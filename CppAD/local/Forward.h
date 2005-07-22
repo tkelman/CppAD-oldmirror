@@ -269,9 +269,9 @@ VectorBase ADFun<Base>::Forward(size_t p, const VectorBase &up)
 	size_t m = indvar.size();
 	for(i = 0; i < m; i++)
 	{	CppADUnknownError( indvar[i] < totalNumVar );
-		// indvar[i] is operator index for i-th independent variable
+		// indvar[i] is operator taddr for i-th independent variable
 		CppADUnknownError( Rec->GetOp( indvar[i] ) == InvOp );
-		// It is also variable index for i-th independent variable
+		// It is also variable taddr for i-th independent variable
 		Taylor[indvar[i] * TaylorColDim + p] = up[i];
 	}
 

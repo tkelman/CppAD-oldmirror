@@ -341,7 +341,7 @@ template <typename VectorADBase>
 ADFun<Base>::ADFun(const VectorADBase &u, const VectorADBase &z)
 {	size_t   n = z.size();
 	size_t   i;
-	size_t   z_index;
+	size_t   z_taddr;
 	OpCode   op;
 
 	// check VectorADBase is Simple Vector class with AD<Base> elements
@@ -361,12 +361,12 @@ ADFun<Base>::ADFun(const VectorADBase &u, const VectorADBase &z)
 	VectorADBase z_copy(n);
 	for(i = 0; i < n; i++)
 	{	z_copy[i].value = z[i].value;
-		z_index         = z[i].index;
+		z_taddr         = z[i].taddr;
 		parameter[i]    = CppAD::Parameter(z[i]);
 		if( parameter[i] )
-			z_index = AD<Base>::Tape()->RecordParOp( z[i].value );
+			z_taddr = AD<Base>::Tape()->RecordParOp( z[i].value );
 
-		z_copy[i].MakeVariable( z_index );
+		z_copy[i].MakeVariable( z_taddr );
 	}
 
 	// total number of varables in this recording 
@@ -394,10 +394,10 @@ ADFun<Base>::ADFun(const VectorADBase &u, const VectorADBase &z)
 	for(i = 0; i < n; i++)
 	{	
 		CppADUsageError( 
-			u[i].index == i+1,
+			u[i].taddr == i+1,
 			"independent variable vector has changed"
 		);
-		// i+1 is both the operator and independent variable index
+		// i+1 is both the operator and independent variable taddr
 		op = Rec->GetOp(i+1);
 		CppADUsageError(
 			op == InvOp,
@@ -421,10 +421,10 @@ ADFun<Base>::ADFun(const VectorADBase &u, const VectorADBase &z)
 	n = z_copy.size();
 	depvar.resize(n);
 	for(i = 0; i < n; i++)
-	{	z_index  = z_copy[i].index;
-		CppADUnknownError( z_index > 0 );
-		CppADUnknownError( z_index < totalNumVar );
-		depvar[i] = z_index;
+	{	z_taddr  = z_copy[i].taddr;
+		CppADUnknownError( z_taddr > 0 );
+		CppADUnknownError( z_taddr < totalNumVar );
+		depvar[i] = z_taddr;
 	}
 
 	// use independent variable values to fill in values for others

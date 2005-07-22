@@ -309,7 +309,7 @@ VectorBase ADFun<Base>::Reverse(size_t p, const VectorBase &v)
 	VectorBase value(m * p);
 	for(i = 0; i < m; i++)
 	{	CppADUnknownError( indvar[i] < totalNumVar );
-		// independent variable index equals its operator index 
+		// independent variable taddr equals its operator taddr 
 		CppADUnknownError( Rec->GetOp( indvar[i] ) == InvOp );
 
 		// by the Reverse Identity Theorem 
