@@ -264,7 +264,7 @@ VectorBase ADFun<Base>::Reverse(size_t p, const VectorBase &v)
 	if( PartialColDim < p )
 	{	if( Partial != CppADNull ) delete [] Partial;
 		PartialColDim = p;
-		Partial = new Base[length * PartialColDim];
+		Partial = new Base[totalNumVar * PartialColDim];
 	}
 
 	// check VectorBase is Simple Vector class with Base type elements
@@ -288,7 +288,7 @@ VectorBase ADFun<Base>::Reverse(size_t p, const VectorBase &v)
 	// initialize entire Partial matrix to zero
 	size_t i;
 	size_t j;
-	for(i = 0; i < length; i++)
+	for(i = 0; i < totalNumVar; i++)
 		for(j = 0; j < p; j++)
 			Partial[i * PartialColDim + j] = Base(0);
 
@@ -296,19 +296,19 @@ VectorBase ADFun<Base>::Reverse(size_t p, const VectorBase &v)
 	// (use += because two dependent variables can point to same location)
 	size_t n = depvar.size();
 	for(i = 0; i < n; i++)
-	{	CppADUnknownError( depvar[i] < length );
+	{	CppADUnknownError( depvar[i] < totalNumVar );
 		Partial[depvar[i] * PartialColDim + p - 1] += v[i];
 	}
 
 	// evaluate the derivatives
-	ADReverse(p - 1, length, Rec, 
+	ADReverse(p - 1, totalNumVar, Rec, 
 		TaylorColDim, Taylor, PartialColDim, Partial);
 
 	// return the derivative values
 	size_t m = indvar.size();
 	VectorBase value(m * p);
 	for(i = 0; i < m; i++)
-	{	CppADUnknownError( indvar[i] < length );
+	{	CppADUnknownError( indvar[i] < totalNumVar );
 		// independent variable index equals its operator index 
 		CppADUnknownError( Rec->GetOp( indvar[i] ) == InvOp );
 

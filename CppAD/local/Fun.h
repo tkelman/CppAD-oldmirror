@@ -102,7 +102,8 @@ The operation
 $syntax%
 	size_t %F%.Size(void) const
 %$$
-returns the number of tape records that correspond to the function $italic F$$.
+returns the total number of varaibles
+that are used to calculate the function $italic F$$.
 
 $head Order$$
 $index Order, ADFun$$
@@ -229,7 +230,7 @@ public:
 
 	// size of this function object
 	size_t Size(void) const
-	{	return length; }
+	{	return totalNumVar; }
 
 	// order of this function object
 	size_t Order(void) const
@@ -255,7 +256,7 @@ public:
 	// amount of memory for each variable
 	size_t Memory(void) const
 	{	size_t pervar  = (TaylorColDim + PartialColDim) * sizeof(Base);
-		size_t total   = length * pervar + Rec->Memory();
+		size_t total   = totalNumVar * pervar + Rec->Memory();
 		return total;
 	}
 
@@ -313,7 +314,7 @@ private:
 	size_t                  PartialColDim;
 
 	// number of rows (variables) in the Taylor and Partial arrays
-	size_t                         length;
+	size_t                         totalNumVar;
 
 	// row indices for the independent variables
 	CppAD::vector<size_t>          indvar;
@@ -368,8 +369,8 @@ ADFun<Base>::ADFun(const VectorADBase &u, const VectorADBase &z)
 		z_copy[i].MakeVariable( z_index );
 	}
 
-	// length of the recording 
-	length = AD<Base>::Tape()->Rec.TotNumVar();
+	// total number of varables in this recording 
+	totalNumVar = AD<Base>::Tape()->Rec.TotNumVar();
 
 	// current order and row dimensions
 	order         = 0;
@@ -378,13 +379,13 @@ ADFun<Base>::ADFun(const VectorADBase &u, const VectorADBase &z)
 
 	// recording
 	Rec     = new TapeRec<Base>( AD<Base>::Tape()->Rec );
-	Taylor  = new Base[length];
+	Taylor  = new Base[totalNumVar];
 	Partial = CppADNull;
 
 	// number of elements in u
 	n = u.size();
 	CppADUsageError(
-		n < length,
+		n < totalNumVar,
 		"independent variables vector has changed"
 	);
 
@@ -422,12 +423,12 @@ ADFun<Base>::ADFun(const VectorADBase &u, const VectorADBase &z)
 	for(i = 0; i < n; i++)
 	{	z_index  = z_copy[i].index;
 		CppADUnknownError( z_index > 0 );
-		CppADUnknownError( z_index < length );
+		CppADUnknownError( z_index < totalNumVar );
 		depvar[i] = z_index;
 	}
 
 	// use independent variable values to fill in values for others
-	compareChange = ADForward(false, 0, length, Rec, TaylorColDim, Taylor);
+	compareChange = ADForward(false, 0, totalNumVar, Rec, TaylorColDim, Taylor);
 	CppADUnknownError( compareChange == 0 );
 
 	// check the dependent variable values

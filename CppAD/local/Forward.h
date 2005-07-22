@@ -256,8 +256,8 @@ VectorBase ADFun<Base>::Forward(size_t p, const VectorBase &up)
 	if( TaylorColDim <= p )
 	{	CppADUnknownError(TaylorColDim == p);
 		TaylorColDim = p+1;
-		Base *Tmp = new Base[length * TaylorColDim];
-		for(i = 0; i < length; i++)
+		Base *Tmp = new Base[totalNumVar * TaylorColDim];
+		for(i = 0; i < totalNumVar; i++)
 		{	for(j = 0; j < p; j++)
 				Tmp[i * TaylorColDim + j] = Taylor[i * p + j];
 		}
@@ -268,7 +268,7 @@ VectorBase ADFun<Base>::Forward(size_t p, const VectorBase &up)
 	// set the p-th order Taylor coefficients for independent variables
 	size_t m = indvar.size();
 	for(i = 0; i < m; i++)
-	{	CppADUnknownError( indvar[i] < length );
+	{	CppADUnknownError( indvar[i] < totalNumVar );
 		// indvar[i] is operator index for i-th independent variable
 		CppADUnknownError( Rec->GetOp( indvar[i] ) == InvOp );
 		// It is also variable index for i-th independent variable
@@ -276,13 +276,13 @@ VectorBase ADFun<Base>::Forward(size_t p, const VectorBase &up)
 	}
 
 	// evaluate the derivatives
-	compareChange = ADForward(true, p, length, Rec, TaylorColDim, Taylor);
+	compareChange = ADForward(true, p, totalNumVar, Rec, TaylorColDim, Taylor);
 
 	// return the p-th order Taylor coefficients for dependent variables
 	size_t n = depvar.size();
 	VectorBase vp(n);
 	for(i = 0; i < n; i++)
-	{	CppADUnknownError( depvar[i] < length );
+	{	CppADUnknownError( depvar[i] < totalNumVar );
 		vp[i] = Taylor[depvar[i] * TaylorColDim + p];
 	}
 
