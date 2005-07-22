@@ -253,13 +253,13 @@ VectorBase ADFun<Base>::Forward(size_t p, const VectorBase &up)
 		"The Taylor coefficient currently stored\n"
 		"in this ADFun has order less than p-1."
 	);  
-	if( TaylorRowDim <= p )
-	{	CppADUnknownError(TaylorRowDim == p);
-		TaylorRowDim = p+1;
-		Base *Tmp = new Base[length * TaylorRowDim];
+	if( TaylorColDim <= p )
+	{	CppADUnknownError(TaylorColDim == p);
+		TaylorColDim = p+1;
+		Base *Tmp = new Base[length * TaylorColDim];
 		for(i = 0; i < length; i++)
 		{	for(j = 0; j < p; j++)
-				Tmp[i * TaylorRowDim + j] = Taylor[i * p + j];
+				Tmp[i * TaylorColDim + j] = Taylor[i * p + j];
 		}
 		delete [] Taylor;
 		Taylor = Tmp;
@@ -272,18 +272,18 @@ VectorBase ADFun<Base>::Forward(size_t p, const VectorBase &up)
 		// indvar[i] is operator index for i-th independent variable
 		CppADUnknownError( Rec->GetOp( indvar[i] ) == InvOp );
 		// It is also variable index for i-th independent variable
-		Taylor[indvar[i] * TaylorRowDim + p] = up[i];
+		Taylor[indvar[i] * TaylorColDim + p] = up[i];
 	}
 
 	// evaluate the derivatives
-	compareChange = ADForward(true, p, length, Rec, TaylorRowDim, Taylor);
+	compareChange = ADForward(true, p, length, Rec, TaylorColDim, Taylor);
 
 	// return the p-th order Taylor coefficients for dependent variables
 	size_t n = depvar.size();
 	VectorBase vp(n);
 	for(i = 0; i < n; i++)
 	{	CppADUnknownError( depvar[i] < length );
-		vp[i] = Taylor[depvar[i] * TaylorRowDim + p];
+		vp[i] = Taylor[depvar[i] * TaylorColDim + p];
 	}
 
 	// order of the Taylor coefficient matrix currently in this ADFun

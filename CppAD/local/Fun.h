@@ -254,7 +254,7 @@ public:
 
 	// amount of memory for each variable
 	size_t Memory(void) const
-	{	size_t pervar  = (TaylorRowDim + PartialRowDim) * sizeof(Base);
+	{	size_t pervar  = (TaylorColDim + PartialColDim) * sizeof(Base);
 		size_t total   = length * pervar + Rec->Memory();
 		return total;
 	}
@@ -303,8 +303,8 @@ private:
 	// values that are set during the constructor and do not change 
 	size_t		        compareChange;
 	size_t                          order;
-	size_t                   TaylorRowDim;
-	size_t                  PartialRowDim;
+	size_t                   TaylorColDim;
+	size_t                  PartialColDim;
 	size_t                         length;
 
 	CppAD::vector<size_t>          indvar;
@@ -356,8 +356,8 @@ ADFun<Base>::ADFun(const VectorADBase &u, const VectorADBase &z)
 
 	// current order and row dimensions
 	order         = 0;
-	TaylorRowDim  = 1;
-	PartialRowDim = 0;
+	TaylorColDim  = 1;
+	PartialColDim = 0;
 
 	// recording
 	Rec     = new TapeRec<Base>( AD<Base>::Tape()->Rec );
@@ -410,7 +410,7 @@ ADFun<Base>::ADFun(const VectorADBase &u, const VectorADBase &z)
 	}
 
 	// use independent variable values to fill in values for others
-	compareChange = ADForward(false, 0, length, Rec, TaylorRowDim, Taylor);
+	compareChange = ADForward(false, 0, length, Rec, TaylorColDim, Taylor);
 	CppADUnknownError( compareChange == 0 );
 
 	// check the dependent variable values
