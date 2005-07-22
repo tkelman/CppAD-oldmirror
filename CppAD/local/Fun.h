@@ -300,20 +300,37 @@ public:
 		const VectorSize_t &J );
 
 private:
-	// values that are set during the constructor and do not change 
+	// debug checking number of comparision operations that changed
 	size_t		        compareChange;
+
+	// order of the informaiton currently stored in Taylor array
 	size_t                          order;
+
+	// number of columns in the currently allocated Taylor array
 	size_t                   TaylorColDim;
+
+	// number of rows in the currently allocated Partial array
 	size_t                  PartialColDim;
+
+	// number of rows (variables) in the Taylor and Partial arrays
 	size_t                         length;
 
+	// row indices for the independent variables
 	CppAD::vector<size_t>          indvar;
+
+	// row indices for the dependent variables
 	CppAD::vector<size_t>          depvar;
+
+	// which of the dependent variables are parameters 
 	CppAD::vector<bool>         parameter;
 
+	// the operations corresponding to this function
 	TapeRec<Base>                    *Rec;
 
+	// the results of the forward mode calculations
 	Base                          *Taylor;
+
+	// the results of the reverse mode calculations
 	Base                         *Partial;
 };
 // ---------------------------------------------------------------------------
