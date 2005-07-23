@@ -664,7 +664,8 @@ size_t ADForward(
 				else
 				{	i   = VectorInd[ i + ind[0] ];
 					Rec->ReplaceInd(i_ind + 2, 0);
-					Z[d] = *(Rec->GetPar(i));
+					Y    = Taylor + Vaddr[i] * J;
+					Z[d] = Y[d];
 					i    = 0;
 				}
 			}
@@ -706,7 +707,8 @@ size_t ADForward(
 				else
 				{	i   = VectorInd[ i + ind[0] ];
 					Rec->ReplaceInd(i_ind + 2, 0);
-					Z[d] = *(Rec->GetPar(i));
+					Y    = Taylor + Vaddr[i] * J;
+					Z[d] = Y[d];
 					i    = 0;
 				}
 			}

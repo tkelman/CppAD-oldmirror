@@ -1012,14 +1012,13 @@ size_t ADTape<Base>::AddVec(size_t length, const Base *data)
 	// store the length in VecInd
 	size_t start = Rec.PutVecInd(length);
 
-	// store indices of the values in VecInd 
+	// store initial values of vector as operators in the tape
 	for(i = 0; i < length; i++)
-	{
-		vecInd = Rec.PutPar( data[i] );
+	{	vecInd = RecordParOp( data[i] );
 		Rec.PutVecInd( vecInd );
 	}
  
-	// return the taddr of the length (where the vector starts)
+	// return the index in VecInd of the length (where the vector starts)
 	return start;
 }
 
