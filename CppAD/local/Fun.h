@@ -216,6 +216,7 @@ public:
 	~ADFun(void)
 	{	delete Rec;
 		delete [] Taylor;
+		delete [] Vaddr;
 		if( Partial != CppADNull )
 			delete [] Partial;
 
@@ -255,7 +256,8 @@ public:
 
 	// amount of memory for each variable
 	size_t Memory(void) const
-	{	size_t pervar  = (TaylorColDim + PartialColDim) * sizeof(Base);
+	{	size_t pervar  = sizeof(size_t) +
+			(TaylorColDim + PartialColDim) * sizeof(Base);
 		size_t total   = totalNumVar * pervar + Rec->Memory();
 		return total;
 	}
@@ -313,7 +315,7 @@ private:
 	// number of rows in the currently allocated Partial array
 	size_t PartialColDim;
 
-	// number of rows (variables) in the Taylor and Partial arrays
+	// number of rows (variables) in Vaddr, Taylor and Partial arrays
 	size_t totalNumVar;
 
 	// row indices for the independent variables
@@ -328,7 +330,10 @@ private:
 	// the operations corresponding to this function
 	TapeRec<Base> *Rec;
 
-	// the results of the forward mode calculations
+	// addressing results of forward mode
+	size_t *Vaddr;
+
+	// Taylor coefficient results of the forward mode calculations
 	Base *Taylor;
 
 	// the results of the reverse mode calculations
@@ -379,6 +384,7 @@ ADFun<Base>::ADFun(const VectorADBase &u, const VectorADBase &z)
 
 	// recording
 	Rec     = new TapeRec<Base>( AD<Base>::Tape()->Rec );
+	Vaddr   = new size_t[totalNumVar];
 	Taylor  = new Base[totalNumVar];
 	Partial = CppADNull;
 
@@ -428,7 +434,9 @@ ADFun<Base>::ADFun(const VectorADBase &u, const VectorADBase &z)
 	}
 
 	// use independent variable values to fill in values for others
-	compareChange = ADForward(false, 0, totalNumVar, Rec, TaylorColDim, Taylor);
+	compareChange = ADForward(
+		false, 0, totalNumVar, Rec, Vaddr, TaylorColDim, Taylor
+	);
 	CppADUnknownError( compareChange == 0 );
 
 	// check the dependent variable values

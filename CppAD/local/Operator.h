@@ -25,6 +25,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 $begin OpCode$$
 $aindex subhead$$
 $spell
+	VecAD
+
 	Ltfpp
 	Lttpp
 	Ltfpv
@@ -184,7 +186,8 @@ namespace CppAD {
 		StvvOp,   //    z[variable]  = variable
 		SubpvOp,  //      parameter  - variable
 		SubvpOp,  //      variable   - parameter
-		SubvvOp   //      variable   - variable
+		SubvvOp,  //      variable   - variable
+		VecADOp   // start VecAD at current variable location
 	};
 }
 /* $$
@@ -390,15 +393,16 @@ const size_t NumIndTable[] = {
 	3, // StvvOp
 	2, // SubpvOp
 	2, // SubvpOp
-	2  // SubvvOp
+	2, // SubvvOp
+	1  // VecADOp
 };
 
 inline size_t NumInd(OpCode op)
 {
-	CppADUnknownError( size_t(SubvvOp) == 
+	CppADUnknownError( size_t(VecADOp) == 
 		sizeof(NumIndTable) / sizeof(NumIndTable[0]) - 1
 	);
-	CppADUnknownError( size_t(op) <= size_t(SubvvOp) );
+	CppADUnknownError( size_t(op) <= size_t(VecADOp) );
 
 	return NumIndTable[(size_t) op];
 }
@@ -468,15 +472,16 @@ const size_t NumVarTable[] = {
 	1, // StvvOp
 	1, // SubpvOp
 	1, // SubvpOp
-	1  // SubvvOp
+	1, // SubvvOp
+	0  // VecADOp
 };
 
 inline size_t NumVar(OpCode op)
 {
-	CppADUnknownError( size_t(SubvvOp) == 
+	CppADUnknownError( size_t(VecADOp) == 
 		sizeof(NumVarTable) / sizeof(NumVarTable[0]) - 1
 	);
-	CppADUnknownError( size_t(op) <= size_t(SubvvOp) );
+	CppADUnknownError( size_t(op) <= size_t(VecADOp) );
 
 	return NumVarTable[(size_t) op];
 }
@@ -598,15 +603,21 @@ void printOp(
 		"Stvv"  ,
 		"Subpv" ,
 		"Subvp" ,
-		"Subvv"
+		"Subvv" ,
+		"VecAD"
 	};
 	CppADUnknownError( 
-		size_t(SubvvOp) == sizeof(OpName) / sizeof(OpName[0]) - 1
+		size_t(VecADOp) == sizeof(OpName) / sizeof(OpName[0]) - 1
 	);
 	printOpField(os,  "i= ",      i_var, 5);
 	printOpField(os, "op= ", OpName[op], 7); 
 	switch( op )
 	{
+		case VecADOp:
+		CppADUnknownError( NumInd(op) == 1 );
+		printOpField(os, "len= ", ind[0], 5);
+		break;
+
 		case LdpOp:
 		CppADUnknownError( NumInd(op) == 3 );
 		printOpField(os, "off= ", ind[0], 5);

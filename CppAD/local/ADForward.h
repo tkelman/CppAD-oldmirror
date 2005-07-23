@@ -50,6 +50,7 @@ $syntax%size_t ADForward(
 	size_t                 %d%,
 	size_t                 %numvar%,
 	TapeRec<%Base%>       *%Rec%,
+	size_t                *%Vaddr%,
 	size_t                 %J%,
 	Base                  *%Taylor%,
 )%$$
@@ -61,7 +62,6 @@ $head Return Value$$
 The return value is equal to the number of
 $syntax%AD<%Base%>%$$ comparison operations have a different result
 from when the information in $italic Rec$$ was recorded.
-
 
 $head Rec$$
 The information stored in $italic Rec$$
@@ -86,6 +86,10 @@ for all the other variables.
 $head numvar$$
 is the number of rows in the matrix $italic Taylor$$.
 It must also be equal to $syntax%%Rec%->TotNumVar()%$$.
+
+$head Vaddr$$
+is an array of length $italic numvar$$ that maps tape addresses (addresses
+in $italic Rec$$) to to variable addresses (index in $italic Taylor$$).
 
 
 $head J$$
@@ -131,6 +135,12 @@ $rnext
 	any operator except for $code InvOp$$ 
 $tend
 
+$subhead Vaddr$$
+If $italic d$$ is zero, the input value of the elements of $italic Vaddr$$ 
+are not used. 
+Otherwise, for each $italic taddr$$ in $italic Rec$$, 
+$italic Vaddr$$ maps it to the corresponind index in $italic Taylor$$  
+
 $head On Output$$
 
 $subhead Rec$$
@@ -148,6 +158,11 @@ For $latex i = m+1, \ldots , numvar-1$$,
 $syntax%%Taylor%[%i% * %J% + %d%]%$$ is set equal to the
 $th d$$ order Taylor coefficient for the variable with index $italic i$$.
 
+$subhead Vaddr$$
+For each $italic taddr$$ in $italic Rec$$, 
+the output value of $italic Vaddr$$ maps it to the corresponind 
+index in $italic Taylor$$.
+
 
 $end
 ------------------------------------------------------------------------------
@@ -163,6 +178,7 @@ size_t ADForward(
 	size_t                d,
 	size_t                numvar,
 	TapeRec<Base>        *Rec,
+	size_t               *Vaddr,
 	size_t                J,
 	Base                 *Taylor
 )
@@ -209,6 +225,10 @@ size_t ADForward(
 		VectorSto = CppADNull;
 	}
 
+	// initialize Vaddr
+	for(i = 0; i < numvar; i++)
+		Vaddr[i] = i;
+
 
 	// check numvar argument
 	CppADUnknownError( Rec->TotNumVar() == numvar );
@@ -254,7 +274,7 @@ size_t ADForward(
 			CppADUnknownError( n_var == 1);
 			CppADUnknownError( n_ind == 1 );
 			CppADUnknownError( ind[0] < i_var );
-			X   = Taylor + ind[0] * J;
+			X   = Taylor + Vaddr[ind[0]] * J;
 			ForAbsOp(d, Z, X);
 			break;
 			// -------------------------------------------------
@@ -265,8 +285,8 @@ size_t ADForward(
 			CppADUnknownError( ind[0] < i_var );
 			CppADUnknownError( ind[1] < i_var );
 
-			X = Taylor + ind[0] * J;
-			Y = Taylor + ind[1] * J;
+			X = Taylor + Vaddr[ind[0]] * J;
+			Y = Taylor + Vaddr[ind[1]] * J;
 			ForAddvvOp(d, Z, X, Y);
 			break;
 			// -------------------------------------------------
@@ -277,7 +297,7 @@ size_t ADForward(
 			CppADUnknownError( ind[1] < i_var );
 
 			P = Rec->GetPar( ind[0] );
-			Y = Taylor + ind[1] * J;
+			Y = Taylor + Vaddr[ind[1]] * J;
 			ForAddpvOp(d, Z, P, Y);
 			break;
 			// -------------------------------------------------
@@ -287,7 +307,7 @@ size_t ADForward(
 			CppADUnknownError( n_ind == 2 );
 			CppADUnknownError( ind[0] < i_var );
 
-			X = Taylor + ind[0] * J;
+			X = Taylor + Vaddr[ind[0]] * J;
 			P = Rec->GetPar( ind[1] );
 			ForAddvpOp(d, Z, X, P);
 			break;
@@ -303,7 +323,7 @@ size_t ADForward(
 
 			// use Tmp for data stored in variable record
 			Tmp = Taylor + (i_var+1) * J;
-			X   = Taylor + ind[0] * J;
+			X   = Taylor + Vaddr[ind[0]] * J;
 			ForAcosOp(d, Z, Tmp, X);
 			break;
 			// -------------------------------------------------
@@ -318,7 +338,7 @@ size_t ADForward(
 
 			// use Tmp for data stored in variable record
 			Tmp = Taylor + (i_var+1) * J;
-			X   = Taylor + ind[0] * J;
+			X   = Taylor + Vaddr[ind[0]] * J;
 			ForAsinOp(d, Z, Tmp, X);
 			break;
 			// -------------------------------------------------
@@ -333,7 +353,7 @@ size_t ADForward(
 
 			// use Tmp for data stored in variable record
 			Tmp = Taylor + (i_var+1) * J;
-			X   = Taylor + ind[0] * J;
+			X   = Taylor + Vaddr[ind[0]] * J;
 			ForAtanOp(d, Z, Tmp, X);
 			break;
 			// -------------------------------------------------
@@ -350,7 +370,7 @@ size_t ADForward(
 			CppADUnknownError( n_var == 1);
 			CppADUnknownError( n_ind == 3 );
 			CppADUnknownError( ind[2] < i_var );
-			Y = Taylor + ind[2] * J;
+			Y = Taylor + Vaddr[ind[2]] * J;
 			Z[d] = CondExp( 
 				*(Rec->GetPar( ind[0] )),
 				d == 0 ? *(Rec->GetPar( ind[1] )) : Base(0),
@@ -364,7 +384,7 @@ size_t ADForward(
 			CppADUnknownError( n_var == 1);
 			CppADUnknownError( n_ind == 3 );
 			CppADUnknownError( ind[1] < i_var );
-			X = Taylor + ind[1] * J;
+			X = Taylor + Vaddr[ind[1]] * J;
 			Z[d] = CondExp( 
 				*(Rec->GetPar( ind[0] )),
 				X[d],
@@ -379,8 +399,8 @@ size_t ADForward(
 			CppADUnknownError( n_ind == 3 );
 			CppADUnknownError( ind[1] < i_var );
 			CppADUnknownError( ind[2] < i_var );
-			X = Taylor + ind[1] * J;
-			Y = Taylor + ind[2] * J;
+			X = Taylor + Vaddr[ind[1]] * J;
+			Y = Taylor + Vaddr[ind[2]] * J;
 			Z[d] = CondExp( 
 				*(Rec->GetPar( ind[0] )),
 				X[d],
@@ -409,7 +429,7 @@ size_t ADForward(
 			CppADUnknownError( n_ind == 3 );
 			CppADUnknownError( ind[0] < i_var );
 			CppADUnknownError( ind[2] < i_var );
-			Y = Taylor + ind[2] * J;
+			Y = Taylor + Vaddr[ind[2]] * J;
 			Z[d] = CondExp( 
 				*(Taylor + ind[0] * J), 
 				d == 0 ? *(Rec->GetPar( ind[1] )) : Base(0),
@@ -424,7 +444,7 @@ size_t ADForward(
 			CppADUnknownError( n_ind == 3 );
 			CppADUnknownError( ind[0] < i_var );
 			CppADUnknownError( ind[1] < i_var );
-			X = Taylor + ind[1] * J;
+			X = Taylor + Vaddr[ind[1]] * J;
 			Z[d] = CondExp( 
 				*(Taylor + ind[0] * J), 
 				X[d],
@@ -440,8 +460,8 @@ size_t ADForward(
 			CppADUnknownError( ind[0] < i_var );
 			CppADUnknownError( ind[1] < i_var );
 			CppADUnknownError( ind[2] < i_var );
-			X = Taylor + ind[1] * J;
-			Y = Taylor + ind[2] * J;
+			X = Taylor + Vaddr[ind[1]] * J;
+			Y = Taylor + Vaddr[ind[2]] * J;
 			Z[d] = CondExp( 
 				*(Taylor + ind[0] * J), 
 				X[d],
@@ -461,7 +481,7 @@ size_t ADForward(
 
 			// use Tmp for data stored in variable record
 			Tmp = Taylor + (i_var+1) * J;
-			X   = Taylor + ind[0] * J;
+			X   = Taylor + Vaddr[ind[0]] * J;
 			ForSinCos(d, Tmp, Z, X);
 			break;
 			// -------------------------------------------------
@@ -472,7 +492,7 @@ size_t ADForward(
 			if( d == 0 ) 
 			{	ind    = Rec->GetInd(n_ind, i_ind);
 				CppADUnknownError( ind[0] < i_var );
-				X   = Taylor + ind[0] * J;
+				X   = Taylor + Vaddr[ind[0]] * J;
 				Z[0] = ADDiscrete<Base>::Eval(ind[1], X[0]);
 			}
 			else	Z[d] = Base(0);
@@ -485,8 +505,8 @@ size_t ADForward(
 			CppADUnknownError( ind[0] < i_var );
 			CppADUnknownError( ind[1] < i_var );
 
-			X = Taylor + ind[0] * J;
-			Y = Taylor + ind[1] * J;
+			X = Taylor + Vaddr[ind[0]] * J;
+			Y = Taylor + Vaddr[ind[1]] * J;
 			ForDivvvOp(d, Z, X, Y);
 			break;
 			// -------------------------------------------------
@@ -496,7 +516,7 @@ size_t ADForward(
 			CppADUnknownError( n_ind == 2 );
 			CppADUnknownError( ind[1] < i_var );
 
-			Y = Taylor + ind[1] * J;
+			Y = Taylor + Vaddr[ind[1]] * J;
 			P = Rec->GetPar( ind[0] );
 			ForDivpvOp(d, Z, P, Y);
 			break;
@@ -508,7 +528,7 @@ size_t ADForward(
 			CppADUnknownError( ind[0] < i_var );
 
 			P = Rec->GetPar( ind[1] );
-			X = Taylor + ind[0] * J;
+			X = Taylor + Vaddr[ind[0]] * J;
 			ForDivvpOp(d, Z, X, P);
 			break;
 
@@ -541,7 +561,7 @@ size_t ADForward(
 			CppADUnknownError( ind[1] < i_var );
 			if( d == 0 )
 			{	P            = Rec->GetPar( ind[0] );
-				Y            = Taylor + ind[1] * J;
+				Y            = Taylor + Vaddr[ind[1]] * J;
 				compareCount += (*P == Y[0]);
 			}
 			break;
@@ -553,7 +573,7 @@ size_t ADForward(
 			CppADUnknownError( ind[1] < i_var );
 			if( d == 0 )
 			{	P            = Rec->GetPar( ind[0] );
-				Y            = Taylor + ind[1] * J;
+				Y            = Taylor + Vaddr[ind[1]] * J;
 				compareCount += (*P != Y[0]);
 			}
 			break;
@@ -564,7 +584,7 @@ size_t ADForward(
 			CppADUnknownError( n_ind == 2 );
 			CppADUnknownError( ind[0] < i_var );
 			if( d == 0 )
-			{	X            = Taylor + ind[0] * J;
+			{	X            = Taylor + Vaddr[ind[0]] * J;
 				P            = Rec->GetPar( ind[1] );
 				compareCount += (X[0] == *P);
 			}
@@ -576,7 +596,7 @@ size_t ADForward(
 			CppADUnknownError( n_ind == 2 );
 			CppADUnknownError( ind[0] < i_var );
 			if( d == 0 )
-			{	X            = Taylor + ind[0] * J;
+			{	X            = Taylor + Vaddr[ind[0]] * J;
 				P            = Rec->GetPar( ind[1] );
 				compareCount += (X[0] != *P);
 			}
@@ -589,8 +609,8 @@ size_t ADForward(
 			CppADUnknownError( ind[0] < i_var );
 			CppADUnknownError( ind[1] < i_var );
 			if( d == 0 )
-			{	X            = Taylor + ind[0] * J;
-				Y            = Taylor + ind[1] * J;
+			{	X            = Taylor + Vaddr[ind[0]] * J;
+				Y            = Taylor + Vaddr[ind[1]] * J;
 				compareCount += (X[0] == Y[0]);
 			}
 			break;
@@ -602,8 +622,8 @@ size_t ADForward(
 			CppADUnknownError( ind[0] < i_var );
 			CppADUnknownError( ind[1] < i_var );
 			if( d == 0 )
-			{	X            = Taylor + ind[0] * J;
-				Y            = Taylor + ind[1] * J;
+			{	X            = Taylor + Vaddr[ind[0]] * J;
+				Y            = Taylor + Vaddr[ind[1]] * J;
 				compareCount += (X[0] != Y[0]);
 			}
 			break;
@@ -614,7 +634,7 @@ size_t ADForward(
 			CppADUnknownError( n_ind == 1 );
 			CppADUnknownError( ind[0] < i_var );
 
-			X = Taylor + ind[0] * J;
+			X = Taylor + Vaddr[ind[0]] * J;
 			ForExpOp(d, Z, X);
 			break;
 			// -------------------------------------------------
@@ -651,7 +671,7 @@ size_t ADForward(
 			else	i = ind[2];
 			if( i > 0 )
 			{	CppADUnknownError( i < i_var );
-				Y     = Taylor + i * J;
+				Y     = Taylor + Vaddr[i] * J;
 				Z[d]  = Y[d];
 			}
 			break;
@@ -667,7 +687,7 @@ size_t ADForward(
 
 			if( d == 0 )
 			{
-				X   = Taylor + ind[1] * J;
+				X   = Taylor + Vaddr[ind[1]] * J;
 				i   = Integer( X[0] );
 				len = VectorInd[ ind[0] - 1 ];
 				CppADUsageError( 
@@ -693,7 +713,7 @@ size_t ADForward(
 			else	i = ind[2];
 			if( i > 0 )
 			{	CppADUnknownError( i < i_var );
-				Y     = Taylor + i * J;
+				Y     = Taylor + Vaddr[i] * J;
 				Z[d]  = Y[d];
 			}
 			break;
@@ -733,7 +753,7 @@ size_t ADForward(
 			CppADUnknownError( ind[1] < i_var );
 			if( d == 0 )
 			{	P            = Rec->GetPar( ind[0] );
-				Y            = Taylor + ind[1] * J;
+				Y            = Taylor + Vaddr[ind[1]] * J;
 				compareCount += LessThanOrZero(*P - Y[0]);
 			}
 			break;
@@ -745,7 +765,7 @@ size_t ADForward(
 			CppADUnknownError( ind[1] < i_var );
 			if( d == 0 )
 			{	P            = Rec->GetPar( ind[0] );
-				Y            = Taylor + ind[1] * J;
+				Y            = Taylor + Vaddr[ind[1]] * J;
 				compareCount += ! LessThanOrZero(*P - Y[0]);
 			}
 			break;
@@ -756,7 +776,7 @@ size_t ADForward(
 			CppADUnknownError( n_ind == 2 );
 			CppADUnknownError( ind[0] < i_var );
 			if( d == 0 )
-			{	X            = Taylor + ind[0] * J;
+			{	X            = Taylor + Vaddr[ind[0]] * J;
 				P            = Rec->GetPar( ind[1] );
 				compareCount += LessThanOrZero(X[0] - *P);
 			}
@@ -768,7 +788,7 @@ size_t ADForward(
 			CppADUnknownError( n_ind == 2 );
 			CppADUnknownError( ind[0] < i_var );
 			if( d == 0 )
-			{	X            = Taylor + ind[0] * J;
+			{	X            = Taylor + Vaddr[ind[0]] * J;
 				P            = Rec->GetPar( ind[1] );
 				compareCount += ! LessThanOrZero(X[0] - *P);
 			}
@@ -781,8 +801,8 @@ size_t ADForward(
 			CppADUnknownError( ind[0] < i_var );
 			CppADUnknownError( ind[1] < i_var );
 			if( d == 0 )
-			{	X            = Taylor + ind[0] * J;
-				Y            = Taylor + ind[1] * J;
+			{	X            = Taylor + Vaddr[ind[0]] * J;
+				Y            = Taylor + Vaddr[ind[1]] * J;
 				compareCount += LessThanOrZero(X[0] - Y[0]);
 			}
 			break;
@@ -794,8 +814,8 @@ size_t ADForward(
 			CppADUnknownError( ind[0] < i_var );
 			CppADUnknownError( ind[1] < i_var );
 			if( d == 0 )
-			{	X            = Taylor + ind[0] * J;
-				Y            = Taylor + ind[1] * J;
+			{	X            = Taylor + Vaddr[ind[0]] * J;
+				Y            = Taylor + Vaddr[ind[1]] * J;
 				compareCount += ! LessThanOrZero(X[0] - Y[0]);
 			}
 			break;
@@ -806,7 +826,7 @@ size_t ADForward(
 			CppADUnknownError( n_ind == 1 );
 			CppADUnknownError( ind[0] < i_var );
 
-			X = Taylor + ind[0] * J;
+			X = Taylor + Vaddr[ind[0]] * J;
 			ForLogOp(d, Z, X);
 			break;
 
@@ -839,7 +859,7 @@ size_t ADForward(
 			CppADUnknownError( ind[1] < i_var );
 			if( d == 0 )
 			{	P            = Rec->GetPar( ind[0] );
-				Y            = Taylor + ind[1] * J;
+				Y            = Taylor + Vaddr[ind[1]] * J;
 				compareCount += LessThanZero(*P - Y[0]);
 			}
 			break;
@@ -851,7 +871,7 @@ size_t ADForward(
 			CppADUnknownError( ind[1] < i_var );
 			if( d == 0 )
 			{	P            = Rec->GetPar( ind[0] );
-				Y            = Taylor + ind[1] * J;
+				Y            = Taylor + Vaddr[ind[1]] * J;
 				compareCount += ! LessThanZero(*P - Y[0]);
 			}
 			break;
@@ -862,7 +882,7 @@ size_t ADForward(
 			CppADUnknownError( n_ind == 2 );
 			CppADUnknownError( ind[0] < i_var );
 			if( d == 0 )
-			{	X            = Taylor + ind[0] * J;
+			{	X            = Taylor + Vaddr[ind[0]] * J;
 				P            = Rec->GetPar( ind[1] );
 				compareCount += LessThanZero(X[0] - *P);
 			}
@@ -874,7 +894,7 @@ size_t ADForward(
 			CppADUnknownError( n_ind == 2 );
 			CppADUnknownError( ind[0] < i_var );
 			if( d == 0 )
-			{	X            = Taylor + ind[0] * J;
+			{	X            = Taylor + Vaddr[ind[0]] * J;
 				P            = Rec->GetPar( ind[1] );
 				compareCount += ! LessThanZero(X[0] - *P);
 			}
@@ -887,8 +907,8 @@ size_t ADForward(
 			CppADUnknownError( ind[0] < i_var );
 			CppADUnknownError( ind[1] < i_var );
 			if( d == 0 )
-			{	X            = Taylor + ind[0] * J;
-				Y            = Taylor + ind[1] * J;
+			{	X            = Taylor + Vaddr[ind[0]] * J;
+				Y            = Taylor + Vaddr[ind[1]] * J;
 				compareCount += LessThanZero(X[0] - Y[0]);
 			}
 			break;
@@ -900,8 +920,8 @@ size_t ADForward(
 			CppADUnknownError( ind[0] < i_var );
 			CppADUnknownError( ind[1] < i_var );
 			if( d == 0 )
-			{	X            = Taylor + ind[0] * J;
-				Y            = Taylor + ind[1] * J;
+			{	X            = Taylor + Vaddr[ind[0]] * J;
+				Y            = Taylor + Vaddr[ind[1]] * J;
 				compareCount += ! LessThanZero(X[0] - Y[0]);
 			}
 			break;
@@ -913,8 +933,8 @@ size_t ADForward(
 			CppADUnknownError( ind[0] < i_var );
 			CppADUnknownError( ind[1] < i_var );
 
-			X = Taylor + ind[0] * J;
-			Y = Taylor + ind[1] * J;
+			X = Taylor + Vaddr[ind[0]] * J;
+			Y = Taylor + Vaddr[ind[1]] * J;
 			ForMulvvOp(d, Z, X, Y);
 			break;
 			// -------------------------------------------------
@@ -924,7 +944,7 @@ size_t ADForward(
 			CppADUnknownError( n_ind == 2 );
 			CppADUnknownError( ind[1] < i_var );
 
-			Y = Taylor + ind[1] * J;
+			Y = Taylor + Vaddr[ind[1]] * J;
 			P = Rec->GetPar( ind[0] );
 			ForMulpvOp(d, Z, P, Y);
 			break;
@@ -935,7 +955,7 @@ size_t ADForward(
 			CppADUnknownError( n_ind == 2 );
 			CppADUnknownError( ind[0] < i_var );
 
-			X = Taylor + ind[0] * J;
+			X = Taylor + Vaddr[ind[0]] * J;
 			P = Rec->GetPar( ind[1] );
 			ForMulvpOp(d, Z, X, P);
 			break;
@@ -976,7 +996,7 @@ size_t ADForward(
 				CppADUnknownError( ind[0] < Rec->NumTxt() );
 				CppADUnknownError( ind[1] < i_var );
 
-				X      = Taylor + ind[1] * J;
+				X      = Taylor + Vaddr[ind[1]] * J;
 				std::cout << Rec->GetTxt(ind[0]);
 				std::cout << X[0];
 			}
@@ -993,7 +1013,7 @@ size_t ADForward(
 
 			// use Tmp for data stored in second variable
 			Tmp = Taylor + (i_var+1) * J;
-			X   = Taylor + ind[0] * J;
+			X   = Taylor + Vaddr[ind[0]] * J;
 			ForSinCos(d, Z, Tmp, X);
 			break;
 			// -------------------------------------------------
@@ -1003,7 +1023,7 @@ size_t ADForward(
 			CppADUnknownError( n_ind == 1 );
 			CppADUnknownError( ind[0] < i_var );
 
-			X = Taylor + ind[0] * J;
+			X = Taylor + Vaddr[ind[0]] * J;
 			ForSqrtOp(d, Z, X);
 			break;
 			// -------------------------------------------------
@@ -1049,7 +1069,7 @@ size_t ADForward(
 				VectorInd[ i + ind[0] ] = i_var;
 				VectorSto[ i + ind[0] ] = true;
 			}
-			Y    = Taylor + ind[2] * J;
+			Y    = Taylor + Vaddr[ind[2]] * J;
 			Z[d] = Y[d];
 			break;
 			// -------------------------------------------------
@@ -1064,7 +1084,7 @@ size_t ADForward(
 				CppADUnknownError( ind[0] < Rec->NumVecInd() );
 				CppADUnknownError( ind[1] < i_var );
 
-				X   = Taylor + ind[1] * J;
+				X   = Taylor + Vaddr[ind[1]] * J;
 				i   = Integer( X[0] );
 				len = VectorInd[ ind[0] - 1 ];
 				CppADUsageError( 
@@ -1094,7 +1114,7 @@ size_t ADForward(
 				CppADUnknownError( ind[1] < i_var );
 				CppADUnknownError( ind[2] < i_var );
 
-				X   = Taylor + ind[1] * J;
+				X   = Taylor + Vaddr[ind[1]] * J;
 				i   = Integer( X[0] );
 				len = VectorInd[ ind[0] - 1 ];
 				CppADUsageError( 
@@ -1107,7 +1127,7 @@ size_t ADForward(
 				VectorInd[ i + ind[0] ] = i_var;
 				VectorSto[ i + ind[0] ] = true;
 			}
-			Y    = Taylor + ind[2] * J;
+			Y    = Taylor + Vaddr[ind[2]] * J;
 			Z[d] = Y[d];
 			break;
 			// -------------------------------------------------
@@ -1118,8 +1138,8 @@ size_t ADForward(
 			CppADUnknownError( ind[0] < i_var );
 			CppADUnknownError( ind[1] < i_var );
 
-			X = Taylor + ind[0] * J;
-			Y = Taylor + ind[1] * J;
+			X = Taylor + Vaddr[ind[0]] * J;
+			Y = Taylor + Vaddr[ind[1]] * J;
 			ForSubvvOp(d, Z, X, Y);
 			break;
 			// -------------------------------------------------
@@ -1130,7 +1150,7 @@ size_t ADForward(
 			CppADUnknownError( ind[1] < i_var );
 
 			P = Rec->GetPar( ind[0] );
-			Y = Taylor + ind[1] * J;
+			Y = Taylor + Vaddr[ind[1]] * J;
 			ForSubpvOp(d, Z, P, Y);
 			break;
 			// -------------------------------------------------
@@ -1140,7 +1160,7 @@ size_t ADForward(
 			CppADUnknownError( n_ind == 2 );
 			CppADUnknownError( ind[0] < i_var );
 
-			X = Taylor + ind[0] * J;
+			X = Taylor + Vaddr[ind[0]] * J;
 			P = Rec->GetPar( ind[1] );
 			ForSubvpOp(d, Z, X, P);
 			break;

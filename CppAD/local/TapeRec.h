@@ -87,8 +87,9 @@ $syntax%
 	inline size_t %Rec%.PutOp(OpCode %op%)
 %$$
 places the value $italic op$$ at the end of the current Op recording
-and returns the offset for the corresponding variable 
-(if the operator has a resulting variable).
+and returns the offset for the corresponding variable.
+(If the operator does not have a corresponding variable,
+the offset of the next variable is returned.) 
 With each call, this index increments by the number of variables required
 for the previous call to $code PutOp$$.
 
