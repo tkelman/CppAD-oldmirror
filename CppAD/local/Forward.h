@@ -276,9 +276,7 @@ VectorBase ADFun<Base>::Forward(size_t p, const VectorBase &up)
 	}
 
 	// evaluate the derivatives
-	compareChange = ADForward(
-		true, p, totalNumVar, Rec, Vaddr, TaylorColDim, Taylor
-	);
+	compareChange = ADForward(true, p, totalNumVar, Rec, TaylorColDim, Taylor);
 
 	// return the p-th order Taylor coefficients for dependent variables
 	size_t n = depvar.size();
