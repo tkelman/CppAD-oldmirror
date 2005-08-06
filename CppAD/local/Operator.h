@@ -119,6 +119,7 @@ The value $italic op$$ is one of the following enum type values:
 $codep */
 
 namespace CppAD {
+	enum CompareOp { Lt, Le, Eq, Ge, Gt };
 	enum OpCode {
 		AbsOp,    //  abs(variable)
 		AcosOp,   // asin(variable)
@@ -128,13 +129,13 @@ namespace CppAD {
 		AsinOp,   // asin(variable)
 		AtanOp,   // atan(variable)
 		CEpppOp,  // place holder that is not used
-		CEppvOp,  // CondExp(parameter, parameter, variable )
-		CEpvpOp,  // CondExp(parameter, variable,  parameter)
-		CEpvvOp,  // CondExp(parameter, variable,  variable )
-		CEvppOp,  // CondExp(variable,  parameter, parameter)
-		CEvpvOp,  // CondExp(variable,  parameter, variable )
-		CEvvpOp,  // CondExp(variable,  variable,  parameter)
-		CEvvvOp,  // CondExp(variable,  variable,  variable )
+		CEppvOp,  // CondExp(parameter, parameter, variable , op)
+		CEpvpOp,  // CondExp(parameter, variable,  parameter, op)
+		CEpvvOp,  // CondExp(parameter, variable,  variable , op)
+		CEvppOp,  // CondExp(variable,  parameter, parameter, op)
+		CEvpvOp,  // CondExp(variable,  parameter, variable , op)
+		CEvvpOp,  // CondExp(variable,  variable,  parameter, op)
+		CEvvvOp,  // CondExp(variable,  variable,  variable , op)
 		CosOp,    //  cos(variable)
 		DisOp,    //  dis(variable,    index)
 		DivpvOp,  //      parameter  / variable
@@ -333,14 +334,14 @@ const size_t NumIndTable[] = {
 	2, // AddvvOp
 	1, // AsinOp
 	1, // AtanOp
-	3, // CEpppOp
-	3, // CEppvOp
-	3, // CEpvpOp
-	3, // CEpvvOp
-	3, // CEvppOp
-	3, // CEvpvOp
-	3, // CEvvpOp
-	3, // CEvvvOp
+	4, // CEpppOp
+	4, // CEppvOp
+	4, // CEpvpOp
+	4, // CEpvvOp
+	4, // CEvppOp
+	4, // CEvpvOp
+	4, // CEvvpOp
+	4, // CEvvvOp
 	1, // CosOp
 	2, // DisOp
 	2, // DivpvOp
@@ -533,7 +534,9 @@ void printOp(
 	const  Base           *fz     ,
 	size_t                 nrz    ,
 	const  Base           *rz     )
-{	static char *OpName[] = {
+{	
+	static char *CompareOpName = { "Lt", "Le", "Eq", "Ge", "Gt" };
+	static char *OpName[] = {
 		"Abs"   ,
 		"Acos"  ,
 		"Addpv" ,
@@ -745,52 +748,59 @@ void printOp(
 		break;
 
 		case CEppvOp:
-		CppADUnknownError( NumInd(op) == 3 );
+		CppADUnknownError( NumInd(op) == 4 );
 		printOpField(os, "p_1= ", *(Rec->GetPar(ind[0])), 5);
 		printOpField(os, "p_2= ", *(Rec->GetPar(ind[1])), 5);
 		printOpField(os, "i_3= ", ind[2], 5);
+		printOpField(os, "op= ", CompareOpName[ ind[3] ], 3);
 		break;
 
 		case CEpvpOp:
-		CppADUnknownError( NumInd(op) == 3 );
+		CppADUnknownError( NumInd(op) == 4 );
 		printOpField(os, "p_1= ", *(Rec->GetPar(ind[0])), 5);
 		printOpField(os, "i_2= ", ind[1], 5);
 		printOpField(os, "p_3= ", *(Rec->GetPar(ind[2])), 5);
+		printOpField(os, "op= ", CompareOpName[ ind[3] ], 3);
 		break;
 
 		case CEpvvOp:
-		CppADUnknownError( NumInd(op) == 3 );
+		CppADUnknownError( NumInd(op) == 4 );
 		printOpField(os, "p_1= ", *(Rec->GetPar(ind[0])), 5);
 		printOpField(os, "i_2= ", ind[1], 5);
 		printOpField(os, "i_3= ", ind[2], 5);
+		printOpField(os, "op= ", CompareOpName[ ind[3] ], 3);
 		break;
 
 		case CEvppOp:
-		CppADUnknownError( NumInd(op) == 3 );
+		CppADUnknownError( NumInd(op) == 4 );
 		printOpField(os, "i_1= ", ind[0], 5);
 		printOpField(os, "p_2= ", *(Rec->GetPar(ind[1])), 5);
 		printOpField(os, "p_3= ", *(Rec->GetPar(ind[2])), 5);
+		printOpField(os, "op= ", CompareOpName[ ind[3] ], 3);
 		break;
 
 		case CEvpvOp:
-		CppADUnknownError( NumInd(op) == 3 );
+		CppADUnknownError( NumInd(op) == 4 );
 		printOpField(os, "i_1= ", ind[0], 5);
 		printOpField(os, "p_2= ", *(Rec->GetPar(ind[1])), 5);
 		printOpField(os, "i_3= ", ind[2], 5);
+		printOpField(os, "op= ", CompareOpName[ ind[3] ], 3);
 		break;
 
 		case CEvvpOp:
-		CppADUnknownError( NumInd(op) == 3 );
+		CppADUnknownError( NumInd(op) == 4 );
 		printOpField(os, "i_1= ", ind[0], 5);
 		printOpField(os, "i_2= ", ind[1], 5);
 		printOpField(os, "p_3= ", *(Rec->GetPar(ind[2])), 5);
+		printOpField(os, "op= ", CompareOpName[ ind[3] ], 3);
 		break;
 
 		case CEvvvOp:
-		CppADUnknownError( NumInd(op) == 3 );
+		CppADUnknownError( NumInd(op) == 4 );
 		printOpField(os, "i_1= ", ind[0], 5);
 		printOpField(os, "i_2= ", ind[1], 5);
 		printOpField(os, "i_3= ", ind[2], 5);
+		printOpField(os, "op= ", CompareOpName[ ind[3] ], 3);
 		break;
 
 		default:

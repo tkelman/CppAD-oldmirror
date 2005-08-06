@@ -20,6 +20,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 $begin WhatsNew05$$
 $spell
+	Le
+	Lt
+	Eq
+	Ge
+	Gt
 	op
 	gcc
 	Cygwin
@@ -63,6 +68,16 @@ This section contains a list of the changes to CppAD during 2005
 The purpose of these sections is to
 assist you in learning about changes between various versions of CppAD.
 
+$head 08-06$$
+The $xref/CondExp//conditional expression/$$ function has been changed
+from just $code CondExp$$ to
+$code CondExpLt$$,
+$code CondExpLe$$,
+$code CondExpEq$$,
+$code CondExpGe$$,
+$code CondExpGt$$.
+This should make code with conditional expressions easier to understand.
+The old $code CondExp$$ function has been deprecated.
 
 $head 07-21$$
 Remove unnecessary no-op that was left in tape for the following cases:

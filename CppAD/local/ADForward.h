@@ -340,6 +340,7 @@ size_t ADForward(
 
 			case CEpppOp:
 			CppADUnknownError( n_var == 1);
+			CppADUnknownError( n_ind == 4);
 			CppADUnknownError(0); // this instruction is not used
 			break;
 
@@ -348,10 +349,11 @@ size_t ADForward(
 
 			case CEppvOp:
 			CppADUnknownError( n_var == 1);
-			CppADUnknownError( n_ind == 3 );
+			CppADUnknownError( n_ind == 4 );
 			CppADUnknownError( ind[2] < i_var );
 			Y = Taylor + ind[2] * J;
-			Z[d] = CondExp( 
+			Z[d] = CondExpOp( 
+				CompareOp( ind[3] ),
 				*(Rec->GetPar( ind[0] )),
 				d == 0 ? *(Rec->GetPar( ind[1] )) : Base(0),
 				Y[d]
@@ -362,10 +364,11 @@ size_t ADForward(
 
 			case CEpvpOp:
 			CppADUnknownError( n_var == 1);
-			CppADUnknownError( n_ind == 3 );
+			CppADUnknownError( n_ind == 4 );
 			CppADUnknownError( ind[1] < i_var );
 			X = Taylor + ind[1] * J;
-			Z[d] = CondExp( 
+			Z[d] = CondExpOp( 
+				CompareOp( ind[3] ),
 				*(Rec->GetPar( ind[0] )),
 				X[d],
 				d == 0 ? *(Rec->GetPar( ind[2] )) : Base(0)
@@ -376,12 +379,13 @@ size_t ADForward(
 
 			case CEpvvOp:
 			CppADUnknownError( n_var == 1);
-			CppADUnknownError( n_ind == 3 );
+			CppADUnknownError( n_ind == 4 );
 			CppADUnknownError( ind[1] < i_var );
 			CppADUnknownError( ind[2] < i_var );
 			X = Taylor + ind[1] * J;
 			Y = Taylor + ind[2] * J;
-			Z[d] = CondExp( 
+			Z[d] = CondExpOp( 
+				CompareOp( ind[3] ),
 				*(Rec->GetPar( ind[0] )),
 				X[d],
 				Y[d]
@@ -392,9 +396,10 @@ size_t ADForward(
 
 			case CEvppOp:
 			CppADUnknownError( n_var == 1);
-			CppADUnknownError( n_ind == 3 );
+			CppADUnknownError( n_ind == 4 );
 			CppADUnknownError( ind[0] < i_var );
-			Z[d] = CondExp(
+			Z[d] = CondExpOp(
+				CompareOp( ind[3] ),
 				*(Taylor + ind[0] * J),
 				d == 0 ? *(Rec->GetPar( ind[1] )) : Base(0),
 				d == 0 ? *(Rec->GetPar( ind[2] )) : Base(0)
@@ -406,11 +411,12 @@ size_t ADForward(
 
 			case CEvpvOp:
 			CppADUnknownError( n_var == 1);
-			CppADUnknownError( n_ind == 3 );
+			CppADUnknownError( n_ind == 4 );
 			CppADUnknownError( ind[0] < i_var );
 			CppADUnknownError( ind[2] < i_var );
 			Y = Taylor + ind[2] * J;
-			Z[d] = CondExp( 
+			Z[d] = CondExpOp( 
+				CompareOp( ind[3] ),
 				*(Taylor + ind[0] * J), 
 				d == 0 ? *(Rec->GetPar( ind[1] )) : Base(0),
 				Y[d]
@@ -421,11 +427,12 @@ size_t ADForward(
 
 			case CEvvpOp:
 			CppADUnknownError( n_var == 1);
-			CppADUnknownError( n_ind == 3 );
+			CppADUnknownError( n_ind == 4 );
 			CppADUnknownError( ind[0] < i_var );
 			CppADUnknownError( ind[1] < i_var );
 			X = Taylor + ind[1] * J;
-			Z[d] = CondExp( 
+			Z[d] = CondExpOp( 
+				CompareOp( ind[3] ),
 				*(Taylor + ind[0] * J), 
 				X[d],
 				d == 0 ? *(Rec->GetPar( ind[2] )) : Base(0)
@@ -436,13 +443,14 @@ size_t ADForward(
 
 			case CEvvvOp:
 			CppADUnknownError( n_var == 1);
-			CppADUnknownError( n_ind == 3 );
+			CppADUnknownError( n_ind == 4 );
 			CppADUnknownError( ind[0] < i_var );
 			CppADUnknownError( ind[1] < i_var );
 			CppADUnknownError( ind[2] < i_var );
 			X = Taylor + ind[1] * J;
 			Y = Taylor + ind[2] * J;
-			Z[d] = CondExp( 
+			Z[d] = CondExpOp( 
+				CompareOp( ind[3] ),
 				*(Taylor + ind[0] * J), 
 				X[d],
 				Y[d]

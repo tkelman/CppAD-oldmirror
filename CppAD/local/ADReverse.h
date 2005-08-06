@@ -317,16 +317,18 @@ void ADReverse(
 
 			case CEpppOp:
 			CppADUnknownError( n_var == 1);
+			CppADUnknownError( n_ind == 4 );
 			CppADUnknownError(0); // this instruction is not used
 			break;
 			// ---------------------------------------------------
 
 			case CEpvpOp:
 			CppADUnknownError( n_var == 1);
-			CppADUnknownError( n_ind == 3 );
+			CppADUnknownError( n_ind == 4 );
 			CppADUnknownError( ind[1] < i_var );
 			pX     = Partial + ind[1] * K;
-			pX[d] += CondExp(
+			pX[d] += CondExpOp(
+				CompareOp( ind[3] ),
 				*(Rec->GetPar( ind[0] )),
 				pZ[d],
 				Base(0)
@@ -337,10 +339,11 @@ void ADReverse(
 
 			case CEppvOp:
 			CppADUnknownError( n_var == 1);
-			CppADUnknownError( n_ind == 3 );
+			CppADUnknownError( n_ind == 4 );
 			CppADUnknownError( ind[2] < i_var );
 			pY     = Partial + ind[2] * K;
-			pY[d] += CondExp(
+			pY[d] += CondExpOp(
+				CompareOp( ind[3] ),
 				*(Rec->GetPar( ind[0] )),
 				Base(0),
 				pZ[d]
@@ -351,17 +354,19 @@ void ADReverse(
 
 			case CEpvvOp:
 			CppADUnknownError( n_var == 1);
-			CppADUnknownError( n_ind == 3 );
+			CppADUnknownError( n_ind == 4 );
 			CppADUnknownError( ind[1] < i_var );
 			CppADUnknownError( ind[2] < i_var );
 			pX     = Partial + ind[1] * K;
 			pY     = Partial + ind[2] * K;
-			pX[d] += CondExp(
+			pX[d] += CondExpOp(
+				CompareOp( ind[3] ),
 				*(Rec->GetPar( ind[0] )),
 				pZ[d],
 				Base(0)
 			);
-			pY[d] += CondExp(
+			pY[d] += CondExpOp(
+				CompareOp( ind[3] ),
 				*(Rec->GetPar( ind[0] )),
 				Base(0),
 				pZ[d]
@@ -371,18 +376,19 @@ void ADReverse(
 
 			case CEvppOp:
 			CppADUnknownError( n_var == 1);
-			CppADUnknownError( n_ind == 3 );
+			CppADUnknownError( n_ind == 4 );
 
 			break;
 			// ---------------------------------------------------
 
 			case CEvvpOp:
 			CppADUnknownError( n_var == 1);
-			CppADUnknownError( n_ind == 3 );
+			CppADUnknownError( n_ind == 4 );
 			CppADUnknownError( ind[0] < i_var );
 			CppADUnknownError( ind[1] < i_var );
 			pX     = Partial + ind[1] * K;
-			pX[d] += CondExp(
+			pX[d] += CondExpOp(
+				CompareOp( ind[3] ),
 				*(Taylor + ind[0] * J),
 				pZ[d],
 				Base(0)
@@ -393,11 +399,12 @@ void ADReverse(
 
 			case CEvpvOp:
 			CppADUnknownError( n_var == 1);
-			CppADUnknownError( n_ind == 3 );
+			CppADUnknownError( n_ind == 4 );
 			CppADUnknownError( ind[0] < i_var );
 			CppADUnknownError( ind[2] < i_var );
 			pY     = Partial + ind[2] * K;
-			pY[d] += CondExp(
+			pY[d] += CondExpOp(
+				CompareOp( ind[3] ),
 				*(Taylor + ind[0] * J),
 				Base(0),
 				pZ[d]
@@ -408,18 +415,20 @@ void ADReverse(
 
 			case CEvvvOp:
 			CppADUnknownError( n_var == 1);
-			CppADUnknownError( n_ind == 3 );
+			CppADUnknownError( n_ind == 4 );
 			CppADUnknownError( ind[0] < i_var );
 			CppADUnknownError( ind[1] < i_var );
 			CppADUnknownError( ind[2] < i_var );
 			pX     = Partial + ind[1] * K;
 			pY     = Partial + ind[2] * K;
-			pX[d] += CondExp(
+			pX[d] += CondExpOp(
+				CompareOp( ind[3] ),
 				*(Taylor + ind[0] * J),
 				pZ[d],
 				Base(0)
 			);
-			pY[d] += CondExp(
+			pY[d] += CondExpOp(
+				CompareOp( ind[3] ),
 				*(Taylor + ind[0] * J),
 				Base(0),
 				pZ[d]

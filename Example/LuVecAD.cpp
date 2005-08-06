@@ -210,7 +210,6 @@ AD<double> LuVecAD(
 	// temporary values
 	Type  etmp;
 	Type  diff;
-	Type  yes;
 
 	// pivot element
 	Type  pivot;
@@ -276,8 +275,7 @@ AD<double> LuVecAD(
 		ip[imax] = index;
 
 		// if imax != p, switch sign of determinant
-		yes      = EqZero(imax - p);
-		signdet  = CondExp(yes, signdet,  -signdet);
+		signdet  = CondExpEq(imax - p, signdet,  -signdet);
 
 		// switch columns so max absolute element is in column p
 		jndex    = jp[p];
@@ -285,8 +283,7 @@ AD<double> LuVecAD(
 		jp[jmax] = jndex;
 
 		// if imax != p, switch sign of determinant
-		yes      = EqZero(jmax - p);
-		signdet  = CondExp(yes, signdet,  -signdet);
+		signdet  = CondExpEq(jmax - p, signdet,  -signdet);
 	
 		// pivot using the max absolute element
 		itmp    = ip[p] * N;
@@ -294,14 +291,12 @@ AD<double> LuVecAD(
 		pivot   = Matrix[ index ];
 
 		// update the singular matrix flag
-		yes      = EqZero(pivot);
-		singular = CondExp(yes, One, singular);
+		singular = CondExpEq(pivot, One, singular);
 
 		// update the log of absolute determinant and its sign
-		yes      = GeqZero( pivot );
 		etmp     = abs(pivot);
 		logdet   = logdet + log( etmp );
-		signdet  = CondExp(yes, signdet, - signdet);
+		signdet  = CondExpGe(pivot, signdet, - signdet);
 
 		/*
 		Reduce by the elementary transformations that maps 

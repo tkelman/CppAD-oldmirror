@@ -102,7 +102,7 @@ The operation
 $syntax%
 	size_t %F%.Size(void) const
 %$$
-returns the total number of varaibles
+returns the total number of variables
 that are used to calculate the function $italic F$$.
 
 $head Order$$

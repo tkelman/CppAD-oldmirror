@@ -93,10 +93,11 @@ class AD {
 	friend bool IdenticalEqual <Base> 
 		(const AD<Base> &u, const AD<Base> &v);
 
-	friend AD<Base> CondExp   <Base> (
-		const AD<Base> &exp1, 
-		const AD<Base> &exp2, 
-		const AD<Base> &exp3 
+	friend AD<Base> CondExpOp  <Base> (
+		enum CompareOp  cop       ,
+		const AD<Base> &flag      , 
+		const AD<Base> &trueCase  , 
+		const AD<Base> &falseCase 
 	);
 
 	friend class ADTape<Base>;

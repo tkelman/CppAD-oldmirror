@@ -502,10 +502,11 @@ class ADTape {
 	friend void PrintFor <Base>
 		(const char *text, const AD<Base> &x);
 
-	friend AD<Base> CondExp   <Base> (
-		const AD<Base> &exp1, 
-		const AD<Base> &exp2, 
-		const AD<Base> &exp3 
+	friend AD<Base> CondExpOp <Base> (
+		enum CompareOp  cop          ,
+		const AD<Base> &flag         , 
+		const AD<Base> &trueCase     , 
+		const AD<Base> &falseCase 
 	);
 
 	friend bool Parameter     <Base> 
@@ -555,10 +556,11 @@ private:
 
 	// see CondExp.h
 	void RecordCondExp(
-		AD<Base>       &z,
-		const AD<Base> &e1,
-		const AD<Base> &e2,
-		const AD<Base> &e3
+		enum CompareOp  cop           ,
+		AD<Base>       &returnValue   ,
+		const AD<Base> &flag          ,
+		const AD<Base> &trueCase      ,
+		const AD<Base> &falseCase
 	);
 
 	// load ADVec element 

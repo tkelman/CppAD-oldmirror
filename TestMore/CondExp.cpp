@@ -48,22 +48,22 @@ bool CondExp(void)
 	size_t a = 3;
 	size_t b = 4;
 
-	// CondExp(parameter, variable, variable)
+	// CondExpGt(parameter, variable, variable)
 	AD<double> p = 1.;
-	W[x] = CondExp(p, V[t], V[u]);
+	W[x] = CondExpGt(p, V[t], V[u]);
 
-	// CondExp(variable, variable, variable)
-	W[y] = CondExp(V[s], V[t], V[u]);
+	// CondExpGt(variable, variable, variable)
+	W[y] = CondExpGt(V[s], V[t], V[u]);
 
-	// CondExp(variable, variable, parameter)
-	W[z] = CondExp(V[s], V[t], p);
+	// CondExpGt(variable, variable, parameter)
+	W[z] = CondExpGt(V[s], V[t], p);
 
-	// CondExp(variable, parameter, variable)
-	W[a] = CondExp(V[s], p, V[u]);
+	// CondExpGt(variable, parameter, variable)
+	W[a] = CondExpGt(V[s], p, V[u]);
 
-	// CondExp(variable, parameter, parameter)
+	// CondExpGt(variable, parameter, parameter)
 	AD<double> q = 2.;
-	W[b] = CondExp(V[s], p, q);
+	W[b] = CondExpGt(V[s], p, q);
 
 	// create f: V -> W and vectors used for derivative calculations
 	ADFun<double> f(V, W);
