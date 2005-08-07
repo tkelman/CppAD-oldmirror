@@ -68,7 +68,7 @@ This section contains a list of the changes to CppAD during 2005
 The purpose of these sections is to
 assist you in learning about changes between various versions of CppAD.
 
-$head 08-06$$
+$head 08-07$$
 The $xref/CondExp//conditional expression/$$ function has been changed
 from just $code CondExp$$ to
 $code CondExpLt$$,
@@ -77,6 +77,8 @@ $code CondExpEq$$,
 $code CondExpGe$$,
 $code CondExpGt$$.
 This should make code with conditional expressions easier to understand.
+In addition, it should reduce the number of tape operations because
+one need not create as many temporaries to do comparisons with.
 The old $code CondExp$$ function has been deprecated.
 
 $head 07-21$$

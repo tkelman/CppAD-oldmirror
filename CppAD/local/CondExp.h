@@ -49,7 +49,7 @@ $section The Conditional Expression Function$$
 
 $table
 $bold Syntax$$ $cnext 
-$syntax%CondExp%Op%(%flag%, %trueCase%, %falseCase%)%$$
+$syntax%CondExp%Op%(%left%, %right%, %trueCase%, %falseCase%)%$$
 $tend
 
 $fend 20$$
@@ -57,23 +57,30 @@ $fend 20$$
 $head Description$$
 Returns a $italic Type$$ object $italic returnValue$$ that is given by
 $syntax%
-	if( %boolFlag% )
+	if( %left% %op% %right% )
 		%returnValue% = %trueCase%
 	else	%returnValue% = %falseCase%
 %$$
-where $italic boolFlag$$ is given by
+where $italic op$$ and $italic Op$$ have the following correspondence: 
 $table
-$bold Op$$ $cnext $rnext
-$code Lt$$ $cnext $syntax%  %boolFlag% = %flag% <  %Type%(0)%$$  $rnext
-$code Le$$ $cnext $syntax%  %boolFlag% = %flag% <= %Type%(0)%$$  $rnext
-$code Eq$$ $cnext $syntax%  %boolFlag% = %flag% == %Type%(0)%$$  $rnext
-$code Ge$$ $cnext $syntax%  %boolFlag% = %flag% >= %Type%(0)%$$  $rnext
-$code Gt$$ $cnext $syntax%  %boolFlag% = %flag% >  %Type%(0)%$$  
+$italic Op$$ 
+	$pre  $$ $cnext $code Lt$$
+	$pre  $$ $cnext $code Le$$
+	$pre  $$ $cnext $code Eq$$
+	$pre  $$ $cnext $code Ge$$
+	$pre  $$ $cnext $code Gt$$
+$rnext
+$italic op$$ 
+	$cnext $code <$$
+	$cnext $code <=$$
+	$cnext $code ==$$
+	$cnext $code >=$$
+	$cnext $code >$$
 $tend
 
 $head Type$$
 We use $italic Type$$ for the type of
-$italic flag$$, $italic trueCase$$, and $italic falseCase$$
+$italic left$$, $italic right$$, $italic trueCase$$, and $italic falseCase$$
 (which must all have the same type). 
 This type must be
 $code float$$, $code double$$
@@ -84,20 +91,21 @@ $head Op$$
 In the syntax above, $italic Op$$ represents one of the following
 two characters: $code Lt$$, $code Le$$, $code Eq$$, $code Ge$$, $code Gt$$. 
 As in the table above,
-$italic Op$$ determines which comparison operator is used when comparing
-$italic flag$$ with zero.
-
-$head CondExp$$
-Previous versions of CppAD used $code CondExp$$ ($italic Op$$ empty)
-for the same meaning as $code CondExpGt$$.
-This use is deprecated, but continues to be supported.
+$italic Op$$ determines which comparison operator $italic op$$.
  
-$head flag$$
-The argument $italic flag$$ has prototype
+$head left$$
+The argument $italic left$$ has prototype
 $syntax%
-	const %Type% &%flag%
+	const %Type% &%left%
 %$$
-It specifies the value that should be compared with zero.
+It specifies the value for the left side of the comparison operator.
+ 
+$head right$$
+The argument $italic right$$ has prototype
+$syntax%
+	const %Type% &%right%
+%$$
+It specifies the value for the right side of the comparison operator.
 
 $head trueCase$$
 The argument $italic trueCase$$ has prototype
@@ -123,6 +131,17 @@ for which an $xref/ADFun/$$ object is a valid representation
 of the corresponding algorithm.
 (See $xref/Discrete/$$ for another type of taped evaluation). 
 
+$head CondExp$$
+Previous versions of CppAD used 
+$syntax%
+	CondExp(%flag%, %trueCase%, %falseCase%)
+%$$
+for the same meaning as 
+$syntax%
+	CondExpGt(%flag%, %Type%(0), %trueCase%, %falseCase%)
+%$$
+Use of $code CondExp$$ is deprecated, but continues to be supported.
+
 $head Example$$
 $children%
 	Example/CondExp.cpp
@@ -131,6 +150,8 @@ The file
 $xref/CondExp.cpp/$$
 contains an example and a test of this function.   
 It returns true if it succeeds and false otherwise.
+The Error function routine $code lib/ErrFun.cpp$$ provides an example
+using conditional expressions in a more complex setting.
 
 $end
 -------------------------------------------------------------------------------
@@ -139,42 +160,43 @@ $end
 //  BEGIN CppAD namespace
 namespace CppAD {
 
-// ------------ CondExpOp(cop, flag, trueCase, falseCase) --------------
+// ------------ CondExpOp(cop, left, right, trueCase, falseCase) --------------
 
 inline float CondExpOp( 
 	enum CompareOp     cop ,
-	const float      &flag , 
+	const float      &left ,
+	const float     &right , 
 	const float  &trueCase , 
 	const float &falseCase )
 {	float returnValue;
 	switch( cop )
 	{
-		case Lt:
-		if( flag < 0. )
+		case CompareLt:
+		if( left < right )
 			returnValue = trueCase;
 		else	returnValue = falseCase;
 		break;
 
-		case Le:
-		if( flag <= 0. )
+		case CompareLe:
+		if( left <= right )
 			returnValue = trueCase;
 		else	returnValue = falseCase;
 		break;
 
-		case Eq:
-		if( flag == 0. )
+		case CompareEq:
+		if( left == right )
 			returnValue = trueCase;
 		else	returnValue = falseCase;
 		break;
 
-		case Ge:
-		if( flag >= 0. )
+		case CompareGe:
+		if( left >= right )
 			returnValue = trueCase;
 		else	returnValue = falseCase;
 		break;
 
-		case Gt:
-		if( flag > 0. )
+		case CompareGt:
+		if( left > right )
 			returnValue = trueCase;
 		else	returnValue = falseCase;
 		break;
@@ -188,38 +210,39 @@ inline float CondExpOp(
 
 inline double CondExpOp( 
 	enum CompareOp     cop  ,
-	const double     &flag  , 
+	const double     &left  , 
+	const double     &right , 
 	const double &trueCase  , 
 	const double &falseCase )
 {	double returnValue;
 	switch( cop )
 	{
-		case Lt:
-		if( flag < 0. )
+		case CompareLt:
+		if( left < right )
 			returnValue = trueCase;
 		else	returnValue = falseCase;
 		break;
 
-		case Le:
-		if( flag <= 0. )
+		case CompareLe:
+		if( left <= right )
 			returnValue = trueCase;
 		else	returnValue = falseCase;
 		break;
 
-		case Eq:
-		if( flag == 0. )
+		case CompareEq:
+		if( left == right )
 			returnValue = trueCase;
 		else	returnValue = falseCase;
 		break;
 
-		case Ge:
-		if( flag >= 0. )
+		case CompareGe:
+		if( left >= right )
 			returnValue = trueCase;
 		else	returnValue = falseCase;
 		break;
 
-		case Gt:
-		if( flag > 0. )
+		case CompareGt:
+		if( left > right )
 			returnValue = trueCase;
 		else	returnValue = falseCase;
 		break;
@@ -234,7 +257,8 @@ inline double CondExpOp(
 
 inline std::complex<float> CondExpOp(
 	enum CompareOp             cop       ,
-	const std::complex<float> &flag      ,
+	const std::complex<float> &left      ,
+	const std::complex<float> &right     ,
 	const std::complex<float> &trueCase  ,
 	const std::complex<float> &falseCase )
 {	CppADUsageError(
@@ -247,7 +271,8 @@ inline std::complex<float> CondExpOp(
 
 inline std::complex<double> CondExpOp(
 	enum CompareOp             cop        ,
-	const std::complex<double> &flag      ,
+	const std::complex<double> &left      ,
+	const std::complex<double> &right     ,
 	const std::complex<double> &trueCase  ,
 	const std::complex<double> &falseCase )
 {	CppADUsageError(
@@ -262,7 +287,8 @@ inline std::complex<double> CondExpOp(
 template <class Base>
 inline AD<Base> CondExpOp(
 	enum  CompareOp cop       ,
-	const AD<Base> &flag      , 
+	const AD<Base> &left      , 
+	const AD<Base> &right     , 
 	const AD<Base> &trueCase  , 
 	const AD<Base> &falseCase )
 {
@@ -270,35 +296,35 @@ inline AD<Base> CondExpOp(
 	CppADUnknownError( returnValue.id == 0 );
 
 	// check first case where do not need to tape
-	if( IdenticalPar(flag) )
+	if( IdenticalPar(left) & IdenticalPar(right) )
 	{	switch( cop )
 		{
-			case Lt:
-			if( flag.value < Base(0) )
+			case CompareLt:
+			if( left.value < right.value )
 				returnValue = trueCase;
 			else	returnValue = falseCase;
 			break;
 
-			case Le:
-			if( flag.value <= Base(0) )
+			case CompareLe:
+			if( left.value <= right.value )
 				returnValue = trueCase;
 			else	returnValue = falseCase;
 			break;
 
-			case Eq:
-			if( flag.value == Base(0) )
+			case CompareEq:
+			if( left.value == right.value )
 				returnValue = trueCase;
 			else	returnValue = falseCase;
 			break;
 
-			case Ge:
-			if( flag.value >= Base(0) )
+			case CompareGe:
+			if( left.value >= right.value )
 				returnValue = trueCase;
 			else	returnValue = falseCase;
 			break;
 
-			case Gt:
-			if( flag.value > Base(0) )
+			case CompareGt:
+			if( left.value > right.value )
 				returnValue = trueCase;
 			else	returnValue = falseCase;
 			break;
@@ -311,102 +337,107 @@ inline AD<Base> CondExpOp(
 	}
 
 	// must use CondExp incase Base is an AD type and recording
-	returnValue.value = 
-		CondExpOp(cop, flag.value, trueCase.value, falseCase.value);
+	returnValue.value = CondExpOp(cop, 
+		left.value, right.value, trueCase.value, falseCase.value);
 
 	// second case where do not need to tape this operation
 	if( AD<Base>::Tape()->State() == Empty ) 
 		return returnValue;
 
 	// third case where we do not need to tape this operation
-	if( Parameter(flag) & Parameter(trueCase) & Parameter(falseCase) )
-		return returnValue;
+	if(	Parameter(left)      & 
+		Parameter(right)     & 
+		Parameter(trueCase)  & 
+		Parameter(falseCase) 
+	)	return returnValue;
 	
 	// add this operation to the tape
-	AD<Base>::Tape()->
-		RecordCondExp(cop, returnValue, flag, trueCase, falseCase);
+	AD<Base>::Tape()-> RecordCondExp(cop, 
+		returnValue, left, right, trueCase, falseCase);
 
 	return returnValue;
 }
 
-// ----- RecordCondExp(cop, returnValue, flag, trueCase, falseCase) ------
+// --- RecordCondExp(cop, returnValue, left, right, trueCase, falseCase) -----
 
 template <class Base>
 void ADTape<Base>::RecordCondExp(
 	enum CompareOp  cop         ,
 	AD<Base>       &returnValue ,
-	const AD<Base> &flag        ,
+	const AD<Base> &left        ,
+	const AD<Base> &right       ,
 	const AD<Base> &trueCase    ,
 	const AD<Base> &falseCase   )
-{	size_t   op_taddr;
-	size_t   ind0, ind1, ind2, ind3;
+{	size_t   ind0, ind1, ind2, ind3, ind4, ind5;
 	size_t   returnValue_taddr;
-	OpCode   op;
-
-	static OpCode List[] = {
-		CEpppOp,
-		CEppvOp,
-		CEpvpOp,
-		CEpvvOp,
-		CEvppOp,
-		CEvpvOp,
-		CEvvpOp,
-		CEvvvOp
-	};
-	op_taddr = 0;
-	if( Variable(flag) )
-		op_taddr += 4;
-	if( Variable(trueCase) )
-		op_taddr += 2;
-	if( Variable(falseCase) )
-		op_taddr += 1;
-
-	CppADUnknownError( 0 < op_taddr && op_taddr < 8 ); 
-	op       = List[op_taddr];
 
 	// taddr of this variable
-	returnValue_taddr = Rec.PutOp(op);
+	returnValue_taddr = Rec.PutOp(CExpOp);
+
+	// ind[0] = cop
+	ind0 = size_t( cop );
+
+	// ind[1] = base 2 representaion of the value
+	// [Var(left), Var(right), Var(trueCase), Var(falseCase)]
+	ind1 = 0;
 
 	// Make sure returnValue is in the list of variables and set its taddr
 	if( Parameter(returnValue) )
 		returnValue.MakeVariable( returnValue_taddr );
 	else	returnValue.taddr = returnValue_taddr;
 
-	// ind for flag
-	if( Parameter(flag) )
-		ind0 = Rec.PutPar(flag.value);
-	else	ind0 = flag.taddr;	
+	// ind[2] = left address
+	if( Parameter(left) )
+		ind2 = Rec.PutPar(left.value);
+	else
+	{	ind1 += 1;
+		ind2 = left.taddr;	
+	}
 
-	// ind for trueCase
+	// ind[3] = right address
+	if( Parameter(right) )
+		ind3 = Rec.PutPar(right.value);
+	else
+	{	ind1 += 2;
+		ind3 = right.taddr;	
+	}
+
+	// ind[4] = trueCase address
 	if( Parameter(trueCase) )
-		ind1 = Rec.PutPar(trueCase.value);
-	else	ind1 = trueCase.taddr;	
+		ind4 = Rec.PutPar(trueCase.value);
+	else
+	{	ind1 += 4;
+		ind4 = trueCase.taddr;	
+	}
 
-	// ind for falseCase
+	// ind[5] =  falseCase address
 	if( Parameter(falseCase) )
-		ind2 = Rec.PutPar(falseCase.value);
-	else	ind2 = falseCase.taddr;	
+		ind5 = Rec.PutPar(falseCase.value);
+	else
+	{	ind1 += 8;
+		ind5 = falseCase.taddr;	
+	}
 
-	// ind for comparison operator
-	ind3 = (size_t) cop;
-
-	CppADUnknownError( NumInd(op) == 4 );
-	Rec.PutInd(ind0, ind1, ind2, ind3);
+	CppADUnknownError( NumInd(CExpOp) == 6 );
+	CppADUnknownError( ind1 > 0 );
+	Rec.PutInd(ind0, ind1, ind2, ind3, ind4, ind5);
 
 	// check that returnValue is a dependent variable
 	CppADUnknownError( Variable(returnValue) );
 }
 
-// ------------- CondExp(flag, trueCase, falseCase) -------------------
+// ------------ CondExpOp(left, right, trueCase, falseCase) ----------------
 
-# define CppADCondExp(Name)                                             \
-	template <class Base>                                           \
-	inline AD<Base> CondExp##Name(                                  \
-		const AD<Base> &flag      ,                             \
-		const AD<Base> &trueCase  ,                             \
-		const AD<Base> &falseCase )                             \
-	{                                                               \
-		return CondExpOp(Name, flag, trueCase, falseCase);      \
+# define CppADCondExp(Name)                                                \
+	template <class Base>                                              \
+	inline AD<Base> CondExp##Name(                                     \
+		const AD<Base> &left      ,                                \
+		const AD<Base> &right     ,                                \
+		const AD<Base> &trueCase  ,                                \
+		const AD<Base> &falseCase )                                \
+	{                                                                  \
+		return CondExpOp(Compare##Name,                            \
+			left, right, trueCase, falseCase);                 \
 	}
 
 // AD<Base>
@@ -421,22 +452,22 @@ inline AD<Base> CondExp(
 	const AD<Base> &trueCase  ,
 	const AD<Base> &falseCase )
 {	
-	return CondExpOp(Gt, flag, trueCase, falseCase);
+	return CondExpOp(CompareGt, flag, AD<Base>(0), trueCase, falseCase);
 }
 
 # undef CppADCondExp
 # define CppADCondExp(Name, Op, Type)                               \
 	inline Type CondExp##Name(                                  \
-		const Type &flag      ,                             \
+		const Type &left      ,                             \
+		const Type &right     ,                             \
 		const Type &trueCase  ,                             \
 		const Type &falseCase )                             \
 	{	Type returnValue;                                   \
-		if( flag Op 0. )                                    \
+		if( left Op right )                                 \
 			returnValue = trueCase;                     \
 		else	returnValue = falseCase;                    \
 		return returnValue;                                 \
 	}
-
 
 // float
 CppADCondExp(Lt,  <, float)
@@ -449,7 +480,7 @@ inline float CondExp(
 	const float &trueCase  ,
 	const float &falseCase )
 {	
-	return CondExpOp(Gt, flag, trueCase, falseCase);
+	return CondExpGt(flag, float(0), trueCase, falseCase);
 }
 
 // double
@@ -463,7 +494,7 @@ inline double CondExp(
 	const double &trueCase  ,
 	const double &falseCase )
 {	
-	return CondExpOp(Gt, flag, trueCase, falseCase);
+	return CondExpGt(flag, 0., trueCase, falseCase);
 }
 
 # undef CppADCondExp

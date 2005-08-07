@@ -79,13 +79,13 @@ bool CondExp(void)
 	AD<double> Zero(0);
 	for(i = 0; i < m; i++)
 	{	// if X[i] > 0
-		Sum += CondExpGt(X[i], log(X[i]),     Zero);
+		Sum += CondExpGt(X[i], Zero, log(X[i]),     Zero);
 
 		// if X[i] < 0
-		Sum += CondExpLt(X[i], log(-X[i]),    Zero);
+		Sum += CondExpLt(X[i], Zero, log(-X[i]),    Zero);
 
 		// if X[i] == 0
-		Sum += CondExpEq(X[i], MinusInfinity, Zero);
+		Sum += CondExpEq(X[i], Zero, MinusInfinity, Zero);
 	}
 
 	// dependent variable vector 

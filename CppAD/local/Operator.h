@@ -67,14 +67,7 @@ $spell
 	namespace
 	Prip
 	Priv
-	CEppp
-	CEppv
-	CEpvp
-	CEpvv
-	CEvpp
-	CEvpv
-	CEvvp
-	CEvvv
+	CExp
 	Stpp
 	Stvp
 	Inv
@@ -119,7 +112,6 @@ The value $italic op$$ is one of the following enum type values:
 $codep */
 
 namespace CppAD {
-	enum CompareOp { Lt, Le, Eq, Ge, Gt };
 	enum OpCode {
 		AbsOp,    //  abs(variable)
 		AcosOp,   // asin(variable)
@@ -128,14 +120,7 @@ namespace CppAD {
 		AddvvOp,  //      variable   + variable
 		AsinOp,   // asin(variable)
 		AtanOp,   // atan(variable)
-		CEpppOp,  // place holder that is not used
-		CEppvOp,  // CondExp(parameter, parameter, variable , op)
-		CEpvpOp,  // CondExp(parameter, variable,  parameter, op)
-		CEpvvOp,  // CondExp(parameter, variable,  variable , op)
-		CEvppOp,  // CondExp(variable,  parameter, parameter, op)
-		CEvpvOp,  // CondExp(variable,  parameter, variable , op)
-		CEvvpOp,  // CondExp(variable,  variable,  parameter, op)
-		CEvvvOp,  // CondExp(variable,  variable,  variable , op)
+		CExpOp,   // CondExp(cop, left, right, trueCase, falseCase)
 		CosOp,    //  cos(variable)
 		DisOp,    //  dis(variable,    index)
 		DivpvOp,  //      parameter  / variable
@@ -334,14 +319,7 @@ const size_t NumIndTable[] = {
 	2, // AddvvOp
 	1, // AsinOp
 	1, // AtanOp
-	4, // CEpppOp
-	4, // CEppvOp
-	4, // CEpvpOp
-	4, // CEpvvOp
-	4, // CEvppOp
-	4, // CEvpvOp
-	4, // CEvvpOp
-	4, // CEvvvOp
+	6, // CEpppOp
 	1, // CosOp
 	2, // DisOp
 	2, // DivpvOp
@@ -412,14 +390,7 @@ const size_t NumVarTable[] = {
 	1, // AddvvOp
 	2, // AsinOp
 	2, // AtanOp
-	1, // CEpppOp
-	1, // CEppvOp
-	1, // CEpvpOp
-	1, // CEpvvOp
-	1, // CEvppOp
-	1, // CEvpvOp
-	1, // CEvvpOp
-	1, // CEvvvOp
+	1, // CExpOp
 	2, // CosOp
 	1, // DisOp
 	1, // DivpvOp
@@ -535,7 +506,7 @@ void printOp(
 	size_t                 nrz    ,
 	const  Base           *rz     )
 {	
-	static char *CompareOpName = { "Lt", "Le", "Eq", "Ge", "Gt" };
+	static char *CompareOpName[] = { "Lt", "Le", "Eq", "Ge", "Gt" };
 	static char *OpName[] = {
 		"Abs"   ,
 		"Acos"  ,
@@ -544,14 +515,7 @@ void printOp(
 		"Addvv" ,
 		"Asin"  ,
 		"Atan"  ,
-		"CEppp" ,
-		"CEppv" ,
-		"CEpvp" ,
-		"CEpvv" ,
-		"CEvpp" ,
-		"CEvpv" ,
-		"CEvvp" ,
-		"CEvvv" ,
+		"CExp"  ,
 		"Cos"   ,
 		"DisOp" ,
 		"Divpv" ,
@@ -606,48 +570,48 @@ void printOp(
 	CppADUnknownError( 
 		size_t(SubvvOp) == sizeof(OpName) / sizeof(OpName[0]) - 1
 	);
-	printOpField(os,  "i= ",      i_var, 5);
-	printOpField(os, "op= ", OpName[op], 7); 
+	printOpField(os,  "i=",      i_var, 5);
+	printOpField(os, "op=", OpName[op], 6); 
 	switch( op )
 	{
 		case LdpOp:
 		CppADUnknownError( NumInd(op) == 3 );
-		printOpField(os, "off= ", ind[0], 5);
-		printOpField(os, "x_j= ", ind[1], 5);
+		printOpField(os, "off=", ind[0], 5);
+		printOpField(os, "x_j=", ind[1], 5);
 		break;
 
 		case LdvOp:
 		CppADUnknownError( NumInd(op) == 3 );
-		printOpField(os, "off= ", ind[0], 5);
-		printOpField(os, "x_i= ", ind[1], 5);
+		printOpField(os, "off=", ind[0], 5);
+		printOpField(os, "x_i=", ind[1], 5);
 		break;
 
 		case StppOp:
 		CppADUnknownError( NumInd(op) == 3 );
-		printOpField(os, "off= ", ind[0], 5);
-		printOpField(os, "x_j= ", ind[1], 5);
-		printOpField(os, "  y= ", *(Rec->GetPar(ind[2])), 5);
+		printOpField(os, "off=", ind[0], 5);
+		printOpField(os, "x_j=", ind[1], 5);
+		printOpField(os, "  y=", *(Rec->GetPar(ind[2])), 5);
 		break;
 
 		case StpvOp:
 		CppADUnknownError( NumInd(op) == 3 );
-		printOpField(os, "off= ", ind[0], 5);
-		printOpField(os, "x_j= ", ind[1], 5);
-		printOpField(os, "y_i= ", ind[2], 5);
+		printOpField(os, "off=", ind[0], 5);
+		printOpField(os, "x_j=", ind[1], 5);
+		printOpField(os, "y_i=", ind[2], 5);
 		break;
 
 		case StvpOp:
 		CppADUnknownError( NumInd(op) == 3 );
-		printOpField(os, "off= ", ind[0], 5);
-		printOpField(os, "x_i= ", ind[1], 5);
-		printOpField(os, "  y= ", *(Rec->GetPar(ind[2])), 5);
+		printOpField(os, "off=", ind[0], 5);
+		printOpField(os, "x_i=", ind[1], 5);
+		printOpField(os, "  y=", *(Rec->GetPar(ind[2])), 5);
 		break;
 
 		case StvvOp:
 		CppADUnknownError( NumInd(op) == 3 );
-		printOpField(os, "off= ", ind[0], 5);
-		printOpField(os, "x_i= ", ind[1], 5);
-		printOpField(os, "y_i= ", ind[2], 5);
+		printOpField(os, "off=", ind[0], 5);
+		printOpField(os, "x_i=", ind[1], 5);
+		printOpField(os, "y_i=", ind[2], 5);
 		break;
 
 		case EqtvvOp:
@@ -662,8 +626,8 @@ void printOp(
 		case SubvvOp:
 		case DisOp:
 		CppADUnknownError( NumInd(op) == 2 );
-		printOpField(os, "x_i= ", ind[0], 5);
-		printOpField(os, "y_i= ", ind[1], 5);
+		printOpField(os, "x_i=", ind[0], 5);
+		printOpField(os, "y_i=", ind[1], 5);
 		break;
 
 		case EqtpvOp:
@@ -677,8 +641,8 @@ void printOp(
 		case MulpvOp:
 		case DivpvOp:
 		CppADUnknownError( NumInd(op) == 2 );
-		printOpField(os, "  p= ", *(Rec->GetPar(ind[0])), 5);
-		printOpField(os, "y_i= ", ind[1], 5);
+		printOpField(os, "  p=", *(Rec->GetPar(ind[0])), 5);
+		printOpField(os, "y_i=", ind[1], 5);
 		break;
 
 		case EqtvpOp:
@@ -692,8 +656,8 @@ void printOp(
 		case MulvpOp:
 		case SubvpOp:
 		CppADUnknownError( NumInd(op) == 2 );
-		printOpField(os, "x_i= ", ind[0], 5);
-		printOpField(os, "  p= ", *(Rec->GetPar(ind[1])), 5);
+		printOpField(os, "x_i=", ind[0], 5);
+		printOpField(os, "  p=", *(Rec->GetPar(ind[1])), 5);
 		break;
 
 		case EqfppOp:
@@ -703,8 +667,8 @@ void printOp(
 		case LtfppOp:
 		case LttppOp:
 		CppADUnknownError( NumInd(op) == 2 );
-		printOpField(os, "  x= ", *(Rec->GetPar(ind[0])), 5);
-		printOpField(os, "  y= ", *(Rec->GetPar(ind[1])), 5);
+		printOpField(os, "  x=", *(Rec->GetPar(ind[0])), 5);
+		printOpField(os, "  y=", *(Rec->GetPar(ind[1])), 5);
 		break;
 
 		case AbsOp:
@@ -717,24 +681,24 @@ void printOp(
 		case SinOp:
 		case SqrtOp:
 		CppADUnknownError( NumInd(op) == 1 );
-		printOpField(os, "x_i= ", ind[0], 5);
+		printOpField(os, "x_i=", ind[0], 5);
 		break;
 
 		case ParOp:
 		CppADUnknownError( NumInd(op) == 1 );
-		printOpField(os, "  p= ", *(Rec->GetPar(ind[0])), 5);
+		printOpField(os, "  p=", *(Rec->GetPar(ind[0])), 5);
 		break;
 
 		case PripOp:
 		CppADUnknownError( NumInd(op) == 2 );
-		printOpField(os, "txt= ", *(Rec->GetTxt(ind[0])), 5);
-		printOpField(os, "  p= ", *(Rec->GetPar(ind[1])), 5);
+		printOpField(os, "txt=", *(Rec->GetTxt(ind[0])), 5);
+		printOpField(os, "  p=", *(Rec->GetPar(ind[1])), 5);
 		break;
 
 		case PrivOp:
 		CppADUnknownError( NumInd(op) == 2 );
-		printOpField(os, "txt= ", *(Rec->GetTxt(ind[0])), 5);
-		printOpField(os, "x_i= ", ind[1], 5);
+		printOpField(os, "txt=", *(Rec->GetTxt(ind[0])), 5);
+		printOpField(os, "x_i=", ind[1], 5);
 		break;
 
 		case InvOp:
@@ -742,78 +706,34 @@ void printOp(
 		CppADUnknownError( NumInd(op) == 0 );
 		break;
 
-		case CEpppOp:
-		// This instruction is not used
-		CppADUnknownError(0);
-		break;
-
-		case CEppvOp:
-		CppADUnknownError( NumInd(op) == 4 );
-		printOpField(os, "p_1= ", *(Rec->GetPar(ind[0])), 5);
-		printOpField(os, "p_2= ", *(Rec->GetPar(ind[1])), 5);
-		printOpField(os, "i_3= ", ind[2], 5);
-		printOpField(os, "op= ", CompareOpName[ ind[3] ], 3);
-		break;
-
-		case CEpvpOp:
-		CppADUnknownError( NumInd(op) == 4 );
-		printOpField(os, "p_1= ", *(Rec->GetPar(ind[0])), 5);
-		printOpField(os, "i_2= ", ind[1], 5);
-		printOpField(os, "p_3= ", *(Rec->GetPar(ind[2])), 5);
-		printOpField(os, "op= ", CompareOpName[ ind[3] ], 3);
-		break;
-
-		case CEpvvOp:
-		CppADUnknownError( NumInd(op) == 4 );
-		printOpField(os, "p_1= ", *(Rec->GetPar(ind[0])), 5);
-		printOpField(os, "i_2= ", ind[1], 5);
-		printOpField(os, "i_3= ", ind[2], 5);
-		printOpField(os, "op= ", CompareOpName[ ind[3] ], 3);
-		break;
-
-		case CEvppOp:
-		CppADUnknownError( NumInd(op) == 4 );
-		printOpField(os, "i_1= ", ind[0], 5);
-		printOpField(os, "p_2= ", *(Rec->GetPar(ind[1])), 5);
-		printOpField(os, "p_3= ", *(Rec->GetPar(ind[2])), 5);
-		printOpField(os, "op= ", CompareOpName[ ind[3] ], 3);
-		break;
-
-		case CEvpvOp:
-		CppADUnknownError( NumInd(op) == 4 );
-		printOpField(os, "i_1= ", ind[0], 5);
-		printOpField(os, "p_2= ", *(Rec->GetPar(ind[1])), 5);
-		printOpField(os, "i_3= ", ind[2], 5);
-		printOpField(os, "op= ", CompareOpName[ ind[3] ], 3);
-		break;
-
-		case CEvvpOp:
-		CppADUnknownError( NumInd(op) == 4 );
-		printOpField(os, "i_1= ", ind[0], 5);
-		printOpField(os, "i_2= ", ind[1], 5);
-		printOpField(os, "p_3= ", *(Rec->GetPar(ind[2])), 5);
-		printOpField(os, "op= ", CompareOpName[ ind[3] ], 3);
-		break;
-
-		case CEvvvOp:
-		CppADUnknownError( NumInd(op) == 4 );
-		printOpField(os, "i_1= ", ind[0], 5);
-		printOpField(os, "i_2= ", ind[1], 5);
-		printOpField(os, "i_3= ", ind[2], 5);
-		printOpField(os, "op= ", CompareOpName[ ind[3] ], 3);
+		case CExpOp:
+		CppADUnknownError(ind[1] != 0);
+		CppADUnknownError( NumInd(op) == 6 );
+		printOpField(os, "", CompareOpName[ ind[0] ], 3);
+		if( ind[1] & 1 )
+			printOpField(os, "vleft=", ind[2], 5);
+		else	printOpField(os, "pleft=", *(Rec->GetPar(ind[2])), 5);
+		if( ind[1] & 2 )
+			printOpField(os, "vright=", ind[3], 5);
+		else	printOpField(os, "pright=", *(Rec->GetPar(ind[3])), 5);
+		if( ind[1] & 4 )
+			printOpField(os, "vtrue=", ind[4], 5);
+		else	printOpField(os, "ptrue=", *(Rec->GetPar(ind[4])), 5);
+		if( ind[1] & 8 )
+			printOpField(os, "vfalse=", ind[5], 5);
+		else	printOpField(os, "pfalse=", *(Rec->GetPar(ind[5])), 5);
 		break;
 
 		default:
-		printOpField(os, "p_3= ", *(Rec->GetPar(ind[2])), 5);
 		CppADUnknownError(0);
 	}
 	size_t k;
 	if( NumVar(op) > 0 )
 	{ 
 		for(k = 0; k < nfz; k++)
-			std::cout << ", fz[" << k << "]= " << fz[k];
+			std::cout << ", fz[" << k << "]=" << fz[k];
 		for(k = 0; k < nrz; k++)
-			std::cout << ", rz[" << k << "]= " << rz[k];
+			std::cout << ", rz[" << k << "]=" << rz[k];
 	}
 	std::cout << std::endl;
 }

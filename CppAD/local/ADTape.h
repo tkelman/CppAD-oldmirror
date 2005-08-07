@@ -504,7 +504,8 @@ class ADTape {
 
 	friend AD<Base> CondExpOp <Base> (
 		enum CompareOp  cop          ,
-		const AD<Base> &flag         , 
+		const AD<Base> &left         , 
+		const AD<Base> &right        , 
 		const AD<Base> &trueCase     , 
 		const AD<Base> &falseCase 
 	);
@@ -558,7 +559,8 @@ private:
 	void RecordCondExp(
 		enum CompareOp  cop           ,
 		AD<Base>       &returnValue   ,
-		const AD<Base> &flag          ,
+		const AD<Base> &left          ,
+		const AD<Base> &right         ,
 		const AD<Base> &trueCase      ,
 		const AD<Base> &falseCase
 	);
