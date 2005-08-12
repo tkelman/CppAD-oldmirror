@@ -19,28 +19,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // END SHORT COPYRIGHT
 
 /*
-$begin Cos.cpp$$
-$spell
-	cos
-$$
-
-$section The Trigonometric Cosine Function: Example and Test$$
-$index cos$$
-$index example, cos$$
-$index test, cos$$
-
-$comment This file is in the Example subdirectory$$
-$code
-$verbatim%Example/Cos.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
-$$
-
-$end
+Comprehensive test of Trigonometric and Hyperbolic Sine and Cosine
 */
 // BEGIN PROGRAM
 
 # include <CppAD/CppAD.h>
+# include <cmath>
 
-bool Cos(void)
+bool SinCos(void)
 {	bool ok = true;
 
 	using CppAD::sin;
@@ -48,66 +34,90 @@ bool Cos(void)
 	using namespace CppAD;
 
 	// independent variable vector
-	CppADvector< AD<double> > U(1);
-	U[0]     = 1.;
-	Independent(U);
+	double x = .5;
+	double y = .8;
+	CppADvector< AD<double> > X(2);
+	X[0]     = x;
+	X[1]     = y;
+	Independent(X);
 
 	// dependent variable vector 
 	CppADvector< AD<double> > Z(1);
-	Z[0] = cos(U[0]); 
+	AD<double> U = X[0] * X[1];
+	Z[0] = sin( U ); 
 
-	// create f: U -> Z and vectors used for derivative calculations
-	ADFun<double> f(U, Z); 
-	CppADvector<double> v(1);
-	CppADvector<double> w(1);
+	// create f: X -> Z and vectors used for derivative calculations
+	// f(x, y) = sin(x, y)
+	ADFun<double> f(X, Z); 
+	CppADvector<double> v( 2 );
+	CppADvector<double> w( 1 );
 
 	// check value 
-	double sin_u = sin( Value(U[0]) );
-	double cos_u = cos( Value(U[0]) );
+	double sin_u = sin( Value(U) );
+	double cos_u = cos( Value(U) );
 
-	ok &= NearEqual(cos_u, Value(Z[0]),  1e-10 , 1e-10);
+	ok &= NearEqual(sin_u, Value(Z[0]),  1e-10 , 1e-10);
 
 	// forward computation of partials w.r.t. u
 	size_t j;
 	size_t p     = 5;
 	double jfac  = 1.;
-	v[0]         = 1.;
+	v[0]         = 1.;  // differential w.r.t. x
+	v[1]         = 0;   // differential w.r.t. y
+	double yj    = 1;   // y^j
 	for(j = 1; j < p; j++)
-	{	w     = f.Forward(j, v);	
+	{	w      = f.Forward(j, v);	
 
-		double value;
+		// compute j-th power of y
+		yj *= y ;
+
+		// compute j-th derivartive of sin function
+		double sinj;
 		if( j % 4 == 1 )
-			value = -sin_u;
+			sinj = cos_u;
 		else if( j % 4 == 2 )
-			value = -cos_u;
+			sinj = -sin_u;
 		else if( j % 4 == 3 )
-			value = sin_u;
-		else	value = cos_u;
+			sinj = -cos_u;
+		else	sinj = sin_u;
 
 		jfac *= j;
-		ok &= NearEqual(jfac*w[0], value, 1e-10 , 1e-10); // d^jz/du^j
+
+		// check j-th derivative of z w.r.t x
+		ok &= NearEqual(jfac*w[0], sinj * yj, 1e-10 , 1e-10); 
+
 		v[0]  = 0.;
 	}
 
 	// reverse computation of partials of Taylor coefficients
-	CppADvector<double> r(p); 
+	CppADvector<double> r( 2 * p); 
 	w[0]  = 1.;
 	r     = f.Reverse(p, w);
 	jfac  = 1.;
+	yj    = 1.;
+	double sinjp = 0.;
 	for(j = 0; j < p; j++)
 	{
-		double value;
+		double sinj = sinjp;
+
+		// compute j+1 derivative of sin funciton
 		if( j % 4 == 0 )
-			value = -sin_u;
+			sinjp = cos_u;
 		else if( j % 4 == 1 )
-			value = -cos_u;
+			sinjp = -sin_u;
 		else if( j % 4 == 2 )
-			value = sin_u;
-		else	value = cos_u;
+			sinjp = -cos_u;
+		else	sinjp = sin_u;
 
-		ok &= NearEqual(jfac*r[j], value, 1e-10 , 1e-10); // d^jz/du^j
+		// derivative w.r.t x of sin^{(j)} (x * y) * y^j
+		ok &= NearEqual(jfac*r[0+j], sinjp * yj * y, 1e-10 , 1e-10);
 
-		jfac *= (j + 1);
+		// derivative w.r.t y of sin^{(j)} (x * y) * y^j
+		double value = sinjp * yj * x + j * sinj * yj / y;
+		ok &= NearEqual(jfac*r[p+j], value , 1e-10 , 1e-10);
+
+		jfac  *= (j + 1);
+		yj    *= y;
 	}
 
 	return ok;
