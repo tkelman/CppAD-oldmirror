@@ -310,10 +310,99 @@ bool Cosh(void)
 	return ok;
 }
 
+bool Sinh(void)
+{	bool ok = true;
+
+	using CppAD::sinh;
+	using CppAD::cosh;
+	using namespace CppAD;
+
+	// independent variable vector
+	double x = .5;
+	double y = .8;
+	CppADvector< AD<double> > X(2);
+	X[0]     = x;
+	X[1]     = y;
+	Independent(X);
+
+	// dependent variable vector 
+	CppADvector< AD<double> > Z(1);
+	AD<double> U = X[0] * X[1];
+	Z[0] = sinh( U ); 
+
+	// create f: X -> Z and vectors used for derivative calculations
+	// f(x, y) = sinh(x, y)
+	ADFun<double> f(X, Z); 
+	CppADvector<double> v( 2 );
+	CppADvector<double> w( 1 );
+
+	// check value 
+	double sinh_u = sinh( Value(U) );
+	double cosh_u = cosh( Value(U) );
+
+	ok &= NearEqual(sinh_u, Value(Z[0]),  1e-10 , 1e-10);
+
+	// forward computation of partials w.r.t. u
+	size_t j;
+	size_t p     = 5;
+	double jfac  = 1.;
+	v[0]         = 1.;  // differential w.r.t. x
+	v[1]         = 0;   // differential w.r.t. y
+	double yj    = 1;   // y^j
+	for(j = 1; j < p; j++)
+	{	w      = f.Forward(j, v);	
+
+		// compute j-th power of y
+		yj *= y ;
+
+		// compute j-th derivartive of sinh function
+		double sinhj;
+		if( j % 2 == 1 )
+			sinhj = cosh_u;
+		else	sinhj = sinh_u;
+
+		jfac *= j;
+
+		// check j-th derivative of z w.r.t x
+		ok &= NearEqual(jfac*w[0], sinhj * yj, 1e-10 , 1e-10); 
+
+		v[0]  = 0.;
+	}
+
+	// reverse computation of partials of Taylor coefficients
+	CppADvector<double> r( 2 * p); 
+	w[0]  = 1.;
+	r     = f.Reverse(p, w);
+	jfac  = 1.;
+	yj    = 1.;
+	double sinhjp = 0.;
+	for(j = 0; j < p; j++)
+	{
+		double sinhj = sinhjp;
+
+		// compute j+1 derivative of sinh funciton
+		if( j % 2 == 0 )
+			sinhjp = cosh_u;
+		else	sinhjp = sinh_u;
+
+		// derivative w.r.t x of sinh^{(j)} (x * y) * y^j
+		ok &= NearEqual(jfac*r[0+j], sinhjp * yj * y, 1e-10 , 1e-10);
+
+		// derivative w.r.t y of sinh^{(j)} (x * y) * y^j
+		double value = sinhjp * yj * x + j * sinhj * yj / y;
+		ok &= NearEqual(jfac*r[p+j], value , 1e-10 , 1e-10);
+
+		jfac  *= (j + 1);
+		yj    *= y;
+	}
+
+	return ok;
+}
+
 } // End empty namespace
 
 bool SinCos(void)
-{	bool ok = Sin() & Cos() & Cosh();
+{	bool ok = Sin() & Cos() & Cosh() & Sinh();
 	return ok;
 }
 	
