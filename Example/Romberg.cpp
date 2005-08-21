@@ -70,13 +70,12 @@ bool Romberg(void)
 	size_t degree = 4;
 	Fun F(degree);
 
+	// arguments to Romberg
 	double a = 0.;
 	double b = 1.;
-	size_t n = 3;
-	CppAD::vector<double> r(n);
-	CppAD::vector<double> e(n);
-
-	CppAD::Romberg(F, a, b, n, r, e);
+	size_t n = 4;
+	size_t p;
+	double r, e;
 
 	// int_a^b F(x) dx = [ b^(degree+1) - a^(degree+1) ] / (degree+1) 
 	double bpow = 1.;
@@ -87,12 +86,20 @@ bool Romberg(void)
 	}  
 	double check = (bpow - apow) / (degree+1);
 
+	// step size corresponding to r
 	double step = (b - a) / exp(log(2.)*(n-1));
+	// step size corresponding to error estimate
+	step *= 2.;
+	// step size raised to a power
 	double spow = 1;
-	for(i = 0; i < n; i++)
+
+	for(p = 0; p < n; p++)
 	{	spow = spow * step * step;
-		ok  &= e[i] < (degree+1) * spow;
-		ok  &= CppAD::NearEqual(check, r[i], 0., e[i]);	
+
+		r = CppAD::Romberg(F, a, b, n, p, e);
+
+		ok  &= e < (degree+1) * spow;
+		ok  &= CppAD::NearEqual(check, r, 0., e);	
 	}
 
 	return ok;

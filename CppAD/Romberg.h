@@ -35,21 +35,31 @@ $table
 $bold Syntax$$
 $cnext $code # include <CppAD/Romberg.h>$$ 
 $rnext $cnext
-$syntax%Romberg(%F%, %a%, %b%, %n%, %r%, %e%)%$$
+$syntax%%r% = Romberg(%F%, %a%, %b%, %n%, %e%)%$$
 $tend
 
 $fend 20$$
 
 $head Description$$
-Returns the Romberg integration estimates for
+Returns the Romberg integration estimate
+$latex r$$ for a one dimensional integral
 $latex \[
-	I = \int_a^b F(x) {\bf d} x
+r = \int_a^b F(x) {\bf d} x + O \left[ (b - a) / 2^{n-1} \right]^{2(p+1)}
 \] $$
 
 $head Include$$
 The file $code CppAD/Romberg.h$$ is included by $code CppAD/CppAD.h$$
 but it can also be included separately with out the rest of 
 the $code CppAD$$ routines.
+
+$head r$$
+The return value $italic r$$ has prototype
+$syntax%
+	%Scalar% %r%
+%$$ 
+It is an estimate of the integral 
+$latex \[
+\] $$
 
 $head F$$
 The object $italic F$$ can be of any type, but it must support 
@@ -86,32 +96,30 @@ $syntax%
 A total number of $latex 2^{n-1} + 1$$ evaluations of $syntax%%F%(%x%)%$$
 are used to estimate the integral.
 
-$head r$$
-The argument $italic r$$ has prototype
+$head p$$
+The argument $italic p$$ has prototype
 $syntax%
-	%Vector% &%r%
+	size_t %p%
 %$$ 
-(see description of $xref/Romberg/Vector/Vector/$$ below). 
-It is a vector of size $italic n$$.
-The input value of its elements does not matter
-and the output value of its elements are the estimates of the integral
-with different order accuracy.
-To be specific,
+It must be less than or equal $latex n$$
+and determines the accuracy order in the approximation for the integral
+that is returned by $code Romberg$$. 
+To be specific
 $latex \[
-	r_i = \int_a^b F(x) {\bf d} x + O \left[ (b - a) / 2^{n-1} \right]^{2(i+1)}
+r = \int_a^b F(x) {\bf d} x + O \left[ (b - a) / 2^{n-1} \right]^{2(p+1)}
 \] $$
+
 
 $head e$$
 The argument $italic e$$ has prototype
 $syntax%
-	%Vector% &%e%
+	%Scalar% &%e%
 %$$ 
-It is a vector of size $italic m$$.
-The input value of its elements does not matter
-and the output value of its elements are approximations
-for the corresponding integral estimates; i.e.,
+The input value of $italic e$$ does not matter
+and its output value is an approximation for the error in 
+the integral estimates; i.e.,
 $latex \[
-	e_i \approx \left| r_i - \int_a^b F(x) {\bf d} x \right|
+	e \approx \left| r - \int_a^b F(x) {\bf d} x \right|
 \] $$
 
 $head Scalar$$
@@ -121,12 +129,6 @@ $italic a$$ and $italic b$$:
 $table
 $bold Operation$$ $cnext $bold Description$$  $rnext
 $tend
-
-$head Vector$$
-The type $italic Vector$$ must be a $xref/SimpleVector/$$ class with
-$xref/SimpleVector/Elements of Specified Type/elements of type Scalar/$$.
-The routine $xref/CheckSimpleVector/$$ will generate an error message
-if this is not the case.
 
 $children%
 	Example/Romberg.cpp
@@ -148,17 +150,18 @@ $end
 */
 
 # include <CppAD/CppADError.h>
+# include <CppAD/CppAD_vector.h>
 
 namespace CppAD { // BEGIN CppAD namespace
 
-template <class Fun, class Scalar, class Vector>
-void Romberg(
+template <class Fun, class Scalar>
+Scalar Romberg(
 	Fun           &F , 
 	const Scalar  &a , 
 	const Scalar  &b , 
 	size_t         n , 
-	Vector        &r , 
-	Vector        &e )
+	size_t         p ,
+	Scalar        &e )
 {
 	size_t i, k;
 	Scalar pow2, sum, x; 
@@ -171,6 +174,7 @@ void Romberg(
 		n >= 2,
 		"Romberg: n must be greater than or equal 2"
 	);
+	CppAD::vector<Scalar> r(n);
 
 	//  set r[i] = trapazoidal rule with 2^i intervals in [a, b]
 	r[0]  = ( F(a) + F(b) ) * (b - a) / two; 
@@ -189,26 +193,22 @@ void Romberg(
 
 	// now compute the higher order estimates
 	size_t ipow4    = 1;   // order of accuract for previous estimate
-	Scalar pow4, pow4minus, best;
-	for(i = 0; i < n; i++)
-	{	// smallest step size estimate for order step^(2*i) estimate
-		best = r[n-1];
-
-		// corresponding error estimate
-		e[i] = r[n-1] - r[n-2];
-		if( e[i] < zero )
-			e[i] = - e[i];
-
-		// previous estimate is accurate to O[ step^(2*i) ]
+	Scalar pow4, pow4minus;
+	for(i = 0; i < p; i++)
+	{	// compute estimate accurate to O[ step^(2*(i+1)) ]
+		// put resutls in r[n-1], r[n-2], ... , r[n-i+1]
 		ipow4    *= 4;
 		pow4      = Scalar(ipow4);
 		pow4minus = Scalar(ipow4-1);
 		for(k = n-1; k > i; k--)
 			r[k] = ( pow4 * r[k] - r[k-1] ) / pow4minus;
-
-		r[i] = best;
 	}
-	return;
+
+	// error estimate for r[n]
+	e = r[n-1] - r[n-2];
+	if( e < zero )
+		e = - e;
+	return r[n-1];
 }
 
 } // END CppAD namespace
