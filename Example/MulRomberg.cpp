@@ -68,6 +68,7 @@ namespace {
 		const double  b;
 		const size_t  n;
 		const size_t  p;
+		double        esum;
 
 	public:
 		IntegrateLast(
@@ -79,10 +80,16 @@ namespace {
 		: F(F_) , a(a_) , b(b_) , n(n_) , p(p_) 
 		{ }		
 		double operator()(const double &x0)
-		{	double e;
+		{	double r, e;
 			SliceLast S(F, x0);
-			return CppAD::Romberg(S, a, b, n, p, e);
+			r     = CppAD::Romberg(S, a, b, n, p, e);
+			esum += e;
+			return r;
 		}
+		void SetEsum(const double &esum_)
+		{	esum = esum_; }
+		double GetEsum(void)
+		{	return esum; }
 	};
 
 	double MulRomberg(
@@ -92,9 +99,13 @@ namespace {
 		const CppAD::vector<size_t> &n  ,
 		const CppAD::vector<size_t> &p  ,
 		double                      &e  )
-	{
+	{	double r, s0;
 		IntegrateLast G(F, a[1], b[1], n[1], p[1]);
-		return CppAD::Romberg(G, a[0], b[0], n[0], p[0], e);
+		G.SetEsum(0.);
+		r  = CppAD::Romberg(G, a[0], b[0], n[0], p[0], e);
+		s0 = (b[0] - a[0]) / exp( log(2.) * (n[0] - 1) );
+		e += G.GetEsum() * s0;
+		return r;
 	}
 
 }
