@@ -47,21 +47,21 @@ namespace {
 		}
 	};
 
-	class SliceZero {
+	class SliceLast {
 	private:
 		Fun                      F;
 		size_t                   m;
 		CppAD::vector<double>    x;
 	public:
-		SliceZero(Fun F_, const double &x1) : F(F_) , x(2)
-		{	x[1] = x1; }
-		double operator()(const double &x0)
-		{	x[0] = x0;
+		SliceLast(Fun F_, const double &x0) : F(F_) , x(2)
+		{	x[0] = x0; }
+		double operator()(const double &x1)
+		{	x[1] = x1;
 			return F(x);
 		}
 	};
 
-	class IntegrateZero {
+	class IntegrateLast {
 	private:
 		Fun           F;
 		const double  a;
@@ -70,7 +70,7 @@ namespace {
 		const size_t  p;
 
 	public:
-		IntegrateZero(
+		IntegrateLast(
 			Fun           F_ , 
 			const double &a_ , 
 			const double &b_ , 
@@ -78,24 +78,37 @@ namespace {
 			size_t        p_ )
 		: F(F_) , a(a_) , b(b_) , n(n_) , p(p_) 
 		{ }		
-		double operator()(const double &x1)
-		{	CppAD::vector<double> r(n), e(n);
-			SliceZero S(F, x1);
-			Romberg(S, a, b, n, r, e);
-			return r[p];
+		double operator()(const double &x0)
+		{	double e;
+			SliceLast S(F, x0);
+			return CppAD::Romberg(S, a, b, n, p, e);
 		}
 	};
+
+	double MulRomberg(
+		Fun                         &F  , 
+		const CppAD::vector<double> &a  ,
+		const CppAD::vector<double> &b  ,
+		const CppAD::vector<size_t> &n  ,
+		const CppAD::vector<size_t> &p  ,
+		double                      &e  )
+	{
+		IntegrateLast G(F, a[1], b[1], n[1], p[1]);
+		return CppAD::Romberg(G, a[0], b[0], n[0], p[0], e);
+	}
 
 }
 
 bool MulRomberg(void)
 {	bool ok = true;
 	size_t i;
+	size_t k;
 
-	size_t x0deg = 3;
+	size_t x0deg = 4;
 	size_t x1deg = 3;
 	Fun F(x0deg, x1deg);
 
+	// arugments to MulRomberg
 	CppAD::vector<double> a(2);
 	CppAD::vector<double> b(2);
 	CppAD::vector<size_t> n(2);
@@ -103,14 +116,9 @@ bool MulRomberg(void)
 	for(i = 0; i < 2; i++)
 	{	a[i] = 0.;
 		b[i] = 1.;
-		n[i] = 3;
-		p[i] = 2;
+		n[i] = 4;
 	}
-
-	IntegrateZero G(F, a[0], b[0], n[0], p[0]);
-
-	CppAD::vector<double> r(n[1]), e(n[1]);
-	CppAD::Romberg(G, a[1], b[1], n[1], r, e);
+	double r, e;
 
 	// int_a1^b1 dx1 int_a0^b0 F(x0,x1) dx0
 	//	= [ b0^(x0deg+1) - a0^(x0deg+1) ] / (x0deg+1) 
@@ -132,14 +140,19 @@ bool MulRomberg(void)
 
 	double step = (b[1] - a[1]) / exp(log(2.)*(n[1]-1));
 	double spow = 1;
-	for(i = 0; i < n[1]; i++)
+	for(k = 0; k < n[1]; k++)
 	{	spow = spow * step * step;
-		ok  &= e[i] < (x1deg+1) * spow;
-		ok  &= CppAD::NearEqual(check, r[i], 0., e[i]);	
+
+		for(i = 0; i < 2; i++)
+			p[i] = k;
+		r    = MulRomberg(F, a, b, n, p, e);
+
+		ok  &= e < (x1deg+1) * spow;
+		ok  &= CppAD::NearEqual(check, r, 0., e);	
 
 		std::cout << "check = "  << check
-		          << ", r[i] = " << r[i]
-		          << ", e[i] = " << e[i]
+		          << ", r = "    << r
+		          << ", e = "    << e
 		          << std::endl;
 	}
 
