@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 $begin WhatsNew05$$
 $spell
+	cos
 	Le
 	Lt
 	Eq
@@ -68,6 +69,40 @@ This section contains a list of the changes to CppAD during 2005
 The purpose of these sections is to
 assist you in learning about changes between various versions of CppAD.
 
+$head 08-19$$
+Added a $xref/Romberg/$$ integration routine for 
+where the argument types are template parameters
+(for use with AD types).
+
+$head 08-15$$
+The Microsoft project files $code Example/Example.vcproj$$ and 
+$code TestMore/TestMore.vcproj$$ were missing some necessary routines.
+In addition, $code Speed/Speed.vcproj$$ was generating a warning.
+This has been fixed. 
+
+$head 08-14$$
+An $xref/Integer/$$ conversion function as been added.
+$pre
+
+$$
+The $xref/Value.cpp/$$ example has been improved and the old example
+has been moved into the $code TestMore$$ directory.
+
+$head 08-13$$
+The standard math functions $xref/sinh//sinh/$$ and $xref/cosh//cosh/$$ have
+been added. 
+In addition, more correctness testing 
+(
+$xref/InstallUnix/More Correctness Testing/unix/$$ , 
+$xref/InstallWindows/More Correctness Testing/windows/$$ 
+)
+has been added for the $xref/Sin//sin/$$ and $xref/cos//cos/$$ functions.
+$pre
+
+$$
+The $xref/OdeErrControl/$$ routine could lock in an infinite loop.
+This has been fixed and a test case has been added to check for this problem.
+
 $head 08-07$$
 The $xref/CondExp//conditional expression/$$ function has been changed
 from just $code CondExp$$ to
@@ -83,7 +118,7 @@ The old $code CondExp$$ function has been deprecated.
 
 $head 07-21$$
 Remove unnecessary no-op that was left in tape for the following cases:
-$xref/Acos/$$, $xref/Asin/$$, $xref/Atan/$$, and $xref/cos/$$.
+$xref/acos/$$, $xref/asin/$$, $xref/atan/$$, and $xref/cos/$$.
 $pre
 
 $$

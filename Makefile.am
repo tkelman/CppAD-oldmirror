@@ -33,6 +33,7 @@ nobase_include_HEADERS =  \
 	CppAD/NearEqual.h \
 	CppAD/OdeErrControl.h \
 	CppAD/Poly.h \
+	CppAD/Romberg.h \
 	CppAD/Rosen34.h \
 	CppAD/Runge45.h \
 	CppAD/SpeedTest.h \
@@ -63,6 +64,7 @@ nobase_include_HEADERS =  \
 	CppAD/local/CondExp.h \
 	CppAD/local/Copy.h \
 	CppAD/local/Cos.h \
+	CppAD/local/Cosh.h \
 	CppAD/local/CppADvector.h \
 	CppAD/local/Declare.h \
 	CppAD/local/Default.h \
@@ -103,6 +105,7 @@ nobase_include_HEADERS =  \
 	CppAD/local/RevTwo.h \
 	CppAD/local/Reverse.h \
 	CppAD/local/Sin.h \
+	CppAD/local/Sinh.h \
 	CppAD/local/SinCos.h \
 	CppAD/local/Sqrt.h \
 	CppAD/local/SqrtOp.h \

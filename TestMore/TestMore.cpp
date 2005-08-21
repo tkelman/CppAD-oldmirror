@@ -49,6 +49,7 @@ extern bool Log(void);
 extern bool Mul(void);
 extern bool MulEq(void);
 extern bool MulZeroOne(void);
+extern bool OdeErrControl(void);
 extern bool Reverse(void);
 extern bool Rosen34(void);
 extern bool Runge45(void);
@@ -58,6 +59,7 @@ extern bool Sqrt(void);
 extern bool Sub(void);
 extern bool SubEq(void);
 extern bool SubZero(void);
+extern bool Value(void);
 extern bool VecADPar(void);
 extern bool VecUnary(void);
 
@@ -100,6 +102,7 @@ int main(void)
 	ok &= Run( Mul,             "Mul"            );
 	ok &= Run( MulEq,           "MulEq"          );
 	ok &= Run( MulZeroOne,      "MulZeroOne"     );
+	ok &= Run( OdeErrControl,   "OdeErrControl"  );
 	ok &= Run( Reverse,         "Reverse"        );
 	ok &= Run( Rosen34,         "Rosen34"        );
 	ok &= Run( Runge45,         "Runge45"        );
@@ -109,6 +112,7 @@ int main(void)
 	ok &= Run( Sub,             "Sub"            );
 	ok &= Run( SubEq,           "SubEq"          );
 	ok &= Run( SubZero,         "SubZero"        );
+	ok &= Run( Value,           "Value"          );
 	ok &= Run( VecADPar,        "VecADPar"       );
 	ok &= Run( VecUnary,        "VecUnary"       );
 
