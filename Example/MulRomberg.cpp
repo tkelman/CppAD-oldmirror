@@ -25,73 +25,88 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 namespace {
 
-	class Fun {
+	class TestFun {
 	private:
-		const size_t x0deg;
-		const size_t x1deg;
+		const CppAD::vector<size_t> deg;
 	public:
 		// constructor
-		Fun(size_t x0deg_, size_t x1deg_) 
-		: x0deg(x0deg_) , x1deg(x1deg_)
+		TestFun(const CppAD::vector<size_t> deg_) 
+		: deg(deg_)
 		{ }
 
-		// function F(x0, x1) = x0^x0deg * x1^x1deg
+		// function F(x) = x[0]^deg[0] * x[1]^deg[1]
 		double operator () (const CppAD::vector<double> &x)
 		{	size_t i;
 			double   f = 1;
-			for(i = 0; i < x0deg; i++)
+			for(i = 0; i < deg[0]; i++)
 				f *= x[0];
-			for(i = 0; i < x1deg; i++)
+			for(i = 0; i < deg[1]; i++)
 				f *= x[1];
 			return f;
 		}
 	};
 
+	template <class Fun>
 	class SliceLast {
 	private:
 		Fun                      F;
 		size_t                   m;
 		CppAD::vector<double>    x;
 	public:
-		SliceLast(Fun F_, const double &x0) : F(F_) , x(2)
-		{	x[0] = x0; }
-		double operator()(const double &x1)
-		{	x[1] = x1;
+		SliceLast(Fun F_, size_t m_, const CppAD::vector<double> &x_) 
+		: F(F_) , m(m_), x(m + 1)
+		{	size_t i;
+			for(i = 0; i < m; i++)
+				x[i] = x_[i];
+		}
+		double operator()(const double &xm)
+		{	x[m] = xm;
 			return F(x);
 		}
 	};
 
+	template <class Fun>
 	class IntegrateLast {
 	private:
-		Fun           F;
-		const double  a;
-		const double  b;
-		const size_t  n;
-		const size_t  p;
-		double        esum;
+		Fun                         F; 
+		const size_t                m;
+		const CppAD::vector<double> a; 
+		const CppAD::vector<double> b; 
+		const CppAD::vector<size_t> n; 
+		const CppAD::vector<size_t> p; 
+		double                      esum;
+		size_t                      ecount;
 
 	public:
 		IntegrateLast(
-			Fun           F_ , 
-			const double &a_ , 
-			const double &b_ , 
-			size_t        n_ ,
-			size_t        p_ )
-		: F(F_) , a(a_) , b(b_) , n(n_) , p(p_) 
+			Fun                         &F_ , 
+			size_t                       m_ ,
+			const CppAD::vector<double> &a_ , 
+			const CppAD::vector<double> &b_ , 
+			const CppAD::vector<size_t> &n_ , 
+			const CppAD::vector<size_t> &p_ ) 
+		: F(F_) , m(m_), a(a_) , b(b_) , n(n_) , p(p_) 
 		{ }		
-		double operator()(const double &x0)
+		double operator()(const CppAD::vector<double> &x)
 		{	double r, e;
-			SliceLast S(F, x0);
-			r     = CppAD::Romberg(S, a, b, n, p, e);
+			SliceLast<Fun> S(F, m, x);
+			r     = CppAD::Romberg(S, a[m], b[m], n[m], p[m], e);
 			esum += e;
+			ecount++;
 			return r;
 		}
-		void SetEsum(const double &esum_)
-		{	esum = esum_; }
+		void ClearEsum(void)
+		{	esum   = 0.; }
 		double GetEsum(void)
 		{	return esum; }
+
+		void ClearEcount(void)
+		{	ecount   = 0; }
+		size_t GetEcount(void)
+		{	return ecount; }
 	};
 
+	template <class Fun>
 	double MulRomberg(
 		Fun                         &F  , 
 		const CppAD::vector<double> &a  ,
@@ -99,12 +114,33 @@ namespace {
 		const CppAD::vector<size_t> &n  ,
 		const CppAD::vector<size_t> &p  ,
 		double                      &e  )
-	{	double r, s0;
-		IntegrateLast G(F, a[1], b[1], n[1], p[1]);
-		G.SetEsum(0.);
-		r  = CppAD::Romberg(G, a[0], b[0], n[0], p[0], e);
-		s0 = (b[0] - a[0]) / exp( log(2.) * (n[0] - 1) );
-		e += G.GetEsum() * s0;
+	{	double r;
+		size_t m = a.size();
+		if( m == 1 )
+		{	IntegrateLast<Fun> F0(F, 0, a, b, n, p);
+			F0.ClearEsum();
+			F0.ClearEcount();
+			r  = F0(a);
+			e  = F0.GetEsum();
+			assert( F0.GetEcount() == 1 );
+		}
+		else if( m == 2 )
+		{	IntegrateLast<Fun> F1(F, 1, a, b, n, p);
+			IntegrateLast< IntegrateLast<Fun> > 
+				F0(F1, 0, a, b, n, p);
+
+			F1.ClearEsum();
+			F1.ClearEcount();
+			F0.ClearEsum();
+			F0.ClearEcount();
+
+			r  = F0(a);
+
+			e  = F0.GetEsum();
+			e += F1.GetEsum() * (b[0] - a[0]) / F0.GetEcount();
+		}
+		else	assert(0);
+		
 		return r;
 	}
 
@@ -115,9 +151,10 @@ bool MulRomberg(void)
 	size_t i;
 	size_t k;
 
-	size_t x0deg = 4;
-	size_t x1deg = 3;
-	Fun F(x0deg, x1deg);
+	CppAD::vector<size_t> deg(2);
+	deg[0] = 4;
+	deg[1] = 3;
+	TestFun F(deg);
 
 	// arugments to MulRomberg
 	CppAD::vector<double> a(2);
@@ -132,22 +169,22 @@ bool MulRomberg(void)
 	double r, e;
 
 	// int_a1^b1 dx1 int_a0^b0 F(x0,x1) dx0
-	//	= [ b0^(x0deg+1) - a0^(x0deg+1) ] / (x0deg+1) 
-	//	* [ b1^(x1deg+1) - a1^(x1deg+1) ] / (x1deg+1) 
+	//	= [ b0^(deg[0]+1) - a0^(deg[0]+1) ] / (deg[0]+1) 
+	//	* [ b1^(deg[1]+1) - a1^(deg[1]+1) ] / (deg[1]+1) 
 	double bpow = 1.;
 	double apow = 1.;
-	for(i = 0; i <= x0deg; i++)
+	for(i = 0; i <= deg[0]; i++)
 	{	bpow *= b[0];
 		apow *= a[0];
 	}  
-	double check = (bpow - apow) / (x0deg+1);
+	double check = (bpow - apow) / (deg[0]+1);
 	bpow = 1.;
 	apow = 1.;
-	for(i = 0; i <= x1deg; i++)
+	for(i = 0; i <= deg[1]; i++)
 	{	bpow *= b[1];
 		apow *= a[1];
 	}  
-	check *= (bpow - apow) / (x1deg+1);
+	check *= (bpow - apow) / (deg[1]+1);
 
 	double step = (b[1] - a[1]) / exp(log(2.)*(n[1]-1));
 	double spow = 1;
@@ -158,7 +195,7 @@ bool MulRomberg(void)
 			p[i] = k;
 		r    = MulRomberg(F, a, b, n, p, e);
 
-		ok  &= e < (x1deg+1) * spow;
+		ok  &= e < (deg[1]+1) * spow;
 		ok  &= CppAD::NearEqual(check, r, 0., e);	
 
 		std::cout << "check = "  << check
