@@ -46,52 +46,51 @@ namespace {
 		}
 	};
 
-	template <class Fun>
+	template <class Fun, class FloatVector>
 	class SliceLast {
+		typedef typename FloatVector::value_type Scalar;
 	private:
-		Fun                     *F;
-		size_t                   last;
-		CppAD::vector<double>    x;
+		Fun        *F;
+		size_t      last;
+		FloatVector x;
 	public:
-		SliceLast(
-		Fun *F_, size_t last_, const CppAD::vector<double> &x_
-		) 
+		SliceLast( Fun *F_, size_t last_, const FloatVector &x_ ) 
 		: F(F_) , last(last_), x(last + 1)
 		{	size_t i;
 			for(i = 0; i < last; i++)
 				x[i] = x_[i];
 		}
-		double operator()(const double &xlast)
+		double operator()(const Scalar &xlast)
 		{	x[last] = xlast;
 			return (*F)(x);
 		}
 	};
 
-	template <class Fun>
+	template <class Fun, class SizeVector, class FloatVector, class Scalar>
 	class IntegrateLast {
 	private:
 		Fun                        *F; 
 		const size_t                last;
-		const CppAD::vector<double> a; 
-		const CppAD::vector<double> b; 
-		const CppAD::vector<size_t> n; 
-		const CppAD::vector<size_t> p; 
-		double                      esum;
+		const FloatVector           a; 
+		const FloatVector           b; 
+		const SizeVector            n; 
+		const SizeVector            p; 
+		Scalar                      esum;
 		size_t                      ecount;
 
 	public:
 		IntegrateLast(
 			Fun                         *F_    , 
 			size_t                       last_ ,
-			const CppAD::vector<double> &a_    , 
-			const CppAD::vector<double> &b_    , 
-			const CppAD::vector<size_t> &n_    , 
-			const CppAD::vector<size_t> &p_    ) 
+			const FloatVector           &a_    , 
+			const FloatVector           &b_    , 
+			const SizeVector            &n_    , 
+			const SizeVector            &p_    ) 
 		: F(F_) , last(last_), a(a_) , b(b_) , n(n_) , p(p_) 
 		{ }		
-		double operator()(const CppAD::vector<double> &x)
-		{	double r, e;
-			SliceLast<Fun> S(F, last, x);
+		Scalar operator()(const FloatVector           &x)
+		{	Scalar r, e;
+			SliceLast<Fun, FloatVector           > S(F, last, x);
 			r     = CppAD::Romberg(
 				S, a[last], b[last], n[last], p[last], e
 			);
@@ -101,7 +100,7 @@ namespace {
 		}
 		void ClearEsum(void)
 		{	esum   = 0.; }
-		double GetEsum(void)
+		Scalar GetEsum(void)
 		{	return esum; }
 
 		void ClearEcount(void)
@@ -110,22 +109,33 @@ namespace {
 		{	return ecount; }
 	};
 
-	template <class Fun, size_t m>
+	template <class Fun, class SizeVector, class FloatVector, size_t m>
 	class RombergMul {
+		typedef typename FloatVector::value_type Scalar;
 	public:
 		RombergMul(void)
 		{	}
-		double operator() (
+		Scalar operator() (
 			Fun                         &F  , 
-			const CppAD::vector<double> &a  ,
-			const CppAD::vector<double> &b  ,
-			const CppAD::vector<size_t> &n  ,
-			const CppAD::vector<size_t> &p  ,
-			double                      &e  )
-		{	double r;
+			const FloatVector           &a  ,
+			const FloatVector           &b  ,
+			const SizeVector            &n  ,
+			const SizeVector            &p  ,
+			Scalar                      &e  )
+		{	Scalar r;
 
-			IntegrateLast<Fun> Fm1(&F, m-1, a, b, n, p);
-			RombergMul< IntegrateLast<Fun> , m-1> RombergMulM1;
+			typedef IntegrateLast<
+				Fun                  , 
+				SizeVector           , 
+				FloatVector          , 
+				Scalar               > IntegrateOne;
+
+			IntegrateOne Fm1(&F, m-1, a, b, n, p);
+			RombergMul<
+				IntegrateOne, 
+				SizeVector  ,
+				FloatVector ,
+				m-1         > RombergMulM1;
 
 			Fm1.ClearEsum();
 			Fm1.ClearEcount();
@@ -133,7 +143,7 @@ namespace {
 			r  = RombergMulM1(Fm1, a, b, n, p, e);
 
 			size_t i, j;
-			double prod = 1;
+			Scalar prod = 1;
 			size_t pow2 = 1;
 			for(i = 0; i < m-1; i++)
 			{	prod *= (b[i] - a[i]);
@@ -148,19 +158,25 @@ namespace {
 		}
 	};
 
-	template <class Fun>
-	class RombergMul <Fun, 1>{
+	template <class Fun, class SizeVector, class FloatVector>
+	class RombergMul <Fun, SizeVector, FloatVector, 1> {
+		typedef typename FloatVector::value_type Scalar;
 	public:
-		double operator() (
+		Scalar operator() (
 			Fun                         &F  , 
-			const CppAD::vector<double> &a  ,
-			const CppAD::vector<double> &b  ,
-			const CppAD::vector<size_t> &n  ,
-			const CppAD::vector<size_t> &p  ,
-			double                      &e  )
-		{	double r;
+			const FloatVector           &a  ,
+			const FloatVector           &b  ,
+			const SizeVector            &n  ,
+			const SizeVector            &p  ,
+			Scalar                      &e  )
+		{	Scalar r;
+			typedef IntegrateLast<
+				Fun                  , 
+				SizeVector           , 
+				FloatVector          , 
+				Scalar               > IntegrateOne;
 
-			IntegrateLast<Fun> F0(&F, 0, a, b, n, p);
+			IntegrateOne F0(&F, 0, a, b, n, p);
 
 			F0.ClearEsum();
 			F0.ClearEcount();
@@ -186,7 +202,11 @@ bool MulRomberg(void)
 	deg[1] = 3;
 	TestFun F(deg);
 
-	RombergMul<TestFun, 2> RombergMulTest;
+	RombergMul<
+		TestFun              , 
+		CppAD::vector<size_t>, 
+		CppAD::vector<double>, 
+		2                    > RombergMulTest;
 
 	// arugments to RombergMul
 	CppAD::vector<double> a(2);
