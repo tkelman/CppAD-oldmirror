@@ -49,27 +49,29 @@ namespace {
 	template <class Fun>
 	class SliceLast {
 	private:
-		Fun                      F;
-		size_t                   m;
+		Fun                     *F;
+		size_t                   last;
 		CppAD::vector<double>    x;
 	public:
-		SliceLast(Fun F_, size_t m_, const CppAD::vector<double> &x_) 
-		: F(F_) , m(m_), x(m + 1)
+		SliceLast(
+		Fun *F_, size_t last_, const CppAD::vector<double> &x_
+		) 
+		: F(F_) , last(last_), x(last + 1)
 		{	size_t i;
-			for(i = 0; i < m; i++)
+			for(i = 0; i < last; i++)
 				x[i] = x_[i];
 		}
-		double operator()(const double &xm)
-		{	x[m] = xm;
-			return F(x);
+		double operator()(const double &xlast)
+		{	x[last] = xlast;
+			return (*F)(x);
 		}
 	};
 
 	template <class Fun>
 	class IntegrateLast {
 	private:
-		Fun                         F; 
-		const size_t                m;
+		Fun                        *F; 
+		const size_t                last;
 		const CppAD::vector<double> a; 
 		const CppAD::vector<double> b; 
 		const CppAD::vector<size_t> n; 
@@ -79,18 +81,20 @@ namespace {
 
 	public:
 		IntegrateLast(
-			Fun                         &F_ , 
-			size_t                       m_ ,
-			const CppAD::vector<double> &a_ , 
-			const CppAD::vector<double> &b_ , 
-			const CppAD::vector<size_t> &n_ , 
-			const CppAD::vector<size_t> &p_ ) 
-		: F(F_) , m(m_), a(a_) , b(b_) , n(n_) , p(p_) 
+			Fun                         *F_    , 
+			size_t                       last_ ,
+			const CppAD::vector<double> &a_    , 
+			const CppAD::vector<double> &b_    , 
+			const CppAD::vector<size_t> &n_    , 
+			const CppAD::vector<size_t> &p_    ) 
+		: F(F_) , last(last_), a(a_) , b(b_) , n(n_) , p(p_) 
 		{ }		
 		double operator()(const CppAD::vector<double> &x)
 		{	double r, e;
-			SliceLast<Fun> S(F, m, x);
-			r     = CppAD::Romberg(S, a[m], b[m], n[m], p[m], e);
+			SliceLast<Fun> S(F, last, x);
+			r     = CppAD::Romberg(
+				S, a[last], b[last], n[last], p[last], e
+			);
 			esum += e;
 			ecount++;
 			return r;
@@ -106,43 +110,69 @@ namespace {
 		{	return ecount; }
 	};
 
+	template <class Fun, size_t m>
+	class RombergMul {
+	public:
+		RombergMul(void)
+		{	}
+		double operator() (
+			Fun                         &F  , 
+			const CppAD::vector<double> &a  ,
+			const CppAD::vector<double> &b  ,
+			const CppAD::vector<size_t> &n  ,
+			const CppAD::vector<size_t> &p  ,
+			double                      &e  )
+		{	double r;
+
+			IntegrateLast<Fun> Fm1(&F, m-1, a, b, n, p);
+			RombergMul< IntegrateLast<Fun> , m-1> RombergMulM1;
+
+			Fm1.ClearEsum();
+			Fm1.ClearEcount();
+
+			r  = RombergMulM1(Fm1, a, b, n, p, e);
+
+			size_t i, j;
+			double prod = 1;
+			size_t pow2 = 1;
+			for(i = 0; i < m-1; i++)
+			{	prod *= (b[i] - a[i]);
+				for(j = 0; j < (n[i] - 1); j++)
+					pow2 *= 2;
+			}
+			assert( Fm1.GetEcount() == (pow2+1) );
+			
+			e += Fm1.GetEsum() * prod / Fm1.GetEcount();
+
+			return r;
+		}
+	};
+
 	template <class Fun>
-	double MulRomberg(
-		Fun                         &F  , 
-		const CppAD::vector<double> &a  ,
-		const CppAD::vector<double> &b  ,
-		const CppAD::vector<size_t> &n  ,
-		const CppAD::vector<size_t> &p  ,
-		double                      &e  )
-	{	double r;
-		size_t m = a.size();
-		if( m == 1 )
-		{	IntegrateLast<Fun> F0(F, 0, a, b, n, p);
+	class RombergMul <Fun, 1>{
+	public:
+		double operator() (
+			Fun                         &F  , 
+			const CppAD::vector<double> &a  ,
+			const CppAD::vector<double> &b  ,
+			const CppAD::vector<size_t> &n  ,
+			const CppAD::vector<size_t> &p  ,
+			double                      &e  )
+		{	double r;
+
+			IntegrateLast<Fun> F0(&F, 0, a, b, n, p);
+
 			F0.ClearEsum();
 			F0.ClearEcount();
+
 			r  = F0(a);
-			e  = F0.GetEsum();
+
 			assert( F0.GetEcount() == 1 );
+			e = F0.GetEsum();
+
+			return r;
 		}
-		else if( m == 2 )
-		{	IntegrateLast<Fun> F1(F, 1, a, b, n, p);
-			IntegrateLast< IntegrateLast<Fun> > 
-				F0(F1, 0, a, b, n, p);
-
-			F1.ClearEsum();
-			F1.ClearEcount();
-			F0.ClearEsum();
-			F0.ClearEcount();
-
-			r  = F0(a);
-
-			e  = F0.GetEsum();
-			e += F1.GetEsum() * (b[0] - a[0]) / F0.GetEcount();
-		}
-		else	assert(0);
-		
-		return r;
-	}
+	};
 
 }
 
@@ -152,11 +182,13 @@ bool MulRomberg(void)
 	size_t k;
 
 	CppAD::vector<size_t> deg(2);
-	deg[0] = 4;
+	deg[0] = 5;
 	deg[1] = 3;
 	TestFun F(deg);
 
-	// arugments to MulRomberg
+	RombergMul<TestFun, 2> RombergMulTest;
+
+	// arugments to RombergMul
 	CppAD::vector<double> a(2);
 	CppAD::vector<double> b(2);
 	CppAD::vector<size_t> n(2);
@@ -164,8 +196,9 @@ bool MulRomberg(void)
 	for(i = 0; i < 2; i++)
 	{	a[i] = 0.;
 		b[i] = 1.;
-		n[i] = 4;
 	}
+	n[0] = 4;
+	n[1] = 3;
 	double r, e;
 
 	// int_a1^b1 dx1 int_a0^b0 F(x0,x1) dx0
@@ -188,19 +221,21 @@ bool MulRomberg(void)
 
 	double step = (b[1] - a[1]) / exp(log(2.)*(n[1]-1));
 	double spow = 1;
-	for(k = 0; k < n[1]; k++)
+	for(k = 0; k <= n[1]; k++)
 	{	spow = spow * step * step;
+		double bnd = 3 * (deg[1] + 1) * spow;
 
 		for(i = 0; i < 2; i++)
 			p[i] = k;
-		r    = MulRomberg(F, a, b, n, p, e);
+		r    = RombergMulTest(F, a, b, n, p, e);
 
-		ok  &= e < (deg[1]+1) * spow;
+		ok  &= e < bnd;
 		ok  &= CppAD::NearEqual(check, r, 0., e);	
 
 		std::cout << "check = "  << check
 		          << ", r = "    << r
 		          << ", e = "    << e
+		          << ", bnd = "  << bnd
 		          << std::endl;
 	}
 
