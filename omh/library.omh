@@ -23,10 +23,17 @@ $spell
 	CppAD
 $$
 
-$section The CppAD General Purpose Library$$
+$index numerical, C++ template library$$
+$index template, numerical C++ library$$
+$index C++, numerical template library$$
+$index library, numerical C++ template$$
 
-The routines listed in this section are general purpose utilities
-can be used outside the context of CppAD.
+$section A Numerical C++ Template Library$$
+
+The routines listed in this section are general purpose numerical routines
+written with the floating point type A C++ template parameter.
+This enables them to be used with algorithmic differentiation types,
+as well as for other purposes. 
 
 $contents%
 	omh/VectorTempClass.omh%
@@ -34,7 +41,8 @@ $contents%
 	omh/Polynomial.omh%
 	lib/SpeedTest.cpp%
 	omh/LuDetAndSolve.omh%
-	CppAD/Romberg.h%
+	CppAD/RombergOne.h%
+	CppAD/RombergMul.h%
 	CppAD/Runge45.h%
 	CppAD/Rosen34.h%
 	CppAD/OdeErrControl.h%

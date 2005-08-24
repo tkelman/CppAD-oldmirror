@@ -974,6 +974,9 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\MulRomberg.cpp">
+			</File>
+			<File
 				RelativePath="MulTape.cpp">
 				<FileConfiguration
 					Name="Release|Win32">
@@ -1174,7 +1177,10 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\Romberg.cpp">
+				RelativePath=".\RombergMul.cpp">
+			</File>
+			<File
+				RelativePath=".\RombergOne.cpp">
 			</File>
 			<File
 				RelativePath="Rosen34.cpp">

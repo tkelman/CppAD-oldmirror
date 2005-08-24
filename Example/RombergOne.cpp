@@ -19,26 +19,26 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // END SHORT COPYRIGHT
 
 /*
-$begin Romberg.cpp$$
+$begin RombergOne.cpp$$
 $spell
 	Romberg
 $$
 
-$section Romberg Integration: Example and Test$$
+$section One Dimensional Romberg Integration: Example and Test$$
 
 $index Romberg, example$$
 $index example, Romberg$$
 $index test, Romberg$$
 
 $code
-$verbatim%Example/Romberg.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
+$verbatim%Example/RombergOne.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
 $$
 
 $end
 */
 // BEGIN PROGRAM
 
-# include <CppAD/Romberg.h>
+# include <CppAD/RombergOne.h>
 # include <CppAD/CppAD_vector.h>
 # include <CppAD/NearEqual.h>
 
@@ -63,14 +63,14 @@ namespace {
 	};
 }
 
-bool Romberg(void)
+bool RombergOne(void)
 {	bool ok = true;
 	size_t i;
 
 	size_t degree = 4;
 	Fun F(degree);
 
-	// arguments to Romberg
+	// arguments to RombergOne
 	double a = 0.;
 	double b = 1.;
 	size_t n = 4;
@@ -96,7 +96,7 @@ bool Romberg(void)
 	for(p = 0; p < n; p++)
 	{	spow = spow * step * step;
 
-		r = CppAD::Romberg(F, a, b, n, p, e);
+		r = CppAD::RombergOne(F, a, b, n, p, e);
 
 		ok  &= e < (degree+1) * spow;
 		ok  &= CppAD::NearEqual(check, r, 0., e);	

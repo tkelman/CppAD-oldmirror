@@ -1,5 +1,5 @@
-# ifndef CppADRombergIncluded
-# define CppADRombergIncluded
+# ifndef CppADRombergOneIncluded
+# define CppADRombergOneIncluded
 
 /* -----------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-05 Bradley M. Bell
@@ -19,23 +19,23 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ------------------------------------------------------------------------ */
 /*
-$begin Romberg$$
+$begin RombergOne$$
 $spell
 	const
 	Cpp
-	Romberg
+	RombergOne
 $$
 
-$section Romberg Integration$$
+$section One DimensionalRomberg Integration$$
 
 $index integrate, Romberg$$
 $index Romberg, Integrate$$
 
 $table
 $bold Syntax$$
-$cnext $code # include <CppAD/Romberg.h>$$ 
+$cnext $code # include <CppAD/RombergOne.h>$$ 
 $rnext $cnext
-$syntax%%r% = Romberg(%F%, %a%, %b%, %n%, %e%)%$$
+$syntax%%r% = RombergOne(%F%, %a%, %b%, %n%, %e%)%$$
 $tend
 
 $fend 20$$
@@ -48,14 +48,14 @@ r = \int_a^b F(x) {\bf d} x + O \left[ (b - a) / 2^{n-1} \right]^{2(p+1)}
 \] $$
 
 $head Include$$
-The file $code CppAD/Romberg.h$$ is included by $code CppAD/CppAD.h$$
+The file $code CppAD/RombergOne.h$$ is included by $code CppAD/CppAD.h$$
 but it can also be included separately with out the rest of 
 the $code CppAD$$ routines.
 
 $head r$$
 The return value $italic r$$ has prototype
 $syntax%
-	%Scalar% %r%
+	%Float% %r%
 %$$ 
 It is an estimate of the integral 
 $latex \[
@@ -69,22 +69,22 @@ $syntax%
 %$$
 The argument $italic x$$ to $italic F$$ has prototype
 $syntax%
-	const %Scalar% &%x%
+	const %Float% &%x%
 %$$
-The return value of $italic F$$ is a $italic Scalar$$ object
-(see description of $xref/Romberg/Scalar/Scalar/$$ below). 
+The return value of $italic F$$ is a $italic Float$$ object
+(see description of $xref/RombergOne/Float/Float/$$ below). 
 
 $head a$$
 The argument $italic a$$ has prototype
 $syntax%
-	const %Scalar% &%a%
+	const %Float% &%a%
 %$$ 
 It specifies the lower limit for the integration.
 
 $head b$$
 The argument $italic b$$ has prototype
 $syntax%
-	const %Scalar% &%b%
+	const %Float% &%b%
 %$$ 
 It specifies the upper limit for the integration.
 
@@ -103,7 +103,7 @@ $syntax%
 %$$ 
 It must be less than or equal $latex n$$
 and determines the accuracy order in the approximation for the integral
-that is returned by $code Romberg$$. 
+that is returned by $code RombergOne$$. 
 To be specific
 $latex \[
 r = \int_a^b F(x) {\bf d} x + O \left[ (b - a) / 2^{n-1} \right]^{2(p+1)}
@@ -113,7 +113,7 @@ r = \int_a^b F(x) {\bf d} x + O \left[ (b - a) / 2^{n-1} \right]^{2(p+1)}
 $head e$$
 The argument $italic e$$ has prototype
 $syntax%
-	%Scalar% &%e%
+	%Float% &%e%
 %$$ 
 The input value of $italic e$$ does not matter
 and its output value is an approximation for the error in 
@@ -122,29 +122,46 @@ $latex \[
 	e \approx \left| r - \int_a^b F(x) {\bf d} x \right|
 \] $$
 
-$head Scalar$$
-The following operations must be defined for $italic Scalar$$ objects
-$italic a$$ and $italic b$$:
+$head Float$$
+The following operations must be defined for $italic Float$$ objects
+$italic x$$, $italic y$$ and $code size_t$$ object $italic i$$.
+The result is of type $italic Float$$ unless otherwise specified.
 
 $table
-$bold Operation$$ $cnext $bold Description$$  $rnext
+$bold Operation$$       
+	$cnext $bold Description$$ $rnext
+$syntax%%Float%(%i%)%$$ 
+	$cnext converts $italic i$$ to $italic Float$$    $rnext
+$syntax%%x% = %y%$$     
+	$cnext assigns current $italic y$$ to $italic x$$ $rnext
+$syntax%%x% + %y%$$     
+	$cnext returns sum of $italic x$$ and $italic y$$ $rnext
+$syntax%%x% - %y%$$     
+	$cnext returns difference of $italic x$$ and $italic y$$ $rnext
+$syntax%%x% * %y%$$     
+	$cnext returns quotient of $italic x$$ and $italic y$$ $rnext
+$syntax%%x% / %y%$$     
+	$cnext returns quotient of $italic x$$ and $italic y$$ $rnext
+$syntax%%x% < %y%$$     
+	$cnext returns the $code bool$$ value true if 
+	$italic x$$ is less than $italic y$$                   $rnext
 $tend
 
 $children%
-	Example/Romberg.cpp
+	Example/RombergOne.cpp
 %$$
 $head Example$$
 $comment%
-	Example/Romberg.cpp
+	Example/RombergOne.cpp
 %$$
 The file
-$xref/Romberg.cpp/$$
+$xref/RombergOne.cpp/$$
 contains an example and test a test of using this routine.
 It returns true if it succeeds and false otherwise.
 
 $head Source Code$$
 The source code for this routine is in the file
-$code CppAD/Romberg.h$$.
+$code CppAD/RombergOne.h$$.
 
 $end
 */
@@ -154,38 +171,38 @@ $end
 
 namespace CppAD { // BEGIN CppAD namespace
 
-template <class Fun, class Scalar>
-Scalar Romberg(
+template <class Fun, class Float>
+Float RombergOne(
 	Fun           &F , 
-	const Scalar  &a , 
-	const Scalar  &b , 
+	const Float   &a , 
+	const Float   &b , 
 	size_t         n , 
 	size_t         p ,
-	Scalar        &e )
+	Float         &e )
 {
 	size_t i, k;
-	Scalar pow2, sum, x; 
+	Float pow2, sum, x; 
 
 	size_t ipow2 = 1;
-	Scalar zero  = Scalar(0);
-	Scalar two   = Scalar(2);
+	Float  zero  = Float(0);
+	Float  two   = Float(2);
 
 	CppADUsageError(
 		n >= 2,
-		"Romberg: n must be greater than or equal 2"
+		"RombergOne: n must be greater than or equal 2"
 	);
-	CppAD::vector<Scalar> r(n);
+	CppAD::vector<Float> r(n);
 
 	//  set r[i] = trapazoidal rule with 2^i intervals in [a, b]
 	r[0]  = ( F(a) + F(b) ) * (b - a) / two; 
 	for(i = 1; i < n; i++)
 	{	ipow2 *= 2;
-		pow2   = Scalar(ipow2);
+		pow2   = Float(ipow2);
 		sum    = zero;
 		for(k = 1; k < ipow2; k += 2)
 		{	// start = a + (b-a)/pow2, increment = 2*(b-a)/pow2
 			x    = ( (pow2 - k) * a + k * b ) / pow2;
-			sum += F(x);
+			sum  = sum + F(x);
 		}
 		// combine function evaluations in sum with those in T[i-1]
 		r[i] = r[i-1] / two + sum * (b - a) / pow2;
@@ -193,13 +210,13 @@ Scalar Romberg(
 
 	// now compute the higher order estimates
 	size_t ipow4    = 1;   // order of accuract for previous estimate
-	Scalar pow4, pow4minus;
+	Float pow4, pow4minus;
 	for(i = 0; i < p; i++)
 	{	// compute estimate accurate to O[ step^(2*(i+1)) ]
 		// put resutls in r[n-1], r[n-2], ... , r[n-i+1]
 		ipow4    *= 4;
-		pow4      = Scalar(ipow4);
-		pow4minus = Scalar(ipow4-1);
+		pow4      = Float(ipow4);
+		pow4minus = Float(ipow4-1);
 		for(k = n-1; k > i; k--)
 			r[k] = ( pow4 * r[k] - r[k-1] ) / pow4minus;
 	}
