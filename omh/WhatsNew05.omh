@@ -70,6 +70,11 @@ This section contains a list of the changes to CppAD during 2005
 The purpose of these sections is to
 assist you in learning about changes between various versions of CppAD.
 
+$head 08-24$$
+Changed $code Romberg$$ to $xref/RombergOne/$$ and added $xref/RombergMul/$$.
+In addition, added missing entries to $xref/ListAllExamples/$$
+and reorganized $xref/library/$$.
+
 $head 08-19$$
 Added a $code Romberg$$ integration routine for 
 where the argument types are template parameters
