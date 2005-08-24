@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /*
 $begin RombergOne$$
 $spell
+	bool
 	const
 	Cpp
 	RombergOne
@@ -57,9 +58,7 @@ The return value $italic r$$ has prototype
 $syntax%
 	%Float% %r%
 %$$ 
-It is an estimate of the integral 
-$latex \[
-\] $$
+It is the estimate computed by $code RombergOne$$ for the integral above.
 
 $head F$$
 The object $italic F$$ can be of any type, but it must support 

@@ -23,9 +23,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /*
 $begin RombergMul$$
 $spell
+	bool
 	const
 	Cpp
-	Romberg
+	RombergMulMul
 $$
 
 $section Multi-dimensional Romberg Integration$$
@@ -40,7 +41,8 @@ $bold Syntax$$
 $cnext $code # include <CppAD/RombergMul.h>$$ 
 $rnext $cnext
 $syntax%RombergMul<%Fun%, %SizeVector%, %FloatVector%, %m%> %R%$$
-$syntax%%r% = R(%F%, %a%, %b%, %n%, %p%, %e%)%$$
+$rnext $cnext
+$syntax%%r% = %R%(%F%, %a%, %b%, %n%, %p%, %e%)%$$
 $tend
 
 $fend 20$$
@@ -50,10 +52,10 @@ Returns the Romberg integration estimate
 $latex r$$ for the multi-dimensional integral
 $latex \[
 r = 
-\int_{a[0]}^{b[0] {\bf d} x_0
-\cdots
-\int_{a[m-1]}^{b[m-1] {\bf d} x_{m-1} F(x) 
-+ 
+\int_{a[0]}^{b[0]} \cdots \int_{a[m-1]}^{b[m-1]}
+\; F(x) \;
+{\bf d} x_0 \cdots {\bf d} x_{m-1} 
+\; + \; 
 \sum_{i=0}^{m-1} 
 O \left[ ( b[i] - a[i] ) / 2^{n[i]-1} \right]^{2(p[i]+1)}
 \] $$
@@ -63,12 +65,18 @@ The file $code CppAD/RombergMul.h$$ is included by $code CppAD/CppAD.h$$
 but it can also be included separately with out the rest of 
 the $code CppAD$$ routines.
 
+$head m$$
+The template parameter $italic m$$ must be convertible to a $code size_t$$ 
+object with a value that can be determined at compile time; for example
+$code 2$$.
+It determines the dimension of the domain space for the integration.
+
 $head r$$
 The return value $italic r$$ has prototype
 $syntax%
 	%Float% %r%
 %$$ 
-It is an estimate of the integral
+It is the estimate computed by $code RombergMul$$ for the integral above
 (see description of $xref/RombergMul/Float/Float/$$ below). 
 
 $head F$$
@@ -91,7 +99,8 @@ The argument $italic a$$ has prototype
 $syntax%
 	const %FloatVector% &%a%
 %$$ 
-It specifies the lower limit for the integration.
+It specifies the lower limit for the integration
+(see description of $xref/RombergMul/FloatVector/FloatVector/$$ below). 
 
 $head b$$
 The argument $italic b$$ has prototype
@@ -118,8 +127,8 @@ For $latex i = 0 , \ldots , m-1$$,
 $latex n[i]$$ determines the accuracy order in the 
 approximation for the integral 
 that is returned by $code RombergMul$$.
-The values in $italic p$$ are restriced by
-$latex p[i] \leq n[i]$$.
+The values in $italic p$$ must be less than or equal $italic n$$; i.e.,
+$syntax%%p%[%i%] <= %n%[%i%]%$$.
 
 $head e$$
 The argument $italic e$$ has prototype
@@ -164,7 +173,7 @@ if this is not the case.
 
 
 $children%
-	Example/Romberg.cpp
+	Example/RombergMul.cpp
 %$$
 $head Example$$
 $comment%
