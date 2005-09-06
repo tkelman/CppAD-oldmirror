@@ -974,9 +974,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\MulRomberg.cpp">
-			</File>
-			<File
 				RelativePath="MulTape.cpp">
 				<FileConfiguration
 					Name="Release|Win32">
@@ -1075,6 +1072,9 @@
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\OdeErrMaxabs.cpp">
 			</File>
 			<File
 				RelativePath="OdeTaylor.cpp">
