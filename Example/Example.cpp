@@ -90,6 +90,7 @@ extern bool MulTape(void);
 extern bool Near_Equal(void);
 extern bool OdeErrControl(void);
 extern bool OdeErrMaxabs(void);
+extern bool OdeStiff(void);
 extern bool OdeTaylor(void);
 extern bool Output(void);
 extern bool Poly(void);

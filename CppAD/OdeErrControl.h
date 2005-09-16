@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 $begin OdeErrControl$$
 
 $spell
+	nstep
 	maxabs
 	exp
 	scur
@@ -58,7 +59,7 @@ $bold Syntax$$
 $cnext $code # include <CppAD/OdeErrControl.h>$$
 $rnext $cnext
 $syntax%%xf% = OdeErrControl(%method%, %ti%, %tf%, %xi%, 
-	%smin%, %smax%, %scur%, %eabs%, %erel%, %ef% , %maxabs% )%$$
+	%smin%, %smax%, %scur%, %eabs%, %erel%, %ef% , %maxabs%, %nstep% )%$$
 $tend
 
 $fend 20$$
@@ -149,12 +150,12 @@ the object $italic method$$ must also support the following syntax
 $syntax%
 	%m% = %method%.order()
 %$$
-The return value $italic m$$ is the order of the ODE integration method;
+The return value $italic m$$ is the order of the error estimate;
 i.e., there is a constant K such that if $latex ti \leq ta \leq tb \leq tf$$,
 $latex \[
-	| X(tb) - xb | \leq K | tb - ta |^m
+	| eb(tb) | \leq K | tb - ta |^m
 \] $$
-where $italic ta$$, $italic tb$$, and $italic xb$$ are as in 
+where $italic ta$$, $italic tb$$, and $italic eb$$ are as in 
 $syntax%%method%.step(%ta%, %tb%, %xa%, %xb%, %eb%)%$$
 
 
@@ -252,10 +253,10 @@ $syntax%
 and size $italic n$$.
 The input value of its elements does not matter.
 On output, 
-it contains an estimate for the 
+it contains an estimated bound for the 
 absolute error in the approximation $italic xf$$; i.e.,
 $latex \[
-	ef_i \approx | X( tf )_i - xf_i |
+	ef_i > | X( tf )_i - xf_i |
 \] $$
 
 $head maxabs$$
@@ -274,6 +275,16 @@ $latex \[
 		| X( t )_i | \; : \;  t \in [ti, tf] 
 	\right\}
 \] $$
+
+$head nstep$$
+The argument $italic nstep$$ is optional in the call to $code OdeErrControl$$.
+If it is present, it has the prototype
+$syntax%
+	%size_t% &%nstep%
+%$$
+Its input value does not matter and its output value
+is the number of calls to $syntax%%method%.step%$$ 
+used by $code OdeErrControl$$.
 
 $head Error Criteria Discussion$$
 The relative error criteria $italic erel$$ and
@@ -387,7 +398,8 @@ Vector OdeErrControl(
 	const Vector    &eabs  , 
 	const Scalar    &erel  , 
 	Vector          &ef    ,
-	Vector          &maxabs) 
+	Vector          &maxabs,
+	size_t          &nstep ) 
 {
 	// check simple vector class specifications
 	CheckSimpleVector<Scalar, Vector>();
@@ -429,6 +441,7 @@ Vector OdeErrControl(
 		else	maxabs[i] = - xi[i];
 
 	}  
+	nstep = 0;
 
 	Scalar tb, step, lambda, axbi, a, r, root;
 	while( ! (ta == tf) )
@@ -449,6 +462,7 @@ Vector OdeErrControl(
 		else	tb = ta + step;
 
 		// try using this step size
+		nstep++;
 		method.step(ta, tb, xa, xb, eb);
 		step = tb - ta;
 
@@ -499,8 +513,28 @@ Vector OdeErrControl(
 	const Scalar    &erel  , 
 	Vector          &ef    ) 
 {	Vector maxabs(xi.size());
+	size_t nstep;
 	return OdeErrControl(
-		method, ti, tf, xi, smin, smax, scur, eabs, erel, ef, maxabs
+	method, ti, tf, xi, smin, smax, scur, eabs, erel, ef, maxabs, nstep
+	);
+}
+
+template <typename Scalar, typename Vector, typename Method>
+Vector OdeErrControl(
+	Method          &method, 
+	const Scalar    &ti    , 
+	const Scalar    &tf    , 
+	const Vector    &xi    , 
+	const Scalar    &smin  , 
+	const Scalar    &smax  , 
+	Scalar          &scur  ,
+	const Vector    &eabs  , 
+	const Scalar    &erel  , 
+	Vector          &ef    ,
+	Vector          &maxabs) 
+{	size_t nstep;
+	return OdeErrControl(
+	method, ti, tf, xi, smin, smax, scur, eabs, erel, ef, maxabs, nstep
 	);
 }
 
