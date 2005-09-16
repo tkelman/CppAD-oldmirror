@@ -38,6 +38,7 @@ nobase_include_HEADERS =  \
 	CppAD/Rosen34.h \
 	CppAD/Runge45.h \
 	CppAD/SpeedTest.h \
+	CppAD/CheckNumericType.h \
 	CppAD/CheckSimpleVector.h \
 	CppAD/local/AD.h \
 	CppAD/local/ADBoolFun.h \
@@ -94,7 +95,6 @@ nobase_include_HEADERS =  \
 	CppAD/local/Mul.h \
 	CppAD/local/MulEq.h \
 	CppAD/local/MulOp.h \
-	CppAD/local/Neg.h \
 	CppAD/local/Op.h \
 	CppAD/local/Operator.h \
 	CppAD/local/Ordered.h \
@@ -116,6 +116,8 @@ nobase_include_HEADERS =  \
 	CppAD/local/SubOp.h \
 	CppAD/local/TapeRec.h \
 	CppAD/local/UserAD.h \
+	CppAD/local/UnaryMinus.h \
+	CppAD/local/UnaryPlus.h \
 	CppAD/local/Value.h \
 	CppAD/local/Vec.h
 #

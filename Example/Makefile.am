@@ -46,6 +46,8 @@ Example_SOURCES   = \
 	Atan.cpp \
 	Atan2.cpp \
 	BoolFun.cpp \
+	CheckNumericType.cpp \
+	CheckSimpleVector.cpp \
 	Compare.cpp \
 	CompareChange.cpp \
 	ComplexPoly.cpp \
@@ -93,7 +95,6 @@ Example_SOURCES   = \
 	MulTape.cpp \
 	Near_Equal.cpp \
 	NearEqualExt.h \
-	Neg.cpp \
 	OdeErrControl.cpp \
 	OdeErrMaxabs.cpp \
 	OdeTaylor.cpp \
@@ -108,12 +109,13 @@ Example_SOURCES   = \
 	RombergOne.cpp \
 	Rosen34.cpp \
 	Runge45.cpp \
-	CheckSimpleVector.cpp \
 	SimpleVector.cpp \
 	Sin.cpp \
 	Sinh.cpp \
 	Sqrt.cpp \
 	Sub.cpp \
 	SubEq.cpp \
+	UnaryMinus.cpp \
+	UnaryPlus.cpp \
 	Value.cpp \
 	Vec.cpp 
