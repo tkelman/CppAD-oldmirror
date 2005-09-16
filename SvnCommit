@@ -5,11 +5,11 @@
 # CppAD/OdeErrControl.h:  ... and add optional nstep argument 
 # Example/OdeStiff.cpp    add (stand along for now) stiff integration test
 # Example/Example.cpp     modify so OneTest can run OdeStiff 
-sed -e "/^[^#]/d" < svn_commit > svn.log
+sed -e "/^[^#]/d" -e "s/^[#] *//" < SvnCommit > svn.log
 svn add Example/OdeStiff.cpp
 svn commit --file svn.log \
-	CppAD/Runge45.h \
-	CppAD/Rosen34.h \
-	CppAD/OdeErrControl.h \
-	Example/OdeStiff.cpp \
-	Example/Example.cpp
+ 	CppAD/Runge45.h \
+ 	CppAD/Rosen34.h \
+ 	CppAD/OdeErrControl.h \
+ 	Example/OdeStiff.cpp \
+ 	Example/Example.cpp
