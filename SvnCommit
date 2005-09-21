@@ -1,15 +1,23 @@
-# Improve Ode integrators
+# Merge changes from trunk into branches/Brad
 #  
-# CppAD/Runge45.h:        improve error bound doc 
-# CppAD/Rosen34.h:        ...
-# CppAD/OdeErrControl.h:  ... and add optional nstep argument 
-# Example/OdeStiff.cpp    add (stand along for now) stiff integration test
-# Example/Example.cpp     modify so OneTest can run OdeStiff 
 sed -e "/^[^#]/d" -e "s/^[#] *//" < SvnCommit > svn.log
-svn add Example/OdeStiff.cpp
 svn commit --file svn.log \
- 	CppAD/Runge45.h \
- 	CppAD/Rosen34.h \
- 	CppAD/OdeErrControl.h \
- 	Example/OdeStiff.cpp \
- 	Example/Example.cpp
+	SvnCommit \
+	SvnMerge \
+	CppAD/CheckNumericType.h \
+	CppAD/CppAD.h \
+	Build \
+	configure.ac \
+	SvnStatus \
+	omh/InstallUnix.omh \
+	omh/NumericType.omh \
+	omh/WhatsNew05.omh \
+	omh/SimpleVector.omh \
+	Example/CheckNumericType.cpp \
+	Example/NumericType.cpp \
+	Example/CheckSimpleVector.cpp \
+	Example/Example.vcproj \
+	Example/Example.cpp \
+	Example/Makefile.am \
+	TestMore/TestMore.vcproj \
+	Makefile.am
