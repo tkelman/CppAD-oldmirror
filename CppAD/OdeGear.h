@@ -45,7 +45,7 @@ $table
 $bold Syntax$$ 
 $cnext $code # include <CppAD/OdeGear.h>$$
 $rnext $cnext
-$syntax%OdeGear(%F%, %J%, %K%, %T%, %X%, %e%)%$$
+$syntax%OdeGear(%F%, %J%, %K%, %N%, %T%, %X%)%$$
 $tend
 
 $fend 25$$
@@ -54,8 +54,8 @@ $head Description$$
 This routine applies
 $xref/OdeGear/Gear's Method/Gear's Method/$$
 to solve an explicit set of ordinary differential equations.
-We use $latex n$$ for the size of the state space,
-and suppose $latex f : \R \times \R^n \rightarrow \R^n$$ be a smooth function.
+We are given 
+$latex f : \R \times \R^N \rightarrow \R^N$$ be a smooth function.
 This routine solves the following initial value problem
 $latex \[
 \begin{array}{rcl}
@@ -63,7 +63,7 @@ $latex \[
 	x \prime (t)  & = & f[t , x(t)] 
 \end{array}
 \] $$
-for the value of $latex x( t_{J-1} )$$.
+for the value of $latex x( t_K )$$.
 If your set of  ordinary differential equations are not stiff
 an explicit method may be better (perhaps $xref/Runge45/$$.)
 
@@ -81,24 +81,22 @@ $syntax%
 This must support the following set of calls
 $syntax%
 	%F%.Ode(%t%, %x%, %f%)
-	%F%.Ode_dep(%t%, %x%, %f_x%)
+	%F%.Ode(%t%, %x%, %f%, %f_x%)
 %$$
 
 $subhead t$$
-In both cases, 
-the argument $italic t$$ has prototype
+The argument $italic t$$ has prototype
 $syntax%
 	const %Scalar% &%t%
 %$$
 (see description of $xref/OdeGear/Scalar/Scalar/$$ below). 
 
 $subhead x$$
-In both cases,
-the argument $italic x$$ has prototype
+The argument $italic x$$ has prototype
 $syntax%
 	const %Vector% &%x%
 %$$
-and has size $italic n$$
+and has size $italic N$$
 (see description of $xref/OdeGear/Vector/Vector/$$ below). 
 
 $subhead f$$
@@ -106,18 +104,19 @@ The argument $italic f$$ to $syntax%%F%.Ode%$$ has prototype
 $syntax%
 	%Vector% &%f%
 %$$
-On input and output, $italic f$$ is a vector of size $italic n$$
+On input and output, $italic f$$ is a vector of size $italic N$$
 and the input values of the elements of $italic f$$ do not matter.
 On output,
 $italic f$$ is set equal to $latex f(t, x)$$
 (see $italic f(t, x)$$ in $xref/OdeGear/Description/Description/$$). 
 
 $subhead f_x$$
-The argument $italic f_x$$ to $syntax%%F%.Ode_dep%$$ has prototype
+If the argument $italic f_x$$ is present,
+it has prototype
 $syntax%
 	%Vector% &%f_x%
 %$$
-On input and output, $italic f_x$$ is a vector of size $latex n * n$$
+On input and output, $italic f_x$$ is a vector of size $latex N * N$$
 and the input values of the elements of $italic f_x$$ do not matter.
 On output, 
 $latex \[
@@ -141,9 +140,21 @@ backward difference method.
 This must be greater than or equal one.
 
 $head K$$
-The argument $italic K$$ specifies the index of the next time point in
+The argument $italic K$$ has prototype
+$syntax%
+	size_t %K%
+%$$
+It specifies the index of the next time point in
 $italic T$$ and $italic X$$. 
 It must be greater than or equal $italic J$$.
+
+$head N$$
+The argument $italic N$$ has prototype
+$syntax%
+	size_t %N%
+%$$
+It specifies the range space dimesion of the 
+vector valued function $latex x(t)$$.
 
 $head T$$
 The argument $italic T$$ has prototype
@@ -166,29 +177,14 @@ and the size of $italic X$$ is equal greater than or equal
 $latex (K+1) * n$$.
 On input to $code OdeGear$$,
 for $latex j = 1 , \ldots , K$$, and
-$latex i = 0 , \ldots , n-1$$ 
+$latex i = 0 , \ldots , N-1$$ 
 $latex \[
-	X[ (K-j) * n + i ] = x_i ( t_{k-j} )
+	X[ (K-j) * N + i ] = x_i ( t_{k-j} )
 \] $$
 Upon return from $code OdeGear$$,
-for $latex i = 0 , \ldots , n-1$$ 
+for $latex i = 0 , \ldots , N-1$$ 
 $latex \[
-	X[ K * n + i ] \approx x_i ( t_K ) 
-\] $$
-
-$head e$$
-The argument $italic e$$ is optional and has the prototype
-$syntax%
-	%Vector% &%e%
-%$$
-The size of $italic e$$ must be equal to $italic n$$.
-The input value of the elements of $italic e$$ does not matter.
-On output
-it contains an element by element
-estimated bound for the absolute value of the approximation for
-$italic x( t_K )$$; i.e.,
-$latex \[
-	e [ i ] \approx = | x_i ( t_K ) - X [ K * n + i ] |
+	X[ K * N + i ] \approx x_i ( t_K ) 
 \] $$
 
 $head Scalar$$
@@ -325,7 +321,7 @@ f( t_K , x_K^{k-1} ) + \partial_x f( t_K , x_K^{k-1} ) ( x_K^k - x_K^{k-1} )
 & = &
 \frac{1}{\alpha_0} \left[ 
 f( t_K , x_K^{k-1} ) - \partial_x f( t_K , x_K^{k-1} ) x_K^{k-1} 
-- \alpha_1 x_{J-1} - \cdots - \alpha_J x_{K-J}
+- \alpha_1 x_{K-1} - \cdots - \alpha_J x_{K-J}
 \right]
 \end{array}
 \] $$
@@ -351,31 +347,112 @@ $end
 
 namespace CppAD { // BEGIN CppAD namespace
 
-template <typename Scalar, typename Vector, typename Fun>
-Vector OdeGear(
-	Fun           &F , 
-	size_t         M , 
-	const Scalar &ti , 
-	const Scalar &tf , 
-	const Vector &xi )
-{	Vector e( xi.size() );
-	return OdeGear(F, M, ti, tf, xi, e);
-}
-
-template <typename Scalar, typename Vector, typename Fun>
-Vector OdeGear(
+template <typename Vector, typename Fun>
+void OdeGear(
 	Fun          &F  , 
 	size_t        J  , 
+	size_t        K  ,
+	size_t        N  ,
 	const Vector &T  , 
-	const Vector &X  , 
-	Vector       &e  )
+	Vector       &X  ) 
 {
+	typedef typename Vector::value_type Scalar;
+
 	// check numeric type specifications
 	CheckNumericType<Scalar>();
 
 	// check simple vector class specifications
 	CheckSimpleVector<Scalar, Vector>();
 
+	// check for other input errors
+	CppADUsageError(
+		J > 0,
+		"OdeGear: J is equal to zero"
+	);
+	CppADUsageError(
+		K >= J,
+		"OdeGear: K is less than J"
+	);
+	CppADUsageError(
+		N > 0,
+		"OdeGear: N is equal to zero"
+	);
+	CppADUsageError(
+		T.size() >= (K+1),
+		"OdeGear: size of T is too small"
+	);
+	CppADUsageError(
+		X.size() >= (K+1) * N,
+		"OdeGear: size of X is too small"
+	);
+
+	// some constants
+	Scalar zero(0);
+	Scalar one(1);
+
+	// temporary indices
+	size_t i, j, k;
+
+
+	// vectors required by method
+	Vector alpha(J + 1);
+	Vector f(N);
+	Vector f_x(N * N);
+	Vector x_K(N);
+	Vector b(N);
+	Vector A(N * N);
+
+	// compute alpha[0]
+	alpha[0] = zero;
+	for(k = 1; k <= J; k++)
+		alpha[0] += one / (T[K] - T[K-k]);
+
+	for(j = 1; j <= J; j++)
+	{	// compute alpha[j]
+		alpha[j] = one / (T[K-j] - T[K]);
+		for(k = 1; k <= J; k++)
+		{	if( k != j )
+			{	alpha[j] *= (T[K] - T[K-k]);
+				alpha[j] /= (T[K-j] - T[K-k]);
+			}
+		}
+	}
+
+	// initialize x( t_K ) = x( t_{K-1} )
+	for(i = 0; i < N; i++)
+		x_K[i] = X[ (K-1) * N + i ]; 
+
+
+	// Iterations of Newton's method
+	for(k = 0; k < 3; k++)
+	{	// evaluate f and f_x at ( T[K] , x_K )
+		F.Ode(T[K], x_K, f, f_x);
+
+		// A = ( I - f_x / alpha[0] )
+		// b = f - f_x x_K - alpha[1] x[K-1] - ... - alpha[J] x[K-J]
+		for(i = 0; i < N; i++)
+		{	b[i]         = f[i];
+			for(j = 0; j < N; j++)
+			{	A[i * N + j]  = - f_x[i * N + j];
+				b[i]         += f_x[i * N + j] * x_K[j];
+			}
+			A[i * N + i] += alpha[0];
+			for(j = 1; j <= J; j++)
+				b[i] -= alpha[j] * X[ j * N + i ];
+		}
+
+		Scalar logdet;
+		int    signdet;
+		signdet = LuSolve(N, 1, A, b, x_K, logdet);
+		CppADUsageError(
+			signdet != 0,
+			"OdeGear: step size is to large"
+		);
+	}
+
+	// return estimate for x( t[k] )
+	for(i = 0; i < N; i++)
+		X[K * N + i] = x_K[i];
 }
 
 } // End CppAD namespace 
