@@ -83,10 +83,9 @@ namespace {
 			}
 		}
 
-		void Ode(
+		void Ode_dep(
 			const double              &t, 
 			const CppADvector<double> &x, 
-			CppADvector<double>       &f,
 			CppADvector<double>       &f_x)
 		{	using namespace CppAD;
 
@@ -109,10 +108,6 @@ namespace {
 
 			// define AD function object
 			ADFun<double> Fun(X, F);
-
-			// return value of f
-			for(i = 0; i < N; i++)
-				f[i] = Value(F[i]);
 
 			// compute partial of f w.r.t x
 			CppADvector<double> dx(N);

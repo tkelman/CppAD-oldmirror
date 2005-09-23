@@ -81,7 +81,7 @@ $syntax%
 This must support the following set of calls
 $syntax%
 	%F%.Ode(%t%, %x%, %f%)
-	%F%.Ode(%t%, %x%, %f%, %f_x%)
+	%F%.Ode_dep(%t%, %x%, %f_x%)
 %$$
 
 $subhead t$$
@@ -111,8 +111,7 @@ $italic f$$ is set equal to $latex f(t, x)$$
 (see $italic f(t, x)$$ in $xref/OdeGear/Description/Description/$$). 
 
 $subhead f_x$$
-If the argument $italic f_x$$ is present,
-it has prototype
+The argument $italic f_x$$ has prototype
 $syntax%
 	%Vector% &%f_x%
 %$$
@@ -418,17 +417,19 @@ void OdeGear(
 		}
 	}
 
-	// initialize x( t_K ) = x( t_{K-1} )
+	// initialize x_k = x( t_{K-1} )
 	for(i = 0; i < N; i++)
 		x_K[i] = X[ (K-1) * N + i ]; 
 
+	// evaluate f( T[K] , x_K ) and it's partial w.r.t x
+	F.Ode_dep(T[K], x_K, f_x);
 
 	// Iterations of Newton's method
 	for(k = 0; k < 3; k++)
 	{	std::cout << "x_K = " << x_K << std::endl;
 
-		// evaluate f and f_x at ( T[K] , x_K )
-		F.Ode(T[K], x_K, f, f_x);
+		// only evaluate f( T[K] , x_K ) keep f_x during iteration
+		F.Ode(T[K], x_K, f);
 
 		// A = ( I - f_x / alpha[0] )
 		// b = f + f_x x_K - alpha[1] x[K-1] - ... - alpha[J] x[K-J]
