@@ -138,15 +138,18 @@ bool OdeGear(void)
 {	bool ok = true; // initial return value
 	size_t i, j;    // temporary indices
 
-	size_t  J = 2;  // number of previous steps in multi-step method
-	size_t  K = 2;  // index of next value in X
+	size_t  J = 3;  // number of previous steps in multi-step method
+	size_t  K = J;  // index of next value in X
 	size_t  N = J;  // number of components in x(t)
 
 	// vector of times
 	CppADvector<double> T(K+1); 
 	double step = .1;
-	for(j = 0; j <= K; j++)
-		T[j] = double(j) * step;
+	T[0]        = 0.;
+	for(j = 1; j <= K; j++)
+	{	T[j] = T[j-1] + step;
+		step = 2. * step;
+	}
 
 	// initial values for x( T[K-j] ) 
 	CppADvector<double> X((K+1) * N);
