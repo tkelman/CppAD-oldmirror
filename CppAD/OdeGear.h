@@ -317,9 +317,9 @@ f( t_K , x_K^{k-1} ) + \partial_x f( t_K , x_K^{k-1} ) ( x_K^k - x_K^{k-1} )
 & = &
 \alpha_0 x_K^k + \alpha_1 x_{K-1} + \cdots + \alpha_J x_{K-J}
 \\
-\left[ I - \frac{1}{\alpha_0} \partial_x f( t_K , x_K^{k-1} ) \right]  x_K
+\left[ \alpha_0 I - \partial_x f( t_K , x_K^{k-1} ) \right]  x_K
 & = &
-\frac{1}{\alpha_0} \left[ 
+\left[ 
 f( t_K , x_K^{k-1} ) - \partial_x f( t_K , x_K^{k-1} ) x_K^{k-1} 
 - \alpha_1 x_{K-1} - \cdots - \alpha_J x_{K-J}
 \right]
@@ -425,20 +425,22 @@ void OdeGear(
 
 	// Iterations of Newton's method
 	for(k = 0; k < 3; k++)
-	{	// evaluate f and f_x at ( T[K] , x_K )
+	{	std::cout << "x_K = " << x_K << std::endl;
+
+		// evaluate f and f_x at ( T[K] , x_K )
 		F.Ode(T[K], x_K, f, f_x);
 
 		// A = ( I - f_x / alpha[0] )
-		// b = f - f_x x_K - alpha[1] x[K-1] - ... - alpha[J] x[K-J]
+		// b = f + f_x x_K - alpha[1] x[K-1] - ... - alpha[J] x[K-J]
 		for(i = 0; i < N; i++)
 		{	b[i]         = f[i];
 			for(j = 0; j < N; j++)
 			{	A[i * N + j]  = - f_x[i * N + j];
-				b[i]         += f_x[i * N + j] * x_K[j];
+				b[i]         -= f_x[i * N + j] * x_K[j];
 			}
 			A[i * N + i] += alpha[0];
 			for(j = 1; j <= J; j++)
-				b[i] -= alpha[j] * X[ j * N + i ];
+				b[i] -= alpha[j] * X[ (K-j) * N + i ];
 		}
 
 		Scalar logdet;
@@ -449,6 +451,7 @@ void OdeGear(
 			"OdeGear: step size is to large"
 		);
 	}
+	std::cout << "x_K = " << x_K << std::endl;
 
 	// return estimate for x( t[k] )
 	for(i = 0; i < N; i++)
