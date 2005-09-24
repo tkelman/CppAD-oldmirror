@@ -409,9 +409,21 @@ void OdeGear(
 		}
 	}
 
-	// initialize x_m = x( t_{m-1} )
+	// define q(t) as polynomial of degree m-1 such that
+	// 	q( t_j ) = x( t_j ) for j = 0 , ... , m-1
+	// initialize x_m = q( t_m )
 	for(i = 0; i < n; i++)
-		x_m[i] = X[ (m-1) * n + i ]; 
+		x_m[i] = zero;
+	for(j = 0; j < m; j++)
+	{	// compute term in q( t_m ) that uses x( t_j )
+		Scalar factor = one;
+		for(k = 0; k < m; k++)
+		{	if( k != j )
+				factor *= ( T[m] - T[k] ) / ( T[j] - T[k] );
+		}
+		for(i = 0; i < n; i++)
+			x_m[i] += factor * X[ j * n + i ]; 
+	}
 
 	// evaluate f( T[m] , x_m ) and it's partial w.r.t x
 	F.Ode_dep(T[m], x_m, f_x);
