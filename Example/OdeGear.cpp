@@ -71,11 +71,11 @@ namespace {
 			const Scalar              &t, 
 			const CppADvector<Scalar> &x, 
 			CppADvector<Scalar>       &f)
-		{	size_t N  = x.size();	
+		{	size_t n  = x.size();	
 			Scalar ti(1);
 			f[0]   = Scalar(1);
 			size_t i;
-			for(i = 1; i < N; i++)
+			for(i = 1; i < n; i++)
 			{	ti *= t;
 				if( use_x )
 					f[i] = (i+1) * x[i-1];
@@ -89,15 +89,15 @@ namespace {
 			CppADvector<double>       &f_x)
 		{	using namespace CppAD;
 
-			size_t N  = x.size();	
+			size_t n  = x.size();	
 			CppADvector< AD<double> > T(1);
-			CppADvector< AD<double> > X(N);
-			CppADvector< AD<double> > F(N);
+			CppADvector< AD<double> > X(n);
+			CppADvector< AD<double> > F(n);
 
 			// set argument values
 			T[0] = t;
 			size_t i, j;
-			for(i = 0; i < N; i++)
+			for(i = 0; i < n; i++)
 				X[i] = x[i];
 
 			// declare independent variables
@@ -110,15 +110,15 @@ namespace {
 			ADFun<double> Fun(X, F);
 
 			// compute partial of f w.r.t x
-			CppADvector<double> dx(N);
-			CppADvector<double> df(N);
-			for(j = 0; j < N; j++)
+			CppADvector<double> dx(n);
+			CppADvector<double> df(n);
+			for(j = 0; j < n; j++)
 				dx[j] = 0.;
-			for(j = 0; j < N; j++)
+			for(j = 0; j < n; j++)
 			{	dx[j] = 1.;
 				df = Fun.Forward(1, dx);
-				for(i = 0; i < N; i++)
-					f_x [i * N + j] = df[i];
+				for(i = 0; i < n; i++)
+					f_x [i * n + j] = df[i];
 				dx[j] = 0.;
 			}
 		}
@@ -133,25 +133,24 @@ bool OdeGear(void)
 {	bool ok = true; // initial return value
 	size_t i, j;    // temporary indices
 
-	size_t  J = 3;  // number of previous steps in multi-step method
-	size_t  K = J;  // index of next value in X
-	size_t  N = J;  // number of components in x(t)
+	size_t  m = 4;    // index of next value in X
+	size_t  n = m-1;  // number of components in x(t)
 
 	// vector of times
-	CppADvector<double> T(K+1); 
+	CppADvector<double> T(m+1); 
 	double step = .1;
 	T[0]        = 0.;
-	for(j = 1; j <= K; j++)
+	for(j = 1; j <= m; j++)
 	{	T[j] = T[j-1] + step;
 		step = 2. * step;
 	}
 
-	// initial values for x( T[K-j] ) 
-	CppADvector<double> X((K+1) * N);
-	for(j = 0; j < K; j++)
+	// initial values for x( T[m-j] ) 
+	CppADvector<double> X((m+1) * n);
+	for(j = 0; j < m; j++)
 	{	double ti = T[j];
-		for(i = 0; i < N; i++)
-		{	X[ j * N + i ] = ti;
+		for(i = 0; i < n; i++)
+		{	X[ j * n + i ] = ti;
 			ti *= T[j];
 		}
 	}
@@ -161,17 +160,17 @@ bool OdeGear(void)
 	{	// function object depends on value of use_x
 		Fun F(use_x > 0); 
 
-		// compute OdeGear approximation for x( T[K] )
-		CppAD::OdeGear(F, J, K, N, T, X);
+		// compute OdeGear approximation for x( T[m] )
+		CppAD::OdeGear(F, m, n, T, X);
 
-		double check = T[K];
-		for(i = 0; i < N; i++)
-		{	// method is exact for orders <= J+1
+		double check = T[m];
+		for(i = 0; i < n; i++)
+		{	// method is exact up to order m and x[i] = t^{i+1}
 			ok &= CppAD::NearEqual(
-				X[K * N + i], check, 1e-10, 1e-10
+				X[m * n + i], check, 1e-10, 1e-10
 			);
 			// check value for next i
-			check *= T[K];
+			check *= T[m];
 		}
 	}
 	return ok;
