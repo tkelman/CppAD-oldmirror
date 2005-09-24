@@ -428,6 +428,22 @@ void OdeGear(
 	// evaluate f( T[m] , x_m ) and it's partial w.r.t x
 	F.Ode_dep(T[m], x_m, f_x);
 
+	// compute the matrix A = ( alpha[m] * I - f_x )
+	for(i = 0; i < n; i++)
+	{	for(j = 0; j < n; j++)
+			A[i * n + j]  = - f_x[i * n + j];
+		A[i * n + i] += alpha[m];
+	}
+
+	// LU factor (and overwrite) the matrix A
+	int sign;
+	CppAD::vector<size_t> ip(n) , jp(n);
+	sign = LuFactor(ip, jp, A);
+	CppADUsageError(
+		sign != 0,
+		"OdeGear: step size is to large"
+	);
+
 	// Iterations of Newton's method
 	for(k = 0; k < 3; k++)
 	{	std::cout << "x_m = " << x_m << std::endl;
@@ -435,26 +451,16 @@ void OdeGear(
 		// only evaluate f( T[m] , x_m ) keep f_x during iteration
 		F.Ode(T[m], x_m, f);
 
-		// A = ( alpha[m] * I - f_x )
 		// b = f + f_x x_m - alpha[0] x_0 - ... - alpha[m-1] x_{m-1}
 		for(i = 0; i < n; i++)
 		{	b[i]         = f[i];
 			for(j = 0; j < n; j++)
-			{	A[i * n + j]  = - f_x[i * n + j];
 				b[i]         -= f_x[i * n + j] * x_m[j];
-			}
-			A[i * n + i] += alpha[m];
 			for(k = 0; k < m; k++)
 				b[i] -= alpha[k] * X[ k * n + i ];
 		}
-
-		Scalar logdet;
-		int    signdet;
-		signdet = LuSolve(n, 1, A, b, x_m, logdet);
-		CppADUsageError(
-			signdet != 0,
-			"OdeGear: step size is to large"
-		);
+		LuInvert(ip, jp, A, b);
+		x_m = b;
 	}
 	std::cout << "x_m = " << x_m << std::endl;
 
