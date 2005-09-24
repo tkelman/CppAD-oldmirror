@@ -45,7 +45,7 @@ $table
 $bold Syntax$$ 
 $cnext $code # include <CppAD/OdeGear.h>$$
 $rnext $cnext
-$syntax%OdeGear(%F%, %m%, %n%, %T%, %X%)%$$
+$syntax%OdeGear(%F%, %m%, %n%, %T%, %X%, %e%)%$$
 $tend
 
 $fend 25$$
@@ -162,7 +162,10 @@ corresponding to time corresponding
 to a previous point in the multi-step method.
 The value $latex T[m]$$ is the time 
 of the next point in the multi-step method.
+The array $latex T$$ must be monotone increasing; i.e.,
+$latex T[j] < T[j+1]$$.
 Above and below we often use the shorthand $latex t_j$$ for $latex T[j]$$.
+
 
 $head X$$
 The argument $italic X$$ has the prototype
@@ -182,6 +185,18 @@ for $latex i = 0 , \ldots , n-1$$
 $latex \[
 	X[ m * n + i ] \approx x_i ( t_m ) 
 \] $$
+
+$head e$$
+The vector $italic e$$ is an approximate error bound for the result; i.e.,
+$latex \[
+	e[i] \geq | X[ m * n + i ] - x_i ( t_m ) |
+\] $$
+The order of this approximation is one less than the order of
+the solution; i.e., 
+$latex \[
+	e = O ( h^m )
+\] $$
+where $latex h$$ is the maximum of $latex t_{j+1} - t_j$$.
 
 $head Scalar$$
 The type $italic Scalar$$ must satisfy the conditions
@@ -349,8 +364,12 @@ void OdeGear(
 	size_t        m  ,
 	size_t        n  ,
 	const Vector &T  , 
-	Vector       &X  ) 
+	Vector       &X  ,
+	Vector       &e  ) 
 {
+	// temporary indices
+	size_t i, j, k;
+
 	typedef typename Vector::value_type Scalar;
 
 	// check numeric type specifications
@@ -375,19 +394,20 @@ void OdeGear(
 		X.size() == (m+1) * n,
 		"OdeGear: size of X is not equal to (m+1) * n"
 	);
+	for(j = 0; j < m; j++) CppADUsageError(
+		T[j] < T[j+1],
+		"OdeGear: the array T is not monotone increasing"
+	);
 
 	// some constants
 	Scalar zero(0);
 	Scalar one(1);
 
-	// temporary indices
-	size_t i, j, k;
-
-
 	// vectors required by method
 	Vector alpha(m + 1);
 	Vector f(n);
 	Vector f_x(n * n);
+	Vector x_m0(n);
 	Vector x_m(n);
 	Vector b(n);
 	Vector A(n * n);
@@ -424,6 +444,7 @@ void OdeGear(
 		for(i = 0; i < n; i++)
 			x_m[i] += factor * X[ j * n + i ]; 
 	}
+	x_m0 = x_m;
 
 	// evaluate f( T[m] , x_m ) and it's partial w.r.t x
 	F.Ode_dep(T[m], x_m, f_x);
@@ -464,9 +485,13 @@ void OdeGear(
 	}
 	std::cout << "x_m = " << x_m << std::endl;
 
-	// return estimate for x( t[k] )
+	// return estimate for x( t[k] ) and the estimated error bound
 	for(i = 0; i < n; i++)
-		X[m * n + i] = x_m[i];
+	{	X[m * n + i] = x_m[i];
+		e[i]         = x_m[i] - x_m0[i];
+		if( e[i] < zero )
+			e[i] = - e[i];
+	}
 }
 
 } // End CppAD namespace 

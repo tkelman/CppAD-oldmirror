@@ -133,8 +133,8 @@ bool OdeGear(void)
 {	bool ok = true; // initial return value
 	size_t i, j;    // temporary indices
 
-	size_t  m = 4;    // index of next value in X
-	size_t  n = m-1;  // number of components in x(t)
+	size_t  m = 4;  // index of next value in X
+	size_t  n = m;  // number of components in x(t)
 
 	// vector of times
 	CppADvector<double> T(m+1); 
@@ -155,19 +155,26 @@ bool OdeGear(void)
 		}
 	}
 
+	// error bound
+	CppADvector<double> e(n);
+
 	size_t use_x;
 	for( use_x = 0; use_x < 2; use_x++)
 	{	// function object depends on value of use_x
 		Fun F(use_x > 0); 
 
 		// compute OdeGear approximation for x( T[m] )
-		CppAD::OdeGear(F, m, n, T, X);
+		CppAD::OdeGear(F, m, n, T, X, e);
 
 		double check = T[m];
 		for(i = 0; i < n; i++)
 		{	// method is exact up to order m and x[i] = t^{i+1}
-			ok &= CppAD::NearEqual(
+			if( i + 1 <= m ) ok &= CppAD::NearEqual(
 				X[m * n + i], check, 1e-10, 1e-10
+			);
+			// error bound should be zero up to order m-1
+			if( i + 1 < m ) ok &= CppAD::NearEqual(
+				e[i], 0., 1e-10, 1e-10
 			);
 			// check value for next i
 			check *= T[m];
