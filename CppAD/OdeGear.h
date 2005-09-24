@@ -45,7 +45,7 @@ $table
 $bold Syntax$$ 
 $cnext $code # include <CppAD/OdeGear.h>$$
 $rnext $cnext
-$syntax%OdeGear(%F%, %K%, %n%, %T%, %X%)%$$
+$syntax%OdeGear(%F%, %m%, %n%, %T%, %X%)%$$
 $tend
 
 $fend 25$$
@@ -59,11 +59,11 @@ $latex f : \R \times \R^n \rightarrow \R^n$$ be a smooth function.
 This routine solves the following initial value problem
 $latex \[
 \begin{array}{rcl}
-	x( t_{K-1} )  & = & x^0    \\
+	x( t_{m-1} )  & = & x^0    \\
 	x \prime (t)  & = & f[t , x(t)] 
 \end{array}
 \] $$
-for the value of $latex x( t_K )$$.
+for the value of $latex x( t_m )$$.
 If your set of  ordinary differential equations are not stiff
 an explicit method may be better (perhaps $xref/Runge45/$$.)
 
@@ -138,10 +138,10 @@ and hence the order, in the multi-step
 backward difference method.
 This must be greater than or equal one.
 
-$head K$$
-The argument $italic K$$ has prototype
+$head m$$
+The argument $italic m$$ has prototype
 $syntax%
-	size_t %K%
+	size_t %m%
 %$$
 It specifies the index of the next time point in
 $italic T$$ and $italic X$$. 
@@ -160,11 +160,11 @@ The argument $italic T$$ has prototype
 $syntax%
 	const %Vector% &%T%
 %$$
-and length greater or equal $latex K+1$$.
-For $latex j = 0 , \ldots K$$, $latex T[j]$$ is the time 
+and length greater or equal $latex m+1$$.
+For $latex j = 0 , \ldots m$$, $latex T[j]$$ is the time 
 corresponding to time corresponding 
 to a previous point in the multi-step method.
-The value $latex T[K]$$ is the time 
+The value $latex T[m]$$ is the time 
 of the next point in the multi-step method.
 
 $head X$$
@@ -173,17 +173,17 @@ $syntax%
 	%Vector% &%X%
 %$$
 and the size of $italic X$$ is equal greater than or equal 
-$latex (K+1) * n$$.
+$latex (m+1) * n$$.
 On input to $code OdeGear$$,
-for $latex j = 1 , \ldots , K$$, and
+for $latex j = 1 , \ldots , m$$, and
 $latex i = 0 , \ldots , n-1$$ 
 $latex \[
-	X[ (K-j) * n + i ] = x_i ( t_{k-j} )
+	X[ (m-j) * n + i ] = x_i ( t_{k-j} )
 \] $$
 Upon return from $code OdeGear$$,
 for $latex i = 0 , \ldots , n-1$$ 
 $latex \[
-	X[ K * n + i ] \approx x_i ( t_K ) 
+	X[ m * n + i ] \approx x_i ( t_m ) 
 \] $$
 
 $head Scalar$$
@@ -227,100 +227,100 @@ We define the interpolating polynomial $latex p(t)$$ by
 $latex \[
 p(t) = 
 \sum_{j=0}^J 
-x_{K-j}
+x_{m-j}
 \frac{ 
-	\prod_{i \neq j} ( t - t_{K-i} )
+	\prod_{i \neq j} ( t - t_{m-i} )
 }{
-	\prod_{i \neq j} ( t_{K-j} - t_{K-i} ) 
+	\prod_{i \neq j} ( t_{m-j} - t_{m-i} ) 
 }
 \] $$
 The derivative $latex p \prime (t)$$ is given by
 $latex \[
 p \prime (t) = 
 \sum_{j=0}^J 
-x_{K-j}
+x_{m-j}
 \frac{ 
-	\sum_{i \neq j} \prod_{k \neq i,j} ( t - t_{K-k} )
+	\sum_{i \neq j} \prod_{k \neq i,j} ( t - t_{m-k} )
 }{ 
-	\prod_{i \neq j} ( t_{K-j} - t_{K-i} ) 
+	\prod_{i \neq j} ( t_{m-j} - t_{m-i} ) 
 }
 \] $$
-Evaluating the derivative at the point $latex t_K$$ we have
+Evaluating the derivative at the point $latex t_m$$ we have
 $latex \[
 \begin{array}{rcl}
-p \prime ( t_K ) & = & 
-x_K
+p \prime ( t_m ) & = & 
+x_m
 \frac{ 
-	\sum_{i \neq 0} \prod_{k \neq i,0} ( t_K - t_{K-k} )
+	\sum_{i \neq 0} \prod_{k \neq i,0} ( t_m - t_{m-k} )
 }{ 
-	\prod_{i \neq 0} ( t_K - t_{K-i} ) 
+	\prod_{i \neq 0} ( t_m - t_{m-i} ) 
 }
 +
 \sum_{j=1}^{J-1} 
-x_{K-j}
+x_{m-j}
 \frac{ 
-	\sum_{i \neq j} \prod_{k \neq i,j} ( t_K - t_{K-k} )
+	\sum_{i \neq j} \prod_{k \neq i,j} ( t_m - t_{m-k} )
 }{ 
-	\prod_{i \neq j} ( t_{K-j} - t_{K-i} ) 
+	\prod_{i \neq j} ( t_{m-j} - t_{m-i} ) 
 }
 \\
 & = &
-x_K
+x_m
 \sum_{i \neq 0} 
-\frac{ 1 }{ ( t_K - t_{K-i} ) }
+\frac{ 1 }{ ( t_m - t_{m-i} ) }
 +
 \sum_{j=1}^{J-1} 
-x_{K-j}
+x_{m-j}
 \frac{ 
-	\prod_{k \neq 0,j} ( t_K - t_{K-k} )
+	\prod_{k \neq 0,j} ( t_m - t_{m-k} )
 }{ 
-	\prod_{i \neq j} ( t_{K-j} - t_{K-i} ) 
+	\prod_{i \neq j} ( t_{m-j} - t_{m-i} ) 
 }
 \\
 & = &
-x_K
-\sum_{k \neq 0} ( t_K - t_{K-k} )^{-1}
+x_m
+\sum_{k \neq 0} ( t_m - t_{m-k} )^{-1}
 +
 \sum_{j=1}^{J-1} 
-x_{K-j}
-( t_{K-j} - t_K )^{-1}
-\prod_{k \neq 0,j} ( t_K - t_{K-k} ) / ( t_{K-j} - t_{K-k} )
+x_{m-j}
+( t_{m-j} - t_m )^{-1}
+\prod_{k \neq 0,j} ( t_m - t_{m-k} ) / ( t_{m-j} - t_{m-k} )
 \end{array}
 \] $$
 We define the vector $latex \alpha$$ by
 $latex \[
 \alpha_j = \left\{ \begin{array}{ll}
-\sum_{k \neq 0} ( t_K - t_{K-k} )^{-1}
+\sum_{k \neq 0} ( t_m - t_{m-k} )^{-1}
 	& {\rm if} \; j = 0
 \\
-( t_{K-j} - t_K )^{-1}
-\prod_{k \neq 0,j} ( t_K - t_{K-k} ) / ( t_{K-j} - t_{K-k} )
+( t_{m-j} - t_m )^{-1}
+\prod_{k \neq 0,j} ( t_m - t_{m-k} ) / ( t_{m-j} - t_{m-k} )
 	& {\rm otherwise}
 \end{array} \right.
 \] $$
 It follows that
 $latex \[
-	p \prime ( t_K ) = \alpha_0 x_K + \cdots + \alpha_J x_{K-J}
+	p \prime ( t_m ) = \alpha_0 x_m + \cdots + \alpha_J x_{m-J}
 \] $$
-Gear's method determines $latex x_K$$ by solving the following 
+Gear's method determines $latex x_m$$ by solving the following 
 nonlinear equation
 $latex \[
-	f( t_K , x_K ) = \alpha_0 x_K + \cdots + \alpha_J x_{K-J}
+	f( t_m , x_m ) = \alpha_0 x_m + \cdots + \alpha_J x_{m-J}
 \] $$
 Newton's method determine iterates, 
-which we denote by $latex x_K^k$$, by solving the following affine 
+which we denote by $latex x_m^k$$, by solving the following affine 
 approximation of the equation above
 $latex \[
 \begin{array}{rcl}
-f( t_K , x_K^{k-1} ) + \partial_x f( t_K , x_K^{k-1} ) ( x_K^k - x_K^{k-1} )
+f( t_m , x_m^{k-1} ) + \partial_x f( t_m , x_m^{k-1} ) ( x_m^k - x_m^{k-1} )
 & = &
-\alpha_0 x_K^k + \alpha_1 x_{K-1} + \cdots + \alpha_J x_{K-J}
+\alpha_0 x_m^k + \alpha_1 x_{m-1} + \cdots + \alpha_J x_{m-J}
 \\
-\left[ \alpha_0 I - \partial_x f( t_K , x_K^{k-1} ) \right]  x_K
+\left[ \alpha_0 I - \partial_x f( t_m , x_m^{k-1} ) \right]  x_m
 & = &
 \left[ 
-f( t_K , x_K^{k-1} ) - \partial_x f( t_K , x_K^{k-1} ) x_K^{k-1} 
-- \alpha_1 x_{K-1} - \cdots - \alpha_J x_{K-J}
+f( t_m , x_m^{k-1} ) - \partial_x f( t_m , x_m^{k-1} ) x_m^{k-1} 
+- \alpha_1 x_{m-1} - \cdots - \alpha_J x_{m-J}
 \right]
 \end{array}
 \] $$
@@ -350,7 +350,7 @@ template <typename Vector, typename Fun>
 void OdeGear(
 	Fun          &F  , 
 	size_t        J  , 
-	size_t        K  ,
+	size_t        m  ,
 	size_t        n  ,
 	const Vector &T  , 
 	Vector       &X  ) 
@@ -369,19 +369,19 @@ void OdeGear(
 		"OdeGear: J is equal to zero"
 	);
 	CppADUsageError(
-		K >= J,
-		"OdeGear: K is less than J"
+		m >= J,
+		"OdeGear: m is less than J"
 	);
 	CppADUsageError(
 		n > 0,
 		"OdeGear: n is equal to zero"
 	);
 	CppADUsageError(
-		T.size() >= (K+1),
+		T.size() >= (m+1),
 		"OdeGear: size of T is too small"
 	);
 	CppADUsageError(
-		X.size() >= (K+1) * n,
+		X.size() >= (m+1) * n,
 		"OdeGear: size of X is too small"
 	);
 
@@ -397,66 +397,66 @@ void OdeGear(
 	Vector alpha(J + 1);
 	Vector f(n);
 	Vector f_x(n * n);
-	Vector x_K(n);
+	Vector x_m(n);
 	Vector b(n);
 	Vector A(n * n);
 
 	// compute alpha[0]
 	alpha[0] = zero;
 	for(k = 1; k <= J; k++)
-		alpha[0] += one / (T[K] - T[K-k]);
+		alpha[0] += one / (T[m] - T[m-k]);
 
 	for(j = 1; j <= J; j++)
 	{	// compute alpha[j]
-		alpha[j] = one / (T[K-j] - T[K]);
+		alpha[j] = one / (T[m-j] - T[m]);
 		for(k = 1; k <= J; k++)
 		{	if( k != j )
-			{	alpha[j] *= (T[K] - T[K-k]);
-				alpha[j] /= (T[K-j] - T[K-k]);
+			{	alpha[j] *= (T[m] - T[m-k]);
+				alpha[j] /= (T[m-j] - T[m-k]);
 			}
 		}
 	}
 
-	// initialize x_k = x( t_{K-1} )
+	// initialize x_m = x( t_{m-1} )
 	for(i = 0; i < n; i++)
-		x_K[i] = X[ (K-1) * n + i ]; 
+		x_m[i] = X[ (m-1) * n + i ]; 
 
-	// evaluate f( T[K] , x_K ) and it's partial w.r.t x
-	F.Ode_dep(T[K], x_K, f_x);
+	// evaluate f( T[m] , x_m ) and it's partial w.r.t x
+	F.Ode_dep(T[m], x_m, f_x);
 
 	// Iterations of Newton's method
 	for(k = 0; k < 3; k++)
-	{	std::cout << "x_K = " << x_K << std::endl;
+	{	std::cout << "x_m = " << x_m << std::endl;
 
-		// only evaluate f( T[K] , x_K ) keep f_x during iteration
-		F.Ode(T[K], x_K, f);
+		// only evaluate f( T[m] , x_m ) keep f_x during iteration
+		F.Ode(T[m], x_m, f);
 
 		// A = ( I - f_x / alpha[0] )
-		// b = f + f_x x_K - alpha[1] x[K-1] - ... - alpha[J] x[K-J]
+		// b = f + f_x x_m - alpha[1] x[m-1] - ... - alpha[J] x[m-J]
 		for(i = 0; i < n; i++)
 		{	b[i]         = f[i];
 			for(j = 0; j < n; j++)
 			{	A[i * n + j]  = - f_x[i * n + j];
-				b[i]         -= f_x[i * n + j] * x_K[j];
+				b[i]         -= f_x[i * n + j] * x_m[j];
 			}
 			A[i * n + i] += alpha[0];
 			for(j = 1; j <= J; j++)
-				b[i] -= alpha[j] * X[ (K-j) * n + i ];
+				b[i] -= alpha[j] * X[ (m-j) * n + i ];
 		}
 
 		Scalar logdet;
 		int    signdet;
-		signdet = LuSolve(n, 1, A, b, x_K, logdet);
+		signdet = LuSolve(n, 1, A, b, x_m, logdet);
 		CppADUsageError(
 			signdet != 0,
 			"OdeGear: step size is to large"
 		);
 	}
-	std::cout << "x_K = " << x_K << std::endl;
+	std::cout << "x_m = " << x_m << std::endl;
 
 	// return estimate for x( t[k] )
 	for(i = 0; i < n; i++)
-		X[K * n + i] = x_K[i];
+		X[m * n + i] = x_m[i];
 }
 
 } // End CppAD namespace 
