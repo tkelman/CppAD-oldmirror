@@ -120,18 +120,25 @@ bool OdeErrControl(void)
 	eabs[0] = 1e-4;
 	eabs[1] = 1e-4;
 
-	CppAD::vector<double> ef(2);
-	CppAD::vector<double> xf(2);
-
+	// inputs
 	double ti   = 0.;
 	double tf   = 1.;
 	double smin = 1e-4;
 	double smax = 1.;
 	double scur = .5;
 	double erel = 0.;
+
+	// outputs
+	CppAD::vector<double> ef(2);
+	CppAD::vector<double> xf(2);
+	CppAD::vector<double> maxabs(2);
+	size_t nstep;
+
 	
 	xf = OdeErrControl(method,
-		ti, tf, xi, smin, smax, scur, eabs, erel, ef);
+		ti, tf, xi, smin, smax, scur, eabs, erel, ef, maxabs, nstep);
+
+	std::cout << "nstep = " << nstep << std::endl;
 
 	double x0 = exp(-w[0]*tf);
 	ok &= CppAD::NearEqual(x0, xf[0], 1e-4, 1e-4);

@@ -59,7 +59,10 @@ $end
 */
 // BEGIN PROGRAM
 
-# include <CppAD/CppAD.h>        // For automatic differentiation
+# include <CppAD/CppAD.h> 
+
+// To print the comparision, change the 0 to 1 on the next line.
+# define CppADOdeStiffPrint 0
 
 namespace {
 	// --------------------------------------------------------------
@@ -70,7 +73,6 @@ namespace {
 		// constructor
 		Fun(const CppADvector<double>& a_) : a(a_)
 		{ }
-
 		// compute f(t, x) 
 		void Ode(
 			const double              &t, 
@@ -79,7 +81,6 @@ namespace {
 		{	f[0]  = - a[0] * x[0];
 			f[1]  = + a[0] * x[0] - a[1] * x[1]; 
 		}
-
 		// compute partial of f(t, x) w.r.t. t 
 		void Ode_ind(
 			const double              &t, 
@@ -88,7 +89,6 @@ namespace {
 		{	f_t[0] = 0.;
 			f_t[1] = 0.;
 		}
-
 		// compute partial of f(t, x) w.r.t. x 
 		void Ode_dep(
 			const double              &t, 
@@ -100,14 +100,13 @@ namespace {
 			f_x[3] = -a[1];
 		}
 	};
-
 	// --------------------------------------------------------------
-	class Method {
+	class RungeMethod {
 	private:
 		Fun F;
 	public:
 		// constructor
-		Method(const CppAD::vector<double> &a_) : F(a_)
+		RungeMethod(const CppAD::vector<double> &a_) : F(a_)
 		{ }
 		void step(
 			double                 ta , 
@@ -120,6 +119,24 @@ namespace {
 		size_t order(void)
 		{	return 5; }
 	};
+	class RosenMethod {
+	private:
+		Fun F;
+	public:
+		// constructor
+		RosenMethod(const CppAD::vector<double> &a_) : F(a_)
+		{ }
+		void step(
+			double                 ta , 
+			double                 tb , 
+			CppAD::vector<double> &xa ,
+			CppAD::vector<double> &xb ,
+			CppAD::vector<double> &eb )
+		{	xb = CppAD::Rosen34(F, 1, ta, tb, xa, eb);
+		}
+		size_t order(void)
+		{	return 4; }
+	};
 }
 
 bool OdeStiff(void)
@@ -128,7 +145,9 @@ bool OdeStiff(void)
 	CppAD::vector<double> a(2);
 	a[0] = 1e3;
 	a[1] = 1.;
-	Method method(a);
+	RosenMethod rosen(a);
+	RungeMethod runge(a);
+	Fun          gear(a);
 
 	CppAD::vector<double> xi(2);
 	xi[0] = 1.;
@@ -143,32 +162,55 @@ bool OdeStiff(void)
 	CppAD::vector<double> maxabs(2);
 	size_t                nstep;
 
-	double ti   = 0.;
-	double tf   = 1.;
-	double smin = 1e-10;
-	double smax = 1.;
-	double scur = .5;
-	double erel = 0.;
-	
-	xf = OdeErrControl(method,
-	ti, tf, xi, smin, smax, scur, eabs, erel, ef, maxabs, nstep);
-	std::cout << "nstep = " << nstep << std::endl;
+	size_t k;
+	for(k = 0; k < 3; k++)
+	{	
+		size_t M    = 5;
+		double ti   = 0.;
+		double tf   = 1.;
+		double smin = 1e-7;
+		double sini = 1e-7;
+		double smax = 1.;
+		double scur = .5;
+		double erel = 0.;
 
-	double x0 = exp(-a[0]*tf);
-	std::cout << "x0         = " << x0 << std::endl;
-	std::cout << "xf[0]      = " << xf[0] << std::endl;
-	std::cout << "x0 - xf[0] = " << x0 - xf[0] << std::endl;
-	std::cout << "ef[0]      = " << ef[0] << std::endl;
-	ok &= CppAD::NearEqual(x0, xf[0], 0., eabs[0]);
-	ok &= CppAD::NearEqual(0., ef[0], 0., eabs[0]);
+		const char *method;
+		if( k == 0 )
+		{	method = "Rosen34";
+			xf = OdeErrControl(rosen, ti, tf, 
+			xi, smin, smax, scur, eabs, erel, ef, maxabs, nstep);
+		}
+		else if( k == 1 )
+		{	method = "Runge45";
+			xf = OdeErrControl(runge, ti, tf, 
+			xi, smin, smax, scur, eabs, erel, ef, maxabs, nstep);
+		}
+		else if( k == 2 )
+		{	method = "Gear5";
+			xf = OdeGearControl(gear, M, ti, tf,
+			xi, smin, smax, sini, eabs, erel, ef, maxabs, nstep);
+		}
+		double x0 = exp(-a[0]*tf);
+		ok &= CppAD::NearEqual(x0, xf[0], 0., eabs[0]);
+		ok &= CppAD::NearEqual(0., ef[0], 0., eabs[0]);
 
-	double x1 = a[0] * (exp(-a[1]*tf) - exp(-a[0]*tf))/(a[0] - a[1]);
-	std::cout << "x1         = " << x1 << std::endl;
-	std::cout << "xf[1]      = " << xf[1] << std::endl;
-	std::cout << "x1 - xf[1] = " << x1 - xf[1] << std::endl;
-	std::cout << "ef[1]      = " << ef[1] << std::endl;
-	ok &= CppAD::NearEqual(x1, xf[1], 0., eabs[1]);
-	ok &= CppAD::NearEqual(0., ef[1], 0., eabs[0]);
+		double x1 = a[0] * 
+			(exp(-a[1]*tf) - exp(-a[0]*tf))/(a[0] - a[1]);
+		ok &= CppAD::NearEqual(x1, xf[1], 0., eabs[1]);
+		ok &= CppAD::NearEqual(0., ef[1], 0., eabs[0]);
+# if CppADOdeStiffPrint
+		std::cout << "method     = " << method << std::endl;
+		std::cout << "nstep      = " << nstep  << std::endl;
+		std::cout << "x0         = " << x0 << std::endl;
+		std::cout << "xf[0]      = " << xf[0] << std::endl;
+		std::cout << "x0 - xf[0] = " << x0 - xf[0] << std::endl;
+		std::cout << "ef[0]      = " << ef[0] << std::endl;
+		std::cout << "x1         = " << x1 << std::endl;
+		std::cout << "xf[1]      = " << xf[1] << std::endl;
+		std::cout << "x1 - xf[1] = " << x1 - xf[1] << std::endl;
+		std::cout << "ef[1]      = " << ef[1] << std::endl;
+# endif
+	}
 
 	return ok;
 }

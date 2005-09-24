@@ -472,8 +472,6 @@ Vector OdeErrControl(
 		{	if( zero <= xb[i] )
 				axbi = xb[i];
 			else	axbi = - xb[i];
-			if( axbi > maxabs[i] )
-				maxabs[i] = axbi;
 			a    = eabs[i] + erel * axbi;
 			if( ! (eb[i] == zero) )
 			{	r = ( a / eb[i] ) * step / (tf - ti);
@@ -489,6 +487,11 @@ Vector OdeErrControl(
 			for(i = 0; i < n; i++)
 			{	xa[i] = xb[i];
 				ef[i] = ef[i] + eb[i];
+				if( zero <= xb[i] )
+					axbi = xb[i];
+				else	axbi = - xb[i];
+				if( axbi > maxabs[i] )
+					maxabs[i] = axbi;
 			}
 		}
 

@@ -21,7 +21,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /*
 $begin OdeGearControl$$
-$latex \newcommand{\R}{{\bf R}}$$
 $spell
 	CppAD
 	xf
@@ -33,7 +32,7 @@ $spell
 	maxabs
 	nstep
 	tf
-	scur
+	sini
 	erel
 	dep
 	const
@@ -146,10 +145,10 @@ The argument $italic M$$ has prototype
 $syntax%
 	size_t %M%
 %$$
-It specifies the order of the multiple step method; i.e.,
+It specifies the order of the multi-step method; i.e.,
 the order of the approximating polynomial
 (after the initialization process).
-The argument $italic M$$ must ge greater than or equal one.
+The argument $italic M$$ must greater than or equal one.
 
 $head ti$$
 The argument $italic ti$$ has prototype
@@ -200,7 +199,7 @@ $syntax%
 	%Scalar% &%sini%
 %$$
 The value of $italic sini$$ is the minimum 
-step size to use during initialization of the multistep method; i.e.,
+step size to use during initialization of the multi-step method; i.e.,
 for calls to $code OdeGear$$ where $latex m < M$$.
 The value of $italic sini$$ must be less than or equal $italic smax$$.
 
@@ -330,7 +329,7 @@ The routine $xref/CheckSimpleVector/$$ will generate an error message
 if this is not the case.
 
 $head Example$$
-$comment%
+$children%
 	Example/OdeGearControl.cpp
 %$$
 The file

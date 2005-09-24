@@ -44,7 +44,9 @@ $children%
 	CppAD/RombergMul.h%
 	CppAD/Runge45.h%
 	CppAD/Rosen34.h%
-	CppAD/OdeErrControl.h
+	CppAD/OdeErrControl.h%
+	CppAD/OdeGear.h%
+	CppAD/OdeGearControl.h
 %$$
 
 $head C++ Concepts$$

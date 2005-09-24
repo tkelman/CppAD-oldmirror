@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /*
 $begin OdeGear$$
-$latex \newcommand{\R}{{\bf R}}$$
 $spell
 	Jan
 	bool
@@ -148,7 +147,7 @@ The argument $italic n$$ has prototype
 $syntax%
 	size_t %n%
 %$$
-It specifies the range space dimesion of the 
+It specifies the range space dimension of the 
 vector valued function $latex x(t)$$.
 
 $head T$$
@@ -156,7 +155,7 @@ The argument $italic T$$ has prototype
 $syntax%
 	const %Vector% &%T%
 %$$
-and size equal to $latex m+1$$.
+and size greater than or equal to $latex m+1$$.
 For $latex j = 0 , \ldots m$$, $latex T[j]$$ is the time 
 corresponding to time corresponding 
 to a previous point in the multi-step method.
@@ -172,8 +171,7 @@ The argument $italic X$$ has the prototype
 $syntax%
 	%Vector% &%X%
 %$$
-and the size of $italic X$$ is equal to
-$latex (m+1) * n$$.
+and size greater than or equal to $latex (m+1) * n$$.
 On input to $code OdeGear$$,
 for $latex j = 0 , \ldots , m-1$$, and
 $latex i = 0 , \ldots , n-1$$ 
@@ -219,7 +217,7 @@ The routine $xref/CheckSimpleVector/$$ will generate an error message
 if this is not the case.
 
 $head Example$$
-$comment%
+$children%
 	Example/OdeGear.cpp
 %$$
 The file
@@ -257,46 +255,46 @@ x_j
 	\prod_{k \neq j} ( t_j - t_k ) 
 }
 \] $$
-Evaluating the derivative at the point $latex t_m$$ we have
+Evaluating the derivative at the point $latex t_\ell$$ we have
 $latex \[
 \begin{array}{rcl}
-p \prime ( t_m ) & = & 
-x_m
+p \prime ( t_\ell ) & = & 
+x_\ell
 \frac{ 
-	\sum_{i \neq m} \prod_{k \neq i,m} ( t_m - t_k )
+	\sum_{i \neq \ell} \prod_{k \neq i,\ell} ( t_\ell - t_k )
 }{ 
-	\prod_{k \neq m} ( t_m - t_k ) 
+	\prod_{k \neq \ell} ( t_\ell - t_k ) 
 }
 +
-\sum_{j=0}^{m-1} 
+\sum_{j \neq \ell}
 x_j
 \frac{ 
-	\sum_{i \neq j} \prod_{k \neq i,j} ( t_m - t_k )
-}{ 
-	\prod_{k \neq j} ( t_j - t_k ) 
-}
-\\
-& = &
-x_m
-\sum_{i \neq m} 
-\frac{ 1 }{ t_m - t_i }
-+
-\sum_{j=0}^{m-1} 
-x_j
-\frac{ 
-	\prod_{k \neq m,j} ( t_m - t_k )
+	\sum_{i \neq j} \prod_{k \neq i,j} ( t_\ell - t_k )
 }{ 
 	\prod_{k \neq j} ( t_j - t_k ) 
 }
 \\
 & = &
-x_m
-\sum_{k \neq m} ( t_m - t_k )^{-1}
+x_\ell
+\sum_{i \neq \ell} 
+\frac{ 1 }{ t_\ell - t_i }
 +
-\sum_{j=0}^{m-1} 
+\sum_{j \neq \ell}
 x_j
-( t_j - t_m )^{-1}
-\prod_{k \neq m,j} ( t_m - t_k ) / ( t_j - t_k )
+\frac{ 
+	\prod_{k \neq \ell,j} ( t_\ell - t_k )
+}{ 
+	\prod_{k \neq j} ( t_j - t_k ) 
+}
+\\
+& = &
+x_\ell
+\sum_{k \neq \ell} ( t_\ell - t_k )^{-1}
++
+\sum_{j \neq \ell}
+x_j
+( t_j - t_\ell )^{-1}
+\prod_{k \neq \ell ,j} ( t_\ell - t_k ) / ( t_j - t_k )
 \end{array}
 \] $$
 We define the vector $latex \alpha \in \R^{m+1}$$ by
@@ -336,6 +334,29 @@ f( t_m , x_m^{k-1} ) - \partial_x f( t_m , x_m^{k-1} ) x_m^{k-1}
 \right]
 \end{array}
 \] $$
+In order to initialize Newton's method; i.e. choose $latex x_m^0$$
+we define the vector $latex \beta \in \R^{m+1}$$ by
+$latex \[
+\beta_j = \left\{ \begin{array}{ll}
+\sum_{k \neq m-1} ( t_{m-1} - t_k )^{-1}
+	& {\rm if} \; j = m-1
+\\
+( t_j - t_{m-1} )^{-1}
+\prod_{k \neq m-1,j} ( t_{m-1} - t_k ) / ( t_j - t_k )
+	& {\rm otherwise}
+\end{array} \right.
+\] $$
+It follows that
+$latex \[
+	p \prime ( t_{m-1} ) = \beta_0 x_0 + \cdots + \beta_m x_m
+\] $$
+We solve the following approximation of the equation above to determine
+$latex x_m^0$$:
+$latex \[
+	f( t_{m-1} , x_{m-1} ) = 
+	\beta_0 x_0 + \cdots + \beta_{m-1} x_{m-1} + \beta_m x_m^0
+\] $$
+
 
 $head Gear's Method$$
 C. W. Gear, 
@@ -387,12 +408,12 @@ void OdeGear(
 		"OdeGear: n is equal to zero"
 	);
 	CppADUsageError(
-		T.size() == (m+1),
-		"OdeGear: size of T is not equal to (m+1)"
+		T.size() >= (m+1),
+		"OdeGear: size of T is not greater than or equal (m+1)"
 	);
 	CppADUsageError(
-		X.size() == (m+1) * n,
-		"OdeGear: size of X is not equal to (m+1) * n"
+		X.size() >= (m+1) * n,
+		"OdeGear: size of X is not greater than or equal (m+1) * n"
 	);
 	for(j = 0; j < m; j++) CppADUsageError(
 		T[j] < T[j+1],
@@ -405,6 +426,7 @@ void OdeGear(
 
 	// vectors required by method
 	Vector alpha(m + 1);
+	Vector beta(m + 1);
 	Vector f(n);
 	Vector f_x(n * n);
 	Vector x_m0(n);
@@ -412,12 +434,18 @@ void OdeGear(
 	Vector b(n);
 	Vector A(n * n);
 
-	// compute alpha[m]
+	// compute alpha[m] 
 	alpha[m] = zero;
 	for(k = 0; k < m; k++)
 		alpha[m] += one / (T[m] - T[k]);
 
-	// compute other components of alpha
+	// compute beta[m-1]
+	beta[m-1] = one / (T[m-1] - T[m]);
+	for(k = 0; k < m-1; k++)
+		beta[m-1] += one / (T[m-1] - T[k]);
+
+
+	// compute other components of alpha 
 	for(j = 0; j < m; j++)
 	{	// compute alpha[j]
 		alpha[j] = one / (T[j] - T[m]);
@@ -429,24 +457,35 @@ void OdeGear(
 		}
 	}
 
-	// define q(t) as polynomial of degree m-1 such that
-	// 	q( t_j ) = x( t_j ) for j = 0 , ... , m-1
-	// initialize x_m = q( t_m )
-	for(i = 0; i < n; i++)
-		x_m[i] = zero;
-	for(j = 0; j < m; j++)
-	{	// compute term in q( t_m ) that uses x( t_j )
-		Scalar factor = one;
-		for(k = 0; k < m; k++)
-		{	if( k != j )
-				factor *= ( T[m] - T[k] ) / ( T[j] - T[k] );
+	// compute other components of beta 
+	for(j = 0; j <= m; j++)
+	{	if( j != m-1 )
+		{	// compute beta[j]
+			beta[j] = one / (T[j] - T[m-1]);
+			for(k = 0; k <= m; k++)
+			{	if( k != j && k != m-1 )
+				{	beta[j] *= (T[m-1] - T[k]);
+					beta[j] /= (T[j] - T[k]);
+				}
+			}
 		}
-		for(i = 0; i < n; i++)
-			x_m[i] += factor * X[ j * n + i ]; 
+	}
+
+	// evaluate f(T[m-1], x_{m-1} )
+	for(i = 0; i < n; i++)
+		x_m[i] = X[(m-1) * n + i];
+	F.Ode(T[m-1], x_m, f);
+
+	// solve for x_m^0
+	for(i = 0; i < n; i++)
+	{	x_m[i] =  f[i];
+		for(j = 0; j < m; j++)
+			x_m[i] -= beta[j] * X[j * n + i];
+		x_m[i] /= beta[m];
 	}
 	x_m0 = x_m;
 
-	// evaluate f( T[m] , x_m ) and it's partial w.r.t x
+	// evaluate partial w.r.t x of f(T[m], x_m^0)
 	F.Ode_dep(T[m], x_m, f_x);
 
 	// compute the matrix A = ( alpha[m] * I - f_x )
@@ -467,8 +506,7 @@ void OdeGear(
 
 	// Iterations of Newton's method
 	for(k = 0; k < 3; k++)
-	{	std::cout << "x_m = " << x_m << std::endl;
-
+	{
 		// only evaluate f( T[m] , x_m ) keep f_x during iteration
 		F.Ode(T[m], x_m, f);
 
@@ -477,13 +515,12 @@ void OdeGear(
 		{	b[i]         = f[i];
 			for(j = 0; j < n; j++)
 				b[i]         -= f_x[i * n + j] * x_m[j];
-			for(k = 0; k < m; k++)
-				b[i] -= alpha[k] * X[ k * n + i ];
+			for(j = 0; j < m; j++)
+				b[i] -= alpha[j] * X[ j * n + i ];
 		}
 		LuInvert(ip, jp, A, b);
 		x_m = b;
 	}
-	std::cout << "x_m = " << x_m << std::endl;
 
 	// return estimate for x( t[k] ) and the estimated error bound
 	for(i = 0; i < n; i++)

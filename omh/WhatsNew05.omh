@@ -77,6 +77,13 @@ This section contains a list of the changes to CppAD during 2005
 The purpose of these sections is to
 assist you in learning about changes between various versions of CppAD.
 
+$head 09-24$$
+The stiff Ode routines,
+$xref/OdeGear/$$ and $xref/OdeGearControl/$$,
+were added to the $xref/library/$$.
+In addition, a comparison various Ode solvers on a stiff problem
+$xref/OdeStiff.cpp/$$ was added.
+
 $head 09-20$$
 The Microsoft compiler project files 
 $code Example/Example.vcproj$$ and $code TestMore/TestMore.vcproj$$ 
