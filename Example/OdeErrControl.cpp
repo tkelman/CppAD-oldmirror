@@ -138,8 +138,6 @@ bool OdeErrControl(void)
 	xf = OdeErrControl(method,
 		ti, tf, xi, smin, smax, scur, eabs, erel, ef, maxabs, nstep);
 
-	std::cout << "nstep = " << nstep << std::endl;
-
 	double x0 = exp(-w[0]*tf);
 	ok &= CppAD::NearEqual(x0, xf[0], 1e-4, 1e-4);
 	ok &= CppAD::NearEqual(0., ef[0], 1e-4, 1e-4);

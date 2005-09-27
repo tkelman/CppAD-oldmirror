@@ -1,31 +1,29 @@
-# Add a version of Gear's Ode solver to CppAD
-#  
-# SvnCommit: commands and log for this commit
-# CppADvector.h: add location of file to documentation
-# OdeGear.h: Make error estimate and initial Newton iterate to more accurate
-# OdeGearControl.h: Correct documentation spelling errors and include example
-# OdeErrControl.h: Do not include rejected steps in maxabs calculation
-# CppAD.h: add includes for Gear's method
-# InstallUnix.omh: change CppAD.yy-mm-dd to CppAD-yy-mm-dd
-# Distribute.omh: fix out of date instructions
-# library.omh: Add OdeGear and OdeGearControl to documentation
-# WhatsNew05.omh: users view of changes
-# ExampleList.omh: add OdeStiff.cpp
-# OdeErrControl.cpp: Include maxabs and nstep in example
-# OdeStiff.cpp: Example comparing Rosen34, Runge45, and Gear5
-# Example.vcproj: OdeGear, OdeGearControl and OdeStiff
-# Example.cpp: add OdeGear, OdeGearControl and OdeStiff
-# Example/Makefile.am: OdeGear, OdeGearControl and OdeStiff
-# Makefile.am: add OdeGear.h and OdeGearControl.h to distribution
+# Merge changes from branches/Brad into trunk
+# 
+# Conflicts:
+# SvnCommit: This script file changes for each commit
+# configure.ac: Only difference was date which is automatically updated
+# InstallUnix.omh: use branches/Brad version
+# library.omh: add changes in branches/Brad plus reorganize
+# WhatsNew05.omh: uses view of this commit
+#
+# Other Changes:
+# AllocMat.cpp: change ADOLC to Adolc
+# AllocVec.h: change ADOLC to Adolc
+# OdeErrControl.cpp: remove printing of nstep during test
+# OdeGearControl.cpp: remove printing of nstep during test
 #
 sed -e "/^[^#]/d" -e "s/^[#] *//" < SvnCommit > svn.log
 svn commit --file svn.log \
 	SvnCommit \
+	CppAD/Runge45.h \
+	CppAD/Rosen34.h \
 	CppAD/local/CppADvector.h \
 	CppAD/OdeGear.h \
 	CppAD/OdeGearControl.h \
 	CppAD/OdeErrControl.h \
 	CppAD/CppAD.h \
+	SvnStatus \
 	omh/InstallUnix.omh \
 	omh/Distribute.omh \
 	omh/library.omh \
@@ -33,7 +31,12 @@ svn commit --file svn.log \
 	omh/ExampleList.omh \
 	Example/OdeErrControl.cpp \
 	Example/OdeStiff.cpp \
-	Example/Example.vcproj  \
-	Example/Example.cpp  \
-	Example/Makefile.am  \
-	Makefile.am 
+	Example/NumericType.cpp \
+	Example/OdeGear.cpp \
+	Example/OdeGearControl.cpp \
+	Example/Example.vcproj \
+	Example/Example.cpp \
+	Example/Makefile.am \
+	Makefile.am \
+	Adolc/AllocMat.cpp \
+	Adolc/AllocVec.h
