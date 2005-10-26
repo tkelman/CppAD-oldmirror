@@ -70,7 +70,7 @@ $head Rec$$
 The information stored in $italic Rec$$
 is a recording of the operations corresponding to a function
 $latex \[
-	F : B^m \rightarrow B^n
+	F : B^n \rightarrow B^m
 \] $$
 
 $head print$$
@@ -100,7 +100,7 @@ $head On Input$$
 
 $subhead Independent Variables and Operators$$
 The independent variable records come first.
-For $latex i = 1, \ldots , m$$ and $latex j = 0 , \ldots , d$$,
+For $latex i = 1, \ldots , n$$ and $latex j = 0 , \ldots , d$$,
 $table
 	$bold field$$ $cnext 
 	$bold Value$$          
@@ -115,20 +115,20 @@ $rnext
 	$th j$$ order coefficient for variable with index $italic i$$   
 $rnext
 	$syntax%%Rec%->GetOp(%i%)%$$              $cnext 
-	the operator with index zero must be a $code InvOp$$
+	the operator with index $italic i$$ must be a $code InvOp$$
 $tend
 
 $subhead Other Variables and Operators$$
 The other variables follow the independent variables.
-For $latex i = m+1, \ldots , numvar-1$$,
+For $latex i = n+1, \ldots , numvar-1$$,
 $latex j = 0 , \ldots , d-1$$,
-and $latex k = m+1, \ldots ,$$ $syntax%%Rec%->NumOp() - 1%$$,
+and $latex k = n+1, \ldots ,$$ $syntax%%Rec%->NumOp() - 1%$$,
 $table
 	$bold field$$ $cnext 
 	$bold Value$$          
 $rnext
 	$syntax%%Taylor%[%i% * %J% + %j%]%$$      $cnext 
-	$th j$$ coefficient for independent variable with index $italic i$$     
+	$th j$$ coefficient for variable with index $italic i$$     
 $rnext
 	$syntax%%Rec%->GetOp(%i%)%$$              $cnext 
 	any operator except for $code InvOp$$ 
@@ -140,14 +140,14 @@ $subhead Rec$$
 None of the values stored in $italic Rec$$ are modified.
 
 $subhead Independent Variables$$
-For $latex i = 1, \ldots , m$$ and $latex j = 0 , \ldots , J-1$$,
+For $latex i = 1, \ldots , n$$ and $latex j = 0 , \ldots , J-1$$,
 $syntax%%Taylor%[%i% * %J% + %j%]%$$ is not modified.
 
 
 $subhead Other Variables$$
-For $latex i = m+1, \ldots , numvar-1$$ and $latex j \neq d$$,
+For $latex i = n+1, \ldots , numvar-1$$ and $latex j < d$$,
 $syntax%%Taylor%[%i% * %J% + %j%]%$$ is not modified.
-For $latex i = m+1, \ldots , numvar-1$$, 
+For $latex i = n+1, \ldots , numvar-1$$, 
 $syntax%%Taylor%[%i% * %J% + %d%]%$$ is set equal to the
 $th d$$ order Taylor coefficient for the variable with index $italic i$$.
 
