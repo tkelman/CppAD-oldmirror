@@ -1,7 +1,6 @@
 # ifndef CppADADForwardIncluded
 # define CppADADForwardIncluded
 
-// BEGIN SHORT COPYRIGHT
 /* -----------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-05 Bradley M. Bell
 
@@ -19,7 +18,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ------------------------------------------------------------------------ */
-// END SHORT COPYRIGHT
 
 /*
 $begin ADForward$$
@@ -41,7 +39,12 @@ $spell
 $$
 
 $section Forward Computation of Taylor Coefficients$$
-$mindex ADForward derivative second order Taylor coefficient$$
+$index ADForward$$
+$index mode, forward$$
+$index forward, mode$$
+$index derivative, forward$$
+$index Taylor coefficient, forward$$
+
 
 $table
 $bold Syntax$$ $cnext
