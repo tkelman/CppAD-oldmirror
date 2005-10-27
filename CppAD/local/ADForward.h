@@ -379,7 +379,6 @@ size_t ADForward(
 				*falseCase
 			);
 			break;
-
 			// ---------------------------------------------------
 
 			case CosOp:
@@ -457,8 +456,8 @@ size_t ADForward(
 			X = Taylor + ind[0] * J;
 			ForDivvpOp(d, Z, X, P);
 			break;
-
 			// -------------------------------------------------
+
 			case EqfppOp:
 			CppADUnknownError( n_var == 0 );
 			CppADUnknownError( n_ind == 2 );
@@ -468,8 +467,8 @@ size_t ADForward(
 				compareCount += (X[0] == Y[0]);
 			}
 			break;
-
 			// -------------------------------------------------
+
 			case EqtppOp:
 			CppADUnknownError( n_var == 0 );
 			CppADUnknownError( n_ind == 2 );
@@ -479,8 +478,8 @@ size_t ADForward(
 				compareCount += (X[0] != Y[0]);
 			}
 			break;
-
 			// -------------------------------------------------
+
 			case EqfpvOp:
 			CppADUnknownError( n_var == 0 );
 			CppADUnknownError( n_ind == 2 );
@@ -491,8 +490,8 @@ size_t ADForward(
 				compareCount += (*P == Y[0]);
 			}
 			break;
-
 			// -------------------------------------------------
+
 			case EqtpvOp:
 			CppADUnknownError( n_var == 0 );
 			CppADUnknownError( n_ind == 2 );
@@ -503,8 +502,8 @@ size_t ADForward(
 				compareCount += (*P != Y[0]);
 			}
 			break;
-
 			// -------------------------------------------------
+
 			case EqfvpOp:
 			CppADUnknownError( n_var == 0 );
 			CppADUnknownError( n_ind == 2 );
@@ -515,8 +514,8 @@ size_t ADForward(
 				compareCount += (X[0] == *P);
 			}
 			break;
-
 			// -------------------------------------------------
+
 			case EqtvpOp:
 			CppADUnknownError( n_var == 0 );
 			CppADUnknownError( n_ind == 2 );
@@ -527,8 +526,8 @@ size_t ADForward(
 				compareCount += (X[0] != *P);
 			}
 			break;
-
 			// -------------------------------------------------
+
 			case EqfvvOp:
 			CppADUnknownError( n_var == 0 );
 			CppADUnknownError( n_ind == 2 );
@@ -540,8 +539,8 @@ size_t ADForward(
 				compareCount += (X[0] == Y[0]);
 			}
 			break;
-
 			// -------------------------------------------------
+
 			case EqtvvOp:
 			CppADUnknownError( n_var == 0 );
 			CppADUnknownError( n_ind == 2 );
@@ -553,8 +552,8 @@ size_t ADForward(
 				compareCount += (X[0] != Y[0]);
 			}
 			break;
-
 			// -------------------------------------------------
+
 			case ExpOp:
 			CppADUnknownError( n_var == 1);
 			CppADUnknownError( n_ind == 1 );
@@ -564,6 +563,13 @@ size_t ADForward(
 			ForExpOp(d, Z, X);
 			break;
 			// -------------------------------------------------
+
+			case InvOp:
+			CppADUnknownError( n_var == 1);
+			CppADUnknownError( n_ind == 0 );
+			break;
+			// -------------------------------------------------
+
 			case LdpOp:
 			CppADUnknownError( n_var == 1);
 			CppADUnknownError( n_ind == 3 );
@@ -602,6 +608,7 @@ size_t ADForward(
 			}
 			break;
 			// -------------------------------------------------
+
 			case LdvOp:
 			CppADUnknownError( n_var == 1);
 			CppADUnknownError( n_ind == 3 );
@@ -645,12 +652,6 @@ size_t ADForward(
 			break;
 			// -------------------------------------------------
 
-			case InvOp:
-			CppADUnknownError( n_var == 1);
-			CppADUnknownError( n_ind == 0 );
-			break;
-
-			// -------------------------------------------------
 			case LefppOp:
 			CppADUnknownError( n_var == 0 );
 			CppADUnknownError( n_ind == 2 );
@@ -660,8 +661,8 @@ size_t ADForward(
 				compareCount += LessThanOrZero(X[0] - Y[0]);
 			}
 			break;
-
 			// -------------------------------------------------
+
 			case LetppOp:
 			CppADUnknownError( n_var == 0 );
 			CppADUnknownError( n_ind == 2 );
@@ -671,8 +672,8 @@ size_t ADForward(
 				compareCount += ! LessThanOrZero(X[0] - Y[0]);
 			}
 			break;
-
 			// -------------------------------------------------
+
 			case LefpvOp:
 			CppADUnknownError( n_var == 0 );
 			CppADUnknownError( n_ind == 2 );
@@ -683,8 +684,8 @@ size_t ADForward(
 				compareCount += LessThanOrZero(*P - Y[0]);
 			}
 			break;
-
 			// -------------------------------------------------
+
 			case LetpvOp:
 			CppADUnknownError( n_var == 0 );
 			CppADUnknownError( n_ind == 2 );
@@ -695,8 +696,8 @@ size_t ADForward(
 				compareCount += ! LessThanOrZero(*P - Y[0]);
 			}
 			break;
-
 			// -------------------------------------------------
+
 			case LefvpOp:
 			CppADUnknownError( n_var == 0 );
 			CppADUnknownError( n_ind == 2 );
@@ -707,8 +708,8 @@ size_t ADForward(
 				compareCount += LessThanOrZero(X[0] - *P);
 			}
 			break;
-
 			// -------------------------------------------------
+
 			case LetvpOp:
 			CppADUnknownError( n_var == 0 );
 			CppADUnknownError( n_ind == 2 );
@@ -719,8 +720,8 @@ size_t ADForward(
 				compareCount += ! LessThanOrZero(X[0] - *P);
 			}
 			break;
-
 			// -------------------------------------------------
+
 			case LefvvOp:
 			CppADUnknownError( n_var == 0 );
 			CppADUnknownError( n_ind == 2 );
@@ -732,8 +733,8 @@ size_t ADForward(
 				compareCount += LessThanOrZero(X[0] - Y[0]);
 			}
 			break;
-
 			// -------------------------------------------------
+
 			case LetvvOp:
 			CppADUnknownError( n_var == 0 );
 			CppADUnknownError( n_ind == 2 );
@@ -745,8 +746,8 @@ size_t ADForward(
 				compareCount += ! LessThanOrZero(X[0] - Y[0]);
 			}
 			break;
-
 			// -------------------------------------------------
+
 			case LogOp:
 			CppADUnknownError( n_var == 1);
 			CppADUnknownError( n_ind == 1 );
@@ -755,8 +756,8 @@ size_t ADForward(
 			X = Taylor + ind[0] * J;
 			ForLogOp(d, Z, X);
 			break;
-
 			// -------------------------------------------------
+
 			case LtfppOp:
 			CppADUnknownError( n_var == 0 );
 			CppADUnknownError( n_ind == 2 );
@@ -766,8 +767,8 @@ size_t ADForward(
 				compareCount += LessThanZero(X[0] - Y[0]);
 			}
 			break;
-
 			// -------------------------------------------------
+
 			case LttppOp:
 			CppADUnknownError( n_var == 0 );
 			CppADUnknownError( n_ind == 2 );
@@ -777,8 +778,8 @@ size_t ADForward(
 				compareCount += ! LessThanZero(X[0] - Y[0]);
 			}
 			break;
-
 			// -------------------------------------------------
+
 			case LtfpvOp:
 			CppADUnknownError( n_var == 0 );
 			CppADUnknownError( n_ind == 2 );
@@ -789,8 +790,8 @@ size_t ADForward(
 				compareCount += LessThanZero(*P - Y[0]);
 			}
 			break;
-
 			// -------------------------------------------------
+
 			case LttpvOp:
 			CppADUnknownError( n_var == 0 );
 			CppADUnknownError( n_ind == 2 );
@@ -801,8 +802,8 @@ size_t ADForward(
 				compareCount += ! LessThanZero(*P - Y[0]);
 			}
 			break;
-
 			// -------------------------------------------------
+
 			case LtfvpOp:
 			CppADUnknownError( n_var == 0 );
 			CppADUnknownError( n_ind == 2 );
@@ -813,8 +814,8 @@ size_t ADForward(
 				compareCount += LessThanZero(X[0] - *P);
 			}
 			break;
-
 			// -------------------------------------------------
+
 			case LttvpOp:
 			CppADUnknownError( n_var == 0 );
 			CppADUnknownError( n_ind == 2 );
@@ -825,8 +826,8 @@ size_t ADForward(
 				compareCount += ! LessThanZero(X[0] - *P);
 			}
 			break;
-
 			// -------------------------------------------------
+
 			case LtfvvOp:
 			CppADUnknownError( n_var == 0 );
 			CppADUnknownError( n_ind == 2 );
@@ -838,8 +839,8 @@ size_t ADForward(
 				compareCount += LessThanZero(X[0] - Y[0]);
 			}
 			break;
-
 			// -------------------------------------------------
+
 			case LttvvOp:
 			CppADUnknownError( n_var == 0 );
 			CppADUnknownError( n_ind == 2 );
