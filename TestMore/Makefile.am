@@ -50,6 +50,7 @@ TestMore_SOURCES  = TestMore.cpp \
 	DivZeroOne.cpp \
 	Exp.cpp \
 	ForHess.cpp \
+	ForJacDep.cpp \
 	Forward.cpp \
 	Log.cpp \
 	Mul.cpp \

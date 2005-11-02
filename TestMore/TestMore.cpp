@@ -44,6 +44,7 @@ extern bool DivEq(void);
 extern bool DivZeroOne(void);
 extern bool Exp(void);
 extern bool ForHess(void);
+extern bool ForJacDep(void);
 extern bool Forward(void);
 extern bool Log(void);
 extern bool Mul(void);
@@ -98,6 +99,7 @@ int main(void)
 	ok &= Run( DivZeroOne,      "DivZeroOne"     );
 	ok &= Run( Exp,             "Exp"            );
 	ok &= Run( ForHess,         "ForHess"        );
+	ok &= Run( ForJacDep,       "ForJacDep"      );
 	ok &= Run( Forward,         "Forward"        );
 	ok &= Run( Log,             "Log"            );
 	ok &= Run( Mul,             "Mul"            );

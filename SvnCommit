@@ -1,45 +1,21 @@
-# Add forward mode calculation of Jacobian dependencies
+# Add extensive testing of ForJacDep in TestMore
 #
 # SvnCommit: command that made this commit.
-# WhatsNew05.omh: users view of the changes
-# ForJacSweep.h: routine that calculates forward mode dependices.
-# ForJacDep.h: interface to ADFun object.
-# Operator.h: template type of calculated result in printOp function
-#             and change the number of variables for PripOp to zero.
-# ADForward.h: change the number of variables for PripOp to zero.
-# ADReverse.h: change the number of variables for PripOp to zero.
-# Fun.h: add interface to ADFun object and includes of new routines.
-# ForJacDep.cpp: Example and test of forward mode dependices.
-# Example.cpp: add ForJacDep
-# Example.vcproj: add ForJacDep.cpp
-# Example/Makefile.am: add ForJacDep.cpp
-# omh/ExampleList.omh: add ForJacDep.cpp to list
-# Developer.omh: add ForJacSweep.h to developer documentation
-# Makefile.am: add ForJacDep.h and ForJacSweep.h to distribution
-# 
-# 
-#
-# CppAD/local/Forward.h: 
-# remove & from syntax (only belongs in prototype), document argument p,
-# identify which argument in error message.
-#
-# CppAD/local/ADForward.h:
-# improve indexing
-# 
+# SvnStatus: exclude the automatically generated program TestOne.cpp.
+# ExampleList.omh: missing part of previous commit (add ForJacDep.cpp).
+# Example.vcproj: incorrect in previous commit (ForwardDep -> ForJacDep).
+# ForJacDep.cpp: new test file.
+# TestMore.vcproj: add ForJacDep.cpp.
+# TestMore.cpp: add ForJacDep.cpp.
+# Makefile.am: add ForJacDep.cpp.
 #
 sed -e "/^[^#]/d" -e "s/^[#] *//" < SvnCommit > svn.log
+svn add TestMore/ForJacDep.cpp
 svn commit --file svn.log \
 	SvnCommit \
-	CppAD/local/ForJacSweep.h \
-	CppAD/local/ForJacDep.h \
-	CppAD/local/Operator.h \
-	CppAD/local/ADForward.h \
-	CppAD/local/ADReverse.h \
-	CppAD/local/Fun.h \
-	Example/ForJacDep.cpp \
-	Example/Example.cpp  \
-	Example/Example.vcproj \
-	Example/Makefile.am \
-	Makefile.am \
-	omh/WhatsNew05.omh \
-	Developer.omh
+	SvnStatus \
+	omh/ExampleList.omh \
+	TestMore/ForJacDep.cpp \
+	TestMore/TestMore.cpp \
+	TestMore/TestMore.vcproj \
+	TestMore/Makefile.am
