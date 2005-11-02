@@ -78,6 +78,9 @@ This section contains a list of the changes to CppAD during 2005
 The purpose of these sections is to
 assist you in learning about changes between various versions of CppAD.
 
+$head 11-01$$
+Add $xref/ForJacDep//forward mode dependency/$$ calculation.
+
 $head 10-20$$
 Add $xref/WishList/Sparsity Structure/sparsity structure/$$ to 
 the whish list.
