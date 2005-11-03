@@ -195,7 +195,7 @@ $contents%
 	Example/Fun.h%
 	Example/CompareChange.cpp%
 	omh/MulTape.omh%
-	CppAD/local/ForJacDep.h
+	CppAD/local/ForSparseJac.h
 %$$
 
 $end
@@ -232,7 +232,7 @@ public:
 
 	// forward mode dependency sweep
 	template <typename VectorBase>
-	VectorBase ForJacDep(size_t q, const VectorBase &Dx);
+	VectorBase ForSparseJac(size_t q, const VectorBase &Dx);
 
 	// size of this function object
 	size_t Size(void) const
@@ -455,7 +455,7 @@ ADFun<Base>::ADFun(const VectorADBase &u, const VectorADBase &z)
 # include <CppAD/local/ADReverse.h>
 # include <CppAD/local/Reverse.h>
 # include <CppAD/local/ForJacSweep.h>
-# include <CppAD/local/ForJacDep.h>
+# include <CppAD/local/ForSparseJac.h>
 //
 // driver routines
 # include <CppAD/local/Jacobian.h>

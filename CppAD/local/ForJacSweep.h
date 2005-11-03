@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /*
 $begin ForJacSweep$$  $comment CppAD Developer Documentation$$
 $spell
+	Jacobian
 	ForJacSweep
 	npv
 	numvar
@@ -34,11 +35,10 @@ $$
 
 $section Forward Computation of Dependency Matrix$$
 $index ForJacSweep$$
-$index depend, forward matrix$$
-$index forward, depend matrix$$
-$index matrix, forward depend$$
-$index bit pattern, forward$$
-$index pattern, bit forward$$
+$index sparsity, forward Jacobian$$
+$index forward, Jacobian sparsity$$
+$index pattern, forward Jacobian$$
+$index bit pattern, Jacobian$$
 
 $table
 $bold Syntax$$ $cnext
@@ -60,19 +60,19 @@ $latex \[
 \] $$
 
 $head Description$$
-Given the dependency matrix for the independent variables,
-$code ForJacSweep$$ computes the dependency matrix
+Given the sparsity pattern for the independent variables,
+$code ForJacSweep$$ computes the sparsity pattern
 for all the other variables.
 
 
 $head numvar$$
-is the number of rows in the entire dependency matrix $italic pack$$.
+is the number of rows in the entire sparsity pattern $italic pack$$.
 It must also be equal to $syntax%%Rec%->TotNumVar()%$$.
 
 
 $head npv$$
 Is the number of elements of type $italic P$$
-per variable in the dependency matrix $italic pack$$.
+(per variable) in the sparsity pattern $italic pack$$.
 
 $head On Input$$
 
@@ -90,7 +90,7 @@ $rnext
 	the operator with index zero must be a $code NonOp$$
 $rnext
 	$syntax%%pack%[%i% * %npv% + %j%]%$$      $cnext 
-	$th j$$ set of dependency bits for variable with index $italic i$$   
+	$th j$$ set of sparsity pattern for variable with index $italic i$$   
 $rnext
 	$syntax%%Rec%->GetOp(%i%)%$$              $cnext 
 	the operator with index $italic i$$ must be a $code InvOp$$
@@ -106,7 +106,7 @@ $table
 	$bold Value$$          
 $rnext
 	$syntax%%pack%[%i% * %npv% + %j%]%$$      $cnext 
-	$th j$$ set of dependency bits for variable with index $italic i$$     
+	$th j$$ set of sparsity pattern for variable with index $italic i$$     
 $rnext
 	$syntax%%Rec%->GetOp(%i%)%$$              $cnext 
 	any operator except for $code InvOp$$ 
@@ -125,7 +125,7 @@ $syntax%%Taylor%[%i% * %npv% + %j%]%$$ is not modified.
 $subhead Other Variables$$
 For $latex i = m+1, \ldots , numvar-1$$ and $latex j = 0 , \ldots , npv-1$$,
 $syntax%%pack%[%i% * %npv% + %j%]%$$ is set equal to the
-$th j$$ set of dependency bits for the variable with index $italic i$$.
+$th j$$ set of sparsity pattern for the variable with index $italic i$$.
 
 
 $end
@@ -166,7 +166,7 @@ void ForJacSweep(
 	size_t            i;
 	size_t            j;
 
-	// initialize VecAD dependicies (inefficient because just the index
+	// initial VecAD sparsity pattern (inefficient because just the index
 	// corresponding to size is used for all elements in a VecAD array)
 	Pack   *VectorSto;
 	i  = Rec->NumVecInd();
@@ -485,7 +485,7 @@ void ForJacSweep(
 			CppADUnknownError( ind[0] < Rec->NumVecInd() );
 			CppADUnknownError( VectorSto != CppADNull );
 
-			// use dependency for entire vector for this value
+			// use sparsity for entire vector for this value
 			for(j = 0; j < npv; j++)
 				Z[j] = VectorSto[ j + (ind[0] - 1) * npv ];
 			break;
@@ -499,7 +499,7 @@ void ForJacSweep(
 			CppADUnknownError( ind[0] < Rec->NumVecInd() );
 			CppADUnknownError( VectorSto != CppADNull );
 
-			// use dependency for entire vector for this value
+			// use sparsity for entire vector for this value
 			for(j = 0; j < npv; j++)
 				Z[j] = VectorSto[ j + (ind[0] - 1) * npv ];
 			break;
@@ -739,7 +739,7 @@ void ForJacSweep(
 			CppADUnknownError( n_var == 1);
 			CppADUnknownError( n_ind == 3 );
 
-			// dependency of vector does not change in this case
+			// sparsity of vector does not change in this case
 			for(j = 0; j < npv; j++)
 				Z[j] = 0;
 			break;
@@ -749,7 +749,7 @@ void ForJacSweep(
 			CppADUnknownError( n_var == 1);
 			CppADUnknownError( n_ind == 3 );
 
-			// update dependency for entire vector
+			// update sparsity for entire vector
 			Y = pack + ind[2] * npv;
 			for(j = 0; j < npv; j++)
 			{	Z[j] = Y[j];
@@ -762,7 +762,7 @@ void ForJacSweep(
 			CppADUnknownError( n_var == 1);
 			CppADUnknownError( n_ind == 3 );
 
-			// dependency of vector does not change in this case
+			// sparsity of vector does not change in this case
 			for(j = 0; j < npv; j++)
 				Z[j] = 0;
 			break;

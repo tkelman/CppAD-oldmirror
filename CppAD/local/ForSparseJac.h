@@ -1,5 +1,5 @@
-# ifndef CppADForJacDepIncluded
-# define CppADForJacDepIncluded
+# ifndef CppADForSparseJacIncluded
+# define CppADForSparseJacIncluded
 
 /* -----------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-05 Bradley M. Bell
@@ -20,41 +20,40 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ------------------------------------------------------------------------ */
 
 /*
-$begin ForJacDep$$
+$begin ForSparseJac$$
 $spell
+	Py 
+	Px
 	Jacobian
 	Jac
 	const
 	Bool
-	Dy
 	Dep
 	proportional
 $$
 
-$section Forward Mode Jacobian Dependency$$ 
+$section Forward Mode Jacobian Sparsity Pattern$$ 
 
-$index forward, depend$$
-$index depend, forward$$
-$index bit pattern, forward$$
+$index forward, sparse Jacobian$$
+$index sparse, forward Jacobian$$
+$index pattern, forward Jacobian$$
 
 $table
 $bold Syntax$$ $cnext
-$syntax%%Dy% = %F%.Forward(q, %Dx%)%$$
+$syntax%%Py% = %F%.ForSparseJac(%q%, %Px%)%$$
 $rnext $cnext
 $tend
 
 $fend 20$$
 
-$head Jacobian Dependency Matrix$$
-$index Jacobian, depend matrix$$
-$index matrix, Jacobian depend$$
-$index depend, Jacobian$$
+$head Jacobian Sparsity Pattern$$
+$index sparse, pattern$$
 Suppose that $latex G : B^q \rightarrow B^p$$ is a differentiable function.
-A boolean valued $latex p \times q$$ matrix $latex D$$ is a dependency
-matrix for $latex G$$ if 
+A boolean valued $latex p \times q$$ matrix $latex P$$ is a 
+sparsity pattern for $latex G$$ if 
 for $latex i = 1, \ldots , p$$ and $latex j = 1 , \ldots q$$,
 $latex \[
-D_{i,j} = {\rm false} \Rightarrow G^{(1)}_{i,j} (x) = 0  
+P_{i,j} = {\rm false} \Rightarrow G^{(1)}_{i,j} (x) = 0  
 \hspace{1cm} ({\rm for \; all}) \; x \in B^p
 \] $$
 
@@ -62,9 +61,9 @@ D_{i,j} = {\rm false} \Rightarrow G^{(1)}_{i,j} (x) = 0
 $head Description$$
 Given the function 
 $latex F : B^n \rightarrow B^m$$ defined by the argument $italic F$$,
-and a Jacobian dependency matrix $latex Dx$$ for a function
+and a Jacobian sparsity pattern $latex Px$$ for a function
 $latex X : B^q \rightarrow B^n$$,
-$code ForJacDep$$ returns a dependency matrix for the function
+$code ForSparseJac$$ returns a sparsity pattern for the function
 $latex F \circ X : B^q \rightarrow B^m$$. 
 
 $head F$$
@@ -85,33 +84,33 @@ $syntax%
 	size_t %q%
 %$$
 It specifies the number of components we are computing the 
-dependency relation with respect to.
+sparsity pattern with respect to.
 Note that the memory required for the calculation is proportional 
 to $latex q$$ times the total number of variables on the tape.
-Thus it may be desireable to break the dependency calculation into 
+Thus it may be desireable to break the sparsity calculation into 
 groups that do not require to much memory. 
 
-$head Dx$$
-The argument $italic Dx$$ has prototype
+$head Px$$
+The argument $italic Px$$ has prototype
 $syntax%
-	const %VectorBool% &%Dx%
+	const %VectorBool% &%Px%
 %$$
 and is a vector with size $latex q * n$$.
-The dependency matrix for $latex X$$ is given by
+The sparsity pattern for $latex X$$ is given by
 $latex \[
-	Dx_{i,j} = Dx [ i * q + j ]
+	Px_{i,j} = Px [ i * q + j ]
 \] $$
 for $latex i = 1 , \ldots , n$$ and $latex j = 1 , \ldots , q$$.
 
-$head Dy$$
-The return value $italic Dy$$ has prototype
+$head Py$$
+The return value $italic Py$$ has prototype
 $syntax%
-	const %VectorBool% &%Dy%
+	const %VectorBool% &%Py%
 %$$
 and is a vector with size $latex q * m$$.
-The dependency matrix for $latex F \circ X$$ is given by
+The sparsity pattern for $latex F \circ X$$ is given by
 $latex \[
-	Dy_{i,j} = Dy [ i * q + j ]
+	Py_{i,j} = Py [ i * q + j ]
 \] $$
 for $latex i = 1 , \ldots , m$$ and $latex j = 1 , \ldots , q$$.
 
@@ -123,10 +122,10 @@ if this is not the case.
 
 $head Example$$
 $children%
-	Example/ForJacDep.cpp
+	Example/ForSparseJac.cpp
 %$$
 The file
-$xref/ForJacDep.cpp/$$
+$xref/ForSparseJac.cpp/$$
 contains an example and a test of this operation.
 It returns true if it succeeds and false otherwise.
 
@@ -139,7 +138,7 @@ namespace CppAD {
 
 template <class Base>
 template <class VectorBool>
-VectorBool ADFun<Base>::ForJacDep(size_t q, const VectorBool &Dx)
+VectorBool ADFun<Base>::ForSparseJac(size_t q, const VectorBool &Px)
 {
 	// type used to pack bits (must support standard bit operations)
 	typedef size_t Pack;
@@ -155,7 +154,7 @@ VectorBool ADFun<Base>::ForJacDep(size_t q, const VectorBool &Dx)
 	size_t n = indvar.size();
 
 	CppADUsageError(
-	Dx.size() == n * q,
+	Px.size() == n * q,
 	"Second argument to ForDep does not have length equal to\n"
 	"first argument times domain dimension for the corresponding ADFun."
 	);
@@ -190,16 +189,16 @@ VectorBool ADFun<Base>::ForJacDep(size_t q, const VectorBool &Dx)
 		{	k    = j / sizeof(Pack);
 			p    = j - k * sizeof(Pack);
 			mask = Pack(1) << p;
-			if( Dx[ i * q + j ] )
+			if( Px[ i * q + j ] )
 				pack[ indvar[i] * npv + k ] |= mask;
 		}
 	}
 
-	// evaluate the dependencies
+	// evaluate the sparsity patterns
 	ForJacSweep(npv, totalNumVar, Rec, pack);
 
 	// return values corresponding to dependent variables
-	VectorBool Dy(m * q);
+	VectorBool Py(m * q);
 	for(i = 0; i < m; i++)
 	{	CppADUnknownError( depvar[i] < totalNumVar );
 
@@ -209,14 +208,14 @@ VectorBool ADFun<Base>::ForJacDep(size_t q, const VectorBool &Dx)
 			p     = j - k * sizeof(Pack);
 			mask  = Pack(1) << p;
 			mask &=	pack[ depvar[i] * npv + k ];
-			Dy[ i * q + j ] = (mask != 0);
+			Py[ i * q + j ] = (mask != 0);
 		}
 	}
 
 	// free local memory
 	delete [] pack;
 
-	return Dy;
+	return Py;
 }
 
 } // END CppAD namespace

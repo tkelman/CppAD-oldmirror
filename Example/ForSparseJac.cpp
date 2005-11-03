@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ------------------------------------------------------------------------ */
 
 /*
-$begin ForJacDep.cpp$$
+$begin ForSparseJac.cpp$$
 $spell
 	Jacobian
 	Jac
@@ -26,14 +26,14 @@ $spell
 $$
 
 $section Forward Mode Jacobian Dependency: Example and Test$$
-$index ForJacDep$$
+$index ForSparseJac$$
 $index example, forward Jacobian depend$$
 $index example, Jacobian  forward depend$$
 $index test, forward Jacobian depend$$
 $index test, Jacobian forward depend$$
 
 $code
-$verbatim%Example/ForJacDep.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
+$verbatim%Example/ForSparseJac.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
 $$
 
 $end
@@ -47,7 +47,7 @@ $end
 
 namespace { // Begin empty namespace
 template <typename VectorBool> // vector class, elements of type bool
-bool ForJacDepCases(void)
+bool ForSparseJacCases(void)
 {	bool ok = true;
 	using namespace CppAD;
 
@@ -73,37 +73,37 @@ bool ForJacDepCases(void)
 	ADFun<double> F(X, Y);
 
 	// dependency matrix for the identity function W(x) = x
-	VectorBool Dx(n * n);
+	VectorBool Px(n * n);
 	size_t i, j;
 	for(i = 0; i < n; i++)
 	{	for(j = 0; j < n; j++)
-			Dx[ i * n + j ] = false;
-		Dx[ i * n + i ] = true;
+			Px[ i * n + j ] = false;
+		Px[ i * n + i ] = true;
 	}
 
 	// evaluate the dependency matrix for F(X(x))
-	VectorBool Dy(m * n);
-	Dy = F.ForJacDep(n, Dx);
+	VectorBool Py(m * n);
+	Py = F.ForSparseJac(n, Px);
 
 	// check values
-	ok &= (Dy[ 0 * n + 0 ] == true);  // Y[0] does     depend on X[0]
-	ok &= (Dy[ 0 * n + 1 ] == false); // Y[0] does not depend on X[1]
-	ok &= (Dy[ 1 * n + 0 ] == true);  // Y[1] does     depend on X[0]
-	ok &= (Dy[ 1 * n + 1 ] == true);  // Y[1] does     depend on X[1]
-	ok &= (Dy[ 2 * n + 0 ] == false); // Y[2] does not depend on X[0]
-	ok &= (Dy[ 2 * n + 1 ] == true);  // Y[2] does     depend on X[1]
+	ok &= (Py[ 0 * n + 0 ] == true);  // Y[0] does     depend on X[0]
+	ok &= (Py[ 0 * n + 1 ] == false); // Y[0] does not depend on X[1]
+	ok &= (Py[ 1 * n + 0 ] == true);  // Y[1] does     depend on X[0]
+	ok &= (Py[ 1 * n + 1 ] == true);  // Y[1] does     depend on X[1]
+	ok &= (Py[ 2 * n + 0 ] == false); // Y[2] does not depend on X[0]
+	ok &= (Py[ 2 * n + 1 ] == true);  // Y[2] does     depend on X[1]
 
 	return ok;
 }
 } // End empty namespace
 
-bool ForJacDep(void)
+bool ForSparseJac(void)
 {	bool ok = true;
 
-	ok &= ForJacDepCases< CppAD::vectorBool     >();
-	ok &= ForJacDepCases< CppAD::vector  <bool> >();
-	ok &= ForJacDepCases< std::vector    <bool> >(); 
-	ok &= ForJacDepCases< std::valarray  <bool> >(); 
+	ok &= ForSparseJacCases< CppAD::vectorBool     >();
+	ok &= ForSparseJacCases< CppAD::vector  <bool> >();
+	ok &= ForSparseJacCases< std::vector    <bool> >(); 
+	ok &= ForSparseJacCases< std::valarray  <bool> >(); 
 
 	return ok;
 }

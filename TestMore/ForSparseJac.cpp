@@ -51,7 +51,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  
 
 
-bool ForJacDep(void)
+bool ForSparseJac(void)
 {	bool ok = true;
 	using namespace CppAD;
 
@@ -115,22 +115,22 @@ bool ForJacDep(void)
 	ADFun<double> F(X, Y);
 
 	// dependency matrix for the identity function W(x) = x
-	CppADvector< bool > Dx(n * n);
+	CppADvector< bool > Px(n * n);
 	size_t i, j;
 	for(i = 0; i < n; i++)
 	{	for(j = 0; j < n; j++)
-			Dx[ i * n + j ] = false;
-		Dx[ i * n + i ] = true;
+			Px[ i * n + j ] = false;
+		Px[ i * n + i ] = true;
 	}
 
 	// evaluate the dependency matrix for F(X(x))
-	CppADvector< bool > Dy(m * n);
-	Dy = F.ForJacDep(n, Dx);
+	CppADvector< bool > Py(m * n);
+	Py = F.ForSparseJac(n, Px);
 
 	// check values
 	for(i = 0; i < m; i++)
 	{	for(j = 0; j < n; j++)
-			ok &= (Dy[i * n + j] == Check[i * n + j]);
+			ok &= (Py[i * n + j] == Check[i * n + j]);
 	}	
 
 	return ok;
