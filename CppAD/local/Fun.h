@@ -157,7 +157,7 @@ $syntax%
 	size_t %F%.Memory(void) const
 %$$
 returns the number of memory units ($code sizeof$$) required to store
-the operations and derivative information corresponding to $italic F$$.
+the operations and derivative information currently stored in $italic F$$.
 This memory is returned to the system when the destructor for 
 $italic F$$ is called.
 
@@ -207,6 +207,8 @@ namespace CppAD {
 
 template <class Base>
 class ADFun {
+	// type used for packing sparsity patters
+	typedef size_t Pack;
 
 public:
 	// constructor
@@ -219,6 +221,8 @@ public:
 		delete [] Taylor;
 		if( Partial != CppADNull )
 			delete [] Partial;
+		if( ForJac != CppADNull )
+			delete [] ForJac;
 
 	}
 
@@ -261,7 +265,8 @@ public:
 
 	// amount of memory for each variable
 	size_t Memory(void) const
-	{	size_t pervar  = (TaylorColDim + PartialColDim) * sizeof(Base);
+	{	size_t pervar  = (TaylorColDim + PartialColDim) * sizeof(Base)
+		               + ForJacColDim * sizeof(Pack);
 		size_t total   = totalNumVar * pervar + Rec->Memory();
 		return total;
 	}
@@ -313,13 +318,16 @@ private:
 	// order of the informaiton currently stored in Taylor array
 	size_t order;
 
-	// number of columns in the currently allocated Taylor array
+	// number of columns currently allocated for Taylor array
 	size_t TaylorColDim;
 
-	// number of rows in the currently allocated Partial array
+	// number of columns currently allocated for Partial array
 	size_t PartialColDim;
 
-	// number of rows (variables) in the Taylor and Partial arrays
+	// number of columns currently allocated for ForJac array
+	size_t ForJacColDim;
+
+	// number of rows (variables) in the recording (Rec)
 	size_t totalNumVar;
 
 	// row indices for the independent variables
@@ -334,11 +342,14 @@ private:
 	// the operations corresponding to this function
 	TapeRec<Base> *Rec;
 
-	// the results of the forward mode calculations
+	// results of the forward mode calculations
 	Base *Taylor;
 
-	// the results of the reverse mode calculations
+	// results of the reverse mode calculations
 	Base *Partial;
+
+	// results of the forward mode Jacobian sparsity calculations
+	Pack *ForJac;
 };
 // ---------------------------------------------------------------------------
 
@@ -382,11 +393,13 @@ ADFun<Base>::ADFun(const VectorADBase &u, const VectorADBase &z)
 	order         = 0;
 	TaylorColDim  = 1;
 	PartialColDim = 0;
+	ForJacColDim  = 0;
 
 	// recording
 	Rec     = new TapeRec<Base>( AD<Base>::Tape()->Rec );
 	Taylor  = new Base[totalNumVar];
 	Partial = CppADNull;
+	ForJac  = CppADNull;
 
 	// number of elements in u
 	n = u.size();

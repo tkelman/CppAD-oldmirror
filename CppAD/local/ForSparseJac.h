@@ -164,13 +164,14 @@ VectorBool ADFun<Base>::ForSparseJac(size_t q, const VectorBool &Px)
 	size_t npv = 1 + q / sizeof(Pack);
 
 	// array that will hold packed values
-	Pack *pack;
-	try
-	{	pack = new Pack[totalNumVar * npv]; 
-	}
-	catch(...)
-	{	CppADUsageError(0, "cannot allocate sufficient memory");
-		abort();
+	if( ForJacColDim < npv )
+	{	try
+		{	ForJac = new Pack[totalNumVar * npv]; 
+		}
+		catch(...)
+		{	CppADUsageError(0, "cannot allocate sufficient memory");
+			abort();
+		}
 	}
 
 	// set values corresponding to independent variables
@@ -182,7 +183,7 @@ VectorBool ADFun<Base>::ForSparseJac(size_t q, const VectorBool &Px)
 
 		// initialize all bits as zero
 		for(k = 0; k < npv; k++)
-			pack[ indvar[i] * npv + k ] = 0;
+			ForJac[ indvar[i] * npv + k ] = 0;
 
 		// set bits that are true
 		for(j = 0; j < q; j++) 
@@ -190,12 +191,12 @@ VectorBool ADFun<Base>::ForSparseJac(size_t q, const VectorBool &Px)
 			p    = j - k * sizeof(Pack);
 			mask = Pack(1) << p;
 			if( Px[ i * q + j ] )
-				pack[ indvar[i] * npv + k ] |= mask;
+				ForJac[ indvar[i] * npv + k ] |= mask;
 		}
 	}
 
 	// evaluate the sparsity patterns
-	ForJacSweep(npv, totalNumVar, Rec, pack);
+	ForJacSweep(npv, totalNumVar, Rec, ForJac);
 
 	// return values corresponding to dependent variables
 	VectorBool Py(m * q);
@@ -207,13 +208,10 @@ VectorBool ADFun<Base>::ForSparseJac(size_t q, const VectorBool &Px)
 		{	k     = j / sizeof(Pack);
 			p     = j - k * sizeof(Pack);
 			mask  = Pack(1) << p;
-			mask &=	pack[ depvar[i] * npv + k ];
+			mask &=	ForJac[ depvar[i] * npv + k ];
 			Py[ i * q + j ] = (mask != 0);
 		}
 	}
-
-	// free local memory
-	delete [] pack;
 
 	return Py;
 }

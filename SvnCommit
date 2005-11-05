@@ -1,36 +1,13 @@
-# Move ForJacDep to ForSparseJac and change 
-# dependency matrix to sparsity pattern
+# Move Jacobian sparsity pattern results so that retained between calls
+# (for future use with Hessian sparsity calculations)
 #
 # SvnCommit: command that made this commit.
-# WhatsNew05.omh: users view of the changes.
-# ForJacSweep.h: change dependency matrix to sparsity pattern.
-# Fun.h: change ForJacDep to ForSparseJac.
-# ExampleList.omh: change ForJacDep to ForSparseJac.
-# Example.cpp: change ForJacDep to ForSparseJac.
-# Example.vcproj: change ForJacDep to ForSparseJac.
-# TestMore.cpp: change ForJacDep to ForSparseJac.
-# TestMore.vcproj: change ForJacDep to ForSparseJac.
-# */Makefile.am: change ForJacDep to ForSparseJac.
-# ForJacDep.h: delete.
-# */ForJacDep.cpp: delete.
-# ForSparseJac.h: add.
-# ForSparseJac.cpp: add.
+# CppAD/local/Fun.h: store sparsity information in this object.
+# CppAD/local/ForSparseJac.h: remove allocation from this member function.
+# CppAD/local/ForJacSweep.h: change pack to ForJac.
 sed -e "/^[^#]/d" -e "s/^[#] *//" < SvnCommit > svn.log
 svn commit --file svn.log \
 	SvnCommit \
 	CppAD/local/ForJacSweep.h \
-	CppAD/local/ForJacDep.h \
 	CppAD/local/Fun.h \
-	CppAD/local/ForSparseJac.h \
-	omh/WhatsNew05.omh \
-	omh/ExampleList.omh \
-	Example/Example.vcproj \
-	Example/ForSparseJac.cpp \
-	Example/Example.cpp \
-	Example/ForJacDep.cpp \
-	Example/Makefile.am \
-	TestMore/Makefile.am \
-	TestMore/ForSparseJac.cpp \
-	TestMore/ForJacDep.cpp \
-	TestMore/TestMore.cpp \
-	TestMore/TestMore.vcproj
+	CppAD/local/ForSparseJac.h 

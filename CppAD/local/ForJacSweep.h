@@ -46,7 +46,7 @@ $syntax%void ForJacSweep(
 	size_t                 %npv%,
 	size_t                 %numvar%,
 	TapeRec<%Base%>       *%Rec%,
-	Pack                  *%pack%
+	%Pack%                *%ForJac%
 )%$$
 $tend
 
@@ -66,13 +66,13 @@ for all the other variables.
 
 
 $head numvar$$
-is the number of rows in the entire sparsity pattern $italic pack$$.
+is the number of rows in the entire sparsity pattern $italic ForJac$$.
 It must also be equal to $syntax%%Rec%->TotNumVar()%$$.
 
 
 $head npv$$
 Is the number of elements of type $italic P$$
-(per variable) in the sparsity pattern $italic pack$$.
+(per variable) in the sparsity pattern $italic ForJac$$.
 
 $head On Input$$
 
@@ -83,13 +83,13 @@ $table
 	$bold field$$ $cnext 
 	$bold Value$$          
 $rnext
-	$syntax%%pack%[%0% * %npv% + %j%]%$$      $cnext 
+	$syntax%%ForJac%[%0% * %npv% + %j%]%$$      $cnext 
 	the variable with index zero is not used
 $rnext
 	$syntax%%Rec%->GetOp(0)%$$                $cnext 
 	the operator with index zero must be a $code NonOp$$
 $rnext
-	$syntax%%pack%[%i% * %npv% + %j%]%$$      $cnext 
+	$syntax%%ForJac%[%i% * %npv% + %j%]%$$      $cnext 
 	$th j$$ set of sparsity pattern for variable with index $italic i$$   
 $rnext
 	$syntax%%Rec%->GetOp(%i%)%$$              $cnext 
@@ -105,7 +105,7 @@ $table
 	$bold field$$ $cnext 
 	$bold Value$$          
 $rnext
-	$syntax%%pack%[%i% * %npv% + %j%]%$$      $cnext 
+	$syntax%%ForJac%[%i% * %npv% + %j%]%$$      $cnext 
 	$th j$$ set of sparsity pattern for variable with index $italic i$$     
 $rnext
 	$syntax%%Rec%->GetOp(%i%)%$$              $cnext 
@@ -124,7 +124,7 @@ $syntax%%Taylor%[%i% * %npv% + %j%]%$$ is not modified.
 
 $subhead Other Variables$$
 For $latex i = m+1, \ldots , numvar-1$$ and $latex j = 0 , \ldots , npv-1$$,
-$syntax%%pack%[%i% * %npv% + %j%]%$$ is set equal to the
+$syntax%%ForJac%[%i% * %npv% + %j%]%$$ is set equal to the
 $th j$$ set of sparsity pattern for the variable with index $italic i$$.
 
 
@@ -142,7 +142,7 @@ void ForJacSweep(
 	size_t                npv,
 	size_t                numvar,
 	TapeRec<Base>        *Rec,
-	Pack                 *pack
+	Pack                 *ForJac
 )
 {
 	size_t        numop;
@@ -212,7 +212,7 @@ void ForJacSweep(
 		ind    = Rec->GetInd(n_ind, i_ind);
 
 		// value of z for this op
-		Z      = pack + i_var * npv;
+		Z      = ForJac + i_var * npv;
 
 		// rest of information depends on the case
 		switch( op )
@@ -221,7 +221,7 @@ void ForJacSweep(
 			CppADUnknownError( n_var == 1);
 			CppADUnknownError( n_ind == 1 );
 			CppADUnknownError( ind[0] < i_var );
-			X   = pack + ind[0] * npv;
+			X   = ForJac + ind[0] * npv;
 			for(j = 0; j < npv; j++)
 				Z[j] = X[j];
 			break;
@@ -233,8 +233,8 @@ void ForJacSweep(
 			CppADUnknownError( ind[0] < i_var );
 			CppADUnknownError( ind[1] < i_var );
 
-			X = pack + ind[0] * npv;
-			Y = pack + ind[1] * npv;
+			X = ForJac + ind[0] * npv;
+			Y = ForJac + ind[1] * npv;
 			for(j = 0; j < npv; j++)
 				Z[j] = X[j] | Y[j];
 			break;
@@ -245,7 +245,7 @@ void ForJacSweep(
 			CppADUnknownError( n_ind == 2 );
 			CppADUnknownError( ind[1] < i_var );
 
-			Y = pack + ind[1] * npv;
+			Y = ForJac + ind[1] * npv;
 			for(j = 0; j < npv; j++)
 				Z[j] = Y[j];
 			break;
@@ -256,7 +256,7 @@ void ForJacSweep(
 			CppADUnknownError( n_ind == 2 );
 			CppADUnknownError( ind[0] < i_var );
 
-			X = pack + ind[0] * npv;
+			X = ForJac + ind[0] * npv;
 			for(j = 0; j < npv; j++)
 				Z[j] = X[j];
 			break;
@@ -271,8 +271,8 @@ void ForJacSweep(
 			CppADUnknownError( (i_var+1) < numvar  );
 
 			// use Tmp for data stored in variable record
-			Tmp = pack + (i_var+1) * npv;
-			X   = pack + ind[0] * npv;
+			Tmp = ForJac + (i_var+1) * npv;
+			X   = ForJac + ind[0] * npv;
 			for(j = 0; j < npv; j++)
 				Tmp[j] = Z[j] = X[j];
 			break;
@@ -287,8 +287,8 @@ void ForJacSweep(
 			CppADUnknownError( (i_var+1) < numvar  );
 
 			// use Tmp for data stored in variable record
-			Tmp = pack + (i_var+1) * npv;
-			X   = pack + ind[0] * npv;
+			Tmp = ForJac + (i_var+1) * npv;
+			X   = ForJac + ind[0] * npv;
 			for(j = 0; j < npv; j++)
 				Tmp[j] = Z[j] = X[j];
 			break;
@@ -303,8 +303,8 @@ void ForJacSweep(
 			CppADUnknownError( (i_var+1) < numvar  );
 
 			// use Tmp for data stored in variable record
-			Tmp = pack + (i_var+1) * npv;
-			X   = pack + ind[0] * npv;
+			Tmp = ForJac + (i_var+1) * npv;
+			X   = ForJac + ind[0] * npv;
 			for(j = 0; j < npv; j++)
 				Tmp[j] = Z[j] = X[j];
 			break;
@@ -315,8 +315,8 @@ void ForJacSweep(
 			CppADUnknownError( n_ind == 6);
 			CppADUnknownError( ind[1] != 0 );
 
-			trueCase  = pack + ind[4] * npv; // if ind[1] & 4 true
-			falseCase = pack + ind[5] * npv; // if ind[1] & 8 true
+			trueCase  = ForJac + ind[4] * npv; // if ind[1] & 4 true
+			falseCase = ForJac + ind[5] * npv; // if ind[1] & 8 true
 			for(j = 0; j < npv; j++)
 			{	if( ind[1] & 4 )
 					Z[j] = trueCase[j];
@@ -336,8 +336,8 @@ void ForJacSweep(
 			CppADUnknownError( (i_var+1) < numvar  );
 
 			// use Tmp for data stored in variable record
-			Tmp = pack + (i_var+1) * npv;
-			X   = pack + ind[0] * npv;
+			Tmp = ForJac + (i_var+1) * npv;
+			X   = ForJac + ind[0] * npv;
 			for(j = 0; j < npv; j++)
 				Tmp[j] = Z[j] = X[j];
 			break;
@@ -352,8 +352,8 @@ void ForJacSweep(
 			CppADUnknownError( (i_var+1) < numvar  );
 
 			// use Tmp for data stored in variable record
-			Tmp = pack + (i_var+1) * npv;
-			X   = pack + ind[0] * npv;
+			Tmp = ForJac + (i_var+1) * npv;
+			X   = ForJac + ind[0] * npv;
 			for(j = 0; j < npv; j++)
 				Tmp[j] = Z[j] = X[j];
 			break;
@@ -374,8 +374,8 @@ void ForJacSweep(
 			CppADUnknownError( ind[0] < i_var );
 			CppADUnknownError( ind[1] < i_var );
 
-			X = pack + ind[0] * npv;
-			Y = pack + ind[1] * npv;
+			X = ForJac + ind[0] * npv;
+			Y = ForJac + ind[1] * npv;
 			for(j = 0; j < npv; j++)
 				Z[j] = X[j] | Y[j];
 			break;
@@ -386,7 +386,7 @@ void ForJacSweep(
 			CppADUnknownError( n_ind == 2 );
 			CppADUnknownError( ind[1] < i_var );
 
-			Y = pack + ind[1] * npv;
+			Y = ForJac + ind[1] * npv;
 			for(j = 0; j < npv; j++)
 				Z[j] = Y[j];
 			break;
@@ -397,7 +397,7 @@ void ForJacSweep(
 			CppADUnknownError( n_ind == 2 );
 			CppADUnknownError( ind[0] < i_var );
 
-			X = pack + ind[0] * npv;
+			X = ForJac + ind[0] * npv;
 			for(j = 0; j < npv; j++)
 				Z[j] = X[j];
 			break;
@@ -464,7 +464,7 @@ void ForJacSweep(
 			CppADUnknownError( n_ind == 1 );
 			CppADUnknownError( ind[0] < i_var );
 
-			X = pack + ind[0] * npv;
+			X = ForJac + ind[0] * npv;
 			for(j = 0; j < npv; j++)
 				Z[j] = X[j];
 			break;
@@ -566,7 +566,7 @@ void ForJacSweep(
 			CppADUnknownError( n_ind == 1 );
 			CppADUnknownError( ind[0] < i_var );
 
-			X = pack + ind[0] * npv;
+			X = ForJac + ind[0] * npv;
 			for(j = 0; j < npv; j++)
 				Z[j] = X[j];
 			break;
@@ -635,8 +635,8 @@ void ForJacSweep(
 			CppADUnknownError( ind[0] < i_var );
 			CppADUnknownError( ind[1] < i_var );
 
-			X = pack + ind[0] * npv;
-			Y = pack + ind[1] * npv;
+			X = ForJac + ind[0] * npv;
+			Y = ForJac + ind[1] * npv;
 			for(j = 0; j < npv; j++)
 				Z[j] = X[j] | Y[j];
 			break;
@@ -647,7 +647,7 @@ void ForJacSweep(
 			CppADUnknownError( n_ind == 2 );
 			CppADUnknownError( ind[1] < i_var );
 
-			Y = pack + ind[1] * npv;
+			Y = ForJac + ind[1] * npv;
 			for(j = 0; j < npv; j++)
 				Z[j] = Y[j];
 			break;
@@ -658,7 +658,7 @@ void ForJacSweep(
 			CppADUnknownError( n_ind == 2 );
 			CppADUnknownError( ind[0] < i_var );
 
-			X = pack + ind[0] * npv;
+			X = ForJac + ind[0] * npv;
 			for(j = 0; j < npv; j++)
 				Z[j] = X[j];
 			break;
@@ -701,8 +701,8 @@ void ForJacSweep(
 			CppADUnknownError( (i_var+1) < numvar  );
 
 			// use Tmp for data stored in second variable
-			Tmp = pack + (i_var+1) * npv;
-			X   = pack + ind[0] * npv;
+			Tmp = ForJac + (i_var+1) * npv;
+			X   = ForJac + ind[0] * npv;
 			for(j = 0; j < npv; j++)
 				Z[j] = Tmp[j] = X[j];
 			break;
@@ -717,8 +717,8 @@ void ForJacSweep(
 			CppADUnknownError( (i_var+1) < numvar  );
 
 			// use Tmp for data stored in second variable
-			Tmp = pack + (i_var+1) * npv;
-			X   = pack + ind[0] * npv;
+			Tmp = ForJac + (i_var+1) * npv;
+			X   = ForJac + ind[0] * npv;
 			for(j = 0; j < npv; j++)
 				Z[j] = Tmp[j] = X[j];
 			break;
@@ -729,7 +729,7 @@ void ForJacSweep(
 			CppADUnknownError( n_ind == 1 );
 			CppADUnknownError( ind[0] < i_var );
 
-			X = pack + ind[0] * npv;
+			X = ForJac + ind[0] * npv;
 			for(j = 0; j < npv; j++)
 				Z[j] = X[j];
 			break;
@@ -750,7 +750,7 @@ void ForJacSweep(
 			CppADUnknownError( n_ind == 3 );
 
 			// update sparsity for entire vector
-			Y = pack + ind[2] * npv;
+			Y = ForJac + ind[2] * npv;
 			for(j = 0; j < npv; j++)
 			{	Z[j] = Y[j];
 				VectorSto[ j + (ind[0] - 1) * npv] |= Y[j];
@@ -772,7 +772,7 @@ void ForJacSweep(
 			CppADUnknownError( n_var == 1);
 			CppADUnknownError( n_ind == 3 );
 
-			Y    = pack + ind[2] * npv;
+			Y    = ForJac + ind[2] * npv;
 			for(j = 0; j < npv; j++)
 			{	Z[j] = Y[j];
 				VectorSto[ j + (ind[0] - 1) * npv] |= Y[j];
@@ -786,8 +786,8 @@ void ForJacSweep(
 			CppADUnknownError( ind[0] < i_var );
 			CppADUnknownError( ind[1] < i_var );
 
-			X = pack + ind[0] * npv;
-			Y = pack + ind[1] * npv;
+			X = ForJac + ind[0] * npv;
+			Y = ForJac + ind[1] * npv;
 			for(j = 0; j < npv; j++)
 				Z[j] = X[j] | Y[j];
 			break;
@@ -798,7 +798,7 @@ void ForJacSweep(
 			CppADUnknownError( n_ind == 2 );
 			CppADUnknownError( ind[1] < i_var );
 
-			Y = pack + ind[1] * npv;
+			Y = ForJac + ind[1] * npv;
 			for(j = 0; j < npv; j++)
 				Z[j] = Y[j];
 			break;
@@ -809,7 +809,7 @@ void ForJacSweep(
 			CppADUnknownError( n_ind == 2 );
 			CppADUnknownError( ind[0] < i_var );
 
-			X = pack + ind[0] * npv;
+			X = ForJac + ind[0] * npv;
 			for(j = 0; j < npv; j++)
 				Z[j] = X[j];
 			break;
