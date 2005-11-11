@@ -43,9 +43,9 @@ then
 	for name in Doc omh/InstallUnix omh/InstallWindows
 	do
 		sed $name.omh > $name.tmp \
-		-e "s/CppAD-[0-9][0-9]-[0-9][0-9]-[0-9][0-9]/CppAD-$Today/g" \
-		-e "s/cppad-[0-9][0-9]-[0-9][0-9]-[0-9][0-9]/cppad-$Today/g" 
-		#
+	-e "s/\([^0-9]\)[0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/\1$Today/g" \
+	-e "s/\([^0-9]\)[0-9][0-9]-[0-9][0-9]-[0-9][0-9]\([^0-9]\)/\1$Today\2/g" 
+	#
 		diff $name.omh $name.tmp
 		mv   $name.tmp $name.omh
 	done
@@ -117,38 +117,35 @@ fi
 #
 if [ "$1" = "configure" ] || [ "$1" = "all" ]
 then
-	ADOLC=""
-	if [ -e $HOME/adolc_base ]
-	then
-		ADOLC="ADOLC_DIR=$HOME/adolc_base"
-	fi
-	#
-	FADBAD=""
-	if [ -e $HOME/FADBAD++ ]
-	then
-		FADBAD="FADBAD_DIR=$HOME"
-	fi
 	#
 	TEST=""
 	if [ "$2" == "test" ]
 	then
+		TEST="$TEST --with-GetStarted"
 		TEST="$TEST --with-Example"
 		TEST="$TEST --with-TestMore"
 		TEST="$TEST --with-Speed"
+		TEST="$TEST --with-PrintFor"
 		TEST="$TEST --with-profiling"
+		if [ -e $HOME/adolc_base ]
+		then
+			TEST="$TEST ADOLC_DIR=$HOME/adolc_base"
+		fi
+		if [ -e $HOME/FADBAD++ ]
+		then
+			TEST="$TEST FADBAD_DIR=$HOME"
+		fi
+		if [ -e $HOME/boost_1_32_0 ]
+		then
+			TEST="$TEST BOOST_DIR=$HOME/boost_1_32_0"
+		fi
 	fi
 	#
 	echo "configure \\"
-	echo "	--with-profiling \\"
-	echo "	$ADOLC  \\"
-	echo "	$FADBAD \\"
 	echo "  $TEST   \\"
 	echo "	CPP_ERROR_WARN=\"-Wall -ansi -pedantic-errors -std=c++98\""
 	#
 	./configure \
-		--with-profiling \
-		$ADOLC  \
-		$FADBAD \
 		$TEST   \
 		CPP_ERROR_WARN="-Wall -ansi -pedantic-errors -std=c++98"
 	#
@@ -220,19 +217,35 @@ then
 		#
 		exit
 	fi
-	#
-	# extract from compressed tar
-	tar -xvzf cppad-$AcDate.tar.gz 
-	#
 	# create the unix version by changing cppad to upper case
 	# (use temporary file to avoid error on rename in Cygwin case)
 	mv cppad-$AcDate.tar.gz CppAD-$AcDate.tmp
 	mv CppAD-$AcDate.tmp    CppAD-$AcDate.tar.gz
 	#
+	if [ "$1" != "all" ]
+	then
+		exit
+	fi
+fi
+if [ "$1" = "dos" ] || ( [ "$1" = "all" ] && [ "$2" != "unix" ] )
+then
+	#
+	if [ -e cppad-$AcDate ]
+	then
+		echo "rm -f -r cppad-$AcDate"
+		rm -f -r cppad-$AcDate
+	fi
+	#
+	# extract from compressed tar
+	tar -xvzf CppAD-$AcDate.tar.gz 
+	#
 	# convert files to dos format
 	for file in  cppad-$AcDate/*
 	do
-		unix2dos $file
+		if [ -f $file ]
+		then
+			unix2dos $file
+		fi
 	done
 	for dir in \
 		Adolc \
@@ -248,7 +261,10 @@ then
 	do
 		for file in cppad-$AcDate/$dir/*
 		do
-			unix2dos $file
+			if [ -f $file ]
+			then
+				unix2dos $file
+			fi
 		done
 	done
 	for dir in \
@@ -282,6 +298,13 @@ then
 	# clean up
 	rm -r cppad-$AcDate
 	#
+	if [ "$1" != "all" ]
+	then
+		exit
+	fi
+fi
+if [ "$1" = "all" ]
+then
 	exit
 fi
 #
@@ -297,11 +320,12 @@ echo "version         update configure.ac and Doc.omh version number"
 echo "aclocal         create aclocal.m4 file"
 echo "autoheader      create a CppAD/config.h.in file"
 echo "automake        run autoconf and automake to create configure script"
-echo "configure       configure excludes Example, TestMore, Speed, profiling"
-echo "configure test  configure includes Example, TestMore, Speed, profiling"
+echo "configure       configure excludes all the --with-* options"
+echo "configure test  configure includes all the possible options"
 echo "compile         compile all of the tests"
 echo "omhelp          build all the documentation"
 echo "dist            create the distribution files CppAD.*.tar.gz"
+echo "dos             create the distribution files CppAD.*.zip"
 echo
 echo "Build all"
 echo "This command will execute all the options in the order above"
@@ -310,3 +334,7 @@ echo
 echo "Build all test"
 echo "This command will execute all the options in the order above"
 echo "with the exception that \"configue\" will be excluded."
+echo
+echo "Build all unix"
+echo "This command will execute all the options in the order above"
+echo "with the exception that \"configue\" and \"dos\" will be excluded."

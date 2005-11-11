@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /*
 $begin CppAD_vector$$
 $spell
+	Bool
 	resize
 	cout
 	endl
@@ -141,14 +142,37 @@ $syntax%
 will output the value $italic e$$ to the standard
 output stream $italic os$$.
 
+
+$head vectorBool$$
+$index vectorBool$$
+The file $code <CppAD/CppAD_vector.h>$$ also defines the class
+$code CppAD::vectorBool$$.
+This has the same specifications as $code CppAD::vector<bool>$$ except
+that $code vectorBool$$ conserves on memory
+(on the other hand, $code vectorBool$$ is expected to be faster
+than $code vectorBool$$).
+Another exception is the output operator for $code vectorBool$$
+which is specified below:
+
+$subhead Output$$
+The $code CppAD::vectorBool$$ output operator
+prints each boolean value as 
+a $code 0$$ for false,
+a $code 1$$ for true, 
+and does not print any other output; i.e.,
+the vector is written a long sequence of zeros and ones with no
+surrounding $code {$$, $code }$$ and with no separating commas or spaces. 
+
 $head Example$$
 $children%
-	Example/CppAD_vector.cpp
+	Example/CppAD_vector.cpp%
+	Example/vectorBool.cpp
 %$$
-The file
-$xref/CppAD_vector.cpp/$$
-contains an example and test of this template class.
-It returns true if it succeeds and false otherwise.
+The files
+$xref/CppAD_vector.cpp/$$ and
+$xref/vectorBool.cpp/$$ each
+contain an example and test of this template class.
+They return true if they succeed and false otherwise.
 
 $head Exercise$$
 $index exercise, CppAD::vector$$
@@ -167,35 +191,11 @@ $end
 $end
 
 ------------------------------------------------------------------------ 
-$begin CppAD_vector.h$$
-$spell
-	resize
-	iostream
-	const
-	std
-	ostream
-	vec
-	namespace
-	Cpp
-	cstddef
-	ifndef
-	endif
-	namespace
-	inline
-	typedef
-	tmp
-$$
-
-$section CppAD::vector Source Code$$
-
-$index source, CppAD::vector$$
-$index CppAD::vector, source$$
-$index vector, CppAD source$$
-
-$codep */
+*/
 
 # include <cstddef>
 # include <iostream>
+# include <limits>
 # include <CppAD/CppADError.h>
 
 # ifndef CppADNull
@@ -203,6 +203,25 @@ $codep */
 # endif
 
 namespace CppAD { //  BEGIN CppAD namespace
+
+// ------------------ CppAD::vector<Type> ----------------------------------
+
+# ifdef NDEBUG
+# define CppADvectorAllocate(data, Type, capacity)                         \
+	data = new Type[capacity];
+# else
+# define CppADvectorAllocate(data, Type, capacity)                         \
+	{	try                                                        \
+		{	data = new Type[capacity];                         \
+		}                                                          \
+		catch (...)                                                \
+		{	CppADUsageError(0,                                 \
+			"CppAD::vector: cannot allocate enough memory"     \
+			);	                                           \
+		}                                                          \
+	}
+# endif
+
 
 template <class Type>
 class vector {
@@ -221,32 +240,14 @@ public:
 	inline vector(size_t n) : capacity(n), length(n)
 	{	if( length == 0 )
 			data = CppADNull;
-		else
-		{	try 
-			{	data = new Type[capacity];
-			}
-			catch (...) 
-			{	CppADUsageError(0,
-				"CppAD::vector: cannot allocate enough memory"
-				);	 
-			}
-		}
+		else	CppADvectorAllocate(data, Type, capacity);
 	}
 	// copy constructor
 	inline vector(const vector &x) : capacity(x.length), length(x.length)
 	{	size_t i;
 		if( length == 0 )
 			data = CppADNull;
-		else
-		{	try 
-			{	data = new Type[capacity];
-			}
-			catch (...) 
-			{	CppADUsageError(0,
-				"CppAD::vector: cannot allocate enough memory"
-				);	 
-			}
-		}
+		else	CppADvectorAllocate(data, Type, capacity);
 
 		for(i = 0; i < length; i++)
 			data[i] = x.data[i];
@@ -269,16 +270,7 @@ public:
 		capacity = n;
 		if( capacity == 0 )
 			data = CppADNull;
-		else
-		{	try 
-			{	data = new Type[capacity];
-			}
-			catch (...) 
-			{	CppADUsageError(0,
-				"CppAD::vector: cannot allocate enough memory"
-				);	 
-			}
-		}
+		else	CppADvectorAllocate(data, Type, capacity);
 	}
 	// assignment operator
 	inline vector & operator=(const vector &x)
@@ -317,14 +309,7 @@ public:
 				capacity = 2;
 			else	capacity = 2 * length;
 
-			try 
-			{	tmp = new Type[capacity];
-			}
-			catch (...) 
-			{	CppADUsageError(0,
-				"CppAD::vector: cannot allocate enough memory"
-				);	 
-			}
+			CppADvectorAllocate(tmp, Type, capacity);
 
 			size_t i;
 			for(i = 0; i < length; i++)
@@ -335,6 +320,7 @@ public:
 		data[length++] = x;
 	}
 };
+
 // output operator
 template <class Type>
 inline std::ostream& operator << (
@@ -352,11 +338,186 @@ inline std::ostream& operator << (
 	os << " }";
 	return os;
 }
+
+/*
+--------------------------- vectorBool -------------------------------------
+*/
+# undef  CppADvectorAllocate
+# ifdef NDEBUG
+# define CppADvectorAllocate(data, UnitType, nunit)                        \
+	data = new UnitType[nunit]; 
+# else
+# define CppADvectorAllocate(data, UnitType, nunit)                        \
+	{	try                                                        \
+		{	data = new UnitType[nunit];                        \
+		}                                                          \
+		catch (...)                                                \
+		{	CppADUsageError(0,                                 \
+			"CppAD::vectorBool: cannot allocate enough memory" \
+			);	                                           \
+		}                                                          \
+	}
+# endif
+
+class vectorBoolElement {
+	typedef size_t UnitType;
+private:
+	UnitType *unit;
+	UnitType mask;
+public:
+	vectorBoolElement(UnitType *unit_, UnitType mask_)
+	: unit(unit_) , mask(mask_)
+	{ }
+	vectorBoolElement(const vectorBoolElement &e)
+	: unit(e.unit) , mask(e.mask)
+	{ }
+	operator bool() const
+	{	return (*unit & mask) != 0; }
+	vectorBoolElement& operator=(bool bit)
+	{	if(bit)
+			*unit |= mask;
+		else	*unit &= ~mask;
+		return *this;
+	} 
+};
+
+class vectorBool {
+	typedef size_t UnitType;
+private:
+	static const  size_t BitPerUnit 
+		= std::numeric_limits<UnitType>::digits;
+	size_t    nunit;
+	size_t    length;
+	UnitType *data;
+public:
+	// type of the elements in the vector
+	typedef bool value_type;
+
+	// default constructor
+	inline vectorBool(void) : nunit(0), length(0) , data(CppADNull)
+	{ }
+	// constructor with a specified size
+	inline vectorBool(size_t n) : nunit(0), length(0), data(CppADNull)
+	{	if( n != 0 )
+		{	nunit    = (n - 1) / BitPerUnit + 1;
+			length   = n;
+
+			CppADvectorAllocate(data, UnitType, nunit);
+		}
+	}
+	// copy constructor
+	inline vectorBool(const vectorBool &v) 
+	: nunit(v.nunit), length(v.length)
+	{	size_t i;
+		if( nunit == 0 )
+			data = CppADNull;
+		else	CppADvectorAllocate(data, UnitType, nunit);
+
+		for(i = 0; i < nunit; i++)
+			data[i] = v.data[i];
+	}
+	// destructor
+	~vectorBool(void)
+	{	delete [] data; }
+
+	// size function
+	inline size_t size(void) const
+	{	return length; }
+
+	// resize function
+	inline void resize(size_t n)
+	{	length = n;
+		if( nunit * BitPerUnit >= n )
+			return;
+		if( nunit > 0 )
+			delete [] data;
+		if( n == 0 )
+			data = CppADNull;
+		else
+		{	nunit    = (n - 1) / BitPerUnit + 1;
+			CppADvectorAllocate(data, UnitType, nunit);
+		}
+	}
+	// assignment operator
+	inline vectorBool & operator=(const vectorBool &v)
+	{	size_t i;
+		CppADUsageError(
+			length == v.length ,
+			"size miss match in assignment operation"
+		);
+		CppADUnknownError( nunit == v.nunit );
+		for(i = 0; i < nunit; i++)
+			data[i] = v.data[i];
+		return *this;
+	}
+	// non-constant element access
+	vectorBoolElement operator[](size_t k)
+	{	size_t i, j;
+		CppADUsageError(
+			k < length,
+			"vector index greater than or equal vector size"
+		);
+		i    = k / BitPerUnit;
+		j    = k - i * BitPerUnit;
+		return vectorBoolElement(data + i , UnitType(1) << j );
+	}
+	// constant element access
+	bool operator[](size_t k) const
+	{	size_t i, j;
+		UnitType unit;
+		UnitType mask;
+		CppADUsageError(
+			k < length,
+			"vector index greater than or equal vector size"
+		);
+		i    = k / BitPerUnit;
+		j    = k - i * BitPerUnit;
+		unit = data[i];
+		mask = UnitType(1) << j;
+		return (unit & mask) != 0;
+	}
+	// add to the back of the array
+	void push_back(bool bit)
+	{	size_t i, j;
+		UnitType mask;
+		CppADUnknownError( length <= nunit * BitPerUnit );
+		if( length == nunit * BitPerUnit )
+		{	// allocate another unit
+			UnitType *tmp;
+			nunit++;
+
+			CppADvectorAllocate(tmp, UnitType, nunit);
+
+			for(i = 0; i < nunit; i++)
+				tmp[i] = data[i];
+			delete [] data;
+			data = tmp;
+		}
+		i    = length / BitPerUnit;
+		j    = length - i * BitPerUnit;
+		mask = UnitType(1) << j;
+		if( bit )
+			data[i] |= mask;
+		else	data[i] &= ~mask;
+		length++;
+	}
+};
+
+// output operator
+inline std::ostream& operator << (
+	std::ostream     &os  , 
+	const vectorBool &v   )
+{	size_t i = 0;
+	size_t n = v.size();
+
+	while(i < n)
+		os << v[i++]; 
+	return os;
+}
+
+# undef  CppADvectorAllocate
+
 } // END CppAD namespace
 
-/* $$
-$end
-------------------------------------------------------------------------------
-*/
 
 # endif

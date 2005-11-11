@@ -1,4 +1,3 @@
-// BEGIN SHORT COPYRIGHT
 /* -----------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-05 Bradley M. Bell
 
@@ -16,10 +15,9 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ------------------------------------------------------------------------ */
-// END SHORT COPYRIGHT
 
 /*
-$begin Hessian.h$$
+$begin Hessian.cpp$$
 $spell
 	Cpp
 	Hessian
@@ -31,21 +29,17 @@ $index example, Hessian$$
 $index test, Hessian$$
 
 $code
-$verbatim%Example/Hessian.h%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
+$verbatim%Example/Hessian.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
 $$
 
 $end
 */
 // BEGIN PROGRAM
-
 # include <CppAD/CppAD.h>
 # include "NearEqualExt.h"
-
-
-// ----------------------------------------------------------------------------
-
+namespace { // Begin empty namespace
 template <typename VectorDouble> // vector class, elements of type double
-bool Hessian()
+bool HessianCases()
 {	bool ok = true;
 
 	using namespace CppAD;
@@ -101,7 +95,15 @@ bool Hessian()
 	ok &=  NearEqual( - x[0]*x[0]*sin(x[1]), H[1*n+1], 1e-10, 1e-10 );
 
 	return ok;
-
 }
-
+} // End empty namespace 
+# include <vector>
+# include <valarray>
+bool Hessian(void)
+{	bool ok = true;
+	ok &= HessianCases< CppAD::vector  <double> >();
+	ok &= HessianCases< std::vector    <double> >();
+	ok &= HessianCases< std::valarray  <double> >();
+	return ok;
+}
 // END PROGRAM

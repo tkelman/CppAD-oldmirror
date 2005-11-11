@@ -1,4 +1,3 @@
-// BEGIN SHORT COPYRIGHT
 /* -----------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-05 Bradley M. Bell
 
@@ -16,36 +15,31 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ------------------------------------------------------------------------ */
-// END SHORT COPYRIGHT
 
 /*
-$begin RevTwo.h$$
+$begin RevOne.cpp$$
 $spell
 	Cpp
 $$
 
-$section Second Partials Reverse Driver: Example and Test$$
+$section Derivative of One Range Component: Example and Test$$
 
-$index second, partial$$
-$index partial, second$$
-$index example, second partial$$
-$index test, second partial$$
+$index derivative, one component$$
+$index one, component derivative$$
+$index example, derivative$$
+$index test, derivative$$
 
-$comment This file is in the Example subdirectory$$ 
 $code
-$verbatim%Example/RevTwo.h%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
+$verbatim%Example/RevOne.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
 $$
 
 $end
 */
 // BEGIN PROGRAM
-
 # include <CppAD/CppAD.h>
-
-// ----------------------------------------------------------------------------
-
+namespace { // Begin empty namespace
 template <typename VectorDouble> // vector class, elements of type double
-bool RevTwo()
+bool RevOneCases()
 {	bool ok = true;
 
 	using namespace CppAD;
@@ -69,10 +63,9 @@ bool RevTwo()
 	Independent(X);
 
 	// comupute the dependent variable values
-	AD<double> Square = X[0] * X[0];
-	Y[0] = Square * exp( X[1] );
-	Y[1] = Square * sin( X[1] );
-	Y[2] = Square * cos( X[1] );
+	Y[0] = X[0] * exp( X[1] );
+	Y[1] = X[0] * sin( X[1] );
+	Y[2] = X[0] * cos( X[1] );
 
 	// create the function object F : X -> Y
 	ADFun<double> F(X, Y);
@@ -82,34 +75,32 @@ bool RevTwo()
 	x[0] = 2.;
 	x[1] = 1.;
 
-	// set up call to F.RevTwo
-	size_t L = 2;
-	VectorDouble dF(n * L);
-	CppADvector<size_t> I(2);
-	CppADvector<size_t> J(2);
-	I[0] = 0; J[0] = 0; // request partials F_0 w.r.t x[0] and x[k]
-	I[1] = 1; J[1] = 1; // request partials F_1 w.r.t x[1] and x[k]
-	dF = F.RevTwo(x, I, J);
+	// compute and check derivative of Y[0] w.r.t X[0], X[1]
+	VectorDouble dF(n);
+	dF  = F.RevOne(x, 0);
+	ok &=  NearEqual( dF[0],      exp(x[1]), 1e-10, 1e-10 );
+	ok &=  NearEqual( dF[1], x[0]*exp(x[1]), 1e-10, 1e-10 );
 
-	/*
-	derivative of F is
-	[ 2 * x[0] * exp(x[1]) ,  x[0] * x[0] * exp(x[1]) ]
-	[ 2 * x[0] * sin(x[1]) ,  x[0] * x[0] * cos(x[1]) ]
-	[ 2 * x[0] * cos(x[1]) , -x[0] * x[0] * sin(x[1]) ]
-	*/
+	// compute and check derivative of Y[1] w.r.t X[0], X[1]
+	dF  = F.RevOne(x, 1);
+	ok &=  NearEqual( dF[0],      sin(x[1]), 1e-10, 1e-10 );
+	ok &=  NearEqual( dF[1], x[0]*cos(x[1]), 1e-10, 1e-10 );
 
-	// partials of F_0 w.r.t x[0] is 2 * x[0] * exp(x[1])
-	// check partials of F_0 w.r.t x[0] and x[k] for k = 0, 1 
-	ok &=  NearEqual(      2.*exp(x[1]), dF[0*L+0], 1e-10, 1e-10 );
-	ok &=  NearEqual( 2.*x[0]*exp(x[1]), dF[1*L+0], 1e-10, 1e-10 );
-
-	// partials of F_1 w.r.t x[1] is x[0] * x[0] * cos(x[1])
-	// check partials of F_1 w.r.t x[1] and x[k] for k = 0, 1 
-	ok &=  NearEqual(    2.*x[0]*cos(x[1]), dF[0*L+1], 1e-10, 1e-10 );
-	ok &=  NearEqual( -x[0]*x[0]*sin(x[1]), dF[1*L+1], 1e-10, 1e-10 );
+	// compute and check derivative of Y[2] w.r.t X[0], X[1]
+	dF  = F.RevOne(x, 2);
+	ok &=  NearEqual( dF[0],        cos(x[1]), 1e-10, 1e-10 );
+	ok &=  NearEqual( dF[1], - x[0]*sin(x[1]), 1e-10, 1e-10 );
 
 	return ok;
-
 }
-
+} // End empty namespace 
+# include <vector>
+# include <valarray>
+bool RevOne(void)
+{	bool ok = true;
+	ok &= RevOneCases< CppAD::vector  <double> >();
+	ok &= RevOneCases< std::vector    <double> >();
+	ok &= RevOneCases< std::valarray  <double> >();
+	return ok;
+}
 // END PROGRAM

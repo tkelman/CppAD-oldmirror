@@ -1,6 +1,6 @@
 # ! /bin/bash
 svn status | \
-sed > SvnStatus.out                                           \
+sed                                                           \
 	-e '/^[?].*\.out$/d'                                  \
 	-e '/^[?].*\.gz$/d'                                   \
 	-e '/^[?].*\.zip$/d'                                  \
@@ -13,26 +13,23 @@ sed > SvnStatus.out                                           \
 	-e '/^[?].*\.deps$/d'                                 \
 	-e '/^[?].*\.a$/d'                                    \
 	-e '/^[?].*\.log$/d'                                  \
+	-e '/^[?].*TestOne.cpp$/d'                            \
 	-e '/^[?].*Makefile$/d'                               \
 	-e '/^[?].*Debug$/d'                                  \
 	-e '/^[?].*junk$/d'                                   \
+	-e '/^[?].*junk.[1-9]$/d'                             \
 	-e '/^[?].*stamp-h1$/d'                               \
 	-e '/^[?].*config.h$/d'                               \
 	-e '/^[?] *configure$/d'                              \
 	-e '/^[?] *Developer$/d'                              \
 	-e '/^[?] *config.status$/d'                          \
+	-e '/^[?].*.exe.stackdump$/d'                         \
 	-e '/^[?] *Doc$/d'                                    \
 	-e '/^[?] *aclocal.m4$/d'                             \
 	-e '/^[?] *cppad-[0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/d' 
 #
 # Add differences for automatically updated files
-echo                            >> SvnStatus.out \
-" //////////// Differences for Automatically Edited Files ///////////"
-svn diff Doc.omh                |
-sed -e "/^[^+-]/d"              >> SvnStatus.out
-svn diff configure.ac           |
-sed -e "/^[^+-]/d"              >> SvnStatus.out
-svn diff omh/InstallUnix.omh    |
-sed -e "/^[^+-]/d"              >> SvnStatus.out
-svn diff omh/InstallWindows.omh |
-sed -e "/^[^+-]/d"              >> SvnStatus.out
+./diffToday Doc.omh
+./diffToday configure.ac
+./diffToday omh/InstallUnix.omh
+./diffToday omh/InstallWindows.omh

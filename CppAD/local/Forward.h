@@ -1,7 +1,6 @@
 # ifndef CppADForwardIncluded
 # define CppADForwardIncluded
 
-// BEGIN SHORT COPYRIGHT
 /* -----------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-05 Bradley M. Bell
 
@@ -19,7 +18,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ------------------------------------------------------------------------ */
-// END SHORT COPYRIGHT
 
 /*
 $begin Forward$$
@@ -46,7 +44,7 @@ $index calculate, forward mode$$
 
 $table
 $bold Syntax$$ $cnext
-$syntax%%yp% = %F%.Forward(%p%, &%xp% )%$$
+$syntax%%yp% = %F%.Forward(%p%, %xp% )%$$
 $rnext $cnext
 $tend
 
@@ -97,6 +95,13 @@ $syntax%
 If there is no previous call with $latex k = 0$$,
 $latex x^{(0)}$$ is the value of the independent variables when $italic F$$ 
 was constructed as an $xref/ADFun/$$ object.
+
+$head p$$
+The argument $italic p$$ has prototype
+$syntax%
+	size_t %p%
+%$$
+It specifies the order of the forward mode calculation.
 
 $head xp$$
 The argument $italic xp$$ has prototype
@@ -220,10 +225,10 @@ $latex \[
 
 $head Example$$
 $children%
-	Example/Forward.h
+	Example/Forward.cpp
 %$$
 The file
-$xref/Forward.h/$$
+$xref/Forward.cpp/$$
 contains an example and a test of this operation.
 It returns true if it succeeds and false otherwise.
 
@@ -245,7 +250,7 @@ VectorBase ADFun<Base>::Forward(size_t p, const VectorBase &up)
 
 	CppADUsageError(
 		up.size() == indvar.size(),
-		"Argument to Forward does not have length equal to\n"
+		"Second argument to Forward does not have length equal to\n"
 		"the dimension of the domain for the corresponding ADFun."
 	);
 	CppADUsageError(
@@ -276,7 +281,7 @@ VectorBase ADFun<Base>::Forward(size_t p, const VectorBase &up)
 	}
 
 	// evaluate the derivatives
-	compareChange = ADForward(true, p, totalNumVar, Rec, TaylorColDim, Taylor);
+	compareChange = ForwardSweep(true, p, totalNumVar, Rec, TaylorColDim, Taylor);
 
 	// return the p-th order Taylor coefficients for dependent variables
 	size_t n = depvar.size();

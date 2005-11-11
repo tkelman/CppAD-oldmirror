@@ -1,4 +1,3 @@
-# BEGIN SHORT COPYRIGHT
 # ---------------------------------------------------------------------------
 # CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-05 Bradley M. Bell
 # 
@@ -16,7 +15,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 # ---------------------------------------------------------------------------
-# END SHORT COPYRIGHT
 # automake input file
 #
 # Microsoft project files
@@ -46,6 +44,7 @@ Example_SOURCES   = \
 	Atan.cpp \
 	Atan2.cpp \
 	BoolFun.cpp \
+	vectorBool.cpp \
 	CheckNumericType.cpp \
 	CheckSimpleVector.cpp \
 	Compare.cpp \
@@ -69,22 +68,24 @@ Example_SOURCES   = \
 	Eq.cpp \
 	Erf.cpp \
 	Exp.cpp \
-	ForOne.h \
-	ForTwo.h \
-	Forward.h \
+	ForOne.cpp \
+	ForTwo.cpp \
+	Forward.cpp \
+	ForSparseJac.cpp \
 	FromBase.cpp \
-	Fun.h \
+	Fun.cpp \
 	HesLuDet.cpp \
 	HesMinorDet.cpp \
-	Hessian.h \
+	Hessian.cpp \
 	HesTimesDir.cpp \
 	Integer.cpp \
 	JacLuDet.cpp \
 	JacMinorDet.cpp \
-	Jacobian.h \
+	Jacobian.cpp \
 	Log.cpp \
 	Log10.cpp \
 	LuFactor.cpp \
+	LuFactorRatio.cpp \
 	LuInvert.cpp \
 	LuSolve.cpp \
 	LuVecAD.cpp \
@@ -106,9 +107,9 @@ Example_SOURCES   = \
 	Poly.cpp \
 	Pow.cpp \
 	PowInt.cpp \
-	RevOne.h \
-	RevTwo.h \
-	Reverse.h \
+	RevOne.cpp \
+	RevTwo.cpp \
+	Reverse.cpp \
 	RombergMul.cpp \
 	RombergOne.cpp \
 	Rosen34.cpp \

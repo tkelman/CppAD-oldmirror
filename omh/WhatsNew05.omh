@@ -1,4 +1,3 @@
-o/ BEGIN SHORT COPYRIGHT
 /* -----------------------------------------------------------------------
 CppAD: C++ Algorithm Differentiation: Copyright (C) 2003-05 Bradley M. Bell
 
@@ -16,10 +15,13 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ------------------------------------------------------------------------ */
-// END SHORT COPYRIGHT
 
 $begin WhatsNew05$$
 $spell
+	logdet
+	valarray
+	Jacobian
+	bool
 	yy
 	mm
 	dd
@@ -76,6 +78,97 @@ This section contains a list of the changes to CppAD during 2005
 (in reverse order by date).
 The purpose of these sections is to
 assist you in learning about changes between various versions of CppAD.
+
+$head 11-09$$
+Add prototype documentation for $xref/LuSolve/logdet/logdet/$$ in 
+the $xref/LuSolve/$$ function.
+$pre
+
+$$
+Add the optional $xref/LuFactor/ratio/ratio/$$ argument to the
+$xref/LuFactor/$$ routine.
+
+$head 11-07$$
+Remove some blank lines from the example files listed
+directly below (under 11-06).
+Comments for computing the entire Jacobian
+$xref/ForSparseJac/Entire Sparsity Pattern/entire sparsity pattern/$$
+was added.
+
+$head 11-06$$
+The cases of $code std::vector$$, $code std::valarray$$, and 
+$code CppAD::vector$$ were folded into the standard example and tests
+format for the following cases:
+$xref/RevTwo.cpp/$$,
+$xref/RevOne.cpp/$$,
+$xref/Reverse.cpp/$$,
+$xref/Hessian.cpp/$$,
+$xref/Jacobian.cpp/$$,
+$xref/Forward.cpp/$$,
+$xref/ForTwo.cpp/$$,
+$xref/ForOne.cpp/$$,
+$xref/Fun.cpp/$$.
+
+$head 11-01$$
+Add forward mode $xref/ForSparseJac//Jacobian sparsity/$$ calculation.
+
+$head 10-20$$
+Add $xref/WishList/Sparsity Structure/sparsity structure/$$ to 
+the whish list.
+
+$head 10-18$$
+The Unix install $xref/InstallUnix/Configure/configure/$$ command
+was missing the $code --$$ before of the $code prefix$$ command line
+argument.
+
+$head 10-14$$
+The template class $xref/CppAD_vector/$$ uses a try/catch block
+during the allocation of memory (for error reporting).
+This may be slow down memory allocation and hence it
+is now replaced by simple memory allocation when 
+the preprocessor variable $code NDEBUG$$ is defined.
+$pre
+
+$$
+The specialization of $code CppAD::vector<bool>$$
+was moved to $xref/CppAD_vector/vectorBool/vectorBool/$$
+so that $code CppAD::vector<bool>$$ does not pack one bit per value 
+(which can be slow to access).
+
+
+$head 10-12$$
+Change the 
+$xref/InstallUnix/Configure/configure/$$ script so that compilation of the
+$xref/GetStarted.cpp/$$ and $xref/PrintFor.cpp/$$ examples are optional.
+$pre
+
+$$
+One of the dates in the Unix installation
+$xref/InstallUnix/Extraction/extraction/$$ discussion was
+out of date. This has been fixed.
+
+
+
+$head 10-06$$
+Change the Unix install $code configure$$ script
+so that is reports information using the same order and notation as its
+$xref/InstallUnix/Configure/documentation/$$.
+$pre
+
+$$
+Some compiler errors in the $xref/OdeGearControl.cpp/$$ and 
+$xref/OdeStiff.cpp/$$ examples were fixed.
+
+
+$head 09-29$$
+Add a specialization to $xref/CppAD_vector/$$ for the 
+$code CppAD::vector<bool>$$ case.
+A test for the $code push_back$$ member function as well as a
+$xref/CheckSimpleVector/$$ test has been added to $xref/CppAD_vector.cpp/$$.
+The source code for this template vector class,
+$code CppAD/CppAD_vector.h$$,
+has been removed from the documentation.
+
 
 $head 09-27$$
 Add the $xref/InstallUnix/PrefixDir and PostfixDir/POSTFIX_DIR/$$

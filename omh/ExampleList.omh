@@ -1,4 +1,3 @@
-// BEGIN SHORT COPYRIGHT
 /* -----------------------------------------------------------------------
 CppAD: C++ Algorithm Differentiation: Copyright (C) 2003-05 Bradley M. Bell
 
@@ -16,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ------------------------------------------------------------------------ */
-// END SHORT COPYRIGHT
 
 
 
@@ -99,22 +97,24 @@ $rref Eq.cpp$$
 $rref Erf.cpp$$
 $rref Example.cpp$$
 $rref Exp.cpp$$
-$rref ForOne.h$$
-$rref ForTwo.h$$
-$rref Forward.h$$
+$rref ForOne.cpp$$
+$rref ForTwo.cpp$$
+$rref Forward.cpp$$
+$rref ForSparseJac.cpp$$
 $rref FromBase.cpp$$
-$rref Fun.h$$
+$rref Fun.cpp$$
 $rref HesLuDet.cpp$$
 $rref HesMinorDet.cpp$$
 $rref HesTimesDir.cpp$$
-$rref Hessian.h$$
+$rref Hessian.cpp$$
 $rref Integer.cpp$$
 $rref JacLuDet.cpp$$
 $rref JacMinorDet.cpp$$
-$rref Jacobian.h$$
+$rref Jacobian.cpp$$
 $rref Log.cpp$$
 $rref Log10.cpp$$
 $rref LuFactor.cpp$$
+$rref LuFactorRatio.cpp$$
 $rref LuInvert.cpp$$
 $rref LuSolve.cpp$$
 $rref LuVecADOk.cpp$$
@@ -128,9 +128,9 @@ $rref Output.cpp$$
 $rref Poly.cpp$$
 $rref Pow.cpp$$
 $rref PowInt.cpp$$
-$rref RevOne.h$$
-$rref RevTwo.h$$
-$rref Reverse.h$$
+$rref RevOne.cpp$$
+$rref RevTwo.cpp$$
+$rref Reverse.cpp$$
 $rref RombergOne.cpp$$
 $rref RombergMul.cpp$$
 $rref Rosen34.cpp$$

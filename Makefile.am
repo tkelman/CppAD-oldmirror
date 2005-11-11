@@ -50,12 +50,7 @@ nobase_myinclude_HEADERS =  \
 	CppAD/CheckNumericType.h \
 	CppAD/CheckSimpleVector.h \
 	CppAD/local/AD.h \
-	CppAD/local/ADBoolFun.h \
-	CppAD/local/ADDefine.h \
-	CppAD/local/ADForward.h \
-	CppAD/local/ADReverse.h \
 	CppAD/local/ADTape.h \
-	CppAD/local/ADUndef.h \
 	CppAD/local/Abs.h \
 	CppAD/local/AbsOp.h \
 	CppAD/local/Acos.h \
@@ -70,6 +65,7 @@ nobase_myinclude_HEADERS =  \
 	CppAD/local/AtanOp.h \
 	CppAD/local/BinaryOp.h \
 	CppAD/local/BoolFun.h \
+	CppAD/local/BoolFunLink.h \
 	CppAD/local/CompEq.h \
 	CppAD/local/Compare.h \
 	CppAD/local/CondExp.h \
@@ -79,6 +75,7 @@ nobase_myinclude_HEADERS =  \
 	CppAD/local/CppADvector.h \
 	CppAD/local/Declare.h \
 	CppAD/local/Default.h \
+	CppAD/local/Define.h \
 	CppAD/local/Discrete.h \
 	CppAD/local/Div.h \
 	CppAD/local/DivEq.h \
@@ -90,7 +87,10 @@ nobase_myinclude_HEADERS =  \
 	CppAD/local/ExtendBuffer.h \
 	CppAD/local/ForOne.h \
 	CppAD/local/ForTwo.h \
+	CppAD/local/ForJacSweep.h \
+	CppAD/local/ForSparseJac.h \
 	CppAD/local/Forward.h \
+	CppAD/local/ForwardSweep.h \
 	CppAD/local/FromBase.h \
 	CppAD/local/Fun.h \
 	CppAD/local/Hessian.h \
@@ -114,6 +114,7 @@ nobase_myinclude_HEADERS =  \
 	CppAD/local/RevOne.h \
 	CppAD/local/RevTwo.h \
 	CppAD/local/Reverse.h \
+	CppAD/local/ReverseSweep.h \
 	CppAD/local/Sin.h \
 	CppAD/local/Sinh.h \
 	CppAD/local/SinCos.h \
@@ -127,8 +128,16 @@ nobase_myinclude_HEADERS =  \
 	CppAD/local/UserAD.h \
 	CppAD/local/UnaryMinus.h \
 	CppAD/local/UnaryPlus.h \
+	CppAD/local/Undef.h \
 	CppAD/local/Value.h \
 	CppAD/local/Vec.h
+#
+# Did user specify --with-Example
+if CppAD_GETSTARTED
+GETSTARTED = GetStarted
+else
+GETSTARTED =
+endif
 #
 # Did user specify --with-Example
 if CppAD_EXAMPLE
@@ -151,6 +160,13 @@ else
 SPEED =
 endif
 #
+# Did user specify --with-PrintFor
+if CppAD_PRINTFOR
+PRINTFOR = PrintFor
+else
+PRINTFOR =
+endif
+#
 # Did user specify a value for ADOLC_DIR in configure command line
 if CppAD_ADOLC
 ADOLC = Adolc
@@ -170,8 +186,8 @@ SUBDIRS = \
 	$(ADOLC) \
 	$(EXAMPLE) \
 	$(FADBAD) \
-	GetStarted \
-	PrintFor \
+	$(GETSTARTED) \
+	$(PRINTFOR) \
 	$(SPEED) \
 	$(TESTMORE) 
 #

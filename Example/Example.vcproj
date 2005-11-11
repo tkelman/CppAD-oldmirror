@@ -674,6 +674,18 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\ForOne.cpp">
+			</File>
+			<File
+				RelativePath=".\ForSparseJac.cpp">
+			</File>
+			<File
+				RelativePath=".\ForTwo.cpp">
+			</File>
+			<File
+				RelativePath=".\Forward.cpp">
+			</File>
+			<File
 				RelativePath="FromBase.cpp">
 				<FileConfiguration
 					Name="Release|Win32">
@@ -692,6 +704,9 @@
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\Fun.cpp">
 			</File>
 			<File
 				RelativePath="HesLuDet.cpp">
@@ -732,6 +747,9 @@
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\Hessian.cpp">
 			</File>
 			<File
 				RelativePath="HesTimesDir.cpp">
@@ -797,6 +815,9 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\Jacobian.cpp">
+			</File>
+			<File
 				RelativePath="Log.cpp">
 				<FileConfiguration
 					Name="Release|Win32">
@@ -855,6 +876,9 @@
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\LuFactorRatio.cpp">
 			</File>
 			<File
 				RelativePath="LuInvert.cpp">
@@ -1172,6 +1196,15 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\Reverse.cpp">
+			</File>
+			<File
+				RelativePath=".\RevOne.cpp">
+			</File>
+			<File
+				RelativePath=".\RevTwo.cpp">
+			</File>
+			<File
 				RelativePath=".\RombergMul.cpp">
 			</File>
 			<File
@@ -1365,6 +1398,9 @@
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\vectorBool.cpp">
 			</File>
 		</Filter>
 		<Filter

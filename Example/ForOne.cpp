@@ -1,4 +1,3 @@
-// BEGIN SHORT COPYRIGHT
 /* -----------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-05 Bradley M. Bell
 
@@ -16,35 +15,31 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ------------------------------------------------------------------------ */
-// END SHORT COPYRIGHT
 
 /*
-$begin ForTwo.h$$
+$begin ForOne.cpp$$
 $spell
 	Cpp
 $$
+$index partial, one component$$
+$index derivative, one component$$
+$index one, component partial$$
+$index example, partial$$
+$index test, partial$$
 
-$section Subset of Second Order Partials: Example and Test$$
-
-$index second, partial$$
-$index partial, second$$
-$index example, second partial$$
-$index test, second partial$$
+$section Partial w.r.t One Domain Component: Example and Test$$
 
 $code
-$verbatim%Example/ForTwo.h%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
+$verbatim%Example/ForOne.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
 $$
 
 $end
 */
 // BEGIN PROGRAM
-
 # include <CppAD/CppAD.h>
-
-// ----------------------------------------------------------------------------
-
+namespace { // Begin empty namespace
 template <typename VectorDouble> // vector class, elements of type double
-bool ForTwo()
+bool ForOneCases()
 {	bool ok = true;
 
 	using namespace CppAD;
@@ -68,10 +63,9 @@ bool ForTwo()
 	Independent(X);
 
 	// comupute the dependent variable values
-	AD<double> Square = X[0] * X[0];
-	Y[0] = Square * exp( X[1] );
-	Y[1] = Square * sin( X[1] );
-	Y[2] = Square * cos( X[1] );
+	Y[0] = X[0] * exp( X[1] );
+	Y[1] = X[0] * sin( X[1] );
+	Y[2] = X[0] * cos( X[1] );
 
 	// create the function object F : X -> Y
 	ADFun<double> F(X, Y);
@@ -81,34 +75,29 @@ bool ForTwo()
 	x[0] = 2.;
 	x[1] = 1.;
 
-	// compute L of the elements of F''(x)
-	size_t L = 2;
-	VectorDouble dF(m * L);
-	CppADvector<size_t> J(2);
-	CppADvector<size_t> K(2);
-	J[0] = 0; K[0] = 0; // request second partial w.r.t x[0] and x[0]
-	J[1] = 0; K[1] = 1; // request second partial w.r.t x[0] and x[1]
-	dF = F.ForTwo(x, J, K);
+	// compute and check partials of F w.r.t x[0]
+	VectorDouble dF(m);
+	dF  = F.ForOne(x, 0);
+	ok &=  NearEqual( dF[0], exp(x[1]), 1e-10, 1e-10 );
+	ok &=  NearEqual( dF[1], sin(x[1]), 1e-10, 1e-10 );
+	ok &=  NearEqual( dF[2], cos(x[1]), 1e-10, 1e-10 );
 
-	/*
-	partial of F w.r.t x[0] is
-	[ 2 * x[0] * exp(x[1]) ]
-	[ 2 * x[0] * sin(x[1]) ]
-	[ 2 * x[0] * cos(x[1]) ]
-	*/
-
-	// second partial of F w.r.t x[0] and x[0]
-	ok &=  NearEqual( 2.*exp(x[1]), dF[0*L+0], 1e-10, 1e-10 );
-	ok &=  NearEqual( 2.*sin(x[1]), dF[1*L+0], 1e-10, 1e-10 );
-	ok &=  NearEqual( 2.*cos(x[1]), dF[2*L+0], 1e-10, 1e-10 );
-
-	// second partial of F w.r.t x[0] and x[1]
-	ok &=  NearEqual( 2.*x[0]*exp(x[1]), dF[0*L+1], 1e-10, 1e-10 );
-	ok &=  NearEqual( 2.*x[0]*cos(x[1]), dF[1*L+1], 1e-10, 1e-10 );
-	ok &=  NearEqual( -2.*x[0]*sin(x[1]), dF[2*L+1], 1e-10, 1e-10 );
+	// compute and check partials of F w.r.t x[1]
+	dF  = F.ForOne(x, 1);
+	ok &=  NearEqual( dF[0],  x[0]*exp(x[1]), 1e-10, 1e-10 );
+	ok &=  NearEqual( dF[1],  x[0]*cos(x[1]), 1e-10, 1e-10 );
+	ok &=  NearEqual( dF[2], -x[0]*sin(x[1]), 1e-10, 1e-10 );
 
 	return ok;
-
 }
-
+} // End empty namespace 
+# include <vector>
+# include <valarray>
+bool ForOne(void)
+{	bool ok = true;
+	ok &= ForOneCases< CppAD::vector  <double> >();
+	ok &= ForOneCases< std::vector    <double> >();
+	ok &= ForOneCases< std::valarray  <double> >();
+	return ok;
+}
 // END PROGRAM
