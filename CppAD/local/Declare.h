@@ -43,7 +43,9 @@ namespace CppAD {
 	template <class Base> bool GreaterThanZero (const AD<Base> &u);
 	
 	// CondExp
-	enum CompareOp {CompareLt, CompareLe, CompareEq, CompareGe, CompareGt};
+	enum CompareOp 
+	{CompareLt, CompareLe, CompareEq, CompareGe, CompareGt, CompareNe};
+
 	template <class Base> AD<Base> CondExpOp (
 		enum CompareOp         cop ,
 		const AD<Base>       &left , 

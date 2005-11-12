@@ -353,6 +353,13 @@ void ReverseSweep(
 			break;
 			// --------------------------------------------------
 
+			case ComOp:
+			CppADUnknownError( n_var == 0 );
+			CppADUnknownError( n_ind == 4 );
+			CppADUnknownError( ind[1] > 1 );
+			break;
+			// --------------------------------------------------
+
 			case CosOp:
 			CppADUnknownError( n_ind == 1 );
 			CppADUnknownError( ind[0] < i_var );
@@ -475,38 +482,6 @@ void ReverseSweep(
 			X  = Taylor  + ind[0] * J;
 			pX = Partial + ind[0] * K;
 			RevLogOp(d, Z, X, pZ, pX);
-			break;
-			// --------------------------------------------------
-
-			case EqfppOp:
-			case EqtppOp:
-			case EqfpvOp:
-			case EqtpvOp:
-			case EqfvpOp:
-			case EqtvpOp:
-			case EqfvvOp:
-			case EqtvvOp:
-
-			case LefppOp:
-			case LetppOp:
-			case LefpvOp:
-			case LetpvOp:
-			case LefvpOp:
-			case LetvpOp:
-			case LefvvOp:
-			case LetvvOp:
-
-			case LtfppOp:
-			case LttppOp:
-			case LtfpvOp:
-			case LttpvOp:
-			case LtfvpOp:
-			case LttvpOp:
-			case LtfvvOp:
-			case LttvvOp:
-
-			CppADUnknownError( n_var == 0 );
-			CppADUnknownError( n_ind == 2 );
 			break;
 			// --------------------------------------------------
 

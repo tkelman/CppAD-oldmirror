@@ -1,9 +1,30 @@
-# The optional ratio argument to LuFactor requires the rest of CppAD.
+# Change CppAD/branches/Brad (do not affect trunk):
+# Fold the 24 comparision operators into one case by encoding the result value 
+# and operand types into an index field (similar to CondExp.h).
+# This will make it easier to add the rest of the sparsity calculations.
 #
-# CppAD.h: modified to include LuSolve.h after the rest of CppAD.
-# LuFactor.h: documentation now suggests including CppAD.h when using ratio. 
+# ADTape.h: add prototype for RecordCompare ADTape member function.
+# ForJacSweep.h: fold the 24 comparison cases into "case ComOp:".
+# ForwardSweep.h: fold the 24 comparison cases into "case ComOp:".
+# ReverseSweep.h: fold the 24 comparison cases into "case ComOp:".
+# TapeRec.h: improve PutInd by having all cases up to 6 indices,
+#            make all of these cases very similar code,
+#            add index entries for each of the member functions,
+# Operator.h: fold the 24 comparison cases into "case ComOp:".
+# Declare.h: add CompareNe to the CompareOp enum type.
+# AD.h: declare GreaterThanOrZero to be a friend.
+# Ordered.h: add GreaterThanOrZero function.
+# CompareOp.h: this requried a total rewrite and is now similar to CondExp.h.
 sed -e "/^[^#]/d" -e "s/^[#] *//" < SvnCommit > svn.log
 svn commit --file svn.log \
 	SvnCommit \
-	CppAD/CppAD.h \
-	CppAD/LuFactor.h
+	CppAD/local/ADTape.h \
+	CppAD/local/ForJacSweep.h \
+	CppAD/local/ForwardSweep.h \
+	CppAD/local/ReverseSweep.h \
+	CppAD/local/TapeRec.h \
+	CppAD/local/Operator.h \
+	CppAD/local/Declare.h \
+	CppAD/local/AD.h \
+	CppAD/local/Ordered.h \
+	CppAD/local/Compare.h

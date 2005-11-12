@@ -327,6 +327,13 @@ void ForJacSweep(
 			break;
 			// ---------------------------------------------------
 
+			case ComOp:
+			CppADUnknownError( n_var == 0 );
+			CppADUnknownError( n_ind == 4 );
+			CppADUnknownError( ind[1] > 1 );
+			break;
+			// --------------------------------------------------
+
 			case CosOp:
 			CppADUnknownError( n_ind == 1 );
 			CppADUnknownError( ind[0] < i_var );
@@ -403,62 +410,6 @@ void ForJacSweep(
 			break;
 			// -------------------------------------------------
 
-			case EqfppOp:
-			CppADUnknownError( n_var == 0 );
-			CppADUnknownError( n_ind == 2 );
-			break;
-			// -------------------------------------------------
-
-			case EqtppOp:
-			CppADUnknownError( n_var == 0 );
-			CppADUnknownError( n_ind == 2 );
-			break;
-			// -------------------------------------------------
-
-			case EqfpvOp:
-			CppADUnknownError( n_var == 0 );
-			CppADUnknownError( n_ind == 2 );
-			CppADUnknownError( ind[1] < i_var );
-			break;
-			// -------------------------------------------------
-
-			case EqtpvOp:
-			CppADUnknownError( n_var == 0 );
-			CppADUnknownError( n_ind == 2 );
-			CppADUnknownError( ind[1] < i_var );
-			break;
-			// -------------------------------------------------
-
-			case EqfvpOp:
-			CppADUnknownError( n_var == 0 );
-			CppADUnknownError( n_ind == 2 );
-			CppADUnknownError( ind[0] < i_var );
-			break;
-			// -------------------------------------------------
-
-			case EqtvpOp:
-			CppADUnknownError( n_var == 0 );
-			CppADUnknownError( n_ind == 2 );
-			CppADUnknownError( ind[0] < i_var );
-			break;
-			// -------------------------------------------------
-
-			case EqfvvOp:
-			CppADUnknownError( n_var == 0 );
-			CppADUnknownError( n_ind == 2 );
-			CppADUnknownError( ind[0] < i_var );
-			CppADUnknownError( ind[1] < i_var );
-			break;
-			// -------------------------------------------------
-
-			case EqtvvOp:
-			CppADUnknownError( n_var == 0 );
-			CppADUnknownError( n_ind == 2 );
-			CppADUnknownError( ind[0] < i_var );
-			CppADUnknownError( ind[1] < i_var );
-			break;
-			// -------------------------------------------------
-
 			case ExpOp:
 			CppADUnknownError( n_var == 1);
 			CppADUnknownError( n_ind == 1 );
@@ -505,62 +456,6 @@ void ForJacSweep(
 			break;
 			// -------------------------------------------------
 
-			case LefppOp:
-			CppADUnknownError( n_var == 0 );
-			CppADUnknownError( n_ind == 2 );
-			break;
-			// -------------------------------------------------
-
-			case LetppOp:
-			CppADUnknownError( n_var == 0 );
-			CppADUnknownError( n_ind == 2 );
-			break;
-			// -------------------------------------------------
-
-			case LefpvOp:
-			CppADUnknownError( n_var == 0 );
-			CppADUnknownError( n_ind == 2 );
-			CppADUnknownError( ind[1] < i_var );
-			break;
-			// -------------------------------------------------
-
-			case LetpvOp:
-			CppADUnknownError( n_var == 0 );
-			CppADUnknownError( n_ind == 2 );
-			CppADUnknownError( ind[1] < i_var );
-			break;
-			// -------------------------------------------------
-
-			case LefvpOp:
-			CppADUnknownError( n_var == 0 );
-			CppADUnknownError( n_ind == 2 );
-			CppADUnknownError( ind[0] < i_var );
-			break;
-			// -------------------------------------------------
-
-			case LetvpOp:
-			CppADUnknownError( n_var == 0 );
-			CppADUnknownError( n_ind == 2 );
-			CppADUnknownError( ind[0] < i_var );
-			break;
-			// -------------------------------------------------
-
-			case LefvvOp:
-			CppADUnknownError( n_var == 0 );
-			CppADUnknownError( n_ind == 2 );
-			CppADUnknownError( ind[0] < i_var );
-			CppADUnknownError( ind[1] < i_var );
-			break;
-			// -------------------------------------------------
-
-			case LetvvOp:
-			CppADUnknownError( n_var == 0 );
-			CppADUnknownError( n_ind == 2 );
-			CppADUnknownError( ind[0] < i_var );
-			CppADUnknownError( ind[1] < i_var );
-			break;
-			// -------------------------------------------------
-
 			case LogOp:
 			CppADUnknownError( n_var == 1);
 			CppADUnknownError( n_ind == 1 );
@@ -569,63 +464,6 @@ void ForJacSweep(
 			X = ForJac + ind[0] * npv;
 			for(j = 0; j < npv; j++)
 				Z[j] = X[j];
-			break;
-			// -------------------------------------------------
-
-			case LtfppOp:
-			CppADUnknownError( n_var == 0 );
-			CppADUnknownError( n_ind == 2 );
-			break;
-			// -------------------------------------------------
-
-
-			case LttppOp:
-			CppADUnknownError( n_var == 0 );
-			CppADUnknownError( n_ind == 2 );
-			break;
-			// -------------------------------------------------
-
-			case LtfpvOp:
-			CppADUnknownError( n_var == 0 );
-			CppADUnknownError( n_ind == 2 );
-			CppADUnknownError( ind[1] < i_var );
-			break;
-			// -------------------------------------------------
-
-			case LttpvOp:
-			CppADUnknownError( n_var == 0 );
-			CppADUnknownError( n_ind == 2 );
-			CppADUnknownError( ind[1] < i_var );
-			break;
-			// -------------------------------------------------
-
-			case LtfvpOp:
-			CppADUnknownError( n_var == 0 );
-			CppADUnknownError( n_ind == 2 );
-			CppADUnknownError( ind[0] < i_var );
-			break;
-			// -------------------------------------------------
-
-			case LttvpOp:
-			CppADUnknownError( n_var == 0 );
-			CppADUnknownError( n_ind == 2 );
-			CppADUnknownError( ind[0] < i_var );
-			break;
-			// -------------------------------------------------
-
-			case LtfvvOp:
-			CppADUnknownError( n_var == 0 );
-			CppADUnknownError( n_ind == 2 );
-			CppADUnknownError( ind[0] < i_var );
-			CppADUnknownError( ind[1] < i_var );
-			break;
-			// -------------------------------------------------
-
-			case LttvvOp:
-			CppADUnknownError( n_var == 0 );
-			CppADUnknownError( n_ind == 2 );
-			CppADUnknownError( ind[0] < i_var );
-			CppADUnknownError( ind[1] < i_var );
 			break;
 			// -------------------------------------------------
 
