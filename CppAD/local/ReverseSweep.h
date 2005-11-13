@@ -195,6 +195,7 @@ void ReverseSweep(
 
 		// corresponding varable
 		n_var  = NumVar(op);
+		CppADUnknownError( i_var >= n_var );
 		i_var -= n_var;
 
 		// corresponding index values

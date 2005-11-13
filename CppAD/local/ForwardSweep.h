@@ -197,10 +197,8 @@ size_t ForwardSweep(
 	size_t          len;
 
 
-	// This status flag is only computed when d is zero and
-	size_t compareCount;
-	if( d == 0 )
-		compareCount = 0;
+	// initialize the comparision operator (ComOp) counter
+	size_t compareCount = 0;
 
 	// if this is an order zero calculation, initialize vector indices
 	size_t *VectorInd;

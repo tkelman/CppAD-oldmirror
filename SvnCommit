@@ -1,30 +1,62 @@
-# Change CppAD/branches/Brad (do not affect trunk):
-# Fold the 24 comparision operators into one case by encoding the result value 
-# and operand types into an index field (similar to CondExp.h).
-# This will make it easier to add the rest of the sparsity calculations.
+# Change CppAD/branches/Brad:
 #
-# ADTape.h: add prototype for RecordCompare ADTape member function.
-# ForJacSweep.h: fold the 24 comparison cases into "case ComOp:".
-# ForwardSweep.h: fold the 24 comparison cases into "case ComOp:".
-# ReverseSweep.h: fold the 24 comparison cases into "case ComOp:".
-# TapeRec.h: improve PutInd by having all cases up to 6 indices,
-#            make all of these cases very similar code,
-#            add index entries for each of the member functions,
-# Operator.h: fold the 24 comparison cases into "case ComOp:".
-# Declare.h: add CompareNe to the CompareOp enum type.
-# AD.h: declare GreaterThanOrZero to be a friend.
-# Ordered.h: add GreaterThanOrZero function.
-# CompareOp.h: this requried a total rewrite and is now similar to CondExp.h.
+# RevJacSweep.h: new reverse mode sparsity calculation.
+# RevSparseJac.h: user interface and documentation for new calculation.
+# PrintFor.h: correct filename in # define CppAD<filename>Included statement.
+# ForwardSweep.h: fix undefine return value warning from MS compiler.
+# ForJacSweep.h: improve comments.
+# ReverseSweep.h: add another unknown error check.
+# Declare.h: forward declare the GreaterThanOrZero template funciton.
+# SubOp.h: correct filename in # define CppAD<filename>Included statement.
+# MulOp.h: correct filename in # define CppAD<filename>Included statement.
+# Fun.h: add RevJac and RevJacColDim member variables.
+# DivOp.h: correct filename in # define CppAD<filename>Included statement.
+# ForSparseJac.h: improve error message and memory allocation size.
+# Compare.h: correct filename in # define CppAD<filename>Included statement.
+# LuFactor.h: remove namespace reference (already done in trunk).
+# WhatsNew05.h: users view of changes.
+# ExampleList.omh: add ForSparseJac.cpp to list of examples.
+# Example/RevSparseJac.cpp: example for new calculation. 
+# Example.vcproj: add RevSparseJac to list.
+# ForSparseJac.cpp: use U(x) for identity function notation.
+# Example.cpp: add RevSparseJac to list.
+# Example/Makefile.am: add RevSparseJac to list and correct order.
+# TestMore/RevSparseJac.cpp: more testing for new calculation. 
+# TestMore/ForSparseJac.cpp: more testing for forward sparsity calculation. 
+# TesMore.cpp: add RevSparseJac to list.
+# Makefile.am: add RevSparseJac to list.
+# TestMore/Makefile.am: add RevSparseJac to list and correct order.
 sed -e "/^[^#]/d" -e "s/^[#] *//" < SvnCommit > svn.log
+svn add CppAD/local/RevJacSweep.h
+svn add CppAD/local/RevSparseJac.h
+svn add Example/RevSparseJac.cpp
+svn add TestMore/RevSparseJac.cpp
 svn commit --file svn.log \
 	SvnCommit \
-	CppAD/local/ADTape.h \
+	CppAD/local/RevJacSweep.h \
+	CppAD/local/RevSparseJac.h \
+	CppAD/local/PrintFor.h \
 	CppAD/local/ForJacSweep.h \
 	CppAD/local/ForwardSweep.h \
 	CppAD/local/ReverseSweep.h \
-	CppAD/local/TapeRec.h \
-	CppAD/local/Operator.h \
 	CppAD/local/Declare.h \
-	CppAD/local/AD.h \
-	CppAD/local/Ordered.h \
-	CppAD/local/Compare.h
+	CppAD/local/SubOp.h \
+	CppAD/local/MulOp.h \
+	CppAD/local/Fun.h \
+	CppAD/local/DivOp.h \
+	CppAD/local/ForSparseJac.h \
+	CppAD/local/Compare.h \
+	CppAD/LuFactor.h \
+	omh/WhatsNew05.omh \
+	omh/ExampleList.omh \
+	Example/RevSparseJac.cpp \
+	Example/Example.vcproj \
+	Example/ForSparseJac.cpp \
+	Example/Example.cpp \
+	Example/Makefile.am \
+	TestMore/RevSparseJac.cpp \
+	TestMore/ForSparseJac.cpp \
+	TestMore/TestMore.cpp \
+	TestMore/TestMore.vcproj \
+	TestMore/Makefile.am \
+	Makefile.am
