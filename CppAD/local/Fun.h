@@ -345,8 +345,9 @@ private:
 	// number of rows (variables) in the recording (Rec)
 	size_t totalNumVar;
 
-	// row indices for the independent variables
+	// tape address and value for the independent variables
 	CppAD::vector<size_t> ind_taddr;
+	CppAD::vector<Base>   ind_value;
 
 	// tape address and parameter flag for the dependent variables
 	CppAD::vector<size_t> dep_taddr;
@@ -417,17 +418,18 @@ ADFun<Base>::ADFun(const VectorADBase &x, const VectorADBase &y)
 	// current order and row dimensions
 	memoryMax     = 0;
 	order         = 0;
-	TaylorColDim  = 1;
+	TaylorColDim  = 0;
 	ForJacColDim  = 0;
 	ForJacBitDim  = 0;
 
 	// buffers
 	Taylor  = CppADNull;
 	ForJac  = CppADNull;
-	Taylor  = CppADTrackNewVec(totalNumVar, Taylor);
+	Taylor  = CppADNull;
 
-	// set initial independent variable values
+	// set tape address and initial value for independent variables
 	ind_taddr.resize(n);
+	ind_value.resize(n);
 	CppADUsageError(
 		n < totalNumVar,
 		"independent variables vector has changed"
@@ -444,19 +446,14 @@ ADFun<Base>::ADFun(const VectorADBase &x, const VectorADBase &y)
 			op == InvOp,
 			"independent variable vector has changed"
 		);
-		ind_taddr[j]   = j+1;
-		Taylor[j+1] = x[j].value;
+		ind_taddr[j] = x[j].taddr;
+		ind_value[j] = x[j].value;
 	}
 
-	// check for the special case where there is nothing past
-	// the independent variable records
-	if( n + 1 < Rec->NumOp() )
-	{	op = Rec->GetOp(n+1);
-		CppADUsageError(
-			op != InvOp,
-			"independent variable vector has changed"
-		);
-	}
+	TaylorColDim  = 1;
+	Taylor        = CppADTrackNewVec(totalNumVar, Taylor);
+	for(j = 0; j < n; j++)
+		Taylor[j+1] = ind_value[j];
 
 	// use independent variable values to fill in values for others
 	compareChange = ForwardSweep(
