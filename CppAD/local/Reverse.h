@@ -2,7 +2,7 @@
 # define CppADReverseIncluded
 
 /* -----------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-05 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -272,7 +272,7 @@ VectorBase ADFun<Base>::Reverse(size_t p, const VectorBase &w)
 	CheckSimpleVector<Base, VectorBase>();
 
 	CppADUsageError(
-		w.size() == depvar.size(),
+		w.size() == dep_taddr.size(),
 		"Argument w to Reverse does not have length equal to\n"
 		"the dimension of the range for the corresponding ADFun."
 	);
@@ -295,10 +295,10 @@ VectorBase ADFun<Base>::Reverse(size_t p, const VectorBase &w)
 
 	// set the dependent variable direction
 	// (use += because two dependent variables can point to same location)
-	size_t n = depvar.size();
+	size_t n = dep_taddr.size();
 	for(i = 0; i < n; i++)
-	{	CppADUnknownError( depvar[i] < totalNumVar );
-		Partial[depvar[i] * p + p - 1] += w[i];
+	{	CppADUnknownError( dep_taddr[i] < totalNumVar );
+		Partial[dep_taddr[i] * p + p - 1] += w[i];
 	}
 
 	// evaluate the derivatives
@@ -306,18 +306,18 @@ VectorBase ADFun<Base>::Reverse(size_t p, const VectorBase &w)
 		TaylorColDim, Taylor, p, Partial);
 
 	// return the derivative values
-	size_t m = indvar.size();
+	size_t m = ind_taddr.size();
 	VectorBase value(m * p);
 	for(i = 0; i < m; i++)
-	{	CppADUnknownError( indvar[i] < totalNumVar );
+	{	CppADUnknownError( ind_taddr[i] < totalNumVar );
 		// independent variable taddr equals its operator taddr 
-		CppADUnknownError( Rec->GetOp( indvar[i] ) == InvOp );
+		CppADUnknownError( Rec->GetOp( ind_taddr[i] ) == InvOp );
 
 		// by the Reverse Identity Theorem 
 		// partial of y^{(j)} w.r.t. u^{(0)} is equal to 				// partial of y^{(p-1)} w.r.t. u^{(p - 1 - j)}
 		for(j = 0; j < p; j++)
 			value[i * p + j ] = 
-				Partial[indvar[i] * p + p - 1 - j];
+				Partial[ind_taddr[i] * p + p - 1 - j];
 	}
 
 	// done with the Partial array

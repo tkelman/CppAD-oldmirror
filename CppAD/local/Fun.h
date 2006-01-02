@@ -28,8 +28,8 @@ $spell
 	sizeof
 	const
 	std
-	indvar
-	depvar
+	ind_taddr
+	dep_taddr
 $$
 
 $spell
@@ -260,16 +260,16 @@ public:
 
 	// number of independent variables
 	size_t Domain(void) const
-	{	return indvar.size(); }
+	{	return ind_taddr.size(); }
 
 	// number of dependent variables
 	size_t Range(void) const
-	{	return depvar.size(); }
+	{	return dep_taddr.size(); }
 
 	// is variable a parameter
 	bool Parameter(size_t i)
 	{	CppADUsageError(
-			i < depvar.size(),
+			i < dep_taddr.size(),
 			"Argument to Parameter is >= dimension of range space"
 		);
 		return parameter[i]; 
@@ -346,10 +346,10 @@ private:
 	size_t totalNumVar;
 
 	// row indices for the independent variables
-	CppAD::vector<size_t> indvar;
+	CppAD::vector<size_t> ind_taddr;
 
 	// row indices for the dependent variables
-	CppAD::vector<size_t> depvar;
+	CppAD::vector<size_t> dep_taddr;
 
 	// which of the dependent variables are parameters 
 	CppAD::vector<bool> parameter;
@@ -428,7 +428,7 @@ ADFun<Base>::ADFun(const VectorADBase &x, const VectorADBase &y)
 	);
 
 	// set initial independent variable values
-	indvar.resize(n);
+	ind_taddr.resize(n);
 	for(j = 0; j < n; j++)
 	{	
 		CppADUsageError( 
@@ -441,7 +441,7 @@ ADFun<Base>::ADFun(const VectorADBase &x, const VectorADBase &y)
 			op == InvOp,
 			"independent variable vector has changed"
 		);
-		indvar[j]   = j+1;
+		ind_taddr[j]   = j+1;
 		Taylor[j+1] = x[j].value;
 	}
 
@@ -456,12 +456,12 @@ ADFun<Base>::ADFun(const VectorADBase &x, const VectorADBase &y)
 	}
 
 	// dep
-	depvar.resize(m);
+	dep_taddr.resize(m);
 	for(i = 0; i < m; i++)
 	{	y_taddr  = y_copy[i].taddr;
 		CppADUnknownError( y_taddr > 0 );
 		CppADUnknownError( y_taddr < totalNumVar );
-		depvar[i] = y_taddr;
+		dep_taddr[i] = y_taddr;
 	}
 
 	// use independent variable values to fill in values for others
@@ -472,7 +472,7 @@ ADFun<Base>::ADFun(const VectorADBase &x, const VectorADBase &y)
 
 	// check the dependent variable values
 	for(i = 0; i < m; i++)
-		CppADUnknownError( Taylor[depvar[i]] == y[i].value );
+		CppADUnknownError( Taylor[dep_taddr[i]] == y[i].value );
 
 	// We are now done with the AD<Base> tape so erase it
 	AD<Base>::Tape()->Erase();

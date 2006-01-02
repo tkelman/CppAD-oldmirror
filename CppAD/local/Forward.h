@@ -2,7 +2,7 @@
 # define CppADForwardIncluded
 
 /* -----------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-05 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -248,7 +248,7 @@ VectorBase ADFun<Base>::Forward(size_t p, const VectorBase &up)
 	CheckSimpleVector<Base, VectorBase>();
 
 	CppADUsageError(
-		up.size() == indvar.size(),
+		up.size() == ind_taddr.size(),
 		"Second argument to Forward does not have length equal to\n"
 		"the dimension of the domain for the corresponding ADFun."
 	);
@@ -282,24 +282,24 @@ VectorBase ADFun<Base>::Forward(size_t p, const VectorBase &up)
 	}
 
 	// set the p-th order Taylor coefficients for independent variables
-	size_t m = indvar.size();
+	size_t m = ind_taddr.size();
 	for(i = 0; i < m; i++)
-	{	CppADUnknownError( indvar[i] < totalNumVar );
-		// indvar[i] is operator taddr for i-th independent variable
-		CppADUnknownError( Rec->GetOp( indvar[i] ) == InvOp );
+	{	CppADUnknownError( ind_taddr[i] < totalNumVar );
+		// ind_taddr[i] is operator taddr for i-th independent variable
+		CppADUnknownError( Rec->GetOp( ind_taddr[i] ) == InvOp );
 		// It is also variable taddr for i-th independent variable
-		Taylor[indvar[i] * TaylorColDim + p] = up[i];
+		Taylor[ind_taddr[i] * TaylorColDim + p] = up[i];
 	}
 
 	// evaluate the derivatives
 	compareChange = ForwardSweep(true, p, totalNumVar, Rec, TaylorColDim, Taylor);
 
 	// return the p-th order Taylor coefficients for dependent variables
-	size_t n = depvar.size();
+	size_t n = dep_taddr.size();
 	VectorBase vp(n);
 	for(i = 0; i < n; i++)
-	{	CppADUnknownError( depvar[i] < totalNumVar );
-		vp[i] = Taylor[depvar[i] * TaylorColDim + p];
+	{	CppADUnknownError( dep_taddr[i] < totalNumVar );
+		vp[i] = Taylor[dep_taddr[i] * TaylorColDim + p];
 	}
 
 	// order of the Taylor coefficient matrix currently in this ADFun
