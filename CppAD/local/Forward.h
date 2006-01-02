@@ -242,13 +242,20 @@ namespace CppAD {
 template <typename Base>
 template <typename VectorBase>
 VectorBase ADFun<Base>::Forward(size_t p, const VectorBase &up)
-{	size_t i;
+{	// temporary indices
+	size_t i, j;
+
+	// number of independent variables
+	size_t n = ind_taddr.size();
+
+	// number of dependent variables
+	size_t m = dep_taddr.size();
 
 	// check VectorBase is Simple Vector class with Base type elements
 	CheckSimpleVector<Base, VectorBase>();
 
 	CppADUsageError(
-		up.size() == ind_taddr.size(),
+		up.size() == n,
 		"Second argument to Forward does not have length equal to\n"
 		"the dimension of the domain for the corresponding ADFun."
 	);
@@ -267,7 +274,6 @@ VectorBase ADFun<Base>::Forward(size_t p, const VectorBase &up)
 		newptr          = CppADTrackNewVec(newlen, newptr);
 
 		// copy the old data into the new matrix
-		size_t j;
 		for(i = 0; i < totalNumVar; i++)
 		{	for(j = 0; j < p; j++)
 			{	newptr[i * p1 + j]  = Taylor[i * p + j];
@@ -282,22 +288,24 @@ VectorBase ADFun<Base>::Forward(size_t p, const VectorBase &up)
 	}
 
 	// set the p-th order Taylor coefficients for independent variables
-	size_t m = ind_taddr.size();
-	for(i = 0; i < m; i++)
-	{	CppADUnknownError( ind_taddr[i] < totalNumVar );
-		// ind_taddr[i] is operator taddr for i-th independent variable
-		CppADUnknownError( Rec->GetOp( ind_taddr[i] ) == InvOp );
-		// It is also variable taddr for i-th independent variable
-		Taylor[ind_taddr[i] * TaylorColDim + p] = up[i];
+	for(j = 0; j < n; j++)
+	{	CppADUnknownError( ind_taddr[j] < totalNumVar );
+
+		// ind_taddr[j] is operator taddr for j-th independent variable
+		CppADUnknownError( Rec->GetOp( ind_taddr[j] ) == InvOp );
+
+		// It is also variable taddr for j-th independent variable
+		Taylor[ind_taddr[j] * TaylorColDim + p] = up[j];
 	}
 
 	// evaluate the derivatives
-	compareChange = ForwardSweep(true, p, totalNumVar, Rec, TaylorColDim, Taylor);
+	compareChange = ForwardSweep(
+		true, p, totalNumVar, Rec, TaylorColDim, Taylor
+	);
 
 	// return the p-th order Taylor coefficients for dependent variables
-	size_t n = dep_taddr.size();
-	VectorBase vp(n);
-	for(i = 0; i < n; i++)
+	VectorBase vp(m);
+	for(i = 0; i < m; i++)
 	{	CppADUnknownError( dep_taddr[i] < totalNumVar );
 		vp[i] = Taylor[dep_taddr[i] * TaylorColDim + p];
 	}

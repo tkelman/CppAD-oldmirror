@@ -259,7 +259,15 @@ namespace CppAD {
 template <typename Base>
 template <typename VectorBase>
 VectorBase ADFun<Base>::Reverse(size_t p, const VectorBase &w)
-{
+{	// temporary indices
+	size_t i, j, k;
+
+	// number of independent variables
+	size_t n = ind_taddr.size();
+
+	// number of dependent variables
+	size_t m = dep_taddr.size();
+
 	Base *Partial = CppADNull;
 	Partial       = CppADTrackNewVec(totalNumVar * p, Partial);
 
@@ -272,7 +280,7 @@ VectorBase ADFun<Base>::Reverse(size_t p, const VectorBase &w)
 	CheckSimpleVector<Base, VectorBase>();
 
 	CppADUsageError(
-		w.size() == dep_taddr.size(),
+		w.size() == m,
 		"Argument w to Reverse does not have length equal to\n"
 		"the dimension of the range for the corresponding ADFun."
 	);
@@ -287,37 +295,36 @@ VectorBase ADFun<Base>::Reverse(size_t p, const VectorBase &w)
 	);  
 
 	// initialize entire Partial matrix to zero
-	size_t i;
-	size_t j;
 	for(i = 0; i < totalNumVar; i++)
 		for(j = 0; j < p; j++)
 			Partial[i * p + j] = Base(0);
 
 	// set the dependent variable direction
 	// (use += because two dependent variables can point to same location)
-	size_t n = dep_taddr.size();
-	for(i = 0; i < n; i++)
+	for(i = 0; i < m; i++)
 	{	CppADUnknownError( dep_taddr[i] < totalNumVar );
 		Partial[dep_taddr[i] * p + p - 1] += w[i];
 	}
 
 	// evaluate the derivatives
-	ReverseSweep(p - 1, totalNumVar, Rec, 
-		TaylorColDim, Taylor, p, Partial);
+	ReverseSweep(
+		p - 1, totalNumVar, Rec, TaylorColDim, Taylor, p, Partial
+	);
 
 	// return the derivative values
-	size_t m = ind_taddr.size();
-	VectorBase value(m * p);
-	for(i = 0; i < m; i++)
-	{	CppADUnknownError( ind_taddr[i] < totalNumVar );
+	VectorBase value(n * p);
+	for(j = 0; j < n; j++)
+	{	CppADUnknownError( ind_taddr[j] < totalNumVar );
+
 		// independent variable taddr equals its operator taddr 
-		CppADUnknownError( Rec->GetOp( ind_taddr[i] ) == InvOp );
+		CppADUnknownError( Rec->GetOp( ind_taddr[j] ) == InvOp );
 
 		// by the Reverse Identity Theorem 
-		// partial of y^{(j)} w.r.t. u^{(0)} is equal to 				// partial of y^{(p-1)} w.r.t. u^{(p - 1 - j)}
-		for(j = 0; j < p; j++)
-			value[i * p + j ] = 
-				Partial[ind_taddr[i] * p + p - 1 - j];
+		// partial of y^{(k)} w.r.t. u^{(0)} is equal to
+		// partial of y^{(p-1)} w.r.t. u^{(p - 1 - k)}
+		for(k = 0; k < p; k++)
+			value[j * p + k ] = 
+				Partial[ind_taddr[j] * p + p - 1 - k];
 	}
 
 	// done with the Partial array
