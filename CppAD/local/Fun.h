@@ -272,7 +272,7 @@ public:
 			i < dep_taddr.size(),
 			"Argument to Parameter is >= dimension of range space"
 		);
-		return parameter[i]; 
+		return dep_parameter[i]; 
 	}
 
 	// amount of memory for each variable
@@ -348,11 +348,9 @@ private:
 	// row indices for the independent variables
 	CppAD::vector<size_t> ind_taddr;
 
-	// row indices for the dependent variables
+	// tape address and parameter flag for the dependent variables
 	CppAD::vector<size_t> dep_taddr;
-
-	// which of the dependent variables are parameters 
-	CppAD::vector<bool> parameter;
+	CppAD::vector<bool>   dep_parameter;
 
 	// the operations corresponding to this function
 	TapeRec<Base> *Rec;
@@ -391,13 +389,13 @@ ADFun<Base>::ADFun(const VectorADBase &x, const VectorADBase &y)
 	// set parameter flag and
 	// create a copy of z where parameters are in the tape
 	CppADUnknownError( NumInd(ParOp) == 1 );
-	parameter.resize(m);
+	dep_parameter.resize(m);
 	VectorADBase y_copy(m);
 	for(i = 0; i < m; i++)
 	{	y_copy[i].value = y[i].value;
 		y_taddr         = y[i].taddr;
-		parameter[i]    = CppAD::Parameter(y[i]);
-		if( parameter[i] )
+		dep_parameter[i]    = CppAD::Parameter(y[i]);
+		if( dep_parameter[i] )
 			y_taddr = AD<Base>::Tape()->RecordParOp( y[i].value );
 
 		y_copy[i].MakeVariable( y_taddr );
