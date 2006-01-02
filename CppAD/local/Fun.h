@@ -225,9 +225,14 @@ public:
 	// destructor
 	~ADFun(void)
 	{	delete Rec;
-		CppADTrackDelVec(Taylor);
-		if( ForJac != CppADNull )
+		if( TaylorColDim > 0 )
+		{	CppADUnknownError( Taylor != CppADNull );
+			CppADTrackDelVec(Taylor);
+		}
+		if( ForJacColDim > 0 )
+		{	CppADUnknownError( ForJac != CppADNull );
 			CppADTrackDelVec(ForJac);
+		}
 	}
 
 	// forward mode sweep
@@ -361,6 +366,9 @@ private:
 
 	// results of the forward mode Jacobian sparsity calculations
 	Pack *ForJac;
+
+	// zero order forward mode sweep using ind_value 
+	void ForwardZero(void);
 };
 // ---------------------------------------------------------------------------
 
@@ -450,20 +458,59 @@ ADFun<Base>::ADFun(const VectorADBase &x, const VectorADBase &y)
 		ind_value[j] = x[j].value;
 	}
 
-	TaylorColDim  = 1;
-	Taylor        = CppADTrackNewVec(totalNumVar, Taylor);
+# ifndef NDEBUG
+	/*
+	compare dependent variable values with those computed from tape
+	*/
+	Base *Tmp = CppADNull;
+	Tmp       = CppADTrackNewVec(totalNumVar, Tmp);
 	for(j = 0; j < n; j++)
-		Taylor[j+1] = ind_value[j];
+		Tmp[j+1] = ind_value[j];
 
-	// use independent variable values to fill in values for others
+	// fill in zero order values for others variables
 	compareChange = ForwardSweep(
-		false, 0, totalNumVar, Rec, TaylorColDim, Taylor
+		false, 0, totalNumVar, Rec, 1, Tmp
 	);
 	CppADUnknownError( compareChange == 0 );
 
 	// check the dependent variable values
 	for(i = 0; i < m; i++)
-		CppADUnknownError( Taylor[dep_taddr[i]] == y[i].value );
+		CppADUnknownError( Tmp[dep_taddr[i]] == y[i].value );
+
+	// done with this temporary array
+	CppADTrackDelVec(Tmp);
+# endif
+}
+
+template <typename Base>
+void ADFun<Base>::ForwardZero(void)
+{	size_t j;
+	size_t n = ind_taddr.size();
+
+	if( TaylorColDim == 0 )
+	{	CppADUnknownError( Taylor == CppADNull );
+		TaylorColDim   = 1;
+		size_t len     = TaylorColDim * totalNumVar;
+		Taylor         = CppADTrackNewVec(len, Taylor);
+	}
+	for(j = 0; j < n; j++)
+	{	// ind_taddr[j] is address for j-th independent variable
+		CppADUnknownError( ind_taddr[j] < totalNumVar );
+
+		// check corresponding operator
+		CppADUnknownError( Rec->GetOp(ind_taddr[j]) == InvOp );
+
+		// set corresponding value in Taylor
+		Taylor[ind_taddr[j] * TaylorColDim + 0] = ind_value[j];
+	}
+
+	// evaluate the zero order coefficients
+	compareChange = ForwardSweep(
+			true, 0, totalNumVar, Rec, TaylorColDim, Taylor
+	);
+
+	// resulting order
+	order = 0;
 }
 
 } // END CppAD namespace

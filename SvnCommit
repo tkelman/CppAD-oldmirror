@@ -1,4 +1,5 @@
-# Change indvar -> ind_taddr, depvar -> dep_taddr
+# Optimized version does not compute zero order coefficients until necessary 
+# they (may not be needed).
 # 
 # -----------------------------------------------
 sed -e "/^[^#]/d" -e "s/^[#] *//" < SvnCommit > svn.log
