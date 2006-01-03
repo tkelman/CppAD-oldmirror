@@ -1,5 +1,5 @@
-# Optimized version does not compute zero order coefficients until necessary 
-# they (may not be needed).
+# Speed tests did not show improvement so roll back to previous version (257) 
+# and then hand modify Fun.h to not declare or use ind_value.
 # 
 # -----------------------------------------------
 sed -e "/^[^#]/d" -e "s/^[#] *//" < SvnCommit > svn.log

@@ -294,16 +294,6 @@ VectorBase ADFun<Base>::Reverse(size_t p, const VectorBase &w)
 		"coefficient matrix for this ADFun function."
 	);  
 
-	// check for case where we must first compute zero order coefficients 
-	if( TaylorColDim == 0 )
-	{	CppADUnknownError( p == 1 );
-		CppADUnknownError( order == 0 );
-		CppADUnknownError( Taylor == CppADNull );
-
-		// compute the zero order Taylor coefficients from ind_value
-		ForwardZero();
-	}
-
 	// initialize entire Partial matrix to zero
 	for(i = 0; i < totalNumVar; i++)
 		for(j = 0; j < p; j++)

@@ -265,19 +265,6 @@ VectorBase ADFun<Base>::Forward(size_t p, const VectorBase &up)
 		"in this ADFun has order less than p-1."
 	);  
 
-	// check for case where we must first compute zero order coefficients 
-	if( p == 1 && TaylorColDim == 0 )
-	{	// allocate p+1 columns here so do not need to copy info below
-		CppADUnknownError( order == 0 );
-		CppADUnknownError( Taylor == CppADNull );
-		TaylorColDim   = p + 1;
-		size_t len     = TaylorColDim * totalNumVar;
-		Taylor         = CppADTrackNewVec(len, Taylor);
-
-		// compute the zero order Taylor coefficients from ind_value
-		ForwardZero();
-	}
-
 	// check if we need more columns in Taylor
 	if( TaylorColDim <= p )
 	{	// Allocate new matrix will suffucient column dimension
@@ -293,10 +280,7 @@ VectorBase ADFun<Base>::Forward(size_t p, const VectorBase &up)
 			}
 		}
 		// free the old memory
-		if( TaylorColDim > 0 )
-		{	CppADUnknownError( Taylor != CppADNull )
-			CppADTrackDelVec(Taylor);
-		}
+		CppADTrackDelVec(Taylor);
 
 		// use the new pointer
 		Taylor       = newptr;

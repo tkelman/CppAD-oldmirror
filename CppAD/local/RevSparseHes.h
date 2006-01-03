@@ -228,15 +228,6 @@ VectorBool ADFun<Base>::RevSparseHes(
 		"RevSparseHes: Py (third argument) length is not equal to\n"
 		"range dimension for ADFun object."
 	);
-
-	// check for case where we must first compute zero order coefficients 
-	if( TaylorColDim == 0 )
-	{	CppADUnknownError( order == 0 );
-		CppADUnknownError( Taylor == CppADNull );
-
-		// compute the zero order Taylor coefficients from ind_value
-		ForwardZero();
-	}
 	
 	// number of packed values per variable on the tape
 	size_t npv = 1 + (q - 1) / sizeof(Pack);

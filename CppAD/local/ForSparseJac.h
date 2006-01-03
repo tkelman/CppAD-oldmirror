@@ -198,15 +198,6 @@ VectorBool ADFun<Base>::ForSparseJac(size_t q, const VectorBool &Px)
 		"q (first argument) times domain dimension for ADFun object."
 	);
 
-	// check for case where we must first compute zero order coefficients 
-	if( TaylorColDim == 0 )
-	{	CppADUnknownError( order == 0 );
-		CppADUnknownError( Taylor == CppADNull );
-
-		// compute the zero order Taylor coefficients from ind_value
-		ForwardZero();
-	}
-
 	// number of packed values per variable on the tape
 	size_t npv = 1 + (q - 1) / sizeof(Pack);
 
