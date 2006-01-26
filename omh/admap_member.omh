@@ -1,0 +1,634 @@
+/* -----------------------------------------------------------------------
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+------------------------------------------------------------------------ */
+$begin admap_empty$$
+$spell
+	cpp
+	admap
+$$
+
+$section Empty the Contents of an AD Mapping$$
+
+$index empty, admap$$
+$index admap, empty$$
+
+$table
+$bold Syntax$$ $cnext
+$syntax%%f%.empty()%$$
+$tend
+
+$fend 20$$
+
+$head Purpose$$
+An AD mapping in the $code complete$$ state has information
+stored within it. 
+This function allows to user to free memory used to store that information.
+
+$head f$$
+The object $italic f$$ has prototype
+$syntax%
+	admap<%Base%> %f%
+%$$
+Any previous mapping connected to this object is lost.
+
+$head Mapping State$$
+The object $italic f$$ may have any mapping state when
+$syntax%%f%.empty()%$$ is called.
+After this call,
+the mapping state of $italic f$$ will be $code empty$$.
+
+$head Example$$
+The file $code admap.cpp$$ contains an example and test of this operation.
+It returns true if it succeeds and false otherwise.
+
+$end
+----------------------------------------------------------------------------
+$begin admap_independent$$
+$spell
+	cpp
+	admap
+$$
+
+$section Declare Independent Variables for an AD Mapping$$
+
+$index independent$$
+$index start, tape$$
+$index tape, start$$
+$index variable, independent$$
+
+$table
+$bold Syntax$$ $cnext
+$syntax%%f%.independent(%x%)%$$
+$tend
+
+$fend 20$$
+
+$head Purpose$$
+This declares the independent variables for the next mapping
+that will be stored in $italic f$$.
+
+$head f$$
+The object $italic f$$ has prototype
+$syntax%
+	admap<%Base%> %f%
+%$$
+Any previous mapping connected to this object is lost and a new
+mapping is started with the specified independent variables.
+
+$head x$$
+The vector $italic x$$ has prototype
+$syntax%
+	%Vector% &%x%
+%$$
+The length of $italic x$$, must be greater than zero,
+and is the number of independent variables
+(dimension of the domain space for $italic f$$).
+
+$head Vector$$
+The type $italic Vector$$ must be a $xref/SimpleVector/$$ class with
+$xref/SimpleVector/Elements of Specified Type/elements of type/$$
+$syntax%AD<%Base%>%$$.
+The routine $xref/CheckSimpleVector/$$ will generate an error message
+if this is not the case.
+
+$head Mapping State$$
+The mapping state of $italic f$$ must be either $code empty$$
+or $code complete$$ when 
+$syntax%%f%.independent(%x%)%$$ is called.
+After this call,
+the mapping state of $italic f$$ will be $code record$$.
+
+
+$head Tape State$$
+$index state, tape$$
+$index tape, state$$
+This operation can only be done while the tape 
+that records $syntax%AD<%Base%>%$$ operations is in the 
+$xref/glossary/Tape State/empty state/$$.
+After this operation, this tape will be in the $code record$$ state.
+
+$head Example$$
+The file $code admap.cpp$$ contains an example and test of this operation.
+It returns true if it succeeds and false otherwise.
+
+$end
+----------------------------------------------------------------------------
+
+$begin admap_dependent$$
+$spell
+	cpp
+	admap
+$$
+
+$section Declare Dependent Variables for an AD Mapping$$
+
+$index dependent$$
+$index stop, tape$$
+$index tape, stop$$
+$index variable, dependent$$
+
+$table
+$bold Syntax$$ $cnext
+$syntax%%f%.dependent(%y%)%$$
+$tend
+
+$fend 20$$
+
+$head Purpose$$
+This declares the dependent variables for the mapping
+that is stored in $italic f$$.
+
+$head f$$
+The object $italic f$$ has prototype
+$syntax%
+	admap<%Base%> %f%
+%$$
+
+$head y$$
+The vector $italic y$$ has prototype
+$syntax%
+	%Vector% &%y%
+%$$
+The length of $italic y$$, must be greater than zero,
+and is the number of dependent variables
+(dimension of the range space for $italic f$$).
+
+$head Vector$$
+The type $italic Vector$$ must be a $xref/SimpleVector/$$ class with
+$xref/SimpleVector/Elements of Specified Type/elements of type/$$
+$syntax%AD<%Base%>%$$.
+The routine $xref/CheckSimpleVector/$$ will generate an error message
+if this is not the case.
+
+$head Mapping State$$
+The mapping state of $italic f$$ must be either $code record$$ when 
+$syntax%%f%.dependent(%x%)%$$ is called.
+After this call,
+the mapping state of $italic f$$ will be $code complete$$.
+
+
+$head Tape State$$
+$index state, tape$$
+$index tape, state$$
+This operation can only be done while the tape 
+that records $syntax%AD<%Base%>%$$ operations is in the 
+$xref/glossary/Tape State/record state/$$.
+After this operation, this tape will be in the $code empty$$ state.
+
+$head Example$$
+The file $code admap.cpp$$ contains an example and test of this operation.
+It returns true if it succeeds and false otherwise.
+
+$end
+----------------------------------------------------------------------------
+
+$begin admap_domain$$
+$spell
+	cpp
+	admap
+	const
+$$
+
+$section Determine Domain Dimension for an AD Mapping$$
+
+$index domain$$
+$index dimension, domain$$
+$index variable, number independent$$
+$index independent, number variables$$
+
+$table
+$bold Syntax$$ $cnext
+$syntax%%n% = %f%.domain()%$$
+$tend
+
+$fend 20$$
+
+$head Purpose$$
+Determine the dimension of the domain space corresponding to
+$latex \[
+	f : B^n \rightarrow B^m
+\] $$ 
+(this is also the number of independent variables for $italic f$$).
+
+$head f$$
+The object $italic f$$ has prototype
+$syntax%
+	const admap<%Base%> %f%
+%$$
+
+$head n$$
+The return value $italic n$$ has prototype
+$syntax%
+	size_t %n%
+%$$
+
+$head Example$$
+The file $code admap.cpp$$ contains an example and test of this operation.
+It returns true if it succeeds and false otherwise.
+
+$end
+----------------------------------------------------------------------------
+
+$begin admap_range$$
+$spell
+	cpp
+	admap
+	const
+$$
+
+$section Determine Range Dimension for an AD Mapping$$
+
+$index range$$
+$index dimension, domain$$
+$index variable, number dependent$$
+$index dependent, number variables$$
+
+$table
+$bold Syntax$$ $cnext
+$syntax%%m% = %f%.range()%$$
+$tend
+
+$fend 20$$
+
+
+$head Purpose$$
+Determine the dimension of the range space corresponding to
+$latex \[
+	f : B^n \rightarrow B^m
+\] $$ 
+(this is also the number of dependent variables for $italic f$$).
+
+$head f$$
+The object $italic f$$ has prototype
+$syntax%
+	const admap<%Base%> %f%
+%$$
+
+$head m$$
+The return value $italic m$$ has prototype
+$syntax%
+	size_t %m%
+%$$
+
+$head Example$$
+The file $code admap.cpp$$ contains an example and test of this operation.
+It returns true if it succeeds and false otherwise.
+
+$end
+----------------------------------------------------------------------------
+$begin admap_forward$$
+$spell 
+	cpp
+	dy
+	const
+	admap
+$$
+
+$section AD Mapping Forward Mode Calculations$$
+
+$table
+$bold Syntax$$
+$syntax%%y% = %f%.forward(%p%, %x%)%$$
+$tend
+
+$fend 20$$
+
+$head Purpose$$
+Compute derivatives up to order $latex p-1$$ for the function
+$latex \[
+	F : B^n \rightarrow B^m
+\] $$
+corresponding to the AD mapping object $italic f$$.
+
+$head f$$
+The object $italic f$$ has prototype
+$syntax%
+	const admap<%Base%> %f%
+%$$
+
+$head p$$
+The argument $italic p$$ has prototype
+$syntax%
+	size_t %p%
+%$$
+It must be greater than or equal one and
+specifies order of the derivatives that are being calculated.
+
+$head x$$
+The argument $italic x$$ has prototype
+$syntax%
+	const %Vector% &%x%
+%$$
+and size $latex p * n$$.
+For $latex k = 0, \ldots , p-1$$,
+We use $latex x^{(k)} \in B^n$$ to denote the vector defined by
+$latex \[
+	x_j^{(k)} = x [ j * p + k ]
+\]$$
+for $latex j = 0 , \ldots , n-1$$.
+We use $latex X : B \rightarrow B^n$$ to denote the 
+mathematical function defined by
+$latex \[
+	X(t) = \frac{t^0}{0 !} x^{(0)}
+	     + \frac{t^1}{1 !} x^{(1)}
+	     + \cdots 
+	     + \frac{t^{p-1}}{(p-1) !} x^{(p-1)} 
+\] $$
+Note that for $latex k = 0 , \ldots , p-1$$, the $th k$$ derivative of
+$latex X(t)$$ at $latex t = 0$$ is given by
+$latex \[
+	X^{(k)} (0) = x^{(k)}
+\] $$
+
+$head Vector$$
+The type $italic Vector$$ must be a $xref/SimpleVector/$$ class with
+$xref/SimpleVector/Elements of Specified Type/elements of type/$$
+$italic Base$$.
+The routine $xref/CheckSimpleVector/$$ will generate an error message
+if this is not the case.
+
+$head y$$
+We use $latex Y : B \rightarrow B^m$$ to denote the function defined by
+$latex \[
+	Y(t) = F[ X(t) ]
+\] $$
+The return value $italic y$$ has prototype
+$syntax%
+	%Vector% &%y%
+%$$
+and size $latex p * m$$.
+For 
+$latex i = 0 , \ldots , m-1$$,
+and $latex k = 0 , \ldots , p-1$$, the $th k$$ derivative of
+$latex Y_i (t)$$ at $latex t = 0$$ is given by
+$latex \[
+	Y_i^{(k)} (0) = y [ i * p + k ]
+\] $$
+
+$head Zero Order$$
+Values for the function $latex F$$ are given by the relation
+$latex \[
+	Y(0) = F( X(0) ) = F( x^{(0)} ) 
+\] $$
+
+$head First Order$$
+In the case where $latex p$$ is greater than or equal two,
+values for the derivative of $latex f$$ 
+times a direction vector
+are given by the relation
+$latex \[
+	Y^{(1)} (0) 
+	=
+	F^{(1)} ( X(0) ) * X^{(1)} (0)
+	=
+	F^{(1)} ( x^{(0)} ) * x^{(1)}
+\] $$
+Note that if $latex x^{(1)}$$ is the $th j$$ 
+$xref/glossary/Elementary Vector/elementary vector/$$,
+$latex \[
+	\D{F}{x_j} ( x^{(0)} ) = Y^{(1)} (0)
+\] $$ 
+
+$head Second Order$$
+In the case where $latex p$$ is greater than or equal three,
+for $latex i = 0 , \ldots , m - 1$$
+$latex \[
+\begin{array}{rcl}
+Y_i^{(2)} (0)
+& = & (F_i \circ X)^{(2)} ( 0 ) 
+\\
+& = & 
+F_i^{(1)} [ X(0) ] * X^{(2)} (0) 
+	+ X^{(1)} (0)^T * F_i^{(2)} [ X(0) ] * X^{(1)} (0) 
+\\
+& = & 
+F_i^{(1)} ( x^{(0)} ) * x^{(2)}
+	+
+	( x^{(1)} )^T * F_i^{(2)} ( x^{(0)} ) * x^{(1)}
+\end{array}
+\] $$
+Note that if $latex x^{(1)}$$ is the $th j$$ 
+$xref/glossary/Elementary Vector/elementary vector/$$
+and $latex x^{(2)}$$ is zero,
+$latex \[
+\begin{array}{rcl}
+	\DD{F_i}{x_j}{x_j} ( x^{(0)} ) = Y_i^{(2)} (0) 
+\end{array}
+\] $$
+If $latex x^{(1)}$$ is the sum of the $th j$$ and $th l$$ 
+$xref/glossary/Elementary Vector/elementary vectors/$$
+and $latex x^{(2)}$$ is zero,
+$latex \[
+\begin{array}{rcl}
+Y_i^{(2)} (0)
+& = & 
+\DD{F_i}{x_j}{x_j}       ( x^{(0)} )
++
+\DD{F_i}{x_j}{x_\ell}    ( x^{(0)} )
++
+\DD{F_i}{x_\ell}{x_j}    ( x^{(0)} )
++
+\DD{F_i}{x_\ell}{x_\ell} ( x^{(0)} )
+\\
+\DD{F_i}{x_\ell}{x_j}    ( x^{(0)} )
+& = & 
+Y_i^{(2)} (0)
+-
+\DD{F_i}{x_j}{x_j}      ( x^{(0)} )
+-
+\DD{F_i}{x_\ell}{x_\ell} ( x^{(0)} )
+\end{array} 
+\] $$
+
+$head Example$$
+The file $code admap_forward.cpp$$ contains 
+an example and test of this operation. 
+It returns true if it succeeds and false otherwise.
+
+$end
+----------------------------------------------------------------------------
+$begin admap_reverse$$
+$spell 
+	cpp
+	dy
+	const
+	admap
+$$
+
+$section AD Mapping Reverse Mode Calculations$$
+
+$table
+$bold Syntax$$
+$syntax%%y% = %f%.reverse(%p%, %x%, %w%)%$$
+$tend
+
+$fend 20$$
+
+$head Purpose$$
+Compute derivatives up to order $latex p$$ for the function
+$latex \[
+	F : B^n \rightarrow B^m
+\] $$
+corresponding to the AD mapping object $italic f$$.
+
+$head f$$
+The object $italic f$$ has prototype
+$syntax%
+	const admap<%Base%> %f%
+%$$
+
+$head p$$
+The argument $italic p$$ has prototype
+$syntax%
+	size_t %p%
+%$$
+must be greater than or equal one and
+specifies order of the derivatives that are being calculated.
+
+$head x$$
+The argument $italic x$$ has prototype
+$syntax%
+	const %Vector% &%x%
+%$$
+and size $latex p * n$$.
+For $latex k = 0, \ldots , p-1$$,
+We use $latex x^{(k)} \in B^n$$ to denote the vector defined by
+$latex \[
+	x_j^{(k)} = x [ j * p + k ]
+\]$$
+for $latex j = 0 , \ldots , n-1$$.
+We use $latex X : B \times B^n \rightarrow B^n$$ to denote the 
+mathematical function defined by
+$latex \[
+	X(t, u) 
+		=  u
+		+ \frac{t^1}{1 !} x^{(1)}
+		+ \cdots 
+		+ \frac{t^{p-1}}{(p-1) !} x^{(p-1)} 
+\] $$
+Note that for $latex k = 0 , \ldots , p-1$$, the $th k$$ partial of
+$latex X(t, u)$$ with respect to $latex t$$
+at $latex t = 0$$ and $latex u = x^{(0)}$$ is given by
+$latex \[
+	\Dpow{k}{t} X( 0, x^{(0)} ) = x^{(k)}
+\] $$
+
+$head Vector$$
+The type $italic Vector$$ must be a $xref/SimpleVector/$$ class with
+$xref/SimpleVector/Elements of Specified Type/elements of type/$$
+$italic Base$$.
+The routine $xref/CheckSimpleVector/$$ will generate an error message
+if this is not the case.
+
+$head w$$
+The argument $italic w$$ has prototype
+$syntax%
+	const %Vector% &%w%
+%$$
+and size $latex m$$.
+This argument defines the function 
+$latex Y : B \times B^n \rightarrow B$$ by
+$latex \[
+	Y(t, u) = \sum_{i=0}^{m-1} w_i F_i [ X(t, u) ]
+\] $$
+
+
+$head y$$
+The return value $italic y$$ has prototype
+$syntax%
+	%Vector% &%y%
+%$$
+and size $latex p * n$$.
+For 
+$latex j = 0 , \ldots , n-1$$,
+and $latex k = 0 , \ldots , p-1$$, 
+$latex \[
+y[ j * p + k ]
+=
+\frac{\partial}{\partial u_j} \left\{ 
+	\Dpow{k}{t} \left[ Y ( t, u ) \right]_{t=0} 
+\right\}_{u=x^{(0)}} 
+%
+\hspace{2cm} (\star)
+\] $$
+
+$head First Order$$
+Substituting $latex k = 0$$ and 
+$latex w$$ the $th i$$ 
+$xref/glossary/Elementary Vector/elementary vector/$$ in
+$latex (\star)$$ we obtain
+$latex \[
+\begin{array}{rcl}
+y[ j * p + 0 ] 
+& = & 
+\frac{\partial}{\partial u_j} \left[ Y ( 0 , u ) \right]_{u=x^{(0)}} 
+=
+\frac{\partial}{\partial u_j} \left\{ F_i [ X ( 0 , u ) ] \right\}_{u=x^{(0)}} 
+=
+\frac{\partial}{\partial u_j} \left[ F_i ( u ) \right]_{u=x^{(0)}} 
+\\
+& = &
+\D{F}{x_j} F_i ( x^{(0)} ) 
+\end{array}
+\] $$
+
+$head Second Order$$
+Suppose  $latex p \geq 2$$,
+and $latex w$$ is the $th i$$ 
+$xref/glossary/Elementary Vector/elementary vector/$$
+It follows from $latex (\star)$$ with $latex k = 1$$ and
+$latex j = 0, \ldots, n-1$$
+$latex \[
+\begin{array}{rcl}
+y[ j * p + 1 ] 
+& = & 
+\frac{\partial}{\partial u_j} \left( 
+	\Dpow{1}{t} \left\{ F_i [ X ( t, u ) ] \right\}_{t=0} 
+\right)_{u=x^{(0)}} 
+\\
+& = & 
+\frac{\partial}{\partial u_j} \left[ 
+	F_i^{(1)} ( u ) * x^{(1)}
+\right]_{u=x^{(0)}} 
+\\
+& = & 
+\sum_{\ell=0}^{n-1} \DD{F_i}{x_j}{x_\ell} ( x^{(0)} )  x_\ell^{(1)}
+\\
+& = & \left[ F^{(2)} ( x^{(0)} ) * x^{(1)} \right]_j
+\end{array}
+\] $$
+Thus, with one call to $code reverse$$ we can compute all the components
+of the Hessian of $latex F$$ times a direction vector; i.e.
+$latex \[
+	F^{(2)} ( x^{(0)} ) * x^{(1)}
+\] $$
+Furthermore, if $latex x^{(1)}$$ is chosen to be the
+$th l$$ elementary vector 
+$latex \[
+y[ j * p + 1 ] 
+=
+\DD{F_i}{x_j}{x_\ell} ( x^{(0)} ) 
+\] $$
+
+
+$head Example$$
+The file $code admap_reverse.cpp$$ contains 
+an example and test of this operation. 
+It returns true if it succeeds and false otherwise.
+
+
+$end

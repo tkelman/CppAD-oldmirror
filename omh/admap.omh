@@ -1,0 +1,91 @@
+/* -----------------------------------------------------------------------
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+------------------------------------------------------------------------ */
+$begin admap$$
+$spell
+	cpp
+	admap
+	Taylor
+$$
+
+$section Algorithmic Differentiable Mapping Objects$$
+
+$index admap$$
+$index map, ad$$
+$index function, ad$$
+
+$table
+$bold Syntax$$ $cnext
+$syntax%admap<%Base%> %f%$$
+$tend
+
+$fend 20$$
+
+$head Purpose$$
+Constructs the $syntax%admap<%Base%>%$$ object 
+$italic f$$ which can be used to store and
+access an algorithmic differentiable mapping 
+$latex \[
+	F : B^n \rightarrow B^m
+\] $$ 
+where $latex B$$ is the space corresponding to objects of type $italic Base$$.
+We use the notation $latex F$$ for the mathematical mapping
+that is currently stored in $italic f$$
+(initially there is no mapping stored in $italic f$$).
+An $syntax%admap<%Base%>%$$ object 
+has the following differences from an $xref/ADFun/$$ object:
+
+$list number$$
+An $syntax%admap<%Base%>%$$ object does not store
+intermediate forward mode calculations.
+This uses less memory but may lead recalculation of some values.
+
+$lnext
+An $syntax%admap<%Base%>%$$ object has a current mapping
+instead of just one mapping between its constructor and destructor.
+
+$lnext
+An $syntax%admap<%Base%>%$$ object returns derivative values instead
+of $xref/glossary/Taylor Coefficient/Taylor coefficients/$$. 
+
+$lend
+
+$head Mapping State$$
+The object $italic f$$ can have one of the following three mapping states
+(the initial mapping state of $italic f$$ is $code empty$$).
+$table
+$code empty$$     
+	$cnext there is no mapping currently stored in $italic f$$ 
+$rnext
+$code record$$ 
+	$cnext a mapping is currently being recorded for storage in $italic f$$
+$rnext
+$code complete$$
+	$cnext a mapping is currently stored in $italic f$$
+$tend 
+
+$head Example$$
+The file $code admap.cpp$$ contains an example and test of this
+constructor.
+It returns true if it succeeds and false otherwise.
+
+$contents%
+	omh/admap_member.omh
+%$$
+
+$end
+----------------------------------------------------------------------------

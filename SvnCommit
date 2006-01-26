@@ -1,15 +1,14 @@
-# Add batch editing to SvnCommit
+# Branch admap: documentation files for admap routines
+# (these routines are not yet implemented or tested).
 # 
 # SvnCommit: this file.
-# SvnCommit.sed: edits to be made with each commit.
-# WhatsNew06.omh: users view of the changes.
-# WishList.omh: add software guidlines.
-# CleanCppAD: remove htm directories.
+# admap.omh: documentation node for admap class.
+# admap_member.omh: documentation for admap member funcitons.
 # -----------------------------------------------
 list="\
-	omh/WhatsNew06.omh\
-	omh/WishList.omh\
-	CleanCppAD\
+	omh/admap.omh \
+	omh/admap_member.omh \
+	Doc.omh
 "
 for file in $list
 do
@@ -20,8 +19,8 @@ do
 	mv junk $file
 done
 sed -e "/^[^#]/d" -e "s/^[#] *//" < SvnCommit > svn.log
-svn add SvnCommit.sed
+svn add omh/admap.omh
+svn add omh/admap_member.omh
 svn commit --file svn.log \
 	SvnCommit \
-	SvnCommit.sed \
 	$list
