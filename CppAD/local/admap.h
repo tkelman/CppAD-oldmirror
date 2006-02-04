@@ -1,3 +1,6 @@
+# ifndef CppADadmapIncluded
+# define CppADadmapIncluded
+
 /* -----------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
 
@@ -15,6 +18,61 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ------------------------------------------------------------------------ */
+// This file contains the implementation of the admap template class.  
+// The constructor is documented in omh/admap.  
+// The member functions are documented in this file.
+
+// BEGIN CppAD namespace
+namespace CppAD {
+
+
+template <class Base>
+class admap {
+private:
+	// type used for packing sparsity patters
+	typedef size_t Pack;
+
+	// state of an admap object
+	enum admap_state { empty_state, defined_state };
+
+	TapeRec<Base>    *rec;
+	enum admap_state  state;
+
+public:
+	// constructor 
+	admap(void)
+	: rec(CppADNull), state(empty_state)
+	{ }
+
+	// destructor
+	~admap(void)
+	{	if( rec != CppADNull )
+			delete rec;
+	}
+
+	// empty
+	void empty(void);
+
+	// map
+	template <typename Vector>
+	void map(const Vector x, const Vector &y);
+
+	// domain
+	size_t domain(void) const;
+
+	// range
+	size_t range(void) const;
+
+	// one forward mode sweep
+	template <typename Vector>
+	Vector forward(size_t p, const Vector &x) const; 
+
+	// one reverse mode sweep
+	template <typename Vector>
+	Vector reverse(size_t p, const Vector &x, Vector &w) const;
+};
+/*
+-----------------------------------------------------------------------------
 $begin admap_empty$$
 $spell
 	cpp
@@ -34,7 +92,7 @@ $tend
 $fend 20$$
 
 $head Purpose$$
-An AD mapping in the $code complete$$ state has information
+An AD mapping in the $code defined$$ state has information
 stored within it. 
 This function allows to user to free memory used to store that information.
 
@@ -56,101 +114,52 @@ The file $code admap.cpp$$ contains an example and test of this operation.
 It returns true if it succeeds and false otherwise.
 
 $end
+*/
+template<typename Base>
+void admap<Base>::empty(void)
+{	if( rec != CppADNull )
+		delete rec;
+	state = empty_state;
+}
+
+/*
 ----------------------------------------------------------------------------
-$begin admap_independent$$
+$begin admap_map$$
 $spell
+	const
 	cpp
 	admap
 $$
 
-$section Declare Independent Variables for an AD Mapping$$
+$section Store a New AD Mapping$$
 
-$index independent$$
-$index start, tape$$
-$index tape, start$$
+$index map$$
+$index stop, tape$$
+$index tape, stop$$
+$index variable, dependent$$
 $index variable, independent$$
+$index dependent, variable$$
+$index independent, variable$$
 
 $table
 $bold Syntax$$ $cnext
-$syntax%%f%.independent(%x%)%$$
+$syntax%%f%.map(%x%, %y%)%$$
 $tend
 
 $fend 20$$
 
 $head Purpose$$
-This declares the independent variables for the next mapping
-that will be stored in $italic f$$.
-
-$head f$$
-The object $italic f$$ has prototype
-$syntax%
-	admap<%Base%> %f%
-%$$
-Any previous mapping connected to this object is lost and a new
-mapping is started with the specified independent variables.
-
-$head x$$
-The vector $italic x$$ has prototype
-$syntax%
-	%Vector% &%x%
-%$$
-The length of $italic x$$, must be greater than zero,
-and is the number of independent variables
-(dimension of the domain space for $italic f$$).
-
-$head Vector$$
-The type $italic Vector$$ must be a $xref/SimpleVector/$$ class with
-$xref/SimpleVector/Elements of Specified Type/elements of type/$$
-$syntax%AD<%Base%>%$$.
-The routine $xref/CheckSimpleVector/$$ will generate an error message
-if this is not the case.
-
-$head Mapping State$$
-The mapping state of $italic f$$ must be either $code empty$$
-or $code complete$$ when 
-$syntax%%f%.independent(%x%)%$$ is called.
-After this call,
-the mapping state of $italic f$$ will be $code record$$.
-
+This stores a new AD mapping in the object $italic f$$.
 
 $head Tape State$$
 $index state, tape$$
 $index tape, state$$
 This operation can only be done while the tape 
 that records $syntax%AD<%Base%>%$$ operations is in the 
-$xref/glossary/Tape State/empty state/$$.
-After this operation, this tape will be in the $code record$$ state.
-
-$head Example$$
-The file $code admap.cpp$$ contains an example and test of this operation.
-It returns true if it succeeds and false otherwise.
-
-$end
-----------------------------------------------------------------------------
-
-$begin admap_dependent$$
-$spell
-	cpp
-	admap
-$$
-
-$section Declare Dependent Variables for an AD Mapping$$
-
-$index dependent$$
-$index stop, tape$$
-$index tape, stop$$
-$index variable, dependent$$
-
-$table
-$bold Syntax$$ $cnext
-$syntax%%f%.dependent(%y%)%$$
-$tend
-
-$fend 20$$
-
-$head Purpose$$
-This declares the dependent variables for the mapping
-that is stored in $italic f$$.
+$xref/glossary/Tape State/record state/$$.
+After this operation, the tape 
+that records $syntax%AD<%Base%>%$$ operations 
+will be in the $code empty$$ state.
 
 $head f$$
 The object $italic f$$ has prototype
@@ -158,11 +167,34 @@ $syntax%
 	admap<%Base%> %f%
 %$$
 
+$head x$$
+The vector $italic x$$ has prototype
+$syntax%
+	const %Vector% &%x%
+%$$
+It specifies the independent variables for this mapping.
+The length of $italic x$$, must be greater than zero,
+and is the number of independent variables
+(dimension of the domain space for $italic f$$).
+The current recording of $syntax%AD<%Base%>%$$ operations 
+was started with a call to $xref/Independent/$$ with $italic x$$
+as the independent variable vector.
+None of the elements of $italic x$$ may have changed
+between the call
+$syntax%
+	Independent(%x%)
+%$$
+and the corresponding call
+$syntax%
+	%f%.map(%x%, %y%)
+%$$
+
 $head y$$
 The vector $italic y$$ has prototype
 $syntax%
-	%Vector% &%y%
+	const %Vector% &%y%
 %$$
+It specifies the dependent variables for this mapping.
 The length of $italic y$$, must be greater than zero,
 and is the number of dependent variables
 (dimension of the range space for $italic f$$).
@@ -175,19 +207,12 @@ The routine $xref/CheckSimpleVector/$$ will generate an error message
 if this is not the case.
 
 $head Mapping State$$
-The mapping state of $italic f$$ must be either $code record$$ when 
-$syntax%%f%.dependent(%x%)%$$ is called.
+The object $italic f$$ can have any mapping state when 
+$syntax%
+	%f%.map(%x%, %y%)
+%$$ is called.  
 After this call,
-the mapping state of $italic f$$ will be $code complete$$.
-
-
-$head Tape State$$
-$index state, tape$$
-$index tape, state$$
-This operation can only be done while the tape 
-that records $syntax%AD<%Base%>%$$ operations is in the 
-$xref/glossary/Tape State/record state/$$.
-After this operation, this tape will be in the $code empty$$ state.
+the mapping state of $italic f$$ will be $code defined$$.
 
 $head Example$$
 The file $code admap.cpp$$ contains an example and test of this operation.
@@ -632,3 +657,9 @@ It returns true if it succeeds and false otherwise.
 
 
 $end
+------------------------------------------------------------------------------
+*/
+
+} // END CppAD namespace
+
+# endif

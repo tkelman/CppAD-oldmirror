@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-05 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -45,6 +45,7 @@ extern bool Abs(void);
 extern bool Acos(void);
 extern bool Add(void);
 extern bool AddEq(void);
+extern bool admap(void);
 extern bool Asin(void);
 extern bool Atan(void);
 extern bool Atan2(void);
@@ -169,6 +170,7 @@ int main(void)
 	ok &= Run( Acos,              "Acos"             );
 	ok &= Run( Add,               "Add"              );
 	ok &= Run( AddEq,             "AddEq"            );
+	ok &= Run( admap,             "admap"            );
 	ok &= Run( Asin,              "Asin"             );
 	ok &= Run( Atan,              "Atan"             );
 	ok &= Run( Atan2,             "Atan2"            );

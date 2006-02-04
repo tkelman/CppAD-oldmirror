@@ -219,6 +219,9 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\admap.cpp">
+			</File>
+			<File
 				RelativePath="Asin.cpp">
 				<FileConfiguration
 					Name="Release|Win32">

@@ -1,9 +1,8 @@
 # ifndef CppADUserADIncluded
 # define CppADUserADIncluded
 
-// BEGIN SHORT COPYRIGHT
 /* -----------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-05 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -19,7 +18,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ------------------------------------------------------------------------ */
-// END SHORT COPYRIGHT
 /*
 ---------------------------------------------------------------------------
 
@@ -59,7 +57,9 @@ $childtable%
 	CppAD/local/PrintFor.h%
 	CppAD/local/StdMathLib.h%
 	CppAD/local/BoolFun.h%
-	CppAD/local/NearEqualExt.h
+	CppAD/local/NearEqualExt.h%
+	CppAD/local/Independent.h%
+	CppAD/local/Parameter.h
 %$$
 
 $end
@@ -81,5 +81,7 @@ $end
 # include <CppAD/local/StdMathLib.h>   // standard math library functions
 # include <CppAD/local/BoolFun.h>      // user defined boolean valued functions
 # include <CppAD/local/NearEqualExt.h> // mix AD and base in NearEqual
+# include <CppAD/local/Independent.h>  // declare independent variables
+# include <CppAD/local/Parameter.h>    // check for a parameter
 
 # endif

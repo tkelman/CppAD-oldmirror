@@ -65,16 +65,13 @@ of $xref/glossary/Taylor Coefficient/Taylor coefficients/$$.
 $lend
 
 $head Mapping State$$
-The object $italic f$$ can have one of the following three mapping states
+The object $italic f$$ has one of the following two mapping states
 (the initial mapping state of $italic f$$ is $code empty$$).
 $table
 $code empty$$     
 	$cnext there is no mapping currently stored in $italic f$$ 
 $rnext
-$code record$$ 
-	$cnext a mapping is currently being recorded for storage in $italic f$$
-$rnext
-$code complete$$
+$code defined$$
 	$cnext a mapping is currently stored in $italic f$$
 $tend 
 
@@ -84,7 +81,7 @@ constructor.
 It returns true if it succeeds and false otherwise.
 
 $contents%
-	omh/admap_member.omh
+	CppAD/local/admap.h
 %$$
 
 $end

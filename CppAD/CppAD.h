@@ -2,7 +2,7 @@
 # define CppADCppADIncluded
 
 /* -----------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation Copyright (C) 2003-04 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation Copyright (C) 2003-06 Bradley M. Bell
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -71,7 +71,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // files containing user interface documentation
 
 # include <CppAD/local/Op.h>           // executes taped operations
-# include <CppAD/local/Fun.h>          // differentiable function objects
+# include <CppAD/local/Fun.h>          // AD function objects
+# include <CppAD/local/admap.h>        // AD mapping objects
 # include <CppAD/local/UserAD.h>       // AD class methods available to the user
 # include <CppAD/local/ExtendDomain.h> // extend useful domain of an ADFun
 

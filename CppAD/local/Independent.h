@@ -1,9 +1,8 @@
 # ifndef CppADIndependentIncluded
 # define CppADIndependentIncluded
 
-// BEGIN SHORT COPYRIGHT
 /* -----------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-05 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -19,7 +18,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ------------------------------------------------------------------------ */
-// END SHORT COPYRIGHT
 /*
 ---------------------------------------------------------------------------
 
@@ -50,8 +48,8 @@ $head Purpose$$
 Calling $code Independent$$ 
 starts the recording of $syntax%AD<%Base%>%$$ operations
 with $italic x$$ being the independent variable vector.
-This is the first step in defining a CppAD differentiable function object
-($xref/ADFun/$$ object).
+This is the first step in defining an AD mapping using
+$xref/admap/$$ or $xref/ADFun/$$.
 
 $head VectorADBase$$
 The type $italic VectorADBase$$ must be a $xref/SimpleVector/$$ class with
