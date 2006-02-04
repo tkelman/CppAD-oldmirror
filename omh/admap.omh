@@ -76,11 +76,12 @@ $code defined$$
 $tend 
 
 $head Example$$
-The file $code admap.cpp$$ contains an example and test of this
+The file $xref/admap.cpp/$$ contains an example and test of this
 constructor.
 It returns true if it succeeds and false otherwise.
 
 $contents%
+	Example/admap.cpp%
 	CppAD/local/admap.h
 %$$
 
