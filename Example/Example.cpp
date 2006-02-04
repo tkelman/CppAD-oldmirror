@@ -151,11 +151,6 @@ namespace {
 	
 		return ok;
 	}
-	// check for memory leak in previous calculations
-	bool TrackCount(void)
-	{	bool ok = (CppADTrackCount() == 0);
-		return ok;
-	}
 }
 
 // main program that runs all the tests
@@ -257,7 +252,10 @@ int main(void)
 	ok &= Run( Vec,               "Vec"              );
 
 	// check for memory leak in previous calculations
-	ok &= Run( TrackCount,        "TrackCount"       );
+	if( CppADTrackCount() != 0 )
+	{	ok = false;
+		cout << "Error: memroy leak detected" << endl;
+	}
 
 	cout << endl << endl;
 	if( ok )

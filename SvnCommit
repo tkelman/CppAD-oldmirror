@@ -1,32 +1,17 @@
-# Branch admap: test admap constructor and empty member function.
+# Branch admap: merge in changes from trunk to this version
 # 
 # SvnCommit: this file.
-# admap.h: implementation of template class and documtation of member functions.
-# UserAD.h: move Independent, Parameter, and Variable includes to here.
-# Independent.h: include admap in comment about function objects.
-# Fun.h: move Independent, Parameter, and Variable includes from here.
-# CppAD.h: include admap.h here.
-# admap_member.omh: move this information to admap.h.
-# admap.omh: include CppAD/local/admap.h in place of omh/admap_member.omh.
-# ExampleList.omh: include admap example.
-# admap.cpp: initial example using admap objects.
-# Example.vcproj: add admap example to list.
-# Example.cpp: add admap to list of examples.
-# Example/Makefile.am: add admap to list of examples.
-# Makefile.am: add admap.h to distribution.
 # -----------------------------------------------
 list="\
-	CppAD/local/admap.h \
-	CppAD/local/UserAD.h \
-	CppAD/local/Independent.h \
-	CppAD/local/Fun.h \
-	CppAD/CppAD.h \
-	omh/admap.omh \
-	omh/ExampleList.omh \
-	Example/admap.cpp \
+	CppAD/Runge45.h \
+	CppAD/Rosen34.h \
+	CppAD/local/CppADError.h \
+	CppAD/CppAD_vector.h \
+	CppAD/ErrorHandler.h \
+	SvnCommit.sed \
+	omh/WhatsNew05.omh \
+	omh/WhatsNew06.omh \
 	Example/Example.cpp \
-	Example/Makefile.am \
-	Makefile.am  \
 "
 for file in $list
 do
@@ -37,11 +22,6 @@ do
 	mv junk $file
 done
 sed -e "/^[^#]/d" -e "s/^[#] *//" < SvnCommit > svn.log
-# svn delete omh/admap_member.omh
-# svn add    CppAD/local/admap.h
-# svn add    Example/admap.cpp
 svn commit --file svn.log \
 	SvnCommit \
-	omh/admap_member.omh \
-	Example/Example.vcproj \
 	$list
