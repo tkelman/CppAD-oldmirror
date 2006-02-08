@@ -66,12 +66,13 @@ $lend
 
 $head Mapping State$$
 The object $italic f$$ has one of the following two mapping states
-(the initial mapping state of $italic f$$ is $code empty$$).
+(the initial mapping state of $italic f$$ is empty).
 $table
-$code empty$$     
+$bold State$$ $cnext $bold Meaning$$ $rnext
+empty     
 	$cnext there is no mapping currently stored in $italic f$$ 
 $rnext
-$code defined$$
+defined
 	$cnext a mapping is currently stored in $italic f$$
 $tend 
 

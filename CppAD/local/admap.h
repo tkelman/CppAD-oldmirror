@@ -37,11 +37,13 @@ private:
 
 	TapeRec<Base>    *rec;
 	enum admap_state  state;
+	size_t            n;
+	size_t            m;
 
 public:
 	// constructor 
 	admap(void)
-	: rec(CppADNull), state(empty_state)
+	: rec(CppADNull), state(empty_state), n(0), m(0)
 	{ }
 
 	// destructor
@@ -92,7 +94,7 @@ $tend
 $fend 20$$
 
 $head Purpose$$
-An AD mapping in the $code defined$$ state has information
+An AD mapping in the defined state has information
 stored within it. 
 This function allows to user to free memory used to store that information.
 
@@ -107,7 +109,7 @@ $head Mapping State$$
 The object $italic f$$ may have any mapping state when
 $syntax%%f%.empty()%$$ is called.
 After this call,
-the mapping state of $italic f$$ will be $code empty$$.
+the mapping state of $italic f$$ will be empty.
 
 $head Example$$
 The file $code admap.cpp$$ contains an example and test of this operation.
@@ -120,6 +122,8 @@ void admap<Base>::empty(void)
 {	if( rec != CppADNull )
 		delete rec;
 	state = empty_state;
+	n     = 0;
+	m     = 0;
 }
 
 /*
@@ -159,7 +163,7 @@ that records $syntax%AD<%Base%>%$$ operations is in the
 $xref/glossary/Tape State/record state/$$.
 After this operation, the tape 
 that records $syntax%AD<%Base%>%$$ operations 
-will be in the $code empty$$ state.
+will be in the empty state.
 
 $head f$$
 The object $italic f$$ has prototype
@@ -195,6 +199,9 @@ $syntax%
 	const %Vector% &%y%
 %$$
 It specifies the dependent variables for this mapping.
+The length of $italic x$$, must be greater than zero,
+and is the number of independent variables
+(dimension of the domain space for $italic f$$).
 The length of $italic y$$, must be greater than zero,
 and is the number of dependent variables
 (dimension of the range space for $italic f$$).
@@ -208,11 +215,9 @@ if this is not the case.
 
 $head Mapping State$$
 The object $italic f$$ can have any mapping state when 
-$syntax%
-	%f%.map(%x%, %y%)
-%$$ is called.  
+$syntax%%f%.map%$$ is called.  
 After this call,
-the mapping state of $italic f$$ will be $code defined$$.
+the mapping state of $italic f$$ will be defined.
 
 $head Example$$
 The file $code admap.cpp$$ contains an example and test of this operation.
@@ -243,11 +248,14 @@ $tend
 $fend 20$$
 
 $head Purpose$$
-Determine the dimension of the domain space corresponding to
+Determine the dimension of the domain space 
+(number of independent variables)
+corresponding to
 $latex \[
 	f : B^n \rightarrow B^m
 \] $$ 
-(this is also the number of independent variables for $italic f$$).
+One can also use $syntax%%f%.domain%$$ to determine the 
+mapping state of $italic f$$ (see the description of $italic n$$ below).
 
 $head f$$
 The object $italic f$$ has prototype
@@ -260,6 +268,15 @@ The return value $italic n$$ has prototype
 $syntax%
 	size_t %n%
 %$$
+If the mapping state of $italic f$$ is empty,
+$italic n$$ is equal to zero.
+Otherwise, it is non-zero.
+
+$head Mapping State$$
+The object $italic f$$ can have any mapping state when 
+$syntax%%f%.domain%$$ is called.  
+The mapping state of $italic f$$ is not affected by this call.
+
 
 $head Example$$
 The file $code admap.cpp$$ contains an example and test of this operation.
@@ -289,25 +306,37 @@ $tend
 
 $fend 20$$
 
-
-$head Purpose$$
-Determine the dimension of the range space corresponding to
+Determine the dimension of the range space 
+(number of dependent variables)
+corresponding to
 $latex \[
 	f : B^n \rightarrow B^m
 \] $$ 
-(this is also the number of dependent variables for $italic f$$).
+One can also use $syntax%%f%.range%$$ to determine the 
+mapping state of $italic f$$ (see the description of $italic m$$ below).
 
 $head f$$
 The object $italic f$$ has prototype
 $syntax%
 	const admap<%Base%> %f%
 %$$
+If the mapping state of $italic f$$ is empty,
+$italic n$$ is equal to zero.
+Otherwise, it is non-zero.
 
 $head m$$
 The return value $italic m$$ has prototype
 $syntax%
 	size_t %m%
 %$$
+If the mapping state of $italic f$$ is empty,
+$italic m$$ is equal to zero.
+Otherwise, it is non-zero.
+
+$head Mapping State$$
+The object $italic f$$ can have any mapping state when 
+$syntax%%f%.range%$$ is called.  
+The mapping state of $italic f$$ is not affected by this call.
 
 $head Example$$
 The file $code admap.cpp$$ contains an example and test of this operation.
@@ -479,6 +508,13 @@ Y_i^{(2)} (0)
 \end{array} 
 \] $$
 
+$head Mapping State$$
+The object $italic f$$ must be in the defined mapping state when
+$syntax%%f%.forward%$$ is called.  
+The mapping state of $italic f$$ is 
+not affected by this call.
+
+
 $head Example$$
 The file $code admap_forward.cpp$$ contains 
 an example and test of this operation. 
@@ -649,6 +685,12 @@ y[ j * p + 1 ]
 \DD{F_i}{x_j}{x_\ell} ( x^{(0)} ) 
 \] $$
 
+
+$head Mapping State$$
+The object $italic f$$ must be in the defined mapping state when
+$syntax%%f%.reverse%$$ is called.  
+The mapping state of $italic f$$ is 
+not affected by this call.
 
 $head Example$$
 The file $code admap_reverse.cpp$$ contains 

@@ -1,17 +1,12 @@
-# Branch admap: merge in changes from trunk to this version
+# Branch admap: improve documentaiton and plan for admap template class
 # 
 # SvnCommit: this file.
+# admap.omh: use normal font for the empty mapping state.
+# admap.h: document input / output mapping state for each member function.
 # -----------------------------------------------
 list="\
-	CppAD/Runge45.h \
-	CppAD/Rosen34.h \
-	CppAD/local/CppADError.h \
-	CppAD/CppAD_vector.h \
-	CppAD/ErrorHandler.h \
-	SvnCommit.sed \
-	omh/WhatsNew05.omh \
-	omh/WhatsNew06.omh \
-	Example/Example.cpp \
+	CppAD/local/admap.h
+	omh/admap.omh \
 "
 for file in $list
 do
