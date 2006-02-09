@@ -20,12 +20,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 $begin admap.cpp$$
 $spell
 	Cpp
+	admap
 $$
 
 $section AD Mapping Object: Example and Test$$
-$index ADFun$$
-$index example, ADFun$$
-$index test, ADFun$$
+$index admap$$
+$index example, admap$$
+$index test, admap$$
 
 $code
 $verbatim%Example/admap.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
@@ -37,8 +38,6 @@ $end
 
 # include <CppAD/CppAD.h>
 
-# include <vector>
-# include <valarray>
 bool admap(void)
 {	bool ok = true;
 

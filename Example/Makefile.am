@@ -38,6 +38,7 @@ Example_SOURCES   = \
 	Add.cpp \
 	AddEq.cpp \
 	admap.cpp \
+	admap_map.cpp \
 	Asin.cpp \
 	Atan.cpp \
 	Atan2.cpp \

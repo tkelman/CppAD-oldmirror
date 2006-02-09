@@ -1,9 +1,8 @@
 # ifndef CppADDeclareIncluded
 # define CppADDeclareIncluded
 
-// BEGIN SHORT COPYRIGHT
 /* -----------------------------------------------------------------------
-CppAD: C++ Algorithm Differentiation Copyright (C) 2003-04 Bradley M. Bell
+CppAD: C++ Algorithm Differentiation Copyright (C) 2003-06 Bradley M. Bell
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -19,12 +18,12 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ------------------------------------------------------------------------ */
-// END SHORT COPYRIGHT
 
 namespace CppAD {
 	// classes
 	template <class Base> class AD;
 	template <class Base> class ADFun;
+	template <class Base> class admap;
 	template <class Base> class ADTape;
 	template <class Base> class VecAD;
 	template <class Base> class TapeRec;

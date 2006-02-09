@@ -46,6 +46,7 @@ extern bool Acos(void);
 extern bool Add(void);
 extern bool AddEq(void);
 extern bool admap(void);
+extern bool admap_map(void);
 extern bool Asin(void);
 extern bool Atan(void);
 extern bool Atan2(void);
@@ -166,6 +167,7 @@ int main(void)
 	ok &= Run( Add,               "Add"              );
 	ok &= Run( AddEq,             "AddEq"            );
 	ok &= Run( admap,             "admap"            );
+	ok &= Run( admap_map,         "admap_map"        );
 	ok &= Run( Asin,              "Asin"             );
 	ok &= Run( Atan,              "Atan"             );
 	ok &= Run( Atan2,             "Atan2"            );

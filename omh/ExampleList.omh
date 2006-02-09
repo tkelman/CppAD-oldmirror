@@ -84,6 +84,7 @@ $rref Acos.cpp$$
 $rref Add.cpp$$
 $rref AddEq.cpp$$
 $rref admap.cpp$$
+$rref admap_map.cpp$$
 $rref Asin.cpp$$
 $rref Atan.cpp$$
 $rref Atan2.cpp$$

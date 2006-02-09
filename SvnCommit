@@ -1,12 +1,31 @@
-# Branch admap: improve documentaiton and plan for admap template class
+# Branch admap: add map member function.
 # 
 # SvnCommit: this file.
-# admap.omh: use normal font for the empty mapping state.
-# admap.h: document input / output mapping state for each member function.
+# ADTape.h: make admap a friend of ADTape.
+# Declare.h: forward declare admap to be a template class.
+# AD.h: make admap a friend of AD.
+# CppADError.h: fix spelling error in documentation.
+# Fun.h: improve some of the error messaging.
+# admap.cpp: change indexing from ADFun to admap.
+# admap_map.cpp: example for map member function.
+# Example.cpp: add the admap_map example.
+# Example.vcproj: add the admap_map example.
+# Makefile.am: add the admap_map example.
+# admap.h: add the map member function.
 # -----------------------------------------------
+# Do not include */*.vcproj in this automatically edited list
 list="\
-	CppAD/local/admap.h
-	omh/admap.omh \
+	CppAD/local/ADTape.h \
+	CppAD/local/Declare.h \
+	CppAD/local/AD.h \
+	CppAD/local/CppADError.h \
+	CppAD/local/Fun.h \
+	CppAD/local/admap.h \
+	omh/ExampleList.omh \
+	Example/admap.cpp \
+	Example/Example.cpp \
+	Example/Makefile.am \
+	CppAD/local/admap.h \
 "
 for file in $list
 do
@@ -16,7 +35,9 @@ do
 	mv $file ~/trash 
 	mv junk $file
 done
+svn add Example/admap_map.cpp
 sed -e "/^[^#]/d" -e "s/^[#] *//" < SvnCommit > svn.log
 svn commit --file svn.log \
 	SvnCommit \
+	Example/Example.vcproj \
 	$list

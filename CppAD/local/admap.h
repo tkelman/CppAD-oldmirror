@@ -22,9 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // The constructor is documented in omh/admap.  
 // The member functions are documented in this file.
 
-// BEGIN CppAD namespace
-namespace CppAD {
-
+namespace CppAD { // BEGIN CppAD namespace
 
 template <class Base>
 class admap {
@@ -32,18 +30,22 @@ private:
 	// type used for packing sparsity patters
 	typedef size_t Pack;
 
-	// state of an admap object
-	enum admap_state { empty_state, defined_state };
-
+	// recording for this object (CppADNull if in empty state)
 	TapeRec<Base>    *rec;
-	enum admap_state  state;
-	size_t            n;
-	size_t            m;
+
+	// tape address for independent variables
+	CppAD::vector<size_t> x_taddr;
+
+	// tape address for dependent variables
+	CppAD::vector<size_t> y_taddr;
+
+	// is the corresponding dependent variable a parameter
+	CppAD::vector<size_t> y_parameter;
 
 public:
 	// constructor 
 	admap(void)
-	: rec(CppADNull), state(empty_state), n(0), m(0)
+	: rec(CppADNull), x_taddr(0), y_taddr(0), y_parameter(0)
 	{ }
 
 	// destructor
@@ -57,7 +59,7 @@ public:
 
 	// map
 	template <typename Vector>
-	void map(const Vector x, const Vector &y);
+	void map(const Vector &x, const Vector &y);
 
 	// domain
 	size_t domain(void) const;
@@ -74,7 +76,7 @@ public:
 	Vector reverse(size_t p, const Vector &x, Vector &w) const;
 };
 /*
------------------------------------------------------------------------------
+=============================================================================
 $begin admap_empty$$
 $spell
 	cpp
@@ -116,18 +118,21 @@ The file $code admap.cpp$$ contains an example and test of this operation.
 It returns true if it succeeds and false otherwise.
 
 $end
+--------------------------------------------------------------------------
 */
-template<typename Base>
+template<class Base>
 void admap<Base>::empty(void)
 {	if( rec != CppADNull )
-		delete rec;
-	state = empty_state;
-	n     = 0;
-	m     = 0;
+	{	delete rec;
+		rec = CppADNull;
+		x_taddr.resize(0);
+		y_taddr.resize(0);
+		y_parameter.resize(0);
+	}
 }
 
 /*
-----------------------------------------------------------------------------
+============================================================================
 $begin admap_map$$
 $spell
 	const
@@ -219,12 +224,123 @@ $syntax%%f%.map%$$ is called.
 After this call,
 the mapping state of $italic f$$ will be defined.
 
+$children%
+	Example/admap_map.cpp
+%$$
 $head Example$$
-The file $code admap.cpp$$ contains an example and test of this operation.
+The file $xref/admap_map.cpp/$$ contains an example and test of this operation.
 It returns true if it succeeds and false otherwise.
 
 $end
 ----------------------------------------------------------------------------
+*/
+
+template <class Base>
+template <class Vector>
+void admap<Base>::map(const Vector &x, const Vector &y)
+{	// check that Vector is a simple vector class with AD<Base> elements
+	CheckSimpleVector< AD<Base> , Vector >();
+
+	CppADUsageError(
+	AD<Base>::Tape()->state != Empty,
+	"Can't create an AD mapping because corresponding tape is empty"
+	);
+	CppADUnknownError( AD<Base>::Tape()->state == Recording );
+
+	// pointer to the tape that records AD<Base> operations
+	ADTape<Base> *tape = AD<Base>::Tape();
+	
+	// dimension of the domain space
+	size_t n = x.size(); 
+	CppADUsageError(
+	n > 0,
+	"Can't create an AD mapping with domain dimension (x.size) zero"
+	);
+	x_taddr.resize(n);
+
+	// dimension of the range space
+	size_t m = y.size(); 
+	CppADUsageError(
+	m > 0,
+	"Can't create an AD mapping with range dimension (y.size) zero"
+	);
+	y_taddr.resize(m);
+	y_parameter.resize(m);
+
+	// Set value of the elements of x_taddr.
+	CppADUsageError(
+		n + 1 < tape->Rec.TotNumVar(),
+		"admap_map: x has changed since the call to Independent"
+	);
+	size_t j;
+	CppADUnknownError( NumVar(InvOp) == 1 );
+	for(j = 0; j < n; j++)
+	{	x_taddr[j] = x[j].taddr;
+
+		CppADUsageError(
+		x_taddr[j] == j+1,
+		"admap_map: x has changed since the call to Independent"
+		);
+
+		// j+1 is both the operator and independent variable taddr
+		CppADUsageError(
+		tape->Rec.GetOp(j+1) == InvOp,
+		"admap_map: x has changed since the call to Independent"
+	);
+	}
+
+	// Set value of the elements of y_taddr and y_parameter.
+	// Make tape entries for independent variables that are parameters.
+	CppADUnknownError( NumVar(ParOp) == 1 );
+	size_t i;
+	for(i = 0; i < m; i++)
+	{	y_parameter[i] = Parameter(y[i]);
+		if( y_parameter[i] )
+			y_taddr[i] = tape->RecordParOp(y[i].value);
+		else	y_taddr[i] = y[i].taddr;
+
+		CppADUnknownError( y_taddr[i] > 0 );
+		CppADUnknownError( y_taddr[i] < tape->Rec.TotNumVar() );
+	}
+
+	// Now that each dependent variable has a place in the tape,
+	// we can make a separate copy for this mapping and erase the tape.
+	// The separate copy may be shorter (tape can have unused space).
+	if( rec != CppADNull )
+		delete rec; 
+	rec = new TapeRec<Base>( tape->Rec );
+	tape->Erase();
+
+# ifndef NDEBUG
+	// compare tape evaluation with values in the vector y
+	size_t num_var = rec->TotNumVar();
+	for(j = 0; j < n; j++)
+		CppADUnknownError( x_taddr[j] < num_var );
+
+	Base *Taylor   = CppADNull;
+	Taylor         = CppADTrackNewVec(num_var, Taylor);
+	for(j = 0; j < n; j++)
+		Taylor[ x_taddr[j] ] = x[j].value;
+
+	size_t compare_change = ForwardSweep(
+		false, 0, num_var, rec, 1, Taylor
+	);
+
+	for(i = 0; i < m; i++)
+	{	CppADUnknownError( y_taddr[i] < num_var );
+		CppADUsageError(
+		Taylor[ y_taddr[i] ] == y[i].value,
+		"admap_map: y[i] not equal to its tape evaluation, may be nan"
+		);
+	}
+	CppADUnknownError( compare_change == 0 );
+	CppADTrackDelVec(Taylor);
+# endif
+
+}
+
+/*
+============================================================================
 
 $begin admap_domain$$
 $spell
