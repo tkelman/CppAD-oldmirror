@@ -152,28 +152,28 @@ const AD<Base> &x, const Base &y, const Base &r, const Base &a)
 
 // fold into AD type and then use cases above
 template <class Base>
-inline bool NearEqual(const VecADelem<Base> &x, const VecADelem<Base> &y, 
-	const Base &r, const Base &a)
+inline bool NearEqual(const typename VecAD<Base>::reference &x, 
+const typename VecAD<Base>::reference &y, const Base &r, const Base &a)
 {	return NearEqual(x.ADBase(), y.ADBase(), r, a);
 }
 template <class Base>
-inline bool NearEqual(const VecADelem<Base> &x, const AD<Base> &y, 
-	const Base &r, const Base &a)
+inline bool NearEqual(const typename VecAD<Base>::reference &x, 
+const AD<Base> &y, const Base &r, const Base &a)
 {	return NearEqual(x.ADBase(), y, r, a);
 }
 template <class Base>
-inline bool NearEqual(const VecADelem<Base> &x, const Base &y, 
-	const Base &r, const Base &a)
+inline bool NearEqual(const typename VecAD<Base>::reference &x, 
+const Base &y, const Base &r, const Base &a)
 {	return NearEqual(x.ADBase(), y, r, a);
 }
 template <class Base>
-inline bool NearEqual(const AD<Base> &x, const VecADelem<Base> &y, 
-	const Base &r, const Base &a)
+inline bool NearEqual(const AD<Base> &x, 
+const typename VecAD<Base>::reference &y, const Base &r, const Base &a)
 {	return NearEqual(x, y.ADBase(), r, a);
 }
 template <class Base>
-inline bool NearEqual(const Base &x, const VecADelem<Base> &y, 
-	const Base &r, const Base &a)
+inline bool NearEqual(const Base &x, 
+const typename VecAD<Base>::reference &y, const Base &r, const Base &a)
 {	return NearEqual(x, y.ADBase(), r, a);
 }
 
