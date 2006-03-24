@@ -113,7 +113,7 @@ inline Type operator Op                                                \
                                                                        \
 template <class Base>                                                  \
 inline Type operator Op                                                \
-	(const Base &left, const VecADelem<Base> &right)               \
+(const Base &left, const typename VecAD<Base>::reference &right)       \
 {	return AD<Base>(left) Op right.ADBase(); }                     \
                                                                        \
 template <class Base>                                                  \
@@ -122,7 +122,7 @@ inline Type AD<Base>::operator Op (const Base &right)  const           \
                                                                        \
 template <class Base>                                                  \
 inline Type operator Op                                                \
-	(const VecADelem<Base> &left, const Base &right)               \
+(const typename VecAD<Base>::reference &left, const Base &right)       \
 {	return left.ADBase() Op AD<Base>(right); }                     \
                                                                        \
 /* ----------------------------------------------------------------*/  \
@@ -135,7 +135,7 @@ inline Type operator Op                                                \
                                                                        \
 template <class Base>                                                  \
 inline Type operator Op                                                \
-	(int left, const VecADelem<Base> &right)                       \
+(int left, const typename VecAD<Base>::reference &right)               \
 {	return AD<Base>(left) Op right.ADBase(); }                     \
                                                                        \
 template <class Base>                                                  \
@@ -144,7 +144,7 @@ inline Type AD<Base>::operator Op (int right) const                    \
                                                                        \
 template <class Base>                                                  \
 inline Type operator Op                                                \
-	(const VecADelem<Base> &left, int right)                       \
+(const typename VecAD<Base>::reference &left, int right)               \
 {	return left.ADBase() Op AD<Base>(right); }
 
 # endif
