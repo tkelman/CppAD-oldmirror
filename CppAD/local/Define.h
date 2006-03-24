@@ -90,7 +90,8 @@ $end
 /* Operations with VecADelem<Base> and AD<Base> only*/                 \
 template <class Base>                                                  \
                                                                        \
-inline Type AD<Base>::operator Op (const VecADelem<Base> &right) const \
+inline Type AD<Base>::operator Op                                      \
+(const typename VecAD<Base>::reference &right) const                   \
 {	return *this Op right.ADBase(); }                              \
                                                                        \
 template <class Base>                                                  \

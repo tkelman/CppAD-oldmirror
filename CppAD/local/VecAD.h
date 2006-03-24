@@ -388,6 +388,8 @@ class VecAD {
 	friend class ADTape<Base>;
 	friend class VecADelem<Base>;
 public:
+	typedef VecADelem<Base> reference;
+
 	// default constructor
 	VecAD(void) : length(0) , data(CppADNull)
 	{ }
