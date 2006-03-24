@@ -101,7 +101,7 @@ inline Type operator Op                                                \
                                                                        \
 template <class Base>                                                  \
 inline Type operator Op                                                \
-	(const VecADelem<Base> &left, const AD<Base> &right)           \
+(const typename VecAD<Base>::reference &left, const AD<Base> &right)   \
 {	return left.ADBase() Op right; }                               \
 /* ----------------------------------------------------------------*/  \
 /* Operations Base */                                                  \
