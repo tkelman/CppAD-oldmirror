@@ -104,7 +104,7 @@ inline AD<Base> AD<Base>::operator - (void) const
 
 
 template <class Base>
-inline AD<Base> operator - (VecADelem<Base> const &right) 
+inline AD<Base> operator - (const typename VecAD<Base>::reference &right) 
 {	return - right.ADBase(); }
 
 }
