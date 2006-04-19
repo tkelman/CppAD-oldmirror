@@ -23,37 +23,42 @@ $spell
 $$
 
 
-$index Theory$$
-$section Theory of Algorithmic Differentiation$$
+$index introduction, AD$$
+$index AD, introduction$$
+$index Algorithmic Differentiation, introduction$$
+$index Automatic Differentiation, introduction$$
 
-$head Motivation$$
-This chapter presents an introduction
-to the theory of Algorithmic Differentiation.
-We begin with a simple floating point algorithm
-that approximates the exponential function.
-We then write out an
-operation sequence corresponding to this algorithm.
+$section An Introduction to Algorithmic Differentiation$$
+
+$head Purpose$$
+This is an introduction
+to the theory of Algorithmic Differentiation
+(often referred to as Automatic Differentiation or just AD).
+We begin with a floating point algorithm
+that approximates the exponential function
+(this algorithm is only meant as an example).
+We then write out 
+the floating point operation sequence 
+that corresponds to a specific input to the algorithm. 
 This is followed by forward and reverse
 mode calculations of the derivative of the function corresponding
 to the operation sequence.
-A more complete treatment of the theory of AD can be found in 
-Andreas Griewank's book
-$xref/Bib/Evaluating Derivatives/Evaluating Derivatives/$$.
+A good review of the theory of AD can be found in 
+the book
+$italic 
+Evaluating Derivatives:
+Principles and Techniques of Algorithmic Differentiation
+$$,
+Andreas Griewank,
+SIAM Frontiers in Applied Mathematics, 
+2000.
 
-$head Sections$$
-$children%
+$childtable%
 	Introduction/ExpApxExample.h%
 	Introduction/ExpSeqExample.cpp%
 	Introduction/ExpForExample.cpp%
 	Introduction/ExpRevExample.cpp
 %$$
-$table
-$tref ExpApxExample$$ $rnext
-$tref ExpSeqExample$$      $rnext
-$tref ExpForExample$$       $rnext
-$tref ExpRevExample$$ 
-$tend
-	
 
 $end
 */
