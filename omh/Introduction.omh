@@ -1,0 +1,45 @@
+// C++IntroAD: A C++ Introduction To Algorithmic Differentiation
+//             Copyright (C) 2004 Bradley M. Bell 
+
+/*
+$begin Introduction$$
+$spell
+	Griewank
+	Andreas
+$$
+
+
+$index Theory$$
+$section Theory of Algorithmic Differentiation$$
+
+$head Motivation$$
+This chapter presents an introduction
+to the theory of Algorithmic Differentiation.
+We begin with a simple floating point algorithm
+that approximates the exponential function.
+We then write out an
+operation sequence corresponding to this algorithm.
+This is followed by forward and reverse
+mode calculations of the derivative of the function corresponding
+to the operation sequence.
+A more complete treatment of the theory of AD can be found in 
+Andreas Griewank's book
+$xref/Bib/Evaluating Derivatives/Evaluating Derivatives/$$.
+
+$head Sections$$
+$children%
+	Introduction/ExpApxExample.h%
+	Introduction/ExpSeqExample.cpp%
+	Introduction/ExpForExample.cpp%
+	Introduction/ExpRevExample.cpp
+%$$
+$table
+$tref ExpApxExample$$ $rnext
+$tref ExpSeqExample$$      $rnext
+$tref ExpForExample$$       $rnext
+$tref ExpRevExample$$ 
+$tend
+	
+
+$end
+*/
