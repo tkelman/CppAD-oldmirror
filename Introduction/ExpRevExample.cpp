@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /*
 $begin ExpRevExample$$
 $spell
+	Apx
 	const
 	fname
 	findex
@@ -46,7 +47,7 @@ $index reverse, theory$$
 
 $head Reverse Example$$
 In reverse mode we use an
-$xref/ExpSeqExample//operation sequence/$$
+$xref/ExpApxSeq//operation sequence/$$
 in reverse order to compute the entire derivative of
 one dependent variable with respect to all of the independent variables.
 For this example we use our
@@ -390,7 +391,7 @@ The program below
 traces the reverse mode derivative calculations
 above to standard output.
 It uses the global variables that are computed and stored by
-$xref/ExpSeqExample/$$.
+$xref/ExpApxSeq/$$.
 It only prints the non-zero partial derivative of $latex f_0$$; i.e.,
 its derivative with respect to $latex s_3$$.
 For $latex j > 0$$,
@@ -406,9 +407,9 @@ $codep */
 
 # include <iostream>
 
-// global variables computed by ExpSeqExample
+// global variables computed by ExpApxSeq
 extern double a[1], q[4], r[4], s[4], k[4];
-extern void ExpSeqExample(double x, double e);
+extern void ExpApxSeq(double x, double e);
 
 void Print(const char *fname, size_t findex, const char *vname, size_t vindex, 
 	double f_v )
@@ -423,7 +424,7 @@ int main(void)
 
 	// compute the global variables 
 	double x = .5, e = .1;
-	ExpSeqExample(x, e);
+	ExpApxSeq(x, e);
 
 	// initial all partial derivatives as zero
 	double df[13];
@@ -463,21 +464,6 @@ is generated when this program is run:
 $code
 $verbatim%Introduction/ExpRevExample.out%$$
 $$
-
-$head Exercise$$
-$index exercise, reverse$$
-$index reverse, exercise$$
-
-$list number$$
-Determine a reverse mode computation 
-corresponding to an algorithm sequence 
-for the 
-$xref/ExpSeqExample/Exercise/hypotenuse function/$$
-defined in a previous exercise.
-$lnext
-Create and run a program that outputs the corresponding partial derivatives to
-standard output.
-$lend
 
 $end
 */

@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /*
 $begin ExpForExample$$
 $spell
+	Apx
 	const
 	vname
 	vindex
@@ -40,7 +41,7 @@ $index theory, forward$$
 
 $head Parameter$$
 The independent variables correspond to a subset of 
-$xref/ExpSeqExample/Operation Symbol/symbols/$$ in an operation sequence.
+$xref/ExpApxSeq/Symbols/symbols/$$ in an operation sequence.
 If the value of a symbol does not depend on the value of the independent
 variables, the symbol is called a parameter.
 Otherwise the symbol is called a variable.
@@ -55,7 +56,7 @@ $index forward, example$$
 $index example, forward$$
 $index Exp, forward$$
 In forward mode we use an 
-$xref/ExpSeqExample//operation sequence/$$
+$xref/ExpApxSeq//operation sequence/$$
 in its original order to compute the partial derivative
 of all the dependent variables with respect to one independent variable. 
 For this example, we use our 
@@ -162,14 +163,14 @@ The program below
 traces the forward mode derivative calculations
 above to standard output.
 It uses the global variables that are computed and stored by
-$xref/ExpSeqExample/$$.
+$xref/ExpApxSeq/$$.
 $codep */
 
 # include <iostream>
 
-// global variables computed by ExpSeqExample
+// global variables computed by ExpApxSeq
 extern double a[1], q[4], r[4], s[4], k[4];
-extern void ExpSeqExample(double x, double e);
+extern void ExpApxSeq(double x, double e);
 
 
 void Print(const char *vname, size_t vindex, double v_x )
@@ -181,14 +182,14 @@ int main(void)
 
 	// compute the global variables 
 	double x = .5, e = .1;
-	ExpSeqExample(x, e);
+	ExpApxSeq(x, e);
 
 	// begin forward mode
 	r_x[0] = s_x[0] = 0.;
 	a_x[0] = 1.;
 	Print("a", 0, a_x[0]);
 	size_t j;
-	for(j = 1; j <= 3; j++) 
+	for(j = 1; j <= 2; j++) 
 	{	q_x[j] = r_x[j-1] * a[0] + r[j-1] * a_x[0];  // q = r * a
 		Print("q", j, q_x[j]);
 
@@ -208,21 +209,6 @@ is generated when this program is run:
 $code
 $verbatim%Introduction/ExpForExample.out%$$
 $$
-
-$head Exercise$$
-$index exercise, forward$$
-$index forward, exercise$$
-
-$list number$$
-Determine a forward mode computation 
-corresponding to an algorithm sequence 
-for the 
-$xref/ExpSeqExample/Exercise/hypotenuse function/$$
-defined in a previous exercise.
-$lnext
-Create and run a C++ program that outputs the corresponding 
-partial derivatives to standard output
-$lend
 
 $end
 */
