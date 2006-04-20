@@ -1,32 +1,32 @@
-# Copy from the exp approximation example from IntroAD to CppAD Introduction.
+# Change some file names and separate C++ source from its documentation.
 #
 # SvnCommit: file that made this commit plus comments about adding directories.
-# Doc.omh: add Introduction to documenation.
-# Build: group aclocal + autoheader + autoconf + automake.
-# configure.ac: add Introduction directory to configuration.
-# RunOMhelp: fix minor unrelated errors.
-# Makefile.am: add Introduction to configuration.
-#
-# Introduction/*: version of Exp approximation example from IntroAD.
+# ExpApxMain.cpp: move to here from ExpAppMain.cpp.
+# ExpApx.hpp: source code part of old ExpApxExample.h file.
+# ExpForExample.cpp: change cross reference to ExpApx.Implementation.
+# ExpSeqExample.cpp: change cross reference to ExpApx.Implementation.
+# ExpAppMain.cpp: move from here to ExpApxMain.cpp.
+# ExpRevExample.cpp: change cross reference to ExpApx.Implementation.
+# ExpApxExample.h: split from here to ExpApx.omh and ExpApx.hpp.
+# Makefile.am: ExpApxExample.h -> ExpApx.hpp, ExpAppMain.cpp -> ExpApxMain.cpp.
+# ExpSeqMain.cpp: ExpApxExample.h -> ExpApx.hpp.
+# ExpApx.omh: specifications part of old ExpApxExample.h file.
 add_list="
-	Introduction/ExpAppMain.cpp
-	Introduction/ExpSeqMain.cpp
-	Introduction/ExpForExample.cpp
-	Introduction/ExpSeqExample.cpp
-	Introduction/ExpRevExample.cpp
-	Introduction/ExpApxExample.h
-	Introduction/Makefile.am
-	omh/Introduction.omh
+	Introduction/ExpApxMain.cpp
+	Introduction/ExpApx.hpp
+	omh/ExpApx.omh
 "
 change_list="
 	SvnCommit
-	Doc.omh
-	Build
-	configure.ac
-	RunOMhelp
-	Makefile.am
+	Introduction/ExpForExample.cpp
+	Introduction/ExpSeqExample.cpp
+	Introduction/ExpRevExample.cpp
+	Introduction/Makefile.am
+	Introduction/ExpSeqMain.cpp
 "
 delete_list="
+	Introduction/ExpAppMain.cpp
+	Introduction/ExpApxExample.h
 "
 #----------------------------------------------------------------------
 # Edit section above for individual cases, section below stays the same

@@ -52,8 +52,8 @@ we often drop it and just refer to the operation sequence.
 
 $head Exp Operation Sequence$$
 Suppose that we use our
-$xref/ExpApxExample/Implementation/implementation/$$
-of $latex Exp(x, e)$$ 
+$xref/ExpApx/Implementation/implementation/$$
+of $latex ExpApx(x, e)$$ 
 with $latex x$$ is equal to .5
 and $latex e$$ is equal to .1. 
 We use the notation $latex v_j$$ for the value assigned

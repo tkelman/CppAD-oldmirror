@@ -1,3 +1,6 @@
+# ifndef CppADExpApxIncluded
+# define CppADExpApxIncluded
+
 /* -----------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
 
@@ -15,11 +18,33 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ------------------------------------------------------------------------ */
-// BEGIN PROGRAM
-# include <iostream>
-# include "ExpApxExample.h"
-int main(void)
-{	double x = .5, e = .1;
-	std::cout << "Exp(x, e) = " << Exp(x, e) << std::endl;
-	return 0;
+/*
+$begin ExpApx.hpp$$
+$spell
+	ExpApx
+	const
+	Exp
+$$
+
+$section An Example Exponential Approximation Source Code$$
+$codep */
+template <class Type>
+Type ExpApx(const Type &x, const Type &e)
+{	Type a, q, r, s, k;
+	r = s = k = Type(1);
+	a = x;
+	if( Type(0) > x ) a = -x;
+	while(r > e) 
+	{	q  = a * r;
+		r  = q / k;
+		s  = s + r;
+		k  = k + Type(1);
+	}
+	if( Type(0) > x ) s = Type(1) / s;
+	return s;
 }
+/* $$
+$end
+*/
+
+# endif

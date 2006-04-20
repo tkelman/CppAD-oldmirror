@@ -50,8 +50,8 @@ $xref/ExpSeqExample//operation sequence/$$
 in reverse order to compute the entire derivative of
 one dependent variable with respect to all of the independent variables.
 For this example we use our
-$xref/ExpApxExample/Implementation/implementation/$$
-of $latex Exp(x, e)$$
+$xref/ExpApx/Implementation/implementation/$$
+of $latex ExpApx(x, e)$$
 with the independent variables being $italic x$$ and $italic e$$.
 The operation sequence symbols
 $latex s_0$$, $latex r_0$$, $latex k_0$$, $latex k_1$$,
@@ -377,7 +377,7 @@ Note that for the symbol $latex a_0 $$ is equal to $latex x$$ and
 $latex \partial_{a0} f_9 $$ 
 is equal to
 the partial with respect to
-$latex x$$ of $latex Exp(x, .1)$$ at the point $latex x = 0.5$$.
+$latex x$$ of $latex ExpApx(x, .1)$$ at the point $latex x = 0.5$$.
 We also note that both reverse and forward mode give the 
 same result for this partial derivative.
 

@@ -59,8 +59,8 @@ $xref/ExpSeqExample//operation sequence/$$
 in its original order to compute the partial derivative
 of all the dependent variables with respect to one independent variable. 
 For this example, we use our 
-$xref/ExpApxExample/Implementation/implementation/$$ 
-of $latex Exp(x, e)$$
+$xref/ExpApx/Implementation/implementation/$$ 
+of $latex ExpApx(x, e)$$
 with the independent variables being $latex x$$ and $latex e$$.
 The operation sequence depends on $italic e$$,
 but given the operation sequence,
@@ -152,7 +152,7 @@ It is a subtile point (related to continuity of functions)
 that there is a neighborhood
 of $latex x = 0.5$$ in which the algorithm sequence does not change.
 Thus forward mode returns the exact partial with respect to
-$latex x$$ of $latex Exp(x, .1)$$ at the point $latex x = 0.5$$.
+$latex x$$ of $latex ExpApx(x, .1)$$ at the point $latex x = 0.5$$.
 
 $head Trace$$
 $index trace, forward$$

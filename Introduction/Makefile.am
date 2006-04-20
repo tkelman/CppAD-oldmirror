@@ -18,28 +18,28 @@
 # automake input file
 #
 noinst_PROGRAMS    = \
-	ExpAppMain \
+	ExpApxMain \
 	ExpSeqMain \
 	ExpForExample \
 	ExpRevExample
 #
 noinst_DATA        = \
-	ExpAppMain.out \
+	ExpApxMain.out \
 	ExpSeqExample.out \
 	ExpForExample.out \
 	ExpRevExample.out
 #
 AM_CXXFLAGS = -g $(CPP_ERROR_WARN)
 #
-EXTRA_DIST = ExpApxExample.h
+EXTRA_DIST = ExpApx.hpp
 #
-ExpAppMain_SOURCES = ExpAppMain.cpp 
+ExpApxMain_SOURCES = ExpApxMain.cpp 
 ExpSeqMain_SOURCES = ExpSeqMain.cpp ExpSeqExample.cpp
 ExpForExample_SOURCES = ExpForExample.cpp ExpSeqExample.cpp
 ExpRevExample_SOURCES = ExpRevExample.cpp ExpSeqExample.cpp
 #
-ExpAppMain.out: ExpAppMain$(EXEEXT)
-	./ExpAppMain > ExpAppMain.out
+ExpApxMain.out: ExpApxMain$(EXEEXT)
+	./ExpApxMain > ExpApxMain.out
 #
 ExpSeqExample.out: ExpSeqMain$(EXEEXT)
 	./ExpSeqMain 

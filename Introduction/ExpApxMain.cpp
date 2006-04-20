@@ -17,10 +17,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ------------------------------------------------------------------------ */
 // BEGIN PROGRAM
 # include <iostream>
-
-extern void ExpSeqExample(double x, double e);
+# include "ExpApx.hpp"
 int main(void)
-{	double x = .5, e = .1;
-	ExpSeqExample(x, e);
+{	double x = .5, e = .2;
+	std::cout << "ExpApx(x, e) = " << ExpApx(x, e) << std::endl;
 	return 0;
 }
