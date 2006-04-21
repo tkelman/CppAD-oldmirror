@@ -128,8 +128,8 @@ f_1 [ a_0 , q_1 , r_1 , s_1 , q_2 , r_2 , s_2 , q_3 , r_3 ( q_3 ) ]
 r_3 & =   & q_3 / k_2  
 \end{array}
 \] $$
-Note that $latex k_2 = 3 $$ is a 
-$xref/ExpForExample/Parameter/parameter/$$ 
+Note that $latex k_2 = 3 $$ is an operation sequence 
+$xref/ExpApxSeq/Parameter/parameter/$$ 
 so we have not included it an argument to the function $latex r_3 $$.
 It follows that 
 $latex \[
@@ -232,7 +232,7 @@ r_2 & =   & q_2 / k_1
 \end{array}
 \] $$
 Note that $latex k_1 = 2 $$ is a 
-$xref/ExpForExample/Parameter/parameter/$$ 
+$xref/ExpApxSeq/Parameter/parameter/$$ 
 so we have not included as an argument to the function $latex r_2 $$.
 It follows that 
 $latex \[
@@ -298,7 +298,7 @@ s_1 & =   & s_0 + r_1
 \end{array}
 \] $$
 Note that $latex s_0 $$ is a 
-$xref/ExpForExample/Parameter/parameter/$$ 
+$xref/ExpApxSeq/Parameter/parameter/$$ 
 so we have not included as an argument to the function $latex s_1 $$.
 It follows that 
 $latex \[
@@ -331,7 +331,7 @@ r_1 & =  & q_1 / k_0
 \end{array}
 \] $$
 Note that $latex k_0 = 1 $$ is a 
-$xref/ExpForExample/Parameter/parameter/$$ 
+$xref/ExpApxSeq/Parameter/parameter/$$ 
 so we have not included as an argument to the function $latex r_1 $$.
 It follows that 
 $latex \[
@@ -362,7 +362,7 @@ q_1 & = & r_0 * a_0
 \end{array}
 \] $$
 Note that $latex r_0 = 1 $$ is a 
-$xref/ExpForExample/Parameter/parameter/$$ 
+$xref/ExpApxSeq/Parameter/parameter/$$ 
 so we have not included as an argument to the function $latex q_1 $$.
 It follows that 
 $latex \[

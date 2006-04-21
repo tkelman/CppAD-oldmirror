@@ -1,28 +1,29 @@
-# Change more file names and separate more C++ source from its documentation.
+# Split ExpForExample.cpp to ExpApxFor.omh and ExpApxFor.cpp.
 #
 # SvnCommit: file that made this commit plus comments about adding directories.
-# ExpApxSeq.cpp: move ExpSeqExample.cpp source code to here.
-# ExpApxSeqMain.cpp: move ExpSeqMain.cpp to here.
-# ExpForExample.cpp: fix cross references that changed.
-# ExpSeqExample.cpp: split into ExpApxSeq.cpp and ExpApxSeq.omh.
+# ExpApxFor.cpp: move ExpForExample.cpp source code to here.
+# ExpApxSeq.cpp: change the section title.
+# ExpForExample.cpp: split into ExpApxFor.omh and ExpApxFor.cpp.
 # ExpRevExample.cpp: fix cross references that changed.
-# Makefile.am: fix file name changes.
-# ExpSeqMain.cpp: move to ExpApxSeqMain.cpp.
-# ExpApxSeq.omh: move ExpSeqExample.cpp discussion to here.
+# Makefile.am: map ExpForExample -> ExpApxFor.
+# ExpApxFor.omh: move ExpForExample.cpp documentation to here.
+# ExpApxSeq.omh: change title and some headings, groupt operation with symbol.
+# Introduciton.omh: change ExpForExample.cpp to ExpApxFor.omh. 
+#
 add_list="
-	Introduction/ExpApxSeq.cpp
-	Introduction/ExpApxSeqMain.cpp
-	omh/ExpApxSeq.omh
+	Introduction/ExpApxFor.cpp
+	omh/ExpApxFor.omh
 "
 change_list="
 	SvnCommit
-	Introduction/ExpForExample.cpp
+	Introduction/ExpApxSeq.cpp
 	Introduction/ExpRevExample.cpp
 	Introduction/Makefile.am
+	omh/ExpApxSeq.omh
+	omh/Introduction.omh
 "
 delete_list="
-	Introduction/ExpSeqExample.cpp
-	Introduction/ExpSeqMain.cpp
+	Introduction/ExpForExample.cpp
 "
 #----------------------------------------------------------------------
 # Edit section above for individual cases, section below stays the same

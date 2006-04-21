@@ -16,53 +16,53 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ------------------------------------------------------------------------ */
 /*
-$begin ExpApxSeq.cpp$$
+$begin ExpApxFor.cpp$$
 $spell
-	Apx
-	fstream
-	ofstream
-	iostream
-	std
-	cout
-	endl
-	Exp
+	ExpApxFor
 	const
 	vname
 	vindex
+	iostream
+	cout
+	std
+	endl
+	vars
 $$
-$section An Example Operation Sequence Trace$$
+
+$section An Example Forward Mode Trace$$
 $codep */
 
-# include <fstream>                  // used to write ExpApxSeq.out
-double a[1], q[4], r[4], s[4], k[4]; // global variables set by ExpApxSeq
+# include <iostream>                        // C++ standard input/output
+extern void ExpApxSeq(double x, double e);  // prototype for ExpApxSeq
+extern double a[1], q[4], r[4], s[4], k[4]; // global vars set by ExpApxSeq
 
-void Print(std::ofstream &file, const char *vname, size_t vindex, double v)
-{	file << vname << vindex << " = " << v;
-	file << std::endl;
+void Print(const char *vname, size_t vindex, double v_x )
+{	std::cout << vname << vindex << "_x = " << v_x;
+	std::cout << std::endl;
 }
-void ExpApxSeq(double x, double e)
-{	r[0] = s[0] = k[0] = 1.;                   // r = s = k = Type(1);
+int main(void)
+{	double a_x[1], q_x[4], r_x[4], s_x[4];
 
-	// open the output file
-	std::ofstream file( "ExpApxSeq.out" );
+	// compute the global variables 
+	double x = .5, e = .1;
+	ExpApxSeq(x, e);
 
-	a[0] = x;                                  // a = x;
-	Print(file, "a", 0, a[0]);
-
+	// begin forward mode
+	r_x[0] = s_x[0] = 0.;
+	a_x[0] = 1.;
+	Print("a", 0, a_x[0]);
 	size_t j;
 	for(j = 1; j <= 2; j++) 
-	{	q[j] = r[j-1] * a[0];              // q  = a * r;
-		Print(file, "q", j, q[j]);
+	{	q_x[j] = r_x[j-1] * a[0] + r[j-1] * a_x[0];  // q = r * a
+		Print("q", j, q_x[j]);
 
-		r[j] = q[j] / k[j-1];              // r  = q / k;
-		Print(file, "r", j, r[j]);
+		r_x[j] = q_x[j] / k[j-1];                    // r = q / k
+		Print("r", j, r_x[j]);
 
-		s[j]     = s[j-1] + r[j];          // s  = s + r;
-		Print(file, "s", j, s[j]);
-
-		k[j]     = k[j-1] + 1.;            // k  = k + Type(1);
-		Print(file, "k", j, k[j]);
+		s_x[j]     = s_x[j-1] + r_x[j];              // s = s + r
+		Print("s", j, s_x[j]);
 	}
+	return 0;
 }
 /* $$
 $end
