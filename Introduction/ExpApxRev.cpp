@@ -16,53 +16,76 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ------------------------------------------------------------------------ */
 /*
-$begin ExpApxFor.cpp$$
+$begin ExpApxRev.cpp$$
 $spell
 	namespace
-	ExpApxFor
+	vars
+	ExpApx
 	const
+	fname
+	findex
 	vname
 	vindex
+	iq
+	ir
+	cpp
 	iostream
 	cout
 	std
 	endl
-	vars
+	ia
+	df
 $$
 
-$section An Example Forward Mode Trace$$
+$section An Example Reverse Mode Trace$$
 $codep */
-
 # include <iostream>                        // C++ standard input/output
 extern void ExpApxSeq(double x, double e);  // prototype for ExpApxSeq
 extern double a[1], q[3], r[3], s[3], k[3]; // global vars set by ExpApxSeq
 namespace { // empty namespace
-	void Print(const char *vname, size_t vindex, double v_x )
-	{	std::cout << vname << vindex << "_x = " << v_x;
+	void Print(const char *fname, size_t findex, 
+	           const char *vname, size_t vindex, double f_v )
+	{	std::cout << fname << findex << "_" 
+		          << vname << vindex << " = " << f_v;
 		std::cout << std::endl;
 	}
 }
 int main(void)
-{	double a_x[1], q_x[3], r_x[3], s_x[3];
+{	// ordering of arguments is: 
+	// a0, q0, q1, q2, r0, r1, r2, s0, s1, s2 
+	// corresponding index offsets for each of the parameters
+	size_t ia = 0, iq = ia+1, ir = iq+3, is = ir+3;
 
 	// compute the global variables 
 	double x = .5, e = .1;
 	ExpApxSeq(x, e);
 
-	// begin forward mode
-	r_x[0] = s_x[0] = 0.;
-	a_x[0] = 1.;
-	Print("a", 0, a_x[0]);
+	// initial all partial derivatives as zero
+	double df[10];
 	size_t j;
-	for(j = 1; j <= 2; j++) 
-	{	q_x[j] = r_x[j-1] * a[0] + r[j-1] * a_x[0];  // q = r * a
-		Print("q", j, q_x[j]);
+	for(j = 0; j < 10; j++)
+		df[j] = 0.;
 
-		r_x[j] = q_x[j] / k[j-1];                    // r = q / k
-		Print("r", j, r_x[j]);
+	// f0
+	df[is+2] = 1.;
+	Print("f", 0, "s", 2, df[is + 2]);
 
-		s_x[j]     = s_x[j-1] + r_x[j];              // s = s + r
-		Print("s", j, s_x[j]);
+	for(j = 2; j >= 1; j--) 
+	{	// remove s_j = s_{j-1} + r_j from f_{6-3*j} to get f_{7-3*j}
+		df[is + j-1] += df[is + j];
+		df[ir + j]   += df[is + j];
+		Print("f", 7-3*j, "s", j-1, df[is + j-1]);
+		Print("f", 7-3*j, "r", j,   df[ir + j]);
+
+		// remove r_j = q_j / k_{j-1} from f_{7-3*j} to get f_{8-3*j}
+		df[iq + j]   += df[ir + j] / k[j-1];
+		Print("f", 8-3*j, "q", j,   df[iq + j]);
+
+		// remove q_j = r_{j-1} * a_0 from f_{8-3*j} to get f_{9-3*j}
+		df[ir + j-1] += df[iq + j] * a[0];
+		df[ia + 0]   += df[iq + j] * r[j-1];
+		Print("f", 9-3*j, "r", j-1, df[ir + j-1]);
+		Print("f", 9-3*j, "a", 0,   df[ia + 0]);
 	}
 	return 0;
 }

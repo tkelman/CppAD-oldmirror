@@ -21,13 +21,13 @@ noinst_PROGRAMS    = \
 	ExpApxMain \
 	ExpApxSeqMain \
 	ExpApxFor \
-	ExpRevExample
+	ExpApxRev
 #
 noinst_DATA        = \
 	ExpApxMain.out \
 	ExpApxSeq.out \
 	ExpApxFor.out \
-	ExpRevExample.out
+	ExpApxRev.out
 #
 AM_CXXFLAGS = -g $(CPP_ERROR_WARN)
 #
@@ -36,7 +36,7 @@ EXTRA_DIST = ExpApx.hpp
 ExpApxMain_SOURCES = ExpApxMain.cpp 
 ExpApxSeqMain_SOURCES = ExpApxSeqMain.cpp ExpApxSeq.cpp
 ExpApxFor_SOURCES = ExpApxFor.cpp ExpApxSeq.cpp
-ExpRevExample_SOURCES = ExpRevExample.cpp ExpApxSeq.cpp
+ExpApxRev_SOURCES = ExpApxRev.cpp ExpApxSeq.cpp
 #
 ExpApxMain.out: ExpApxMain$(EXEEXT)
 	./ExpApxMain > ExpApxMain.out
@@ -47,5 +47,5 @@ ExpApxSeq.out: ExpApxSeqMain$(EXEEXT)
 ExpApxFor.out: ExpApxFor$(EXEEXT)
 	./ExpApxFor > ExpApxFor.out
 #
-ExpRevExample.out: ExpRevExample$(EXEEXT)
-	./ExpRevExample > ExpRevExample.out
+ExpApxRev.out: ExpApxRev$(EXEEXT)
+	./ExpApxRev > ExpApxRev.out

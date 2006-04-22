@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /*
 $begin ExpApxSeq.cpp$$
 $spell
+	namespace
 	Apx
 	fstream
 	ofstream
@@ -34,11 +35,13 @@ $section An Example Operation Sequence Trace$$
 $codep */
 
 # include <fstream>                  // used to write ExpApxSeq.out
-double a[1], q[4], r[4], s[4], k[4]; // global variables set by ExpApxSeq
-
-void Print(std::ofstream &file, const char *vname, size_t vindex, double v)
-{	file << vname << vindex << " = " << v;
-	file << std::endl;
+double a[1], q[3], r[3], s[3], k[3]; // global variables set by ExpApxSeq
+namespace { // empty namespace
+	void Print(std::ofstream &file, 
+	           const char *vname, size_t vindex, double v)
+	{	file << vname << vindex << " = " << v;
+		file << std::endl;
+	}
 }
 void ExpApxSeq(double x, double e)
 {	r[0] = s[0] = k[0] = 1.;                   // r = s = k = Type(1);

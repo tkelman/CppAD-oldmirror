@@ -173,7 +173,7 @@ $$
 
 $head ExpApxSeq.out$$
 The following trace
-is generated when the program above is run:
+is generated when the program in $xref/ExpApxSeq.cpp/$$ is run:
 $code
 $verbatim%Introduction/ExpApxSeq.out%$$
 $$
