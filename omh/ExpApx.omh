@@ -47,7 +47,7 @@ This is an example algorithm that is used to demonstrate
 Algorithmic Differentiation. 
 
 
-$head Approximation$$
+$head Mathematical Form$$
 The exponential function can be defined by
 $latex \[
 	\exp (x) = 1 + x^1 / 1 ! + x^2 / 2 ! + \cdots 
@@ -57,7 +57,7 @@ non-negative integer such that $latex \varepsilon \geq x^k / k !$$; i.e.,
 $latex \[
 k( \varepsilon ) = \min \{ k \in {\rm Z}_+ \; | \; \varepsilon \geq x^k / k ! \}
 \] $$
-We can approximate the exponential function using the following function
+The mathematical form for our approximation of the exponential function is
 $latex \[
 \begin{array}{rcl}
 ExpApx(x , \varepsilon ) & = & \left\{

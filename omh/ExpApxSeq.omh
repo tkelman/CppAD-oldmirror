@@ -41,13 +41,18 @@ there is a corresponding $italic Type$$ operation sequence for each type.
 If $italic Type$$ is clear from the context, 
 we drop it and just refer to the operation sequence.
 
-$head Notation$$
+$head Mathematical Form$$
 Suppose that we use the algorithm $xref/ExpApx.hpp/$$
 to compute $latex ExpApx(x, e)$$ 
 with $latex x$$ is equal to .5
 and $latex e$$ is equal to .2. 
-We use the symbol $latex v_j$$ for the value assigned
-to the object $latex v$$ in the $th j$$ execution of loop in the algorithm.
+For this case, our approximation of the exponential function is
+$latex \[
+ExpApx (x, e) =   1 + x + x^2 / 2 
+=   1 + .5 + .25 / 2 
+=   1.625
+\] $$
+
 
 $head Parameter$$
 The initialization section always sets
@@ -74,6 +79,8 @@ Note that the comparisons
 $code r > e$$ and $code  Type(0) > x $$
 have results of type
 $code bool$$ and hence are not part of the operation sequence.
+We use the symbol $latex v_j$$ for the value assigned
+to the object $latex v$$ in the $th j$$ execution of loop in the algorithm.
 $center
 $table
 $bold Code$$ 
