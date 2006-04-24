@@ -1,30 +1,18 @@
-# Split ExpRevExample.cpp to ExpApxRev.omh and ExpApxRev.cpp.
+# Add CppAD example calculations for ExpApx
 #
-# SvnCommit: file that made this commit plus comments about adding directories.
-# ExpApxRev.cpp: source code from ExpRevExample.cpp.
-# ExpApxSeq.cpp: put Print in empty namspace and reduce global var dimensions.
-# ExpRevExample.cpp: split into ExpApxRev.omh and ExpApxRev.cpp.
-# Makefile.am: change ExpRevExample to ExpApxRev.
-# ExpApxFor.cpp: put Print in empty namspace and reduce global var dimensions.
-# ExpApxRev.omh: documentaiton from ExpRevExample.cpp.
-# ExpApxFor.omh: use sweep to describe the calculation.
-# ExpApxSeq.omh: minor edit.
-# Introduction.omh: change ExpRevExample.cpp to ExpApxRev.omh.
+# SvnCommit: file that made this commit.
+# ExpApxAD.cpp: example of using CppAD with ExpApx.
+# Makefile.am: add BOOST_DIR and ExpAppAD entries.
+# Introduction.omh: add ExpAppAD entry.
 add_list="
-	Introduction/ExpApxRev.cpp
-	omh/ExpApxRev.omh
+	Introduction/ExpApxAD.cpp
 "
 change_list="
 	SvnCommit
-	Introduction/ExpApxSeq.cpp
 	Introduction/Makefile.am
-	Introduction/ExpApxFor.cpp
-	omh/ExpApxFor.omh
-	omh/ExpApxSeq.omh
 	omh/Introduction.omh
 "
 delete_list="
-	Introduction/ExpRevExample.cpp
 "
 #----------------------------------------------------------------------
 # Edit section above for individual cases, section below stays the same

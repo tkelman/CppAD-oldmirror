@@ -21,13 +21,22 @@ noinst_PROGRAMS    = \
 	ExpApxMain \
 	ExpApxSeqMain \
 	ExpApxFor \
-	ExpApxRev
+	ExpApxRev \
+	ExpApxAD
 #
 noinst_DATA        = \
 	ExpApxMain.out \
 	ExpApxSeq.out \
 	ExpApxFor.out \
-	ExpApxRev.out
+	ExpApxRev.out \
+	ExpApxAD.out
+#
+if CppAD_BOOSTVECTOR
+AM_CPPFLAGS       = -I$(BOOST_DIR) \
+                    -I. -I$(top_builddir)
+else
+AM_CPPFLAGS       = -I. -I$(top_builddir)
+endif
 #
 AM_CXXFLAGS = -g $(CPP_ERROR_WARN)
 #
@@ -37,6 +46,7 @@ ExpApxMain_SOURCES = ExpApxMain.cpp
 ExpApxSeqMain_SOURCES = ExpApxSeqMain.cpp ExpApxSeq.cpp
 ExpApxFor_SOURCES = ExpApxFor.cpp ExpApxSeq.cpp
 ExpApxRev_SOURCES = ExpApxRev.cpp ExpApxSeq.cpp
+ExpApxAD_SOURCES = ExpApxAD.cpp 
 #
 ExpApxMain.out: ExpApxMain$(EXEEXT)
 	./ExpApxMain > ExpApxMain.out
@@ -49,3 +59,6 @@ ExpApxFor.out: ExpApxFor$(EXEEXT)
 #
 ExpApxRev.out: ExpApxRev$(EXEEXT)
 	./ExpApxRev > ExpApxRev.out
+#
+ExpApxAD.out: ExpApxAD$(EXEEXT)
+	./ExpApxAD > ExpApxAD.out
