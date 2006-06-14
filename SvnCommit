@@ -1,8 +1,9 @@
-# Check size of function return matrix in BenderQuad.
+# Change BenderQuad to use Base instead of AD<Base> where possible (efficency)
 #
 # SvnCommit: file that preformed this commit.
 # WhatsNew06.omh: user's view of the changes.
 # BenderQuad.h: the change was here.
+# BenderQuad.cpp: change example to match.
 #
 add_list="
 "
@@ -10,6 +11,7 @@ change_list="
 	SvnCommit
 	omh/WhatsNew06.omh
 	CppAD/local/BenderQuad.h
+	Example/BenderQuad.cpp
 "
 delete_list="
 "
