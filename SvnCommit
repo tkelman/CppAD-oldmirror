@@ -25,25 +25,34 @@
 # commit. If copy_branch is empty; i.e., copy_branch="", the changes will not
 # be copied (and commited) into another branch.
 #
-log_entry="
-Fixes so CheckInclude<*> script works for <*> equal File, Def, and Omh.
+log_entry="Control of memory allocated for Taylor coefficients
 
-SvnCommit: improve comments and make log entry a script variable.
-CheckIncludeOmh: add */*.hpp as possible file to be checked.
-ADFun.h: fix define to CppAD<name>Included where <name> is ADFun.
-Sparse.h: fix include commands to be just those also below in documentation.
-FunEval.h: remove individual includes and replace by Sparse.h.
+CapTaylor.h: implement control as capacity_taylor ADFun member function.
+ADFun.h: define capacity_taylor and change taylor_size to size_taylor.
+FunConstruct.h: mention implicit zero order calculation during constructor.
+Forward.h: include CapTaylor.h and use taylor_capacity.
+Reverse.omh: change cross reference from taylor_size to size_taylor.
+Forward.omh: taylor_size->size_taylor and add mention of capacity_taylor.
+WhatsNew06.omh: change cross reference from taylor_size to size_taylor.
+FunDeprecated.omh: add taylor_size to this list.
+Forward.cpp: add calls to capacity_taylor in example.
+Makefile.am: add CapTaylor.h
 "
 #
 add_list="
+	CppAD/local/CapTaylor.h
 "
 #
 change_list="
-	SvnCommit
-	CheckIncludeOmh
 	CppAD/local/ADFun.h
-	CppAD/local/Sparse.h
-	CppAD/local/FunEval.h
+	CppAD/local/FunConstruct.h
+	CppAD/local/Forward.h
+	omh/Reverse.omh
+	omh/Forward.omh
+	omh/WhatsNew06.omh
+	omh/FunDeprecated.omh
+	Example/Forward.cpp
+	Makefile.am
 "
 #
 delete_list="

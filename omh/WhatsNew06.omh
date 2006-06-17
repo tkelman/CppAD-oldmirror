@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 $begin WhatsNew06$$
 $spell
+	taylor
 	BAvector
 	fy
 	uninitialized
@@ -66,6 +67,20 @@ $tref WhatsNew05$$
 $tend
 The purpose of these sections is to
 assist you in learning about changes between various versions of CppAD.
+
+$comment ----------------------------------------------------------- $$
+$head head ??-??$$
+The changes listed under this heading were made in the branches/ADFun branch 
+of the CppAD subversion repository. They did not get merged into the trunk
+and become part of the distribution until ??-??.
+
+$subhead 06-17$$
+Added $xref/capacity_taylor/$$ which can be used to control
+the amount of memory used to store $xref/Forward/$$ results.
+Also $xref/FunDeprecated//deprecated/$$ $code taylor_size$$, and defined 
+$xref/size_taylor/$$ in its place.
+
+$comment ----------------------------------------------------------- $$
 
 $head 06-17$$
 The location where the distribution files are stored has changed
