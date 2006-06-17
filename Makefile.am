@@ -67,6 +67,7 @@ nobase_myinclude_HEADERS =  \
 	CppAD/local/BoolFun.h \
 	CppAD/local/BoolFunLink.h \
 	CppAD/local/BoolValued.h \
+	CppAD/local/CapTaylor.h \
 	CppAD/local/Compare.h \
 	CppAD/local/CondExp.h \
 	CppAD/local/Constructor.h \

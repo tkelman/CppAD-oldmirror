@@ -297,7 +297,7 @@ $pre
 
 $$
 The ADFun $xref/FunDeprecated/Size/Size/$$ member function
-has been deprecated (use $xref/taylor_size/$$ instead).
+has been deprecated (use $xref/size_taylor/$$ instead).
 $pre
 
 $$

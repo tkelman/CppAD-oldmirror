@@ -108,6 +108,15 @@ $syntax%AD<%Base%>%$$.
 The routine $xref/CheckSimpleVector/$$ will generate an error message
 if this is not the case.
 
+$head Forward$$
+Originally, when $italic f$$ is constructed,
+there is an implicit call to $xref/ForwardZero/$$ 
+$syntax%
+	%f%.Forward(0, %x_p%)
+%$$ 
+with the elements of $italic x_p$$ equal to 
+the corresponding elements of $italic x$$.
+
 $head Example$$
 The file
 $xref/Independent.cpp/$$ 

@@ -77,7 +77,8 @@ public:
 	// destructor
 	~ADFun(void)
 	{	delete Rec;
-		CppADTrackDelVec(Taylor);
+		if( Taylor != CppADNull )
+			CppADTrackDelVec(Taylor);
 		if( ForJac != CppADNull )
 			CppADTrackDelVec(ForJac);
 	}
@@ -110,9 +111,12 @@ public:
 	size_t size_var(void) const
 	{	return totalNumVar; }
 
-	// number of Taylor coefficients currently stored (per variable)
-	size_t taylor_size(void) const
+	// number of Taylor coefficients currently calculated (per variable)
+	size_t size_taylor(void) const
 	{	return taylor_per_var; } 
+
+	// set number of coefficients currently allocated (per variable)
+	void capacity_taylor(size_t per_var);   
 
 	// number of independent variables
 	size_t Domain(void) const
@@ -188,6 +192,10 @@ public:
 		size_t total   = totalNumVar * pervar + Rec->Memory();
 		return total;
 	}
+
+	// number of Taylor coefficients currently calculated (per variable)
+	size_t taylor_size(void) const
+	{	return taylor_per_var; } 
 	// ------------------------------------------------------------
 private:
 	// maximum amount of memory required for this function object

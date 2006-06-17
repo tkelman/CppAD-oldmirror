@@ -198,7 +198,7 @@ $syntax%
 and specifies the number of Taylor coefficients to be differentiated.
 There must be at least $latex p$$ Taylor coefficients 
 currently stored in $italic f$$ when $code Reverse$$ is called
-(see $xref/taylor_size/$$).
+(see $xref/size_taylor/$$).
 
 
 $head w$$

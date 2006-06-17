@@ -289,7 +289,7 @@ $syntax%
 and specifies the order of the Taylor coefficients to be calculated.
 There must be at least $latex p$$ Taylor coefficients of lower
 order stored in $italic f$$ when $code Forward$$ is called
-(see $xref/taylor_size/$$).
+(see $xref/size_taylor/$$).
 
 $head x_p$$
 The argument $italic x_p$$ has prototype
@@ -433,25 +433,24 @@ It returns true if it succeeds and false otherwise.
 
 $end
 -----------------------------------------------------------------------------
-$begin taylor_size$$
+$begin size_taylor$$
 $spell
+	var
 	Taylor
 	const
 $$
 
-$section Number Taylor Coefficients Per Variable$$
+$section Number Taylor Coefficients, Per Variable, Currently Stored$$
 
 $head Syntax$$
-$syntax%%t% = %f%.taylor_size()%$$
+$syntax%%s% = %f%.size_taylor()%$$
 
 
 $head Purpose$$
-Forward mode stores Taylor coefficients for all the variables in the 
-AD of $italic Base$$
-$xref/glossary/Operation/Sequence/operation sequence/1/$$
-corresponding to $italic f$$.
-The result $italic t$$ is the number of Taylor coefficients
-per variable.
+Determine the number of Taylor coefficients, per variable,
+currently calculated and stored. 
+(This can change each time $xref/ForwardAny//Forward/$$ 
+or $xref/capacity_taylor/$$ is called using the same $italic f$$).
 
 $head f$$
 The object $italic f$$ has prototype
@@ -459,24 +458,35 @@ $syntax%
 	const ADFun<%Base%> %f%
 %$$
 
-$head t$$
-The result $italic t$$ has prototype
+$head s$$
+The result $italic s$$ has prototype
 $syntax%
-	size_t %t%
+	size_t %s%
 %$$
-an is the number of Taylor coefficients, 
+and is the number of Taylor coefficients, 
 per variable in the AD operation sequence,
-currently stored in the ADFun object $italic f$$.
-The value $italic t$$ is determined by 
-$latex t = p + 1$$ where 
-$italic p$$ is the value in the previous call of the form
+currently calculated and stored in the ADFun object $italic f$$.
+
+$head Discussion$$
+A call to $xref/ForwardAny//Forward/$$ with the syntax
 $syntax%
-	%f%.Forward(%p%, %x_p%)
+        %y_p% = %f%.Forward(%p%, %x_p%)
 %$$
-If there was no previous call to forward, $latex t = 1$$
-and the Taylor coefficients are determined by the value of the
+uses the lower order Taylor coefficients and 
+computes the $th p$$ order Taylor coefficients for all
+the variables in the operation sequence corresponding to $italic f$$.
+(You can determine the number of variables in the operation sequence
+using the $xref/SeqProperty/size_var/size_var/$$ function.)
+$pre
+
+$$
+Originally, when $italic f$$ is constructed,
+there is an implicit call to $code Forward$$ with $italic p$$ equal to zero
+and $italic x_p$$ equal to 
+the value of the
 $xref/glossary/Independent Variable/independent variables/$$ 
 when the AD operation sequence was recorded.
+
 
 $head Example$$
 The file
