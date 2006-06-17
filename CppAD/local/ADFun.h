@@ -109,14 +109,10 @@ public:
 	// number of variables in opertion sequence
 	size_t size_var(void) const
 	{	return totalNumVar; }
-	size_t Size(void) const       // (Deprecated)
-	{	return totalNumVar; }
 
 	// number of Taylor coefficients currently stored (per variable)
 	size_t taylor_size(void) const
 	{	return taylor_per_var; } 
-	size_t Order(void) const      // (Deprecated)
-	{	return taylor_per_var - 1; }
 
 	// number of independent variables
 	size_t Domain(void) const
@@ -133,14 +129,6 @@ public:
 			"Argument to Parameter is >= dimension of range space"
 		);
 		return dep_parameter[i]; 
-	}
-
-	// amount of memory for each variable (Deprecated)
-	size_t Memory(void) const
-	{	size_t pervar  = TaylorColDim * sizeof(Base)
-		+ ForJacColDim * sizeof(Pack);
-		size_t total   = totalNumVar * pervar + Rec->Memory();
-		return total;
 	}
 
 # ifndef NDEBUG
@@ -183,6 +171,24 @@ public:
 		const VectorSize_t &I ,
 		const VectorSize_t &J );
 
+	// ------------------- Deprecated -----------------------------
+
+	// number of variables in opertion sequence
+	size_t Size(void) const
+	{	return totalNumVar; }
+
+	// number of Taylor coefficients currently stored (per variable)
+	size_t Order(void) const
+	{	return taylor_per_var - 1; }
+
+	// amount of memory for each variable 
+	size_t Memory(void) const
+	{	size_t pervar  = TaylorColDim * sizeof(Base)
+		+ ForJacColDim * sizeof(Pack);
+		size_t total   = totalNumVar * pervar + Rec->Memory();
+		return total;
+	}
+	// ------------------------------------------------------------
 private:
 	// maximum amount of memory required for this function object
 	// mutable size_t memoryMax;
