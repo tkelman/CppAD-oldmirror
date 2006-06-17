@@ -1,41 +1,56 @@
-# Extend Value function, fix download directory, improve utility scripts
+# ----------------------------------------------------------------------
+# Define your subversion commit by editing the definition of 
+# log_entry, add_list, change_list, delete_list and copy_branch below.
 #
-# SvnCommit: add the copy_branch option to this utility.
-# SvnMerge: forgot to include this in commit that created ADFun branch. 
-# Value.h: extend this function to any parameter.
-# Speed.vcproj: add /O2 option for release version.
-# SvnStatus: do not include Release directory in status output.
-# InstallUnix.omh: change directory where distribution file is stored. 
-# Speed.omh: improve Speed build instructions.
-# InstallWindows.omh: change directory where distribution file is stored. 
-# Value.cpp: test new feature and improve comments.
+# log_entry
+# The contents of this variable will be used as the log entry for the commit.
+#
+# add_list
+# List of files that will be added to the repository during this commit.
+# Do not use add_list to add directories; use the following instead:
+# 	svn add --non-recursive dir
+# 	svn commit directory -m "adding directory dir" dir
+# where dir is replaced by the name of the directory. 
+# Then use add_list to add the files within that directory.
+#
+# change_list
+# List of files that are currently in repository and change during this commit.
+#
+# delete_list
+# List of files that will be deleted from the repository during this commit.
+#
+# copy_branch
+# You may specify up one other branch (not the trunk and currently in memory) 
+# that should receive a copy of all that changes that you are making with this 
+# commit. If copy_branch is empty; i.e., copy_branch="", the changes will not
+# be copied (and commited) into another branch.
+#
+log_entry="
+Fixes so CheckInclude<*> script works for <*> equal File, Def, and Omh.
+
+SvnCommit: improve comments and make log entry a script variable.
+CheckIncludeOmh: add */*.hpp as possible file to be checked.
+ADFun.h: fix define to CppAD<name>Included where <name> is ADFun.
+Sparse.h: fix include commands to be just those also below in documentation.
+FunEval.h: remove individual includes and replace by Sparse.h.
+"
 #
 add_list="
 "
+#
 change_list="
 	SvnCommit
-	SvnMerge
-	CppAD/local/Value.h
-	Speed/Speed.vcproj
-	SvnStatus
-	omh/InstallUnix.omh
-	omh/Speed.omh
-	omh/WhatsNew06.omh
-	omh/InstallWindows.omh
-	CleanCppAD
-	Example/Value.cpp
+	CheckIncludeOmh
+	CppAD/local/ADFun.h
+	CppAD/local/Sparse.h
+	CppAD/local/FunEval.h
 "
+#
 delete_list="
 "
-copy_branch="ADFun" # branch directory, use copy_branch="" for not copying
-## ----------------------------------------------------------------------
-##  Edit section above for individual cases, section below stays the same
-##  Do not use add_list to add directories; use the following instead:
-## 	svn add --non-recursive dir
-## 	svn commit directory -m "adding directory dir" dir
-##  where dir is replaced by the name of the directory. 
-##  Then use add_list to add the files within that directory.
-## ----------------------------------------------------------------------
+#
+copy_branch="" # branch directory, use copy_branch="" for not copying
+# ----------------------------------------------------------------------
 if [ "$copy_branch" != "" ]
 then
 	if [ ! -d ../branches/$copy_branch/.svn ]
@@ -43,7 +58,7 @@ then
 		echo "../branches/$copy_branch/.svn is not a directory"
 	fi
 fi
-sed -e "/^[^#]/d" -e "/^##/d" -e "s/^[#] *//" < SvnCommit > svn.log
+echo "$log_entry" > SvnCommit.log
 count=0
 for file in $add_list $change_list
 do
@@ -88,6 +103,7 @@ do
 		echo "svn delete ../branches/$copy_branch/$file ?"
 	fi
 done
+cat SvnCommit.log
 response=""
 while [ "$response" != "c" ] && [ "$response" != "a" ]
 do
@@ -152,4 +168,4 @@ then
 	done
 	
 fi
-svn commit --file svn.log $add_list $change_list $delete_list $copy_list
+svn commit --file SvnCommit.log $add_list $change_list $delete_list $copy_list
