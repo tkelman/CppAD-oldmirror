@@ -20,6 +20,7 @@ $begin ReverseOne$$
 
 $section First Order Reverse Mode: Derivative Values$$
 $spell 
+	taylor
 	const
 	dw
 $$
@@ -49,6 +50,11 @@ The object $italic f$$ has prototype
 $syntax%
 	const ADFun<%Base%> %f%
 %$$
+Before this call to $code Forward$$, the value returned by
+$syntax%
+	%f%.size_taylor()
+%$$
+must be greater than or equal one (see $xref/size_taylor/$$).
 
 $head x$$
 The vector $italic x$$ in expression for $italic dw$$ above
@@ -189,6 +195,12 @@ The object $italic f$$ has prototype
 $syntax%
 	const ADFun<%Base%> %f%
 %$$
+Before this call to $code Forward$$, the value returned by
+$syntax%
+	%f%.size_taylor()
+%$$
+must be greater than or equal $italic p$$
+(see $xref/size_taylor/$$).
 
 $head p$$
 The argument $italic p$$ has prototype
@@ -196,9 +208,6 @@ $syntax%
 	size_t %p%
 %$$
 and specifies the number of Taylor coefficients to be differentiated.
-There must be at least $latex p$$ Taylor coefficients 
-currently stored in $italic f$$ when $code Reverse$$ is called
-(see $xref/size_taylor/$$).
 
 
 $head w$$

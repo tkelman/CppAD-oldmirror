@@ -52,10 +52,11 @@ $syntax%
 	ADFun<%Base%> %f%
 %$$
 Note that the $xref/ADFun/$$ object $italic f$$ is not $code const$$.
-After this call one
-$xref/glossary/Taylor Coefficient/Taylor coefficient/$$
-(for each of the variables in the operation sequence)
-is stored in the object $italic f$$.
+After this call to $code Forward$$, the value returned by
+$syntax%
+	%f%.size_taylor()
+%$$
+will be equal to one (see $xref/size_taylor/$$).
 
 $head x$$
 The argument $italic x$$ has prototype
@@ -128,10 +129,12 @@ $syntax%
 	ADFun<%Base%> %f%
 %$$
 Note that the $xref/ADFun/$$ object $italic f$$ is not $code const$$.
-After this call two
-$xref/glossary/Taylor Coefficient/Taylor coefficients/$$
-(for each of the variables in the operation sequence)
-are stored in the object $italic f$$.
+Before this call to $code Forward$$, the value returned by
+$syntax%
+	%f%.size_taylor()
+%$$
+must be greater than or equal one.
+After this call it will be will be two (see $xref/size_taylor/$$).
 
 $head x$$
 The vector $italic x$$ in expression for $italic dy$$ above
@@ -276,10 +279,12 @@ $syntax%
 	ADFun<%Base%> %f%
 %$$
 Note that the $xref/ADFun/$$ object $italic f$$ is not $code const$$.
-After this call $latex p + 1$$
-$xref/glossary/Taylor Coefficient/Taylor coefficients/$$
-(for each of the variables in the operation sequence)
-are stored in the object $italic f$$.
+Before this call to $code Forward$$, the value returned by
+$syntax%
+	%f%.size_taylor()
+%$$
+must be greater than or equal $latex p$$.
+After this call it will be will be $latex p+1$$ (see $xref/size_taylor/$$).
 
 $head p$$
 The argument $italic p$$ has prototype
@@ -287,9 +292,6 @@ $syntax%
 	size_t %p%
 %$$
 and specifies the order of the Taylor coefficients to be calculated.
-There must be at least $latex p$$ Taylor coefficients of lower
-order stored in $italic f$$ when $code Forward$$ is called
-(see $xref/size_taylor/$$).
 
 $head x_p$$
 The argument $italic x_p$$ has prototype

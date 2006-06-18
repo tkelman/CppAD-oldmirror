@@ -25,8 +25,8 @@
 # commit. If copy_branch is empty; i.e., copy_branch="", the changes will not
 # be copied (and commited) into another branch.
 #
-log_entry="Change vectorAD and vectorADBase to ADvector in
-FunConstruct.h, ADFun.h.
+log_entry="Use size_taylor to describe taylor coefficient requirement in
+Reverse.omh, Forward.omh.
 
 SvnCommit: this file.
 "
@@ -36,8 +36,8 @@ add_list="
 #
 change_list="
 	SvnCommit
-	CppAD/local/ADFun.h
-	CppAD/local/FunConstruct.h
+	omh/Reverse.omh
+	omh/Forward.omh
 "
 #
 delete_list="
