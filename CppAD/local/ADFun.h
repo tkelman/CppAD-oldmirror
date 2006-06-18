@@ -72,12 +72,14 @@ class ADFun {
 
 public:
 	// default constructor
-	ADFun(void) : totalNumVar(0)  // set flag for no operation sequence
+	ADFun(void) 
+	: totalNumVar(0), Taylor(CppADNull), ForJac(CppADNull)
 	{ }
 
 	// constructor
 	template <typename ADvector>
 	ADFun(const ADvector &x, const ADvector &y)
+	: totalNumVar(0), Taylor(CppADNull), ForJac(CppADNull)
 	{	(*this)(x, y);
 	}
 

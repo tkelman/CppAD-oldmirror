@@ -80,6 +80,15 @@ the amount of memory used to store $xref/Forward/$$ results.
 Also $xref/FunDeprecated//deprecated/$$ $code taylor_size$$, and defined 
 $xref/size_taylor/$$ in its place.
 
+$subhead 06-18$$
+Added the $xref/FunConstruct//ADFun default constructor/$$
+and the ability to
+$xref/FunOpSeq//store a new operation sequence/$$ 
+in an $code ADFun$$ object with out having to use 
+$code ADFun$$ pointers together with $code new$$
+and $code delete$$.
+
+
 $comment ----------------------------------------------------------- $$
 
 $head 06-17$$

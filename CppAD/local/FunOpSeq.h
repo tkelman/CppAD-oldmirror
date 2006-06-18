@@ -132,11 +132,12 @@ the value of $italic x$$ are also stored $italic f$$
 
 $head Example$$
 The file
-$xref/Independent.cpp/$$ 
-contains an example and test of this constructor.
+$xref/FunCheck.cpp/$$ 
+contains an example and test of this operation.
 It returns true if it succeeds and false otherwise.
 
 $end
+----------------------------------------------------------------------------
 */
 
 
@@ -197,18 +198,22 @@ void ADFun<Base>::operator()(const ADvector &x, const ADvector &y)
 	// total number of varables in this recording 
 	CppADUnknownError( totalNumVar == Rec.TotNumVar() );
 
+	// free old buffers
+	if( Taylor != CppADNull )
+		CppADTrackDelVec(Taylor);
+	if( ForJac != CppADNull )
+		CppADTrackDelVec(ForJac);
+
+	// initialize buffers
+	Taylor  = CppADTrackNewVec(totalNumVar, Taylor);
+	ForJac  = CppADNull;
+
 	// initial row and column dimensions
 	// memoryMax  = 0;
 	taylor_per_var= 1;
 	ForJacColDim  = 0;
 	ForJacBitDim  = 0;
 	TaylorColDim  = 1;
-
-	// buffers
-	Taylor  = CppADNull;
-	ForJac  = CppADNull;
-	Taylor  = CppADNull;
-	Taylor  = CppADTrackNewVec(totalNumVar, Taylor);
 
 	// set tape address and initial value for independent variables
 	ind_taddr.resize(n);

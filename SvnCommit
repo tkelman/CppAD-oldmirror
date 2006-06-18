@@ -25,15 +25,17 @@
 # commit. If copy_branch is empty; i.e., copy_branch="", the changes will not
 # be copied (and commited) into another branch.
 #
-log_entry="Change domain and range space cross reference in:
-Hessian.h, Jacobian.h, ForTwo.h, RevTwo.h, ForOne.h, RevOne.h, FunCheck.h,
-Reverse.omh, Forward.omh
+log_entry="Add default ADFun constructor and storing new operation sequence.
 
-SvnCommit: this file.
-ADFun.h: include FunOpSeq.h OMhelp from here, default constructor.
-FunOpSeq.h: fix spelling OMhelp error.
-SeqProperty.omh: move definition of domain and range space to here.
-FunConstuct.omh: use FunOpSeq to describe operation sequence.
+SvnCommit: file that made this commit.
+WhatsNew06.omh: users view of the changes.
+ADFun.h: initialize values corresponding to default constructor.
+FunOpSeq.h: fix memory leak and point to proper example.
+FunConstruct.omh: add default constructor and example for it.
+LuRatio.cpp: improve comment about why need pointer in this case.
+FunCheck.cpp: convert from pointer to default constructor and operator(x, y).
+Independent.cpp: warning about cross referencing.
+CompareChange.cpp: convert from pointer to ADFun operator(x, y).
 "
 #
 add_list="
@@ -41,19 +43,14 @@ add_list="
 #
 change_list="
 	SvnCommit
-	CppAD/local/Hessian.h
+	omh/WhatsNew06.omh
 	CppAD/local/ADFun.h
-	CppAD/local/Jacobian.h
 	CppAD/local/FunOpSeq.h
-	CppAD/local/ForTwo.h
-	CppAD/local/RevTwo.h
-	CppAD/local/ForOne.h
-	CppAD/local/RevOne.h
-	CppAD/local/FunCheck.h
-	omh/SeqProperty.omh
-	omh/Reverse.omh
 	omh/FunConstruct.omh
-	omh/Forward.omh
+	Example/LuRatio.cpp
+	Example/FunCheck.cpp
+	Example/Independent.cpp
+	Example/CompareChange.cpp
 "
 #
 delete_list="
