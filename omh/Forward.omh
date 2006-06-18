@@ -448,9 +448,13 @@ $syntax%%s% = %f%.size_taylor()%$$
 
 $head Purpose$$
 Determine the number of Taylor coefficients, per variable,
-currently calculated and stored. 
-(This can change each time $xref/ForwardAny//Forward/$$ 
-or $xref/capacity_taylor/$$ is called using the same $italic f$$).
+currently calculated and stored in the ADFun object $italic f$$. 
+See the discussion under 
+$xref/size_taylor/Constructor/Constructor/$$,
+$xref/size_taylor/Forward/Forward/$$, and
+$xref/size_taylor/capacity_taylor/capacity_taylor/$$
+for a description of when this value can change.
+
 
 $head f$$
 The object $italic f$$ has prototype
@@ -467,26 +471,45 @@ and is the number of Taylor coefficients,
 per variable in the AD operation sequence,
 currently calculated and stored in the ADFun object $italic f$$.
 
-$head Discussion$$
-A call to $xref/ForwardAny//Forward/$$ with the syntax
+$head Constructor$$
+Directly after the $xref/FunConstruct/$$ syntax
 $syntax%
-        %y_p% = %f%.Forward(%p%, %x_p%)
+	ADFun<%Base%> %f%(%x%, %y%)
 %$$
-uses the lower order Taylor coefficients and 
-computes the $th p$$ order Taylor coefficients for all
+the value of $italic s$$ returned by $code size_taylor$$ is one.
+This is because
+there is an implicit call to $code Forward$$ that computes
+the zero order Taylor coefficients during this constructor.
+
+$head Forward$$
+After a call to $xref/ForwardAny//Forward/$$ with the syntax
+$syntax%
+        %f%.Forward(%p%, %x_p%)
+%$$
+the value of $italic s$$ returned by $code size_taylor$$ 
+would be $latex p + 1$$.
+The call to $code Forward$$ above
+uses the lower order Taylor coefficients to compute and store 
+the $th p$$ order Taylor coefficients for all
 the variables in the operation sequence corresponding to $italic f$$.
+Thus there are $latex p + 1$$ (order zero through $italic p$$)
+Taylor coefficients per variable.
 (You can determine the number of variables in the operation sequence
 using the $xref/SeqProperty/size_var/size_var/$$ function.)
-$pre
 
-$$
-Originally, when $italic f$$ is constructed,
-there is an implicit call to $code Forward$$ with $italic p$$ equal to zero
-and $italic x_p$$ equal to 
-the value of the
-$xref/glossary/Independent Variable/independent variables/$$ 
-when the AD operation sequence was recorded.
-
+$head capacity_taylor$$
+If the number of Taylor coefficients
+currently stored in $italic f$$ is less than or equal $italic c$$, 
+a call to $xref/capacity_taylor/$$ with the syntax
+$syntax%
+	%f%.capacity_taylor(%c%)
+%$$
+does not affect the value $italic s$$ returned by $code size_taylor$$.
+Otherwise,
+the value $italic s$$ returned by $code size_taylor$$
+is equal to $italic c$$
+(only Taylor coefficients of order zero through $latex c-1$$ 
+have been retained).
 
 $head Example$$
 The file
