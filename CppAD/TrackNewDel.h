@@ -22,10 +22,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 $begin TrackNewDel$$
 $spell
 	Cpp
-	newptr
+	new_vec
 	Vec
-	oldptr
-	newlen
+	new_len
 	ncopy
 	const
 $$
@@ -37,21 +36,24 @@ $index track, new and delete$$
 $index memory, track$$
 
 $head Syntax$$
-$syntax%%newptr% = TrackNewVec(%file%, %line%, %newlen%, %oldptr%)%$$
-$pre
-$$
-$syntax%TrackDelVec(%file%, %line%, %oldptr%)%$$
-$pre
-$$
-$syntax%%newptr% = TrackExtend(%file%, %line%, %newlen%, %ncopy%, %oldptr%)%$$
-$pre
-$$
-$syntax%%count% = TrackCount(%file%, %line%)%$$
+$syntax%%new_vec% = TrackNewOne(%file%, %line%, %old_vec%)
+%$$
+$syntax%%new_one% = TrackNewVec(%file%, %line%, %new_len%, %old_one%)
+%$$
+$syntax%TrackDelOne(%file%, %line%, %old_one%)
+%$$
+$syntax%TrackDelVec(%file%, %line%, %old_vec%)
+%$$
+$syntax%%new_vec% = TrackExtend(%file%, %line%, %new_len%, %ncopy%, %old_vec%)
+%$$
+$syntax%%count% = TrackCount(%file%, %line%)
+%$$
 
 
 $head Purpose$$
 These routines 
-aid in the use of $code new[]$$ and  $code delete[]$$
+aid in the use of 
+$code new$$, $code new[]$$, $code delete$$, and  $code delete[]$$
 during the execution of a C++ program.
 
 $head file$$
@@ -74,28 +76,46 @@ where the call to $code TrackNew$$ is located.
 The best way to accomplish this is the use the preprocessor symbol
 $code __LINE__$$ for this argument.
 
-$head oldptr$$
-The argument $italic oldptr$$ has prototype
+$head old_one$$
+The argument $italic old_one$$ has prototype
 $syntax%
-	%Type% *%oldptr%
+	%Type% *%old_one%
 %$$
 This argument is used to identify the type $italic Type$$.
 
-$head newlen$$
-The argument $italic newlen$$ has prototype
+$head old_vec$$
+The argument $italic old_vec$$ has prototype
 $syntax%
-	size_t %newlen%
+	%Type% *%old_vec%
+%$$
+This argument is used to identify the type $italic Type$$.
+
+$head new_len$$
+The argument $italic new_len$$ has prototype
+$syntax%
+	size_t %new_len%
 %$$
 
-$head head newptr$$
-The return value $italic newptr$$ has prototype
+$head new_one$$
+The return value $italic new_one$$ has prototype
 $syntax%
-	%Type% *%newptr%
+	%Type% *%new_one%
+%$$
+It points to the newly allocated object
+that was allocated using
+$syntax%
+	new Type
+%$$
+
+$head new_vec$$
+The return value $italic new_vec$$ has prototype
+$syntax%
+	%Type% *%new_vec%
 %$$
 It points to the newly allocated vector of objects
 that were allocated using
 $syntax%
-	new Type[%newlen%]
+	new Type[%new_len%]
 %$$
 
 $head ncopy$$
@@ -106,43 +126,82 @@ $syntax%
 This specifies the number of elements that are copied from
 the old array to the new array.
 The value of $italic ncopy$$ 
-must be less than or equal $italic newlen$$.
+must be less than or equal $italic new_len$$.
+
+$head TrackNewOne$$
+$index TrackNewOne$$
+$index NDEBUG$$
+This routine is used to start the tracking of memory allocation 
+using $code new$$.
+The value of $italic old_one$$ does not matter for this case
+(however the type of $italic old_one$$ does matter).
+If $code NDEBUG$$ is not defined and the memory cannot be allocated,
+$xref/ErrorHandler/$$ is used to generate a message
+stating that there was not sufficient memory.
+The preprocessor macro call
+$syntax%
+	CppADTrackNewOne(%old_one%)
+%$$
+expands to
+$syntax%
+	CppAD::TrackNewOne(__FILE__, __LINE__, %old_one%)
+%$$
 
 $head TrackNewVec$$
 $index TrackNewVec$$
 $index NDEBUG$$
 This routine is used to start the tracking of memory allocation 
 using $code new[]$$.
-The value of $italic oldptr$$ does not matter for this case.
+The value of $italic old_vec$$ does not matter for this case
+(however the type of $italic old_vec$$ does matter).
 If $code NDEBUG$$ is not defined and the memory cannot be allocated,
 $xref/ErrorHandler/$$ is used to generate a message
 stating that there was not sufficient memory.
 The preprocessor macro call
 $syntax%
-	CppADTrackNewVec(%newlen%, %oldptr%)
+	CppADTrackNewVec(%new_len%, %old_vec%)
 %$$
 expands to
 $syntax%
-	CppAD::TrackNewVec(__FILE__, __LINE__, %newlen%, %oldptr%)
+	CppAD::TrackNewVec(__FILE__, __LINE__, %new_len%, %old_vec%)
 %$$
 
 
-$head TrackDelVec$$
-$index TrackDelVec$$
-This routine is used to a vector of objects 
-that have been allocated using $code TrackNew$$ or $code TrackExtend$$.
-If $code NDEBUG$$ is not defined, $code TrackDelete$$ check that
-$italic oldptr$$ was allocated by $code TrackNew$$ or $code TrackExtend$$
+$head TrackDelOne$$
+$index TrackDelOne$$
+This routine is used to delete an object 
+that was allocated using $code TrackNewOne$$.
+If $code NDEBUG$$ is not defined, $code TrackDelOne$$ checks that
+$italic old_one$$ was allocated by $code TrackNewOne$$
 and has not yet been freed.
 If this is not the case,
 $xref/ErrorHandler/$$ is used to generate an error message.
 The preprocessor macro call
 $syntax%
-	CppADTrackDelVec(%oldptr%)
+	CppADTrackDelOne(%old_one%)
 %$$
 expands to
 $syntax%
-	CppAD::TrackDelVec(__FILE__, __LINE__, %oldptr%)
+	CppAD::TrackDelOne(__FILE__, __LINE__, %old_one%)
+%$$
+
+
+$head TrackDelVec$$
+$index TrackDelVec$$
+This routine is used to delete a vector of objects 
+that were allocated using $code TrackNewVec$$ or $code TrackExtend$$.
+If $code NDEBUG$$ is not defined, $code TrackDelVec$$ check that
+$italic old_vec$$ was allocated by $code TrackNewVec$$ or $code TrackExtend$$
+and has not yet been freed.
+If this is not the case,
+$xref/ErrorHandler/$$ is used to generate an error message.
+The preprocessor macro call
+$syntax%
+	CppADTrackDelVec(%old_vec%)
+%$$
+expands to
+$syntax%
+	CppAD::TrackDelVec(__FILE__, __LINE__, %old_vec%)
 %$$
 
 $head TrackExtend$$
@@ -152,15 +211,15 @@ allocate a new vector (using $code TrackNewVec$$),
 and copy $italic ncopy$$ elements from the old vector to the new vector.
 The preprocessor macro call
 $syntax%
-	CppADTrackExtend(%newlen%, %ncopy%, %oldptr%)
+	CppADTrackExtend(%new_len%, %ncopy%, %old_vec%)
 %$$
 expands to
 $syntax%
-	CppAD::TrackExtend(__FILE__, __LINE__, %newlen%, %ncopy%, %oldptr%)
+	CppAD::TrackExtend(__FILE__, __LINE__, %new_len%, %ncopy%, %old_vec%)
 %$$
-If $italic ncopy$$ is greater than zero, $italic oldptr$$ 
+If $italic ncopy$$ is greater than zero, $italic old_vec$$ 
 must have been allocated using $code TrackNewVec$$ or $code TrackExtend$$.
-In this case, the vector pointed to by $italic oldptr$$ 
+In this case, the vector pointed to by $italic old_vec$$ 
 must be have at least $italic ncopy$$ elements
 and it will be freed (using $code TrackDelVec$$).
 
@@ -172,11 +231,11 @@ $syntax%
 %$$
 If $code NDEBUG$$ is defined, $italic count$$ will be zero.
 Otherwise, it will be
-the number of vectors that 
-have been allocated
-(by $code TrackNewVec$$ or $code TrackExtend$$)
+the number of allocations (both single object and vector) that 
+have been completed by
+$code TrackNewOne$$, $code TrackNewVec$$ and $code TrackExtend$$
 and not yet freed
-(by $code TrackDelete$$).
+(by $code TrackDelOne$$ or $code TrackDelVec$$).
 $syntax%
 	CppADTrackCount()
 %$$
@@ -200,20 +259,26 @@ $end
 # include <sstream>
 # include <string>
 
-# define CppADDebugTrack 0
+# define CppADDebugTrack 1
 
 # ifndef CppADNull
 # define CppADNull	0
 # endif
 
-# define CppADTrackNewVec(newlen, oldptr) \
-	CppAD::TrackNewVec(__FILE__, __LINE__, newlen, oldptr)
+# define CppADTrackNewOne(old_one) \
+	CppAD::TrackNewOne(__FILE__, __LINE__, old_one)
 
-# define CppADTrackDelVec(oldptr) \
-	CppAD::TrackDelVec(__FILE__, __LINE__, oldptr)
+# define CppADTrackNewVec(new_len, old_vec) \
+	CppAD::TrackNewVec(__FILE__, __LINE__, new_len, old_vec)
 
-# define CppADTrackExtend(newlen, ncopy, oldptr) \
-	CppAD::TrackExtend(__FILE__, __LINE__, newlen, ncopy, oldptr)
+# define CppADTrackDelOne(old_one) \
+	CppAD::TrackDelOne(__FILE__, __LINE__, old_one)
+
+# define CppADTrackDelVec(old_vec) \
+	CppAD::TrackDelVec(__FILE__, __LINE__, old_vec)
+
+# define CppADTrackExtend(new_len, ncopy, old_vec) \
+	CppAD::TrackExtend(__FILE__, __LINE__, new_len, ncopy, old_vec)
 
 # define CppADTrackCount() \
 	CppAD::TrackCount(__FILE__, __LINE__)
@@ -222,20 +287,29 @@ namespace CppAD { // Begin CppAD namespace
 
 // TrackElement ------------------------------------------------------------
 class TrackElement {
-	
 public:
-	std::string   file;   // corresponding file name
-	int           line;   // corresponding line number
-	void          *ptr;   // value returned by TrackNew
-	TrackElement *next;   // next element in linked list
+	typedef enum { 
+		none   ,
+		new_one,
+		new_vec,
+		del_one,
+		del_vec,
+		extend
+	} Routine;
+
+	Routine    routine; // which routine created this element
+	std::string   file; // corresponding file name
+	int           line; // corresponding line number
+	void          *ptr; // value returned by TrackNew
+	TrackElement *next; // next element in linked list
 
 	// default contructor (used to initialize root)
 	TrackElement(void)
-	: file(""), line(0), ptr(CppADNull), next(CppADNull)
+	: routine(none), file(""), line(0), ptr(CppADNull), next(CppADNull)
 	{ }
 	
-	TrackElement(const char *f, int l, void *p)
-	: file(f), line(l), ptr(p), next(CppADNull)
+	TrackElement(Routine r, const char *f, int l, void *p)
+	: routine(r), file(f), line(l), ptr(p), next(CppADNull)
 	{	CppADUnknownError( p != CppADNull);
 	}
 
@@ -252,7 +326,8 @@ public:
 		while( E->next != CppADNull )
 		{	E = E->next;
 			std::cout << "next = " << E->next;
-			std::cout << ", ptr  = " << E->ptr;
+			std::cout << ", ptr = " << E->ptr;
+			std::cout << ", routine  = " << E->routine;
 			std::cout << ", line = " << E->line;
 			std::cout << ", file = " << E->file;
 			std::cout << std::endl;
@@ -265,9 +340,9 @@ public:
 // TrackError ----------------------------------------------------------------
 inline void TrackError(
 	const char *routine,
-	const char *file,
-	int         line,
-	char       *msg )
+	const char *file   ,
+	int         line   ,
+	char       *msg    )
 {
 	std::ostringstream buf;
 	buf << routine
@@ -284,38 +359,52 @@ inline void TrackError(
 	for(i = 0; i < n; i++)
 		message[i] = str[i];
 	message[n] = '\0';
-	CppADUsageError( false , message);
+	CppADUsageError(false , message);
 }
 
-// TrackNewVec ---------------------------------------------------------------
+// TrackNew ---------------------------------------------------------------
 # ifdef NDEBUG
 template <class Type>
-inline Type *TrackNewVec(const char *file, int line, size_t len, Type *oldptr)
+inline Type *TrackNewOne(const char *file, int line, size_t len, Type *old_one)
+{	return (new Type); 
+}
+template <class Type>
+inline Type *TrackNewVec(const char *file, int line, size_t len, Type *old_vec)
 {	return (new Type[len]); 
 }
 
 # else
 
 template <class Type>
-Type *TrackNewVec(
-	const char *file    , 
-	int         line    , 
-	size_t      len     ,
-	Type       *oldptr  )
+Type *TrackNew(
+	TrackElement::Routine  r      ,
+	const char            *file   , 
+	int                    line   , 
+	size_t                 len    ,
+	Type                  *old_ptr)
 {
 	// try to allocate the new memrory
-	Type *newptr = CppADNull;
+	Type *new_ptr = CppADNull;
 	try
-	{	newptr = new Type[len];
+	{	if( r == TrackElement::new_one )
+			new_ptr = new Type;
+		else	new_ptr = new Type[len];
 	}
 	catch(...)
-	{	TrackError("TrackNewVec", file, line, 
+	{	char *name = "Track program error";
+		if( r == TrackElement::new_one )
+			name = "TrackNewOne";
+		else if( r == TrackElement::new_vec )
+			name = "TrackNewVec";
+		else if( r == TrackElement::extend )
+			name = "TrackExtend";
+		TrackError(name, file, line, 
 			"Cannot allocate sufficient memory"
 		);
 	}
 	// create tracking element
-	void *vptr = static_cast<void *>(newptr);
-	TrackElement *E = new TrackElement(file, line, vptr);
+	void *v_ptr = static_cast<void *>(new_ptr);
+	TrackElement *E = new TrackElement(r, file, line, v_ptr);
 
 	// get the root
 	TrackElement *root = TrackElement::Root();
@@ -324,25 +413,47 @@ Type *TrackNewVec(
 	E->next    = root->next;  
 	root->next = E;
 
-	return newptr;
+	return new_ptr;
+}
+
+template <class Type>
+Type *TrackNewOne(
+	const char *file   , 
+	int         line   , 
+	Type       *old_one)
+{	size_t len = 0;
+	return TrackNew(TrackElement::new_one, file, line, len, old_one);
+}
+template <class Type>
+Type *TrackNewVec(
+	const char *file   , 
+	int         line   , 
+	size_t      len    ,
+	Type       *old_vec)
+{	return TrackNew(TrackElement::new_vec, file, line, len, old_vec);
 }
 
 # endif
 
-// TrackDelVec --------------------------------------------------------------
+// TrackDel --------------------------------------------------------------
 # ifdef NDEBUG
 template <class Type>
-inline void TrackDelVec(const char *file, int line, Type *oldptr)
-{	 delete [] oldptr; 
+inline void TrackDelOne(const char *file, int line, Type *old_one)
+{	 delete old_one; 
+}
+template <class Type>
+inline void TrackDelVec(const char *file, int line, Type *old_vec)
+{	 delete [] old_vec; 
 }
 
 # else
 
 template <class Type>
-void TrackDelVec(
-	const char *file    ,
-	int         line    ,
-	Type       *oldptr  )
+void TrackDel(
+	TrackElement::Routine  r       ,
+	const char            *file    ,
+	int                    line    ,
+	Type                  *old_ptr )
 {
 	TrackElement        *P;
 	TrackElement        *E;
@@ -350,23 +461,46 @@ void TrackDelVec(
 	// search list for pointer
 	P          = TrackElement::Root();
 	E          = P->next;
-	void *vptr = static_cast<void *>(oldptr);
-	while(E != CppADNull && E->ptr != vptr)
+	void *v_ptr = static_cast<void *>(old_ptr);
+	while(E != CppADNull && E->ptr != v_ptr)
 	{	P = E;
 		E = E->next;
 	}
+	// name of routine that user called
+	char *name = "Track program error";
+	if( r == TrackElement::del_one )
+		name = "TrackDelOne";
+	else if( r == TrackElement::del_vec )
+		name = "TrackDelVec";
+	else if( r == TrackElement::extend )
+		name = "TrackExtend";
 
 	// check if pointer was not in list
-	if( E == CppADNull || E->ptr != vptr ) TrackError(
-		"TrackDelVec", file, line, 
-		"Invalid value for the argument oldptr"
-	); 
+	if( E == CppADNull || E->ptr != v_ptr )
+	{	TrackError(name, file, line, 
+			"Invalid value for the argument old pointer"
+		); 
+	}
+
+	// check for proper type of pointer
+	if( E->routine == TrackElement::new_one && r != TrackElement::del_one )
+	{	TrackError(name, file, line, 
+			"must use TrackDelOne to delete this old pointer"
+		); 
+	}
+	if( E->routine != TrackElement::new_one && r == TrackElement::del_one )
+	{	TrackError(name, file, line, 
+			"must use TrackDelVec to delete this old pointer"
+		); 
+	}
 
 	// remove tracking element from list
 	P->next = E->next;
 
 	// delete allocated pointer
-	delete [] oldptr;
+	if( r == TrackElement::del_one )
+		delete old_ptr;
+	else	delete [] old_ptr;
 
 	// delete tracking element
 	delete E;
@@ -374,37 +508,53 @@ void TrackDelVec(
 	return;
 }
 
+template <class Type>
+void TrackDelOne(
+	const char *file    ,
+	int         line    ,
+	Type       *old_one )
+{	TrackDel(TrackElement::del_one, file, line, old_one);
+}
+
+template <class Type>
+void TrackDelVec(
+	const char *file    ,
+	int         line    ,
+	Type       *old_vec )
+{	TrackDel(TrackElement::del_vec, file, line, old_vec);
+}
+
 # endif
 
 // TrackExtend --------------------------------------------------------------
 template <class Type>
 Type *TrackExtend(
-	const char *file    , 
-	int         line    , 
-	size_t      newlen  , 
-	size_t      ncopy   ,
-	Type       *oldptr  ) 
+	const char *file     , 
+	int         line     , 
+	size_t      new_len  , 
+	size_t      ncopy    ,
+	Type       *old_vec  ) 
 {	// check size of ncopy
 	CppADUsageError( 
-		ncopy <= newlen,
-		"TrackExtend: ncopy is greater than newlen."
+		ncopy <= new_len,
+		"TrackExtend: ncopy is greater than new_len."
 	);
 
 	// allocate the new memrory
-	Type *newptr = TrackNewVec(file, line, newlen, oldptr);
+	Type *new_vec = TrackNewVec(file, line, new_len, old_vec);
 
 	// copy the data
 	size_t i = ncopy;
 	while(i)
 	{	--i;
-		newptr[i] = oldptr[i];
+		new_vec[i] = old_vec[i];
 	}
 
 	// delete the old vector 
 	if( ncopy > 0 )
-		TrackDelVec(file, line, oldptr);
+		TrackDelVec(file, line, old_vec);
 
-	return newptr;
+	return new_vec;
 }
 
 // TrackCount --------------------------------------------------------------

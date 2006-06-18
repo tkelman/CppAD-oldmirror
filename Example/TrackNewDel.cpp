@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-05 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -45,31 +45,42 @@ bool TrackNewDel(void)
 	// initial count
 	size_t count = CppADTrackCount();
 
-	// allocate an array of lenght 5
-	double *ptr = 0;
-	size_t  newlen = 5;
-	ptr = CppADTrackNewVec(newlen, ptr);
+	// allocate a single object
+	double *ptr_one = 0;
+	ptr_one = CppADTrackNewOne(ptr_one);
 
-	// copy data into the array
-	size_t ncopy = newlen;
+	// assing a value to the object
+	*ptr_one = 3.;
+
+	// check the value in the object
+	ok &= (*ptr_one == 3.);
+
+	// allocate a vector of lenght 5
+	double *ptr_vec = 0;
+	size_t  new_len = 5;
+	ptr_vec = CppADTrackNewVec(new_len, ptr_vec);
+
+	// assing a value to the elements of the vector
+	size_t ncopy = new_len;
 	size_t i;
 	for(i = 0; i < ncopy; i++)
-		ptr[i] = double(i);
+		ptr_vec[i] = double(i);
 
-	// extend the buffer to be lenght 10
-	newlen = 10;
-	ptr    = CppADTrackExtend(newlen, ncopy, ptr);
+	// extend the vector to be lenght 10
+	new_len = 10;
+	ptr_vec = CppADTrackExtend(new_len, ncopy, ptr_vec);
 		
-	// copy data into the new part of the array
-	for(i = ncopy; i < newlen; i++)
-		ptr[i] = double(i);
+	// copy data into the new part of the vector
+	for(i = ncopy; i < new_len; i++)
+		ptr_vec[i] = double(i);
 
-	// check the values in the array
- 	for(i = 0; i < newlen; i++)
-		ok &= (ptr[i] == double(i));
+	// check the values in the vector
+ 	for(i = 0; i < new_len; i++)
+		ok &= (ptr_vec[i] == double(i));
 
 	// free the memory allocated since previous call to TrackCount
-	CppADTrackDelVec(ptr);
+	CppADTrackDelVec(ptr_vec);
+	CppADTrackDelOne(ptr_one);
 
 	// check for memory leak
 	ok &= (count == CppADTrackCount());
