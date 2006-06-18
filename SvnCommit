@@ -25,9 +25,7 @@
 # commit. If copy_branch is empty; i.e., copy_branch="", the changes will not
 # be copied (and commited) into another branch.
 #
-log_entry="
-SvnCommit: automatic printing of branch name at beginning of log entry.
-TrackNewDel.h: use CppADNull, in place of 0, for null pointer.
+log_entry="revert to version 439 (just before previous commit)
 "
 #
 add_list="
@@ -36,6 +34,8 @@ add_list="
 change_list="
 	SvnCommit
 	CppAD/TrackNewDel.h
+	Example/TrackNewDel.cpp
+	omh/WhatsNew06.omh
 "
 #
 delete_list="
