@@ -50,6 +50,7 @@ derivative values, and other values related to the corresponding function.
 $childtable%
 	CppAD/local/Independent.h%
 	omh/FunConstruct.omh%
+	CppAD/local/FunOpSeq.h%
 	omh/SeqProperty.omh%
 	CppAD/local/FunEval.h%
 	CppAD/local/Drivers.h%
@@ -70,6 +71,10 @@ class ADFun {
 	typedef size_t Pack;
 
 public:
+	// default constructor
+	ADFun(void) : totalNumVar(0)  // set flag for no operation sequence
+	{ }
+
 	// constructor
 	template <typename ADvector>
 	ADFun(const ADvector &x, const ADvector &y)

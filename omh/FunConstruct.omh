@@ -15,8 +15,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ------------------------------------------------------------------------ */
+
 $begin FunConstruct$$
 $spell 
+	var
 	ADvector
 	const
 $$
@@ -32,87 +34,53 @@ $index tape, stop recording$$
 $index recording, stop tape$$
 
 $head Syntax$$
-$syntax%ADFun<%Base%> %f%(%x%, %y%)%$$
+$syntax%ADFun<%Base%> %f%
+%$$
+$syntax%ADFun<%Base%> %f%(%x%, %y%)
+%$$
 
 
 $head Purpose$$
-The 
-AD of $italic Base$$
-$xref/glossary/Operation/Sequence/operation sequence/1/$$ 
-corresponding to $italic f$$ is 
-the operation sequence that occurred since the previous 
-$xref/Independent//Independent(x)/$$
-where $italic x$$ was a 
-vector with elements of type $syntax%AD<%Base%>%$$.
-The operation sequence defines an 
+The $syntax%AD<%Base%>%$$ object $italic f$$ can 
+store an AD of $italic Base$$
+$xref/glossary/Operation/Sequence/operation sequence/1/$$.
+It can then be used to calculate derivatives of the corresponding
 $xref/glossary/AD Function/AD function/$$
 $latex \[
 	F : B^n \rightarrow B^m
 \] $$
-where $latex B$$ is the space corresponding to objects of type $italic Base$$,
-$italic n$$ is the size of the domain vector $italic x$$,
-and $italic m$$ is the size of range vector $italic y$$.
+where $latex B$$ is the space corresponding to objects of type $italic Base$$.
 
-$head Tape State$$
-The tape that records $xref/glossary/AD of Base/AD of/$$ $italic Base$$ operations
-must be in the 
-$xref/glossary/Tape State/Recording/recording state/1/$$
-when this constructor is called.
-The recording will stop and
-the AD operation sequence will be transferred to $italic f$$.
-The tape will be in the $xref/glossary/Tape State/Empty/empty state/1/$$
-after this constructor is called.
-
-$head x$$
-The vector $italic x$$ has prototype
+$head Default Constructor$$
+The default constructor 
 $syntax%
-	const %ADvector% &%x%
+	ADFun<%Base%> %f%
 %$$
-(see $xref/FunConstruct//ADvector/$$ below).
-The length of $italic x$$ must be greater than zero
-and it must be the 
-$xref/Independent//independent variable vector/$$ corresponding to
-the current $syntax%AD<%Base%>%$$ operation sequence; i.e.,
-the current recording must have started with
+creates an 
+$syntax%AD<%Base%>%$$ object with no corresponding operation sequence; i.e.,
 $syntax%
-	Independent(%x%)
+	%f%.size_var()
 %$$
-In addition, none of the element of $italic x$$
-can be assigned a new value between the call to $xref/Independent/$$
-and the $syntax%ADFun<%Base%>%$$ constructor call.
+returns the value zero (see $xref/SeqProperty/size_var/size_var/$$).
 
-$subhead Domain Space$$
-The size of $italic x$$ is referred to as $latex n$$ above and the
-domain space is $latex B^n$$.
-
-$head y$$
-The vector $italic y$$ has prototype
+$head Sequence Constructor$$
+The sequence constructor 
 $syntax%
-	const %ADvector% &%y%
+	ADFun<%Base%> %f%(%x%, %y%)
 %$$
-(see $xref/FunConstruct//ADvector/$$ below).
-The length of $italic y$$ must be greater than zero
-and is the dimension of the range space for $italic f$$.
-
-$subhead Range Space$$
-The size of $italic y$$ is referred to as $latex m$$ above and the
-domain space is $latex B^m$$.
-
-$head ADvector$$
-The type $italic ADvector$$ must be a $xref/SimpleVector/$$ class with
-$xref/SimpleVector/Elements of Specified Type/elements of type/$$
-$syntax%AD<%Base%>%$$.
-The routine $xref/CheckSimpleVector/$$ will generate an error message
-if this is not the case.
-
-$head Forward$$
-Originally, when $italic f$$ is constructed,
-there is an implicit call to $xref/ForwardZero/$$ 
+creates an 
+$syntax%AD<%Base%>%$$ object and then stores the 
+corresponding operation sequence in that object.
+This is actually equivalent to first creating $italic f$$ with
 $syntax%
-	%f%.Forward(0, %x_p%)
-%$$ 
-with the elements of $italic x_p$$ equal to 
-the corresponding elements of $italic x$$.
+	ADFun<%Base%> %f%;
+%$$
+and then using
+$syntax%
+	%f%(%x%, %y%);
+%$$
+to store the operation sequence (see $xref/FunOpSeq/$$).
+
 
 $head Example$$
 The file

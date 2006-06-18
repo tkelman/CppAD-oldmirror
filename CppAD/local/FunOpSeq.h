@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /*
 $begin FunOpSeq$$
 $spell 
+	Taylor
 	ADvector
 	const
 $$
@@ -244,7 +245,7 @@ void ADFun<Base>::operator()(const ADvector &x, const ADvector &y)
 		", it may be nan"
 	);
 
-	// flag used to determine if there is an operation sequence in *this
+	// used to determine if there is an operation sequence in *this
 	CppADUnknownError( totalNumVar > 0 );
 }
 

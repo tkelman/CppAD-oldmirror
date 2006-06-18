@@ -66,7 +66,7 @@ $syntax%
 (see $xref/ForwardZero/Vector/Vector/$$ below)
 and its size 
 must be equal to $italic n$$, the dimension of the
-$xref/FunConstruct/x/Domain Space/domain space/1/$$ for $italic f$$.
+$xref/SeqProperty/Domain/domain/$$ space for $italic f$$.
 
 $head y$$
 The result $italic y$$ has prototype
@@ -77,7 +77,7 @@ $syntax%
 and its value is $latex F(x)$$.
 The size of $italic y$$ 
 is equal to $italic m$$, the dimension of the
-$xref/FunConstruct/y/Range Space/range space/1/$$ for $italic f$$.
+$xref/SeqProperty/Range/range/$$ space for $italic f$$.
 
 $head Vector$$
 The type $italic Vector$$ must be a $xref/SimpleVector/$$ class with
@@ -156,7 +156,7 @@ $syntax%
 (see $xref/ForwardOne/Vector/Vector/$$ below)
 and its size 
 must be equal to $italic n$$, the dimension of the
-$xref/FunConstruct/x/Domain Space/domain space/1/$$ for $italic f$$.
+$xref/SeqProperty/Domain/domain/$$ space for $italic f$$.
 
 $head dy$$
 The result $italic dy$$ has prototype
@@ -167,7 +167,7 @@ $syntax%
 and its value is $latex F^{(1)} (x) * dx$$.
 The size of $italic dy$$ 
 is equal to $italic m$$, the dimension of the
-$xref/FunConstruct/y/Range Space/range space/1/$$ for $italic f$$.
+$xref/SeqProperty/Range/range/$$ space for $italic f$$.
 
 $head Vector$$
 The type $italic Vector$$ must be a $xref/SimpleVector/$$ class with
@@ -301,7 +301,7 @@ $syntax%
 (see $xref/ForwardAny/Vector/Vector/$$ below)
 and its size 
 must be equal to $italic n$$, the dimension of the
-$xref/FunConstruct/x/Domain Space/domain space/1/$$ for $italic f$$.
+$xref/SeqProperty/Domain/domain/$$ space for $italic f$$.
 The $th p$$ order Taylor coefficient for $latex X(t)$$ 
 is defined by this value; i.e., $latex x^{(p)} = x\_p$$.
 (The lower order Taylor coefficients for $latex X(t)$$ are
@@ -318,7 +318,7 @@ The $th p$$ order Taylor coefficient for $latex Y(t)$$; i.e.,
 $latex y^{(p)} = y\_p$$. 
 The size of $italic y_p$$ 
 is equal to $italic m$$, the dimension of the
-$xref/FunConstruct/y/Range Space/range space/1/$$ for $italic f$$.
+$xref/SeqProperty/Range/range/$$ space for $italic f$$.
 
 $head Vector$$
 The type $italic Vector$$ must be a $xref/SimpleVector/$$ class with

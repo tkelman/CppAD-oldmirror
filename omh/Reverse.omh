@@ -76,7 +76,7 @@ $syntax%
 (see $xref/ReverseOne/Vector/Vector/$$ below)
 and its size 
 must be equal to $italic m$$, the dimension of the
-$xref/FunConstruct/y/Range Space/range space/1/$$ for $italic f$$.
+$xref/SeqProperty/Range/range/$$ space for $italic f$$.
 
 $head dw$$
 The result $italic dw$$ has prototype
@@ -87,7 +87,7 @@ $syntax%
 and its value is the derivative $latex W^{(1)} (x)$$.
 The size of $italic dw$$ 
 is equal to $italic n$$, the dimension of the
-$xref/FunConstruct/x/Domain Space/domain space/1/$$ for $italic f$$.
+$xref/SeqProperty/Domain/domain/$$ space for $italic f$$.
 
 $head Vector$$
 The type $italic Vector$$ must be a $xref/SimpleVector/$$ class with
@@ -218,7 +218,7 @@ $syntax%
 (see $xref/ReverseAny/Vector/Vector/$$ below)
 and its size 
 must be equal to $italic m$$, the dimension of the
-$xref/FunConstruct/y/Range Space/range space/1/$$ for $italic f$$.
+$xref/SeqProperty/Range/range/$$ space for $italic f$$.
 It specifies the weighting vector $italic w$$
 in the definition of $latex W(t, x)$$ above.
 
