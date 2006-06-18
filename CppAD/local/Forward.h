@@ -76,7 +76,7 @@ Vector ADFun<Base>::Forward(size_t p, const Vector &up)
 	{	CppADUnknownError( ind_taddr[j] < totalNumVar );
 
 		// ind_taddr[j] is operator taddr for j-th independent variable
-		CppADUnknownError( Rec->GetOp( ind_taddr[j] ) == InvOp );
+		CppADUnknownError( Rec.GetOp( ind_taddr[j] ) == InvOp );
 
 		// It is also variable taddr for j-th independent variable
 		Taylor[ind_taddr[j] * TaylorColDim + p] = up[j];
@@ -84,7 +84,7 @@ Vector ADFun<Base>::Forward(size_t p, const Vector &up)
 
 	// evaluate the derivatives
 	compareChange = ForwardSweep(
-		true, p, totalNumVar, Rec, TaylorColDim, Taylor
+		true, p, totalNumVar, &Rec, TaylorColDim, Taylor
 	);
 
 	// return the p-th order Taylor coefficients for dependent variables

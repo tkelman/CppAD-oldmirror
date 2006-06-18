@@ -25,7 +25,12 @@
 # commit. If copy_branch is empty; i.e., copy_branch="", the changes will not
 # be copied (and commited) into another branch.
 #
-log_entry="revert to version 439 (just before previous commit)
+log_entry="Change Rec from pointer to object in the following files:
+RevSparseHes.h, Reverse.h, ADFun.h, FunConstruct.h, Forward.h, 
+RevSparseJac.h, RevSparseJac.h
+
+SvnCommit: this file.
+TapeRec: change copy constructor to assignment operator.
 "
 #
 add_list="
@@ -33,9 +38,14 @@ add_list="
 #
 change_list="
 	SvnCommit
-	CppAD/TrackNewDel.h
-	Example/TrackNewDel.cpp
-	omh/WhatsNew06.omh
+	CppAD/local/RevSparseHes.h
+	CppAD/local/Reverse.h
+	CppAD/local/TapeRec.h
+	CppAD/local/ADFun.h
+	CppAD/local/FunConstruct.h
+	CppAD/local/Forward.h
+	CppAD/local/ForSparseJac.h
+	CppAD/local/RevSparseJac.h
 "
 #
 delete_list="

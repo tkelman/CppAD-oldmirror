@@ -76,8 +76,7 @@ public:
 
 	// destructor
 	~ADFun(void)
-	{	delete Rec;
-		if( Taylor != CppADNull )
+	{	if( Taylor != CppADNull )
 			CppADTrackDelVec(Taylor);
 		if( ForJac != CppADNull )
 			CppADTrackDelVec(ForJac);
@@ -105,7 +104,7 @@ public:
 
 	// does this AD operation sequence use VecAD<Base>::reference operands
 	bool use_VecAD(void) const
-	{	return Rec->NumVecInd() > 0; }
+	{	return Rec.NumVecInd() > 0; }
 
 	// number of variables in opertion sequence
 	size_t size_var(void) const
@@ -189,7 +188,7 @@ public:
 	size_t Memory(void) const
 	{	size_t pervar  = TaylorColDim * sizeof(Base)
 		+ ForJacColDim * sizeof(Pack);
-		size_t total   = totalNumVar * pervar + Rec->Memory();
+		size_t total   = totalNumVar * pervar + Rec.Memory();
 		return total;
 	}
 
@@ -227,7 +226,7 @@ private:
 	CppAD::vector<bool>   dep_parameter;
 
 	// the operations corresponding to this function
-	TapeRec<Base> *Rec;
+	TapeRec<Base> Rec;
 
 	// results of the forward mode calculations
 	Base *Taylor;

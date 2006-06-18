@@ -178,11 +178,11 @@ ADFun<Base>::ADFun(const VectorAD &x, const VectorAD &y)
 
 	// now that each dependent variable has a place in the tape,
 	// we can make a copy for this function and erase the tape.
-	Rec = new TapeRec<Base>( AD<Base>::Tape()->Rec );
+	Rec = AD<Base>::Tape()->Rec;
 	AD<Base>::Tape()->Erase();
 
 	// total number of varables in this recording 
-	CppADUnknownError( totalNumVar == Rec->TotNumVar() );
+	CppADUnknownError( totalNumVar == Rec.TotNumVar() );
 
 	// initial row and column dimensions
 	// memoryMax  = 0;
@@ -210,7 +210,7 @@ ADFun<Base>::ADFun(const VectorAD &x, const VectorAD &y)
 			"independent variable vector has changed"
 		);
 		// j+1 is both the operator and independent variable taddr
-		op = Rec->GetOp(j+1);
+		op = Rec.GetOp(j+1);
 		CppADUsageError(
 			op == InvOp,
 			"independent variable vector has changed"
@@ -221,7 +221,7 @@ ADFun<Base>::ADFun(const VectorAD &x, const VectorAD &y)
 
 	// use independent variable values to fill in values for others
 	compareChange = ForwardSweep(
-		false, 0, totalNumVar, Rec, TaylorColDim, Taylor
+		false, 0, totalNumVar, &Rec, TaylorColDim, Taylor
 	);
 	CppADUnknownError( compareChange == 0 );
 
