@@ -49,7 +49,7 @@ derivative values, and other values related to the corresponding function.
 
 $childtable%
 	CppAD/local/Independent.h%
-	CppAD/local/FunConstruct.h%
+	omh/FunConstruct.omh%
 	omh/SeqProperty.omh%
 	CppAD/local/FunEval.h%
 	CppAD/local/Drivers.h%
@@ -72,7 +72,9 @@ class ADFun {
 public:
 	// constructor
 	template <typename ADvector>
-	ADFun(const ADvector &u, const ADvector &z);
+	ADFun(const ADvector &x, const ADvector &y)
+	{	(*this)(x, y);
+	}
 
 	// destructor
 	~ADFun(void)
@@ -81,6 +83,10 @@ public:
 		if( ForJac != CppADNull )
 			CppADTrackDelVec(ForJac);
 	}
+
+	// assign a new operation sequence
+	template <typename ADvector>
+	void operator()(const ADvector &x, const ADvector &y);
 
 	// forward mode sweep
 	template <typename VectorBase>
@@ -248,7 +254,7 @@ private:
 
 // user interfaces
 # include <CppAD/local/Independent.h>
-# include <CppAD/local/FunConstruct.h>
+# include <CppAD/local/FunOpSeq.h>
 # include <CppAD/local/FunEval.h>
 # include <CppAD/local/Drivers.h>
 # include <CppAD/local/FunCheck.h>

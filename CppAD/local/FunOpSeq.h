@@ -1,5 +1,5 @@
-# ifndef CppADFunConstructIncluded
-# define CppADFunConstructIncluded
+# ifndef CppADFunOpSeqIncluded
+# define CppADFunOpSeqIncluded
 
 /* -----------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
@@ -19,7 +19,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ------------------------------------------------------------------------ */
 /*
-$begin FunConstruct$$
+$begin FunOpSeq$$
 $spell 
 	ADvector
 	const
@@ -28,23 +28,21 @@ $$
 $spell
 $$
 
-$section Construct an ADFun Object and Stop Recording$$
+$section Stop Recording and Store Operation Sequence$$
 
-$index ADFun, construct$$
-$index construct, ADFun$$
+$index ADFun, operation sequence$$
+$index operation, sequence store$$
+$index sequence, operation store$$
+$index recording, stop$$
 $index tape, stop recording$$
-$index recording, stop tape$$
 
 $head Syntax$$
-$syntax%ADFun<%Base%> %f%(%x%, %y%)%$$
-
+$syntax%%f%(%x%, %y%)%$$
 
 $head Purpose$$
-The 
-AD of $italic Base$$
+Stop recording and store the AD of $italic Base$$
 $xref/glossary/Operation/Sequence/operation sequence/1/$$ 
-corresponding to $italic f$$ is 
-the operation sequence that occurred since the previous 
+that was started by the previous 
 $xref/Independent//Independent(x)/$$
 where $italic x$$ was a 
 vector with elements of type $syntax%AD<%Base%>%$$.
@@ -57,15 +55,15 @@ where $latex B$$ is the space corresponding to objects of type $italic Base$$,
 $italic n$$ is the size of the domain vector $italic x$$,
 and $italic m$$ is the size of range vector $italic y$$.
 
-$head Tape State$$
-The tape that records $xref/glossary/AD of Base/AD of/$$ $italic Base$$ operations
-must be in the 
-$xref/glossary/Tape State/Recording/recording state/1/$$
-when this constructor is called.
-The recording will stop and
-the AD operation sequence will be transferred to $italic f$$.
-The tape will be in the $xref/glossary/Tape State/Empty/empty state/1/$$
-after this constructor is called.
+$head f$$
+The object $italic f$$ has prototype
+$syntax%
+	ADFun<%Base%> %f%
+%$$
+The AD of $italic Base$$ operation sequence is stored in $italic f$$; i.e.,
+it becomes the operation sequence corresponding to $italic f$$.
+If a previous operation sequence was stored in $italic f$$,
+it is deleted. 
 
 $head x$$
 The vector $italic x$$ has prototype
@@ -109,14 +107,27 @@ $syntax%AD<%Base%>%$$.
 The routine $xref/CheckSimpleVector/$$ will generate an error message
 if this is not the case.
 
+$head Tape State$$
+The tape that records 
+$xref/glossary/AD of Base/AD of Base/$$ operations must be in the 
+$xref/glossary/Tape State/Recording/recording state/1/$$
+when this operation is preformed.
+The recording will stop and
+the AD operation sequence will be stored in $italic f$$.
+The tape will be in the $xref/glossary/Tape State/Empty/empty state/1/$$
+after this operation is preformed.
+
 $head Forward$$
-Originally, when $italic f$$ is constructed,
-there is an implicit call to $xref/ForwardZero/$$ 
+This operation preforms an implicit call to 
 $syntax%
 	%f%.Forward(0, %x_p%)
 %$$ 
+(see $xref/ForwardZero/$$) 
 with the elements of $italic x_p$$ equal to 
-the corresponding elements of $italic x$$.
+the corresponding elements of $italic x$$; i.e.,
+the zero order Taylor coefficients corresponding to 
+the value of $italic x$$ are also stored $italic f$$
+(see $xref/size_taylor/$$ and $xref/capacity_taylor/$$). 
 
 $head Example$$
 The file
@@ -133,7 +144,7 @@ namespace CppAD {
 
 template <typename Base>
 template <typename ADvector>
-ADFun<Base>::ADFun(const ADvector &x, const ADvector &y)
+void ADFun<Base>::operator()(const ADvector &x, const ADvector &y)
 {	size_t   n = x.size();
 	size_t   m = y.size();
 	size_t   i, j;
@@ -145,16 +156,16 @@ ADFun<Base>::ADFun(const ADvector &x, const ADvector &y)
 
 	CppADUsageError(
 		AD<Base>::Tape()->state == Recording,
-		"Can not create an ADFun object because "
-		" tape is not currently recording."
+		"Can't store current operation sequence in this ADFun object"
+		"\nbecause corresponding tape is not currently recording."
 	);
 	CppADUsageError(
 		y.size() > 0,
-		"ADFun constructor second argument vector Y has zero size"
+		"ADFun operation sequence second argument y has zero size"
 	); 
 	CppADUsageError(
 		x.size() > 0,
-		"ADFun constructor first argument vector X has zero size"
+		"ADFun operation sequence first argument x has zero size"
 	); 
 
 	// set total number of variables in tape, parameter flag, 
@@ -232,6 +243,9 @@ ADFun<Base>::ADFun(const ADvector &x, const ADvector &y)
 		"independent variable not equal its tape evaluation"
 		", it may be nan"
 	);
+
+	// flag used to determine if there is an operation sequence in *this
+	CppADUnknownError( totalNumVar > 0 );
 }
 
 } // END CppAD namespace
