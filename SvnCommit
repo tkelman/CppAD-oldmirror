@@ -25,34 +25,17 @@
 # commit. If copy_branch is empty; i.e., copy_branch="", the changes will not
 # be copied (and commited) into another branch.
 #
-log_entry="Control of memory allocated for Taylor coefficients
-
-CapTaylor.h: implement control as capacity_taylor ADFun member function.
-ADFun.h: define capacity_taylor and change taylor_size to size_taylor.
-FunConstruct.h: mention implicit zero order calculation during constructor.
-Forward.h: include CapTaylor.h and use taylor_capacity.
-Reverse.omh: change cross reference from taylor_size to size_taylor.
-Forward.omh: taylor_size->size_taylor and add mention of capacity_taylor.
-WhatsNew06.omh: change cross reference from taylor_size to size_taylor.
-FunDeprecated.omh: add taylor_size to this list.
-Forward.cpp: add calls to capacity_taylor in example.
-Makefile.am: add CapTaylor.h
+log_entry="
+SvnCommit: automatic printing of branch name at beginning of log entry.
+TrackNewDel.h: use CppADNull, in place of 0, for null pointer.
 "
 #
 add_list="
-	CppAD/local/CapTaylor.h
 "
 #
 change_list="
-	CppAD/local/ADFun.h
-	CppAD/local/FunConstruct.h
-	CppAD/local/Forward.h
-	omh/Reverse.omh
-	omh/Forward.omh
-	omh/WhatsNew06.omh
-	omh/FunDeprecated.omh
-	Example/Forward.cpp
-	Makefile.am
+	SvnCommit
+	CppAD/TrackNewDel.h
 "
 #
 delete_list="
@@ -67,7 +50,8 @@ then
 		echo "../branches/$copy_branch/.svn is not a directory"
 	fi
 fi
-echo "$log_entry" > SvnCommit.log
+this_branch=`pwd | sed -e "s|.*/CppAD/||"`
+echo "$this_branch: $log_entry" > SvnCommit.log
 count=0
 for file in $add_list $change_list
 do
