@@ -69,9 +69,9 @@ after this constructor is called.
 $head x$$
 The vector $italic x$$ has prototype
 $syntax%
-	const %VectorAD% &%x%
+	const %ADvector% &%x%
 %$$
-(see $xref/FunConstruct//VectorAD/$$ below).
+(see $xref/FunConstruct//ADvector/$$ below).
 The length of $italic x$$ must be greater than zero
 and it must be the 
 $xref/Independent//independent variable vector/$$ corresponding to
@@ -91,9 +91,9 @@ domain space is $latex B^n$$.
 $head y$$
 The vector $italic y$$ has prototype
 $syntax%
-	const %VectorAD% &%y%
+	const %ADvector% &%y%
 %$$
-(see $xref/FunConstruct//VectorAD/$$ below).
+(see $xref/FunConstruct//ADvector/$$ below).
 The length of $italic y$$ must be greater than zero
 and is the dimension of the range space for $italic f$$.
 
@@ -101,8 +101,8 @@ $subhead Range Space$$
 The size of $italic y$$ is referred to as $latex m$$ above and the
 domain space is $latex B^m$$.
 
-$head VectorAD$$
-The type $italic VectorAD$$ must be a $xref/SimpleVector/$$ class with
+$head ADvector$$
+The type $italic ADvector$$ must be a $xref/SimpleVector/$$ class with
 $xref/SimpleVector/Elements of Specified Type/elements of type/$$
 $syntax%AD<%Base%>%$$.
 The routine $xref/CheckSimpleVector/$$ will generate an error message
@@ -131,16 +131,16 @@ $end
 namespace CppAD {
 
 template <typename Base>
-template <typename VectorAD>
-ADFun<Base>::ADFun(const VectorAD &x, const VectorAD &y)
+template <typename ADvector>
+ADFun<Base>::ADFun(const ADvector &x, const ADvector &y)
 {	size_t   n = x.size();
 	size_t   m = y.size();
 	size_t   i, j;
 	size_t   y_taddr;
 	OpCode   op;
 
-	// check VectorAD is Simple Vector class with AD<Base> elements
-	CheckSimpleVector< AD<Base>, VectorAD>();
+	// check ADvector is Simple Vector class with AD<Base> elements
+	CheckSimpleVector< AD<Base>, ADvector>();
 
 	CppADUsageError(
 		AD<Base>::Tape()->state == Recording,

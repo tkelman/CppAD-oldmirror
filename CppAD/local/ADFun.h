@@ -71,8 +71,8 @@ class ADFun {
 
 public:
 	// constructor
-	template <typename VectorADBase>
-	ADFun(const VectorADBase &u, const VectorADBase &z);
+	template <typename ADvector>
+	ADFun(const ADvector &u, const ADvector &z);
 
 	// destructor
 	~ADFun(void)
