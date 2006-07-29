@@ -25,25 +25,37 @@
 # commit. If copy_branch is empty; i.e., copy_branch="", the changes will not
 # be copied (and commited) into another branch.
 # ----------------------------------------------------------------------
-log_entry="Fix minor errors found during DIMACS workshop demonstrations
+log_entry="Prepare for changing subversion copyright from GPL to CPL
 
 SvnCommit: file that made this commit.
-WhatsNew06.omh: users view of the changes.
-TrackNewDel.h: fix warning (argument should be const).
-Build: put ./ in path for RunOMhelp and conditional Adolc and Fadbad.
+ChangeCopy.sh: shell script that loop over the file names.
+ChangeCopy.sed: sed script that do the editing for each file. 
+cpl1.0.txt: text version of the CPL copyright message.
+AUTHORS: add GPL copyright message to authors file.
+Build: add AUTHORS to list of files updated by Build version.
+SvnStatus: add AUTHORS to list of files updated by Build version.
+SeqProperty.omh: add GPL copyright message to authors file.
+omh/license.omh: prepare so that sed script can change license.
+gpl.txt: moved from omh/gpl.txt to gpl2.txt.
 "
 # 
 add_list="
+	ChangeCopy.sh
+	ChangeCopy.sed
+	cpl1.0.txt
 "
 #
 change_list="
 	SvnCommit
-	omh/WhatsNew06.omh
-	CppAD/TrackNewDel.h
+	AUTHORS
 	Build
+	SvnStatus
+	omh/SeqProperty.omh
+	omh/license.omh
 "
 #
 delete_list="
+	omh/gpl.txt
 "
 #
 copy_branch="" 

@@ -47,14 +47,14 @@ then
 	# change Autoconf date to today
 	AcDate=$Today
 	#
-	for name in Doc omh/InstallUnix omh/InstallWindows
+	for name in AUTHORS Doc.omh omh/InstallUnix.omh omh/InstallWindows.omh
 	do
-		sed $name.omh > $name.tmp \
+		sed $name > $name.$$ \
 	-e "s/\([^0-9]\)[0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/\1$Today/g" \
 	-e "s/\([^0-9]\)[0-9][0-9]-[0-9][0-9]-[0-9][0-9]\([^0-9]\)/\1$Today\2/g" 
 	#
-		diff $name.omh $name.tmp
-		mv   $name.tmp $name.omh
+		diff $name $name.$$
+		mv   $name.$$ $name
 	done
 	#
 	# configure file is out of date so remove it
@@ -321,15 +321,9 @@ then
 	Example/Example           >  Test.log
 	TestMore/TestMore         >> Test.log
 	Introduction/Introduction >> Test.log
-	if [ -e $ADOLC_DIR/include/adolc ]
-	then
-		Adolc/Example     >> Test.log
-	fi
-	if [ -e $FADBAD_DIR/FADBAD++ ]
-	then
-		Fadbad/Example    >> Test.log
-	fi
-	./RunOMhelp Doc
+	Fadbad/Example            >> Test.log
+	Adolc/Example             >> Test.log
+	RunOMhelp Doc
 	cat OMhelp.Doc.log        >> Test.log
 	if [ "$1" != "all" ]
 	then
