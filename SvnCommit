@@ -44,8 +44,9 @@
 # be copied (and commited) into another branch.
 # ----------------------------------------------------------------------
 log_entry="Add copyright message to following svn shell scripts files:
+CheckIncludeDef, CheckIncludeFile, CheckIncludeOmh
 
-SvnCommit, SvnMerge, SvnStatus.
+SvnCommit: file that made this commit.
 "
 # 
 add_list="
@@ -53,8 +54,9 @@ add_list="
 #
 change_list="
 	SvnCommit
-	SvnMerge
-	SvnStatus
+	CheckIncludeDef
+	CheckIncludeFile
+	CheckIncludeOmh
 "
 #
 delete_list="
