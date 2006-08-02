@@ -43,23 +43,41 @@
 # commit. If copy_branch is empty; i.e., copy_branch="", the changes will not
 # be copied (and commited) into another branch.
 # ----------------------------------------------------------------------
-log_entry="Add copyright message to following svn shell scripts files:
-CheckIncludeDef, CheckIncludeFile, CheckIncludeOmh
+log_entry="Change Bash script file names to *.bsh
 
-SvnCommit: file that made this commit.
+Makefile.am: distribute new file names.
 "
 # 
 add_list="
 "
 #
 change_list="
-	SvnCommit
-	CheckIncludeDef
-	CheckIncludeFile
-	CheckIncludeOmh
+	Makefile.am
+	Build.bsh
+	ChangeCopy.bsh
+	CheckIncludeDef.bsh
+	CheckIncludeFile.bsh
+	CheckIncludeOmh.bsh
+	CleanCppAD.bsh
+	FixAclocal.bsh
+	RunOMhelp.bsh
+	SvnCommit.bsh
+	SvnMerge.bsh
+	SvnStatus.bsh
 "
 #
 delete_list="
+	Build
+	ChangeCopy.sh
+	CheckIncludeDef
+	CheckIncludeFile
+	CheckIncludeOmh
+	CleanCppAD
+	FixAclocal
+	RunOMhelp
+	SvnCommit
+	SvnMerge
+	SvnStatus
 "
 #
 copy_branch="" 

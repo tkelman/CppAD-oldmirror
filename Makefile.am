@@ -214,21 +214,22 @@ SUBDIRS = \
 	$(TESTMORE) 
 #
 EXTRA_DIST = \
-	Build \
-	CheckIncludeFile \
-	CheckIncludeOmh \
-	CheckIncludeDef \
-	CleanCppAD \
+	Build.bsh \
+	CheckIncludeFile.bsh \
+	CheckIncludeOmh.bsh \
+	CheckIncludeDef.bsh \
+	CleanCppAD.bsh \
 	CppAD.tex \
+	gpl2.txt \
 	Dev \
 	Dev.omh \
 	Doc \
 	Doc.omh \
 	Example/OneTest \
-	FixAclocal \
+	FixAclocal.bsh \
 	FixMakefile \
 	omh \
-	RunOMhelp \
+	RunOMhelp.bsh \
 	UWCopy040507.html
 #
 dist-hook:

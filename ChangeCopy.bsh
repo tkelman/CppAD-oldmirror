@@ -1,19 +1,17 @@
 #! /bin/bash
 list=`find . \
-	\( -name '*.h'   \) -or \
 	\( -name '*.am'  \) -or \
 	\( -name '*.ac'  \) -or \
 	\( -name '*.ac'  \) -or \
+	\( -name '*.bsh' \) -or \
 	\( -name '*.cpp' \) -or \
+	\( -name '*.h'   \) -or \
+	\( -name '*.hpp' \) -or \
 	\( -name '*.omh' \)`
 list="
 	$list
 	AUTHORS
 	COPYING
-	Build
-	CleanCppAD
-	FixAclocal
-	RunOMhelp
 "
 for file in $list
 do
