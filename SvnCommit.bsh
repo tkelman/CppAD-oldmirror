@@ -43,20 +43,9 @@
 # commit. If copy_branch is empty; i.e., copy_branch="", the changes will not
 # be copied (and commited) into another branch.
 # ----------------------------------------------------------------------
-log_entry="More changes for dual copyright version
+log_entry="Missing from previou commit.
 
-SvnCommit.bsh: file that made this commit.
-diffToday.bsh: moved here from diffToday (and add short copyright).
-diffToday: moved from here to diffToday.bsh.
-AUTHORS: remove OMhelp formating and short copyright.
-Build.bsh: change FixMakefile to FixMakefile.bsh.
-NEWS: imporve pointer to whatsnew.
-FixMakefile.bsh: move here from FixMakefile.
-FixMakefile: move form here to FixMakefile.bsh.
-SvnStatus.bsh: change diffToday to diffToday.bsh.
-ChangeLog: imporve pointer to whatsnew.
-ChangeCopy.bsh: only include COPYING as a special case.
-README: change to simple directory for some key files.
+Makefile.am: change FixMakefile to FixMakefile.bsh.
 "
 # 
 add_list="
@@ -64,17 +53,7 @@ add_list="
 #
 change_list="
 	SvnCommit.bsh
-	diffToday
-	diffToday.bsh
-	AUTHORS
-	Build.bsh
-	NEWS
-	FixMakefile
-	FixMakefile.bsh
-	SvnStatus.bsh
-	ChangeLog
-	ChangeCopy.bsh
-	README
+	Makefile.am
 "
 #
 delete_list="

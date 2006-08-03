@@ -227,7 +227,7 @@ EXTRA_DIST = \
 	Doc.omh \
 	Example/OneTest \
 	FixAclocal.bsh \
-	FixMakefile \
+	FixMakefile.bsh \
 	omh \
 	RunOMhelp.bsh \
 	UWCopy040507.html
