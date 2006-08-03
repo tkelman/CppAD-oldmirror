@@ -47,7 +47,7 @@ log_entry="More preparation for copyright change
 
 SvnCommit.bsh: file that made this commit.
 FixMakefile.bsh: add copyright message.
-ChangeCopy.bsh: commands that will be used for the change.
+ChangeCopy.bsh: commands that will be used for the change of copyright.
 "
 # 
 add_list="
@@ -55,7 +55,8 @@ add_list="
 #
 change_list="
 	SvnCommit.bsh
-	Makefile.am
+	FixMakefile.bsh
+	ChangeCopy.bsh
 "
 #
 delete_list="

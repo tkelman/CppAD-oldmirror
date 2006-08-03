@@ -14,9 +14,18 @@ list="
 "
 for file in $list
 do
-	if ! grep "Copyright (C)" $file >> /dev/null
+	echo "$file"
+	#
+	sed -f ChangeCopy.sed < $file > ChangeCopy.tmp
+	mv ChangeCopy.tmp $file
+	#
+	if ! grep "Common Public License" $file >> /dev/null
 	then
-		echo "$file has not copyright message"
-		exit 1
+		name=`echo $file | sed -e 's|.*/||'`
+		if [ "$name" != "config.h" ] 
+		then
+			echo "$file has no Common Public License message"
+			exit 1
+		fi
 	fi
 done
