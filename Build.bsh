@@ -144,8 +144,8 @@ then
 		CPP_ERROR_WARN="-Wall -ansi -pedantic-errors -std=c++98"
 	#
 	# Fix Makefile for what appears to be a bug in gzip under cygwin
-	echo "FixMakefile"
-	./FixMakefile
+	echo "FixMakefile.bsh"
+	./FixMakefile.bsh
 	#
 	if [ "$1" != "all" ]
 	then

@@ -43,41 +43,41 @@
 # commit. If copy_branch is empty; i.e., copy_branch="", the changes will not
 # be copied (and commited) into another branch.
 # ----------------------------------------------------------------------
-log_entry="Change Bash script file names to *.bsh
+log_entry="More changes for dual copyright version
 
-Makefile.am: distribute new file names.
+SvnCommit.bsh: file that made this commit.
+diffToday.bsh: moved here from diffToday (and add short copyright).
+diffToday: moved from here to diffToday.bsh.
+AUTHORS: remove OMhelp formating and short copyright.
+Build.bsh: change FixMakefile to FixMakefile.bsh.
+NEWS: imporve pointer to whatsnew.
+FixMakefile.bsh: move here from FixMakefile.
+FixMakefile: move form here to FixMakefile.bsh.
+SvnStatus.bsh: change diffToday to diffToday.bsh.
+ChangeLog: imporve pointer to whatsnew.
+ChangeCopy.bsh: only include COPYING as a special case.
+README: change to simple directory for some key files.
 "
 # 
 add_list="
 "
 #
 change_list="
-	Makefile.am
-	Build.bsh
-	ChangeCopy.bsh
-	CheckIncludeDef.bsh
-	CheckIncludeFile.bsh
-	CheckIncludeOmh.bsh
-	CleanCppAD.bsh
-	FixAclocal.bsh
-	RunOMhelp.bsh
 	SvnCommit.bsh
-	SvnMerge.bsh
+	diffToday
+	diffToday.bsh
+	AUTHORS
+	Build.bsh
+	NEWS
+	FixMakefile
+	FixMakefile.bsh
 	SvnStatus.bsh
+	ChangeLog
+	ChangeCopy.bsh
+	README
 "
 #
 delete_list="
-	Build
-	ChangeCopy.sh
-	CheckIncludeDef
-	CheckIncludeFile
-	CheckIncludeOmh
-	CleanCppAD
-	FixAclocal
-	RunOMhelp
-	SvnCommit
-	SvnMerge
-	SvnStatus
 "
 #
 copy_branch="" 

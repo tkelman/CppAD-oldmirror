@@ -51,8 +51,8 @@ sed                                                           \
 	-e '/^[?] *cppad-[0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/d' 
 #
 # Add differences for automatically updated files
-./diffToday AUTHORS
-./diffToday Doc.omh
-./diffToday configure.ac
-./diffToday omh/InstallUnix.omh
-./diffToday omh/InstallWindows.omh
+./diffToday.bsh AUTHORS
+./diffToday.bsh Doc.omh
+./diffToday.bsh configure.ac
+./diffToday.bsh omh/InstallUnix.omh
+./diffToday.bsh omh/InstallWindows.omh

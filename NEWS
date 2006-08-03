@@ -1,2 +1,5 @@
-See Doc/whatsnew05.htm
-or  Doc/whatsnew05.xml
+For a list of recent changes to CppAD see
+	Doc/whatsnew06.htm
+
+If your borwser supports XHTML + MATHML, see 
+	Doc/whatsnew06.xml

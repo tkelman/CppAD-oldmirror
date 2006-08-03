@@ -10,7 +10,6 @@ list=`find . \
 	\( -name '*.omh' \)`
 list="
 	$list
-	AUTHORS
 	COPYING
 "
 for file in $list
