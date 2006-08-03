@@ -43,23 +43,17 @@
 # commit. If copy_branch is empty; i.e., copy_branch="", the changes will not
 # be copied (and commited) into another branch.
 # ----------------------------------------------------------------------
-log_entry="More preparation for copyright change
+log_entry="Extend batch edit of copyright change to work in more cases.
 
-SvnCommit.bsh: file that made this commit.
-FixMakefile.bsh: add copyright message.
-ChangeCopy.bsh: commands that will be used for the change of copyright.
 "
 # 
 add_list="
 "
 #
 change_list="
-	Build.bsh
-	CheckIncludeDef.bsh
-	CheckIncludeFile.bsh
-	CheckIncludeOmh.bsh
-	CleanCppAD.bsh
 	SvnCommit.bsh
+	ChangeCopy.bsh
+	ChangeCopy.sed
 "
 #
 delete_list="
