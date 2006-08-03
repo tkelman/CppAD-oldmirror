@@ -43,9 +43,11 @@
 # commit. If copy_branch is empty; i.e., copy_branch="", the changes will not
 # be copied (and commited) into another branch.
 # ----------------------------------------------------------------------
-log_entry="Missing from previou commit.
+log_entry="More preparation for copyright change
 
-Makefile.am: change FixMakefile to FixMakefile.bsh.
+SvnCommit.bsh: file that made this commit.
+FixMakefile.bsh: add copyright message.
+ChangeCopy.bsh: commands that will be used for the change.
 "
 # 
 add_list="
