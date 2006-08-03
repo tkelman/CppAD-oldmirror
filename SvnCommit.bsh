@@ -43,23 +43,23 @@
 # commit. If copy_branch is empty; i.e., copy_branch="", the changes will not
 # be copied (and commited) into another branch.
 # ----------------------------------------------------------------------
-log_entry="Change file premission to +x:
-	Build.bsh, CheckIncludeDef.bsh, CheckIncludeFile.bsh 
-	CheckIncludeOmh.bsh, CleanCppAD.bsh
+log_entry="More preparation for copyright change
 
 SvnCommit.bsh: file that made this commit.
+FixMakefile.bsh: add copyright message.
+ChangeCopy.bsh: commands that will be used for the change of copyright.
 "
 # 
 add_list="
 "
 #
 change_list="
-	SvnCommit.bsh
 	Build.bsh
-	CheckIncludeDef.bsh 
-	CheckIncludeFile.bsh 
+	CheckIncludeDef.bsh
+	CheckIncludeFile.bsh
 	CheckIncludeOmh.bsh
 	CleanCppAD.bsh
+	SvnCommit.bsh
 "
 #
 delete_list="
