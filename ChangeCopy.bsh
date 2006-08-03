@@ -32,10 +32,9 @@ list="
 "
 for file in $list
 do
-	echo "$file"
 	#
-	sed -f ChangeCopy.sed < $file > ChangeCopy.tmp
-	mv ChangeCopy.tmp $file
+	# sed -f ChangeCopy.sed < $file > ChangeCopy.tmp
+	# mv ChangeCopy.tmp $file
 	#
 	if ! grep "Common Public License" $file >> /dev/null
 	then

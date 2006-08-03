@@ -1,26 +1,15 @@
 dnl ---------------------------------------------------------------------------
-dnl CppAD: C++ Algorithmic Differentiation: 
-dnl Copyright (C) 2003-06 Bradley M. Bell
-dnl 
-dnl This program is free software; you can redistribute it and/or
-dnl modify it under the terms of the GNU General Public License
-dnl as published by the Free Software Foundation; either version 2
-dnl of the License, or (at your option) any later version.
-dnl 
-dnl This program is distributed in the hope that it will be useful,
-dnl but WITHOUT ANY WARRANTY; without even the implied warranty of
-dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-dnl GNU General Public License for more details.
-dnl 
-dnl You should have received a copy of the GNU General Public License
-dnl along with this program; if not, write to the Free Software
-dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+dnl CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+dnl
+dnl This program is free software; you can use it under the terms of the
+dnl                Common Public License Version 1.0.
+dnl You should have received a copy of the this license along with this program.
 dnl ---------------------------------------------------------------------------
 dnl
 dnl Process this file with autoconf to produce a configure script.
 
 dnl   package   version           bug-report
-AC_INIT(CppAD, 06-04-24, bradbell@seanet.com)
+AC_INIT(CppAD, 06-08-02, bradbell@seanet.com)
 
 dnl Set the default install prefix to the installers home directory
 AC_PREFIX_DEFAULT(${HOME})
