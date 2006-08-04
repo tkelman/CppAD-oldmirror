@@ -306,13 +306,22 @@ then
 	./Build.bsh configure test
 	make
 	echo "creating Test.log"
-	Example/Example           >  Test.log
-	TestMore/TestMore         >> Test.log
-	Introduction/Introduction >> Test.log
-	Fadbad/Example            >> Test.log
-	Adolc/Example             >> Test.log
+	Example/Example           >  ../Test.log
+	TestMore/TestMore         >> ../Test.log
+	Introduction/Introduction >> ../Test.log
+	Fadbad/Example            >> ../Test.log
+	Adolc/Example             >> ../Test.log
 	RunOMhelp.bsh Doc
-	cat OMhelp.Doc.log        >> Test.log
+	cat OMhelp.Doc.log        >> ../Test.log
+	if [ "$1" != "all" ]
+	then
+		exit 0
+	fi
+fi
+if [ "$1" = "gpl" ] || [ "$1" = "all" ] 
+then
+	echo "GplLicense.bsh"
+	./GplLicense.bsh
 	if [ "$1" != "all" ]
 	then
 		exit 0
@@ -340,6 +349,7 @@ echo "omhelp          build all the documentation"
 echo "dist            create the distribution files cppad-yy-mm-dd.cpl.tgz"
 echo "dos             create the distribution files cppad-yy-mm-dd.cpl.zip"
 echo "test            unpack the unix distribution and compiles its tests"
+echo "gpl             create cppad-yy-mm-dd.gpl.tgz, cppad-yy-mm-dd.gpl.zip"
 echo
 echo "Build.bsh all"
 echo "This command will execute all the options in the order above"
