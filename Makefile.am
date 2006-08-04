@@ -210,7 +210,7 @@ EXTRA_DIST = \
 	CheckIncludeDef.bsh \
 	CleanCppAD.bsh \
 	CppAD.tex \
-	gpl2.txt \
+	cpl1.0.txt \
 	Dev \
 	Dev.omh \
 	Doc \
