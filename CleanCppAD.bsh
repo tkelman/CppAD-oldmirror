@@ -42,7 +42,6 @@ then
 	\( -name 'TestOne.cpp'    \) -or \
 	\( -name '*.a'            \) -or \
 	\( -name '*.exe'          \) -or \
-	\( -name '*.gz'           \) -or \
 	\( -name '*.log'          \) -or \
 	\( -name '*.ncb'          \) -or \
 	\( -name '*.new'          \) -or \
@@ -53,6 +52,7 @@ then
 	\( -name '*.stackdump'    \) -or \
 	\( -name '*.suo'          \) -or \
 	\( -name '.*.swp'         \) -or \
+	\( -name '*.tgz'          \) -or \
 	\( -name '*.tmp'          \) -or \
 	\( -name '*.zip'          \)`
 else
