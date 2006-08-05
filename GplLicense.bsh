@@ -144,7 +144,3 @@ do
 done
 echo "zip -q -r cppad-$AcDate.gpl.zip cppad-$AcDate"
 zip -q -r cppad-$AcDate.gpl.zip cppad-$AcDate
-#
-# clean up
-echo "rm -r cppad-$AcDate"
-rm -r cppad-$AcDate

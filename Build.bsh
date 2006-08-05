@@ -191,7 +191,11 @@ then
 	if [ -e cppad-$AcDate ]
 	then
 		echo "rm -f -r cppad-$AcDate"
-		rm -f -r cppad-$AcDate
+		if ! rm -f -r cppad-$AcDate
+		then
+			echo "Build: cannot remove old cppad-$AcDate"
+			exit 1
+		fi
 	fi
 	for file in cppad-*.tgz cppad-*.zip
 	do
@@ -215,6 +219,13 @@ then
 	# change *.tar.gz to *.cpl.tgz
 	mv cppad-$AcDate.tar.gz cppad-$AcDate.cpl.tgz
 	#
+	# create GPL licensed version
+	echo "GplLicense.bsh"
+	if ! ./GplLicense.bsh
+	then
+		exit 1
+	fi
+	#
 	if [ "$1" != "all" ]
 	then
 		exit 0
@@ -222,75 +233,11 @@ then
 fi
 if [ "$1" = "dos" ] || ( [ "$1" = "all" ] && [ "$2" != "unix" ] )
 then
-	echo "Build.bsh dos"
-	#
-	if [ -e cppad-$AcDate ]
+	echo "./DosFormat.bsh"
+	if ! ./DosFormat.bsh
 	then
-		echo "rm -f -r cppad-$AcDate"
-		rm -f -r cppad-$AcDate
+		exit 1
 	fi
-	#
-	# extract from compressed tar
-	tar -xvzf cppad-$AcDate.cpl.tgz 
-	#
-	# convert files to dos format
-	for file in  cppad-$AcDate/*
-	do
-		if [ -f $file ]
-		then
-			unix2dos $file
-		fi
-	done
-	for dir in \
-		Adolc \
-		CppAD \
-		CppAD/local \
-		Example \
-		Fadbad \
-		GetStarted \
-		Introduction \
-		omh \
-		Speed \
-		TestMore
-	do
-		for file in cppad-$AcDate/$dir/*
-		do
-			if [ -f $file ]
-			then
-				unix2dos $file
-			fi
-		done
-	done
-	for dir in \
-		Dev \
-		Doc 
-	do
-		for file in \
-			cppad-$AcDate/$dir/*.xml \
-			cppad-$AcDate/$dir/*.htm \
-			cppad-$AcDate/$dir/*.js  \
-			cppad-$AcDate/$dir/*.xsl 
-		do
-			unix2dos $file
-		done
-	done
-	#
-	# Make sure that dates in certain files are in certain order
-	# (necessary because of unix2dos conversion above)
-	touch cppad-$AcDate/aclocal.m4
-	sleep 2
-	touch cppad-$AcDate/CppAD/config.h.in
-	sleep 2
-	touch cppad-$AcDate/Makefile.in
-	touch cppad-$AcDate/*/Makefile.in
-	sleep 2
-	touch cppad-$AcDate/configure
-	#
-	# create the dos version cppad-$AcDate.cpl.zip
-	zip -r cppad-$AcDate.cpl.zip cppad-$AcDate
-	#
-	# clean up
-	rm -r cppad-$AcDate
 	#
 	if [ "$1" != "all" ]
 	then
@@ -299,13 +246,25 @@ then
 fi
 if [ "$1" = "test" ] || ( [ "$1" = "all" ] && [ "$2" = "unix" ] )
 then
-	echo "Build.bsh test"
 	#
-	tar -xvzf cppad-$AcDate.cpl.tgz
+	if [ -e cppad-$AcDate ]
+	then
+		echo "rm -f -r cppad-$AcDate"
+		if ! rm -f -r cppad-$AcDate
+		then
+			echo "Build: cannot remove old cppad-$AcDate"
+			exit 1
+		fi
+	fi
+	#
+	echo "tar -xzf cppad-$AcDate.cpl.tgz"
+	tar -xzf cppad-$AcDate.cpl.tgz
+	#
+	wd=`pwd`
 	cd cppad-$AcDate
 	./Build.bsh configure test
 	make
-	echo "creating Test.log"
+	echo "creating $wd/Test.log"
 	Example/Example           >  ../Test.log
 	TestMore/TestMore         >> ../Test.log
 	Introduction/Introduction >> ../Test.log
@@ -313,15 +272,6 @@ then
 	Adolc/Example             >> ../Test.log
 	RunOMhelp.bsh Doc
 	cat OMhelp.Doc.log        >> ../Test.log
-	if [ "$1" != "all" ]
-	then
-		exit 0
-	fi
-fi
-if [ "$1" = "gpl" ] || [ "$1" = "all" ] 
-then
-	echo "GplLicense.bsh"
-	./GplLicense.bsh
 	if [ "$1" != "all" ]
 	then
 		exit 0
@@ -346,10 +296,9 @@ echo "configure       excludes --with-* except GetStarted and Introduction"
 echo "configure test  includes all the possible options except PREFIX_DIR"
 echo "make            use make to build all of the requested targets"
 echo "omhelp          build all the documentation"
-echo "dist            create the distribution files cppad-yy-mm-dd.cpl.tgz"
-echo "dos             create the distribution files cppad-yy-mm-dd.cpl.zip"
+echo "dist            create the distribution files cppad-yy-mm-dd.*.tgz"
+echo "dos             create the distribution files cppad-yy-mm-dd.*.zip"
 echo "test            unpack the unix distribution and compiles its tests"
-echo "gpl             create cppad-yy-mm-dd.gpl.tgz, cppad-yy-mm-dd.gpl.zip"
 echo
 echo "Build.bsh all"
 echo "This command will execute all the options in the order above"

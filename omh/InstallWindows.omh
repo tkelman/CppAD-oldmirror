@@ -56,11 +56,18 @@ $href%
 %$$,
 with Unix formatted files,
 just follow all of the $xref/InstallUnix//Unix installation/$$ steps.
-Otherwise,
-download the file
+Otherwise, download either the CPL or GPL licensed version from:
+
+$subhead CPL License$$
 $href%
-	http://www.coin-or.org/Tarballs/CppAD/CppAD-06-08-02.zip%
-	CppAD-06-08-02.zip
+	http://www.coin-or.org/Tarballs/CppAD/CppAD-06-08-04.clp.zip%
+	CppAD-06-08-04.cpl.zip
+%$$
+
+$subhead GPL License$$
+$href%
+	http://www.coin-or.org/Tarballs/CppAD/CppAD-06-08-04.gpl.zip%
+	CppAD-06-08-04.gpl.zip
 %$$
 
 $head Extraction$$
@@ -69,11 +76,10 @@ $href%
 	http://www.winzip.com%
 	WinZip
 %$$
-or some other program to decompress the archive
-$code CppAD-06-08-02.zip$$.
+or some other program to decompress the archive.
 This will create the distribution directory 
 $syntax%
-	cppad-06-08-02
+	cppad-06-08-04
 %$$
 All the command sequences below assume that you start in this
 distribution directory.

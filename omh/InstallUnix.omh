@@ -9,6 +9,8 @@ You should have received a copy of the this license along with this program.
 $begin InstallUnix$$
 $dollar @$$
 $spell
+	tgz
+	gpl
 	Dev
 	sed
 	cppad
@@ -51,23 +53,32 @@ $section Unix Installation and Testing$$
 
 $head Download Current Version$$
 $index download, unix$$
-Download the file
+Download either the CPL or GPL licensed version from:
+
+$subhead CPL License$$
 $href%
-	http://www.coin-or.org/Tarballs/CppAD/CppAD-06-08-02.tar.gz%
-	CppAD-06-08-02.tar.gz
+	http://www.coin-or.org/Tarballs/CppAD/CppAD-06-08-04.clp.tgz%
+	CppAD-06-08-04.cpl.tgz
+%$$
+
+$subhead GPL License$$
+$href%
+	http://www.coin-or.org/Tarballs/CppAD/CppAD-06-08-04.gpl.tgz%
+	CppAD-06-08-04.gpl.tgz
 %$$
 
 $head Extraction$$
 Use the command
-$codep
-	tar -xvzf CppAD-06-08-02.tar.gz
-$$
+$syntax%
+	tar -xvzf CppAD-06-08-04.%license%.tgz
+%$$
+(where $italic license$$ is $code cpl$$ or $code gpl$$)
 to decompress and extract the unix format version
 into the distribution directory
 $syntax%
-	cppad-06-08-02
+	cppad-06-08-04
 %$$
-Note that $code 06-08-02$$ is the version number for CppAD.
+Note that $code 06-08-04$$ is the version number for CppAD.
 All of the commands below are to be executed starting from this
 directory.
 
