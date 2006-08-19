@@ -23,7 +23,7 @@ AcDate=`grep "^ *AC_INIT(" configure.ac | \
 #
 if [ "$1" = "version" ] || [ "$1" = "all" ]
 then
-	echo "Build.bsh version"
+	echo "Build.sh version"
 	#
 	# Today's date in yy-mm-dd decimal digit format with leading zeros
 	Today=`date +%g-%m-%d`
@@ -63,14 +63,14 @@ fi
 #
 if [ "$1" = "automake" ] || [ "$1" = "all" ]
 then
-	echo "Build.bsh automake"
+	echo "Build.sh automake"
 	#
 	if [ -e configure ]
 	then
 		rm configure
 	fi
 	echo "---------------------------------------------------------"
-	echo "If aclocal generates warning messages, run ./FixAclocal.bsh"
+	echo "If aclocal generates warning messages, run ./FixAclocal.sh"
 	echo "aclocal"
 	aclocal
 	echo "---------------------------------------------------------"
@@ -96,9 +96,9 @@ if [ "$1" = "configure" ] || [ "$1" = "all" ]
 then
 	if [ "$2" = "test" ]
 	then
-		echo "Build.bsh configure test"
+		echo "Build.sh configure test"
 	else
-		echo "Build.bsh configure"
+		echo "Build.sh configure"
 	fi
 	#
 	TEST="--with-GetStarted"
@@ -134,8 +134,8 @@ then
 		CPP_ERROR_WARN="-Wall -ansi -pedantic-errors -std=c++98"
 	#
 	# Fix Makefile for what appears to be a bug in gzip under cygwin
-	echo "FixMakefile.bsh"
-	./FixMakefile.bsh
+	echo "FixMakefile.sh"
+	./FixMakefile.sh
 	#
 	if [ "$1" != "all" ]
 	then
@@ -147,7 +147,7 @@ fi
 #
 if [ "$1" = "make" ] || [ "$1" = "all" ]
 then
-	echo "Build.bsh make"
+	echo "Build.sh make"
 	#
 	echo "make"
 	make
@@ -162,16 +162,16 @@ fi
 #
 if [ "$1" = "omhelp" ] || [ "$1" = "all" ]
 then
-	echo "Build.bsh omhelp"
+	echo "Build.sh omhelp"
 	#
-	echo "RunOMhelp.bsh Dev"
-	if ! ./RunOMhelp.bsh Dev
+	echo "RunOMhelp.sh Dev"
+	if ! ./RunOMhelp.sh Dev
 	then
 		exit 1
 	fi
 	#
-	echo "RunOMhelp.bsh Doc"
-	if ! ./RunOMhelp.bsh Doc
+	echo "RunOMhelp.sh Doc"
+	if ! ./RunOMhelp.sh Doc
 	then
 		exit 1
 	fi
@@ -186,7 +186,7 @@ fi
 #
 if [ "$1" = "dist" ] || [ "$1" = "all" ]
 then
-	echo "Build.bsh dist"
+	echo "Build.sh dist"
 	#
 	if [ -e cppad-$AcDate ]
 	then
@@ -220,8 +220,8 @@ then
 	mv cppad-$AcDate.tar.gz cppad-$AcDate.cpl.tgz
 	#
 	# create GPL licensed version
-	echo "GplLicense.bsh"
-	if ! ./GplLicense.bsh
+	echo "GplLicense.sh"
+	if ! ./GplLicense.sh
 	then
 		exit 1
 	fi
@@ -233,8 +233,8 @@ then
 fi
 if [ "$1" = "dos" ] || ( [ "$1" = "all" ] && [ "$2" != "unix" ] )
 then
-	echo "./DosFormat.bsh"
-	if ! ./DosFormat.bsh
+	echo "./DosFormat.sh"
+	if ! ./DosFormat.sh
 	then
 		exit 1
 	fi
@@ -262,7 +262,7 @@ then
 	#
 	wd=`pwd`
 	cd cppad-$AcDate
-	./Build.bsh configure test
+	./Build.sh configure test
 	make
 	echo "creating $wd/Test.log"
 	Example/Example           >  ../Test.log
@@ -270,7 +270,7 @@ then
 	Introduction/Introduction >> ../Test.log
 	Fadbad/Example            >> ../Test.log
 	Adolc/Example             >> ../Test.log
-	RunOMhelp.bsh Doc
+	RunOMhelp.sh Doc
 	cat OMhelp.Doc.log        >> ../Test.log
 	if [ "$1" != "all" ]
 	then
@@ -284,7 +284,7 @@ fi
 #
 if [ "$1" = "" ]
 then
-	echo "usage: Build.bsh option (where valid options are listed below)" 
+	echo "usage: Build.sh option (where valid options are listed below)" 
 else
 	echo "$1 is not a valid option (valid options are listed below)"
 fi
@@ -300,11 +300,11 @@ echo "dist            create the distribution files cppad-yy-mm-dd.*.tgz"
 echo "dos             create the distribution files cppad-yy-mm-dd.*.zip"
 echo "test            unpack the unix distribution and compiles its tests"
 echo
-echo "Build.bsh all"
+echo "Build.sh all"
 echo "This command will execute all the options in the order above"
 echo "with the exception that \"configue test\" and \"test\" will be excluded."
 echo
-echo "Build.bsh all unix"
+echo "Build.sh all unix"
 echo "This command will execute all the options in the order above"
 echo "with the exception that \"configue test\" and \"dos\" will be excluded."
 #

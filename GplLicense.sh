@@ -59,7 +59,7 @@ list=`find . \
 	\( -name '*.am'  \) -or \
 	\( -name '*.ac'  \) -or \
 	\( -name '*.ac'  \) -or \
-	\( -name '*.bsh' \) -or \
+	\( -name '*.sh' \) -or \
 	\( -name '*.cpp' \) -or \
 	\( -name '*.h'   \) -or \
 	\( -name '*.hpp' \) -or \
@@ -93,7 +93,7 @@ do
 	exit 1
 		fi
 	fi
-	if [ "$ext" = ".bsh" ]
+	if [ "$ext" = ".sh" ]
 	then
 		chmod +x cppad-$AcDate/$file
 	fi
@@ -137,7 +137,7 @@ do
 	#
 	unix2dos cppad-$AcDate/$file >& /dev/null
 	#
-	if [ "$ext" = ".bsh" ]
+	if [ "$ext" = ".sh" ]
 	then
 		chmod +x cppad-$AcDate/$file
 	fi

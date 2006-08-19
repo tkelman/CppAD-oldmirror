@@ -35,20 +35,41 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Improved messaging.
-
-SvnCommit.bsh: file that made this commit.
-CheckIncludeFile.bsh: checks the C++ include comamnds.
-CheckIncludeOmh.bsh: checks the OMhelp include commands.
+log_entry="Change shell script extension from .bsh to .sh
 "
 # 
 add_list="
 "
 #
 change_list="
-	SvnCommit.bsh
+	Build.bsh
+	CheckIncludeDef.bsh
 	CheckIncludeFile.bsh
 	CheckIncludeOmh.bsh
+	CleanCppAD.bsh
+	DosFormat.bsh
+	FixAclocal.bsh
+	FixMakefile.bsh
+	GplLicense.bsh
+	RunOMhelp.bsh
+	SvnCommit.bsh
+	SvnMerge.bsh
+	SvnStatus.bsh
+	diffToday.bsh
+	Build.sh
+	CheckIncludeDef.sh
+	CheckIncludeFile.sh
+	CheckIncludeOmh.sh
+	CleanCppAD.sh
+	DosFormat.sh
+	FixAclocal.sh
+	FixMakefile.sh
+	GplLicense.sh
+	RunOMhelp.sh
+	SvnCommit.sh
+	SvnMerge.sh
+	SvnStatus.sh
+	diffToday.sh
 "
 #
 delete_list="
