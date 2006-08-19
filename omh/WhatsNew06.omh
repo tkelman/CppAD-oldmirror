@@ -1,13 +1,24 @@
-/* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+/* -----------------------------------------------------------------------
+CppAD: C++ Algorithm Differentiation: Copyright (C) 2003-06 Bradley M. Bell
 
-This program is free software; you can use it under the terms of the 
-	         Common Public License Version 1.0.
-You should have received a copy of the this license along with this program.
--------------------------------------------------------------------------- */
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+------------------------------------------------------------------------ */
 
 $begin WhatsNew06$$
 $spell
+	valgrind memcheck
 	Kasper Kristensen
 	taylor
 	BAvector
@@ -58,6 +69,16 @@ $tref WhatsNew05$$
 $tend
 The purpose of these sections is to
 assist you in learning about changes between various versions of CppAD.
+
+$head 08-17$$
+Some error message occurred while executing
+$codep
+	valgrind --tool=memcheck Example/Example
+	valgrind --tool=memcheck TestMore/TestMore
+
+$$
+These were not really bugs, but they have been fixed to avoid
+this conflict between CppAD and $href%http://valgrind.org/%valgrind%$$.
 
 $head 07-14$$
 Make some improvements were made to the $cref/Introduction/$$, 

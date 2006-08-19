@@ -1,13 +1,23 @@
 # ifndef CppADVecADIncluded
 # define CppADVecADIncluded
 
-/* --------------------------------------------------------------------------
+/* -----------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
 
-This program is free software; you can use it under the terms of the 
-	         Common Public License Version 1.0.
-You should have received a copy of the this license along with this program.
--------------------------------------------------------------------------- */
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+------------------------------------------------------------------------ */
 /*
 $begin VecAD$$
 $spell
@@ -419,7 +429,16 @@ public:
 	{	CppADUnknownError( *ADTape<Base>::Id() > id );
 		data  = CppADNull;
 		if( length > 0 )
+		{	size_t i;
+			Base zero(0);
 			data  = CppADTrackNewVec(length, data);
+
+			// Initialize data to zero so all have same value.
+			// This uses less memory and avoids a valgrind error
+			// during TapeRec<Base>::PutPar 
+			for(i = 0; i < length; i++)
+				data[i] = zero;
+		}
 	}
 
 	// destructor
