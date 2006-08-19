@@ -35,7 +35,7 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Copy changes for valgrind over from trunk to here
+log_entry="Fix copyright message in files copied from trunk
 
 SvnCommit.bsh: file that made this commit.
 WhatsNew06.omh: users view of the changes.
