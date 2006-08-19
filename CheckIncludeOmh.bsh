@@ -7,14 +7,15 @@
 # You should have received a copy of the this license along with this program.
 # -----------------------------------------------------------------------------
 #
-echo "Differences between include omh names and directives"
-echo "-----------------------------------------------------"
+echo "Checking difference between OMhelp include directivers and file names."
+echo "----------------------------------------------------------------------"
 if [ -e junk.1 ]
 then
 	rm junk.1
 fi
 for file in *.omh */*.omh */*.h */*.cpp CppAD/local/*.h */*.hpp
 do
+	# assume $childtable, ... , $verbatim use % for delimiter
 	sed -n < $file >> junk.1 \
 		-e '/$childtable%/,/%$\$/p' \
 		-e '/$children%/,/%$\$/p' \
@@ -32,7 +33,7 @@ sed < junk.1 > junk.2 \
 	-e 's/^[ 	]*//' \
 	-e 's|\\|/|g'
 #
-ls omh/gpl.txt *.omh */*.out */*.omh */*.h */*.cpp CppAD/local/*.h  \
+ls cpl1.0.txt *.omh */*.out */*.omh */*.h */*.cpp CppAD/local/*.h  \
 	*/*.hpp > junk.3
 #
 for file in `cat junk.2`
@@ -42,5 +43,5 @@ do
 		echo $file
 	fi
 done
-echo "-----------------------------------------------------"
+echo "----------------------------------------------------------------------"
 echo "Nothing should be between the two dashed lines above"

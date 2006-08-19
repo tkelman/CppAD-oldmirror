@@ -35,14 +35,11 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Fix copyright message in files copied from trunk
+log_entry="Improved messaging.
 
 SvnCommit.bsh: file that made this commit.
-WhatsNew06.omh: users view of the changes.
-CopyAD.h: use default copy constructor for AD types.
-AD.h: use default copy constructor for AD types.
-VecAD.h: initialize vector data to zero.
-Eq.h: fix check that was before data initialization.
+CheckIncludeFile.bsh: checks the C++ include comamnds.
+CheckIncludeOmh.bsh: checks the OMhelp include commands.
 "
 # 
 add_list="
@@ -50,11 +47,8 @@ add_list="
 #
 change_list="
 	SvnCommit.bsh
-	omh/WhatsNew06.omh
-	CppAD/local/CopyAD.h
-	CppAD/local/AD.h
-	CppAD/local/VecAD.h
-	CppAD/local/Eq.h
+	CheckIncludeFile.bsh
+	CheckIncludeOmh.bsh
 "
 #
 delete_list="

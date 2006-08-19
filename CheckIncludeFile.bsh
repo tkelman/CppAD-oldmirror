@@ -7,8 +7,8 @@
 # You should have received a copy of the this license along with this program.
 # -----------------------------------------------------------------------------
 #
-echo "Differences between include file names and directives"
-echo "-----------------------------------------------------"
+echo "Checking difference between C++ include directivers and file names."
+echo "-------------------------------------------------------------------"
 grep '^# *include *<CppAD/' \
 	CppAD/*.h \
 	CppAD/local/*.h \
@@ -48,6 +48,6 @@ sort -u > junk.2
 cat junk.1 junk.2 | sort -u > junk.3
 diff -b junk.2 junk.3
 #
-echo "-----------------------------------------------------"
+echo "-------------------------------------------------------------------"
 echo "Nothing should be between the two dashed lines above"
 echo "If CppAD/config.h appears, run Build all and try again"
