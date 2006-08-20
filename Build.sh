@@ -1,4 +1,3 @@
-# ! /bin/bash
 # -----------------------------------------------------------------------------
 # CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
 #
@@ -17,7 +16,7 @@ BOOST_DIR=/usr/include/boost-1_33
 #
 # date currently in configure.ac
 AcDate=`grep "^ *AC_INIT(" configure.ac | \
-	sed -e "s/.*, *\([0-9][0-9]-[0-9][0-9]-[0-9][0-9]\) *,.*/\1/"`
+	sed -e "s/.*, *\([0-9]\{8\}\) *,.*/\1/"`
 #
 # version
 #
@@ -25,24 +24,32 @@ if [ "$1" = "version" ] || [ "$1" = "all" ]
 then
 	echo "Build.sh version"
 	#
-	# Today's date in yy-mm-dd decimal digit format with leading zeros
-	Today=`date +%g-%m-%d`
+	# Today's date in ccyy-mm-dd decimal digit format where cc is century,
+	# yy is year in century, mm is month in year, dd is day in month.
+	ccyy_mm_dd=`date +%C%g-%m-%d`
 	#
-	sed configure.ac > configure.tmp -e \
-	"s/(CppAD, [0-9][0-9]-[0-9][0-9]-[0-9][0-9],/(CppAD, $Today,/"
+	# Today's date in ccyymmdd format
+	ccyymmdd=`date +%C%g%m%d`
 	#
-	diff configure.ac  configure.tmp
-	mv   configure.tmp configure.ac
+	# configure.ac
+	sed configure.ac > configure.ac.$$ \
+		-e "s/(CppAD, [0-9]\{8\} *,/(CppAD, $ccyymmdd,/"
+	diff configure.ac  configure.ac.$$
+	mv   configure.ac.$$ configure.ac
 	#
-	# change Autoconf date to today
-	AcDate=$Today
+	# AUTHORS
+	sed AUTHORS > AUTHORS.$$ \
+	-e "s/, *[0-9]\{4\}-[0-9][0-9]-[0-9][0-9] *,/, $ccyy_mm_dd,/"
+	diff AUTHORS    AUTHORS.$$
+	mv   AUTHORS.$$ AUTHORS 
 	#
-	for name in AUTHORS Doc.omh omh/InstallUnix.omh omh/InstallWindows.omh
+	# change Autoconf version to today
+	AcDate=$ccyymmdd
+	#
+	for name in Doc.omh omh/InstallUnix.omh omh/InstallWindows.omh
 	do
 		sed $name > $name.$$ \
-	-e "s/\([^0-9]\)[0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/\1$Today/g" \
-	-e "s/\([^0-9]\)[0-9][0-9]-[0-9][0-9]-[0-9][0-9]\([^0-9]\)/\1$Today\2/g" 
-	#
+			-e "s/cppad-[0-9]\{8\}/cppad-$ccyymmdd/g"
 		diff $name $name.$$
 		mv   $name.$$ $name
 	done

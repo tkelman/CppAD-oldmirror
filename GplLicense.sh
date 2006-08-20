@@ -9,7 +9,7 @@
 #
 # date currently in configure.ac
 AcDate=`grep "^ *AC_INIT(" configure.ac | \
-	sed -e "s/.*, *\([0-9][0-9]-[0-9][0-9]-[0-9][0-9]\) *,.*/\1/"`
+	sed -e "s/.*, *\([0-9]\{8\}\) *,.*/\1/"`
 #
 # delete old version of *.gpl.tgz and *.gpl.zip
 for file in cppad-$AcDate.gpl.tgz cppad-$AcDate.gpl.zip

@@ -9,7 +9,7 @@
 #
 # date currently in configure.ac
 AcDate=`grep "^ *AC_INIT(" configure.ac | \
-	sed -e "s/.*, *\([0-9][0-9]-[0-9][0-9]-[0-9][0-9]\) *,.*/\1/"`
+	sed -e "s/.*, *\([0-9]\{8\}\) *,.*/\1/"`
 #
 # delete old version of *.cpl.zip and *.gpl.zip
 for file in cppad-$AcDate.cpl.zip cppad-$AcDate.gpl.zip
@@ -74,7 +74,7 @@ do
 		NEWS
 	"
 	cd ..
-	echo "DosFormat: converting file formats dos version"
+	echo "DosFormat: converting file formats from unix to dos"
 	for file in $list
 	do
 		ext=`echo $file | sed -e "s/.*\././"`

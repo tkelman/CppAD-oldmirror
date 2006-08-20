@@ -8,6 +8,7 @@ You should have received a copy of the this license along with this program.
 $begin CppAD$$
 
 $spell
+	cppad
 	namespaces
 	std
 	templated
@@ -32,7 +33,7 @@ $index CppAD$$
 $index version, CppAD$$
 
 $section 
-A Package for Differentiation of C++ Algorithms: CppAD-06-08-02
+A Package for Differentiation of C++ Algorithms: cppad-20060820
 $$ 
 
 $head Syntax$$
