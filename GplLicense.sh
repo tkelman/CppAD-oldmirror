@@ -7,6 +7,10 @@
 # You should have received a copy of the this license along with this program.
 # -----------------------------------------------------------------------------
 #
+# Bradley M. Bell has given COIN-OR permission to use this script to generate 
+# a version of CppAD that has "GNU General Public License Version 2"
+# in place of "Common Public License Version 1.0." in the message above.
+#
 # date currently in configure.ac
 AcDate=`grep "^ *AC_INIT(" configure.ac | \
 	sed -e "s/.*, *\([0-9]\{8\}\) *,.*/\1/"`

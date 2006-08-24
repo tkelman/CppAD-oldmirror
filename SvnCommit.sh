@@ -35,44 +35,26 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Change shell script extension from .bsh to .sh
+log_entry="Minor improvements.
+
+SvnCommit.sh: file that make this commit.
+GplLicense.sh: Give COIN-OR permission to change license from CPL to GPL.
+diffToday.sh: convert to new date format (ccyymmdd in place of yy-mm-dd).
+Build.sh: use *.tmp instead of *.$$ (easier for CleanCppAD.sh to find).
 "
 # 
 add_list="
 "
 #
 change_list="
-	Build.bsh
-	CheckIncludeDef.bsh
-	CheckIncludeFile.bsh
-	CheckIncludeOmh.bsh
-	CleanCppAD.bsh
-	DosFormat.bsh
-	FixAclocal.bsh
-	FixMakefile.bsh
-	GplLicense.bsh
-	RunOMhelp.bsh
-	SvnCommit.bsh
-	SvnMerge.bsh
-	SvnStatus.bsh
-	diffToday.bsh
-	Build.sh
-	CheckIncludeDef.sh
-	CheckIncludeFile.sh
-	CheckIncludeOmh.sh
-	CleanCppAD.sh
-	DosFormat.sh
-	FixAclocal.sh
-	FixMakefile.sh
-	GplLicense.sh
-	RunOMhelp.sh
 	SvnCommit.sh
-	SvnMerge.sh
-	SvnStatus.sh
+	GplLicense.sh
 	diffToday.sh
+	Build.sh
 "
 #
 delete_list="
+	ChangeCopy.sed
 "
 #
 copy_branch="" 

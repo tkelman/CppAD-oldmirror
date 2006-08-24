@@ -10,16 +10,20 @@
 # Change date of subversion version of file to current date and then
 # difference that with local version of file
 #
-Today=`date +%g-%m-%d`
+# century, year, month, and date
+ccyymmdd=`date +%C%g%m%d`
+ccyy_mm_dd=`date +%C%g-%m-%d`
 #
 if [ ! -e "$1" ]
 then
-	echo "diffToday list_of_file_names"
+	echo "diffToday file_name"
 	exit
 fi
 svn cat $1 | sed > $1.tmp \
--e "s/\([^0-9]\)[0-9][0-9]-[0-9][0-9]-[0-9][0-9]\([^0-9]\)/\1$Today\2/"  \
--e "s/\([^0-9]\)[0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/\1$Today/" 
+	-e "s/(CppAD, [0-9]\{8\} *,/(CppAD, $ccyymmdd,/" \
+	-e "s/, *[0-9]\{4\}-[0-9][0-9]-[0-9][0-9] *,/, $ccyy_mm_dd,/" \
+	-e "s/cppad-[0-9]\{8\}/cppad-$ccyymmdd/g"
+#
 echo "diff $1-local $1-subversion"
 diff          $1      $1.tmp
 rm                    $1.tmp

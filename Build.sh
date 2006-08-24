@@ -32,26 +32,26 @@ then
 	ccyymmdd=`date +%C%g%m%d`
 	#
 	# configure.ac
-	sed configure.ac > configure.ac.$$ \
+	sed configure.ac > configure.ac.tmp \
 		-e "s/(CppAD, [0-9]\{8\} *,/(CppAD, $ccyymmdd,/"
-	diff configure.ac  configure.ac.$$
-	mv   configure.ac.$$ configure.ac
+	diff configure.ac  configure.ac.tmp
+	mv   configure.ac.tmp configure.ac
 	#
 	# AUTHORS
-	sed AUTHORS > AUTHORS.$$ \
+	sed AUTHORS > AUTHORS.tmp \
 	-e "s/, *[0-9]\{4\}-[0-9][0-9]-[0-9][0-9] *,/, $ccyy_mm_dd,/"
-	diff AUTHORS    AUTHORS.$$
-	mv   AUTHORS.$$ AUTHORS 
+	diff AUTHORS    AUTHORS.tmp
+	mv   AUTHORS.tmp AUTHORS 
 	#
 	# change Autoconf version to today
 	AcDate=$ccyymmdd
 	#
 	for name in Doc.omh omh/InstallUnix.omh omh/InstallWindows.omh
 	do
-		sed $name > $name.$$ \
+		sed $name > $name.tmp \
 			-e "s/cppad-[0-9]\{8\}/cppad-$ccyymmdd/g"
-		diff $name $name.$$
-		mv   $name.$$ $name
+		diff $name $name.tmp
+		mv   $name.tmp $name
 	done
 	#
 	# configure file is out of date so remove it
