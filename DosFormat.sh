@@ -8,11 +8,11 @@
 # -----------------------------------------------------------------------------
 #
 # date currently in configure.ac
-AcDate=`grep "^ *AC_INIT(" configure.ac | \
+version=`grep "^ *AC_INIT(" configure.ac | \
 	sed -e "s/.*, *\([0-9]\{8\}\) *,.*/\1/"`
 #
 # delete old version of *.cpl.zip and *.gpl.zip
-for file in cppad-$AcDate.cpl.zip cppad-$AcDate.gpl.zip
+for file in cppad-$version.cpl.zip cppad-$version.gpl.zip
 do
 	if [ -e $file ]
 	then
@@ -27,31 +27,31 @@ done
 for license in cpl gpl
 do
 	# delete old version of directory (if it exists)
-	if [ -e cppad-$AcDate ]
+	if [ -e cppad-$version ]
 	then
-		echo "rm -r cppad-$AcDate"
-		if ! rm -r cppad-$AcDate
+		echo "rm -r cppad-$version"
+		if ! rm -r cppad-$version
 		then
-			echo "DosFormat: cannot remove old cppad-$AcDate"
+			echo "DosFormat: cannot remove old cppad-$version"
 			exit 1
 		fi
 	fi
 	#
 	# Convert this license version 
-	if [ ! -e cppad-$AcDate.$license.tgz ]
+	if [ ! -e cppad-$version.$license.tgz ]
 	then
-		echo "DosFormat: cannot find cppad-$AcDate.$license.tgz"
+		echo "DosFormat: cannot find cppad-$version.$license.tgz"
 		exit 1
 	fi
 	#
 	# extract from the *.$license.tgz file
-	echo "tar -xzf cppad-$AcDate.$license.tgz"
-	tar -xzf cppad-$AcDate.$license.tgz
+	echo "tar -xzf cppad-$version.$license.tgz"
+	tar -xzf cppad-$version.$license.tgz
 	#
 	# make sure can change into new directory 
-	if ! cd cppad-$AcDate
+	if ! cd cppad-$version
 	then
-	echo "DosFromat: cannot make new cppad-$AcDate working directory"
+	echo "DosFromat: cannot make new cppad-$version working directory"
 	exit 1
 	fi
 	#
@@ -80,14 +80,14 @@ do
 		ext=`echo $file | sed -e "s/.*\././"`
 		file=`echo $file | sed -e 's|^\./||'`
 		#
-		unix2dos cppad-$AcDate/$file >& /dev/null
+		unix2dos cppad-$version/$file >& /dev/null
 		#
 		if [ "$ext" = ".sh" ]
 		then
-			chmod +x cppad-$AcDate/$file
+			chmod +x cppad-$version/$file
 		fi
 	done
-	echo "zip -q -r cppad-$AcDate.$license.zip cppad-$AcDate"
-	zip -q -r cppad-$AcDate.$license.zip cppad-$AcDate
+	echo "zip -q -r cppad-$version.$license.zip cppad-$version"
+	zip -q -r cppad-$version.$license.zip cppad-$version
 	#
 done

@@ -15,7 +15,7 @@ FADBAD_DIR=$HOME
 BOOST_DIR=/usr/include/boost-1_33
 #
 # date currently in configure.ac
-AcDate=`grep "^ *AC_INIT(" configure.ac | \
+version=`grep "^ *AC_INIT(" configure.ac | \
 	sed -e "s/.*, *\([0-9]\{8\}\) *,.*/\1/"`
 #
 # version
@@ -44,7 +44,7 @@ then
 	mv   AUTHORS.tmp AUTHORS 
 	#
 	# change Autoconf version to today
-	AcDate=$ccyymmdd
+	version=$ccyymmdd
 	#
 	for name in Doc.omh omh/InstallUnix.omh omh/InstallWindows.omh
 	do
@@ -195,12 +195,12 @@ if [ "$1" = "dist" ] || [ "$1" = "all" ]
 then
 	echo "Build.sh dist"
 	#
-	if [ -e cppad-$AcDate ]
+	if [ -e cppad-$version ]
 	then
-		echo "rm -f -r cppad-$AcDate"
-		if ! rm -f -r cppad-$AcDate
+		echo "rm -f -r cppad-$version"
+		if ! rm -f -r cppad-$version
 		then
-			echo "Build: cannot remove old cppad-$AcDate"
+			echo "Build: cannot remove old cppad-$version"
 			exit 1
 		fi
 	fi
@@ -216,35 +216,16 @@ then
 	echo "make dist"
 	make dist
 	#
-	if [ ! -e cppad-$AcDate.tar.gz ]
+	if [ ! -e cppad-$version.tar.gz ]
 	then
-		echo "cppad-$AcDate.tar.gz does not exist"
+		echo "cppad-$version.tar.gz does not exist"
 		echo "perhaps version is out of date"
 		#
 		exit 1
 	fi
 	# change *.tar.gz to *.cpl.tgz
-	mv cppad-$AcDate.tar.gz cppad-$AcDate.cpl.tgz
+	mv cppad-$version.tar.gz cppad-$version.cpl.tgz
 	#
-	# create GPL licensed version
-	echo "GplLicense.sh"
-	if ! ./GplLicense.sh
-	then
-		exit 1
-	fi
-	#
-	if [ "$1" != "all" ]
-	then
-		exit 0
-	fi
-fi
-if [ "$1" = "dos" ] || ( [ "$1" = "all" ] && [ "$2" != "unix" ] )
-then
-	echo "./DosFormat.sh"
-	if ! ./DosFormat.sh
-	then
-		exit 1
-	fi
 	#
 	if [ "$1" != "all" ]
 	then
@@ -254,21 +235,21 @@ fi
 if [ "$1" = "test" ] || ( [ "$1" = "all" ] && [ "$2" = "unix" ] )
 then
 	#
-	if [ -e cppad-$AcDate ]
+	if [ -e cppad-$version ]
 	then
-		echo "rm -f -r cppad-$AcDate"
-		if ! rm -f -r cppad-$AcDate
+		echo "rm -f -r cppad-$version"
+		if ! rm -f -r cppad-$version
 		then
-			echo "Build: cannot remove old cppad-$AcDate"
+			echo "Build: cannot remove old cppad-$version"
 			exit 1
 		fi
 	fi
 	#
-	echo "tar -xzf cppad-$AcDate.cpl.tgz"
-	tar -xzf cppad-$AcDate.cpl.tgz
+	echo "tar -xzf cppad-$version.cpl.tgz"
+	tar -xzf cppad-$version.cpl.tgz
 	#
 	wd=`pwd`
-	cd cppad-$AcDate
+	cd cppad-$version
 	./Build.sh configure test
 	make
 	echo "creating $wd/Test.log"
@@ -279,6 +260,25 @@ then
 	Adolc/Example             >> ../Test.log
 	RunOMhelp.sh Doc
 	cat OMhelp.Doc.log        >> ../Test.log
+	if [ "$1" != "all" ]
+	then
+		exit 0
+	fi
+fi
+if [ "$1" = "gpl+dos" ] || ( [ "$1" = "all" ] && [ "$2" != "unix" ] )
+then
+	# create GPL licensed version
+	echo "GplLicense.sh"
+	if ! ./GplLicense.sh
+	then
+		exit 1
+	fi
+	echo "./DosFormat.sh"
+	if ! ./DosFormat.sh
+	then
+		exit 1
+	fi
+	#
 	if [ "$1" != "all" ]
 	then
 		exit 0
@@ -297,22 +297,22 @@ else
 fi
 echo "option"
 echo "------"
-echo "version         update configure.ac and Doc.omh version number"
-echo "automake        run aclocal,autoheader,autoconf,automake -> configure"
-echo "configure       excludes --with-* except GetStarted and Introduction"
-echo "configure test  includes all the possible options except PREFIX_DIR"
-echo "make            use make to build all of the requested targets"
-echo "omhelp          build all the documentation"
-echo "dist            create the distribution files cppad-yy-mm-dd.*.tgz"
-echo "dos             create the distribution files cppad-yy-mm-dd.*.zip"
-echo "test            unpack the unix distribution and compiles its tests"
+echo "version        update configure.ac and Doc.omh version number"
+echo "automake       run aclocal,autoheader,autoconf,automake -> configure"
+echo "configure      excludes --with-* except GetStarted and Introduction"
+echo "configure test includes all the possible options except PREFIX_DIR"
+echo "make           use make to build all of the requested targets"
+echo "omhelp         build all the documentation"
+echo "dist           create the distribution file cppad-version.cpl.tgz"
+echo "test           unpack *.cpl.tgz, compile, run tests, result in Test.log"
+echo "gpl+dos        create *.gpl.tgz, *.gpl.zip, *.cpl.zip"
 echo
 echo "Build.sh all"
-echo "This command will execute all the options in the order above"
-echo "with the exception that \"configue test\" and \"test\" will be excluded."
+echo "This command will execute all the options in the order above with the"
+echo "exception that \"configue test\" and \"test\" will be excluded."
 echo
 echo "Build.sh all unix"
-echo "This command will execute all the options in the order above"
-echo "with the exception that \"configue test\" and \"dos\" will be excluded."
+echo "This command will execute all the options in the order above with the"
+echo "exception that \"configue test\" and \"gpl+dos\" will be excluded."
 #
 exit 1

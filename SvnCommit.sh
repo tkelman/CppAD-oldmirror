@@ -35,12 +35,12 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Minor improvements.
+log_entry="change AcDate to version in bash script files.
 
 SvnCommit.sh: file that make this commit.
-GplLicense.sh: Give COIN-OR permission to change license from CPL to GPL.
-diffToday.sh: convert to new date format (ccyymmdd in place of yy-mm-dd).
-Build.sh: use *.tmp instead of *.$$ (easier for CleanCppAD.sh to find).
+GplLicense.sh: change AcDate to version.
+DosFormat.sh: change AcDate to version.
+Build.sh: in addition, put gpl license and dos format at end.
 "
 # 
 add_list="
@@ -48,13 +48,12 @@ add_list="
 #
 change_list="
 	SvnCommit.sh
-	GplLicense.sh
-	diffToday.sh
 	Build.sh
+	GplLicense.sh
+	DosFormat.sh
 "
 #
 delete_list="
-	ChangeCopy.sed
 "
 #
 copy_branch="" 

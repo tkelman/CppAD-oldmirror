@@ -8,16 +8,16 @@
 # -----------------------------------------------------------------------------
 #
 # Bradley M. Bell has given COIN-OR permission to use this script to generate 
-# a version of CppAD that has "GNU General Public License Version 2"
+# a distribution of CppAD that has "GNU General Public License Version 2"
 # in place of "Common Public License Version 1.0." in all occurrences
 # of the message above.
 #
 # date currently in configure.ac
-AcDate=`grep "^ *AC_INIT(" configure.ac | \
+version=`grep "^ *AC_INIT(" configure.ac | \
 	sed -e "s/.*, *\([0-9]\{8\}\) *,.*/\1/"`
 #
 # delete old version of *.gpl.tgz and *.gpl.zip
-for file in cppad-$AcDate.gpl.tgz cppad-$AcDate.gpl.zip
+for file in cppad-$version.gpl.tgz cppad-$version.gpl.zip
 do
 	if [ -e $file ]
 	then
@@ -31,32 +31,32 @@ do
 done
 #
 # start from the *.cpl.tgz file
-if [ ! -e cppad-$AcDate.cpl.tgz ]
+if [ ! -e cppad-$version.cpl.tgz ]
 then
-	echo "GplLicense: cannot find cppad-$AcDate.cpl.tgz"
+	echo "GplLicense: cannot find cppad-$version.cpl.tgz"
 	exit 1
 fi
 #
 # delete old version of directory (if it exists)
-if [ -e cppad-$AcDate ]
+if [ -e cppad-$version ]
 then
-	echo "rm -f -r cppad-$AcDate"
-	rm -f -r cppad-$AcDate
+	echo "rm -f -r cppad-$version"
+	rm -f -r cppad-$version
 fi
-if [ -e cppad-$AcDate ]
+if [ -e cppad-$version ]
 then
-	echo "GplLicense: cannot remove old cppad-$AcDate directory"
+	echo "GplLicense: cannot remove old cppad-$version directory"
 	exit 1
 fi
 #
 # extract from the *.cpl.tgz file
-echo "tar -xzf cppad-$AcDate.cpl.tgz"
-tar -xzf cppad-$AcDate.cpl.tgz
+echo "tar -xzf cppad-$version.cpl.tgz"
+tar -xzf cppad-$version.cpl.tgz
 #
 # make sure can change into new directory 
-if ! cd cppad-$AcDate
+if ! cd cppad-$version
 then
-	echo "GplLicense: cannot make new cppad-$AcDate working directory"
+	echo "GplLicense: cannot make new cppad-$version working directory"
 	exit 1
 fi
 #
@@ -83,69 +83,45 @@ do
 	ext=`echo $file | sed -e "s/.*\././"`
 	file=`echo $file | sed -e 's|^\./||'`
 	#
-	sed < cppad-$AcDate/$file > GplLicense.tmp \
+	sed < cppad-$version/$file > GplLicense.tmp \
 -e 's/Common Public License Version 1.0/GNU General Public License Version 2/' 
 
-	mv GplLicense.tmp cppad-$AcDate/$file
+	mv GplLicense.tmp cppad-$version/$file
 	#
 	if ! grep "GNU General Public License Version 2" \
-		cppad-$AcDate/$file > /dev/null
+		cppad-$version/$file > /dev/null
 	then
 		name=`echo $file | sed -e 's|.*/||'`
 		if [ "$name" != "config.h" ] 
 		then
-	echo "GplLicense: can not change cppad-$AcDate/$file license" 
+	echo "GplLicense: can not change cppad-$version/$file license" 
 	exit 1
 		fi
 	fi
 	if [ "$ext" = ".sh" ]
 	then
-		chmod +x cppad-$AcDate/$file
+		chmod +x cppad-$version/$file
 	fi
 done
 #
 # change licenses from cpl1.0.txt to gpl2.txt
-rm cppad-$AcDate/cpl1.0.txt
-cp gpl2.txt cppad-$AcDate/gpl2.txt
-sed < Makefile.am > cppad-$AcDate/Makefile.am \
+rm cppad-$version/cpl1.0.txt
+cp gpl2.txt cppad-$version/gpl2.txt
+sed < Makefile.am > cppad-$version/Makefile.am \
 	-e 's/cpl1.0.txt/gpl.txt/'
-sed < omh/License.omh > cppad-$AcDate/omh/License.omh \
+sed < omh/License.omh > cppad-$version/omh/License.omh \
 	-e 's/$verbatim%cpl1.0.txt%$\$/$verbatim%gpl2.txt%$$/'
 #
 # fix time stamp on automake files
-touch cppad-$AcDate/aclocal.m4
+touch cppad-$version/aclocal.m4
 sleep 2
-touch cppad-$AcDate/CppAD/config.h.in
+touch cppad-$version/CppAD/config.h.in
 sleep 2
-touch cppad-$AcDate/Makefile.in
-touch cppad-$AcDate/*/Makefile.in
+touch cppad-$version/Makefile.in
+touch cppad-$version/*/Makefile.in
 sleep 2
-touch cppad-$AcDate/configure
+touch cppad-$version/configure
 #
 # create *.gpl.tgz file
-echo "tar -czf cppad-$AcDate.gpl.tgz cppad-$AcDate"
-tar -czf cppad-$AcDate.gpl.tgz cppad-$AcDate
-#
-echo "GplLicense: creating dos version"
-list="
-	$list
-	AUTHORS
-	ChangeLog
-	INSTALL
-	NEWS
-	gpl2.txt
-"
-for file in $list
-do
-	ext=`echo $file | sed -e "s/.*\././"`
-	file=`echo $file | sed -e 's|^\./||'`
-	#
-	unix2dos cppad-$AcDate/$file >& /dev/null
-	#
-	if [ "$ext" = ".sh" ]
-	then
-		chmod +x cppad-$AcDate/$file
-	fi
-done
-echo "zip -q -r cppad-$AcDate.gpl.zip cppad-$AcDate"
-zip -q -r cppad-$AcDate.gpl.zip cppad-$AcDate
+echo "tar -czf cppad-$version.gpl.tgz cppad-$version"
+tar -czf cppad-$version.gpl.tgz cppad-$version
