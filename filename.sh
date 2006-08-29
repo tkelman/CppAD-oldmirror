@@ -45,6 +45,7 @@ then
 			"s|\\([\\t <%]\\)$src\$|\\1$dest|" \
 			>> filename.sed
 	done
+	echo "s|\$section Lu[A-Z][a-z]* Source Code\$\\\$|&\n\$spell\n\tcppad\n\thpp\n\$\$|" >> filename.sed
 else
 	echo "Skipping creation of filename.sed. Delete this file if"
 	echo "you wish to recreate it."
