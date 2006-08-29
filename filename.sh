@@ -31,7 +31,9 @@ then
 	do
 		src=`echo $tmp | sed -e 's|.*/||' -e 's|\.old$|.h|'`
 		dest=`echo $src | sed \
-			-e 's|\.h$|.hpp|' \
+			-e 's|\.h$|.hpp|'    \
+			-e 's|^CppAD|cppad_|' \
+			-e 's|^AD|ad|'        \
 			-e 's|\([a-z]\)\([A-Z]\)|\1_\2|g' | tr [A-Z] [a-z]`
 		#
 		src="CppAD/local/$src"
@@ -52,12 +54,15 @@ fi
 echo "Create the new version of files that need to be changed"
 #
 # *.hpp files
+rm CppAD/local/*.hpp
 list="CppAD/local/*.old"
 for old in $list
 do
 	dest=`echo $old | sed \
-		-e 's|.*/||' \
+		-e 's|.*/||'        \
 		-e 's|\.old$|.hpp|' \
+		-e 's|^CppAD|cppad_|'\
+		-e 's|^AD|ad|'       \
 		-e 's|\([a-z]\)\([A-Z]\)|\1_\2|g' | tr [A-Z] [a-z]`
 	new="CppAD/local/$dest"
 	#
@@ -66,6 +71,7 @@ do
 done
 #
 # *.h files
+rm CppAD/*.h
 list="CppAD/*.old"
 for old in $list
 do
@@ -76,6 +82,7 @@ do
 done
 #
 # *.omh files
+rm omh/*.omh
 list="Doc.old Dev.old omh/*.old"
 for old in $list
 do
