@@ -29,8 +29,13 @@ then
 	list="CppAD/local/*.old"
 	for tmp in $list
 	do
-		src=`echo $tmp | sed -e 's|\.old$|.h|'`
-		dest=`echo $tmp | sed -e 's|\.old$|.hpp|'`
+		src=`echo $tmp | sed -e 's|.*/||' -e 's|\.old$|.h|'`
+		dest=`echo $src | sed \
+			-e 's|\.h$|.hpp|' \
+			-e 's|\([a-z]\)\([A-Z]\)|\1_\2|g' | tr [A-Z] [a-z]`
+		#
+		src="CppAD/local/$src"
+		dest="CppAD/local/$dest"
 		echo \
 			"s|\\([\\t <%]\\)$src\\([\\t  >%]\\)|\\1$dest\\2|" \
 			>> filename.sed
@@ -50,7 +55,13 @@ echo "Create the new version of files that need to be changed"
 list="CppAD/local/*.old"
 for old in $list
 do
-	new=`echo $old | sed -e 's|\.old$|.hpp|'`
+	dest=`echo $old | sed \
+		-e 's|.*/||' \
+		-e 's|\.old$|.hpp|' \
+		-e 's|\([a-z]\)\([A-Z]\)|\1_\2|g' | tr [A-Z] [a-z]`
+	new="CppAD/local/$dest"
+	#
+	echo "sed -f filename.sed < $old > $new"
 	sed -f filename.sed < $old > $new
 done
 #
@@ -59,6 +70,8 @@ list="CppAD/*.old"
 for old in $list
 do
 	new=`echo $old | sed -e 's|\.old$|.h|'`
+	#
+	echo "sed -f filename.sed < $old > $new"
 	sed -f filename.sed < $old > $new
 done
 #
@@ -67,6 +80,7 @@ list="Doc.old Dev.old omh/*.old"
 for old in $list
 do
 	new=`echo $old | sed -e 's|\.old$|.omh|'`
+	echo "sed -f filename.sed < $old > $new"
 	sed -f filename.sed < $old > $new
 done
 #
