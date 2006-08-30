@@ -46,16 +46,26 @@ fi
 echo "Create the new version of files that need to be changed"
 #
 # *.hpp files
-list="CppAD/local/*_.hpp"
-for src in $list
+list="CppAD/local/*.hpp"
+for dest in $list
 do
-	dest=`echo $src | sed -e 's|_.hpp|.hpp|'`
+	src=`echo $dest | sed -e 's|.hpp|_.hpp|'`
 	#
 	echo "svn revert $src"
 	svn revert $src
+	#
+	echo "rm $dest"
+	rm $dest
+	#
 	echo "svn move $src $dest"
+	svn move $src $dest
+	#
+	echo "mv $dest $src"
+	mv $dest $src
+	#
 	echo "sed -f filename.sed < $src > $dest"
 	sed -f filename.sed < $src > $dest
+	#
 	echo "rm $src"
 	rm $src
 done
