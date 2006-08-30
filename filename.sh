@@ -27,14 +27,15 @@ if [ ! -e filename.sed ]
 then
 	echo "Create the sed script that will edit the files"
 	list="CppAD/local/*.old"
-	for tmp in $list
+	for old in $list
 	do
-		src=`echo $tmp | sed -e 's|.*/||' -e 's|\.old$|.h|'`
+		src=`echo $old | sed -e 's|.*/||' -e 's|\.old$|.h|'`
 		dest=`echo $src | sed \
-			-e 's|\.h$|.hpp|'    \
+			-e 's|\.h$|_.hpp|'    \
 			-e 's|^CppAD|cppad_|' \
 			-e 's|^AD|ad|'        \
-			-e 's|\([a-z]\)\([A-Z]\)|\1_\2|g' | tr [A-Z] [a-z]`
+			-e 's|\([a-z]\)\([A-Z]\)|\1_\2|g' \
+			 | tr [A-Z] [a-z]`
 		#
 		src="CppAD/local/$src"
 		dest="CppAD/local/$dest"
@@ -59,14 +60,18 @@ rm CppAD/local/*.hpp
 list="CppAD/local/*.old"
 for old in $list
 do
+	src=`echo $old | sed -e 's|.*/||' -e 's|\.old$|.h|'`
 	dest=`echo $old | sed \
 		-e 's|.*/||'        \
-		-e 's|\.old$|.hpp|' \
+		-e 's|\.old$|_.hpp|' \
 		-e 's|^CppAD|cppad_|'\
 		-e 's|^AD|ad|'       \
-		-e 's|\([a-z]\)\([A-Z]\)|\1_\2|g' | tr [A-Z] [a-z]`
+		-e 's|\([a-z]\)\([A-Z]\)|\1_\2|g' \
+		| tr [A-Z] [a-z]`
 	new="CppAD/local/$dest"
 	#
+	echo "svn revert $src"
+	echo "svn move $src $new"
 	echo "sed -f filename.sed < $old > $new"
 	sed -f filename.sed < $old > $new
 done
