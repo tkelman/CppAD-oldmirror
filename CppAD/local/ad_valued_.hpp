@@ -20,11 +20,11 @@ $index function, AD valued$$
 $section AD Valued Operations and Functions$$
 
 $childtable%
-	CppAD/local/Arithmetic.h%
-	CppAD/local/StdMathUnary.h%
-	CppAD/local/MathOther.h%
-	CppAD/local/CondExp.h%
-	CppAD/local/Discrete.h
+	CppAD/local/arithmetic_.hpp%
+	CppAD/local/std_math_unary_.hpp%
+	CppAD/local/math_other_.hpp%
+	CppAD/local/cond_exp_.hpp%
+	CppAD/local/discrete_.hpp
 %$$
 
 $end
@@ -33,10 +33,10 @@ $end
 // include MathOther.h after CondExp.h because some MathOther.h routines use 
 // CondExp.h and CondExp.h is not sufficently declared in Declare.h
 
-# include <CppAD/local/Arithmetic.h>
-# include <CppAD/local/StdMathUnary.h>
-# include <CppAD/local/CondExp.h>
-# include <CppAD/local/MathOther.h>
-# include <CppAD/local/Discrete.h>
+# include <CppAD/local/arithmetic_.hpp>
+# include <CppAD/local/std_math_unary_.hpp>
+# include <CppAD/local/cond_exp_.hpp>
+# include <CppAD/local/math_other_.hpp>
+# include <CppAD/local/discrete_.hpp>
 
 # endif

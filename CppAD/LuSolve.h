@@ -252,6 +252,10 @@ $spell
 $$
 
 $section LuSolve Source Code$$
+$spell
+	cppad
+	hpp
+$$
 
 $index source, LuSolve$$
 $index LuSolve, source code$$
@@ -268,7 +272,7 @@ $codep */
 # include <CppAD/CppAD.h>  
 # endif
 
-# include <CppAD/local/CppADError.h>
+# include <CppAD/local/cppad_error_.hpp>
 # include <CppAD/CheckSimpleVector.h>
 # include <CppAD/CheckNumericType.h>
 # include <CppAD/LuFactor.h>

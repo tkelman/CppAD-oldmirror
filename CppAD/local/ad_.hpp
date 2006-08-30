@@ -10,13 +10,13 @@ You should have received a copy of the this license along with this program.
 -------------------------------------------------------------------------- */
 
 // simple AD operations that must be defined for AD as well as base class
-# include <CppAD/local/Ordered.h>
-# include <CppAD/local/Identical.h>
+# include <CppAD/local/ordered_.hpp>
+# include <CppAD/local/identical_.hpp>
 
 // define the template classes that are used by the AD template class
-# include <CppAD/local/OpCode.h>
-# include <CppAD/local/TapeRec.h>
-# include <CppAD/local/ADTape.h>
+# include <CppAD/local/op_code_.hpp>
+# include <CppAD/local/tape_rec_.hpp>
+# include <CppAD/local/ad_tape_.hpp>
 
 // macro for base type binary operators is used in multiple files
 // so declared in CppAD instead of here

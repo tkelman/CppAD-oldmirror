@@ -215,7 +215,7 @@ $end
 --------------------------------------------------------------------------
 */
 # include <cstddef>
-# include <CppAD/local/CppADError.h>
+# include <CppAD/local/cppad_error_.hpp>
 # include <CppAD/CheckSimpleVector.h>
 # include <CppAD/CheckNumericType.h>
 

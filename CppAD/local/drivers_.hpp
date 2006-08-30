@@ -23,21 +23,21 @@ $section First and Second Derivatives: Easy Drivers$$
 
 
 $childtable%
-	CppAD/local/Jacobian.h%
-	CppAD/local/ForOne.h%
-	CppAD/local/RevOne.h%
-	CppAD/local/Hessian.h%
-	CppAD/local/ForTwo.h%
-	CppAD/local/RevTwo.h
+	CppAD/local/jacobian_.hpp%
+	CppAD/local/for_one_.hpp%
+	CppAD/local/rev_one_.hpp%
+	CppAD/local/hessian_.hpp%
+	CppAD/local/for_two_.hpp%
+	CppAD/local/rev_two_.hpp
 %$$
 
 $end
 */
-# include <CppAD/local/Jacobian.h>
-# include <CppAD/local/ForOne.h>
-# include <CppAD/local/RevOne.h>
-# include <CppAD/local/Hessian.h>
-# include <CppAD/local/ForTwo.h>
-# include <CppAD/local/RevTwo.h>
+# include <CppAD/local/jacobian_.hpp>
+# include <CppAD/local/for_one_.hpp>
+# include <CppAD/local/rev_one_.hpp>
+# include <CppAD/local/hessian_.hpp>
+# include <CppAD/local/for_two_.hpp>
+# include <CppAD/local/rev_two_.hpp>
  
 # endif

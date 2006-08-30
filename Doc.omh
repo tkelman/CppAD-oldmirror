@@ -33,7 +33,7 @@ $index CppAD$$
 $index version, CppAD$$
 
 $section 
-A Package for Differentiation of C++ Algorithms: cppad-20060820
+A Package for Differentiation of C++ Algorithms: cppad-20060829
 $$ 
 
 $head Syntax$$
@@ -183,8 +183,8 @@ $childtable%
 	omh/Install.omh%
 	GetStarted/GetStarted.cpp%
 	omh/Introduction.omh%
-	CppAD/local/UserAD.h%
-	CppAD/local/ADFun.h%
+	CppAD/local/user_ad_.hpp%
+	CppAD/local/ad_fun_.hpp%
 	omh/library.omh%
 	omh/Example.omh%
 	omh/Appendix.omh

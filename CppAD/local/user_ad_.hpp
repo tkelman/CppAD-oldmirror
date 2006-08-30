@@ -35,23 +35,23 @@ can be used to evaluate the corresponding
 function and derivative values.
 
 $childtable%
-	CppAD/local/Constructor.h%
-	CppAD/local/Convert.h%
-	CppAD/local/Eq.h%
-	CppAD/local/ADValued.h%
-	CppAD/local/BoolValued.h%
-	CppAD/local/VecAD.h
+	CppAD/local/constructor_.hpp%
+	CppAD/local/convert_.hpp%
+	CppAD/local/eq_.hpp%
+	CppAD/local/ad_valued_.hpp%
+	CppAD/local/bool_valued_.hpp%
+	CppAD/local/vec_ad_.hpp
 %$$
 
 $end
 ---------------------------------------------------------------------------
 */
 
-# include <CppAD/local/Constructor.h>
-# include <CppAD/local/Convert.h>
-# include <CppAD/local/Eq.h>
-# include <CppAD/local/ADValued.h>
-# include <CppAD/local/BoolValued.h>
-# include <CppAD/local/VecAD.h>
+# include <CppAD/local/constructor_.hpp>
+# include <CppAD/local/convert_.hpp>
+# include <CppAD/local/eq_.hpp>
+# include <CppAD/local/ad_valued_.hpp>
+# include <CppAD/local/bool_valued_.hpp>
+# include <CppAD/local/vec_ad_.hpp>
 
 # endif

@@ -35,19 +35,19 @@ CppAD user, are documented in $href%../Doc/CppAD.xml%$$.
 $contents%
 	omh/Distribute.omh%
 	omh/NewFeature.omh%
-	CppAD/local/Define.h%
-	CppAD/local/Ordered.h%
-	CppAD/local/Identical.h%
-	CppAD/local/OpCode.h%
-	CppAD/local/TapeRec.h%
-	CppAD/local/ADTape.h%
-	CppAD/local/BoolFunLink.h%
-	CppAD/local/Op.h%
-	CppAD/local/ForwardSweep.h%
-	CppAD/local/ReverseSweep.h%
-	CppAD/local/ForJacSweep.h%
-	CppAD/local/RevJacSweep.h%
-	CppAD/local/CppADError.h
+	CppAD/local/define_.hpp%
+	CppAD/local/ordered_.hpp%
+	CppAD/local/identical_.hpp%
+	CppAD/local/op_code_.hpp%
+	CppAD/local/tape_rec_.hpp%
+	CppAD/local/ad_tape_.hpp%
+	CppAD/local/bool_fun_link_.hpp%
+	CppAD/local/op_.hpp%
+	CppAD/local/forward_sweep_.hpp%
+	CppAD/local/reverse_sweep_.hpp%
+	CppAD/local/for_jac_sweep_.hpp%
+	CppAD/local/rev_jac_sweep_.hpp%
+	CppAD/local/cppad_error_.hpp
 %$$
 
 

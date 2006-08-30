@@ -38,13 +38,13 @@ The $code ADFun$$ object can then be used to calculate function values,
 derivative values, and other values related to the corresponding function.
 
 $childtable%
-	CppAD/local/Independent.h%
-	CppAD/local/FunConstruct.h%
-	CppAD/local/Dependent.h%
+	CppAD/local/independent_.hpp%
+	CppAD/local/fun_construct_.hpp%
+	CppAD/local/dependent_.hpp%
 	omh/SeqProperty.omh%
-	CppAD/local/FunEval.h%
-	CppAD/local/Drivers.h%
-	CppAD/local/FunCheck.h%
+	CppAD/local/fun_eval_.hpp%
+	CppAD/local/drivers_.hpp%
+	CppAD/local/fun_check_.hpp%
 	omh/FunDeprecated.omh
 %$$
 
@@ -239,19 +239,19 @@ private:
 } // END CppAD namespace
 
 // non-user interfaces
-# include <CppAD/local/ForwardSweep.h>
-# include <CppAD/local/ReverseSweep.h>
-# include <CppAD/local/ForJacSweep.h>
-# include <CppAD/local/RevJacSweep.h>
-# include <CppAD/local/RevHesSweep.h>
+# include <CppAD/local/forward_sweep_.hpp>
+# include <CppAD/local/reverse_sweep_.hpp>
+# include <CppAD/local/for_jac_sweep_.hpp>
+# include <CppAD/local/rev_jac_sweep_.hpp>
+# include <CppAD/local/rev_hes_sweep_.hpp>
 
 
 // user interfaces
-# include <CppAD/local/Independent.h>
-# include <CppAD/local/Dependent.h>
-# include <CppAD/local/FunConstruct.h>
-# include <CppAD/local/FunEval.h>
-# include <CppAD/local/Drivers.h>
-# include <CppAD/local/FunCheck.h>
+# include <CppAD/local/independent_.hpp>
+# include <CppAD/local/dependent_.hpp>
+# include <CppAD/local/fun_construct_.hpp>
+# include <CppAD/local/fun_eval_.hpp>
+# include <CppAD/local/drivers_.hpp>
+# include <CppAD/local/fun_check_.hpp>
 
 # endif

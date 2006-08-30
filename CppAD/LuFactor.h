@@ -258,6 +258,10 @@ $spell
 $$
 
 $section LuFactor Source Code$$
+$spell
+	cppad
+	hpp
+$$
 
 $index LuFactor, source$$
 $index source, LuFactor$$
@@ -267,7 +271,7 @@ $codep */
 # include <complex>
 # include <vector>
 
-# include <CppAD/local/CppADError.h>
+# include <CppAD/local/cppad_error_.hpp>
 # include <CppAD/CheckSimpleVector.h>
 # include <CppAD/CheckNumericType.h>
 
@@ -301,7 +305,7 @@ inline bool AbsGeq(
 	return xsq >= ysq;
 }
 
-// Lines that are different from code in CppAD/local/LuRatio.h end with //
+// Lines that are different from code in CppAD/local/lu_ratio_.hpp end with //
 template <class SizeVector, class FloatVector>                          //
 int LuFactor(SizeVector &ip, SizeVector &jp, FloatVector &LU)           //
 {	

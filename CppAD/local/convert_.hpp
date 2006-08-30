@@ -1,5 +1,5 @@
-# ifndef CppADMathOtherIncluded
-# define CppADMathOtherIncluded
+# ifndef CppADConvertIncluded
+# define CppADConvertIncluded
 
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
@@ -10,38 +10,35 @@ You should have received a copy of the this license along with this program.
 -------------------------------------------------------------------------- */
 
 /*
-$begin MathOther$$
+$begin Convert$$
 $spell
-	atan
 $$
 
-$index atan2, AD$$
+$index convert, from AD$$
+$index AD, convert from$$
 
-$index other, AD math$$
-$index math, AD other$$
-
-$section Other AD Math Functions$$
+$section Conversion and Printing of AD Objects$$
 
 $children%
-	CppAD/local/Abs.h%
-	CppAD/local/Atan2.h%
-	CppAD/local/Erf.h%
-	CppAD/local/Pow.h
+	CppAD/local/value_.hpp%
+	CppAD/local/integer_.hpp%
+	CppAD/local/output_.hpp%
+	CppAD/local/print_for_.hpp
 %$$
 $table
-$rref abs$$
-$rref atan2$$
-$rref erf$$
-$rref  pow$$
+$rref Value$$
+$rref Integer$$
+$rref Output$$
+$rref PrintFor$$
 $tend
 	
 
 $end
 */
 
-# include <CppAD/local/Abs.h>
-# include <CppAD/local/Atan2.h>
-# include <CppAD/local/Erf.h>
-# include <CppAD/local/Pow.h>
+# include <CppAD/local/value_.hpp>
+# include <CppAD/local/integer_.hpp>
+# include <CppAD/local/output_.hpp>
+# include <CppAD/local/print_for_.hpp>
 
 # endif

@@ -1,5 +1,5 @@
-# ifndef CppADConstructorIncluded
-# define CppADConstructorIncluded
+# ifndef CppADMathOtherIncluded
+# define CppADMathOtherIncluded
 
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
@@ -10,32 +10,38 @@ You should have received a copy of the this license along with this program.
 -------------------------------------------------------------------------- */
 
 /*
-$begin Constructor$$
+$begin MathOther$$
 $spell
+	atan
 $$
 
-$index constructor, AD$$
-$index AD, constructor$$
+$index atan2, AD$$
 
-$section AD Constructors$$
+$index other, AD math$$
+$index math, AD other$$
+
+$section Other AD Math Functions$$
 
 $children%
-	CppAD/local/Default.h%
-	CppAD/local/CopyBase.h%
-	CppAD/local/CopyAD.h
+	CppAD/local/abs_.hpp%
+	CppAD/local/atan2_.hpp%
+	CppAD/local/erf_.hpp%
+	CppAD/local/pow_.hpp
 %$$
 $table
-$rref Default$$
-$rref CopyBase$$
-$rref CopyAD$$
+$rref abs$$
+$rref atan2$$
+$rref erf$$
+$rref  pow$$
 $tend
 	
 
 $end
 */
 
-# include <CppAD/local/Default.h>
-# include <CppAD/local/CopyBase.h>
-# include <CppAD/local/CopyAD.h>
+# include <CppAD/local/abs_.hpp>
+# include <CppAD/local/atan2_.hpp>
+# include <CppAD/local/erf_.hpp>
+# include <CppAD/local/pow_.hpp>
 
 # endif

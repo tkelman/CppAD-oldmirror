@@ -164,6 +164,10 @@ $spell
 $$
 
 $section LuInvert Source Code$$
+$spell
+	cppad
+	hpp
+$$
 
 $index LuInvert, source$$
 $index source, LuInvert$$
@@ -171,7 +175,7 @@ $index matrix, LuInvert source$$
 
 $codep */
 
-# include <CppAD/local/CppADError.h>
+# include <CppAD/local/cppad_error_.hpp>
 # include <CppAD/CheckSimpleVector.h>
 # include <CppAD/CheckNumericType.h>
 

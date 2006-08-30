@@ -29,7 +29,7 @@ You should have received a copy of the this license along with this program.
 # include <CppAD/CheckSimpleVector.h>
 # include <CppAD/CheckNumericType.h>
 # include <CppAD/TrackNewDel.h>
-# include <CppAD/local/CppADError.h>
+# include <CppAD/local/cppad_error_.hpp>
 // --------------------------------------------------------------------------
 // System routines that can be used by rest of CppAD with out including 
 
@@ -45,32 +45,32 @@ You should have received a copy of the this license along with this program.
 # include <CppAD/config.h>
 
 // definitions that are local to the CppAD include files
-# include <CppAD/local/Define.h>
+# include <CppAD/local/define_.hpp>
 
 // vectors used with CppAD
-# include <CppAD/local/CppADvector.h>
+# include <CppAD/local/cppad_vector_.hpp>
 
 // Declare classes and fucntions that are used before defined
-# include <CppAD/local/Declare.h>
+# include <CppAD/local/declare_.hpp>
 
 // ---------------------------------------------------------------------------
 // files containing only implementation details
 
-# include <CppAD/local/AD.h>       // the differentaible object class
+# include <CppAD/local/ad_.hpp>       // the differentaible object class
 
 // ---------------------------------------------------------------------------
 // files containing user interface documentation
 
-# include <CppAD/local/Op.h>      // executes taped operations
-# include <CppAD/local/UserAD.h>  // AD class methods available to the user
-# include <CppAD/local/ADFun.h>   // ADFun objects
+# include <CppAD/local/op_.hpp>      // executes taped operations
+# include <CppAD/local/user_ad_.hpp>  // AD class methods available to the user
+# include <CppAD/local/ad_fun_.hpp>   // ADFun objects
 
 // ---------------------------------------------------------------------------
 // library routines that require the rest of CppAD
-# include <CppAD/local/LuRatio.h>
-# include <CppAD/local/BenderQuad.h>
+# include <CppAD/local/lu_ratio_.hpp>
+# include <CppAD/local/bender_quad_.hpp>
 
 // undo definitions in Define.h
-# include <CppAD/local/Undef.h>   
+# include <CppAD/local/undef_.hpp>   
 
 # endif

@@ -172,7 +172,7 @@ $end
 # include <iomanip>
 
 // For an unknown reason, cannot move other includes (using Sun's CC compiler)
-# include <CppAD/local/CppADError.h>
+# include <CppAD/local/cppad_error_.hpp>
 # include <CppAD/SpeedTest.h>
 
 namespace CppAD { // BEGIN CppAD namespace

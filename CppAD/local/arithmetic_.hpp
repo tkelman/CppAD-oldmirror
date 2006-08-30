@@ -28,30 +28,30 @@ $index AD, computed assignment$$
 $section AD Arithmetic Operators and Computed Assignments$$
 
 $childtable%
-	CppAD/local/UnaryPlus.h%
-	CppAD/local/UnaryMinus.h%
-	CppAD/local/Add.h%
-	CppAD/local/Sub.h%
-	CppAD/local/Mul.h%
-	CppAD/local/Div.h%
-	CppAD/local/AddEq.h%
-	CppAD/local/SubEq.h%
-	CppAD/local/MulEq.h%
-	CppAD/local/DivEq.h
+	CppAD/local/unary_plus_.hpp%
+	CppAD/local/unary_minus_.hpp%
+	CppAD/local/add_.hpp%
+	CppAD/local/sub_.hpp%
+	CppAD/local/mul_.hpp%
+	CppAD/local/div_.hpp%
+	CppAD/local/add_eq_.hpp%
+	CppAD/local/sub_eq_.hpp%
+	CppAD/local/mul_eq_.hpp%
+	CppAD/local/div_eq_.hpp
 %$$
 
 $end
 -------------------------------------------------------------------------------
 */
-# include <CppAD/local/UnaryPlus.h>
-# include <CppAD/local/UnaryMinus.h>
-# include <CppAD/local/Add.h>
-# include <CppAD/local/Sub.h>
-# include <CppAD/local/Mul.h>
-# include <CppAD/local/Div.h>
-# include <CppAD/local/AddEq.h>
-# include <CppAD/local/SubEq.h>
-# include <CppAD/local/MulEq.h>
-# include <CppAD/local/DivEq.h>
+# include <CppAD/local/unary_plus_.hpp>
+# include <CppAD/local/unary_minus_.hpp>
+# include <CppAD/local/add_.hpp>
+# include <CppAD/local/sub_.hpp>
+# include <CppAD/local/mul_.hpp>
+# include <CppAD/local/div_.hpp>
+# include <CppAD/local/add_eq_.hpp>
+# include <CppAD/local/sub_eq_.hpp>
+# include <CppAD/local/mul_eq_.hpp>
+# include <CppAD/local/div_eq_.hpp>
 
 # endif
