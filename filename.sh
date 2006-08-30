@@ -7,7 +7,7 @@ if [ ! -e Makefile.old ]
 then
 	echo "Move files that need to be changed to old version name"
 	#
-	list="CppAD/*.h CppAD/local/*.h omh/*.omh"
+	list="CppAD/*.h omh/*.omh"
 	list="Doc.omh Dev.omh $list"
 	for src in $list
 	do
@@ -26,19 +26,10 @@ fi
 if [ ! -e filename.sed ]
 then
 	echo "Create the sed script that will edit the files"
-	list="CppAD/local/*.old"
-	for old in $list
+	list="CppAD/local/*_.hpp"
+	for src in $list
 	do
-		src=`echo $old | sed -e 's|.*/||' -e 's|\.old$|.h|'`
-		dest=`echo $src | sed \
-			-e 's|\.h$|_.hpp|'    \
-			-e 's|^CppAD|cppad_|' \
-			-e 's|^AD|ad|'        \
-			-e 's|\([a-z]\)\([A-Z]\)|\1_\2|g' \
-			 | tr [A-Z] [a-z]`
-		#
-		src="CppAD/local/$src"
-		dest="CppAD/local/$dest"
+		dest=`echo $src | sed -e 's|_.hpp|.hpp|'`
 		echo \
 			"s|\\([\\t <%]\\)$src\\([\\t  >%]\\)|\\1$dest\\2|" \
 			>> filename.sed
@@ -46,7 +37,6 @@ then
 			"s|\\([\\t <%]\\)$src\$|\\1$dest|" \
 			>> filename.sed
 	done
-	echo "s|\$section Lu[A-Z][a-z]* Source Code\$\\\$|&\n\$spell\n\tcppad\n\thpp\n\$\$|" >> filename.sed
 else
 	echo "Skipping creation of filename.sed. Delete this file if"
 	echo "you wish to recreate it."
@@ -56,27 +46,18 @@ fi
 echo "Create the new version of files that need to be changed"
 #
 # *.hpp files
-rm CppAD/local/*.hpp
-list="CppAD/local/*.old"
-for old in $list
+list="CppAD/local/*_.hpp"
+for src in $list
 do
-	src=`echo $old | sed -e 's|.*/||' -e 's|\.old$|.h|'`
-	dest=`echo $old | sed \
-		-e 's|.*/||'        \
-		-e 's|\.old$|_.hpp|' \
-		-e 's|^CppAD|cppad_|'\
-		-e 's|^AD|ad|'       \
-		-e 's|\([a-z]\)\([A-Z]\)|\1_\2|g' \
-		| tr [A-Z] [a-z]`
-	src="CppAD/local/$src"
-	new="CppAD/local/$dest"
+	dest=`echo $src | sed -e 's|_.hpp|.hpp|'`
 	#
 	echo "svn revert $src"
 	svn revert $src
-	echo "svn move $src $new"
-	svn move $src $new
-	echo "sed -f filename.sed < $old > $new"
-	sed -f filename.sed < $old > $new
+	echo "svn move $src $dest"
+	echo "sed -f filename.sed < $src > $dest"
+	sed -f filename.sed < $src > $dest
+	echo "rm $src"
+	rm $src
 done
 #
 # *.h files
