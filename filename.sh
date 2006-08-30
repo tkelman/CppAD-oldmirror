@@ -68,10 +68,13 @@ do
 		-e 's|^AD|ad|'       \
 		-e 's|\([a-z]\)\([A-Z]\)|\1_\2|g' \
 		| tr [A-Z] [a-z]`
+	src="CppAD/local/$src"
 	new="CppAD/local/$dest"
 	#
 	echo "svn revert $src"
+	svn revert $src
 	echo "svn move $src $new"
+	svn move $src $new
 	echo "sed -f filename.sed < $old > $new"
 	sed -f filename.sed < $old > $new
 done
