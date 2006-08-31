@@ -237,16 +237,17 @@ public:
 	{ }
 	// constructor with a specified size
 	inline vector(size_t n) : capacity(n), length(n)
-	{	if( length == 0 )
-			data = CppADNull;
-		else	data = CppADTrackNewVec(capacity, data);
+	{
+		data = CppADNull;
+		if( length > 0 )
+			data = CppADTrackNewVec(capacity, data);
 	}
 	// copy constructor
 	inline vector(const vector &x) : capacity(x.length), length(x.length)
 	{	size_t i;
-		if( length == 0 )
-			data = CppADNull;
-		else	data = CppADTrackNewVec(capacity, data);
+		data = CppADNull;
+		if( length > 0 )
+			data = CppADTrackNewVec(capacity, data);
 
 		for(i = 0; i < length; i++)
 			data[i] = x.data[i];

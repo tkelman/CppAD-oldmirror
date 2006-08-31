@@ -280,7 +280,8 @@ inline void TrackError(
 // TrackNewVec ---------------------------------------------------------------
 # ifdef NDEBUG
 template <class Type>
-inline Type *TrackNewVec(const char *file, int line, size_t len, Type *oldptr)
+inline Type *TrackNewVec(
+	const char *file, int line, size_t len, Type * /* oldptr */ )
 {	return (new Type[len]); 
 }
 
@@ -288,10 +289,10 @@ inline Type *TrackNewVec(const char *file, int line, size_t len, Type *oldptr)
 
 template <class Type>
 Type *TrackNewVec(
-	const char *file    , 
-	int         line    , 
-	size_t      len     ,
-	Type       *oldptr  )
+	const char *file          , 
+	int         line          , 
+	size_t      len           ,
+	Type       * /* oldptr */ )
 {
 	// try to allocate the new memrory
 	Type *newptr = CppADNull;
