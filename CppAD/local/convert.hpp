@@ -20,10 +20,10 @@ $index AD, convert from$$
 $section Conversion and Printing of AD Objects$$
 
 $children%
-	CppAD/local/value_.hpp%
-	CppAD/local/integer_.hpp%
-	CppAD/local/output_.hpp%
-	CppAD/local/print_for_.hpp
+	CppAD/local/value.hpp%
+	CppAD/local/integer.hpp%
+	CppAD/local/output.hpp%
+	CppAD/local/print_for.hpp
 %$$
 $table
 $rref Value$$
@@ -36,9 +36,9 @@ $tend
 $end
 */
 
-# include <CppAD/local/value_.hpp>
-# include <CppAD/local/integer_.hpp>
-# include <CppAD/local/output_.hpp>
-# include <CppAD/local/print_for_.hpp>
+# include <CppAD/local/value.hpp>
+# include <CppAD/local/integer.hpp>
+# include <CppAD/local/output.hpp>
+# include <CppAD/local/print_for.hpp>
 
 # endif

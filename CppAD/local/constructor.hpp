@@ -1,5 +1,5 @@
-# ifndef CppADFunEvalIncluded
-# define CppADFunEvalIncluded
+# ifndef CppADConstructorIncluded
+# define CppADConstructorIncluded
 
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
@@ -10,26 +10,32 @@ You should have received a copy of the this license along with this program.
 -------------------------------------------------------------------------- */
 
 /*
-$begin FunEval$$
+$begin Constructor$$
 $spell
 $$
 
-$index evaluate, ADFun$$
-$index ADFun, evaluate$$
+$index constructor, AD$$
+$index AD, constructor$$
 
-$section Evaluate ADFun Functions, Derivatives, and Sparsity Patterns$$
+$section AD Constructors$$
 
-$childtable%
-	CppAD/local/forward_.hpp%
-	CppAD/local/reverse_.hpp%
-	CppAD/local/sparse_.hpp
+$children%
+	CppAD/local/default.hpp%
+	CppAD/local/copy_base.hpp%
+	CppAD/local/copy_ad.hpp
 %$$
+$table
+$rref Default$$
+$rref CopyBase$$
+$rref CopyAD$$
+$tend
+	
 
 $end
 */
 
-# include <CppAD/local/forward_.hpp>
-# include <CppAD/local/reverse_.hpp>
-# include <CppAD/local/sparse_.hpp>
+# include <CppAD/local/default.hpp>
+# include <CppAD/local/copy_base.hpp>
+# include <CppAD/local/copy_ad.hpp>
 
 # endif

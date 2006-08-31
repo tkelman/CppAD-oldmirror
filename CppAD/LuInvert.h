@@ -175,7 +175,7 @@ $index matrix, LuInvert source$$
 
 $codep */
 
-# include <CppAD/local/cppad_error_.hpp>
+# include <CppAD/local/cppad_error.hpp>
 # include <CppAD/CheckSimpleVector.h>
 # include <CppAD/CheckNumericType.h>
 

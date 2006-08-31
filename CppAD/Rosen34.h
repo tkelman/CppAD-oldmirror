@@ -254,7 +254,7 @@ $end
 */
 
 # include <cstddef>
-# include <CppAD/local/cppad_error_.hpp>
+# include <CppAD/local/cppad_error.hpp>
 # include <CppAD/CheckSimpleVector.h>
 # include <CppAD/CheckNumericType.h>
 # include <CppAD/CppAD_vector.h>

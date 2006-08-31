@@ -23,10 +23,10 @@ $index math, AD other$$
 $section Other AD Math Functions$$
 
 $children%
-	CppAD/local/abs_.hpp%
-	CppAD/local/atan2_.hpp%
-	CppAD/local/erf_.hpp%
-	CppAD/local/pow_.hpp
+	CppAD/local/abs.hpp%
+	CppAD/local/atan2.hpp%
+	CppAD/local/erf.hpp%
+	CppAD/local/pow.hpp
 %$$
 $table
 $rref abs$$
@@ -39,9 +39,9 @@ $tend
 $end
 */
 
-# include <CppAD/local/abs_.hpp>
-# include <CppAD/local/atan2_.hpp>
-# include <CppAD/local/erf_.hpp>
-# include <CppAD/local/pow_.hpp>
+# include <CppAD/local/abs.hpp>
+# include <CppAD/local/atan2.hpp>
+# include <CppAD/local/erf.hpp>
+# include <CppAD/local/pow.hpp>
 
 # endif

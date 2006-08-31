@@ -186,7 +186,7 @@ It returns true, if it succeeds, and false otherwise.
 $end
 ------------------------------------------------------------------------------
 */
-# include <CppAD/local/cppad_error_.hpp>
+# include <CppAD/local/cppad_error.hpp>
 # include <sstream>
 # include <string>
 

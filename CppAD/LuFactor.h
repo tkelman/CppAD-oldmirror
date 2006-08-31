@@ -271,7 +271,7 @@ $codep */
 # include <complex>
 # include <vector>
 
-# include <CppAD/local/cppad_error_.hpp>
+# include <CppAD/local/cppad_error.hpp>
 # include <CppAD/CheckSimpleVector.h>
 # include <CppAD/CheckNumericType.h>
 
@@ -305,7 +305,7 @@ inline bool AbsGeq(
 	return xsq >= ysq;
 }
 
-// Lines that are different from code in CppAD/local/lu_ratio_.hpp end with //
+// Lines that are different from code in CppAD/local/lu_ratio.hpp end with //
 template <class SizeVector, class FloatVector>                          //
 int LuFactor(SizeVector &ip, SizeVector &jp, FloatVector &LU)           //
 {	

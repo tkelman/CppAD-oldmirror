@@ -211,7 +211,7 @@ $end
 # include <cstddef>
 # include <iostream>
 # include <limits>
-# include <CppAD/local/cppad_error_.hpp>
+# include <CppAD/local/cppad_error.hpp>
 # include <CppAD/TrackNewDel.h>
 
 # ifndef CppADNull

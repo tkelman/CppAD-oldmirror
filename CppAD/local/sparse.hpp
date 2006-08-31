@@ -20,16 +20,16 @@ $index pattern, sparsity$$
 $section Calculating Sparsity Patterns$$
 
 $childtable%
-	CppAD/local/for_sparse_jac_.hpp%
-	CppAD/local/rev_sparse_jac_.hpp%
-	CppAD/local/rev_sparse_hes_.hpp
+	CppAD/local/for_sparse_jac.hpp%
+	CppAD/local/rev_sparse_jac.hpp%
+	CppAD/local/rev_sparse_hes.hpp
 %$$
 
 $end
 */
 
-# include <CppAD/local/for_sparse_jac_.hpp>
-# include <CppAD/local/rev_sparse_jac_.hpp>
-# include <CppAD/local/rev_sparse_hes_.hpp>
+# include <CppAD/local/for_sparse_jac.hpp>
+# include <CppAD/local/rev_sparse_jac.hpp>
+# include <CppAD/local/rev_sparse_hes.hpp>
 
 # endif

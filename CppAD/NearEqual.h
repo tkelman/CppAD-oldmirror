@@ -145,7 +145,7 @@ $end
 */
 
 # include <complex>
-# include <CppAD/local/cppad_error_.hpp>
+# include <CppAD/local/cppad_error.hpp>
 # include <CppAD/CheckNumericType.h>
 
 namespace CppAD { // Begin CppAD namespace

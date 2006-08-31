@@ -41,8 +41,8 @@ $children%
 	CppAD/OdeGear.h%
 	CppAD/OdeGearControl.h%
 
-	CppAD/local/bender_quad_.hpp%
-	CppAD/local/lu_ratio_.hpp%
+	CppAD/local/bender_quad.hpp%
+	CppAD/local/lu_ratio.hpp%
 
 	CppAD/CppAD_vector.h%
 	CppAD/TrackNewDel.h

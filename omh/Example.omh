@@ -47,7 +47,7 @@ the examples.
 
 $contents%
 	omh/ExampleList.omh%
-	CppAD/local/cppad_vector_.hpp
+	CppAD/local/cppad_vector.hpp
 %$$
 
 
