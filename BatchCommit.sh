@@ -8,13 +8,13 @@ list2=`ls CppAD/local/*.hpp`
 list3=`ls CppAD/*.h | sed -e '/config.h/d'` 
 list4=`ls omh/*.omh` 
 change_list="
-	$list1
-	$list2
-	$list3
-	$list4
-	Doc.omh
-	Dev.omh
-	Makefile.am
+$list1
+$list2
+$list3
+$list4
+Doc.omh
+Dev.omh
+Makefile.am
 "
 echo "$log_entry" > SvnCommit.log
 echo "svn commit --username bradbell --file SvnCommit.log $change_list"
