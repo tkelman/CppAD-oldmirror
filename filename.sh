@@ -1,5 +1,11 @@
 #! /bin/bash
+# -----------------------------------------------------------------------------
+# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
 #
+# This program is free software; you can use it under the terms of the 
+#	         Common Public License Version 1.0.
+# You should have received a copy of the this license along with this program.
+# -----------------------------------------------------------------------------
 # Script that changes the file names in the directory CppAD/local
 #
 # ---------------------------------------------------------------------------
