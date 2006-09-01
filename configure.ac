@@ -1,9 +1,11 @@
 dnl ---------------------------------------------------------------------------
 dnl CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
 dnl
-dnl This program is free software; you can use it under the terms of the
-dnl                Common Public License Version 1.0.
-dnl You should have received a copy of the this license along with this program.
+dnl CppAD is distributed under multiple licenses. This distribution is under
+dnl the terms of the
+dnl                     Common Public License Version 1.0.
+dnl 
+dnl A copy of this license is included in the COPYING file of this distribution.
 dnl ---------------------------------------------------------------------------
 dnl
 dnl Process this file with autoconf to produce a configure script.
