@@ -40,7 +40,7 @@ $index install, windows CppAD$$
 $index windows, CppAD install$$
 $index CppAD, install windows$$
 
-$section Windows Installation and Testing$$
+$section Windows Download, Test, and Installation$$
 
 $head Download Current Version$$
 $index download, windows$$
@@ -60,14 +60,14 @@ Otherwise, download either the CPL or GPL licensed version from:
 
 $subhead CPL License$$
 $href%
-	http://www.coin-or.org/Tarballs/CppAD/cppad-20060830.clp.zip%
-	cppad-20060830.cpl.zip
+	http://www.coin-or.org/Tarballs/CppAD/cppad-20060901.clp.zip%
+	cppad-20060901.cpl.zip
 %$$
 
 $subhead GPL License$$
 $href%
-	http://www.coin-or.org/Tarballs/CppAD/cppad-20060830.gpl.zip%
-	cppad-20060830.gpl.zip
+	http://www.coin-or.org/Tarballs/CppAD/cppad-20060901.gpl.zip%
+	cppad-20060901.gpl.zip
 %$$
 
 $head Extraction$$
@@ -79,7 +79,7 @@ $href%
 or some other program to decompress the archive.
 This will create the distribution directory 
 $syntax%
-	cppad-20060830
+	cppad-20060901
 %$$
 All the command sequences below assume that you start in this
 distribution directory.
