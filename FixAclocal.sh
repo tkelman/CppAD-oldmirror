@@ -7,6 +7,7 @@
 #                     Common Public License Version 1.0.
 #
 # A copy of this license is included in the COPYING file of this distribution.
+# Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 # -----------------------------------------------------------------------------
 echo "Some packages have bad aclocal macros that generate warnings: see"
 echo "http://sources.redhat.com/automake/automake.html#Extending-aclocal"
