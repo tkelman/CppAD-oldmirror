@@ -38,9 +38,13 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Minor improvement to install instruction titles 
+log_entry="Minor changes for dual licensing version
 
 SvnCommit.sh: file that make this commit.
+GplLicense.sh: COPYING file is a special case.
+DosFormat.sh: remove duplicate search pattern.
+COPYING: copy of cpl1.0.txt plus short licensing header at top.
+gpl2.txt: most recent version from web in unix (not dos) format.
 "
 # 
 add_list="
@@ -48,9 +52,10 @@ add_list="
 #
 change_list="
 	SvnCommit.sh
-	omh/Install.omh
-	omh/InstallWindows.omh
-	omh/InstallUnix.omh
+	GplLicense.sh
+	DosFormat.sh
+	COPYING
+	gpl2.txt
 "
 #
 delete_list="

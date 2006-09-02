@@ -72,10 +72,6 @@ list=`find . \
 	\( -name '*.h'   \) -or \
 	\( -name '*.hpp' \) -or \
 	\( -name '*.omh' \)`
-list="
-	$list
-	COPYING
-"
 #
 # change back up to original directory (to be safe)
 cd ..
@@ -107,23 +103,21 @@ do
 	fi
 done
 #
-# change licenses from cpl1.0.txt to gpl2.txt
+# change the COPYING file
+sed -n < cppad-$version/COPYING > GplLicense.tmp \
+-e 's/Common Public License Version 1.0/GNU General Public License Version 2/' \
+-e '/-\{70\}/,/-\{70\}/p'
+#
+cat gpl2.txt >> GplLicense.tmp
+mv GplLicense.tmp cppad-$version/COPYING
+#
+# change the file cpl1.0.txt to the file gpl2.txt
 rm cppad-$version/cpl1.0.txt
 cp gpl2.txt cppad-$version/gpl2.txt
 sed < Makefile.am > cppad-$version/Makefile.am \
 	-e 's/cpl1.0.txt/gpl.txt/'
 sed < omh/License.omh > cppad-$version/omh/License.omh \
 	-e 's/$verbatim%cpl1.0.txt%$\$/$verbatim%gpl2.txt%$$/'
-#
-# fix time stamp on automake files
-touch cppad-$version/aclocal.m4
-sleep 2
-touch cppad-$version/CppAD/config.h.in
-sleep 2
-touch cppad-$version/Makefile.in
-touch cppad-$version/*/Makefile.in
-sleep 2
-touch cppad-$version/configure
 #
 # create *.gpl.tgz file
 echo "tar -czf cppad-$version.gpl.tgz cppad-$version"

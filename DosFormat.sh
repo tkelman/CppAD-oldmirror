@@ -10,6 +10,11 @@
 # Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 # -----------------------------------------------------------------------------
 #
+if [ -e DosFormat.log ]
+then
+	rm DosFormat.log
+fi
+#
 # date currently in configure.ac
 version=`grep "^ *AC_INIT(" configure.ac | \
 	sed -e "s/.*, *\([0-9]\{8\}\) *,.*/\1/"`
@@ -61,7 +66,6 @@ do
 	list=`find . \
 		\( -name '*.am'  \) -or \
 		\( -name '*.ac'  \) -or \
-		\( -name '*.ac'  \) -or \
 		\( -name '*.sh' \) -or \
 		\( -name '*.cpp' \) -or \
 		\( -name '*.h'   \) -or \
@@ -71,7 +75,7 @@ do
 	list="
 		$list
 		AUTHORS
-		COYPING
+		COPYING
 		ChangeLog
 		INSTALL
 		NEWS
@@ -83,7 +87,7 @@ do
 		ext=`echo $file | sed -e "s/.*\././"`
 		file=`echo $file | sed -e 's|^\./||'`
 		#
-		unix2dos cppad-$version/$file >& /dev/null
+		unix2dos cppad-$version/$file >& DosFormat.log
 		#
 		if [ "$ext" = ".sh" ]
 		then
