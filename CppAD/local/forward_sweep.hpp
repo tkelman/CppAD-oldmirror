@@ -145,7 +145,7 @@ $th d$$ order Taylor coefficient for the variable with index $italic i$$.
 $end
 ------------------------------------------------------------------------------
 */
-# define CppADForwardSweepTrace 0
+# define CPPAD_FORWARD_SWEEP_TRACE 0
 
 // BEGIN CppAD namespace
 namespace CppAD {
@@ -868,7 +868,7 @@ size_t ForwardSweep(
 			default:
 			CppADUnknownError(0);
 		}
-# if CppADForwardSweepTrace
+# if CPPAD_FORWARD_SWEEP_TRACE
 		printOp(
 			std::cout, 
 			Rec,
@@ -896,6 +896,6 @@ size_t ForwardSweep(
 
 } // END CppAD namespace
 
-# undef CppADForwardSweepTrace
+# undef CPPAD_FORWARD_SWEEP_TRACE
 
 # endif

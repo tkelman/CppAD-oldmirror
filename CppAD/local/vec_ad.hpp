@@ -291,7 +291,7 @@ $end
 ------------------------------------------------------------------------ 
 */
 
-# define CppADVecADComputedAssignment(op, name)                         \
+# define CPPAD_VEC_AD_COMPUTED_ASSIGNMENT(op, name)                     \
 VecAD_reference& operator op (const VecAD_reference<Base> &right)       \
 {	CppADUsageError(                                                \
 		0,                                                      \
@@ -336,10 +336,10 @@ public:
 	void operator = (int             right);
 
 	// computed assignments
-	CppADVecADComputedAssignment( += , " += " )
-	CppADVecADComputedAssignment( -= , " -= " )
-	CppADVecADComputedAssignment( *= , " *= " )
-	CppADVecADComputedAssignment( /= , " /= " )
+	CPPAD_VEC_AD_COMPUTED_ASSIGNMENT( += , " += " )
+	CPPAD_VEC_AD_COMPUTED_ASSIGNMENT( -= , " -= " )
+	CPPAD_VEC_AD_COMPUTED_ASSIGNMENT( *= , " *= " )
+	CPPAD_VEC_AD_COMPUTED_ASSIGNMENT( /= , " /= " )
 
 
 	// AD<Base> constructor
@@ -578,6 +578,6 @@ inline std::ostream& operator << (std::ostream &os, const VecAD<Base> &v)
 
 } // END CppAD namespace
 
-# undef CppADVecADComputedAssignment
+# undef CPPAD_VEC_AD_COMPUTED_ASSIGNMENT
 
 # endif

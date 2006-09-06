@@ -275,7 +275,7 @@ $end
 -------------------------------------------------------------------------------
 */
 
-# define CppADStandardMathUnaryBaseAll(Name)                              \
+# define CPPAD_STANDARD_MATH_UNARY_BASE_ALL(Name)                         \
                                                                           \
 	inline float Name(float x)                                        \
 	{	return std::Name(x); }                                    \
@@ -289,7 +289,7 @@ $end
 	inline std::complex<double> Name(std::complex<double> x)          \
 	{	return std::Name(x); }
 
-# define CppADStandardMathUnaryBaseHalf(Name)                             \
+# define CPPAD_STANDARD_MATH_UNARY_BASE_HALF(Name)                        \
                                                                           \
 	inline float Name(float x)                                        \
 	{	return std::Name(x); }                                    \
@@ -313,7 +313,7 @@ $end
 		return x;                                                 \
 	}
 
-# define CppADStandardMathUnaryTemplate(Name, Op)                         \
+# define CPPAD_STANDARD_MATH_UNARY_BASE_TEMPLATE(Name, Op)                \
 	template <class Base>                                             \
 	inline AD<Base> AD<Base>::Name (void) const                       \
         {	using CppAD::Name;                                        \
@@ -335,32 +335,32 @@ $end
 namespace CppAD {
 
         // acos
-        CppADStandardMathUnaryBaseHalf(acos)
-        CppADStandardMathUnaryTemplate(acos, AcosOp)
+        CPPAD_STANDARD_MATH_UNARY_BASE_HALF(acos)
+        CPPAD_STANDARD_MATH_UNARY_BASE_TEMPLATE(acos, AcosOp)
 
         // asin
-        CppADStandardMathUnaryBaseHalf(asin)
-        CppADStandardMathUnaryTemplate(asin, AsinOp)
+        CPPAD_STANDARD_MATH_UNARY_BASE_HALF(asin)
+        CPPAD_STANDARD_MATH_UNARY_BASE_TEMPLATE(asin, AsinOp)
 
         // atan
-        CppADStandardMathUnaryBaseHalf(atan)
-        CppADStandardMathUnaryTemplate(atan, AtanOp)
+        CPPAD_STANDARD_MATH_UNARY_BASE_HALF(atan)
+        CPPAD_STANDARD_MATH_UNARY_BASE_TEMPLATE(atan, AtanOp)
 
         // cos
-        CppADStandardMathUnaryBaseAll(cos)
-        CppADStandardMathUnaryTemplate(cos, CosOp)
+        CPPAD_STANDARD_MATH_UNARY_BASE_ALL(cos)
+        CPPAD_STANDARD_MATH_UNARY_BASE_TEMPLATE(cos, CosOp)
 
         // cosh
-        CppADStandardMathUnaryBaseAll(cosh)
-        CppADStandardMathUnaryTemplate(cosh, CoshOp)
+        CPPAD_STANDARD_MATH_UNARY_BASE_ALL(cosh)
+        CPPAD_STANDARD_MATH_UNARY_BASE_TEMPLATE(cosh, CoshOp)
 
         // exp
-        CppADStandardMathUnaryBaseAll(exp)
-        CppADStandardMathUnaryTemplate(exp, ExpOp)
+        CPPAD_STANDARD_MATH_UNARY_BASE_ALL(exp)
+        CPPAD_STANDARD_MATH_UNARY_BASE_TEMPLATE(exp, ExpOp)
 
         // log
-        CppADStandardMathUnaryBaseAll(log)
-        CppADStandardMathUnaryTemplate(log, LogOp)
+        CPPAD_STANDARD_MATH_UNARY_BASE_ALL(log)
+        CPPAD_STANDARD_MATH_UNARY_BASE_TEMPLATE(log, LogOp)
 
         // log10
 	template <class Base>
@@ -371,16 +371,16 @@ namespace CppAD {
 	{	return CppAD::log(x.ADBase()) / CppAD::log( Base(10) ); }
 
         // sin
-        CppADStandardMathUnaryBaseAll(sin)
-        CppADStandardMathUnaryTemplate(sin, SinOp)
+        CPPAD_STANDARD_MATH_UNARY_BASE_ALL(sin)
+        CPPAD_STANDARD_MATH_UNARY_BASE_TEMPLATE(sin, SinOp)
 
         // sinh
-        CppADStandardMathUnaryBaseAll(sinh)
-        CppADStandardMathUnaryTemplate(sinh, SinhOp)
+        CPPAD_STANDARD_MATH_UNARY_BASE_ALL(sinh)
+        CPPAD_STANDARD_MATH_UNARY_BASE_TEMPLATE(sinh, SinhOp)
 
         // sqrt
-        CppADStandardMathUnaryBaseAll(sqrt)
-        CppADStandardMathUnaryTemplate(sqrt, SqrtOp)
+        CPPAD_STANDARD_MATH_UNARY_BASE_ALL(sqrt)
+        CPPAD_STANDARD_MATH_UNARY_BASE_TEMPLATE(sqrt, SqrtOp)
 	
         // tan
 	template <class Base>
@@ -391,8 +391,8 @@ namespace CppAD {
 	{	return CppAD::sin(x.ADBase()) / CppAD::cos(x.ADBase()); }
 }
 
-# undef CppADStandardMathUnaryBaseAll
-# undef CppADStandardMathUnaryBaseHalf
-# undef CppADStandardMathUnaryTemplate
+# undef CPPAD_STANDARD_MATH_UNARY_BASE_ALL
+# undef CPPAD_STANDARD_MATH_UNARY_BASE_HALF
+# undef CPPAD_STANDARD_MATH_UNARY_BASE_TEMPLATE
 
 # endif 

@@ -413,7 +413,7 @@ void ADTape<Base>::RecordCondExp(
 
 // ------------ CondExpOp(left, right, trueCase, falseCase) ----------------
 
-# define CppADCondExp(Name)                                                \
+# define CPPAD_COND_EXP(Name)                                              \
 	template <class Base>                                              \
 	inline AD<Base> CondExp##Name(                                     \
 		const AD<Base> &left      ,                                \
@@ -426,11 +426,11 @@ void ADTape<Base>::RecordCondExp(
 	}
 
 // AD<Base>
-CppADCondExp(Lt)
-CppADCondExp(Le)
-CppADCondExp(Eq)
-CppADCondExp(Ge)
-CppADCondExp(Gt)
+CPPAD_COND_EXP(Lt)
+CPPAD_COND_EXP(Le)
+CPPAD_COND_EXP(Eq)
+CPPAD_COND_EXP(Ge)
+CPPAD_COND_EXP(Gt)
 template <class Base>
 inline AD<Base> CondExp(
 	const AD<Base> &flag      , 
@@ -440,8 +440,8 @@ inline AD<Base> CondExp(
 	return CondExpOp(CompareGt, flag, AD<Base>(0), trueCase, falseCase);
 }
 
-# undef CppADCondExp
-# define CppADCondExp(Name, Op, Type)                               \
+# undef CPPAD_COND_EXP
+# define CPPAD_COND_EXP(Name, Op, Type)                             \
 	inline Type CondExp##Name(                                  \
 		const Type &left      ,                             \
 		const Type &right     ,                             \
@@ -455,11 +455,11 @@ inline AD<Base> CondExp(
 	}
 
 // float
-CppADCondExp(Lt,  <, float)
-CppADCondExp(Le, <=, float)
-CppADCondExp(Eq, ==, float)
-CppADCondExp(Ge, >=, float)
-CppADCondExp(Gt,  >, float)
+CPPAD_COND_EXP(Lt,  <, float)
+CPPAD_COND_EXP(Le, <=, float)
+CPPAD_COND_EXP(Eq, ==, float)
+CPPAD_COND_EXP(Ge, >=, float)
+CPPAD_COND_EXP(Gt,  >, float)
 inline float CondExp(
 	const float &flag      , 
 	const float &trueCase  ,
@@ -469,11 +469,11 @@ inline float CondExp(
 }
 
 // double
-CppADCondExp(Lt,  <, double)
-CppADCondExp(Le, <=, double)
-CppADCondExp(Eq, ==, double)
-CppADCondExp(Ge, >=, double)
-CppADCondExp(Gt,  >, double)
+CPPAD_COND_EXP(Lt,  <, double)
+CPPAD_COND_EXP(Le, <=, double)
+CPPAD_COND_EXP(Eq, ==, double)
+CPPAD_COND_EXP(Ge, >=, double)
+CPPAD_COND_EXP(Gt,  >, double)
 inline double CondExp(
 	const double &flag      , 
 	const double &trueCase  ,
@@ -482,7 +482,7 @@ inline double CondExp(
 	return CondExpGt(flag, 0., trueCase, falseCase);
 }
 
-# undef CppADCondExp
+# undef CPPAD_COND_EXP
 
 } // END CppAD namespace
 

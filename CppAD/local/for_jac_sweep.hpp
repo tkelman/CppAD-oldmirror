@@ -129,7 +129,7 @@ $th j$$ set of sparsity pattern for the variable with index $italic i$$.
 $end
 ------------------------------------------------------------------------------
 */
-# define CppADForJacSweepTrace 0
+# define CPPAD_FOR_JAC_SWEEP_TRACE 0
 
 
 // BEGIN CppAD namespace
@@ -662,7 +662,7 @@ void ForJacSweep(
 			default:
 			CppADUnknownError(0);
 		}
-# if CppADForJacSweepTrace
+# if CPPAD_FOR_JAC_SWEEP_TRACE
 		printOp(
 			std::cout, 
 			Rec,
@@ -689,6 +689,6 @@ void ForJacSweep(
 
 } // END CppAD namespace
 
-# undef CppADForJacSweepTrace
+# undef CPPAD_FOR_JAC_SWEEP_TRACE
 
 # endif

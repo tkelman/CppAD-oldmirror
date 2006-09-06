@@ -108,7 +108,7 @@ corresponding to the columns of $italic ForJac$$.
 $end
 ------------------------------------------------------------------------------
 */
-# define CppADRevHesSweepTrace 0
+# define CPPAD_REV_HES_SWEEP_TRACE 0
 
 
 // BEGIN CppAD namespace
@@ -186,7 +186,7 @@ void RevHesSweep(
 		Zr     = RevJac + i_var;
 		Zh     = RevHes + i_var * npv;
 
-# if CppADRevHesSweepTrace
+# if CPPAD_REV_HES_SWEEP_TRACE
 		printOp(
 			std::cout, 
 			Rec,
@@ -684,6 +684,6 @@ void RevHesSweep(
 
 } // END CppAD namespace
 
-# undef CppADRevJacSweepTrace
+# undef CPPAD_REV_HES_SWEEP_TRACE
 
 # endif

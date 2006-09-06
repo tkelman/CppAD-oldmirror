@@ -38,12 +38,10 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Change version number to ccyy-mm-dd format in the files:
-Doc.omh, GplLicense.sh, configure.ac, DosFormat.sh, diffToday.sh, 
-InstallUnix.omh, InstallWindows.omh, Build.sh
+log_entry="Change some more macros in CppAD/local from mixed to upper case.
 
 SvnCommit.sh: file that make this commit.
-WhatsNew06.omh: users view of changes.
+WishList.omh: comments about these modifications testing entries in wish list.
 "
 # 
 add_list="
@@ -51,15 +49,14 @@ add_list="
 #
 change_list="
 	SvnCommit.sh
-	omh/WhatsNew06.omh
-	Doc.omh
-	GplLicense.sh
-	configure.ac
-	DosFormat.sh
-	diffToday.sh
-	omh/InstallUnix.omh
-	omh/InstallWindows.omh
-	Build.sh
+	CppAD/local/cond_exp.hpp
+	CppAD/local/for_jac_sweep.hpp
+	CppAD/local/forward_sweep.hpp
+	CppAD/local/rev_jac_sweep.hpp
+	CppAD/local/vec_ad.hpp
+	CppAD/local/rev_hes_sweep.hpp
+	CppAD/local/std_math_unary.hpp
+	omh/WishList.omh
 "
 #
 delete_list="

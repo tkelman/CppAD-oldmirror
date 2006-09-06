@@ -108,7 +108,7 @@ $th j$$ subset of the sparsity pattern for the variable with index $italic i$$.
 $end
 ------------------------------------------------------------------------------
 */
-# define CppADRevJacSweepTrace 0
+# define CPPAD_REV_JAC_SWEEP_TRACE 0
 
 
 // BEGIN CppAD namespace
@@ -173,7 +173,7 @@ void RevJacSweep(
 		// sparsity for z corresponding to this op
 		Z      = RevJac + i_var * npv;
 
-# if CppADRevJacSweepTrace
+# if CPPAD_REV_JAC_SWEEP_TRACE
 		printOp(
 			std::cout, 
 			Rec,
@@ -634,6 +634,6 @@ void RevJacSweep(
 
 } // END CppAD namespace
 
-# undef CppADRevJacSweepTrace
+# undef CPPAD_REV_JAC_SWEEP_TRACE
 
 # endif
