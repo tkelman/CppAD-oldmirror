@@ -72,6 +72,7 @@ Changes not yet check into trunk:
 4. Change all files in CppAD/local to use lower case and *.hpp extension.
 5. CppAD_vector.h was generating a warning on version 4 of gcc.
 6. Change # defines in CppAD/local/*.hpp to use upper case.
+7. Change version numbers from yy-mm-dd to ccyy-mm-dd format.
 
 $$
 
