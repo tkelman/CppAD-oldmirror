@@ -21,24 +21,8 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 # include <CppAD/local/tape_rec.hpp>
 # include <CppAD/local/ad_tape.hpp>
 
-// macro for base type binary operators is used in multiple files
-// so declared in CppAD instead of here
-
-// use this macro for all the Base logical operators
-# define CppADCompareFriend(Op)                                  \
-                                                                 \
-	friend bool operator Op <Base>                           \
-		 (const AD<Base> &left, const AD<Base> &right);  \
-                                                                 \
-	friend bool operator Op <Base>                           \
-		 (const Base &left, const AD<Base> &right);      \
-                                                                 \
-	friend bool operator Op <Base>                           \
-		 (const AD<Base> &left, const Base &right)
-
-
 // use this marco for assignment and computed assignment
-# define CppADAssignMember(Op)                                \
+# define CPPAD_ASSIGN_MEMBER(Op)                              \
 	inline AD& operator Op (const AD &right);             \
 	inline AD& operator Op (int right)                    \
 	{	return *this Op AD(right); }                  \
@@ -48,14 +32,14 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 	{	return *this Op right.ADBase(); }
 
 // use this marco for binary operators 
-# define CppADBinaryMember(Op)                                     \
+# define CPPAD_BINARY_MEMBER(Op)                                   \
 	inline AD operator Op (const AD &right) const;             \
 	inline AD operator Op (int right) const;                   \
 	inline AD operator Op (const Base &right) const;           \
 	inline AD operator Op (const VecAD_reference<Base> &right) const;
 
 // use this marco for comparison operators 
-# define CppADCompareMember(Op)                                      \
+# define CPPAD_COMPARE_MEMBER(Op)                                    \
 	inline bool operator Op (const AD &right) const;             \
 	inline bool operator Op (int right) const;                   \
 	inline bool operator Op (const Base &right) const;           \
@@ -129,18 +113,18 @@ public:
 	typedef Base value_type;
 
 	// comparison operators
-	CppADCompareMember( <  )
-	CppADCompareMember( <= )
-	CppADCompareMember( >  )
-	CppADCompareMember( >= )
-	CppADCompareMember( == )
-	CppADCompareMember( != )
+	CPPAD_COMPARE_MEMBER( <  )
+	CPPAD_COMPARE_MEMBER( <= )
+	CPPAD_COMPARE_MEMBER( >  )
+	CPPAD_COMPARE_MEMBER( >= )
+	CPPAD_COMPARE_MEMBER( == )
+	CPPAD_COMPARE_MEMBER( != )
 
 	// binary operators
-	CppADBinaryMember(+)
-	CppADBinaryMember(-)
-	CppADBinaryMember(*)
-	CppADBinaryMember(/)
+	CPPAD_BINARY_MEMBER(+)
+	CPPAD_BINARY_MEMBER(-)
+	CPPAD_BINARY_MEMBER(*)
+	CPPAD_BINARY_MEMBER(/)
 
 	// default constructor
 	inline AD(void);
@@ -162,11 +146,11 @@ public:
 	friend Base Value <Base> (const AD<Base> &x);
 
 	// binary operators implemented as member functions
-	CppADAssignMember(  = )
-	CppADAssignMember( += )
-	CppADAssignMember( -= )
-	CppADAssignMember( *= )
-	CppADAssignMember( /= )
+	CPPAD_ASSIGN_MEMBER(  = )
+	CPPAD_ASSIGN_MEMBER( += )
+	CPPAD_ASSIGN_MEMBER( -= )
+	CPPAD_ASSIGN_MEMBER( *= )
+	CPPAD_ASSIGN_MEMBER( /= )
 
 	// unary operators
 	inline AD operator +(void) const;
@@ -247,8 +231,8 @@ private:
 
 // operations that expect the AD template class to be defined
 
-# undef CppADCompareFriend
-# undef CppADAssignMember
-# undef CppADBinaryMember
+# undef CPPAD_ASSIGN_MEMBER
+# undef CPPAD_BINARY_MEMBER
+# undef CPPAD_COMPARE_MEMBER
 
 # endif
