@@ -19,7 +19,7 @@ BOOST_DIR=/usr/include/boost-1_33
 #
 # date currently in configure.ac
 version=`grep "^ *AC_INIT(" configure.ac | \
-	sed -e "s/.*, *\([0-9]\{8\}\) *,.*/\1/"`
+	sed -e "s/.*, *\([0-9-]\{10\}\) *,.*/\1/"`
 #
 # version
 #
@@ -31,28 +31,25 @@ then
 	# yy is year in century, mm is month in year, dd is day in month.
 	ccyy_mm_dd=`date +%C%g-%m-%d`
 	#
-	# Today's date in ccyymmdd format
-	ccyymmdd=`date +%C%g%m%d`
-	#
 	# configure.ac
 	sed configure.ac > configure.ac.tmp \
-		-e "s/(CppAD, [0-9]\{8\} *,/(CppAD, $ccyymmdd,/"
+		-e "s/(CppAD, [0-9-]\{10\} *,/(CppAD, $ccyy_mm_dd,/"
 	diff configure.ac  configure.ac.tmp
 	mv   configure.ac.tmp configure.ac
 	#
 	# AUTHORS
 	sed AUTHORS > AUTHORS.tmp \
-	-e "s/, *[0-9]\{4\}-[0-9][0-9]-[0-9][0-9] *,/, $ccyy_mm_dd,/"
+	-e "s/, *[0-9-]\{10\} *,/, $ccyy_mm_dd,/"
 	diff AUTHORS    AUTHORS.tmp
 	mv   AUTHORS.tmp AUTHORS 
 	#
 	# change Autoconf version to today
-	version=$ccyymmdd
+	version=$ccyy_mm_dd
 	#
 	for name in Doc.omh omh/InstallUnix.omh omh/InstallWindows.omh
 	do
 		sed $name > $name.tmp \
-			-e "s/cppad-[0-9]\{8\}/cppad-$ccyymmdd/g"
+			-e "s/cppad-[0-9-]\{10\}/cppad-$ccyy_mm_dd/g"
 		diff $name $name.tmp
 		mv   $name.tmp $name
 	done

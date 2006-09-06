@@ -38,13 +38,12 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Minor changes for dual licensing version
+log_entry="Change version number to ccyy-mm-dd format in the files:
+Doc.omh, GplLicense.sh, configure.ac, DosFormat.sh, diffToday.sh, 
+InstallUnix.omh, InstallWindows.omh, Build.sh
 
 SvnCommit.sh: file that make this commit.
-GplLicense.sh: COPYING file is a special case.
-DosFormat.sh: remove duplicate search pattern.
-COPYING: copy of cpl1.0.txt plus short licensing header at top.
-gpl2.txt: most recent version from web in unix (not dos) format.
+WhatsNew06.omh: users view of changes.
 "
 # 
 add_list="
@@ -52,10 +51,15 @@ add_list="
 #
 change_list="
 	SvnCommit.sh
+	omh/WhatsNew06.omh
+	Doc.omh
 	GplLicense.sh
+	configure.ac
 	DosFormat.sh
-	COPYING
-	gpl2.txt
+	diffToday.sh
+	omh/InstallUnix.omh
+	omh/InstallWindows.omh
+	Build.sh
 "
 #
 delete_list="
