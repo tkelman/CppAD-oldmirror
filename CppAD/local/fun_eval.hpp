@@ -1,5 +1,5 @@
-# ifndef CppADFunEvalIncluded
-# define CppADFunEvalIncluded
+# ifndef CPPAD_FUN_EVAL_INCLUDED
+# define CPPAD_FUN_EVAL_INCLUDED
 
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell

@@ -1,5 +1,5 @@
-# ifndef CppADRevSparseHesIncluded
-# define CppADRevSparseHesIncluded
+# ifndef CPPAD_REV_SPARSE_HES_INCLUDED
+# define CPPAD_REV_SPARSE_HES_INCLUDED
 
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell

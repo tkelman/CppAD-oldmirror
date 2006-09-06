@@ -36,7 +36,7 @@ $index CppAD$$
 $index version, CppAD$$
 
 $section 
-A Package for Differentiation of C++ Algorithms: cppad-20060830
+A Package for Differentiation of C++ Algorithms: cppad-20060905
 $$ 
 
 $head Syntax$$
@@ -147,7 +147,11 @@ $syntax%
 includes the CppAD package for the rest of the current compilation unit.
 
 $head Preprocessor Symbols$$
-All the preprocessor symbols used by CppAD begin with $code CppAD$$.
+$index symbol, preprocessor CppAD$$
+$index preprocessor, symbol CppAD$$
+$index CppAD, preprocessor symbol$$
+All the preprocessor symbols used by CppAD begin with eight
+$code CppAD$$ or $code CPPAD_$$.
 For example, 
 the preprocessor symbol $code CppADIncluded$$ is used to determine
 if $code CppAD.h$$ has already been included.

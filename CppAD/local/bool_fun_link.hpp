@@ -1,5 +1,5 @@
-# ifndef CppADBoolFunLinkIncluded
-# define CppADBoolFunLinkIncluded
+# ifndef CPPAD_BOOL_FUN_LINK_INCLUDED
+# define CPPAD_BOOL_FUN_LINK_INCLUDED
 
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell

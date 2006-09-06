@@ -1,5 +1,5 @@
-# ifndef CppADDriversIncluded
-# define CppADDriversIncluded
+# ifndef CPPAD_DRIVERS_INCLUDED
+# define CPPAD_DRIVERS_INCLUDED
 
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell

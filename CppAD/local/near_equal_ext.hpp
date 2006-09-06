@@ -1,5 +1,5 @@
-# ifndef CppADNearEqualExtIncluded
-# define CppADNearEqualExtIncluded
+# ifndef CPPAD_NEAR_EQUAL_EXT_INCLUDED
+# define CPPAD_NEAR_EQUAL_EXT_INCLUDED
 
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell

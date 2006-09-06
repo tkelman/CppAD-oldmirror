@@ -1,5 +1,5 @@
-# ifndef CppADBoolValuedIncluded
-# define CppADBoolValuedIncluded
+# ifndef CPPAD_BOOL_VALUED_INCLUDED
+# define CPPAD_BOOL_VALUED_INCLUDED
 
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell

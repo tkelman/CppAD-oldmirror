@@ -1,5 +1,5 @@
-# ifndef CppADCondExpIncluded
-# define CppADCondExpIncluded
+# ifndef CPPAD_COND_EXP_INCLUDED
+# define CPPAD_COND_EXP_INCLUDED
 
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell

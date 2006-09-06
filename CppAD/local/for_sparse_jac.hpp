@@ -1,5 +1,5 @@
-# ifndef CppADForSparseJacIncluded
-# define CppADForSparseJacIncluded
+# ifndef CPPAD_FOR_SPARSE_JAC_INCLUDED
+# define CPPAD_FOR_SPARSE_JAC_INCLUDED
 
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell

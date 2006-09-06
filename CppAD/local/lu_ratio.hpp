@@ -1,5 +1,5 @@
-# ifndef CppADLuRatioIncluded
-# define CppADLuRatioIncluded
+# ifndef CPPAD_LU_RATIO_INCLUDED
+# define CPPAD_LU_RATIO_INCLUDED
 
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell

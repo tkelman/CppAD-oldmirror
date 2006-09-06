@@ -1,5 +1,5 @@
-# ifndef CppADRevJacSweepIncluded
-# define CppADRevJacSweepIncluded
+# ifndef CPPAD_REV_JAC_SWEEP_INCLUDED
+# define CPPAD_REV_JAC_SWEEP_INCLUDED
 
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell

@@ -1,5 +1,5 @@
-# ifndef CppADArithmeticIncluded
-# define CppADArithmeticIncluded
+# ifndef CPPAD_ARITHMETIC_INCLUDED
+# define CPPAD_ARITHMETIC_INCLUDED
 
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell

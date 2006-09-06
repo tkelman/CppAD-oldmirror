@@ -1,5 +1,5 @@
-# ifndef CppADCopyBaseIncluded
-# define CppADCopyBaseIncluded
+# ifndef CPPAD_COPY_BASE_INCLUDED
+# define CPPAD_COPY_BASE_INCLUDED
 
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell

@@ -1,5 +1,5 @@
-# ifndef CppADMulEqIncluded
-# define CppADMulEqIncluded
+# ifndef CPPAD_MUL_EQ_INCLUDED
+# define CPPAD_MUL_EQ_INCLUDED
 
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell

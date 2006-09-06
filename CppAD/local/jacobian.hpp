@@ -1,5 +1,5 @@
-# ifndef CppADJacobianIncluded
-# define CppADJacobianIncluded
+# ifndef CPPAD_JACOBIAN_INCLUDED
+# define CPPAD_JACOBIAN_INCLUDED
 
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell

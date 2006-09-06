@@ -1,5 +1,5 @@
-# ifndef CppADADTapeIncluded
-# define CppADADTapeIncluded
+# ifndef CPPAD_AD_TAPE_INCLUDED
+# define CPPAD_AD_TAPE_INCLUDED
 
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell

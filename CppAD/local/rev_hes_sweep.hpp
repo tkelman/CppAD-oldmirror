@@ -1,5 +1,5 @@
-# ifndef CppADRevHesSweepIncluded
-# define CppADRevHesSweepIncluded
+# ifndef CPPAD_REV_HES_SWEEP_INCLUDED
+# define CPPAD_REV_HES_SWEEP_INCLUDED
 
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell

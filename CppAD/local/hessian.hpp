@@ -1,5 +1,5 @@
-# ifndef CppADHessianIncluded
-# define CppADHessianIncluded
+# ifndef CPPAD_HESSIAN_INCLUDED
+# define CPPAD_HESSIAN_INCLUDED
 
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell

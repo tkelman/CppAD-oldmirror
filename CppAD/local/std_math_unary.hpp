@@ -1,5 +1,5 @@
-# ifndef CppADStdMathUnaryIncluded
-# define CppADStdMathUnaryIncluded
+# ifndef CPPAD_STD_MATH_UNARY_INCLUDED
+# define CPPAD_STD_MATH_UNARY_INCLUDED
 
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell

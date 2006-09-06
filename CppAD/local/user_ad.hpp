@@ -1,5 +1,5 @@
-# ifndef CppADUserADIncluded
-# define CppADUserADIncluded
+# ifndef CPPAD_USER_AD_INCLUDED
+# define CPPAD_USER_AD_INCLUDED
 
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell

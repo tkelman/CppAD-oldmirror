@@ -16,7 +16,7 @@ if [ -e junk.1 ]
 then
 	rm junk.1
 fi
-for file in *.omh */*.omh */*.h */*.cpp CppAD/local/*.h */*.hpp
+for file in *.omh */*.omh */*.h */*.cpp CppAD/local/*.hpp */*.hpp
 do
 	# assume $childtable, ... , $verbatim use % for delimiter
 	sed -n < $file >> junk.1 \
@@ -36,7 +36,7 @@ sed < junk.1 > junk.2 \
 	-e 's/^[ 	]*//' \
 	-e 's|\\|/|g'
 #
-ls cpl1.0.txt *.omh */*.out */*.omh */*.h */*.cpp CppAD/local/*.h  \
+ls cpl1.0.txt *.omh */*.out */*.omh */*.h */*.cpp CppAD/local/*.hpp  \
 	*/*.hpp > junk.3
 #
 for file in `cat junk.2`

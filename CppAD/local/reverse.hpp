@@ -1,5 +1,5 @@
-# ifndef CppADReverseIncluded
-# define CppADReverseIncluded
+# ifndef CPPAD_REVERSE_INCLUDED
+# define CPPAD_REVERSE_INCLUDED
 
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell

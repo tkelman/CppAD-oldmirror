@@ -1,5 +1,5 @@
-# ifndef CppADAtan2Included
-# define CppADAtan2Included
+# ifndef CPPAD_ATAN2_INCLUDED
+# define CPPAD_ATAN2_INCLUDED
 
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
