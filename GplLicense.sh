@@ -116,7 +116,7 @@ rm cppad-$version/cpl1.0.txt
 cp gpl2.txt cppad-$version/gpl2.txt
 sed < Makefile.am > cppad-$version/Makefile.am \
 	-e 's/cpl1.0.txt/gpl.txt/'
-sed < omh/License.omh > cppad-$version/omh/License.omh \
+sed < omh/license.omh > cppad-$version/omh/license.omh \
 	-e 's/$verbatim%cpl1.0.txt%$\$/$verbatim%gpl2.txt%$$/'
 #
 # create *.gpl.tgz file
