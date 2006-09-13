@@ -73,6 +73,7 @@ Changes not yet check into trunk:
 5. CppAD_vector.h was generating a warning on version 4 of gcc.
 6. Change # defines in CppAD/local/*.hpp to use upper case.
 7. Change version numbers from yy-mm-dd to ccyy-mm-dd format.
+8. Add Example/StackMachine.cpp example.
 
 $$
 

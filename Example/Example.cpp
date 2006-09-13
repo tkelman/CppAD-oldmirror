@@ -120,6 +120,7 @@ extern bool SimpleVector(void);
 extern bool Sin(void);
 extern bool Sinh(void);
 extern bool Sqrt(void);
+extern bool StackMachine(void);
 extern bool Sub(void);
 extern bool SubEq(void);
 extern bool Tan(void);
@@ -240,6 +241,7 @@ int main(void)
 	ok &= Run( Sin,               "Sin"              );
 	ok &= Run( Sinh,              "Sinh"             );
 	ok &= Run( Sqrt,              "Sqrt"             );
+	ok &= Run( StackMachine,      "StackMachine"     );
 	ok &= Run( Sub,               "Sub"              );
 	ok &= Run( SubEq,             "SubEq"            );
 	ok &= Run( Tan,               "Tan"              );

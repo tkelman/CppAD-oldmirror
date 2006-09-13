@@ -36,6 +36,7 @@ $childtable%
 	Example/HesLuDet.cpp%
 	Example/OdeStiff.cpp%
 	Example/OdeTaylor.cpp%
+	Example/StackMachine.cpp%
 	Example/ComplexPoly.cpp%
 	omh/MulTape.omh
 %$$
@@ -160,6 +161,7 @@ $rref SimpleVector.cpp$$
 $rref Sin.cpp$$
 $rref Sinh.cpp$$
 $rref Sqrt.cpp$$
+$rref StackMachine.cpp$$
 $rref Sub.cpp$$
 $rref SubEq.cpp$$
 $rref Tan.cpp$$

@@ -38,18 +38,26 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Correct case in refernece to omh/license.omh
+log_entry="Add stack machine interpreter example
 
 SvnCommit.sh: file that make this commit.
-GplLicense.sh: file where correction was made.
+WhatsNew06.omh: user's view of the changes.
+ExampleList.omh: add StackMachine.cpp to list of examples.
+StackMachine.cpp: the new example
+Makefile.am: add StackMachine.cpp to list of examples.
+Example.cpp: add StackMachine.cpp to list of examples.
 "
 # 
 add_list="
+	Example/StackMachine.cpp
 "
 #
 change_list="
 	SvnCommit.sh
-	GplLicense.sh
+	omh/WhatsNew06.omh
+	omh/ExampleList.omh
+	Example/Makefile.am
+	Example/Example.cpp
 "
 #
 delete_list="

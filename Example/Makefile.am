@@ -118,9 +118,10 @@ Example_SOURCES   = \
 	Sin.cpp \
 	Sinh.cpp \
 	Sqrt.cpp \
+	StackMachine.cpp \
 	Sub.cpp \
-	Tan.cpp \
 	SubEq.cpp \
+	Tan.cpp \
 	TrackNewDel.cpp \
 	UnaryMinus.cpp \
 	UnaryPlus.cpp \
