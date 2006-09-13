@@ -59,8 +59,6 @@ void StackMachine(
 	CppAD::vector< CppAD::AD<double> > &variable     )
 {	using std::string;
 	using std::stack;
-	using std::cout;
-	using std::endl;
 
 	using CppAD::AD;
 
@@ -134,8 +132,6 @@ void StackMachine(
 bool StackMachine(void)
 {	bool ok = true;
 
-	using std::cout;
-	using std::endl;
 	using std::string;
 	using std::stack;
 
@@ -197,13 +193,19 @@ bool StackMachine(void)
 	ok &= (y[2] == (x[0] + 1.) * 2. - 3.);
 	ok &= (y[3] == ( (x[0] + 1.) * 2. - 3.) / 4.);
 
-	// Use forward mode to calculate the Jacobian
-	// because x vector is longer than y vector
+	// Use forward mode (because x is longer than y) to calculate Jacobian
 	p = 1;
 	vector<double> dx(n);
 	vector<double> dy(m);
 	dx[0] = 1.;
 	dy    = f.Forward(p, dx);
+	ok   &= NearEqual(dy[0], 1., 1e-10, 1e-10);
+	ok   &= NearEqual(dy[1], 2., 1e-10, 1e-10);
+	ok   &= NearEqual(dy[2], 2., 1e-10, 1e-10);
+	ok   &= NearEqual(dy[3], .5, 1e-10, 1e-10);
+
+	// Use Jacobian routine (which automatically decides which mode to use)
+	dy = f.Jacobian(x);
 	ok   &= NearEqual(dy[0], 1., 1e-10, 1e-10);
 	ok   &= NearEqual(dy[1], 2., 1e-10, 1e-10);
 	ok   &= NearEqual(dy[2], 2., 1e-10, 1e-10);
