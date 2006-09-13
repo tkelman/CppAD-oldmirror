@@ -1,0 +1,258 @@
+/* -----------------------------------------------------------------------
+CppAD: C++ Algorithm Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+------------------------------------------------------------------------ */
+
+$begin glossary$$
+$aindex head subhead$$
+$spell
+	Vec
+	cos
+	bool
+	Op
+	Diff
+	Var
+	Cpp
+	enum
+	Taylor
+$$
+
+$section Glossary$$
+
+$head AD Function$$
+Given an $xref/ADFun/$$ object $italic f$$
+there is a corresponding
+AD of $italic Base$$ $xref/glossary/Operation/Sequence/operation sequence/1/$$.
+This operation sequence
+defines a function 
+$latex F : B^n \rightarrow B^m $$
+where $italic B$$ is the space corresponding to objects of type $italic Base$$.
+We refer to $latex F$$ as the AD function corresponding to 
+the operation sequence and to the object $italic f$$.
+(See the $xref/FunCheck/Discussion/FunCheck discussion/$$ for
+possible differences between $latex F(x)$$ and the algorithm that defined
+the operation sequence.)
+
+$head AD of Base$$
+An object is called an AD of $italic Base$$ object its type is 
+either $syntax%AD<%Base%>%$$ (see $xref/Constructor/$$)
+or $syntax%VecAD<%Base%>::reference%$$ (see $xref/VecAD/$$)
+for some $italic Base$$ type.
+
+$head AD Type Sequence$$
+$index sequence, AD Type$$
+$index type, AD sequence$$
+$index AD, type sequence$$
+If $italic Base$$ is a type, the AD type sequence above $italic Base$$ 
+is the following sequence of types:
+$syntax%
+	AD<%Base%> %,% AD< AD<%Base%> > %,% AD< AD< AD<%Base%> > > %,% %...%
+%$$
+
+$head Base Function$$
+A function $latex f : B \rightarrow B$$ 
+is referred to as a $italic Base$$ function,
+if $italic Base$$ is a C++ type that represent elements of
+the domain and range space of $italic f$$; i.e. elements of $latex B$$.
+
+$head Base Type$$
+If $italic x$$ is an $syntax%AD<%Base%>%$$ object,
+$italic Base$$ is referred to as the base type for $italic x$$.
+
+$head Dependent Variable$$
+An $syntax%AD<%Base%>%$$ object is a dependent variable
+if it is a variable and is not an independent variable.
+
+$head Elementary Vector$$
+The $th j$$ elementary vector $latex e^j \in B^m$$ is defined by
+$latex \[
+e_i^j = \left\{ \begin{array}{ll}
+	1 & {\rm if} \; i = j \\
+	0 & {\rm otherwise}
+\end{array} \right.
+\] $$
+
+
+$head Independent Variable$$
+The set of independent variables are specified by
+the $xref/Independent/$$ function call
+that starts recording operations on the corresponding tape.
+
+$head Operation$$
+
+$subhead Atomic$$
+An atomic $italic Type$$ operation is an operation that
+has a $italic Type$$ result and is not made up of other
+more basic operations.
+
+$subhead Sequence$$
+A sequence of atomic $italic Type$$ operations 
+is called a $italic Type$$ operation sequence.
+A sequence of atomic $xref/glossary/AD of Base/AD of Base/$$ operations
+is referred to as an AD of $italic Base$$ operation sequence.
+The abbreviated notation AD operation sequence is often used
+when it is not necessary to specify the base type.
+
+$subhead Dependent$$
+Suppose that $italic x$$ and $italic y$$ are $italic Type$$ objects and
+the result of 
+$syntax%
+	%x% < %y%
+%$$
+has type $code bool$$ (where $italic Type$$ is not the same as $code bool$$).
+If one executes the following code
+$syntax%
+	if( %x% < %y% )
+		%y% = cos(%x%);
+	else	%y% = sin(%x%); 
+%$$
+the choice above depends on the value of $italic x$$ and $italic y$$
+and the two choices result in a different $italic Type$$ operation sequence.
+In this case, we say that the $italic Type$$ operation sequence depends
+on $italic x$$ and $italic y$$.
+
+$subhead Independent$$
+Suppose that $italic i$$ and $italic n$$ are $code size_t$$ objects,
+and $syntax%%x%[%i%]%$$, $italic y$$ are $italic Type$$ objects,
+where $italic Type$$ is different from $code size_t$$.
+The $italic Type$$ sequence of operations corresponding to
+$syntax%
+	%y% = %Type%(0);
+	for(%i% = 0; %i% < %n%; %i%++)
+		%y% += %x%[%i%];
+%$$
+does not depend on the value of $italic x$$ or $italic y$$.
+In this case, we say that the $italic Type$$ operation sequence 
+is independent of $italic y$$ and the elements of $italic x$$.
+
+$head Parameter$$
+All $italic Base$$ objects are parameters.
+All $syntax%AD<%Base%>%$$ objects are currently parameters
+when the tape is in the Empty state.
+An $syntax%AD<%Base%>%$$ object $italic u$$ is currently a parameter if
+its value does not depend on the value of the
+current $xref/Independent/$$ variables.
+If $italic u$$ is a parameter, the function 
+$xref/ParVar//Parameter(u)/$$ returns true
+and $xref/ParVar//Variable(u)/$$ returns false.
+$pre
+
+$$
+Note that we often drop the word currently and 
+just refer to an $syntax%AD<%Base%>%$$ object as a parameter.
+
+$head Sparsity Pattern$$
+$index sparsity, pattern$$
+$index pattern, sparsity$$
+$index efficient, sparsity$$
+Given a matrix 
+$latex A \in B^{n \times m}$$,
+a boolean valued $latex m \times n$$ matrix $latex P$$ is a 
+sparsity pattern for $latex A$$ if 
+for $latex i = 0, \ldots , m-1$$ and $latex j = 0 , \ldots n-1$$,
+$latex \[
+A_{i,j} \neq 0  
+\; \Rightarrow \; 
+P_{i,j} = {\rm true}
+\] $$
+Given two sparsity patterns $latex P$$ and $italic Q$$ 
+for a matrix $italic A$$, we say that $italic P$$ is more efficient than
+$italic Q$$ if $italic P$$ has fewer true elements than $italic Q$$.
+ 
+$head Tape State$$
+For each $italic Base$$ class,
+the tape that record the corresponding 
+AD of $italic Base$$ $xref/glossary/Operation/Sequence/operation sequence/1/$$
+has two possible states:
+$codep
+	enum TapeState {
+		Empty,
+		Recording,
+	}
+$$
+The tape is initially in the $code Empty$$ state.
+It is in the $code Recording$$ state after a call to 
+$xref/Independent/$$ with an argument vector containing 
+$syntax%AD<%Base%>%$$ elements.
+It is in the $code Empty$$ state after the corresponding call to the
+$xref/ADFun//ADFun<Base>/$$ constructor.
+
+
+$subhead Empty$$
+The tape is empty 
+(hence all $syntax%AD<%Base%>%$$ objects are parameters).
+The tape is initially in this state and it enters this state whenever a
+$xref/ADFun//ADFun/$$ object is constructed.
+
+$subhead Recording$$
+All of the independent variables have been specified
+and the tape is currently recording the operations that define
+the more variables as $italic Base$$ scalar functions of the
+independent variables.
+The tape enters this state when a
+$xref/Independent/$$ calculation is preformed.
+
+$head Taylor Coefficient$$
+Suppose $latex X : B \rightarrow B^n$$ is a 
+is $latex p$$ times continuously differentiable function
+in some neighborhood of zero.
+For $latex k = 0 , \ldots , p$$, 
+we use the column vector $latex x^{(k)} \in B^n$$ for the $th k$$ order 
+Taylor coefficient corresponding to $latex X$$ 
+which is defined by
+$latex \[
+	x^{(k)} = \frac{1}{k !} \Dpow{k}{t} X(0)
+\] $$
+It follows that 
+$latex \[
+	X(t) = x^{(0)} + x^{(1)} t + \cdots + x^{(p)} t^p  + R(t)
+\]$$
+where the remainder $latex R(t)$$ divided by $latex t^p$$ 
+converges to zero and $latex t$$ goes to zero.
+
+
+$head Variable$$
+An $syntax%AD<%Base%>%$$ object $italic u$$ is currently a variable if
+the corresponding tape is in the Recording state
+and the current value of an $syntax%AD<%Base%>%$$ object 
+depends on the value of at least one of the 
+$xref/glossary/Independent Variable/independent/$$ variables.
+If $italic u$$ is a variable,
+$xref/ParVar//Variable(u)/$$ returns true and 
+$xref/ParVar//Parameter(u)/$$ returns false. 
+For example,
+directly after the code sequence
+$syntax%
+	Independent(%x%);
+	AD<double> %u% = %x%[0];
+%$$
+the $syntax%AD<double>%$$ object $italic u$$ is currently a variable.
+Directly after the code sequence
+$syntax%
+	Independent(%x%);
+	AD<double> %u% = %x%[0];
+	%u% = 5;
+%$$
+$italic u$$  is currently a $xref/glossary/Parameter/parameter/$$
+(not a variable).
+$pre
+
+$$
+Note that we often drop the word currently and 
+just refer to an $syntax%AD<%Base%>%$$ object as a variable
+or parameter.
+
+$end

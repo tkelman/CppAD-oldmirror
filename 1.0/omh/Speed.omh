@@ -1,0 +1,69 @@
+/* -----------------------------------------------------------------------
+CppAD: C++ Algorithm Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+------------------------------------------------------------------------ */
+
+$begin Speed$$
+$spell
+	CppAD
+	Cygwin
+	Microsoft
+	chdir
+	Workspace
+	dsw
+	exe
+	sln
+$$
+
+$mindex speed test$$
+$section Routines That Speed Test CppAD$$
+
+$head Purpose$$
+CppAD has a set of speed tests that are used to determine if 
+certain changes improve its execution speed.
+This section explains how you can run these tests on your computer.
+
+
+$head Unix$$
+In a unix operating system (or in a Cygwin shell on an Microsoft system),
+you must first configure CppAD to run its speed tests.
+To do this, run the install
+$xref/InstallUnix/Configure/configure/$$ command with the
+$code --with-Speed$$ command line option included.
+You can then compile link and run the speed 
+tests with the following commands (relative to the distribution directory):
+$codep
+	cd Speed
+	make 
+	./Speed
+$$
+
+$head Windows$$
+In Microsoft Visual Studio open the project file 
+$code Speed/Speed.sln$$
+(relative to the distribution directory).
+Then set the configuration to the $code Release$$ version.
+Then select $code Build | Speed$$.
+
+$contents%
+	Speed/Speed.cpp%
+	Speed/DetMinor.cpp%
+	Speed/DetLu.cpp%
+	Speed/Ode.cpp%
+	Speed/LuSolve.cpp
+%$$
+
+$end
