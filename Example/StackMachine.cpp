@@ -193,7 +193,7 @@ bool StackMachine(void)
 	ok &= (y[2] == (x[0] + 1.) * 2. - 3.);
 	ok &= (y[3] == ( (x[0] + 1.) * 2. - 3.) / 4.);
 
-	// Use forward mode (because x is longer than y) to calculate Jacobian
+	// Use forward mode (because x is shorter than y) to calculate Jacobian
 	p = 1;
 	vector<double> dx(n);
 	vector<double> dy(m);
