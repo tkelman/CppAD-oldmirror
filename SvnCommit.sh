@@ -38,26 +38,41 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Add stack machine interpreter example
+log_entry="Make dual license work with old nightly build script.
 
 SvnCommit.sh: file that make this commit.
 WhatsNew06.omh: user's view of the changes.
-ExampleList.omh: add StackMachine.cpp to list of examples.
-StackMachine.cpp: the new example
-Makefile.am: add StackMachine.cpp to list of examples.
-Example.cpp: add StackMachine.cpp to list of examples.
+Build: old build script name link to new Build.sh.
+Doc.omh: change date from ccyy-mm-dd to yy-mm-dd.
+GplLicense.sh: change date from ccyy-mm-dd to yy-mm-dd.
+configure.ac: change date from ccyy-mm-dd to yy-mm-dd.
+DosFormat.sh: change date from ccyy-mm-dd to yy-mm-dd.
+diffToday.sh: change date from ccyy-mm-dd to yy-mm-dd.
+ExpApx.omh: change cross reference from Install.Extraction to Install.
+InstallUnix.omh: change download instructions to reference old file names.
+InstallWindows.omh: change download instructions to reference old file names.
+WhatsNew05.omh: remove cross refernece to Install.Extraction.
+Build.sh: change date from ccyy-mm-dd to yy-mm-dd and use old tarball names.
 "
 # 
 add_list="
-	Example/StackMachine.cpp
+	Build
 "
 #
 change_list="
 	SvnCommit.sh
 	omh/WhatsNew06.omh
-	omh/ExampleList.omh
-	Example/Makefile.am
-	Example/Example.cpp
+	Build
+	Doc.omh
+	GplLicense.sh
+	configure.ac
+	DosFormat.sh
+	diffToday.sh
+	omh/ExpApx.omh
+	omh/InstallUnix.omh
+	omh/WhatsNew05.omh
+	omh/InstallWindows.omh
+	Build.sh
 "
 #
 delete_list="

@@ -67,13 +67,14 @@ $comment
 Changes not yet check into trunk:
 
 1. Change shell scripts to use *.sh extension.
-2. Dual license version *.gpl.tgz, *.gpl.zip, *.cpl.tgz, *.cpl.zip.
+2. Two versions, one with CPL and other with GPL license.
 3. Make subversion version CPL copyright (not GPL).
 4. Change all files in CppAD/local to use lower case and *.hpp extension.
 5. CppAD_vector.h was generating a warning on version 4 of gcc.
 6. Change # defines in CppAD/local/*.hpp to use upper case.
 7. Change version numbers from yy-mm-dd to ccyy-mm-dd format.
 8. Add Example/StackMachine.cpp example.
+9. No longer a dos format version (*.gz is GPL version and *.zip is CPL).
 
 $$
 

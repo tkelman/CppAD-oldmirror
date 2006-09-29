@@ -19,7 +19,7 @@ BOOST_DIR=/usr/include/boost-1_33
 #
 # date currently in configure.ac
 version=`grep "^ *AC_INIT(" configure.ac | \
-	sed -e "s/.*, *\([0-9-]\{10\}\) *,.*/\1/"`
+	sed -e "s/.*, *\([0-9][0-9]-[0-9][0-9]-[0-9][0-9]\) *,.*/\1/"`
 #
 # version
 #
@@ -27,29 +27,29 @@ if [ "$1" = "version" ] || [ "$1" = "all" ]
 then
 	echo "Build.sh version"
 	#
-	# Today's date in ccyy-mm-dd decimal digit format where cc is century,
+	# Today's date in yy-mm-dd decimal digit format where 
 	# yy is year in century, mm is month in year, dd is day in month.
-	ccyy_mm_dd=`date +%C%g-%m-%d`
+	yy_mm_dd=`date +%g-%m-%d`
 	#
 	# configure.ac
 	sed configure.ac > configure.ac.tmp \
-		-e "s/(CppAD, [0-9-]\{10\} *,/(CppAD, $ccyy_mm_dd,/"
+	-e "s/(CppAD, [0-9][0-9]-[0-9][0-9]-[0-9][0-9] *,/(CppAD, $yy_mm_dd,/"
 	diff configure.ac  configure.ac.tmp
 	mv   configure.ac.tmp configure.ac
 	#
 	# AUTHORS
 	sed AUTHORS > AUTHORS.tmp \
-	-e "s/, *[0-9-]\{10\} *,/, $ccyy_mm_dd,/"
+	-e "s/, 20[0-9][0-9]-[0-9][0-9]-[0-9][0-9] *,/, 20$yy_mm_dd,/"
 	diff AUTHORS    AUTHORS.tmp
 	mv   AUTHORS.tmp AUTHORS 
 	#
 	# change Autoconf version to today
-	version=$ccyy_mm_dd
+	version=$yy_mm_dd
 	#
 	for name in Doc.omh omh/InstallUnix.omh omh/InstallWindows.omh
 	do
 		sed $name > $name.tmp \
-			-e "s/cppad-[0-9-]\{10\}/cppad-$ccyy_mm_dd/g"
+		-e "s/cppad-[0-9][0-9]-[0-9][0-9]-[0-9][0-9]/cppad-$yy_mm_dd/g"
 		diff $name $name.tmp
 		mv   $name.tmp $name
 	done
@@ -286,6 +286,10 @@ then
 fi
 if [ "$1" = "all" ]
 then
+	#
+	# temporary fix.
+	mv cppad-$version.gpl.tgz cppad-$version.tar.gz
+	mv cppad-$version.cpl.zip cppad-$version.zip
 	exit 0
 fi
 #

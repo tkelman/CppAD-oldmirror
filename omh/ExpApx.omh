@@ -70,10 +70,8 @@ $syntax%
 	omhelp-%yy%-%mm%-%dd%/Introduction
 %$$
 where $syntax%omhelp-%yy%-%mm%-%dd%$$ is the distribution directory
-created during the extraction step of a 
-$cref/Unix/InstallUnix/Extraction/$$ or 
-$cref/Window/InstallWindows/Extraction/$$ 
-installation of CppAD.
+created during the beginning steps of the
+$cref%installation%Install%$$ of CppAD.
 
 
 $head x$$

@@ -56,34 +56,32 @@ $section Unix Download, Test, and Installation$$
 
 $head Download Current Version$$
 $index download, unix$$
-Download either the CPL or GPL licensed version from:
 
 $subhead CPL License$$
+To obtain the CPL licensed version of CppAD, download the following file
 $href%
-	http://www.coin-or.org/Tarballs/CppAD/cppad-2006-09-05.clp.tgz%
-	cppad-2006-09-05.cpl.tgz
+	http://www.coin-or.org/Tarballs/CppAD/cppad-06-09-28.zip%
+	cppad-06-09-28.zip
 %$$
+Then use the following command 
+$syntax%
+	unzip cppad-06-09-28.zip
+%$$
+to create the directory $code cppad-06-09-28$$.
+The other commands below should be executed from this directory.
 
 $subhead GPL License$$
+To obtain the GPL licensed version of CppAD, download the following file
 $href%
-	http://www.coin-or.org/Tarballs/CppAD/cppad-2006-09-05.gpl.tgz%
-	cppad-2006-09-05.gpl.tgz
+	http://www.coin-or.org/Tarballs/CppAD/cppad-06-09-28.tar.gz%
+	cppad-06-09-28.tar.gz
 %$$
-
-$head Extraction$$
-Use the command
+Then use the following command 
 $syntax%
-	tar -xvzf cppad-2006-09-05.%license%.tgz
+	tar -xvzf cppad-06-09-28.tar.gz
 %$$
-(where $italic license$$ is $code cpl$$ or $code gpl$$)
-to decompress and extract the unix format version
-into the distribution directory
-$syntax%
-	cppad-2006-09-05
-%$$
-Note that $code 06-08-20$$ is the version number for CppAD.
-All of the commands below are to be executed starting from this
-directory.
+to create the directory $code cppad-06-09-28$$.
+The other commands below should be executed from this directory.
 
 $head User Documentation$$
 The $code Doc$$ sub-directory of the distribution directory

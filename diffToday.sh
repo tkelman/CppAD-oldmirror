@@ -13,8 +13,8 @@
 # Change date of subversion version of file to current date and then
 # difference that with local version of file
 #
-# century, year, month, and date
-ccyy_mm_dd=`date +%C%g-%m-%d`
+# year, month, and date
+yy_mm_dd=`date +g-%m-%d`
 #
 if [ ! -e "$1" ]
 then
@@ -22,8 +22,8 @@ then
 	exit
 fi
 svn cat $1 | sed > $1.tmp \
-	-e "s/, *[0-9-]\{10\} *,/, $ccyy_mm_dd,/" \
-	-e "s/cppad-[0-9-]\{10\}/cppad-$ccyy_mm_dd/g"
+	-e "s/, [0-9][0-9]-[0-9][0-9]-[0-9][0-9] *,/, $yy_mm_dd,/" \
+	-e "s/cppad-[0-9][0-9]-[0-9][0-9]-[0-9][0-9]/cppad-$yy_mm_dd/g"
 #
 echo "diff $1-local $1-subversion"
 diff          $1      $1.tmp
