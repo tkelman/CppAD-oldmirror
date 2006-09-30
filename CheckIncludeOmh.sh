@@ -2,9 +2,12 @@
 # -----------------------------------------------------------------------------
 # CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
 #
-# This program is free software; you can use it under the terms of the 
-#	         Common Public License Version 1.0.
-# You should have received a copy of the this license along with this program.
+# CppAD is distributed under multiple licenses. This distribution is under
+# the terms of the 
+#                     Common Public License Version 1.0.
+#
+# A copy of this license is included in the COPYING file of this distribution.
+# Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 # -----------------------------------------------------------------------------
 #
 echo "Checking difference between OMhelp include directivers and file names."
@@ -13,7 +16,7 @@ if [ -e junk.1 ]
 then
 	rm junk.1
 fi
-for file in *.omh */*.omh */*.h */*.cpp CppAD/local/*.h */*.hpp
+for file in *.omh */*.omh */*.h */*.cpp CppAD/local/*.hpp */*.hpp
 do
 	# assume $childtable, ... , $verbatim use % for delimiter
 	sed -n < $file >> junk.1 \
@@ -33,7 +36,7 @@ sed < junk.1 > junk.2 \
 	-e 's/^[ 	]*//' \
 	-e 's|\\|/|g'
 #
-ls cpl1.0.txt *.omh */*.out */*.omh */*.h */*.cpp CppAD/local/*.h  \
+ls cpl1.0.txt *.omh */*.out */*.omh */*.h */*.cpp CppAD/local/*.hpp  \
 	*/*.hpp > junk.3
 #
 for file in `cat junk.2`

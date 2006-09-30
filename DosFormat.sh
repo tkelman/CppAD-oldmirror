@@ -2,14 +2,22 @@
 # -----------------------------------------------------------------------------
 # CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
 #
-# This program is free software; you can use it under the terms of the 
-#	         Common Public License Version 1.0.
-# You should have received a copy of the this license along with this program.
+# CppAD is distributed under multiple licenses. This distribution is under
+# the terms of the 
+#                     Common Public License Version 1.0.
+#
+# A copy of this license is included in the COPYING file of this distribution.
+# Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 # -----------------------------------------------------------------------------
+#
+if [ -e DosFormat.log ]
+then
+	rm DosFormat.log
+fi
 #
 # date currently in configure.ac
 version=`grep "^ *AC_INIT(" configure.ac | \
-	sed -e "s/.*, *\([0-9]\{8\}\) *,.*/\1/"`
+	sed -e "s/.*, *\([0-9][0-9]-[0-9][0-9]-[0-9][0-9]\) *,.*/\1/"`
 #
 # delete old version of *.cpl.zip and *.gpl.zip
 for file in cppad-$version.cpl.zip cppad-$version.gpl.zip
@@ -58,7 +66,6 @@ do
 	list=`find . \
 		\( -name '*.am'  \) -or \
 		\( -name '*.ac'  \) -or \
-		\( -name '*.ac'  \) -or \
 		\( -name '*.sh' \) -or \
 		\( -name '*.cpp' \) -or \
 		\( -name '*.h'   \) -or \
@@ -68,7 +75,7 @@ do
 	list="
 		$list
 		AUTHORS
-		COYPING
+		COPYING
 		ChangeLog
 		INSTALL
 		NEWS
@@ -80,7 +87,7 @@ do
 		ext=`echo $file | sed -e "s/.*\././"`
 		file=`echo $file | sed -e 's|^\./||'`
 		#
-		unix2dos cppad-$version/$file >& /dev/null
+		unix2dos cppad-$version/$file >& DosFormat.log
 		#
 		if [ "$ext" = ".sh" ]
 		then

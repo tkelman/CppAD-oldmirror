@@ -4,9 +4,12 @@
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
 
-This program is free software; you can use it under the terms of the 
-	         Common Public License Version 1.0.
-You should have received a copy of the this license along with this program.
+CppAD is distributed under multiple licenses. This distribution is under
+the terms of the 
+                    Common Public License Version 1.0.
+
+A copy of this license is included in the COPYING file of this distribution.
+Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
 /*
@@ -211,7 +214,7 @@ $end
 # include <cstddef>
 # include <iostream>
 # include <limits>
-# include <CppAD/local/CppADError.h>
+# include <CppAD/local/cppad_error.hpp>
 # include <CppAD/TrackNewDel.h>
 
 # ifndef CppADNull
@@ -237,16 +240,17 @@ public:
 	{ }
 	// constructor with a specified size
 	inline vector(size_t n) : capacity(n), length(n)
-	{	if( length == 0 )
-			data = CppADNull;
-		else	data = CppADTrackNewVec(capacity, data);
+	{
+		data = CppADNull;
+		if( length > 0 )
+			data = CppADTrackNewVec(capacity, data);
 	}
 	// copy constructor
 	inline vector(const vector &x) : capacity(x.length), length(x.length)
 	{	size_t i;
-		if( length == 0 )
-			data = CppADNull;
-		else	data = CppADTrackNewVec(capacity, data);
+		data = CppADNull;
+		if( length > 0 )
+			data = CppADTrackNewVec(capacity, data);
 
 		for(i = 0; i < length; i++)
 			data[i] = x.data[i];

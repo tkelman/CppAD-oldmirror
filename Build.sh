@@ -1,9 +1,12 @@
-# -----------------------------------------------------------------------------
+ test
 # CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
 #
-# This program is free software; you can use it under the terms of the 
-#	         Common Public License Version 1.0.
-# You should have received a copy of the this license along with this program.
+# CppAD is distributed under multiple licenses. This distribution is under
+# the terms of the 
+#                     Common Public License Version 1.0.
+#
+# A copy of this license is included in the COPYING file of this distribution.
+# Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 # -----------------------------------------------------------------------------
 #
 # Bash script for building the CppAD distribution.
@@ -16,7 +19,7 @@ BOOST_DIR=/usr/include/boost-1_33
 #
 # date currently in configure.ac
 version=`grep "^ *AC_INIT(" configure.ac | \
-	sed -e "s/.*, *\([0-9]\{8\}\) *,.*/\1/"`
+	sed -e "s/.*, *\([0-9][0-9]-[0-9][0-9]-[0-9][0-9]\) *,.*/\1/"`
 #
 # version
 #
@@ -24,32 +27,29 @@ if [ "$1" = "version" ] || [ "$1" = "all" ]
 then
 	echo "Build.sh version"
 	#
-	# Today's date in ccyy-mm-dd decimal digit format where cc is century,
+	# Today's date in yy-mm-dd decimal digit format where 
 	# yy is year in century, mm is month in year, dd is day in month.
-	ccyy_mm_dd=`date +%C%g-%m-%d`
-	#
-	# Today's date in ccyymmdd format
-	ccyymmdd=`date +%C%g%m%d`
+	yy_mm_dd=`date +%g-%m-%d`
 	#
 	# configure.ac
 	sed configure.ac > configure.ac.tmp \
-		-e "s/(CppAD, [0-9]\{8\} *,/(CppAD, $ccyymmdd,/"
+	-e "s/(CppAD, [0-9][0-9]-[0-9][0-9]-[0-9][0-9] *,/(CppAD, $yy_mm_dd,/"
 	diff configure.ac  configure.ac.tmp
 	mv   configure.ac.tmp configure.ac
 	#
 	# AUTHORS
 	sed AUTHORS > AUTHORS.tmp \
-	-e "s/, *[0-9]\{4\}-[0-9][0-9]-[0-9][0-9] *,/, $ccyy_mm_dd,/"
+	-e "s/, 20[0-9][0-9]-[0-9][0-9]-[0-9][0-9] *,/, 20$yy_mm_dd,/"
 	diff AUTHORS    AUTHORS.tmp
 	mv   AUTHORS.tmp AUTHORS 
 	#
 	# change Autoconf version to today
-	version=$ccyymmdd
+	version=$yy_mm_dd
 	#
 	for name in Doc.omh omh/InstallUnix.omh omh/InstallWindows.omh
 	do
 		sed $name > $name.tmp \
-			-e "s/cppad-[0-9]\{8\}/cppad-$ccyymmdd/g"
+		-e "s/cppad-[0-9][0-9]-[0-9][0-9]-[0-9][0-9]/cppad-$yy_mm_dd/g"
 		diff $name $name.tmp
 		mv   $name.tmp $name
 	done
@@ -223,8 +223,12 @@ then
 		#
 		exit 1
 	fi
-	# change *.tar.gz to *.cpl.tgz
-	mv cppad-$version.tar.gz cppad-$version.cpl.tgz
+	# change *.tgz to *.cpl.tgz
+	if ! mv cppad-$version.tar.gz cppad-$version.cpl.tgz
+	then
+		echo "cannot move cppad-$version.tar.gz to cppad-$version.tgz"
+		exit 1
+	fi
 	#
 	#
 	if [ "$1" != "all" ]
@@ -232,7 +236,7 @@ then
 		exit 0
 	fi
 fi
-if [ "$1" = "test" ] || ( [ "$1" = "all" ] && [ "$2" = "unix" ] )
+if [ "$1" = "test" ] || ( [ "$1" = "all" ] && [ "$2" = "test" ] )
 then
 	#
 	if [ -e cppad-$version ]
@@ -265,7 +269,7 @@ then
 		exit 0
 	fi
 fi
-if [ "$1" = "gpl+dos" ] || ( [ "$1" = "all" ] && [ "$2" != "unix" ] )
+if [ "$1" = "gpl+dos" ] || ( [ "$1" = "all" ]  && [ "$1" != "test" ] )
 then
 	# create GPL licensed version
 	echo "GplLicense.sh"
@@ -283,6 +287,29 @@ then
 	then
 		exit 0
 	fi
+fi
+if [ "$1" = "move" ] || ( [ "$1" = "all" ]  && [ "$1" != "test" ] )
+then
+	# copy tarballs into Doc directory
+	list="
+		cppad-$version.cpl.tgz
+		cppad-$version.gpl.tgz
+		cppad-$version.cpl.zip
+		cppad-$version.gpl.zip
+	"
+	for file in $list
+	do
+		echo "mv $file Doc/$file"
+		if ! mv $file Doc/$file
+		then
+			echo "cannot move $file to Doc/$file"
+			exit 1
+		fi
+	done
+       if [ "$1" != "all" ]
+       then
+               exit 0
+       fi
 fi
 if [ "$1" = "all" ]
 then
@@ -302,17 +329,18 @@ echo "automake       run aclocal,autoheader,autoconf,automake -> configure"
 echo "configure      excludes --with-* except GetStarted and Introduction"
 echo "configure test includes all the possible options except PREFIX_DIR"
 echo "make           use make to build all of the requested targets"
-echo "omhelp         build all the documentation"
+echo "doc            build all the documentation in Doc directory"
 echo "dist           create the distribution file cppad-version.cpl.tgz"
 echo "test           unpack *.cpl.tgz, compile, run tests, result in Test.log"
-echo "gpl+dos        create *.gpl.tgz, *.gpl.zip, *.cpl.zip"
+echo "gpl+dos        create ./*.gpl.tgz, ./*.gpl.zip, and ./*.cpl.zip"
+echo "move           move ./*.tgz and ./*.zip to Doc directory"
 echo
 echo "Build.sh all"
 echo "This command will execute all the options in the order above with the"
 echo "exception that \"configue test\" and \"test\" will be excluded."
 echo
-echo "Build.sh all unix"
-echo "This command will execute all the options in the order above with the"
-echo "exception that \"configue test\" and \"gpl+dos\" will be excluded."
+echo "Build.sh all test"
+echo "This command will execute all the options in the order above"
+echo "with the exception of \"gpl+dos\" and \"move\"."
 #
 exit 1

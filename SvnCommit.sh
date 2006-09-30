@@ -2,9 +2,12 @@
 # -----------------------------------------------------------------------------
 # CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
 #
-# This program is free software; you can use it under the terms of the 
-#	         Common Public License Version 1.0.
-# You should have received a copy of the this license along with this program.
+# CppAD is distributed under multiple licenses. This distribution is under
+# the terms of the 
+#                     Common Public License Version 1.0.
+#
+# A copy of this license is included in the COPYING file of this distribution.
+# Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 # -----------------------------------------------------------------------------
 #
 # Define your subversion commit by editing the definition of 
@@ -35,12 +38,14 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="change AcDate to version in bash script files.
+log_entry="Put tarballs in Doc directory.
 
 SvnCommit.sh: file that make this commit.
-GplLicense.sh: change AcDate to version.
-DosFormat.sh: change AcDate to version.
-Build.sh: in addition, put gpl license and dos format at end.
+WhatsNew06.omh: user's view of the changes.
+configure.ac: remove trailing spaces in macro calls (move here from trunk r518).
+InstallUnix.omh: change tarball referece to current directory.
+InstallWindows.omh: change tarball reference to current directory.
+Build.sh: change name and location of tarballs.
 "
 # 
 add_list="
@@ -48,9 +53,11 @@ add_list="
 #
 change_list="
 	SvnCommit.sh
+	omh/WhatsNew06.omh
+	configure.ac
+	omh/InstallUnix.omh
+	omh/InstallWindows.omh
 	Build.sh
-	GplLicense.sh
-	DosFormat.sh
 "
 #
 delete_list="

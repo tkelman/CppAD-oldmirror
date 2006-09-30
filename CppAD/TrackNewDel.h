@@ -4,9 +4,12 @@
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
 
-This program is free software; you can use it under the terms of the 
-	         Common Public License Version 1.0.
-You should have received a copy of the this license along with this program.
+CppAD is distributed under multiple licenses. This distribution is under
+the terms of the 
+                    Common Public License Version 1.0.
+
+A copy of this license is included in the COPYING file of this distribution.
+Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 /*
 $begin TrackNewDel$$
@@ -186,7 +189,7 @@ It returns true, if it succeeds, and false otherwise.
 $end
 ------------------------------------------------------------------------------
 */
-# include <CppAD/local/CppADError.h>
+# include <CppAD/local/cppad_error.hpp>
 # include <sstream>
 # include <string>
 
@@ -280,7 +283,8 @@ inline void TrackError(
 // TrackNewVec ---------------------------------------------------------------
 # ifdef NDEBUG
 template <class Type>
-inline Type *TrackNewVec(const char *file, int line, size_t len, Type *oldptr)
+inline Type *TrackNewVec(
+	const char *file, int line, size_t len, Type * /* oldptr */ )
 {	return (new Type[len]); 
 }
 
@@ -288,10 +292,10 @@ inline Type *TrackNewVec(const char *file, int line, size_t len, Type *oldptr)
 
 template <class Type>
 Type *TrackNewVec(
-	const char *file    , 
-	int         line    , 
-	size_t      len     ,
-	Type       *oldptr  )
+	const char *file          , 
+	int         line          , 
+	size_t      len           ,
+	Type       * /* oldptr */ )
 {
 	// try to allocate the new memrory
 	Type *newptr = CppADNull;

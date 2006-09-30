@@ -1,9 +1,12 @@
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
 
-This program is free software; you can use it under the terms of the 
-	         Common Public License Version 1.0.
-You should have received a copy of the this license along with this program.
+CppAD is distributed under multiple licenses. This distribution is under
+the terms of the 
+                    Common Public License Version 1.0.
+
+A copy of this license is included in the COPYING file of this distribution.
+Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
 $begin InstallWindows$$
@@ -40,7 +43,7 @@ $index install, windows CppAD$$
 $index windows, CppAD install$$
 $index CppAD, install windows$$
 
-$section Windows Installation and Testing$$
+$section Windows Download, Test, and Installation$$
 
 $head Download Current Version$$
 $index download, windows$$
@@ -59,16 +62,10 @@ just follow all of the $xref/InstallUnix//Unix installation/$$ steps.
 Otherwise, download either the CPL or GPL licensed version from:
 
 $subhead CPL License$$
-$href%
-	http://www.coin-or.org/Tarballs/CppAD/cppad-20060820.clp.zip%
-	cppad-20060820.cpl.zip
-%$$
+$href%cppad-06-09-29.cpl.zip%$$
 
 $subhead GPL License$$
-$href%
-	http://www.coin-or.org/Tarballs/CppAD/cppad-20060820.gpl.zip%
-	cppad-20060820.gpl.zip
-%$$
+$href%cppad-06-09-29.gpl.zip%$$
 
 $head Extraction$$
 Use 
@@ -79,7 +76,7 @@ $href%
 or some other program to decompress the archive.
 This will create the distribution directory 
 $syntax%
-	cppad-20060820
+	cppad-06-09-29
 %$$
 All the command sequences below assume that you start in this
 distribution directory.

@@ -4,9 +4,12 @@
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
 
-This program is free software; you can use it under the terms of the 
-	         Common Public License Version 1.0.
-You should have received a copy of the this license along with this program.
+CppAD is distributed under multiple licenses. This distribution is under
+the terms of the 
+                    Common Public License Version 1.0.
+
+A copy of this license is included in the COPYING file of this distribution.
+Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 /*
 $begin RombergOne$$
@@ -141,7 +144,7 @@ $end
 */
 
 # include <CppAD/CheckNumericType.h>
-# include <CppAD/local/CppADError.h>
+# include <CppAD/local/cppad_error.hpp>
 # include <CppAD/CppAD_vector.h>
 
 namespace CppAD { // BEGIN CppAD namespace
