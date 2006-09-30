@@ -1,4 +1,4 @@
-# -----------------------------------------------------------------------------
+ test
 # CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
 #
 # CppAD is distributed under multiple licenses. This distribution is under
@@ -223,8 +223,12 @@ then
 		#
 		exit 1
 	fi
-	# change *.tar.gz to *.cpl.tgz
-	mv cppad-$version.tar.gz cppad-$version.cpl.tgz
+	# change *.tgz to *.cpl.tgz
+	if ! mv cppad-$version.tar.gz cppad-$version.cpl.tgz
+	then
+		echo "cannot move cppad-$version.tar.gz to cppad-$version.tgz"
+		exit 1
+	fi
 	#
 	#
 	if [ "$1" != "all" ]
@@ -232,7 +236,7 @@ then
 		exit 0
 	fi
 fi
-if [ "$1" = "test" ] || ( [ "$1" = "all" ] && [ "$2" = "unix" ] )
+if [ "$1" = "test" ] || ( [ "$1" = "all" ] && [ "$2" = "test" ] )
 then
 	#
 	if [ -e cppad-$version ]
@@ -265,7 +269,7 @@ then
 		exit 0
 	fi
 fi
-if [ "$1" = "gpl+dos" ] || ( [ "$1" = "all" ] && [ "$2" != "unix" ] )
+if [ "$1" = "gpl+dos" ] || ( [ "$1" = "all" ]  && [ "$1" != "test" ] )
 then
 	# create GPL licensed version
 	echo "GplLicense.sh"
@@ -284,12 +288,31 @@ then
 		exit 0
 	fi
 fi
+if [ "$1" = "move" ] || ( [ "$1" = "all" ]  && [ "$1" != "test" ] )
+then
+	# copy tarballs into Doc directory
+	list="
+		cppad-$version.cpl.tgz
+		cppad-$version.gpl.tgz
+		cppad-$version.cpl.zip
+		cppad-$version.gpl.zip
+	"
+	for file in $list
+	do
+		echo "mv $file Doc/$file"
+		if ! mv $file Doc/$file
+		then
+			echo "cannot move $file to Doc/$file"
+			exit 1
+		fi
+	done
+       if [ "$1" != "all" ]
+       then
+               exit 0
+       fi
+fi
 if [ "$1" = "all" ]
 then
-	#
-	# temporary fix.
-	mv cppad-$version.gpl.tgz cppad-$version.tar.gz
-	mv cppad-$version.cpl.zip cppad-$version.zip
 	exit 0
 fi
 #
@@ -306,17 +329,18 @@ echo "automake       run aclocal,autoheader,autoconf,automake -> configure"
 echo "configure      excludes --with-* except GetStarted and Introduction"
 echo "configure test includes all the possible options except PREFIX_DIR"
 echo "make           use make to build all of the requested targets"
-echo "omhelp         build all the documentation"
+echo "doc            build all the documentation in Doc directory"
 echo "dist           create the distribution file cppad-version.cpl.tgz"
 echo "test           unpack *.cpl.tgz, compile, run tests, result in Test.log"
-echo "gpl+dos        create *.gpl.tgz, *.gpl.zip, *.cpl.zip"
+echo "gpl+dos        create ./*.gpl.tgz, ./*.gpl.zip, and ./*.cpl.zip"
+echo "move           move ./*.tgz and ./*.zip to Doc directory"
 echo
 echo "Build.sh all"
 echo "This command will execute all the options in the order above with the"
 echo "exception that \"configue test\" and \"test\" will be excluded."
 echo
-echo "Build.sh all unix"
-echo "This command will execute all the options in the order above with the"
-echo "exception that \"configue test\" and \"gpl+dos\" will be excluded."
+echo "Build.sh all test"
+echo "This command will execute all the options in the order above"
+echo "with the exception of \"gpl+dos\" and \"move\"."
 #
 exit 1

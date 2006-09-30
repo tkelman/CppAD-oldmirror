@@ -46,21 +46,26 @@ $index CppAD, install windows$$
 $section Windows Download, Test, and Installation$$
 
 $head Download Current Version$$
-$index download, unix$$
+$index download, windows$$
+If you are using 
+$href%
+	http://www.cygwin.com%
+	Cygwin
+%$$
+or,
+$href%
+	http://www.mingw.org%
+	MinGW with MSYS
+%$$,
+with Unix formatted files,
+just follow all of the $xref/InstallUnix//Unix installation/$$ steps.
+Otherwise, download either the CPL or GPL licensed version from:
 
 $subhead CPL License$$
-To obtain the CPL licensed version of CppAD, download the following file
-$href%
-	http://www.coin-or.org/Tarballs/CppAD/cppad-06-09-28.zip%
-	cppad-06-09-28.zip
-%$$
+$href%cppad-06-09-29.cpl.zip%$$
 
 $subhead GPL License$$
-To obtain the GPL licensed version of CppAD, download the following file
-$href%
-	http://www.coin-or.org/Tarballs/CppAD/cppad-06-09-28.tar.gz%
-	cppad-06-09-28.tar.gz
-%$$
+$href%cppad-06-09-29.gpl.zip%$$
 
 $head Extraction$$
 Use 
@@ -71,7 +76,7 @@ $href%
 or some other program to decompress the archive.
 This will create the distribution directory 
 $syntax%
-	cppad-06-09-28
+	cppad-06-09-29
 %$$
 All the command sequences below assume that you start in this
 distribution directory.
