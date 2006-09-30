@@ -11,6 +11,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 $begin WhatsNew06$$
 $spell
+	hpp
 	valgrind memcheck
 	Kasper Kristensen
 	taylor
@@ -63,20 +64,27 @@ $tend
 The purpose of these sections is to
 assist you in learning about changes between various versions of CppAD.
 
-$comment 
-Changes not yet check into trunk:
-
-1. Change shell scripts to use *.sh extension.
-2. Two versions, one with CPL and other with GPL license.
-3. Make subversion version CPL copyright (not GPL).
-4. Change all files in CppAD/local to use lower case and *.hpp extension.
-5. CppAD_vector.h was generating a warning on version 4 of gcc.
-6. Change # defines in CppAD/local/*.hpp to use upper case.
-7. Change version numbers from yy-mm-dd to ccyy-mm-dd format.
-8. Add Example/StackMachine.cpp example.
-9. No longer a dos format version (*.gz is GPL version and *.zip is CPL).
-
-$$
+$head 09-30$$ 
+These changes were grouped together because it took a while for Coin-Or
+to review the dual licensing version and because it was not possible to 
+get the nightly build changed:
+$list number$$
+Change shell scripts to use *.sh extension.
+$lnext
+Two versions, one with CPL and other with GPL license.
+$lnext
+Change subversion version of CppAD from GPL to CPL copyright.
+$lnext
+Change all files in CppAD/local to use lower case and *.hpp extension.
+$lnext
+CppAD_vector.h was generating a warning on version 4 of gcc.
+This have been fixed.
+$lnext
+Change the preprocessor $code # define$$ commands
+in $code CppAD/local/*.hpp$$ to use upper case names.
+$lnext
+Add the $cref/StackMachine.cpp/$$ example.
+$lend
 
 $head 08-17$$
 Some error message occurred while executing
@@ -91,7 +99,6 @@ this conflict between CppAD and $href%http://valgrind.org/%valgrind%$$.
 $head 07-14$$
 Make some improvements were made to the $cref/Introduction/$$, 
 $cref/ExpApx.hpp/$$ and $cref/ExpApxRev/$$ sections.
-
 
 $head 07-12$$
 Use a drop down menu for the navigation links, instead of a separate frame
