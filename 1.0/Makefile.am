@@ -231,5 +231,8 @@ EXTRA_DIST = \
 	RunOMhelp \
 	UWCopy040507.html
 #
+test:
+	cd Example; make; ./Example
+#
 dist-hook:
 	rm -rf `find $(distdir)/omh -name .svn`
