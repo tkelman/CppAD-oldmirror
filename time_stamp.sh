@@ -1,0 +1,9 @@
+#! /bin/bash
+touch aclocal.m4
+sleep 2
+touch CppAD/config.h.in
+sleep 2
+touch Makefile.in
+touch */Makefile.in
+sleep 2
+touch configure
