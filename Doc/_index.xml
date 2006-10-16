@@ -131,7 +131,7 @@ BODY { background-color : white }
 
 <b><big><a name="A">A</a></big></b>
 <br/>
-AD&#160;<a href="cppad.xml" target="_top">A&#xA0;Package&#xA0;for&#xA0;Differentiation&#xA0;of&#xA0;C++&#xA0;Algorithms:&#xA0;CppAD-1.0</a><br/>
+AD&#160;<a href="cppad.xml" target="_top">A&#xA0;Package&#xA0;for&#xA0;Differentiation&#xA0;of&#xA0;C++&#xA0;Algorithms:&#xA0;CppAD-06-05-29</a><br/>
 &#160;&#160;&#160;&#160;&#160;<b>=</b>&#160;<a href="eq.xml" target="_top">AD&#xA0;Assignment&#xA0;Operator</a><br/>
 &#160;&#160;&#160;&#160;&#160;arithmetic<b>&#xA0;</b>operator&#160;<a href="arithmetic.xml" target="_top">AD&#xA0;Arithmetic&#xA0;Operators&#xA0;and&#xA0;Computed&#xA0;Assignments</a><br/>
 &#160;&#160;&#160;&#160;&#160;assignment<b>&#xA0;</b>operator&#160;<a href="eq.xml" target="_top">AD&#xA0;Assignment&#xA0;Operator</a><br/>
@@ -215,7 +215,7 @@ add<br/>
 &#160;&#160;&#160;&#160;&#160;AD<b>&#xA0;</b>example&#160;<a href="add.cpp.xml" target="_top">AD&#xA0;Binary&#xA0;Addition:&#xA0;Example&#xA0;and&#xA0;Test</a><br/>
 algorithm<br/>
 &#160;&#160;&#160;&#160;&#160;example&#160;<a href="expapx.xml" target="_top">An&#xA0;Example&#xA0;Exponential&#xA0;Approximation</a><br/>
-algorithmic<b>&#xA0;</b>differentiation&#160;<a href="cppad.xml" target="_top">A&#xA0;Package&#xA0;for&#xA0;Differentiation&#xA0;of&#xA0;C++&#xA0;Algorithms:&#xA0;CppAD-1.0</a><br/>
+algorithmic<b>&#xA0;</b>differentiation&#160;<a href="cppad.xml" target="_top">A&#xA0;Package&#xA0;for&#xA0;Differentiation&#xA0;of&#xA0;C++&#xA0;Algorithms:&#xA0;CppAD-06-05-29</a><br/>
 all&#160;<a href="speedfadbad.cpp.xml" target="_top">Run&#xA0;All&#xA0;The&#xA0;Fadbad&#xA0;Speed&#xA0;Comparison&#xA0;Tests</a><br/>
 &#160;&#160;&#160;&#160;<a href="speedadolc.cpp.xml" target="_top">Run&#xA0;All&#xA0;The&#xA0;Adolc&#xA0;Speed&#xA0;Comparison&#xA0;Tests</a><br/>
 &#160;&#160;&#160;&#160;<a href="speed.cpp.xml" target="_top">Run&#xA0;All&#xA0;The&#xA0;Speed&#xA0;Tests</a><br/>
@@ -260,14 +260,14 @@ atan2&#160;<a href="wishlist.xml#Atan2" target="_top">The&#xA0;CppAD&#xA0;Wish&#
 &#160;&#160;&#160;&#160;&#160;AD&#160;<a href="mathother.xml" target="_top">Other&#xA0;AD&#xA0;Math&#xA0;Functions</a><br/>
 &#160;&#160;&#160;&#160;&#160;AD<b>&#xA0;</b>example&#160;<a href="atan2.cpp.xml" target="_top">The&#xA0;AD&#xA0;atan2&#xA0;Function:&#xA0;Example&#xA0;and&#xA0;Test</a><br/>
 atomic&#160;<a href="glossary.xml#Operation.Atomic" target="_top">Glossary:&#160;Operation.Atomic</a><br/>
-automatic<b>&#xA0;</b>differentiation&#160;<a href="cppad.xml" target="_top">A&#xA0;Package&#xA0;for&#xA0;Differentiation&#xA0;of&#xA0;C++&#xA0;Algorithms:&#xA0;CppAD-1.0</a><br/>
+automatic<b>&#xA0;</b>differentiation&#160;<a href="cppad.xml" target="_top">A&#xA0;Package&#xA0;for&#xA0;Differentiation&#xA0;of&#xA0;C++&#xA0;Algorithms:&#xA0;CppAD-06-05-29</a><br/>
 
 <b><big><a name="B">B</a></big></b>
 <br/>
 Base<br/>
 &#160;&#160;&#160;&#160;&#160;construct<b>&#xA0;</b>AD<b>&#xA0;</b>from&#160;<a href="copybase.xml" target="_top">AD&#xA0;From&#xA0;Base&#xA0;Type&#xA0;Constructor</a><br/>
 &#160;&#160;&#160;&#160;&#160;from<b>&#xA0;</b>AD&#160;<a href="value.xml" target="_top">Convert&#xA0;From&#xA0;an&#xA0;AD&#xA0;Type&#xA0;to&#xA0;its&#xA0;Base&#xA0;Type</a><br/>
-&#160;&#160;&#160;&#160;&#160;require&#160;<a href="cppad.xml#Base Type Requirements" target="_top">A&#xA0;Package&#xA0;for&#xA0;Differentiation&#xA0;of&#xA0;C++&#xA0;Algorithms:&#xA0;CppAD-1.0:&#160;Base&#xA0;Type&#xA0;Requirements</a><br/>
+&#160;&#160;&#160;&#160;&#160;require&#160;<a href="cppad.xml#Base Type Requirements" target="_top">A&#xA0;Package&#xA0;for&#xA0;Differentiation&#xA0;of&#xA0;C++&#xA0;Algorithms:&#xA0;CppAD-06-05-29:&#160;Base&#xA0;Type&#xA0;Requirements</a><br/>
 BenderQuad&#160;<a href="benderquad.xml" target="_top">Computing&#xA0;Jacobian&#xA0;and&#xA0;Hessian&#xA0;of&#xA0;Bender's&#xA0;Reduced&#xA0;Objective</a><br/>
 &#160;&#160;&#160;&#160;&#160;example&#160;<a href="benderquad.cpp.xml" target="_top">BenderQuad:&#xA0;Example&#xA0;and&#xA0;Test</a><br/>
 base&#160;<a href="glossary.xml#Base Type" target="_top">Glossary:&#160;Base&#xA0;Type</a><br/>
@@ -297,7 +297,7 @@ bugs<br/>
 C<br/>
 &#160;&#160;&#160;&#160;&#160;interface<b>&#xA0;</b>to&#160;<a href="interface2c.cpp.xml" target="_top">Interfacing&#xA0;to&#xA0;C:&#xA0;Example&#xA0;and&#xA0;Test</a><br/>
 C<b>++</b><br/>
-&#160;&#160;&#160;&#160;&#160;algorithm<b>&#xA0;</b>derivative&#160;<a href="cppad.xml" target="_top">A&#xA0;Package&#xA0;for&#xA0;Differentiation&#xA0;of&#xA0;C++&#xA0;Algorithms:&#xA0;CppAD-1.0</a><br/>
+&#160;&#160;&#160;&#160;&#160;algorithm<b>&#xA0;</b>derivative&#160;<a href="cppad.xml" target="_top">A&#xA0;Package&#xA0;for&#xA0;Differentiation&#xA0;of&#xA0;C++&#xA0;Algorithms:&#xA0;CppAD-06-05-29</a><br/>
 &#160;&#160;&#160;&#160;&#160;numerical<b>&#xA0;</b>template<b>&#xA0;</b>library&#160;<a href="library.xml" target="_top">The&#xA0;CppAD&#xA0;General&#xA0;Purpose&#xA0;Library</a><br/>
 CheckNumericType&#160;<a href="checknumerictype.cpp.xml" target="_top">The&#xA0;CheckNumericType&#xA0;Function:&#xA0;Example&#xA0;and&#xA0;Test</a><br/>
 CheckSimpleVector&#160;<a href="checksimplevector.cpp.xml" target="_top">The&#xA0;CheckSimpleVector&#xA0;Function:&#xA0;Example&#xA0;and&#xA0;Test</a><br/>
@@ -305,11 +305,11 @@ CompareChange&#160;<a href="faq.xml#CompareChange" target="_top">Frequently&#xA0
 &#160;&#160;&#160;&#160;&#160;ADFun&#160;<a href="comparechange.xml" target="_top">Comparison&#xA0;Changes&#xA0;During&#xA0;Zero&#xA0;Order&#xA0;Forward&#xA0;Mode</a><br/>
 CondExp&#160;<a href="wishlist.xml#CondExp" target="_top">The&#xA0;CppAD&#xA0;Wish&#xA0;List:&#160;CondExp</a><br/>
 &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<a href="condexp.cpp.xml" target="_top">Conditional&#xA0;Expressions:&#xA0;Example&#xA0;and&#xA0;Test</a><br/>
-CppAD&#160;<a href="cppad.xml" target="_top">A&#xA0;Package&#xA0;for&#xA0;Differentiation&#xA0;of&#xA0;C++&#xA0;Algorithms:&#xA0;CppAD-1.0</a><br/>
-&#160;&#160;&#160;&#160;&#160;namespace&#160;<a href="cppad.xml#Namespace" target="_top">A&#xA0;Package&#xA0;for&#xA0;Differentiation&#xA0;of&#xA0;C++&#xA0;Algorithms:&#xA0;CppAD-1.0:&#160;Namespace</a><br/>
+CppAD&#160;<a href="cppad.xml" target="_top">A&#xA0;Package&#xA0;for&#xA0;Differentiation&#xA0;of&#xA0;C++&#xA0;Algorithms:&#xA0;CppAD-06-05-29</a><br/>
+&#160;&#160;&#160;&#160;&#160;namespace&#160;<a href="cppad.xml#Namespace" target="_top">A&#xA0;Package&#xA0;for&#xA0;Differentiation&#xA0;of&#xA0;C++&#xA0;Algorithms:&#xA0;CppAD-06-05-29:&#160;Namespace</a><br/>
 &#160;&#160;&#160;&#160;&#160;unix<b>&#xA0;</b>install&#160;<a href="installunix.xml" target="_top">Unix&#xA0;Installation&#xA0;and&#xA0;Testing</a><br/>
 CppAD<b>.</b>h<br/>
-&#160;&#160;&#160;&#160;&#160;include&#160;<a href="cppad.xml#Include File" target="_top">A&#xA0;Package&#xA0;for&#xA0;Differentiation&#xA0;of&#xA0;C++&#xA0;Algorithms:&#xA0;CppAD-1.0:&#160;Include&#xA0;File</a><br/>
+&#160;&#160;&#160;&#160;&#160;include&#160;<a href="cppad.xml#Include File" target="_top">A&#xA0;Package&#xA0;for&#xA0;Differentiation&#xA0;of&#xA0;C++&#xA0;Algorithms:&#xA0;CppAD-06-05-29:&#160;Include&#xA0;File</a><br/>
 CppAD<b>::</b>vector<br/>
 &#160;&#160;&#160;&#160;&#160;example&#160;<a href="cppad_vector.cpp.xml" target="_top">CppAD::vector&#xA0;Template&#xA0;Class:&#xA0;Example&#xA0;and&#xA0;Test</a><br/>
 CppAD<b>::</b>vectorBool<br/>
@@ -772,7 +772,7 @@ Integer&#160;<a href="integer.cpp.xml" target="_top">Convert&#xA0;From&#xA0;AD&#
 Introduction<br/>
 &#160;&#160;&#160;&#160;&#160;unix&#160;<a href="installunix.xml#--with-Introduction" target="_top">Unix&#xA0;Installation&#xA0;and&#xA0;Testing:&#160;--with-Introduction</a><br/>
 include<br/>
-&#160;&#160;&#160;&#160;&#160;CppAD<b>.</b>h&#160;<a href="cppad.xml#Include File" target="_top">A&#xA0;Package&#xA0;for&#xA0;Differentiation&#xA0;of&#xA0;C++&#xA0;Algorithms:&#xA0;CppAD-1.0:&#160;Include&#xA0;File</a><br/>
+&#160;&#160;&#160;&#160;&#160;CppAD<b>.</b>h&#160;<a href="cppad.xml#Include File" target="_top">A&#xA0;Package&#xA0;for&#xA0;Differentiation&#xA0;of&#xA0;C++&#xA0;Algorithms:&#xA0;CppAD-06-05-29:&#160;Include&#xA0;File</a><br/>
 independent&#160;<a href="glossary.xml#Operation.Independent" target="_top">Glossary:&#160;Operation.Independent</a><br/>
 &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<a href="glossary.xml#Independent Variable" target="_top">Glossary:&#160;Independent&#xA0;Variable</a><br/>
 &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<a href="faq.xml#Assignment and Independent" target="_top">Frequently&#xA0;Asked&#xA0;Questions&#xA0;and&#xA0;Answers:&#160;Assignment&#xA0;and&#xA0;Independent</a><br/>
@@ -792,7 +792,7 @@ interface<br/>
 &#160;&#160;&#160;&#160;&#160;to<b>&#xA0;</b>C&#160;<a href="interface2c.cpp.xml" target="_top">Interfacing&#xA0;to&#xA0;C:&#xA0;Example&#xA0;and&#xA0;Test</a><br/>
 interpolate<br/>
 &#160;&#160;&#160;&#160;&#160;piecewise<b>&#xA0;</b>linear&#160;<a href="piecewise.cpp.xml" target="_top">Piecewise&#xA0;Linear&#xA0;Interpolation:&#xA0;Example&#xA0;and&#xA0;Test</a><br/>
-introduction&#160;<a href="cppad.xml#Introduction" target="_top">A&#xA0;Package&#xA0;for&#xA0;Differentiation&#xA0;of&#xA0;C++&#xA0;Algorithms:&#xA0;CppAD-1.0:&#160;Introduction</a><br/>
+introduction&#160;<a href="cppad.xml#Introduction" target="_top">A&#xA0;Package&#xA0;for&#xA0;Differentiation&#xA0;of&#xA0;C++&#xA0;Algorithms:&#xA0;CppAD-06-05-29:&#160;Introduction</a><br/>
 &#160;&#160;&#160;&#160;&#160;AD&#160;<a href="introduction.xml" target="_top">An&#xA0;Introduction&#xA0;by&#xA0;Example&#xA0;to&#xA0;Algorithmic&#xA0;Differentiation</a><br/>
 &#160;&#160;&#160;&#160;&#160;ExpApx&#160;<a href="expapx.cpp.xml" target="_top">ExpApx:&#xA0;Example&#xA0;and&#xA0;Test</a><br/>
 inverse<br/>
@@ -918,7 +918,7 @@ NearEqualExt<br/>
 NumericType<br/>
 &#160;&#160;&#160;&#160;&#160;example&#160;<a href="numerictype.cpp.xml" target="_top">The&#xA0;NumericType:&#xA0;Example&#xA0;and&#xA0;Test</a><br/>
 namespace&#160;<a href="faq.xml#Namespace" target="_top">Frequently&#xA0;Asked&#xA0;Questions&#xA0;and&#xA0;Answers:&#160;Namespace</a><br/>
-&#160;&#160;&#160;&#160;&#160;CppAD&#160;<a href="cppad.xml#Namespace" target="_top">A&#xA0;Package&#xA0;for&#xA0;Differentiation&#xA0;of&#xA0;C++&#xA0;Algorithms:&#xA0;CppAD-1.0:&#160;Namespace</a><br/>
+&#160;&#160;&#160;&#160;&#160;CppAD&#160;<a href="cppad.xml#Namespace" target="_top">A&#xA0;Package&#xA0;for&#xA0;Differentiation&#xA0;of&#xA0;C++&#xA0;Algorithms:&#xA0;CppAD-06-05-29:&#160;Namespace</a><br/>
 new<br/>
 &#160;&#160;&#160;&#160;&#160;example&#160;<a href="tracknewdel.cpp.xml" target="_top">Tracking&#xA0;Use&#xA0;of&#xA0;New&#xA0;and&#xA0;Delete:&#xA0;Example&#xA0;and&#xA0;Test</a><br/>
 &#160;&#160;&#160;&#160;&#160;features&#160;<a href="wishlist.xml" target="_top">The&#xA0;CppAD&#xA0;Wish&#xA0;List</a><br/>
@@ -1086,7 +1086,7 @@ relative<br/>
 replace<br/>
 &#160;&#160;&#160;&#160;&#160;error<b>&#xA0;</b>handler&#160;<a href="errorhandler.xml" target="_top">Replacing&#xA0;the&#xA0;CppAD&#xA0;Error&#xA0;Handler</a><br/>
 require<br/>
-&#160;&#160;&#160;&#160;&#160;Base&#160;<a href="cppad.xml#Base Type Requirements" target="_top">A&#xA0;Package&#xA0;for&#xA0;Differentiation&#xA0;of&#xA0;C++&#xA0;Algorithms:&#xA0;CppAD-1.0:&#160;Base&#xA0;Type&#xA0;Requirements</a><br/>
+&#160;&#160;&#160;&#160;&#160;Base&#160;<a href="cppad.xml#Base Type Requirements" target="_top">A&#xA0;Package&#xA0;for&#xA0;Differentiation&#xA0;of&#xA0;C++&#xA0;Algorithms:&#xA0;CppAD-06-05-29:&#160;Base&#xA0;Type&#xA0;Requirements</a><br/>
 resize<br/>
 &#160;&#160;&#160;&#160;&#160;vector&#160;<a href="simplevector.xml#Resize" target="_top">Definition&#xA0;of&#xA0;a&#xA0;Simple&#xA0;Vector:&#160;Resize</a><br/>
 reverse&#160;<a href="faq.xml#Mode: Forward or Reverse" target="_top">Frequently&#xA0;Asked&#xA0;Questions&#xA0;and&#xA0;Answers:&#160;Mode:&#xA0;Forward&#xA0;or&#xA0;Reverse</a><br/>
@@ -1394,7 +1394,7 @@ track<br/>
 type&#160;<a href="glossary.xml#Base Type" target="_top">Glossary:&#160;Base&#xA0;Type</a><br/>
 &#160;&#160;&#160;&#160;&#160;<a href="glossary.xml#AD Type Sequence" target="_top">Glossary:&#160;AD&#xA0;Type&#xA0;Sequence</a><br/>
 &#160;&#160;&#160;&#160;&#160;AD<b>&#xA0;</b>sequence&#160;<a href="glossary.xml#AD Type Sequence" target="_top">Glossary:&#160;AD&#xA0;Type&#xA0;Sequence</a><br/>
-&#160;&#160;&#160;&#160;&#160;Base<b>&#xA0;</b>require&#160;<a href="cppad.xml#Base Type Requirements" target="_top">A&#xA0;Package&#xA0;for&#xA0;Differentiation&#xA0;of&#xA0;C++&#xA0;Algorithms:&#xA0;CppAD-1.0:&#160;Base&#xA0;Type&#xA0;Requirements</a><br/>
+&#160;&#160;&#160;&#160;&#160;Base<b>&#xA0;</b>require&#160;<a href="cppad.xml#Base Type Requirements" target="_top">A&#xA0;Package&#xA0;for&#xA0;Differentiation&#xA0;of&#xA0;C++&#xA0;Algorithms:&#xA0;CppAD-06-05-29:&#160;Base&#xA0;Type&#xA0;Requirements</a><br/>
 &#160;&#160;&#160;&#160;&#160;numeric&#160;<a href="numerictype.xml" target="_top">Definition&#xA0;of&#xA0;a&#xA0;Numeric&#xA0;Type</a><br/>
 
 <b><big><a name="U">U</a></big></b>
@@ -1447,7 +1447,7 @@ vector&#160;<a href="glossary.xml#Elementary Vector" target="_top">Glossary:&#16
 vectorBool&#160;<a href="cppad_vector.xml#vectorBool" target="_top">The&#xA0;CppAD::vector&#xA0;Template&#xA0;Class:&#160;vectorBool</a><br/>
 &#160;&#160;&#160;&#160;&#160;CppAD&#160;<a href="vectorbool.cpp.xml" target="_top">CppAD::vectorBool&#xA0;Class:&#xA0;Example&#xA0;and&#xA0;Test</a><br/>
 version<br/>
-&#160;&#160;&#160;&#160;&#160;CppAD&#160;<a href="cppad.xml" target="_top">A&#xA0;Package&#xA0;for&#xA0;Differentiation&#xA0;of&#xA0;C++&#xA0;Algorithms:&#xA0;CppAD-1.0</a><br/>
+&#160;&#160;&#160;&#160;&#160;CppAD&#160;<a href="cppad.xml" target="_top">A&#xA0;Package&#xA0;for&#xA0;Differentiation&#xA0;of&#xA0;C++&#xA0;Algorithms:&#xA0;CppAD-06-05-29</a><br/>
 
 <b><big><a name="W">W</a></big></b>
 <br/>

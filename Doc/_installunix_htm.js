@@ -23,7 +23,6 @@ var list_down1 = [
 var list_current0 = [
 'installunix.htm#Download Current Version',
 'installunix.htm#User Documentation',
-'installunix.htm#Developer Documentation',
 'installunix.htm#Configure',
 'installunix.htm#PrefixDir and PostfixDir',
 'installunix.htm#--with-GetStarted',

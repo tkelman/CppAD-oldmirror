@@ -131,7 +131,7 @@ BODY { background-color : white }
 <a href="copybase.cpp.xml" target="_top">CopyBase.cpp</a><br/> </td><td> AD Constructor From Base Type: Example and Test </td></tr><tr valign="top"><td>
 <a href="cos.cpp.xml" target="_top">Cos.cpp</a><br/> </td><td> The AD cos Function: Example and Test </td></tr><tr valign="top"><td>
 <a href="cosh.cpp.xml" target="_top">Cosh.cpp</a><br/> </td><td> The AD cosh Function: Example and Test </td></tr><tr valign="top"><td>
-<a href="cppad.xml" target="_top">CppAD</a><br/> </td><td> A Package for Differentiation of C++ Algorithms: CppAD-1.0 </td></tr><tr valign="top"><td>
+<a href="cppad.xml" target="_top">CppAD</a><br/> </td><td> A Package for Differentiation of C++ Algorithms: CppAD-06-05-29 </td></tr><tr valign="top"><td>
 <a href="cppad_vector.xml" target="_top">CppAD_vector</a><br/> </td><td> The CppAD::vector Template Class </td></tr><tr valign="top"><td>
 <a href="cppad_vector.cpp.xml" target="_top">CppAD_vector.cpp</a><br/> </td><td> CppAD::vector Template Class: Example and Test </td></tr><tr valign="top"><td>
 <a href="cppadvector.xml" target="_top">CppADvector</a><br/> </td><td> Choosing The CppADvector Template Class </td></tr><tr valign="top"><td>
