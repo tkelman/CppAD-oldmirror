@@ -1,0 +1,169 @@
+<html><head>
+<title>Compute the Determinant of a Minor: Source Code</title>
+<meta name="description" id="description" content="Compute the Determinant of a Minor: Source Code">
+<meta name="keywords" id="keywords" content=" Detofminor determinant minor matrix ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_detofminor.h_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td><a href="detofminor.cpp.htm" target="_top">Prev</a>
+</td><td><a href="detbyminor.htm" target="_top">Next</a>
+</td><td><a href="cppad.htm" target="_top">Top</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>CppAD-&gt;</option>
+<option>License</option>
+<option>Faq</option>
+<option>Install</option>
+<option>GetStarted.cpp</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>Example-&gt;</option>
+<option>General</option>
+<option>ExampleUtility</option>
+<option>ListAllExamples</option>
+<option>CppADvector</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>ExampleUtility-&gt;</option>
+<option>Example.cpp</option>
+<option>DetOfMinor</option>
+<option>DetOfMinor.h</option>
+<option>DetByMinor</option>
+<option>DetByMinor.h</option>
+<option>DetByLu</option>
+<option>DetByLu.h</option>
+<option>LuVecAD</option>
+</select>
+</td>
+<td>DetOfMinor.h</td>
+<td>Headings</td>
+</tr></table><br>
+
+
+
+
+
+<center><b><big><big>Compute the Determinant of a Minor: Source Code</big></big></b></center>
+<code><font color="blue"># ifndef CppADDetOfMinorIncluded
+<code><span style='white-space: nowrap'><br>
+</span></code># define CppADDetOfMinorIncluded
+
+<span style='white-space: nowrap'><br>
+<br>
+#&nbsp;include&nbsp;&lt;CppAD/CppAD.h&gt;<br>
+<br>
+<br>
+//&nbsp;BEGIN&nbsp;CppAD&nbsp;namespace<br>
+namespace&nbsp;CppAD&nbsp;{<br>
+<br>
+template&nbsp;&lt;class&nbsp;Type&gt;<br>
+Type&nbsp;DetOfMinor(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;CppADvector&lt;Type&gt;&nbsp;&amp;A,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;m,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;n,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppADvector&lt;size_t&gt;&nbsp;&amp;r,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppADvector&lt;size_t&gt;&nbsp;&amp;c)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R0;&nbsp;&nbsp;//&nbsp;R(0)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cj;&nbsp;&nbsp;//&nbsp;C(j)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;&nbsp;&nbsp;previous;&nbsp;&nbsp;//&nbsp;C(j)&nbsp;=&nbsp;c[previous]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;j;&nbsp;&nbsp;//&nbsp;column&nbsp;index&nbsp;in&nbsp;M<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;detM;&nbsp;&nbsp;//&nbsp;determinant&nbsp;of&nbsp;M<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;detS;&nbsp;&nbsp;//&nbsp;determinant&nbsp;of&nbsp;sub-minor&nbsp;of&nbsp;M<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m0j;&nbsp;&nbsp;//&nbsp;an&nbsp;element&nbsp;of&nbsp;the&nbsp;first&nbsp;row&nbsp;of&nbsp;M<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;s;&nbsp;&nbsp;&nbsp;//&nbsp;sign&nbsp;of&nbsp;the&nbsp;current&nbsp;sub-minor&nbsp;in&nbsp;summation<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;indices&nbsp;in&nbsp;A&nbsp;of&nbsp;M(0,&nbsp;0)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R0&nbsp;=&nbsp;r[m];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cj&nbsp;=&nbsp;c[m];<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;check&nbsp;for&nbsp;1&nbsp;by&nbsp;1&nbsp;case<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;n&nbsp;==&nbsp;1&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;A[&nbsp;R0&nbsp;*&nbsp;m&nbsp;+&nbsp;Cj&nbsp;];<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;compute&nbsp;determinant&nbsp;of&nbsp;M&nbsp;by&nbsp;expanding&nbsp;minors&nbsp;along&nbsp;its&nbsp;first&nbsp;row<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;initialize&nbsp;summation<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;detM&nbsp;=&nbsp;0;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;initialize&nbsp;sign&nbsp;of&nbsp;permutation<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;s&nbsp;=&nbsp;1;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;remove&nbsp;first&nbsp;row&nbsp;from&nbsp;sub-minors&nbsp;of&nbsp;M<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;r[m]&nbsp;=&nbsp;r[R0];<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;initialize&nbsp;previous&nbsp;column&nbsp;index<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;previous&nbsp;=&nbsp;m;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;for&nbsp;each&nbsp;column&nbsp;of&nbsp;M<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(j&nbsp;=&nbsp;0;&nbsp;j&nbsp;&lt;&nbsp;n;&nbsp;j++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;M(0,&nbsp;j)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m0j&nbsp;=&nbsp;A[&nbsp;R0&nbsp;*&nbsp;m&nbsp;+&nbsp;Cj&nbsp;];<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;remove&nbsp;column&nbsp;index&nbsp;j&nbsp;from&nbsp;sub-minor&nbsp;of&nbsp;M<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c[previous]&nbsp;=&nbsp;c[Cj];<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;determinant&nbsp;of&nbsp;subminor<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;detS&nbsp;=&nbsp;DetOfMinor(A,&nbsp;m,&nbsp;n&nbsp;-&nbsp;1,&nbsp;r,&nbsp;c);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;restore&nbsp;column&nbsp;index&nbsp;j&nbsp;to&nbsp;sub-minor&nbsp;of&nbsp;M<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c[previous]&nbsp;=&nbsp;Cj;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;include&nbsp;in&nbsp;summation<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;s&nbsp;&gt;&nbsp;0&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;detM&nbsp;=&nbsp;detM&nbsp;+&nbsp;m0j&nbsp;*&nbsp;detS;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;detM&nbsp;=&nbsp;detM&nbsp;-&nbsp;m0j&nbsp;*&nbsp;detS;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;advance&nbsp;to&nbsp;next&nbsp;column&nbsp;of&nbsp;M<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;previous&nbsp;=&nbsp;Cj;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cj&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;c[Cj];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;s&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-s;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;restore&nbsp;column&nbsp;index&nbsp;zero&nbsp;to&nbsp;M<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;r[m]&nbsp;=&nbsp;R0;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;detM;<br>
+}<br>
+<br>
+}&nbsp;//&nbsp;END&nbsp;CppAD&nbsp;namespace<br>
+<br>
+</span># endif
+</font></code>
+
+
+<hr>Input File: Example/DetOfMinor.h
+
+</body>
+</html>

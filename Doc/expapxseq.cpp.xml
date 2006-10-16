@@ -1,0 +1,117 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>ExpApx: Operation Sequence Verification</title>
+<meta name="description" id="description" content="ExpApx: Operation Sequence Verification"/>
+<meta name="keywords" id="keywords" content=" "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_expapxseq.cpp_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td><a href="expapxseq.xml" target="_top">Prev</a>
+</td><td><a href="expapxfor.xml" target="_top">Next</a>
+</td><td><a href="cppad.xml" target="_top">Top</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>CppAD-&gt;</option>
+<option>License</option>
+<option>Faq</option>
+<option>Install</option>
+<option>GetStarted.cpp</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>Introduction-&gt;</option>
+<option>ExpApx</option>
+<option>ExpApxSeq</option>
+<option>ExpApxFor</option>
+<option>ExpApxRev</option>
+<option>ExpApxAD.cpp</option>
+<option>Introduction.cpp</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>ExpApxSeq-&gt;</option>
+<option>ExpApxSeq.cpp</option>
+</select>
+</td>
+<td>ExpApxSeq.cpp</td>
+<td>Headings</td>
+</tr></table><br/>
+
+
+<center><b><big><big>ExpApx: Operation Sequence Verification</big></big></b></center>
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+<br/>
+#&#xA0;include&#xA0;&lt;cmath&gt;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;for&#xA0;fabs&#xA0;function<br/>
+double&#xA0;a[1],&#xA0;q[3],&#xA0;r[3],&#xA0;s[3],&#xA0;k[3];&#xA0;//&#xA0;global&#xA0;variables&#xA0;set&#xA0;by&#xA0;ExpApxSeq<br/>
+bool&#xA0;ExpApxSeq(void)<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;&#xA0;ok&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;double&#xA0;x&#xA0;=&#xA0;.5;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;r[0]&#xA0;=&#xA0;s[0]&#xA0;=&#xA0;k[0]&#xA0;=&#xA0;1.;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;r&#xA0;=&#xA0;s&#xA0;=&#xA0;k&#xA0;=&#xA0;Type(1);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;a[0]&#xA0;=&#xA0;x;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;a&#xA0;=&#xA0;x;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&amp;=&#xA0;std::fabs(&#xA0;a[0]&#xA0;-&#xA0;0.5)&#xA0;&lt;&#xA0;1e-10;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;q[1]&#xA0;=&#xA0;r[0]&#xA0;*&#xA0;a[0];&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;q&#xA0;&#xA0;=&#xA0;a&#xA0;*&#xA0;r;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&amp;=&#xA0;std::fabs(&#xA0;q[1]&#xA0;-&#xA0;0.5)&#xA0;&lt;&#xA0;1e-10;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;r[1]&#xA0;=&#xA0;q[1]&#xA0;/&#xA0;k[0];&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;r&#xA0;&#xA0;=&#xA0;q&#xA0;/&#xA0;k;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&amp;=&#xA0;std::fabs(&#xA0;r[1]&#xA0;-&#xA0;0.5)&#xA0;&lt;&#xA0;1e-10;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;s[1]&#xA0;=&#xA0;s[0]&#xA0;+&#xA0;r[1];&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;s&#xA0;&#xA0;=&#xA0;s&#xA0;+&#xA0;r;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&amp;=&#xA0;std::fabs(&#xA0;s[1]&#xA0;-&#xA0;1.5)&#xA0;&lt;&#xA0;1e-10;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;k[1]&#xA0;=&#xA0;k[0]&#xA0;+&#xA0;1.;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;k&#xA0;&#xA0;=&#xA0;k&#xA0;+&#xA0;Type(1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&amp;=&#xA0;std::fabs(&#xA0;k[1]&#xA0;-&#xA0;2.0)&#xA0;&lt;&#xA0;1e-10;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;q[2]&#xA0;=&#xA0;r[1]&#xA0;*&#xA0;a[0];&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;q&#xA0;&#xA0;=&#xA0;a&#xA0;*&#xA0;r;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&amp;=&#xA0;std::fabs(&#xA0;q[2]&#xA0;-&#xA0;0.25)&#xA0;&lt;&#xA0;1e-10;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;r[2]&#xA0;=&#xA0;q[2]&#xA0;/&#xA0;k[1];&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;r&#xA0;&#xA0;=&#xA0;q&#xA0;/&#xA0;k;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&amp;=&#xA0;std::fabs(&#xA0;r[2]&#xA0;-&#xA0;0.125)&#xA0;&lt;&#xA0;1e-10;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;s[2]&#xA0;=&#xA0;s[1]&#xA0;+&#xA0;r[2];&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;s&#xA0;&#xA0;=&#xA0;s&#xA0;+&#xA0;r;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&amp;=&#xA0;std::fabs(&#xA0;s[2]&#xA0;-&#xA0;1.625)&#xA0;&lt;&#xA0;1e-10;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;k[2]&#xA0;=&#xA0;k[1]&#xA0;+&#xA0;1.;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;k&#xA0;&#xA0;=&#xA0;k&#xA0;+&#xA0;Type(1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&amp;=&#xA0;std::fabs(&#xA0;k[2]&#xA0;-&#xA0;3.0)&#xA0;&lt;&#xA0;1e-10;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+}<br/>
+</span>
+</font></code>
+
+<hr/>Input File: Introduction/ExpApxSeq.cpp
+
+</body>
+</html>

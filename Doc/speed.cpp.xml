@@ -1,0 +1,141 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Run All The Speed Tests</title>
+<meta name="description" id="description" content="Run All The Speed Tests"/>
+<meta name="keywords" id="keywords" content=" run all speed test "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_speed.cpp_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td><a href="speed.xml" target="_top">Prev</a>
+</td><td><a href="detminorspeed.cpp.xml" target="_top">Next</a>
+</td><td><a href="cppad.xml" target="_top">Top</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>CppAD-&gt;</option>
+<option>License</option>
+<option>Faq</option>
+<option>Install</option>
+<option>GetStarted.cpp</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>Appendix-&gt;</option>
+<option>Theory</option>
+<option>Speed</option>
+<option>Adolc</option>
+<option>Fadbad</option>
+<option>glossary</option>
+<option>Bib</option>
+<option>Bugs</option>
+<option>WishList</option>
+<option>WhatsNew06</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>Speed-&gt;</option>
+<option>Speed.cpp</option>
+<option>DetMinorSpeed.cpp</option>
+<option>DetLuSpeed.cpp</option>
+<option>OdeSpeed.cpp</option>
+<option>LuSolveSpeed.cpp</option>
+</select>
+</td>
+<td>Speed.cpp</td>
+<td>Headings</td>
+</tr></table><br/>
+<center><b><big><big>Run All The Speed Tests</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+<br/>
+#&#xA0;include&#xA0;&lt;CppAD/CppAD.h&gt;<br/>
+<br/>
+#&#xA0;include&#xA0;&lt;cstddef&gt;<br/>
+#&#xA0;include&#xA0;&lt;iostream&gt;<br/>
+#&#xA0;include&#xA0;&lt;complex&gt;<br/>
+<br/>
+//&#xA0;For&#xA0;an&#xA0;unknown&#xA0;reason,&#xA0;cannot&#xA0;move&#xA0;other&#xA0;includes&#xA0;(using&#xA0;Sun's&#xA0;CC&#xA0;compiler)<br/>
+<br/>
+typedef&#xA0;std::complex&lt;double&gt;&#xA0;Complex;<br/>
+<br/>
+std::string&#xA0;doubleDetMinor&#xA0;&#xA0;&#xA0;&#xA0;(size_t&#xA0;size,&#xA0;size_t&#xA0;repeat);<br/>
+std::string&#xA0;ADdoubleDetMinor&#xA0;&#xA0;(size_t&#xA0;size,&#xA0;size_t&#xA0;repeat);<br/>
+std::string&#xA0;TapeDetMinor&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;(size_t&#xA0;size,&#xA0;size_t&#xA0;repeat);<br/>
+std::string&#xA0;JacDetMinor&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;(size_t&#xA0;size,&#xA0;size_t&#xA0;repeat);<br/>
+std::string&#xA0;HesDetMinor&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;(size_t&#xA0;size,&#xA0;size_t&#xA0;repeat);<br/>
+<br/>
+std::string&#xA0;doubleDetLu&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;(size_t&#xA0;size,&#xA0;size_t&#xA0;repeat);<br/>
+std::string&#xA0;ADdoubleDetLu&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;(size_t&#xA0;size,&#xA0;size_t&#xA0;repeat);<br/>
+std::string&#xA0;TapeDetLu&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;(size_t&#xA0;size,&#xA0;size_t&#xA0;repeat);<br/>
+std::string&#xA0;JacDetLu&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;(size_t&#xA0;size,&#xA0;size_t&#xA0;repeat);<br/>
+std::string&#xA0;HesDetLu&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;(size_t&#xA0;size,&#xA0;size_t&#xA0;repeat);<br/>
+<br/>
+std::string&#xA0;doubleOde&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;(size_t&#xA0;size,&#xA0;size_t&#xA0;repeat);<br/>
+std::string&#xA0;ADdoubleOde&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;(size_t&#xA0;size,&#xA0;size_t&#xA0;repeat);<br/>
+std::string&#xA0;TapeOde&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;(size_t&#xA0;size,&#xA0;size_t&#xA0;repeat);<br/>
+std::string&#xA0;JacOde&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;(size_t&#xA0;size,&#xA0;size_t&#xA0;repeat);<br/>
+std::string&#xA0;HesOde&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;(size_t&#xA0;size,&#xA0;size_t&#xA0;repeat);<br/>
+<br/>
+std::string&#xA0;LuSolve&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;(size_t&#xA0;size,&#xA0;size_t&#xA0;repeat);<br/>
+std::string&#xA0;LuVecAD&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;(size_t&#xA0;size,&#xA0;size_t&#xA0;repeat);<br/>
+<br/>
+int&#xA0;main()<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;CppAD::SpeedTest;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;std::cout&#xA0;&lt;&lt;&#xA0;PACKAGE_STRING&#xA0;&lt;&lt;&#xA0;&quot;&#xA0;Speed&#xA0;Test&#xA0;&quot;&#xA0;&lt;&lt;&#xA0;std::endl;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;SpeedTest(doubleDetMinor,&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;5,&#xA0;-1,&#xA0;1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;SpeedTest(ADdoubleDetMinor,&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;5,&#xA0;-1,&#xA0;1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;SpeedTest(TapeDetMinor,&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;5,&#xA0;-1,&#xA0;1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;SpeedTest(JacDetMinor,&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;5,&#xA0;-1,&#xA0;1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;SpeedTest(HesDetMinor,&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;5,&#xA0;-1,&#xA0;1);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;SpeedTest(doubleDetLu,&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;9,&#xA0;-2,&#xA0;1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;SpeedTest(ADdoubleDetLu,&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;9,&#xA0;-2,&#xA0;1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;SpeedTest(TapeDetLu,&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;9,&#xA0;-2,&#xA0;1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;SpeedTest(JacDetLu,&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;9,&#xA0;-2,&#xA0;1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;SpeedTest(HesDetLu,&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;9,&#xA0;-2,&#xA0;1);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;SpeedTest(doubleOde,&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;5,&#xA0;-1,&#xA0;1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;SpeedTest(ADdoubleOde,&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;5,&#xA0;-1,&#xA0;1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;SpeedTest(TapeOde,&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;5,&#xA0;-1,&#xA0;1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;SpeedTest(JacOde,&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;5,&#xA0;-1,&#xA0;1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;SpeedTest(HesOde,&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;5,&#xA0;-1,&#xA0;1);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;SpeedTest(LuSolve,&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;5,&#xA0;-1,&#xA0;1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;SpeedTest(LuVecAD,&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;5,&#xA0;-1,&#xA0;1);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;0;<br/>
+}<br/>
+<br/>
+</span></font></code>
+<hr/>Input File: Speed/Speed.cpp
+
+</body>
+</html>

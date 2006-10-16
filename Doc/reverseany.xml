@@ -1,0 +1,1494 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Any Order Reverse Mode</title>
+<meta name="description" id="description" content="Any Order Reverse Mode"/>
+<meta name="keywords" id="keywords" content=" reverse mode derivative calculate "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_reverseany_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td><a href="reverseone.cpp.xml" target="_top">Prev</a>
+</td><td><a href="reverseany.cpp.xml" target="_top">Next</a>
+</td><td><a href="cppad.xml" target="_top">Top</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>CppAD-&gt;</option>
+<option>License</option>
+<option>Faq</option>
+<option>Install</option>
+<option>GetStarted.cpp</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>ADFun-&gt;</option>
+<option>Independent</option>
+<option>FunConstruct</option>
+<option>Dependent</option>
+<option>SeqProperty</option>
+<option>FunEval</option>
+<option>Drivers</option>
+<option>FunCheck</option>
+<option>FunDeprecated</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>FunEval-&gt;</option>
+<option>Forward</option>
+<option>Reverse</option>
+<option>Sparse</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>Reverse-&gt;</option>
+<option>ReverseOne</option>
+<option>ReverseAny</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down0(this)'>
+<option>ReverseAny-&gt;</option>
+<option>ReverseAny.cpp</option>
+<option>HesTimesDir.cpp</option>
+</select>
+</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Syntax</option>
+<option>Purpose</option>
+<option>X(t, x)</option>
+<option>W(t, x)</option>
+<option>f</option>
+<option>p</option>
+<option>w</option>
+<option>dw</option>
+<option>Vector</option>
+<option>First Order</option>
+<option>Hessian Times Direction</option>
+<option>Example</option>
+</select>
+</td>
+</tr></table><br/>
+
+
+
+<center><b><big><big>Any Order Reverse Mode</big></big></b></center>
+<br/>
+<b><big><a name="Syntax" id="Syntax">Syntax</a></big></b>
+
+<br/>
+<code><font color="blue"></font></code><i><span style='white-space: nowrap'>dw</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;=&#xA0;</span></font></code><i><span style='white-space: nowrap'>f</span></i><code><font color="blue"><span style='white-space: nowrap'>.Reverse(</span></font></code><i><span style='white-space: nowrap'>p</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>w</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>
+
+
+<br/>
+<br/>
+<b><big><a name="Purpose" id="Purpose">Purpose</a></big></b>
+<br/>
+We use 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>F</mi>
+<mo stretchy="false">:</mo>
+<msup><mi mathvariant='italic'>B</mi>
+<mi mathvariant='italic'>n</mi>
+</msup>
+<mo stretchy="false">&#x02192;</mo>
+<msup><mi mathvariant='italic'>B</mi>
+<mi mathvariant='italic'>m</mi>
+</msup>
+</mrow></math>
+
+ to denote the
+<a href="glossary.xml#AD Function" target="_top"><span style='white-space: nowrap'>AD&#xA0;function</span></a>
+ corresponding to <i>f</i>.
+Reverse mode computes the derivative of the <a href="forward.xml" target="_top"><span style='white-space: nowrap'>Forward</span></a>
+ mode
+<a href="glossary.xml#Taylor Coefficient" target="_top"><span style='white-space: nowrap'>Taylor&#xA0;coefficients</span></a>
+
+with respect to the domain variable 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>x</mi>
+</mrow></math>
+
+.
+
+
+<br/>
+<br/>
+<b><big><a name="X(t, x)" id="X(t, x)">X(t, x)</a></big></b>
+<br/>
+The function
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>X</mi>
+<mo stretchy="false">:</mo>
+<mi mathvariant='italic'>B</mi>
+<mo stretchy="false">&#x000D7;</mo>
+<msup><mi mathvariant='italic'>B</mi>
+<mi mathvariant='italic'>n</mi>
+</msup>
+<mo stretchy="false">&#x02192;</mo>
+<msup><mi mathvariant='italic'>B</mi>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mrow></math>
+
+ is defined using
+a sequence of Taylor coefficients 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msup><mi mathvariant='italic'>x</mi>
+<mrow><mo stretchy="false">(</mo>
+<mi mathvariant='italic'>k</mi>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">&#x02208;</mo>
+<msup><mi mathvariant='italic'>B</mi>
+<mi mathvariant='italic'>n</mi>
+</msup>
+</mrow></math>
+
+:
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mi mathvariant='italic'>X</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">=</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">+</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mrow><mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">+</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mrow><mo stretchy="false">(</mo>
+<mn>1</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">*</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">+</mo>
+<mo stretchy="false">&#x022EF;</mo>
+<mo stretchy="false">+</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mrow><mo stretchy="false">(</mo>
+<mi mathvariant='italic'>p</mi>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">*</mo>
+<msup><mi mathvariant='italic'>t</mi>
+<mi mathvariant='italic'>p</mi>
+</msup>
+</mrow></math>
+
+For 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>k</mi>
+<mo stretchy="false">=</mo>
+<mn>0</mn>
+<mo stretchy="false">,</mo>
+<mo stretchy="false">&#x02026;</mo>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>p</mi>
+</mrow></math>
+
+,
+the vector 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msup><mi mathvariant='italic'>x</mi>
+<mrow><mo stretchy="false">(</mo>
+<mi mathvariant='italic'>k</mi>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+</mrow></math>
+
+ above is defined as the value of 
+<i>x_k</i> in the previous call (counting this call) of the form
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>f</span></i><code><font color="blue"><span style='white-space: nowrap'>.Forward(</span></font></code><i><span style='white-space: nowrap'>k</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>x_k</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br/>
+</span></font></code>If there is no previous call with 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>k</mi>
+<mo stretchy="false">=</mo>
+<mn>0</mn>
+</mrow></math>
+
+,
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msup><mi mathvariant='italic'>x</mi>
+<mrow><mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+</mrow></math>
+
+ is the value of the independent variables when the 
+corresponding 
+AD of <i>Base</i>
+<a href="glossary.xml#Operation.Sequence" target="_top"><span style='white-space: nowrap'>operation&#xA0;sequence</span></a>
+ was recorded.
+Note that for 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>k</mi>
+<mo stretchy="false">=</mo>
+<mn>0</mn>
+<mo stretchy="false">,</mo>
+<mo stretchy="false">&#x02026;</mo>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>p</mi>
+<mn>-1</mn>
+</mrow></math>
+
+,
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msup><mi mathvariant='italic'>x</mi>
+<mrow><mo stretchy="false">(</mo>
+<mi mathvariant='italic'>k</mi>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+</mrow></math>
+
+ is related to the <i>k</i>-th partial of 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>X</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+ 
+with respect to 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>t</mi>
+</mrow></math>
+
+ by
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<msup><mi mathvariant='italic'>x</mi>
+<mrow><mo stretchy="false">(</mo>
+<mi mathvariant='italic'>k</mi>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">=</mo>
+<mfrac><mrow><mn>1</mn>
+</mrow>
+<mrow><mi mathvariant='italic'>k</mi>
+<mo stretchy="false">!</mo>
+</mrow>
+</mfrac>
+<mfrac><mrow><msup><mo stretchy="false">&#x02202;</mo>
+<mrow><mi mathvariant='italic'>k</mi>
+</mrow>
+</msup>
+</mrow>
+<mrow><mo stretchy="false">&#x02202;</mo>
+<msup><mrow><mi mathvariant='italic'>t</mi>
+</mrow>
+<mrow><mi mathvariant='italic'>k</mi>
+</mrow>
+</msup>
+</mrow>
+</mfrac>
+<mi mathvariant='italic'>X</mi>
+<mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">,</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+<br/>
+<b><big><a name="W(t, x)" id="W(t, x)">W(t, x)</a></big></b>
+<br/>
+The function
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>W</mi>
+<mo stretchy="false">:</mo>
+<mi mathvariant='italic'>B</mi>
+<mo stretchy="false">&#x000D7;</mo>
+<msup><mi mathvariant='italic'>B</mi>
+<mi mathvariant='italic'>n</mi>
+</msup>
+<mo stretchy="false">&#x02192;</mo>
+<mi mathvariant='italic'>B</mi>
+</mrow></math>
+
+ is defined by
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mi mathvariant='italic'>W</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">=</mo>
+<msub><mi mathvariant='italic'>w</mi>
+<mn>1</mn>
+</msub>
+<mo stretchy="false">*</mo>
+<msub><mi mathvariant='italic'>F</mi>
+<mn>1</mn>
+</msub>
+<mo stretchy="false">[</mo>
+<mi mathvariant='italic'>X</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">]</mo>
+<mo stretchy="false">+</mo>
+<mo stretchy="false">&#x022EF;</mo>
+<mo stretchy="false">+</mo>
+<msub><mi mathvariant='italic'>w</mi>
+<mrow><mi mathvariant='italic'>m</mi>
+<mn>-1</mn>
+</mrow>
+</msub>
+<mo stretchy="false">*</mo>
+<msub><mi mathvariant='italic'>F</mi>
+<mrow><mi mathvariant='italic'>m</mi>
+<mn>-1</mn>
+</mrow>
+</msub>
+<mo stretchy="false">[</mo>
+<mi mathvariant='italic'>X</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">]</mo>
+</mrow></math>
+
+We use 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msup><mi mathvariant='italic'>W</mi>
+<mrow><mo stretchy="false">(</mo>
+<mi mathvariant='italic'>k</mi>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">:</mo>
+<msup><mi mathvariant='italic'>B</mi>
+<mi mathvariant='italic'>n</mi>
+</msup>
+<mo stretchy="false">&#x02192;</mo>
+<msup><mi mathvariant='italic'>B</mi>
+<mi mathvariant='italic'>m</mi>
+</msup>
+</mrow></math>
+
+ to denote the
+<i>k</i>-th order Taylor coefficient of 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>W</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+ with 
+respect to 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>t</mi>
+</mrow></math>
+
+; i.e.,
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mi mathvariant='italic'>W</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">=</mo>
+<msup><mi mathvariant='italic'>W</mi>
+<mrow><mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">+</mo>
+<msup><mi mathvariant='italic'>W</mi>
+<mrow><mo stretchy="false">(</mo>
+<mn>1</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">*</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">+</mo>
+<mo stretchy="false">&#x022EF;</mo>
+<mo stretchy="false">+</mo>
+<msup><mi mathvariant='italic'>W</mi>
+<mrow><mo stretchy="false">(</mo>
+<mi mathvariant='italic'>p</mi>
+<mn>-1</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">*</mo>
+<msup><mi mathvariant='italic'>t</mi>
+<mrow><mi mathvariant='italic'>p</mi>
+<mn>-1</mn>
+</mrow>
+</msup>
+<mo stretchy="false">+</mo>
+<mi mathvariant='italic'>o</mi>
+<mo stretchy="false">(</mo>
+<msup><mi mathvariant='italic'>t</mi>
+<mrow><mi mathvariant='italic'>p</mi>
+<mn>-1</mn>
+</mrow>
+</msup>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+where 
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>o</mi>
+<mo stretchy="false">(</mo>
+<msup><mi mathvariant='italic'>t</mi>
+<mrow><mi mathvariant='italic'>p</mi>
+<mn>-1</mn>
+</mrow>
+</msup>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">*</mo>
+<msup><mi mathvariant='italic'>t</mi>
+<mrow><mn>1</mn>
+<mo stretchy="false">-</mo>
+<mi mathvariant='italic'>p</mi>
+</mrow>
+</msup>
+<mo stretchy="false">&#x02192;</mo>
+<mn>0</mn>
+</mrow></math>
+
+ as 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">&#x02192;</mo>
+<mn>0</mn>
+</mrow></math>
+
+.
+Note that for 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>k</mi>
+<mo stretchy="false">=</mo>
+<mn>0</mn>
+<mo stretchy="false">,</mo>
+<mo stretchy="false">&#x02026;</mo>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>p</mi>
+<mn>-1</mn>
+</mrow></math>
+
+,
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msup><mi mathvariant='italic'>W</mi>
+<mrow><mo stretchy="false">(</mo>
+<mi mathvariant='italic'>k</mi>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+ is related to the <i>k</i>-th partial of 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>W</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+ 
+with respect to 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>t</mi>
+</mrow></math>
+
+ by
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<msup><mi mathvariant='italic'>W</mi>
+<mrow><mo stretchy="false">(</mo>
+<mi mathvariant='italic'>k</mi>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">=</mo>
+<mfrac><mrow><mn>1</mn>
+</mrow>
+<mrow><mi mathvariant='italic'>k</mi>
+<mo stretchy="false">!</mo>
+</mrow>
+</mfrac>
+<mfrac><mrow><msup><mo stretchy="false">&#x02202;</mo>
+<mrow><mi mathvariant='italic'>k</mi>
+</mrow>
+</msup>
+</mrow>
+<mrow><mo stretchy="false">&#x02202;</mo>
+<msup><mrow><mi mathvariant='italic'>t</mi>
+</mrow>
+<mrow><mi mathvariant='italic'>k</mi>
+</mrow>
+</msup>
+</mrow>
+</mfrac>
+<mi mathvariant='italic'>W</mi>
+<mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">,</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+<br/>
+<b><big><a name="f" id="f">f</a></big></b>
+<br/>
+The object <i>f</i> has prototype
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;ADFun&lt;</span></font></code><i><span style='white-space: nowrap'>Base</span></i><code><font color="blue"><span style='white-space: nowrap'>&gt;&#xA0;</span></font></code><i><span style='white-space: nowrap'>f</span></i><code><font color="blue"><span style='white-space: nowrap'><br/>
+</span></font></code>Before this call to <code><font color="blue">Forward</font></code>, the value returned by
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>f</span></i><code><font color="blue"><span style='white-space: nowrap'>.size_taylor()<br/>
+</span></font></code>must be greater than or equal <i>p</i>
+(see <a href="size_taylor.xml" target="_top"><span style='white-space: nowrap'>size_taylor</span></a>
+).
+
+<br/>
+<br/>
+<b><big><a name="p" id="p">p</a></big></b>
+<br/>
+The argument <i>p</i> has prototype
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;</span></font></code><i><span style='white-space: nowrap'>p</span></i><code><font color="blue"><span style='white-space: nowrap'><br/>
+</span></font></code>and specifies the number of Taylor coefficients to be differentiated.
+
+
+<br/>
+<br/>
+<b><big><a name="w" id="w">w</a></big></b>
+<br/>
+The argument <i>w</i> has prototype
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;</span></font></code><i><span style='white-space: nowrap'>Vector</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;&amp;</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'><br/>
+</span></font></code>(see <a href="reverseany.xml#Vector" target="_top"><span style='white-space: nowrap'>Vector</span></a>
+ below)
+and its size 
+must be equal to <i>m</i>, the dimension of the
+<a href="seqproperty.xml#Range" target="_top"><span style='white-space: nowrap'>range</span></a>
+ space for <i>f</i>.
+It specifies the weighting vector <i>w</i>
+in the definition of 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>W</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+ above.
+
+
+<br/>
+<br/>
+<b><big><a name="dw" id="dw">dw</a></big></b>
+<br/>
+The return value <i>dw</i> has prototype
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>Vector</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;</span></font></code><i><span style='white-space: nowrap'>dw</span></i><code><font color="blue"><span style='white-space: nowrap'><br/>
+</span></font></code>(see <a href="reverseany.xml#Vector" target="_top"><span style='white-space: nowrap'>Vector</span></a>
+ below).
+It is a vector with size 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>n</mi>
+<mo stretchy="false">&#x000D7;</mo>
+<mi mathvariant='italic'>p</mi>
+</mrow></math>
+
+.
+For 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>j</mi>
+<mo stretchy="false">=</mo>
+<mn>0</mn>
+<mo stretchy="false">,</mo>
+<mo stretchy="false">&#x02026;</mo>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>n</mi>
+<mn>-1</mn>
+</mrow></math>
+
+ and 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>k</mi>
+<mo stretchy="false">=</mo>
+<mn>0</mn>
+<mo stretchy="false">,</mo>
+<mo stretchy="false">&#x02026;</mo>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>p</mi>
+<mn>-1</mn>
+</mrow></math>
+
+
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mi mathvariant='italic'>dw</mi>
+<mo stretchy="false">[</mo>
+<mi mathvariant='italic'>j</mi>
+<mo stretchy="false">*</mo>
+<mi mathvariant='italic'>p</mi>
+<mo stretchy="false">+</mo>
+<mi mathvariant='italic'>k</mi>
+<mo stretchy="false">]</mo>
+<mo stretchy="false">=</mo>
+<mfrac><mrow><mo stretchy="false">&#x02202;</mo>
+<msup><mi mathvariant='italic'>W</mi>
+<mrow><mo stretchy="false">(</mo>
+<mi mathvariant='italic'>k</mi>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+</mrow>
+<mrow><mo stretchy="false">&#x02202;</mo>
+<msub><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>j</mi>
+</msub>
+</mrow>
+</mfrac>
+<mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">,</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+<br/>
+<b><big><a name="Vector" id="Vector">Vector</a></big></b>
+<br/>
+The type <i>Vector</i> must be a <a href="simplevector.xml" target="_top"><span style='white-space: nowrap'>SimpleVector</span></a>
+ class with
+<a href="simplevector.xml#Elements of Specified Type" target="_top"><span style='white-space: nowrap'>elements&#xA0;of&#xA0;type</span></a>
+
+<i>Base</i>.
+The routine <a href="checksimplevector.xml" target="_top"><span style='white-space: nowrap'>CheckSimpleVector</span></a>
+ will generate an error message
+if this is not the case.
+
+<br/>
+<br/>
+<b><big><a name="First Order" id="First Order">First Order</a></big></b>
+<br/>
+If 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>p</mi>
+<mo stretchy="false">=</mo>
+<mn>1</mn>
+</mrow></math>
+
+,
+the result <i>dw</i> is given by
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mtable rowalign="center" ><mtr><mtd columnalign="right" >
+<mfrac><mrow><mo stretchy="false">&#x02202;</mo>
+<msup><mi mathvariant='italic'>W</mi>
+<mrow><mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+</mrow>
+<mrow><mo stretchy="false">&#x02202;</mo>
+<mi mathvariant='italic'>x</mi>
+</mrow>
+</mfrac>
+<mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">,</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">=</mo>
+</mtd><mtd columnalign="left" >
+<munderover><mo stretchy='false' minsize='2em'>&#x02211;</mo>
+<mrow><mi mathvariant='italic'>i</mi>
+<mo stretchy="false">=</mo>
+<mn>0</mn>
+</mrow>
+<mrow><mi mathvariant='italic'>m</mi>
+<mn>-1</mn>
+</mrow>
+</munderover>
+<msub><mi mathvariant='italic'>w</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">*</mo>
+<mfrac><mrow><mo stretchy="false">&#x02202;</mo>
+<msub><mi mathvariant='italic'>F</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">[</mo>
+<mi mathvariant='italic'>X</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">]</mo>
+</mrow>
+<mrow><mo stretchy="false">&#x02202;</mo>
+<mi mathvariant='italic'>x</mi>
+</mrow>
+</mfrac>
+<mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">,</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+</mtd></mtr><mtr><mtd columnalign="right" >
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">=</mo>
+</mtd><mtd columnalign="left" >
+<munderover><mo stretchy='false' minsize='2em'>&#x02211;</mo>
+<mrow><mi mathvariant='italic'>i</mi>
+<mo stretchy="false">=</mo>
+<mn>0</mn>
+</mrow>
+<mrow><mi mathvariant='italic'>m</mi>
+<mn>-1</mn>
+</mrow>
+</munderover>
+<msub><mi mathvariant='italic'>w</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">*</mo>
+<mfrac><mrow><mo stretchy="false">&#x02202;</mo>
+<msub><mi mathvariant='italic'>F</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+</mrow>
+<mrow><mo stretchy="false">&#x02202;</mo>
+<mi mathvariant='italic'>x</mi>
+</mrow>
+</mfrac>
+<mo stretchy="false">(</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mrow><mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">*</mo>
+<mfrac><mrow><mo stretchy="false">&#x02202;</mo>
+<mi mathvariant='italic'>X</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+</mrow>
+<mrow><mo stretchy="false">&#x02202;</mo>
+<mi mathvariant='italic'>x</mi>
+</mrow>
+</mfrac>
+<mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">,</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">=</mo>
+<munderover><mo stretchy='false' minsize='2em'>&#x02211;</mo>
+<mrow><mi mathvariant='italic'>i</mi>
+<mo stretchy="false">=</mo>
+<mn>0</mn>
+</mrow>
+<mrow><mi mathvariant='italic'>m</mi>
+<mn>-1</mn>
+</mrow>
+</munderover>
+<msub><mi mathvariant='italic'>w</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">*</mo>
+<mfrac><mrow><mo stretchy="false">&#x02202;</mo>
+<msub><mi mathvariant='italic'>F</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+</mrow>
+<mrow><mo stretchy="false">&#x02202;</mo>
+<mi mathvariant='italic'>x</mi>
+</mrow>
+</mfrac>
+<mo stretchy="false">(</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mrow><mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">)</mo>
+</mtd></mtr></mtable>
+</mrow></math>
+
+This agrees with the simplification 
+where <i>W(0, x)</i> is replaced by 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>W</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+ in <a href="reverseone.xml" target="_top"><span style='white-space: nowrap'>ReverseOne</span></a>
+.
+<code><span style='white-space: nowrap'><br/>
+<br/>
+</span></code>It follows from the definitions above that 
+the function 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msup><mi mathvariant='italic'>W</mi>
+<mrow><mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+ 
+does not depend on the value of <i>p</i>
+(in general 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msup><mi mathvariant='italic'>W</mi>
+<mrow><mo stretchy="false">(</mo>
+<mi mathvariant='italic'>k</mi>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+ does not depend on <i>p</i>).
+Thus, in the general case (<i>p</i> not necessarily one)
+for 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>j</mi>
+<mo stretchy="false">=</mo>
+<mn>0</mn>
+<mo stretchy="false">,</mo>
+<mo stretchy="false">&#x02026;</mo>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>n</mi>
+<mo stretchy="false">-</mo>
+<mn>1</mn>
+</mrow></math>
+
+
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mi mathvariant='italic'>dw</mi>
+<mo stretchy="false">[</mo>
+<mi mathvariant='italic'>j</mi>
+<mo stretchy="false">*</mo>
+<mi mathvariant='italic'>p</mi>
+<mo stretchy="false">+</mo>
+<mn>0</mn>
+<mo stretchy="false">]</mo>
+<mo stretchy="false">=</mo>
+<mo stretchy="false">=</mo>
+<mfrac><mrow><mo stretchy="false">&#x02202;</mo>
+<msup><mi mathvariant='italic'>W</mi>
+<mrow><mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+</mrow>
+<mrow><mo stretchy="false">&#x02202;</mo>
+<msub><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>j</mi>
+</msub>
+</mrow>
+</mfrac>
+<mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">,</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">=</mo>
+<munderover><mo stretchy='false' minsize='2em'>&#x02211;</mo>
+<mrow><mi mathvariant='italic'>i</mi>
+<mo stretchy="false">=</mo>
+<mn>0</mn>
+</mrow>
+<mrow><mi mathvariant='italic'>m</mi>
+<mn>-1</mn>
+</mrow>
+</munderover>
+<msub><mi mathvariant='italic'>w</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">*</mo>
+<mfrac><mrow><mo stretchy="false">&#x02202;</mo>
+<msub><mi mathvariant='italic'>F</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+</mrow>
+<mrow><mo stretchy="false">&#x02202;</mo>
+<msub><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>j</mi>
+</msub>
+</mrow>
+</mfrac>
+<mo stretchy="false">(</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mrow><mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+<br/>
+<b><big><a name="Hessian Times Direction" id="Hessian Times Direction">Hessian Times Direction</a></big></b>
+<br/>
+Suppose  
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>p</mi>
+<mo stretchy="false">=</mo>
+<mn>2</mn>
+</mrow></math>
+
+,
+and 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>w</mi>
+</mrow></math>
+
+ is the <i>i</i>-th elementary vector. 
+It follows that for 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>j</mi>
+<mo stretchy="false">=</mo>
+<mn>0</mn>
+<mo stretchy="false">,</mo>
+<mo stretchy="false">&#x02026;</mo>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>n</mi>
+<mn>-1</mn>
+</mrow></math>
+
+
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mtable rowalign="center" ><mtr><mtd columnalign="right" >
+<mi mathvariant='italic'>dw</mi>
+<mo stretchy="false">[</mo>
+<mi mathvariant='italic'>j</mi>
+<mo stretchy="false">*</mo>
+<mn>2</mn>
+<mo stretchy="false">+</mo>
+<mn>0</mn>
+<mo stretchy="false">]</mo>
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">=</mo>
+</mtd><mtd columnalign="left" >
+<mfrac><mrow><mo stretchy="false">&#x02202;</mo>
+<msub><mi mathvariant='italic'>F</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+</mrow>
+<mrow><mo stretchy="false">&#x02202;</mo>
+<msub><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>j</mi>
+</msub>
+</mrow>
+</mfrac>
+<mo stretchy="false">(</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mrow><mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">)</mo>
+</mtd></mtr><mtr><mtd columnalign="right" >
+<mi mathvariant='italic'>dw</mi>
+<mo stretchy="false">[</mo>
+<mi mathvariant='italic'>j</mi>
+<mo stretchy="false">*</mo>
+<mn>2</mn>
+<mo stretchy="false">+</mo>
+<mn>1</mn>
+<mo stretchy="false">]</mo>
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">=</mo>
+</mtd><mtd columnalign="left" >
+<mfrac><mrow><mo stretchy="false">&#x02202;</mo>
+<msup><mi mathvariant='italic'>W</mi>
+<mrow><mo stretchy="false">(</mo>
+<mn>1</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+</mrow>
+<mrow><mo stretchy="false">&#x02202;</mo>
+<msub><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>j</mi>
+</msub>
+</mrow>
+</mfrac>
+<mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">,</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">=</mo>
+<msub><mrow><mo stretchy="true">[</mo><mrow><mfrac><mrow><mo stretchy="false">&#x02202;</mo>
+</mrow>
+<mrow><mo stretchy="false">&#x02202;</mo>
+<msub><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>j</mi>
+</msub>
+</mrow>
+</mfrac>
+<mfrac><mrow><mo stretchy="false">&#x02202;</mo>
+<mi mathvariant='italic'>W</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+</mrow>
+<mrow><mo stretchy="false">&#x02202;</mo>
+<mi mathvariant='italic'>t</mi>
+</mrow>
+</mfrac>
+</mrow><mo stretchy="true">]</mo></mrow>
+<mrow><mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">,</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msub>
+<mo stretchy="false">=</mo>
+<msub><mrow><mo stretchy="true">{</mo><mrow><mfrac><mrow><mo stretchy="false">&#x02202;</mo>
+</mrow>
+<mrow><mo stretchy="false">&#x02202;</mo>
+<msub><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>j</mi>
+</msub>
+</mrow>
+</mfrac>
+<mfrac><mrow><mo stretchy="false">&#x02202;</mo>
+<msub><mi mathvariant='italic'>F</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">[</mo>
+<mi mathvariant='italic'>X</mi>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>t</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">]</mo>
+</mrow>
+<mrow><mo stretchy="false">&#x02202;</mo>
+<mi mathvariant='italic'>t</mi>
+</mrow>
+</mfrac>
+</mrow><mo stretchy="true">}</mo></mrow>
+<mrow><mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">,</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msub>
+</mtd></mtr><mtr><mtd columnalign="right" >
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">=</mo>
+</mtd><mtd columnalign="left" >
+<msub><mrow><mo stretchy="true">{</mo><mrow><mfrac><mrow><mo stretchy="false">&#x02202;</mo>
+</mrow>
+<mrow><mo stretchy="false">&#x02202;</mo>
+<msub><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>j</mi>
+</msub>
+</mrow>
+</mfrac>
+<mrow><mo stretchy="true">[</mo><mrow><msubsup><mi mathvariant='italic'>F</mi>
+<mi mathvariant='italic'>i</mi>
+<mrow><mo stretchy="false">(</mo>
+<mn>1</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msubsup>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">+</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mrow><mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">*</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mrow><mo stretchy="false">(</mo>
+<mn>1</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+</mrow><mo stretchy="true">]</mo></mrow>
+</mrow><mo stretchy="true">}</mo></mrow>
+<mn>0</mn>
+</msub>
+</mtd></mtr><mtr><mtd columnalign="right" >
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">=</mo>
+</mtd><mtd columnalign="left" >
+<munderover><mo stretchy='false' minsize='2em'>&#x02211;</mo>
+<mrow><mo stretchy="false">&#x02113;</mo>
+<mo stretchy="false">=</mo>
+<mn>0</mn>
+</mrow>
+<mrow><mi mathvariant='italic'>n</mi>
+<mn>-1</mn>
+</mrow>
+</munderover>
+<msub><mrow><mo stretchy="true">[</mo><mrow><mfrac><mrow><mo stretchy="false">&#x02202;</mo>
+</mrow>
+<mrow><mo stretchy="false">&#x02202;</mo>
+<msub><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>j</mi>
+</msub>
+</mrow>
+</mfrac>
+<mfrac><mrow><mo stretchy="false">&#x02202;</mo>
+<msub><mi mathvariant='italic'>F</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+</mrow>
+<mrow><mo stretchy="false">&#x02202;</mo>
+<msub><mi mathvariant='italic'>x</mi>
+<mo stretchy="false">&#x02113;</mo>
+</msub>
+</mrow>
+</mfrac>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">+</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mrow><mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">)</mo>
+</mrow><mo stretchy="true">]</mo></mrow>
+<mn>0</mn>
+</msub>
+<mo stretchy="false">*</mo>
+<msubsup><mi mathvariant='italic'>x</mi>
+<mo stretchy="false">&#x02113;</mo>
+<mrow><mo stretchy="false">(</mo>
+<mn>1</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msubsup>
+</mtd></mtr><mtr><mtd columnalign="right" >
+</mtd><mtd columnalign="center" >
+<mo stretchy="false">=</mo>
+</mtd><mtd columnalign="left" >
+<munderover><mo stretchy='false' minsize='2em'>&#x02211;</mo>
+<mrow><mo stretchy="false">&#x02113;</mo>
+<mo stretchy="false">=</mo>
+<mn>0</mn>
+</mrow>
+<mrow><mi mathvariant='italic'>n</mi>
+<mn>-1</mn>
+</mrow>
+</munderover>
+<mfrac><mrow><msup><mo stretchy="false">&#x02202;</mo>
+<mn>2</mn>
+</msup>
+<msub><mi mathvariant='italic'>F</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+</mrow>
+<mrow><mo stretchy="false">&#x02202;</mo>
+<msub><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>j</mi>
+</msub>
+<mo stretchy="false">&#x02202;</mo>
+<msub><mi mathvariant='italic'>x</mi>
+<mo stretchy="false">&#x02113;</mo>
+</msub>
+</mrow>
+</mfrac>
+<mo stretchy="false">(</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mrow><mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">*</mo>
+<msubsup><mi mathvariant='italic'>x</mi>
+<mo stretchy="false">&#x02113;</mo>
+<mrow><mo stretchy="false">(</mo>
+<mn>1</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msubsup>
+<mo stretchy="false">=</mo>
+<mo stretchy="false">[</mo>
+<msubsup><mi mathvariant='italic'>F</mi>
+<mi mathvariant='italic'>i</mi>
+<mrow><mo stretchy="false">(</mo>
+<mn>2</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msubsup>
+<mo stretchy="false">(</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mrow><mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">*</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mrow><mo stretchy="false">(</mo>
+<mn>1</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<msub><mo stretchy="false">]</mo>
+<mi mathvariant='italic'>j</mi>
+</msub>
+</mtd></mtr></mtable>
+</mrow></math>
+
+Thus the vector 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>dw</mi>
+<mo stretchy="false">[</mo>
+<mn>1</mn>
+<mo stretchy="false">]</mo>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>dw</mi>
+<mo stretchy="false">[</mo>
+<mn>3</mn>
+<mo stretchy="false">]</mo>
+<mo stretchy="false">,</mo>
+<mo stretchy="false">&#x02026;</mo>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>dw</mi>
+<mo stretchy="false">[</mo>
+<mi mathvariant='italic'>n</mi>
+<mo stretchy="false">*</mo>
+<mi mathvariant='italic'>p</mi>
+<mo stretchy="false">-</mo>
+<mn>1</mn>
+<mo stretchy="false">]</mo>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+
+is equal to the Hessian of 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msub><mi mathvariant='italic'>F</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+ times the direction
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msup><mi mathvariant='italic'>x</mi>
+<mrow><mo stretchy="false">(</mo>
+<mn>1</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+</mrow></math>
+
+.
+In the special case where 
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msup><mi mathvariant='italic'>x</mi>
+<mrow><mo stretchy="false">(</mo>
+<mn>1</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+</mrow></math>
+
+ is the <i>l</i>-th
+<a href="glossary.xml#Elementary Vector" target="_top"><span style='white-space: nowrap'>elementary&#xA0;vector</span></a>
+,
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mi mathvariant='italic'>dw</mi>
+<mo stretchy="false">[</mo>
+<mi mathvariant='italic'>j</mi>
+<mo stretchy="false">*</mo>
+<mn>2</mn>
+<mo stretchy="false">+</mo>
+<mn>1</mn>
+<mo stretchy="false">]</mo>
+<mo stretchy="false">=</mo>
+<mfrac><mrow><msup><mo stretchy="false">&#x02202;</mo>
+<mn>2</mn>
+</msup>
+<msub><mi mathvariant='italic'>F</mi>
+<mi mathvariant='italic'>i</mi>
+</msub>
+</mrow>
+<mrow><mo stretchy="false">&#x02202;</mo>
+<msub><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>j</mi>
+</msub>
+<mo stretchy="false">&#x02202;</mo>
+<msub><mi mathvariant='italic'>x</mi>
+<mo stretchy="false">&#x02113;</mo>
+</msub>
+</mrow>
+</mfrac>
+<mo stretchy="false">(</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mrow><mo stretchy="false">(</mo>
+<mn>0</mn>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+<br/>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+
+<br/>
+The files
+<a href="reverseany.cpp.xml" target="_top"><span style='white-space: nowrap'>ReverseAny.cpp</span></a>
+
+and
+<a href="hestimesdir.cpp.xml" target="_top"><span style='white-space: nowrap'>HesTimesDir.cpp</span></a>
+
+contain a examples and tests of reverse mode calculations.
+They return true if they succeed and false otherwise.
+
+
+<hr/>Input File: omh/Reverse.omh
+
+</body>
+</html>

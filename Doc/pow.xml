@@ -1,0 +1,190 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>The AD Power Function</title>
+<meta name="description" id="description" content="The AD Power Function"/>
+<meta name="keywords" id="keywords" content=" pow Ad exponent function "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_pow_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td><a href="erf.cpp.xml" target="_top">Prev</a>
+</td><td><a href="pow.cpp.xml" target="_top">Next</a>
+</td><td><a href="cppad.xml" target="_top">Top</a>
+</td><td>
+<select onchange='choose_down4(this)'>
+<option>CppAD-&gt;</option>
+<option>License</option>
+<option>Faq</option>
+<option>Install</option>
+<option>GetStarted.cpp</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down3(this)'>
+<option>AD-&gt;</option>
+<option>Constructor</option>
+<option>Convert</option>
+<option>Eq</option>
+<option>ADValued</option>
+<option>BoolValued</option>
+<option>VecAD</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>ADValued-&gt;</option>
+<option>Arithmetic</option>
+<option>StdMathUnary</option>
+<option>MathOther</option>
+<option>CondExp</option>
+<option>Discrete</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>MathOther-&gt;</option>
+<option>abs</option>
+<option>atan2</option>
+<option>erf</option>
+<option>pow</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down0(this)'>
+<option>pow-&gt;</option>
+<option>Pow.cpp</option>
+</select>
+</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Syntax</option>
+<option>Purpose</option>
+<option>x</option>
+<option>y</option>
+<option>z</option>
+<option>Standard Types</option>
+<option>Operation Sequence</option>
+<option>Example</option>
+</select>
+</td>
+</tr></table><br/>
+<center><b><big><big>The AD Power Function</big></big></b></center>
+<br/>
+<b><big><a name="Syntax" id="Syntax">Syntax</a></big></b>
+
+<br/>
+<code><font color="blue"></font></code><i><span style='white-space: nowrap'>z</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;=&#xA0;pow(</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>
+
+
+<br/>
+<br/>
+<b><big><a name="Purpose" id="Purpose">Purpose</a></big></b>
+<br/>
+Determines the value of the power function which is defined by
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>pow</mi>
+</mstyle></mrow>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>y</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">=</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mi mathvariant='italic'>y</mi>
+</msup>
+</mrow></math>
+
+.
+
+<br/>
+<br/>
+<b><big><a name="x" id="x">x</a></big></b>
+<br/>
+The argument <i>x</i> has one of the following prototypes
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;AD&lt;</span></font></code><i><span style='white-space: nowrap'>Base</span></i><code><font color="blue"><span style='white-space: nowrap'>&gt;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;VecAD&lt;</span></font></code><i><span style='white-space: nowrap'>Base</span></i><code><font color="blue"><span style='white-space: nowrap'>&gt;::reference&#xA0;&amp;</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'><br/>
+</span></font></code><br/>
+<b><big><a name="y" id="y">y</a></big></b>
+<br/>
+The argument <i>y</i> has one of the following prototypes
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;AD&lt;</span></font></code><i><span style='white-space: nowrap'>Base</span></i><code><font color="blue"><span style='white-space: nowrap'>&gt;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&amp;</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;const&#xA0;VecAD&lt;</span></font></code><i><span style='white-space: nowrap'>Base</span></i><code><font color="blue"><span style='white-space: nowrap'>&gt;::reference&#xA0;&amp;</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'><br/>
+</span></font></code>(see <a href="powint.xml" target="_top"><span style='white-space: nowrap'>PowInt</span></a>
+ for the case where <i>y</i> is an <code><font color="blue">int</font></code>).
+
+<br/>
+<br/>
+<b><big><a name="z" id="z">z</a></big></b>
+<br/>
+The result <i>z</i> has prototype
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;AD&lt;</span></font></code><i><span style='white-space: nowrap'>Base</span></i><code><font color="blue"><span style='white-space: nowrap'>&gt;&#xA0;</span></font></code><i><span style='white-space: nowrap'>z</span></i><code><font color="blue"><span style='white-space: nowrap'><br/>
+</span></font></code><br/>
+<b><big><a name="Standard Types" id="Standard Types">Standard Types</a></big></b>
+<br/>
+A definition for the <code><font color="blue">pow</font></code> function is included
+in the CppAD namespace for the case where both <i>x</i>
+and <i>y</i> have the same type and that type is
+<code><font color="blue">float</font></code>, <code><font color="blue">double</font></code>, 
+<code><font color="blue">std::complex&lt;float&gt;</font></code>, or
+<code><font color="blue">std::complex&lt;double&gt;</font></code>.
+For these cases, 
+the result has the same type as the arguments.
+
+<br/>
+<br/>
+<b><big><a name="Operation Sequence" id="Operation Sequence">Operation Sequence</a></big></b>
+<br/>
+The AD of <i>Base</i>
+operation sequence used to calculate <i>z</i> is
+<a href="glossary.xml#Operation.Independent" target="_top"><span style='white-space: nowrap'>independent</span></a>
+
+of <i>x</i> and <i>y</i>.
+
+<br/>
+<br/>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+
+<br/>
+The file
+<a href="pow.cpp.xml" target="_top"><span style='white-space: nowrap'>Pow.cpp</span></a>
+
+contains an example and test of this function.   
+It returns true if it succeeds and false otherwise.
+
+
+<hr/>Input File: CppAD/local/Pow.h
+
+</body>
+</html>

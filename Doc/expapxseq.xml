@@ -1,0 +1,604 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>An Example Operation Sequence</title>
+<meta name="description" id="description" content="An Example Operation Sequence"/>
+<meta name="keywords" id="keywords" content=" Expapx operation sequence example symbol "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_expapxseq_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td><a href="expapx.cpp.xml" target="_top">Prev</a>
+</td><td><a href="expapxseq.cpp.xml" target="_top">Next</a>
+</td><td><a href="cppad.xml" target="_top">Top</a>
+</td><td>
+<select onchange='choose_down2(this)'>
+<option>CppAD-&gt;</option>
+<option>License</option>
+<option>Faq</option>
+<option>Install</option>
+<option>GetStarted.cpp</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>Introduction-&gt;</option>
+<option>ExpApx</option>
+<option>ExpApxSeq</option>
+<option>ExpApxFor</option>
+<option>ExpApxRev</option>
+<option>ExpApxAD.cpp</option>
+<option>Introduction.cpp</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down0(this)'>
+<option>ExpApxSeq-&gt;</option>
+<option>ExpApxSeq.cpp</option>
+</select>
+</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Operation Sequence</option>
+<option>Mathematical Form</option>
+<option>Parameter</option>
+<option>Example Operation Sequence</option>
+<option>Comparisons</option>
+<option>Symbols</option>
+<option>Verification</option>
+</select>
+</td>
+</tr></table><br/>
+<center><b><big><big>An Example Operation Sequence</big></big></b></center>
+<br/>
+<b><big><a name="Operation Sequence" id="Operation Sequence">Operation Sequence</a></big></b>
+<br/>
+An atomic <i>Type</i> operation is an operation
+that has a <i>Type</i> result and is not made up of 
+other more basic operations.
+A sequence of atomic <i>Type</i> operations is called a
+<i>Type</i> operation sequence.
+Given an C++ algorithm and its inputs,
+there is a corresponding <i>Type</i> operation sequence for each type. 
+If <i>Type</i> is clear from the context, 
+we drop it and just refer to the operation sequence.
+
+<br/>
+<br/>
+<b><big><a name="Mathematical Form" id="Mathematical Form">Mathematical Form</a></big></b>
+<br/>
+Suppose that we use the algorithm <a href="expapx.hpp.xml" target="_top"><span style='white-space: nowrap'>ExpApx.hpp</span></a>
+
+to compute 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>ExpApx</mi>
+</mstyle></mrow>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>e</mi>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+ 
+with 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>x</mi>
+</mrow></math>
+
+ is equal to .5
+and 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>e</mi>
+</mrow></math>
+
+ is equal to .2. 
+For this case, our approximation of the exponential function is
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>ExpApx</mi>
+</mstyle></mrow>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>e</mi>
+<mo stretchy="false">)</mo>
+<mo stretchy="false">=</mo>
+<mn>1</mn>
+<mo stretchy="false">+</mo>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">+</mo>
+<msup><mi mathvariant='italic'>x</mi>
+<mn>2</mn>
+</msup>
+<mo stretchy="false">/</mo>
+<mn>2</mn>
+<mo stretchy="false">=</mo>
+<mn>1</mn>
+<mo stretchy="false">+</mo>
+<mn>.5</mn>
+<mo stretchy="false">+</mo>
+<mn>.25</mn>
+<mo stretchy="false">/</mo>
+<mn>2</mn>
+<mo stretchy="false">=</mo>
+<mn>1.625</mn>
+</mrow></math>
+
+<br/>
+<b><big><a name="Parameter" id="Parameter">Parameter</a></big></b>
+<br/>
+The initialization section always sets
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msub><mi mathvariant='italic'>r</mi>
+<mn>0</mn>
+</msub>
+</mrow></math>
+
+,
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msub><mi mathvariant='italic'>s</mi>
+<mn>0</mn>
+</msub>
+</mrow></math>
+
+,
+and
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msub><mi mathvariant='italic'>k</mi>
+<mn>0</mn>
+</msub>
+</mrow></math>
+
+ equal to one.
+Hence the <i>Type</i> values 
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msub><mi mathvariant='italic'>r</mi>
+<mn>0</mn>
+</msub>
+</mrow></math>
+
+, 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msub><mi mathvariant='italic'>s</mi>
+<mn>0</mn>
+</msub>
+</mrow></math>
+
+ and 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msub><mi mathvariant='italic'>k</mi>
+<mn>0</mn>
+</msub>
+</mrow></math>
+
+ do not
+depend on the input variables <i>x</i> or <i>e</i>.
+We refer to symbols that do not depend on the input variables
+as operation sequence parameters.
+We refer to other symbols as operation sequence variables. 
+
+
+<br/>
+<br/>
+<b><big><a name="Example Operation Sequence" id="Example Operation Sequence">Example Operation Sequence</a></big></b>
+<br/>
+In the table below, 
+the C++ source code is listed on the left,
+the corresponding symbol is in the next column,
+the atomic operation is in the next column,
+and the resulting value of the symbol when 
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">=</mo>
+<mn>.5</mn>
+</mrow></math>
+
+ and 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>e</mi>
+<mo stretchy="false">=</mo>
+<mn>.2</mn>
+</mrow></math>
+
+ is listed on the right.
+Note that the comparisons
+<code><font color="blue">r &gt; e</font></code> and <code><font color="blue"> Type(0) &gt; x </font></code>
+have results of type
+<code><font color="blue">bool</font></code> and hence are not part of the operation sequence.
+We use the symbol 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msub><mi mathvariant='italic'>v</mi>
+<mi mathvariant='italic'>j</mi>
+</msub>
+</mrow></math>
+
+ for the value assigned
+to the object 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>v</mi>
+</mrow></math>
+
+ in the <i>j</i>-th execution of loop in the algorithm.
+<center>
+<table><tr><td align='left'  valign='top'>
+
+<b>Code</b> 
+	</td><td align='left'  valign='top'>
+ <code><span style='white-space: nowrap'>&#xA0;&#xA0;</span></code> </td><td align='left'  valign='top'>
+ <b>Operation</b>
+	</td><td align='left'  valign='top'>
+ <code><span style='white-space: nowrap'>&#xA0;&#xA0;</span></code> </td><td align='left'  valign='top'>
+ <b>Value</b>
+	</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">a = x</font></code>
+	</td><td align='left'  valign='top'>
+ </td><td align='left'  valign='top'>
+ 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msub><mi mathvariant='italic'>a</mi>
+<mn>0</mn>
+</msub>
+<mo stretchy="false">=</mo>
+<mi mathvariant='italic'>x</mi>
+</mrow></math>
+
+ 
+	</td><td align='left'  valign='top'>
+ </td><td align='left'  valign='top'>
+ = 0.5      
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">q  = a * r</font></code>
+	</td><td align='left'  valign='top'>
+ </td><td align='left'  valign='top'>
+ 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msub><mi mathvariant='italic'>q</mi>
+<mn>1</mn>
+</msub>
+<mo stretchy="false">=</mo>
+<msub><mi mathvariant='italic'>r</mi>
+<mn>0</mn>
+</msub>
+<mo stretchy="false">*</mo>
+<msub><mi mathvariant='italic'>a</mi>
+<mn>0</mn>
+</msub>
+</mrow></math>
+
+ 
+	</td><td align='left'  valign='top'>
+ </td><td align='left'  valign='top'>
+ = 0.5      
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">r  = q / k</font></code>
+	</td><td align='left'  valign='top'>
+ </td><td align='left'  valign='top'>
+ 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msub><mi mathvariant='italic'>r</mi>
+<mn>1</mn>
+</msub>
+<mo stretchy="false">=</mo>
+<msub><mi mathvariant='italic'>q</mi>
+<mn>1</mn>
+</msub>
+<mo stretchy="false">/</mo>
+<msub><mi mathvariant='italic'>k</mi>
+<mn>0</mn>
+</msub>
+</mrow></math>
+
+ 
+	</td><td align='left'  valign='top'>
+ </td><td align='left'  valign='top'>
+ = 0.5      
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">s  = s + r</font></code>
+	</td><td align='left'  valign='top'>
+ </td><td align='left'  valign='top'>
+ 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msub><mi mathvariant='italic'>s</mi>
+<mn>1</mn>
+</msub>
+<mo stretchy="false">=</mo>
+<msub><mi mathvariant='italic'>s</mi>
+<mn>0</mn>
+</msub>
+<mo stretchy="false">+</mo>
+<msub><mi mathvariant='italic'>r</mi>
+<mn>1</mn>
+</msub>
+</mrow></math>
+
+ 
+	</td><td align='left'  valign='top'>
+ </td><td align='left'  valign='top'>
+ = 1.5      
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">k  = k + Type(1)</font></code>
+	</td><td align='left'  valign='top'>
+ </td><td align='left'  valign='top'>
+ 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msub><mi mathvariant='italic'>k</mi>
+<mn>1</mn>
+</msub>
+<mo stretchy="false">=</mo>
+<msub><mi mathvariant='italic'>k</mi>
+<mn>0</mn>
+</msub>
+<mo stretchy="false">+</mo>
+<mn>1</mn>
+</mrow></math>
+
+ 
+	</td><td align='left'  valign='top'>
+ </td><td align='left'  valign='top'>
+ = 2        
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">q  = a * r</font></code>
+	</td><td align='left'  valign='top'>
+ </td><td align='left'  valign='top'>
+ 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msub><mi mathvariant='italic'>q</mi>
+<mn>2</mn>
+</msub>
+<mo stretchy="false">=</mo>
+<msub><mi mathvariant='italic'>r</mi>
+<mn>1</mn>
+</msub>
+<mo stretchy="false">*</mo>
+<msub><mi mathvariant='italic'>a</mi>
+<mn>0</mn>
+</msub>
+</mrow></math>
+
+ 
+	</td><td align='left'  valign='top'>
+ </td><td align='left'  valign='top'>
+ = 0.25     
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">r  = q / k</font></code>
+	</td><td align='left'  valign='top'>
+ </td><td align='left'  valign='top'>
+ 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msub><mi mathvariant='italic'>r</mi>
+<mn>2</mn>
+</msub>
+<mo stretchy="false">=</mo>
+<msub><mi mathvariant='italic'>q</mi>
+<mn>2</mn>
+</msub>
+<mo stretchy="false">/</mo>
+<msub><mi mathvariant='italic'>k</mi>
+<mn>1</mn>
+</msub>
+</mrow></math>
+
+ 
+	</td><td align='left'  valign='top'>
+ </td><td align='left'  valign='top'>
+ = 0.125    
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">s  = s + r</font></code>
+	</td><td align='left'  valign='top'>
+ </td><td align='left'  valign='top'>
+ 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msub><mi mathvariant='italic'>s</mi>
+<mn>2</mn>
+</msub>
+<mo stretchy="false">=</mo>
+<msub><mi mathvariant='italic'>s</mi>
+<mn>1</mn>
+</msub>
+<mo stretchy="false">+</mo>
+<msub><mi mathvariant='italic'>r</mi>
+<mn>2</mn>
+</msub>
+</mrow></math>
+
+ 
+	</td><td align='left'  valign='top'>
+ </td><td align='left'  valign='top'>
+ = 1.625    
+</td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">k  = k + Type(1)</font></code>
+	</td><td align='left'  valign='top'>
+ </td><td align='left'  valign='top'>
+ 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msub><mi mathvariant='italic'>k</mi>
+<mn>2</mn>
+</msub>
+<mo stretchy="false">=</mo>
+<msub><mi mathvariant='italic'>k</mi>
+<mn>1</mn>
+</msub>
+<mo stretchy="false">+</mo>
+<mn>1</mn>
+</mrow></math>
+
+ 
+	</td><td align='left'  valign='top'>
+ </td><td align='left'  valign='top'>
+ = 3        
+</td></tr>
+</table>
+</center>The return value of the algorithm for this case is
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<msub><mi mathvariant='italic'>s</mi>
+<mn>2</mn>
+</msub>
+</mrow></math>
+
+ which is equal to 1.625.
+
+<br/>
+<br/>
+<b><big><a name="Comparisons" id="Comparisons">Comparisons</a></big></b>
+<br/>
+If 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>x</mi>
+</mrow></math>
+
+ were negative,
+or if 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>e</mi>
+</mrow></math>
+
+ were a much smaller or much larger value,
+the results of the following comparisons could be different:
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;Type(0)&#xA0;&gt;&#xA0;x&#xA0;)&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;while(r&#xA0;&gt;&#xA0;e)<br/>
+</span>
+</font></code>
+This in turn would result in a different operation sequence.
+Thus the operation sequence above only correspond to the our algorithm
+for values of 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>x</mi>
+</mrow></math>
+
+ and 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>e</mi>
+</mrow></math>
+
+ within a certain range.
+Note that there is a neighborhood
+of 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">=</mo>
+<mn>0.5</mn>
+</mrow></math>
+
+ for which the comparisons would have the 
+same result and hence the operation sequence would be the same.
+
+<br/>
+<br/>
+<b><big><a name="Symbols" id="Symbols">Symbols</a></big></b>
+
+
+<br/>
+The symbols for an operation sequence is a
+sequence of unique names for each atomic operation.
+For example, the symbols for the operation sequence above are:
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<msub><mi mathvariant='italic'>r</mi>
+<mn>0</mn>
+</msub>
+<mo stretchy="false">,</mo>
+<msub><mi mathvariant='italic'>s</mi>
+<mn>0</mn>
+</msub>
+<mo stretchy="false">,</mo>
+<msub><mi mathvariant='italic'>k</mi>
+<mn>0</mn>
+</msub>
+<mo stretchy="false">,</mo>
+<msub><mi mathvariant='italic'>a</mi>
+<mn>0</mn>
+</msub>
+<mo stretchy="false">,</mo>
+<msub><mi mathvariant='italic'>q</mi>
+<mn>1</mn>
+</msub>
+<mo stretchy="false">,</mo>
+<msub><mi mathvariant='italic'>r</mi>
+<mn>1</mn>
+</msub>
+<mo stretchy="false">,</mo>
+<msub><mi mathvariant='italic'>s</mi>
+<mn>1</mn>
+</msub>
+<mo stretchy="false">,</mo>
+<msub><mi mathvariant='italic'>k</mi>
+<mn>1</mn>
+</msub>
+<mo stretchy="false">,</mo>
+<msub><mi mathvariant='italic'>q</mi>
+<mn>2</mn>
+</msub>
+<mo stretchy="false">,</mo>
+<msub><mi mathvariant='italic'>r</mi>
+<mn>2</mn>
+</msub>
+<mo stretchy="false">,</mo>
+<msub><mi mathvariant='italic'>s</mi>
+<mn>2</mn>
+</msub>
+</mrow></math>
+
+In an abuse of notation, we use a symbol for both the
+function and the value of the function corresponding to an atomic operation. 
+Note that each time a <i>Type</i> object is assigned a value
+there is a different symbol corresponding to the assignment.
+
+
+<br/>
+<br/>
+<b><big><a name="Verification" id="Verification">Verification</a></big></b>
+<br/>
+The file <a href="expapxseq.cpp.xml" target="_top"><span style='white-space: nowrap'>ExpApxSeq.cpp</span></a>
+ contains a routine 
+which verifies the values computed above.
+It returns true for success and false for failure.
+
+
+<hr/>Input File: omh/ExpApxSeq.omh
+
+</body>
+</html>

@@ -1,0 +1,211 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>The CppAD Wish List</title>
+<meta name="description" id="description" content="The CppAD Wish List"/>
+<meta name="keywords" id="keywords" content=" wish list new features atan2 Condexp multiple tape "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_wishlist_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td><a href="bugs.xml" target="_top">Prev</a>
+</td><td><a href="whatsnew06.xml" target="_top">Next</a>
+</td><td><a href="cppad.xml" target="_top">Top</a>
+</td><td>
+<select onchange='choose_down2(this)'>
+<option>CppAD-&gt;</option>
+<option>License</option>
+<option>Faq</option>
+<option>Install</option>
+<option>GetStarted.cpp</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>Appendix-&gt;</option>
+<option>Theory</option>
+<option>Speed</option>
+<option>Adolc</option>
+<option>Fadbad</option>
+<option>glossary</option>
+<option>Bib</option>
+<option>Bugs</option>
+<option>WishList</option>
+<option>WhatsNew06</option>
+</select>
+</td>
+<td>WishList</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Atan2</option>
+<option>CondExp</option>
+<option>Exceptions</option>
+<option>Multiple Tapes With Same Base Type</option>
+<option>Operation Sequence</option>
+<option>Software Guidelines</option>
+<option>Vector Element Type</option>
+</select>
+</td>
+</tr></table><br/>
+
+
+
+<center><b><big><big>The CppAD Wish List</big></big></b></center>
+<br/>
+<b><big><a name="Atan2" id="Atan2">Atan2</a></big></b>
+
+<br/>
+The <a href="atan2.xml" target="_top"><span style='white-space: nowrap'>atan2</span></a>
+ function could be made faster by adding
+a special operator for it.
+
+<br/>
+<br/>
+<b><big><a name="CondExp" id="CondExp">CondExp</a></big></b>
+
+<br/>
+Extend the conditional expressions <a href="condexp.xml" target="_top"><span style='white-space: nowrap'>CondExp</span></a>
+ so that they are 
+valid for complex types by comparing real parts.
+In addition, use this change to extend <a href="luratio.xml" target="_top"><span style='white-space: nowrap'>LuRatio</span></a>
+ so 
+that it works with complex AD types.
+
+<br/>
+<br/>
+<b><big><a name="Exceptions" id="Exceptions">Exceptions</a></big></b>
+<br/>
+When the function
+<a href="independent.xml" target="_top"><span style='white-space: nowrap'>Independent</span></a>
+ is called,  
+the resulting <code><font color="blue"><span style='white-space: nowrap'>AD&lt;</span></font></code><i><span style='white-space: nowrap'>Base</span></i><code><font color="blue"><span style='white-space: nowrap'>&gt;</span></font></code> 
+<a href="glossary.xml#Tape State" target="_top"><span style='white-space: nowrap'>tape&#xA0;state</span></a>
+ is <code><font color="blue">Recording</font></code>.
+If an exception occurs before the call to the corresponding
+<a href="adfun.xml" target="_top"><span style='white-space: nowrap'>ADFun</span></a>
+ constructor, the tape will be stuck 
+in the <code><font color="blue">Recording</font></code> state.
+Thus, there should be a way to abort the current
+<code><font color="blue"><span style='white-space: nowrap'>AD&lt;</span></font></code><i><span style='white-space: nowrap'>Base</span></i><code><font color="blue"><span style='white-space: nowrap'>&gt;</span></font></code> recording.
+
+
+<br/>
+<br/>
+<b><big><a name="Multiple Tapes With Same Base Type" id="Multiple Tapes With Same Base Type">Multiple Tapes With Same Base Type</a></big></b>
+
+
+<br/>
+Some users have expressed an interest in having multiple tapes,
+with the same base type,
+recording at the same time. 
+The idea is something like this:
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Independent(x);&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;perhaps&#xA0;in&#xA0;thread&#xA0;1<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Independent(y);&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;perhaps&#xA0;in&#xA0;thread&#xA0;2<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;z&#xA0;=&#xA0;x&#xA0;*&#xA0;x;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;operation&#xA0;on&#xA0;tape&#xA0;corresponding&#xA0;to&#xA0;x<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;w&#xA0;=&#xA0;y&#xA0;*&#xA0;y;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;operation&#xA0;on&#xA0;tape&#xA0;corresponding&#xA0;to&#xA0;y<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;a&#xA0;=&#xA0;w&#xA0;*&#xA0;z;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;would&#xA0;generate&#xA0;an&#xA0;error&#xA0;because&#xA0;cannot&#xA0;mix&#xA0;tapes<br/>
+</span>
+</font></code>
+One application of this is where each of the tapes is on a different
+processor in a shared memory multiple processor application.
+
+<br/>
+<br/>
+<b><big><a name="Operation Sequence" id="Operation Sequence">Operation Sequence</a></big></b>
+<br/>
+It is possible to detect if the 
+AD of <i>Base</i> 
+<a href="glossary.xml#Operation.Sequence" target="_top"><span style='white-space: nowrap'>operation&#xA0;sequence</span></a>
+ 
+does not depend on any of the
+<a href="glossary.xml#Independent Variable" target="_top"><span style='white-space: nowrap'>independent&#xA0;variable</span></a>
+ values.
+This could be returned as an extra
+<a href="seqproperty.xml" target="_top"><span style='white-space: nowrap'>SeqProperty</span></a>
+.
+
+<br/>
+<br/>
+<b><big><a name="Software Guidelines" id="Software Guidelines">Software Guidelines</a></big></b>
+<br/>
+The following is a list of some software guidelines taken from
+<a href="http://www.boost.org/more/lib_guide.htm#Guidelines" target="_top"><span style='white-space: nowrap'>boost</span></a>
+.
+These guidelines are not followed by the current CppAD source code,
+but perhaps they should be:
+
+<ol type="1"><li>
+File and directory names should only contain lowercase letters,
+numbers underscores and possibly one period.
+The leading character must be alphabetic.
+
+</li><li>
+
+C++ header files should have the <code><font color="blue">.hpp</font></code> extension.
+
+</li><li>
+
+Names (except as noted below) 
+should be all lowercase, with words separated by underscores.
+For example, acronyms should be treated as ordinary names 
+(xml_parser instead of XML_parser).
+
+</li><li>
+
+Template parameter names should begin with an uppercase letter.
+
+</li><li>
+
+Macro names (gasp!) names should use all uppercase.
+
+</li><li>
+
+Use spaces rather than tabs.  
+
+</li></ol>
+
+
+<br/>
+<br/>
+<b><big><a name="Vector Element Type" id="Vector Element Type">Vector Element Type</a></big></b>
+<br/>
+Change cross references from 
+<a href="simplevector.xml#Elements of Specified Type" target="_top"><span style='white-space: nowrap'>elements&#xA0;of&#xA0;a&#xA0;specified&#xA0;type</span></a>
+
+to
+<a href="simplevector.xml#Value Type" target="_top"><span style='white-space: nowrap'>value_type</span></a>
+.
+
+
+<hr/>Input File: omh/WishList.omh
+
+</body>
+</html>

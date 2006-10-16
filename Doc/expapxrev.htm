@@ -1,0 +1,465 @@
+<html><head>
+<title>An Example Reverse Mode Sweep</title>
+<meta name="description" id="description" content="An Example Reverse Mode Sweep">
+<meta name="keywords" id="keywords" content=" Expapx reverse sweep example ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_expapxrev_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td><a href="expapxfor.cpp.htm" target="_top">Prev</a>
+</td><td><a href="expapxrev.cpp.htm" target="_top">Next</a>
+</td><td><a href="cppad.htm" target="_top">Top</a>
+</td><td>
+<select onchange='choose_down2(this)'>
+<option>CppAD-&gt;</option>
+<option>License</option>
+<option>Faq</option>
+<option>Install</option>
+<option>GetStarted.cpp</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>Introduction-&gt;</option>
+<option>ExpApx</option>
+<option>ExpApxSeq</option>
+<option>ExpApxFor</option>
+<option>ExpApxRev</option>
+<option>ExpApxAD.cpp</option>
+<option>Introduction.cpp</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down0(this)'>
+<option>ExpApxRev-&gt;</option>
+<option>ExpApxRev.cpp</option>
+</select>
+</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Reverse Example</option>
+<option>f_0</option>
+<option>f_1</option>
+<option>f_2</option>
+<option>f_3</option>
+<option>f_4</option>
+<option>f_5</option>
+<option>f_6</option>
+<option>Verification</option>
+</select>
+</td>
+</tr></table><br>
+<center><b><big><big>An Example Reverse Mode Sweep</big></big></b></center>
+<br>
+<b><big><a name="Reverse Example" id="Reverse Example">Reverse Example</a></big></b>
+<br>
+Reverse mode uses the
+<a href="expapxseq.htm#Operation Sequence" target="_top"><span style='white-space: nowrap'>ExpApx&nbsp;operation&nbsp;sequence</span></a>
+
+in reverse order to compute the entire derivative of
+one dependent variable with respect to all of the independent variables.
+The symbols
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;s_0,&nbsp;r_0,&nbsp;k_0,&nbsp;k_1,&nbsp;k_2,&nbsp;k_3<br>
+\]&nbsp;</span></code>
+
+are  operation sequence <a href="expapxseq.htm#Parameter" target="_top"><span style='white-space: nowrap'>parameters</span></a>
+.
+Hence they are not included in our function definitions below.
+In addition, the operation sequence depends on <i>e</i>
+but the individual operations do not.
+Thus, 
+all of the partial derivatives with respect to <i>e</i> are zero.
+Hence it also is left out of our function definitions below.
+
+<br>
+<br>
+<b><big><a name="f_0" id="f_0">f_0</a></big></b>
+<br>
+In reverse mode we choose one of the dependent variable and
+compute its derivative with respect to all the independent variables.
+For our example, we chose the value returned by <code><font color="blue">Exp</font></code>
+which is equal to the symbol <code>
+<span style='white-space: nowrap'>&nbsp;s_2</span></code>
+ in the operation sequence.
+We begin with the function <code>
+<span style='white-space: nowrap'>&nbsp;f_0&nbsp;</span></code>
+ where <code>
+<span style='white-space: nowrap'>&nbsp;s_2</span></code>
+ 
+is both an argument and the value of the function; i.e.,
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+\begin{array}{rcl}<br>
+f_0&nbsp;(&nbsp;a_0&nbsp;,&nbsp;q_1&nbsp;,&nbsp;r_1&nbsp;,&nbsp;s_1&nbsp;,&nbsp;q_2&nbsp;,&nbsp;r_2&nbsp;,&nbsp;s_2&nbsp;)&nbsp;&amp;&nbsp;=&nbsp;&amp;&nbsp;s_2&nbsp;<br>
+\\<br>
+\D{f_0}{s_2}&nbsp;&amp;&nbsp;=&nbsp;&amp;&nbsp;1<br>
+\end{array}<br>
+\]&nbsp;</span></code>
+
+All the other partial derivatives of <code>
+<span style='white-space: nowrap'>&nbsp;f_0&nbsp;</span></code>
+ are zero.
+
+<br>
+<br>
+<b><big><a name="f_1" id="f_1">f_1</a></big></b>
+<br>
+We define the function 
+<code>
+<span style='white-space: nowrap'>&nbsp;f_1&nbsp;(&nbsp;a_0&nbsp;,&nbsp;q_1&nbsp;,&nbsp;r_1&nbsp;,&nbsp;s_1&nbsp;,&nbsp;q_2&nbsp;,&nbsp;r_2&nbsp;)&nbsp;</span></code>
+
+as equal to <code>
+<span style='white-space: nowrap'>&nbsp;f_0&nbsp;</span></code>
+
+except that <code>
+<span style='white-space: nowrap'>&nbsp;s_2&nbsp;</span></code>
+ is eliminated using 
+its functional representation in the operation sequence i.e.
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+\begin{array}{rcl}<br>
+f_1&nbsp;&amp;&nbsp;&nbsp;=&nbsp;&nbsp;&amp;<br>
+f_0&nbsp;[&nbsp;a_0&nbsp;,&nbsp;q_1&nbsp;,&nbsp;r_1&nbsp;,&nbsp;s_1&nbsp;,&nbsp;q_2&nbsp;,&nbsp;r_2&nbsp;,&nbsp;s_2&nbsp;(&nbsp;s_1,&nbsp;r_2&nbsp;)&nbsp;]<br>
+\\<br>
+s_2&nbsp;&amp;&nbsp;=&nbsp;&nbsp;&nbsp;&amp;&nbsp;s_1&nbsp;+&nbsp;r_2&nbsp;&nbsp;<br>
+\end{array}<br>
+\]&nbsp;</span></code>
+
+It follows that 
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+\begin{array}{rcll}<br>
+\D{f_1}{s_1}&nbsp;<br>
+&amp;&nbsp;=&nbsp;&amp;&nbsp;\D{f_0}{s_1}&nbsp;+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\D{f_0}{s_2}&nbsp;*&nbsp;\D{s_2}{s_1}&nbsp;<br>
+&amp;&nbsp;=&nbsp;1<br>
+\\<br>
+\D{f_1}{r_2}&nbsp;<br>
+&amp;&nbsp;=&nbsp;&amp;&nbsp;\D{f_0}{r_2}&nbsp;+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\D{f_0}{s_2}&nbsp;*&nbsp;\D{s_2}{r_2}&nbsp;<br>
+&amp;&nbsp;=&nbsp;1<br>
+\end{array}<br>
+\]&nbsp;</span></code>
+
+All the other partial derivatives of <code>
+<span style='white-space: nowrap'>&nbsp;f_1&nbsp;</span></code>
+ are zero.
+
+<br>
+<br>
+<b><big><a name="f_2" id="f_2">f_2</a></big></b>
+<br>
+We define the function 
+<code>
+<span style='white-space: nowrap'>&nbsp;f_2&nbsp;(&nbsp;a_0&nbsp;,&nbsp;q_1&nbsp;,&nbsp;r_1&nbsp;,&nbsp;s_1&nbsp;,&nbsp;q_2&nbsp;)&nbsp;</span></code>
+
+as equal to <code>
+<span style='white-space: nowrap'>&nbsp;f_1&nbsp;</span></code>
+
+except that <code>
+<span style='white-space: nowrap'>&nbsp;r_2&nbsp;</span></code>
+ is eliminated using 
+its functional representation in the operation sequence i.e.
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+\begin{array}{rcl}<br>
+f_2&nbsp;&amp;&nbsp;&nbsp;=&nbsp;&nbsp;&amp;<br>
+f_1&nbsp;[&nbsp;a_0&nbsp;,&nbsp;q_1&nbsp;,&nbsp;r_1&nbsp;,&nbsp;s_1&nbsp;,&nbsp;q_2&nbsp;,&nbsp;r_2&nbsp;(&nbsp;q_2&nbsp;)&nbsp;]<br>
+\\<br>
+r_2&nbsp;&amp;&nbsp;=&nbsp;&nbsp;&nbsp;&amp;&nbsp;q_2&nbsp;/&nbsp;k_1&nbsp;&nbsp;<br>
+\end{array}<br>
+\]&nbsp;</span></code>
+
+Note that <code>
+<span style='white-space: nowrap'>&nbsp;k_1&nbsp;=&nbsp;2&nbsp;</span></code>
+ is an operation sequence 
+<a href="expapxseq.htm#Parameter" target="_top"><span style='white-space: nowrap'>parameter</span></a>
+ 
+so we have not included it an argument to the function <code>
+<span style='white-space: nowrap'>&nbsp;r_2&nbsp;</span></code>
+.
+It follows that 
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+\begin{array}{rcll}<br>
+\D{f_2}{q_2}&nbsp;<br>
+&amp;&nbsp;=&nbsp;&amp;&nbsp;\D{f_1}{q_2}&nbsp;+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\D{f_1}{r_2}&nbsp;*&nbsp;\D{r_2}{q_2}&nbsp;<br>
+&amp;&nbsp;=&nbsp;0.5<br>
+\\<br>
+\D{f_2}{s_1}<br>
+&amp;&nbsp;=&nbsp;&amp;&nbsp;\D{f_1}{s_1}&nbsp;<br>
+&amp;&nbsp;=&nbsp;1<br>
+\end{array}<br>
+\]&nbsp;</span></code>
+
+All the other partial derivatives of <code>
+<span style='white-space: nowrap'>&nbsp;f_2&nbsp;</span></code>
+ are zero.
+
+<br>
+<br>
+<b><big><a name="f_3" id="f_3">f_3</a></big></b>
+<br>
+We define the function 
+<code>
+<span style='white-space: nowrap'>&nbsp;f_3&nbsp;(&nbsp;a_0&nbsp;,&nbsp;q_1&nbsp;,&nbsp;r_1&nbsp;,&nbsp;s_1&nbsp;)&nbsp;</span></code>
+
+as equal to <code>
+<span style='white-space: nowrap'>&nbsp;f_2&nbsp;</span></code>
+
+except that <code>
+<span style='white-space: nowrap'>&nbsp;q_2&nbsp;</span></code>
+ is eliminated using 
+its functional representation in the operation sequence i.e.
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+\begin{array}{rcl}<br>
+f_3&nbsp;&amp;&nbsp;&nbsp;=&nbsp;&nbsp;&amp;<br>
+f_2&nbsp;[&nbsp;a_0&nbsp;,&nbsp;q_1&nbsp;,&nbsp;r_1&nbsp;,&nbsp;s_1&nbsp;,&nbsp;q_2&nbsp;(r_1,&nbsp;a_0&nbsp;)&nbsp;&nbsp;]<br>
+\\<br>
+q_2&nbsp;&nbsp;&amp;&nbsp;=&nbsp;&amp;&nbsp;r_1&nbsp;*&nbsp;a_0<br>
+\end{array}<br>
+\]&nbsp;</span></code>
+
+Given the independent variable values and the operation sequence,
+<code>
+<span style='white-space: nowrap'>&nbsp;r_1&nbsp;=&nbsp;&nbsp;0.5&nbsp;</span></code>
+ and <code>
+<span style='white-space: nowrap'>&nbsp;a_0&nbsp;=&nbsp;0.5&nbsp;</span></code>
+.
+It follows that 
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+\begin{array}{rcll}<br>
+\D{f_3}{a_0}&nbsp;<br>
+&amp;&nbsp;=&nbsp;&amp;&nbsp;\D{f_2}{a_0}&nbsp;+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\D{f_2}{q_2}&nbsp;*&nbsp;\D{q_2}{a_0}&nbsp;<br>
+&amp;&nbsp;=&nbsp;&nbsp;0.25<br>
+\\<br>
+\D{f_3}{q_1}&nbsp;&amp;&nbsp;=&nbsp;&amp;&nbsp;\D{f_2}{q_1}&nbsp;&nbsp;&amp;&nbsp;=&nbsp;0<br>
+\\<br>
+\D{f_3}{r_1}&nbsp;<br>
+&amp;&nbsp;=&nbsp;&amp;&nbsp;\D{f_2}{r_1}&nbsp;+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\D{f_2}{q_2}&nbsp;*&nbsp;\D{q_2}{r_1}&nbsp;<br>
+&amp;&nbsp;=&nbsp;&nbsp;0.25<br>
+\\<br>
+\D{f_3}{s_1}<br>
+&amp;&nbsp;=&nbsp;&amp;&nbsp;\D{f_2}{s_1}&nbsp;<br>
+&amp;&nbsp;=&nbsp;1<br>
+\end{array}<br>
+\]&nbsp;</span></code>
+
+
+<br>
+<br>
+<b><big><a name="f_4" id="f_4">f_4</a></big></b>
+<br>
+We define the function 
+<code>
+<span style='white-space: nowrap'>&nbsp;f_4&nbsp;(&nbsp;a_0&nbsp;,&nbsp;q_1&nbsp;,&nbsp;r_1&nbsp;)&nbsp;</span></code>
+
+as equal to <code>
+<span style='white-space: nowrap'>&nbsp;f_3&nbsp;</span></code>
+
+except that <code>
+<span style='white-space: nowrap'>&nbsp;s_1&nbsp;</span></code>
+ is eliminated using 
+its functional representation in the operation sequence i.e.
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+\begin{array}{rcl}<br>
+f_4&nbsp;&amp;&nbsp;&nbsp;=&nbsp;&nbsp;&amp;<br>
+f_3&nbsp;[&nbsp;a_0&nbsp;,&nbsp;q_1&nbsp;,&nbsp;r_1&nbsp;,&nbsp;s_1&nbsp;(r_1&nbsp;)&nbsp;]<br>
+\\<br>
+s_1&nbsp;&nbsp;&amp;&nbsp;=&nbsp;&amp;&nbsp;&nbsp;s_0&nbsp;+&nbsp;r_1&nbsp;<br>
+\end{array}<br>
+\]&nbsp;</span></code>
+
+Note that <code>
+<span style='white-space: nowrap'>&nbsp;s_0&nbsp;</span></code>
+ is a 
+<a href="expapxseq.htm#Parameter" target="_top"><span style='white-space: nowrap'>parameter</span></a>
+ 
+so we have not included as an argument to the function <code>
+<span style='white-space: nowrap'>&nbsp;s_1&nbsp;</span></code>
+.
+It follows that
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+\begin{array}{rcll}<br>
+\D{f_4}{a_0}&nbsp;<br>
+&amp;&nbsp;=&nbsp;&amp;&nbsp;\D{f_3}{a_0}<br>
+&amp;&nbsp;=&nbsp;&nbsp;0.25<br>
+\\<br>
+\D{f_4}{q_1}&nbsp;<br>
+&amp;&nbsp;=&nbsp;&amp;&nbsp;\D{f_3}{q_1}<br>
+&amp;&nbsp;=&nbsp;&nbsp;0<br>
+\\<br>
+\D{f_4}{r_1}&nbsp;<br>
+&amp;&nbsp;=&nbsp;&amp;&nbsp;\D{f_3}{r_1}&nbsp;+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\D{f_3}{s_1}&nbsp;*&nbsp;\D{s_1}{r_1}&nbsp;<br>
+&amp;&nbsp;=&nbsp;&nbsp;1.25<br>
+\end{array}<br>
+\]&nbsp;</span></code>
+
+
+<br>
+<br>
+<b><big><a name="f_5" id="f_5">f_5</a></big></b>
+<br>
+We define the function 
+<code>
+<span style='white-space: nowrap'>&nbsp;f_5&nbsp;(&nbsp;a_0&nbsp;,&nbsp;q_1&nbsp;)&nbsp;</span></code>
+
+as equal to <code>
+<span style='white-space: nowrap'>&nbsp;f_4&nbsp;</span></code>
+
+except that <code>
+<span style='white-space: nowrap'>&nbsp;r_1&nbsp;</span></code>
+ is eliminated using 
+its functional representation in the operation sequence i.e.
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+\begin{array}{rcl}<br>
+f_5&nbsp;&amp;&nbsp;&nbsp;=&nbsp;&nbsp;&amp;<br>
+f_4&nbsp;[&nbsp;a_0&nbsp;,&nbsp;q_1&nbsp;,&nbsp;r_1&nbsp;(&nbsp;q_1&nbsp;)]<br>
+\\<br>
+r_1&nbsp;&amp;&nbsp;=&nbsp;&nbsp;&amp;&nbsp;q_1&nbsp;/&nbsp;k_0&nbsp;<br>
+\end{array}<br>
+\]&nbsp;</span></code>
+
+Note that <code>
+<span style='white-space: nowrap'>&nbsp;k_0&nbsp;=&nbsp;1&nbsp;</span></code>
+ is a 
+<a href="expapxseq.htm#Parameter" target="_top"><span style='white-space: nowrap'>parameter</span></a>
+ 
+so we have not included as an argument to the function <code>
+<span style='white-space: nowrap'>&nbsp;r_1&nbsp;</span></code>
+.
+It follows that 
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+\begin{array}{rcll}<br>
+\D{f_5}{q_1}&nbsp;<br>
+&amp;&nbsp;=&nbsp;&amp;&nbsp;\D{f_4}{q_1}&nbsp;+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\D{f_4}{r_1}&nbsp;*&nbsp;\D{r_1}{q_1}<br>
+&amp;&nbsp;=&nbsp;&nbsp;1.25<br>
+\\<br>
+\D{f_5}{a_0}&nbsp;<br>
+&amp;&nbsp;=&nbsp;&amp;&nbsp;\D{f_4}{a_0}&nbsp;<br>
+&amp;&nbsp;=&nbsp;&nbsp;0.25<br>
+\end{array}<br>
+\]&nbsp;</span></code>
+
+
+<br>
+<br>
+<b><big><a name="f_6" id="f_6">f_6</a></big></b>
+<br>
+We define the function 
+<code>
+<span style='white-space: nowrap'>&nbsp;f_6&nbsp;(&nbsp;a_0&nbsp;)&nbsp;</span></code>
+
+as equal to <code>
+<span style='white-space: nowrap'>&nbsp;f_5&nbsp;</span></code>
+
+except that <code>
+<span style='white-space: nowrap'>&nbsp;q_1&nbsp;</span></code>
+ is eliminated using 
+its functional representation in the operation sequence i.e.
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+\begin{array}{rcl}<br>
+f_6&nbsp;&amp;&nbsp;&nbsp;=&nbsp;&nbsp;&amp;<br>
+f_5&nbsp;[&nbsp;a_0&nbsp;,&nbsp;q_1&nbsp;(&nbsp;a_0&nbsp;)&nbsp;]<br>
+\\<br>
+q_1&nbsp;&amp;&nbsp;=&nbsp;&amp;&nbsp;r_0&nbsp;*&nbsp;a_0<br>
+\end{array}<br>
+\]&nbsp;</span></code>
+
+Note that <code>
+<span style='white-space: nowrap'>&nbsp;r_0&nbsp;=&nbsp;1&nbsp;</span></code>
+ is a 
+<a href="expapxseq.htm#Parameter" target="_top"><span style='white-space: nowrap'>parameter</span></a>
+ 
+so we have not included as an argument to the function <code>
+<span style='white-space: nowrap'>&nbsp;q_1&nbsp;</span></code>
+.
+It follows that 
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+\begin{array}{rcll}<br>
+\D{f_6}{a_0}&nbsp;<br>
+&amp;&nbsp;=&nbsp;&amp;&nbsp;\D{f_5}{a_0}&nbsp;+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\D{f_5}{q_1}&nbsp;*&nbsp;\D{q_1}{a_0}<br>
+&amp;&nbsp;=&nbsp;&nbsp;1.5<br>
+\end{array}<br>
+\]&nbsp;</span></code>
+
+Note that,
+for the argument value <code>
+<span style='white-space: nowrap'>&nbsp;x&nbsp;=&nbsp;0.5</span></code>
+,
+<code>
+<span style='white-space: nowrap'>&nbsp;a_0</span></code>
+ is equal to <code>
+<span style='white-space: nowrap'>&nbsp;x</span></code>
+ and  
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+\D{f_6}{a_0}&nbsp;=&nbsp;\D{&nbsp;{\rm&nbsp;ExpApx}&nbsp;(x,&nbsp;.2)&nbsp;}{x}&nbsp;<br>
+\]&nbsp;</span></code>
+
+We also note that both reverse and forward mode give the 
+same result for this partial derivative.
+
+
+
+<br>
+<br>
+<b><big><a name="Verification" id="Verification">Verification</a></big></b>
+<br>
+The file <a href="expapxfor.cpp.htm" target="_top"><span style='white-space: nowrap'>ExpApxFor.cpp</span></a>
+ contains a routine 
+which verifies the values computed above.
+It returns true for success and false for failure.
+It only tests the partial derivatives of
+<code>
+<span style='white-space: nowrap'>&nbsp;f_j</span></code>
+ that are different from those of <code>
+<span style='white-space: nowrap'>&nbsp;f_{j-1}</span></code>
+.
+
+
+<hr>Input File: omh/ExpApxRev.omh
+
+</body>
+</html>
