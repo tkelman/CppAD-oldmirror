@@ -79,13 +79,17 @@ BODY { background-color : white }
 <b><big><a name="Download Current Version" id="Download Current Version">Download Current Version</a></big></b>
 <br>
 To date, the only way to obtain version 1.0 is using subversion.
-If you have subversion, execute the following command
+If you have subversion, execute the following commands
 
 <code><font color="blue">
 <span style='white-space: nowrap'><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;svn&nbsp;checkout&nbsp;http://www.coin-or.org/svn/CppAD/stable/1.0&nbsp;CppAD-1.0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cd&nbsp;CppAD-1.0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;./time_stamp.sh<br>
 </span>
 </font></code>
+(The <code><font color="blue">time_stamp.sh</font></code> command adjusts some non source code files
+time stamps to when <code><font color="blue">make</font></code> expects them to have been created.)
 This creates the distribution directory
 <code><font color="blue"><span style='white-space: nowrap'><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppAD-1.0<br>
@@ -130,13 +134,12 @@ Enter the directory created by the extraction and execute the command:
 </span></font></code>where only the <code><font color="blue">configure</font></code> command need appear.
 The entries one each of the other lines are optional
 and the text in italic is replaced values that you choose.
-A very simple default test and install can be done 
-with the following commands:
+A very simple default test and install can be done with the following commands:
 <code><font color="blue">
 <span style='white-space: nowrap'><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;./configure<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;make&nbsp;test<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;make&nbsp;install<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;./configure<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;make&nbsp;test<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;make&nbsp;install<br>
 </span>
 </font></code>
 <br>

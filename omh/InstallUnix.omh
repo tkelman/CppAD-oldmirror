@@ -61,12 +61,16 @@ $section Unix Installation and Testing$$
 
 $head Download Current Version$$
 To date, the only way to obtain version 1.0 is using subversion.
-If you have subversion, execute the following command
+If you have subversion, execute the following commands
 $nospell
 $codep
 	svn checkout http://www.coin-or.org/svn/CppAD/stable/1.0 CppAD-1.0
+	cd CppAD-1.0
+	./time_stamp.sh
 $$
 $$
+(The $code time_stamp.sh$$ command adjusts some non source code files
+time stamps to when $code make$$ expects them to have been created.)
 This creates the distribution directory
 $syntax%
 	CppAD-1.0
@@ -107,6 +111,13 @@ $syntax%
 where only the $code configure$$ command need appear.
 The entries one each of the other lines are optional
 and the text in italic is replaced values that you choose.
+A very simple default test and install can be done with the following commands:
+$codep
+        ./configure
+        make test
+        make install
+$$
+
 
 $head PrefixDir and PostfixDir$$
 $index configure, prefix$$
