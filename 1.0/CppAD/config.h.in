@@ -1,5 +1,7 @@
 /* CppAD/config.h.in.  Generated from configure.ac by autoheader.  */
 
+/* Line added so that subversion would commit and adjust time stamp. */
+
 /* is CppADvector == boost::numeric::ublas::vector */
 #undef CppAD_BOOSTVECTOR
 
