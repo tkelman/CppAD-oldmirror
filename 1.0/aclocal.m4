@@ -1,5 +1,7 @@
 # generated automatically by aclocal 1.9.6 -*- Autoconf -*-
 
+# Line added so that subversion would commit and adjust time stamp.
+
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004,
 # 2005  Free Software Foundation, Inc.
 # This file is free software; the Free Software Foundation
