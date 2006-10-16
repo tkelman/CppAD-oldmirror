@@ -81,7 +81,7 @@ $pre
 
 $$
 The $xref/TrackNewDel.cpp/$$ example was missing from the Windows install 
-$xref/InstallWindows/Examples and Testing/examples and testing/$$
+examples and testing
 project file. 
 This has been fixed.
 
@@ -153,7 +153,7 @@ $$
 The change on $xref/WhatsNew05/12-14/12-14/$$ broke the 
 Microsoft project files $code Example/Example.sln$$
 and $code TestMore/TestMore.sln$$ used during CppAD
-$xref/InstallWindows//installation on Windows/$$.
+installation on Windows.
 This has been fixed.
 $pre
 
@@ -248,7 +248,7 @@ From now on the dates in this file will correspond to the first
 version of CppAD where the change appears; i.e., the date in the
 $xref/InstallUnix/Download Current Version/unix/$$
 and
-$xref/InstallWindows/Download Current Version/windows/$$
+windows
 download file names $syntax%CppAD-%yy%-%mm%-%dd%$$.
 
 
@@ -431,7 +431,7 @@ $pre
 
 $$
 One of the dates in the Unix installation
-$xref/InstallUnix/Extraction/extraction/$$ discussion was
+extraction discussion was
 out of date. This has been fixed.
 
 
@@ -515,7 +515,7 @@ to
 $syntax%CppAD-%yy%-%mm%-%dd%.tar.gz%$$ and $syntax%CppAD-%yy%-%mm%-%dd%.zip%$$ 
 (the $syntax%%*%.zip%$$ file
 uses pkzip compression as discussed in 
-$xref/InstallWindows/Extraction/windows install extraction/$$).
+windows install extraction).
 
 
 $head 08-30$$
@@ -567,7 +567,7 @@ $code sinh$$, and $code cosh$$ have been added.
 In addition, more correctness testing 
 (
 $xref/InstallUnix/--with-TestMore/unix/$$ , 
-$xref/InstallWindows/More Correctness Testing/windows/$$ 
+windows 
 )
 has been added for the $code sin$$ and $code cos$$ functions.
 $pre

@@ -23,7 +23,6 @@ var list_down1 = [
 var list_current0 = [
 'installunix.xml#Download Current Version',
 'installunix.xml#User Documentation',
-'installunix.xml#Developer Documentation',
 'installunix.xml#Configure',
 'installunix.xml#PrefixDir and PostfixDir',
 'installunix.xml#--with-GetStarted',

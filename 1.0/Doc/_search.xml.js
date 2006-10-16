@@ -3,7 +3,7 @@
 // ------------------------------------------------------- 
 Keyword = 
 [
-"CppAD  A Package for Differentiation of C++ Algorithms: CppAD-1.0   algorithmic automatic derivative version introduction require base type include cppad.h namespace",
+"CppAD  A Package for Differentiation of C++ Algorithms: CppAD-06-05-29   algorithmic automatic derivative version introduction require base type include cppad.h namespace",
 "License  Your License for the CppAD Software  ",
 "Faq  Frequently Asked Questions and Answers   assignment operator independent bugs reporting comparechange ndebug complex test exception errorhandler variable tape avoid record speed taping math functions inverse matrix forward reverse mode namespace cppadvector preprocessor symbols standard using storage memory disk",
 "Install  Installing and Testing CppAD  ",

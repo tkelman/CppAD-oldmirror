@@ -57,7 +57,6 @@ BODY { background-color : white }
 <option>Headings-&gt;</option>
 <option>Download Current Version</option>
 <option>User Documentation</option>
-<option>Developer Documentation</option>
 <option>Configure</option>
 <option>PrefixDir and PostfixDir</option>
 <option>--with-GetStarted</option>
@@ -82,11 +81,12 @@ BODY { background-color : white }
 <br/>
 <b><big><a name="Download Current Version" id="Download Current Version">Download Current Version</a></big></b>
 <br/>
-To date, the only way to obtain <font color="red">verison</font> 1.0 is using subversion.
+To date, the only way to obtain version 1.0 is using subversion.
 If you have subversion, execute the following command
+
 <code><font color="blue">
 <span style='white-space: nowrap'><br/>
-&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;<font color="red">svn</font>&#xA0;checkout&#xA0;<font color="red">http</font>://<font color="red">www</font>.coin-or.<font color="red">org</font>/<font color="red">svn</font>/CppAD/stable/1.0&#xA0;CppAD-1.0<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;svn&#xA0;checkout&#xA0;http://www.coin-or.org/svn/CppAD/stable/1.0&#xA0;CppAD-1.0<br/>
 </span>
 </font></code>
 This creates the distribution directory
@@ -106,13 +106,6 @@ The files <code><font color="blue"><span style='white-space: nowrap'>Doc/</span>
 If your browser supports XHTML+MATHML format,
 an easier to read copy is available in the files
 <code><font color="blue"><span style='white-space: nowrap'>Doc/</span></font></code><i><span style='white-space: nowrap'>*</span></i><code><font color="blue"><span style='white-space: nowrap'>.xml</span></font></code>.
-
-<br/>
-<br/>
-<b><big><a name="Developer Documentation" id="Developer Documentation">Developer Documentation</a></big></b>
-<br/>
-The <code><font color="blue">Dev</font></code> sub-directory of the distribution directory
-contains developer documentation for CppAD. 
 
 <br/>
 <br/>

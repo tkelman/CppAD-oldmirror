@@ -250,15 +250,11 @@ The mathematical form for our approximation of the exponential function is
 <br/>
 The include command in the syntax is relative to 
 <code><font color="blue"><span style='white-space: nowrap'><br/>
-&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;omhelp-</span></font></code><i><span style='white-space: nowrap'>yy</span></i><code><font color="blue"><span style='white-space: nowrap'>-</span></font></code><i><span style='white-space: nowrap'>mm</span></i><code><font color="blue"><span style='white-space: nowrap'>-</span></font></code><i><span style='white-space: nowrap'>dd</span></i><code><font color="blue"><span style='white-space: nowrap'>/Introduction<br/>
-</span></font></code>where <code><font color="blue"><span style='white-space: nowrap'>omhelp-</span></font></code><i><span style='white-space: nowrap'>yy</span></i><code><font color="blue"><span style='white-space: nowrap'>-</span></font></code><i><span style='white-space: nowrap'>mm</span></i><code><font color="blue"><span style='white-space: nowrap'>-</span></font></code><i><span style='white-space: nowrap'>dd</span></i> is the distribution directory
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD-1.0/Introduction<br/>
+</span></font></code>where <code><font color="blue">CppAD-1.0</font></code> is the distribution directory
 created during the extraction step of a 
-<u><font color="red"><span style='white-space: nowrap'>Unix</span></font></u>
-
- or 
-<u><font color="red"><span style='white-space: nowrap'>Window</span></font></u>
-
- 
+Unix or 
+Window 
 installation of CppAD.
 
 

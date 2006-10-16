@@ -60,10 +60,12 @@ $index install, unix CppAD$$
 $section Unix Installation and Testing$$
 
 $head Download Current Version$$
-To date, the only way to obtain verison 1.0 is using subversion.
+To date, the only way to obtain version 1.0 is using subversion.
 If you have subversion, execute the following command
+$nospell
 $codep
 	svn checkout http://www.coin-or.org/svn/CppAD/stable/1.0 CppAD-1.0
+$$
 $$
 This creates the distribution directory
 $syntax%
@@ -80,10 +82,6 @@ The files $syntax%Doc/%*%.htm%$$ are in HTML format.
 If your browser supports XHTML+MATHML format,
 an easier to read copy is available in the files
 $syntax%Doc/%*%.xml%$$.
-
-$head Developer Documentation$$
-The $code Dev$$ sub-directory of the distribution directory
-contains developer documentation for CppAD. 
 
 $head Configure$$
 $index configure$$

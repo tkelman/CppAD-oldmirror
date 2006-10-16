@@ -281,9 +281,7 @@ The location where the distribution files are stored has changed
 and this broke the Download Current Version links for the
 <a href="installunix.xml#Download Current Version" target="_top"><span style='white-space: nowrap'>Unix</span></a>
  and 
-<u><font color="red"><span style='white-space: nowrap'>Windows</span></font></u>
-
- installation.
+Windows installation.
 This has been fixed.
 <code><span style='white-space: nowrap'><br/>
 <br/>
