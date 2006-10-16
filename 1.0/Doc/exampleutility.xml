@@ -1,0 +1,86 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Utility Routines used by CppAD Examples</title>
+<meta name="description" id="description" content="Utility Routines used by CppAD Examples"/>
+<meta name="keywords" id="keywords" content=" "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_exampleutility_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td><a href="multape.cpp.xml" target="_top">Prev</a>
+</td><td><a href="example.cpp.xml" target="_top">Next</a>
+</td><td><a href="cppad.xml" target="_top">Top</a>
+</td><td>
+<select onchange='choose_down2(this)'>
+<option>CppAD-&gt;</option>
+<option>License</option>
+<option>Faq</option>
+<option>Install</option>
+<option>GetStarted.cpp</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>Example-&gt;</option>
+<option>General</option>
+<option>ExampleUtility</option>
+<option>ListAllExamples</option>
+<option>CppADvector</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down0(this)'>
+<option>ExampleUtility-&gt;</option>
+<option>Example.cpp</option>
+<option>DetOfMinor</option>
+<option>DetOfMinor.h</option>
+<option>DetByMinor</option>
+<option>DetByMinor.h</option>
+<option>DetByLu</option>
+<option>DetByLu.h</option>
+<option>LuVecAD</option>
+</select>
+</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Contents</option>
+</select>
+</td>
+</tr></table><br/>
+<center><b><big><big>Utility Routines used by CppAD Examples</big></big></b></center>
+<br/>
+<b><big><a name="Contents" id="Contents">Contents</a></big></b>
+<br/>
+<table>
+<tr><td><a href="example.cpp.xml" target="_top">Example.cpp</a></td><td>Program&#xA0;That&#xA0;Runs&#xA0;all&#xA0;the&#xA0;CppAD&#xA0;Example</td></tr><tr><td><a href="detofminor.xml" target="_top">DetOfMinor</a></td><td>Compute&#xA0;the&#xA0;Determinant&#xA0;of&#xA0;a&#xA0;Minor</td></tr><tr><td><a href="detofminor.h.xml" target="_top">DetOfMinor.h</a></td><td>Compute&#xA0;the&#xA0;Determinant&#xA0;of&#xA0;a&#xA0;Minor:&#xA0;Source&#xA0;Code</td></tr><tr><td><a href="detbyminor.xml" target="_top">DetByMinor</a></td><td>Determinant&#xA0;Using&#xA0;Expansion&#xA0;by&#xA0;Minors</td></tr><tr><td><a href="detbyminor.h.xml" target="_top">DetByMinor.h</a></td><td>Determinant&#xA0;using&#xA0;Expansion&#xA0;by&#xA0;Minors:&#xA0;Source&#xA0;Code</td></tr><tr><td><a href="detbylu.xml" target="_top">DetByLu</a></td><td>Determinant&#xA0;Using&#xA0;Lu&#xA0;Factorization</td></tr><tr><td><a href="detbylu.h.xml" target="_top">DetByLu.h</a></td><td>Determinant&#xA0;using&#xA0;Lu&#xA0;Factorization:&#xA0;Source&#xA0;Code</td></tr><tr><td><a href="luvecad.xml" target="_top">LuVecAD</a></td><td>Lu&#xA0;Factor&#xA0;and&#xA0;Solve&#xA0;with&#xA0;Recorded&#xA0;Pivoting</td></tr></table>
+<hr/>Input File: omh/ExampleList.omh
+
+</body>
+</html>

@@ -1,0 +1,188 @@
+<html><head>
+<title>AD Boolean Functions</title>
+<meta name="description" id="description" content="AD Boolean Functions">
+<meta name="keywords" id="keywords" content=" bool Ad function unary binary ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_boolfun_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td><a href="nearequalext.cpp.htm" target="_top">Prev</a>
+</td><td><a href="boolfun.cpp.htm" target="_top">Next</a>
+</td><td><a href="cppad.htm" target="_top">Top</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>CppAD-&gt;</option>
+<option>License</option>
+<option>Faq</option>
+<option>Install</option>
+<option>GetStarted.cpp</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>AD-&gt;</option>
+<option>Constructor</option>
+<option>Convert</option>
+<option>Eq</option>
+<option>ADValued</option>
+<option>BoolValued</option>
+<option>VecAD</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>BoolValued-&gt;</option>
+<option>Compare</option>
+<option>NearEqualExt</option>
+<option>BoolFun</option>
+<option>ParVar</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down0(this)'>
+<option>BoolFun-&gt;</option>
+<option>BoolFun.cpp</option>
+</select>
+</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Syntax</option>
+<option>Purpose</option>
+<option>Prototypes</option>
+<option>Unary Functions</option>
+<option>Binary Functions</option>
+<option>Operation Sequence</option>
+<option>Example</option>
+</select>
+</td>
+</tr></table><br>
+<center><b><big><big>AD Boolean Functions</big></big></b></center>
+<br>
+<b><big><a name="Syntax" id="Syntax">Syntax</a></big></b>
+
+<br>
+<code><font color="blue"><span style='white-space: nowrap'>CppADCreateUnaryBool(</span></font></code><i><span style='white-space: nowrap'>Base</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;</span></font></code><i><span style='white-space: nowrap'>UnaryName</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>
+<code><span style='white-space: nowrap'><br>
+</span></code><code><font color="blue"><span style='white-space: nowrap'>CppADCreateBinaryBool(</span></font></code><i><span style='white-space: nowrap'>Base</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;</span></font></code><i><span style='white-space: nowrap'>BinaryName</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>
+<code><span style='white-space: nowrap'><br>
+</span></code><code><font color="blue"></font></code><i><span style='white-space: nowrap'>b</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;=&nbsp;</span></font></code><i><span style='white-space: nowrap'>UnaryName</span></i><code><font color="blue"><span style='white-space: nowrap'>(</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>
+<code><span style='white-space: nowrap'><br>
+</span></code><code><font color="blue"></font></code><i><span style='white-space: nowrap'>b</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;=&nbsp;</span></font></code><i><span style='white-space: nowrap'>BinaryName</span></i><code><font color="blue"><span style='white-space: nowrap'>(</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;</span></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>
+
+
+<br>
+<br>
+<b><big><a name="Purpose" id="Purpose">Purpose</a></big></b>
+<br>
+Create a boolean valued function of with
+<code><font color="blue"><span style='white-space: nowrap'>AD&lt;</span></font></code><i><span style='white-space: nowrap'>Base</span></i><code><font color="blue"><span style='white-space: nowrap'>&gt;</span></font></code> arguments from a boolean valued function
+with <i>Base</i> arguments.
+
+<br>
+<br>
+<b><big><a name="Prototypes" id="Prototypes">Prototypes</a></big></b>
+<br>
+The variables above and below have the following prototypes
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;&nbsp;</span></font></code><i></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>b</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;</span></font></code><i><span style='white-space: nowrap'>Base</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>u</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;</span></font></code><i><span style='white-space: nowrap'>Base</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>v</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;AD&lt;</span></font></code><i><span style='white-space: nowrap'>Base</span></i><code><font color="blue"><span style='white-space: nowrap'>&gt;&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;AD&lt;</span></font></code><i><span style='white-space: nowrap'>Base</span></i><code><font color="blue"><span style='white-space: nowrap'>&gt;&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><br>
+<b><big><a name="Unary Functions" id="Unary Functions">Unary Functions</a></big></b>
+<br>
+Given a function called <i>UnaryName</i> with syntax
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>b</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;=&nbsp;</span></font></code><i><span style='white-space: nowrap'>UnaryName</span></i><code><font color="blue"><span style='white-space: nowrap'>(</span></font></code><i><span style='white-space: nowrap'>u</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code>The preprocessor macro invocation
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppADCreateUnaryBool(</span></font></code><i><span style='white-space: nowrap'>Base</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;</span></font></code><i><span style='white-space: nowrap'>UnaryName</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code>can be with in a namespace but must be outside of any routine.
+It defines a function with the following syntax
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>b</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;=&nbsp;</span></font></code><i><span style='white-space: nowrap'>UnaryName</span></i><code><font color="blue"><span style='white-space: nowrap'>(</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code>This enables one to define arbitrary
+boolean valued functions with one AD argument.
+The value returned for the argument <i>x</i>
+is the value return for the argument <i>u</i>
+where <i>u</i> is the <i>Base</i> value corresponding to <i>x</i>.
+
+<br>
+<br>
+<b><big><a name="Binary Functions" id="Binary Functions">Binary Functions</a></big></b>
+<br>
+Given a function called <i>BinaryName</i> with syntax
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>b</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;=&nbsp;</span></font></code><i><span style='white-space: nowrap'>BinaryName</span></i><code><font color="blue"><span style='white-space: nowrap'>(</span></font></code><i><span style='white-space: nowrap'>u</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;</span></font></code><i><span style='white-space: nowrap'>v</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code>The preprocessor macro invocation
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppADCreateBinaryBool(</span></font></code><i><span style='white-space: nowrap'>Base</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;</span></font></code><i><span style='white-space: nowrap'>BinaryName</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code>can be with in a namespace but must be outside of any routine.
+It defines a function with the following syntax
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>b</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;=&nbsp;</span></font></code><i><span style='white-space: nowrap'>BinaryName</span></i><code><font color="blue"><span style='white-space: nowrap'>(</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;</span></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code>This enables one to define arbitrary
+boolean valued functions with two AD arguments.
+The value returned for the argument pair 
+<code><font color="blue"><span style='white-space: nowrap'>(</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;</span></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>
+is the value return for the argument pair
+<code><font color="blue"><span style='white-space: nowrap'>(</span></font></code><i><span style='white-space: nowrap'>u</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;</span></font></code><i><span style='white-space: nowrap'>v</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>
+where <i>u</i> is the <i>Base</i> value corresponding to <i>x</i> and
+<i>v</i> is the <i>Base</i> value corresponding to <i>y</i>.
+
+<br>
+<br>
+<b><big><a name="Operation Sequence" id="Operation Sequence">Operation Sequence</a></big></b>
+<br>
+The result of this operation is not an
+<a href="glossary.htm#AD of Base" target="_top"><span style='white-space: nowrap'>AD&nbsp;of</span></a>
+ <i>Base</i> object.
+Thus it will not be recorded as part of the current
+AD of <i>Base</i>
+<a href="glossary.htm#Operation.Sequence" target="_top"><span style='white-space: nowrap'>operation&nbsp;sequence</span></a>
+
+(even if the current <a href="glossary.htm#Tape State" target="_top"><span style='white-space: nowrap'>tape&nbsp;state</span></a>
+ is Recording).
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+
+<br>
+The file
+<a href="boolfun.cpp.htm" target="_top"><span style='white-space: nowrap'>BoolFun.cpp</span></a>
+
+contains an example and test of these operations.
+It returns true if it succeeds and false otherwise.
+
+
+<hr>Input File: CppAD/local/BoolFun.h
+
+</body>
+</html>

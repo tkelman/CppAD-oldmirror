@@ -1,0 +1,132 @@
+<html><head>
+<title>ExpApx Reverse Mode Verification</title>
+<meta name="description" id="description" content="ExpApx Reverse Mode Verification">
+<meta name="keywords" id="keywords" content=" ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_expapxrev.cpp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td><a href="expapxrev.htm" target="_top">Prev</a>
+</td><td><a href="expapxad.cpp.htm" target="_top">Next</a>
+</td><td><a href="cppad.htm" target="_top">Top</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>CppAD-&gt;</option>
+<option>License</option>
+<option>Faq</option>
+<option>Install</option>
+<option>GetStarted.cpp</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>Introduction-&gt;</option>
+<option>ExpApx</option>
+<option>ExpApxSeq</option>
+<option>ExpApxFor</option>
+<option>ExpApxRev</option>
+<option>ExpApxAD.cpp</option>
+<option>Introduction.cpp</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>ExpApxRev-&gt;</option>
+<option>ExpApxRev.cpp</option>
+</select>
+</td>
+<td>ExpApxRev.cpp</td>
+<td>Headings</td>
+</tr></table><br>
+
+
+
+<center><b><big><big>ExpApx Reverse Mode Verification</big></big></b></center>
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+#&nbsp;include&nbsp;&lt;cstddef&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;for&nbsp;size_t<br>
+#&nbsp;include&nbsp;&lt;cmath&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;for&nbsp;fabs&nbsp;function<br>
+extern&nbsp;bool&nbsp;ExpApxSeq(void);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;prototype&nbsp;for&nbsp;ExpApxSeq<br>
+extern&nbsp;double&nbsp;a[1],&nbsp;q[3],&nbsp;r[3],&nbsp;s[3],&nbsp;k[3];&nbsp;//&nbsp;global&nbsp;vars&nbsp;set&nbsp;by&nbsp;ExpApxSeq<br>
+bool&nbsp;ExpApxRev(void)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;ordering&nbsp;of&nbsp;arguments&nbsp;is:&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;a0,&nbsp;q0,&nbsp;q1,&nbsp;q2,&nbsp;r0,&nbsp;r1,&nbsp;r2,&nbsp;s0,&nbsp;s1,&nbsp;s2&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;corresponding&nbsp;index&nbsp;offsets&nbsp;for&nbsp;each&nbsp;of&nbsp;the&nbsp;parameters<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;ia&nbsp;=&nbsp;0,&nbsp;iq&nbsp;=&nbsp;ia+1,&nbsp;ir&nbsp;=&nbsp;iq+3,&nbsp;is&nbsp;=&nbsp;ir+3;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;make&nbsp;sure&nbsp;global&nbsp;variables&nbsp;have&nbsp;been&nbsp;computed&nbsp;by&nbsp;ExpApxSeq<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;ExpApxSeq();<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;initial&nbsp;all&nbsp;partial&nbsp;derivatives&nbsp;as&nbsp;zero<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;df[10];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;j;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(j&nbsp;=&nbsp;0;&nbsp;j&nbsp;&lt;&nbsp;10;&nbsp;j++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;df[j]&nbsp;=&nbsp;0.;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;f0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;df[is+2]&nbsp;=&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;std::fabs(&nbsp;df[is+2]&nbsp;-&nbsp;1.&nbsp;)&nbsp;&lt;=&nbsp;1e-10;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;f0_s2<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;remove&nbsp;s2&nbsp;=&nbsp;s1&nbsp;+&nbsp;r2&nbsp;from&nbsp;f0&nbsp;to&nbsp;get&nbsp;f1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;df[is+1]&nbsp;+=&nbsp;df[is+2];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;df[ir+2]&nbsp;+=&nbsp;df[is+2];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;std::fabs(&nbsp;df[is+1]&nbsp;-&nbsp;1.&nbsp;)&nbsp;&lt;=&nbsp;1e-10;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;f1_s1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;std::fabs(&nbsp;df[ir+2]&nbsp;-&nbsp;1.&nbsp;)&nbsp;&lt;=&nbsp;1e-10;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;f1_r2<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;remove&nbsp;r2&nbsp;=&nbsp;q2&nbsp;/&nbsp;k1&nbsp;from&nbsp;f1&nbsp;to&nbsp;get&nbsp;f2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;df[iq+2]&nbsp;+=&nbsp;df[ir+2]&nbsp;/&nbsp;k[1];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;std::fabs(&nbsp;df[iq+2]&nbsp;-&nbsp;0.5&nbsp;)&nbsp;&lt;=&nbsp;1e-10;&nbsp;&nbsp;&nbsp;//&nbsp;f2_q2<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;remove&nbsp;q2&nbsp;=&nbsp;r1&nbsp;*&nbsp;a0&nbsp;from&nbsp;f2&nbsp;to&nbsp;get&nbsp;f3<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;df[ir+1]&nbsp;+=&nbsp;df[iq+2]&nbsp;*&nbsp;a[0];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;df[ia+0]&nbsp;+=&nbsp;r[1]&nbsp;*&nbsp;df[iq+2];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;std::fabs(&nbsp;df[ir+1]&nbsp;-&nbsp;0.25&nbsp;)&nbsp;&lt;=&nbsp;1e-10;&nbsp;&nbsp;//&nbsp;f3_r1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;std::fabs(&nbsp;df[ia+0]&nbsp;-&nbsp;0.25&nbsp;)&nbsp;&lt;=&nbsp;1e-10;&nbsp;&nbsp;//&nbsp;f3_a0<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;remove&nbsp;s1&nbsp;=&nbsp;s0&nbsp;+&nbsp;r1&nbsp;from&nbsp;f3&nbsp;to&nbsp;get&nbsp;f4<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;df[ir+1]&nbsp;+=&nbsp;df[is+1];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;std::fabs(&nbsp;df[ir+1]&nbsp;-&nbsp;1.25&nbsp;)&nbsp;&lt;=&nbsp;1e-10;&nbsp;&nbsp;//&nbsp;f4_r1<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;remove&nbsp;r1&nbsp;=&nbsp;q1&nbsp;/&nbsp;k0&nbsp;from&nbsp;f4&nbsp;to&nbsp;get&nbsp;f5<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;df[iq+1]&nbsp;+=&nbsp;df[ir+1]&nbsp;/&nbsp;k[0];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;std::fabs(&nbsp;df[iq+1]&nbsp;-&nbsp;1.25&nbsp;)&nbsp;&lt;=&nbsp;1e-10;&nbsp;&nbsp;//&nbsp;f5_q1<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;remove&nbsp;q1&nbsp;=&nbsp;r0&nbsp;*&nbsp;a0&nbsp;from&nbsp;f5&nbsp;to&nbsp;get&nbsp;f6<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;df[ia+0]&nbsp;+=&nbsp;r[0]&nbsp;*&nbsp;df[iq+1];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;std::fabs(&nbsp;df[ia+0]&nbsp;-&nbsp;1.5&nbsp;)&nbsp;&lt;=&nbsp;1e-10;&nbsp;&nbsp;&nbsp;//&nbsp;f6_a0<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+}<br>
+</span>
+</font></code>
+
+<hr>Input File: Introduction/ExpApxRev.cpp
+
+</body>
+</html>

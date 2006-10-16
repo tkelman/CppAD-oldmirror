@@ -1,0 +1,258 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>A Package for Differentiation of C++ Algorithms: CppAD-1.0</title>
+<meta name="description" id="description" content="A Package for Differentiation of C++ Algorithms: CppAD-1.0"/>
+<meta name="keywords" id="keywords" content=" Ad algorithmic differentiation automatic C++ algorithm derivative Cppad version introduction require Base type include Cppad.h namespace "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_cppad_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>Prev</td><td><a href="_contents_xml.htm" target="_top">Next</a>
+</td><td><a href="cppad.xml" target="_top">Top</a>
+</td><td>
+<select onchange='choose_down0(this)'>
+<option>CppAD-&gt;</option>
+<option>License</option>
+<option>Faq</option>
+<option>Install</option>
+<option>GetStarted.cpp</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Syntax</option>
+<option>Introduction</option>
+<option>Example</option>
+<option>Base Type Requirements</option>
+<option>Include File</option>
+<option>Preprocessor Symbols</option>
+<option>Namespace</option>
+<option>Contents</option>
+</select>
+</td>
+</tr></table><br/>
+,
+
+
+
+
+
+
+<center><b><big><big>A Package for Differentiation of C++ Algorithms: CppAD-1.0</big></big></b></center>
+<br/>
+<b><big><a name="Syntax" id="Syntax">Syntax</a></big></b>
+
+<br/>
+<code><font color="blue"><span style='white-space: nowrap'>#&#xA0;include&#xA0;&quot;CppAD.h&quot;</span></font></code> <code><span style='white-space: nowrap'><br/>
+</span></code><code><font color="blue"><span style='white-space: nowrap'>using&#xA0;namespace&#xA0;CppAD;</span></font></code> <code><span style='white-space: nowrap'><br/>
+</span></code><br/>
+<b><big><a name="Introduction" id="Introduction">Introduction</a></big></b>
+
+<br/>
+We refer to the
+step by step conversion from an algorithm that computes function values
+to an algorithm that computes derivative values
+as <i>Algorithmic Differentiation</i>
+(often referred to as <i>Automatic Differentiation</i>.) 
+Given a C++ algorithm that computes function values,
+CppAD generates an algorithm that computes its derivative values.
+
+<ol type="1"><li>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><span style='white-space: nowrap'>CppAD</span></a>
+
+uses operator overloading to compute derivatives of algorithms defined in C++.
+It is distributed under the <a href="license.xml" target="_top"><span style='white-space: nowrap'>GNU&#xA0;General&#xA0;Public&#xA0;License</span></a>
+
+by the <a href="http://www.coin-or.org/foundation.html" target="_top"><span style='white-space: nowrap'>COIN-OR&#xA0;Foundation</span></a>
+.
+Installation procedures are provided for both
+<a href="installunix.xml" target="_top"><span style='white-space: nowrap'>Unix</span></a>
+ and <u><font color="red"><span style='white-space: nowrap'>MS&#xA0;Windows</span></font></u>
+
+
+operating systems.
+Extensive user and developer documentation is included.
+
+</li><li>
+
+An AD of <i>Base</i>
+<a href="glossary.xml#Operation.Sequence" target="_top"><span style='white-space: nowrap'>operation&#xA0;sequence</span></a>
+
+is stored as an 
+<a href="adfun.xml" target="_top"><span style='white-space: nowrap'>AD&#xA0;function&#xA0;object</span></a>
+ 
+which can evaluate function values and derivatives.
+Arbitrary order 
+<a href="forward.xml" target="_top"><span style='white-space: nowrap'>forward</span></a>
+ and <a href="reverse.xml" target="_top"><span style='white-space: nowrap'>reverse</span></a>
+
+mode derivative calculations
+can be preformed on the operation sequence.
+Logical comparisons can be included in an operation sequence
+using AD <a href="condexp.xml" target="_top"><span style='white-space: nowrap'>conditional&#xA0;expressions</span></a>
+.
+Evaluation of user defined unary 
+<a href="discrete.xml" target="_top"><span style='white-space: nowrap'>discrete&#xA0;functions</span></a>
+ can also be included
+in the sequence of operations; i.e.,
+functions that depend on the
+<a href="glossary.xml#Independent Variable" target="_top"><span style='white-space: nowrap'>independent&#xA0;variables</span></a>
+
+but which have identically zero derivatives
+(e.g., a step function).
+Derivatives of functions that are defined in terms of other derivatives
+can be computed using multiple tapes
+(see <a href="multape.xml" target="_top"><span style='white-space: nowrap'>MulTape</span></a>
+ for a simple example
+and <a href="odetaylor.cpp.xml" target="_top"><span style='white-space: nowrap'>OdeTaylor.cpp</span></a>
+ for a more realistic example).
+
+</li><li>
+
+Includes a C++ <a href="library.xml" target="_top"><span style='white-space: nowrap'>library</span></a>
+ that is useful
+for general operator overloaded numerical method.
+Allows for replacement of the
+<a href="cppadvector.xml" target="_top"><span style='white-space: nowrap'>CppADvector</span></a>
+ 
+template vector class which is used for extensive testing; 
+for example, you can do your testing with the
+<a href="http://www.boost.org/libs/numeric/ublas/doc/index.htm" target="_top"><span style='white-space: nowrap'>uBlas</span></a>
+ 
+template vector class.
+
+</li><li>
+
+See <a href="whatsnew06.xml" target="_top"><span style='white-space: nowrap'>WhatsNew06</span></a>
+ for a list of recent extensions and bug fixes.
+
+</li></ol>
+
+
+You can find out about other algorithmic differentiation tools
+and about algorithmic differentiation in general at the web site
+<a href="http://www.autodiff.org" target="_top"><span style='white-space: nowrap'>http://www.autodiff.org</span></a>
+
+or at
+<a href="http://www.math.tu-dresden.de/wir/staff/griewank/" target="_top"><span style='white-space: nowrap'>Andreas&#xA0;Griewank's&#xA0;home&#xA0;page</span></a>
+.
+
+<br/>
+<br/>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br/>
+The file
+<a href="getstarted.cpp.xml" target="_top"><span style='white-space: nowrap'>GetStarted.cpp</span></a>
+
+contains an example and test of using CppAD to compute
+the derivative of a polynomial.
+There are many other 
+<a href="example.xml" target="_top"><span style='white-space: nowrap'>examples</span></a>
+.
+
+<br/>
+<br/>
+<b><big><a name="Base Type Requirements" id="Base Type Requirements">Base Type Requirements</a></big></b>
+
+
+
+<br/>
+The currently allowable base types are:
+<code><font color="blue">float</font></code>,
+<code><font color="blue">double</font></code>,
+<code><font color="blue">std::complex&lt;float&gt;</font></code>,
+<code><font color="blue">std::complex&lt;double&gt;</font></code>, 
+or any type in the 
+<a href="glossary.xml#AD Type Sequence" target="_top"><span style='white-space: nowrap'>AD&#xA0;type&#xA0;sequences</span></a>
+ above
+these types.
+
+
+<br/>
+<br/>
+<b><big><a name="Include File" id="Include File">Include File</a></big></b>
+
+
+<br/>
+The following include directive
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;#&#xA0;include&#xA0;CppAD/CppAD.h<br/>
+</span></font></code>includes the CppAD package for the rest of the current compilation unit.
+
+<br/>
+<br/>
+<b><big><a name="Preprocessor Symbols" id="Preprocessor Symbols">Preprocessor Symbols</a></big></b>
+<br/>
+All the preprocessor symbols used by CppAD begin with <code><font color="blue">CppAD</font></code>.
+For example, 
+the preprocessor symbol <code><font color="blue">CppADIncluded</font></code> is used to determine
+if <code><font color="blue">CppAD.h</font></code> has already been included.
+As another example,  
+the preprocessor symbol <a href="cppadvector.xml" target="_top"><span style='white-space: nowrap'>CppADvector</span></a>
+ determines which
+<a href="simplevector.xml" target="_top"><span style='white-space: nowrap'>SimpleVector</span></a>
+ template class is extensively tested with CppAD.
+
+<br/>
+<br/>
+<b><big><a name="Namespace" id="Namespace">Namespace</a></big></b>
+
+
+<br/>
+All of the functions and objects defined by CppAD are in the
+<code><font color="blue">CppAD</font></code> namespace; for example, you can access the <a href="ad.xml" target="_top"><span style='white-space: nowrap'>AD</span></a>
+ types as 
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;n&#xA0;=&#xA0;2;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::vector&lt;&#xA0;CppAD::AD&lt;</span></font></code><i><span style='white-space: nowrap'>Base</span></i><code><font color="blue"><span style='white-space: nowrap'>&gt;&#xA0;&gt;&#xA0;</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>(</span></font></code><i><span style='white-space: nowrap'>n</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br/>
+</span></font></code>You can abbreviate access to one object or function a <code><font color="blue">using</font></code> 
+command of the form
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;CppAD::AD<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;CppAD::vector&lt;&#xA0;AD&lt;</span></font></code><i><span style='white-space: nowrap'>Base</span></i><code><font color="blue"><span style='white-space: nowrap'>&gt;&#xA0;&gt;&#xA0;</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>(</span></font></code><i><span style='white-space: nowrap'>n</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br/>
+</span></font></code>You can abbreviate access to all CppAD objects and functions 
+with a command of the form
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;namespace&#xA0;CppAD<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;vector&lt;&#xA0;AD&lt;</span></font></code><i><span style='white-space: nowrap'>Base</span></i><code><font color="blue"><span style='white-space: nowrap'>&gt;&#xA0;&gt;&#xA0;</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>(</span></font></code><i><span style='white-space: nowrap'>n</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br/>
+</span></font></code>If you include other namespaces in a similar manner,
+this can cause naming conflicts.
+
+
+<br/>
+<br/>
+<b><big><a name="Contents" id="Contents">Contents</a></big></b>
+<br/>
+<table>
+<tr><td><a href="_contents_xml.htm" target="_top">_contents</a></td><td>Table&#xA0;of&#xA0;Contents</td></tr><tr><td><a href="license.xml" target="_top">License</a></td><td>Your&#xA0;License&#xA0;for&#xA0;the&#xA0;CppAD&#xA0;Software</td></tr><tr><td><a href="faq.xml" target="_top">Faq</a></td><td>Frequently&#xA0;Asked&#xA0;Questions&#xA0;and&#xA0;Answers</td></tr><tr><td><a href="install.xml" target="_top">Install</a></td><td>Installing&#xA0;and&#xA0;Testing&#xA0;CppAD</td></tr><tr><td><a href="getstarted.cpp.xml" target="_top">GetStarted.cpp</a></td><td>Getting&#xA0;Started&#xA0;Using&#xA0;CppAD</td></tr><tr><td><a href="introduction.xml" target="_top">Introduction</a></td><td>An&#xA0;Introduction&#xA0;by&#xA0;Example&#xA0;to&#xA0;Algorithmic&#xA0;Differentiation</td></tr><tr><td><a href="ad.xml" target="_top">AD</a></td><td>AD&#xA0;Objects</td></tr><tr><td><a href="adfun.xml" target="_top">ADFun</a></td><td>ADFun&#xA0;Objects</td></tr><tr><td><a href="library.xml" target="_top">library</a></td><td>The&#xA0;CppAD&#xA0;General&#xA0;Purpose&#xA0;Library</td></tr><tr><td><a href="example.xml" target="_top">Example</a></td><td>Examples</td></tr><tr><td><a href="appendix.xml" target="_top">Appendix</a></td><td>Appendix</td></tr><tr><td><a href="_reference.xml" target="_top">_reference</a></td><td>Alphabetic&#xA0;Listing&#xA0;of&#xA0;Cross&#xA0;Reference&#xA0;Tags</td></tr><tr><td><a href="_index.xml" target="_top">_index</a></td><td>Keyword&#xA0;Index</td></tr><tr><td><a href="_search_xml.htm" target="_top">_search</a></td><td>Search&#xA0;This&#xA0;Web&#xA0;Site</td></tr><tr><td><a href="_external.xml" target="_top">_external</a></td><td>External&#xA0;Internet&#xA0;References</td></tr></table>
+<hr/>Input File: Doc.omh
+
+</body>
+</html>

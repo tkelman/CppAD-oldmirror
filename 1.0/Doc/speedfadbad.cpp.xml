@@ -1,0 +1,104 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Run All The Fadbad Speed Comparison Tests</title>
+<meta name="description" id="description" content="Run All The Fadbad Speed Comparison Tests"/>
+<meta name="keywords" id="keywords" content=" run all Fadbad speed test "/>
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_speedfadbad.cpp_xml.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"/></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td><a href="fadbad.xml" target="_top">Prev</a>
+</td><td><a href="examplefadbad.cpp.xml" target="_top">Next</a>
+</td><td><a href="cppad.xml" target="_top">Top</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>CppAD-&gt;</option>
+<option>License</option>
+<option>Faq</option>
+<option>Install</option>
+<option>GetStarted.cpp</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>Appendix-&gt;</option>
+<option>Theory</option>
+<option>Speed</option>
+<option>Adolc</option>
+<option>Fadbad</option>
+<option>glossary</option>
+<option>Bib</option>
+<option>Bugs</option>
+<option>WishList</option>
+<option>WhatsNew06</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>Fadbad-&gt;</option>
+<option>SpeedFadbad.cpp</option>
+<option>ExampleFadbad.cpp</option>
+<option>DetMinorFadbad.cpp</option>
+<option>DetLuFadbad.cpp</option>
+</select>
+</td>
+<td>SpeedFadbad.cpp</td>
+<td>Headings</td>
+</tr></table><br/>
+<center><b><big><big>Run All The Fadbad Speed Comparison Tests</big></big></b></center>
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+<br/>
+#&#xA0;include&#xA0;&lt;CppAD/CppAD.h&gt;<br/>
+#&#xA0;include&#xA0;&lt;cstddef&gt;<br/>
+<br/>
+<br/>
+std::string&#xA0;DetMinorCp&#xA0;&#xA0;(size_t&#xA0;size,&#xA0;size_t&#xA0;repeat);<br/>
+std::string&#xA0;DetMinorFa&#xA0;&#xA0;(size_t&#xA0;size,&#xA0;size_t&#xA0;repeat);<br/>
+<br/>
+std::string&#xA0;DetLuCp&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;(size_t&#xA0;size,&#xA0;size_t&#xA0;repeat);<br/>
+std::string&#xA0;DetLuFa&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;(size_t&#xA0;size,&#xA0;size_t&#xA0;repeat);<br/>
+<br/>
+<br/>
+int&#xA0;main()<br/>
+{&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;CppAD::SpeedTest;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;SpeedTest(DetMinorCp,&#xA0;&#xA0;&#xA0;&#xA0;1,&#xA0;2,&#xA0;7);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;SpeedTest(DetMinorFa,&#xA0;&#xA0;&#xA0;&#xA0;1,&#xA0;2,&#xA0;7);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;SpeedTest(DetLuCp,&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;1,&#xA0;2,&#xA0;7);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;SpeedTest(DetLuFa,&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;1,&#xA0;2,&#xA0;7);<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;0;<br/>
+}<br/>
+<br/>
+</span></font></code>
+<hr/>Input File: Fadbad/Speed.cpp
+
+</body>
+</html>

@@ -1,0 +1,89 @@
+var list_across0 = [
+'_contents.htm',
+'_reference.htm',
+'_index.htm',
+'_search.htm',
+'_external.htm'
+];
+var list_down3 = [
+'license.htm',
+'faq.htm',
+'install.htm',
+'getstarted.cpp.htm',
+'introduction.htm',
+'ad.htm',
+'adfun.htm',
+'library.htm',
+'example.htm',
+'appendix.htm'
+];
+var list_down2 = [
+'constructor.htm',
+'convert.htm',
+'eq.htm',
+'advalued.htm',
+'boolvalued.htm',
+'vecad.htm'
+];
+var list_down1 = [
+'arithmetic.htm',
+'stdmathunary.htm',
+'mathother.htm',
+'condexp.htm',
+'discrete.htm'
+];
+var list_down0 = [
+'condexp.cpp.htm'
+];
+var list_current0 = [
+'condexp.htm#Syntax',
+'condexp.htm#Purpose',
+'condexp.htm#Type',
+'condexp.htm#Op',
+'condexp.htm#left',
+'condexp.htm#right',
+'condexp.htm#trueCase',
+'condexp.htm#falseCase',
+'condexp.htm#result',
+'condexp.htm#CondExp',
+'condexp.htm#Operation Sequence',
+'condexp.htm#Example',
+'condexp.htm#Test',
+'condexp.htm#Atan2'
+];
+function choose_across0(item)
+{	var index          = item.selectedIndex;
+	item.selectedIndex = 0;
+	if(index > 0)
+		document.location = list_across0[index-1];
+}
+function choose_down3(item)
+{	var index          = item.selectedIndex;
+	item.selectedIndex = 0;
+	if(index > 0)
+		document.location = list_down3[index-1];
+}
+function choose_down2(item)
+{	var index          = item.selectedIndex;
+	item.selectedIndex = 0;
+	if(index > 0)
+		document.location = list_down2[index-1];
+}
+function choose_down1(item)
+{	var index          = item.selectedIndex;
+	item.selectedIndex = 0;
+	if(index > 0)
+		document.location = list_down1[index-1];
+}
+function choose_down0(item)
+{	var index          = item.selectedIndex;
+	item.selectedIndex = 0;
+	if(index > 0)
+		document.location = list_down0[index-1];
+}
+function choose_current0(item)
+{	var index          = item.selectedIndex;
+	item.selectedIndex = 0;
+	if(index > 0)
+		document.location = list_current0[index-1];
+}

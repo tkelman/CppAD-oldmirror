@@ -1,0 +1,82 @@
+var list_across0 = [
+'_contents_xml.htm',
+'_reference.xml',
+'_index.xml',
+'_search_xml.htm',
+'_external.xml'
+];
+var list_down2 = [
+'license.xml',
+'faq.xml',
+'install.xml',
+'getstarted.cpp.xml',
+'introduction.xml',
+'ad.xml',
+'adfun.xml',
+'library.xml',
+'example.xml',
+'appendix.xml'
+];
+var list_down1 = [
+'theory.xml',
+'speed.xml',
+'adolc.xml',
+'fadbad.xml',
+'glossary.xml',
+'bib.xml',
+'bugs.xml',
+'wishlist.xml',
+'whatsnew06.xml'
+];
+var list_current0 = [
+'glossary.xml#AD Function',
+'glossary.xml#AD of Base',
+'glossary.xml#AD Type Sequence',
+'glossary.xml#Base Function',
+'glossary.xml#Base Type',
+'glossary.xml#Dependent Variable',
+'glossary.xml#Elementary Vector',
+'glossary.xml#Independent Variable',
+'glossary.xml#Operation',
+'glossary.xml#Operation.Atomic',
+'glossary.xml#Operation.Sequence',
+'glossary.xml#Operation.Dependent',
+'glossary.xml#Operation.Independent',
+'glossary.xml#Parameter',
+'glossary.xml#Sparsity Pattern',
+'glossary.xml#Tape State',
+'glossary.xml#Tape State.Empty',
+'glossary.xml#Tape State.Recording',
+'glossary.xml#Taylor Coefficient',
+'glossary.xml#Variable'
+];
+function choose_across0(item)
+{	var index          = item.selectedIndex;
+	item.selectedIndex = 0;
+	if(index > 0)
+		document.location = list_across0[index-1];
+}
+function choose_down2(item)
+{	var index          = item.selectedIndex;
+	item.selectedIndex = 0;
+	if(index > 0)
+		document.location = list_down2[index-1];
+}
+function choose_down1(item)
+{	var index          = item.selectedIndex;
+	item.selectedIndex = 0;
+	if(index > 0)
+		document.location = list_down1[index-1];
+}
+function choose_down0(item)
+{	var index          = item.selectedIndex;
+	item.selectedIndex = 0;
+	if(index > 0)
+		document.location = list_down0[index-1];
+}
+function choose_current0(item)
+{	var index          = item.selectedIndex;
+	item.selectedIndex = 0;
+	if(index > 0)
+		document.location = list_current0[index-1];
+}

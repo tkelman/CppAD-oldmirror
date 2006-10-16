@@ -1,0 +1,179 @@
+<html><head>
+<title>Discrete AD Functions</title>
+<meta name="description" id="description" content="Discrete AD Functions">
+<meta name="keywords" id="keywords" content=" ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_discrete_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://www.coin-or.org/CppAD/" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td><a href="condexp.cpp.htm" target="_top">Prev</a>
+</td><td><a href="discrete.cpp.htm" target="_top">Next</a>
+</td><td><a href="cppad.htm" target="_top">Top</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>CppAD-&gt;</option>
+<option>License</option>
+<option>Faq</option>
+<option>Install</option>
+<option>GetStarted.cpp</option>
+<option>Introduction</option>
+<option>AD</option>
+<option>ADFun</option>
+<option>library</option>
+<option>Example</option>
+<option>Appendix</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>AD-&gt;</option>
+<option>Constructor</option>
+<option>Convert</option>
+<option>Eq</option>
+<option>ADValued</option>
+<option>BoolValued</option>
+<option>VecAD</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>ADValued-&gt;</option>
+<option>Arithmetic</option>
+<option>StdMathUnary</option>
+<option>MathOther</option>
+<option>CondExp</option>
+<option>Discrete</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down0(this)'>
+<option>Discrete-&gt;</option>
+<option>Discrete.cpp</option>
+<option>Piecewise.cpp</option>
+</select>
+</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Syntax</option>
+<option>Purpose</option>
+<option>Prototypes</option>
+<option>CppADCreateDiscrete</option>
+<option>Operation Sequence</option>
+<option>Derivatives</option>
+<option>Example</option>
+</select>
+</td>
+</tr></table><br>
+<center><b><big><big>Discrete AD Functions</big></big></b></center>
+<br>
+<b><big><a name="Syntax" id="Syntax">Syntax</a></big></b>
+
+<br>
+<code><font color="blue"><span style='white-space: nowrap'>CppADCreateDiscrete(</span></font></code><i><span style='white-space: nowrap'>Base</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;</span></font></code><i><span style='white-space: nowrap'>FunName</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>
+<code><span style='white-space: nowrap'><br>
+</span></code><code><font color="blue"></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;=&nbsp;</span></font></code><i><span style='white-space: nowrap'>FunName</span></i><code><font color="blue"><span style='white-space: nowrap'>(</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>
+
+
+<br>
+<br>
+<b><big><a name="Purpose" id="Purpose">Purpose</a></big></b>
+<br>
+Record the evaluation of a discrete function as part
+of an AD of <i>Base</i>
+<a href="glossary.htm#Operation.Sequence" target="_top"><span style='white-space: nowrap'>operation&nbsp;sequence</span></a>
+.
+The value of a discrete function can depend on the
+<a href="glossary.htm#Independent Variable" target="_top"><span style='white-space: nowrap'>independent&nbsp;variables</span></a>
+,
+but its derivative is identically zero.
+For example, suppose that the integer part of <i>x</i> is the 
+index into an array of values. 
+
+<br>
+<br>
+<b><big><a name="Prototypes" id="Prototypes">Prototypes</a></big></b>
+<br>
+The variables above and below have the following prototypes
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;</span></font></code><i><span style='white-space: nowrap'>Base</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>u</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>Base</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>v</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;AD&lt;</span></font></code><i><span style='white-space: nowrap'>Base</span></i><code><font color="blue"><span style='white-space: nowrap'>&gt;&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AD&lt;</span></font></code><i><span style='white-space: nowrap'>Base</span></i><code><font color="blue"><span style='white-space: nowrap'>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><br>
+<b><big><a name="CppADCreateDiscrete" id="CppADCreateDiscrete">CppADCreateDiscrete</a></big></b>
+<br>
+The preprocessor macro invocation
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CppADCreateDiscrete(</span></font></code><i><span style='white-space: nowrap'>Base</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;</span></font></code><i><span style='white-space: nowrap'>FunName</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code>can be with in a namespace but must be outside of any routine.
+It defines a function with the following syntax
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;=&nbsp;</span></font></code><i><span style='white-space: nowrap'>FunName</span></i><code><font color="blue"><span style='white-space: nowrap'>(</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code>This function will compute its values using a user defined function
+with the following syntax
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>v</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;=&nbsp;</span></font></code><i><span style='white-space: nowrap'>FunName</span></i><code><font color="blue"><span style='white-space: nowrap'>(</span></font></code><i><span style='white-space: nowrap'>u</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code><br>
+<b><big><a name="Operation Sequence" id="Operation Sequence">Operation Sequence</a></big></b>
+<br>
+This is an AD of <i>Base</i>
+<a href="glossary.htm#Operation.Atomic" target="_top"><span style='white-space: nowrap'>atomic&nbsp;operation</span></a>
+
+and hence is part of the current
+AD of <i>Base</i>
+<a href="glossary.htm#Operation.Sequence" target="_top"><span style='white-space: nowrap'>operation&nbsp;sequence</span></a>
+.
+
+
+<br>
+<br>
+<b><big><a name="Derivatives" id="Derivatives">Derivatives</a></big></b>
+<br>
+During a zero order <a href="forward.htm" target="_top"><span style='white-space: nowrap'>Forward</span></a>
+ operation,
+an <a href="adfun.htm" target="_top"><span style='white-space: nowrap'>ADFun</span></a>
+ object will compute the value of a discrete function
+using the user provided <i>Base</i> version of the routine.
+All the derivatives of a discrete function will be evaluated as zero.
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+
+<br>
+The file
+<a href="discrete.cpp.htm" target="_top"><span style='white-space: nowrap'>Discrete.cpp</span></a>
+
+contains an example and test of using discrete functions.   
+It returns true if it succeeds and false otherwise.
+The file
+<a href="piecewise.cpp.htm" target="_top"><span style='white-space: nowrap'>Piecewise.cpp</span></a>
+
+contains an example and test that uses discrete
+functions for piecewise linear interpolation.
+
+
+
+<hr>Input File: CppAD/local/Discrete.h
+
+</body>
+</html>
