@@ -19,8 +19,8 @@ $childtable%
 	CppAD/local/preprocessor.hpp%
 	omh/Theory.omh%
 	omh/speed_.omh%
-	omh/Adolc.omh%
-	omh/Fadbad.omh%
+	omh/adolc_.omh%
+	omh/fadbad_.omh%
 	omh/glossary.omh%
 	omh/Bib.omh%
 	omh/Bugs.omh%

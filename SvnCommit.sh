@@ -38,34 +38,28 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Move omh/Introduction.omh to omh/introduction_.omh
+log_entry="Move Adolc.omh -> adolc_.omh and Fadbad.omh -> fadbad.omh
 
 SvnCommit.sh: file that made this commit.
-Doc.omh: change cross reference from Introduciton to introduction_.
-diffToday.sh: check if CppAD/config.h has changed more than just date.
-InstallUnix.omh: change cross reference from Introduciton to introduction_.
-introduction_.omh: new file name.
-Introduciton.omh: old file name.
-WhatsNew06.omh.omh: change cross reference from Introduciton to introduction_.
-InstallWindows.omh: change cross reference from Introduciton to introduction_.
-SvnStatus.sh: check if CppAD/config.h has changed more than date.
-Build.sh: change date in CppAD/config.h.
+Appendix.omh: change cross references Adolc->adolc_ and Fadbad->fadbad_.
+adolc_.omh: Adolc.omh move here.
+fadbad_.omh: Fadbad.omh move here.
+Fadbad.omh: moved to fadbad_.omh.
+WhatsNew04.omh: change cross references Adolc->adolc_ and Fadbad->fadbad_.
+Adolc.omh: moved to adolc_.omh
 "
 # 
 add_list="
 "
 #
 change_list="
-	Doc.omh
-	diffToday.sh
-	omh/InstallUnix.omh
-	omh/introduction_.omh
-	omh/Introduction.omh
-	omh/WhatsNew06.omh
-	omh/InstallWindows.omh
-	SvnStatus.sh
 	SvnCommit.sh
-	Build.sh
+	omh/Appendix.omh
+	omh/adolc_.omh
+	omh/fadbad_.omh
+	omh/Fadbad.omh
+	omh/WhatsNew04.omh
+	omh/Adolc.omh
 "
 #
 delete_list="
