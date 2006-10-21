@@ -45,7 +45,6 @@ sed                                                           \
 #
 # Add differences for automatically updated files
 ./diffToday.sh AUTHORS
-./diffToday.sh CppAD/config.h
 ./diffToday.sh Doc.omh
 ./diffToday.sh configure.ac
 ./diffToday.sh omh/InstallUnix.omh

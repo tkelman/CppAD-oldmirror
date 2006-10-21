@@ -120,7 +120,7 @@ $xref/GetStarted.cpp/$$
 contains an example and test of using CppAD to compute
 the derivative of a polynomial.
 There are many other 
-$xref/Example//examples/$$.
+$xref/example_//examples/$$.
 
 $head Base Type Requirements$$
 $index require, Base$$
@@ -187,7 +187,7 @@ $childtable%
 	CppAD/local/user_ad.hpp%
 	CppAD/local/ad_fun.hpp%
 	omh/library.omh%
-	omh/Example.omh%
+	omh/example_.omh%
 	omh/Appendix.omh
 %$$
 

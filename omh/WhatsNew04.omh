@@ -821,7 +821,7 @@ $pre
 
 $$
 Documentation errors in $xref/ForTwo/$$ and $xref/Reverse/$$ were fixed.
-The $xref/Example/$$ documentation was reorganized.
+The $xref/example_/$$ documentation was reorganized.
 
 
 $head 03-06$$
@@ -882,7 +882,7 @@ $head 02-28$$
 A set of routines for comparing CppAD with 
 $xref/ADOLC/$$ has been added to the distribution.
 In addition, documentation for compiling and linking the
-$xref/Example//Examples/$$ and $xref/Speed//Speed Tests/$$
+$xref/example_//Examples/$$ and $xref/Speed//Speed Tests/$$
 has been added.
 
 $head 02-21$$
