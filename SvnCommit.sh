@@ -38,22 +38,34 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Missing from previous commit.
+log_entry="Move omh/Introduction.omh to omh/introduction_.omh
 
-SvnCommit.sh: file that make this commit.
-WhatsNew06.omh: user's view of the changes.
-Makefile.am: include new preprocessor section.
-ErrorHandler.h: proper interaction with CppAD.h.
+SvnCommit.sh: file that made this commit.
+Doc.omh: change cross reference from Introduciton to introduction_.
+diffToday.sh: check if CppAD/config.h has changed more than just date.
+InstallUnix.omh: change cross reference from Introduciton to introduction_.
+introduction_.omh: new file name.
+Introduciton.omh: old file name.
+WhatsNew06.omh.omh: change cross reference from Introduciton to introduction_.
+InstallWindows.omh: change cross reference from Introduciton to introduction_.
+SvnStatus.sh: check if CppAD/config.h has changed more than date.
+Build.sh: change date in CppAD/config.h.
 "
 # 
 add_list="
 "
 #
 change_list="
-	SvnCommit.sh
+	Doc.omh
+	diffToday.sh
+	omh/InstallUnix.omh
+	omh/introduction_.omh
+	omh/Introduction.omh
 	omh/WhatsNew06.omh
-	Makefile.am
-	CppAD/ErrorHandler.h
+	omh/InstallWindows.omh
+	SvnStatus.sh
+	SvnCommit.sh
+	Build.sh
 "
 #
 delete_list="
