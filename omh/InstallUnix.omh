@@ -59,21 +59,21 @@ $index download, unix$$
 Download either the CPL or GPL licensed version from:
 
 $subhead CPL License$$
-$href%cppad-06-10-21.cpl.tgz%$$
+$href%cppad-06-09-29.cpl.tgz%$$
 
 $subhead GPL License$$
-$href%cppad-06-10-21.gpl.tgz%$$
+$href%cppad-06-09-29.gpl.tgz%$$
 
 $head Extraction$$
 Use the command
 $syntax%
-	tar -xvzf cppad-06-10-21.%license%.tgz
+	tar -xvzf cppad-06-09-29.%license%.tgz
 %$$
 (where $italic license$$ is $code cpl$$ or $code gpl$$)
 to decompress and extract the unix format version
 into the distribution directory
 $syntax%
-	cppad-06-10-21
+	cppad-06-09-29
 %$$
 Note that $code 06-08-20$$ is the version number for CppAD.
 All of the commands below are to be executed starting from this
@@ -169,7 +169,7 @@ $head --with-Introduction$$
 $index Introduction, unix$$
 If the command line argument $code --with-Introduction$$ is specified,
 the $xref/Introduction.cpp/$$ program
-(verifies calculations in the $xref/introduction_/$$) will be built.
+(verifies calculations in the $xref/Introduction/$$) will be built.
 Once the $code make$$ command
 has been executed, you can run these examples by executing the command
 $codep

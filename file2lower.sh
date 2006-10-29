@@ -34,12 +34,9 @@ do
 		-e "s|/\([A-z][a-z]*\)\.|/\1_.|" | tr [A-Z] [a-z]
 	`
 	echo "mv $old $new" >> file2lower.mv
+	old=`echo $old | sed -e 's|/|[\\\\/]|'`
 	#
-	old_name=`echo $old | sed -e "s|.*/||" -e "s|\.$extension||"`
-	new_name=`echo $new | sed -e "s|.*/||" -e "s|\.$extension||"`
-	d='$'
-	echo "s@\([/|%]\)$old_name\([/|%]\)@\1$new_name\2@g" >> file2lower.sed
-	echo "s@\([ /|%\]\)$old_name\.omh@\1$new_name.omh@g" >> file2lower.sed
+	echo "s@$old@$new@g"  >> file2lower.sed
 done
 chmod +x file2lower.mv
 if [ $test_mode = "yes" ]
@@ -94,6 +91,10 @@ then
 else
 	echo "file2lower.sh: changing $file"
 	mv file2lower.tmp $file
+	if [ "$ext" = "sh" ]
+	then
+		chmod +x $file
+	fi
 fi
 			fi
 		done

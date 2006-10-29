@@ -102,7 +102,7 @@ $head 12-10$$
 The change on $xref/WhatsNew03/12-01/12-01/$$ make the taping process simpler
 if one does not directly access
 $code CppADCreateTape$$.
-The $xref/example_//examples/$$ were changed to not use
+The $xref/Example//examples/$$ were changed to not use
 $italic TapeName$$. 
 The following examples were skipped because
 they document the functions that access $italic TapeName$$:
@@ -421,7 +421,7 @@ so they use a template function with both base type and AD type arguments.
 $head 09-05$$
 A $xref/GetStarted.cpp//getting started/$$ 
 example was added and the organization
-of the $xref/example_//Examples/$$ was changed.
+of the $xref/Example//Examples/$$ was changed.
 
 $head 09-04$$
 The $code AbsOfDoubleNotDefine$$ flag is no longer used
@@ -652,7 +652,7 @@ The
 $xref/LuSolve/$$ example was added to show how
 on can differentiate linear algebra calculations.
 In addition, it was used to add another set of 
-$xref/speed_//speed tests/$$.
+$xref/Speed//speed tests/$$.
 $pre
 
 $$
@@ -674,7 +674,7 @@ $pre
 
 $$
 The name of the $code Speed/SpeedTest$$ program was changed to
-$xref%speed_%%Speed/Speed%$$.
+$xref%Speed%%Speed/Speed%$$.
 In addition, $code Speed/SpeedRun$$ was changed to
 $code Speed/SpeedTest$$.
 

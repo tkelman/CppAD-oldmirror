@@ -11,7 +11,7 @@
 # automake input file
 #
 # Microsoft project files
-EXTRA_DIST        = Example.sln Example.vcproj OneTest
+EXTRA_DIST        = Example.sln Example.vcproj OneTest.sh
 #
 noinst_PROGRAMS   = Example 
 #
@@ -66,6 +66,7 @@ Example_SOURCES   = \
 	Forward.cpp \
 	ForSparseJac.cpp \
 	FunCheck.cpp \
+	HesLagrangian.cpp \
 	HesLuDet.cpp \
 	HesMinorDet.cpp \
 	Hessian.cpp \

@@ -38,15 +38,18 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Move Adolc.omh -> adolc_.omh and Fadbad.omh -> fadbad.omh
+log_entry="Move OneTest to OneTest.sh and fix its copyright message GPL-CPL.
 
-SvnCommit.sh: file that made this commit.
-Appendix.omh: change cross references Adolc->adolc_ and Fadbad->fadbad_.
-adolc_.omh: Adolc.omh move here.
-fadbad_.omh: Fadbad.omh move here.
-Fadbad.omh: moved to fadbad_.omh.
-WhatsNew04.omh: change cross references Adolc->adolc_ and Fadbad->fadbad_.
-Adolc.omh: moved to adolc_.omh
+SvnCommit.sh: file that make this commit.
+WhatsNew06.omh: user's view of the changes.
+config.h: current version number.
+Makefile.am: move inclusion of OneTest.sh into sub-directory Makefile.am
+Example/OneTest: move Example/OneTest to Example/OneTest.sh
+Example/OneTest.sh: fix copyright message
+Example/Makefile.am: include OneTest.sh in distribution 
+TestMore/OneTest: move TestMore/OneTest to TestMore/OneTest.sh
+TestMore/OneTest.sh: fix copyright message
+TestMore/Makefile.am: include OneTest.sh in distribution 
 "
 # 
 add_list="
@@ -54,12 +57,15 @@ add_list="
 #
 change_list="
 	SvnCommit.sh
-	omh/Appendix.omh
-	omh/adolc_.omh
-	omh/fadbad_.omh
-	omh/Fadbad.omh
-	omh/WhatsNew04.omh
-	omh/Adolc.omh
+	omh/WhatsNew06.omh
+	CppAD/config.h
+	Example/OneTest
+	Example/OneTest.sh
+	Example/Makefile.am
+	Makefile.am
+	TestMore/OneTest
+	TestMore/OneTest.sh
+	TestMore/Makefile.am
 "
 #
 delete_list="

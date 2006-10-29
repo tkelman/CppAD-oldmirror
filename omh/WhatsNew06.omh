@@ -66,6 +66,42 @@ $tend
 The purpose of these sections is to
 assist you in learning about changes between various versions of CppAD.
 
+$head 10-28$$
+The copyright message in the script files
+$code Example/OneTest$$ and $code TestMore/OneTest$$ were GPL
+(in the CPL distribution).
+This has been fixed by moving them to
+$code Example/OneTest.sh$$ and $code TestMore/OneTest.sh$$ so that
+the distribution automatically edits the copyright message.
+
+
+$head 10-27$$
+Change $cref/HesLagrangian.cpp/$$ example so that it computes the 
+Lagrangian two ways. One is simpler and the other can be used
+to avoid re-taping operation sequence.
+
+$head 10-26$$
+Change $cref/HesLagrangian.cpp/$$ example so that it modifies
+the independent variable vector between the call to 
+$cref/Independent/$$ and the $syntax%ADFun<%Base%>%$$
+$cref/constructor/FunConstruct/$$.
+
+$head 10-25$$
+A $cref/subversion install procedure/InstallSubversion/$$ was
+added to the documentation.
+$pre
+
+$$
+Fix definition of preprocessor symbol
+$code PACKAGE_STRING$$ in $code Speed/Speed.cpp$$ 
+(broken by change on 10-18).
+$pre
+
+$$
+Added the example 
+$cref/HesLagrangian.cpp/$$ which computes the Hessian
+of a Lagrangian.
+
 $head 10-18$$
 Document and fix possible conflicts for 
 $cref/preprocessor/$$ symbols
@@ -123,7 +159,7 @@ These were not really bugs, but they have been fixed to avoid
 this conflict between CppAD and $href%http://valgrind.org/%valgrind%$$.
 
 $head 07-14$$
-Make some improvements were made to the $cref/introduction_/$$, 
+Make some improvements were made to the $cref/Introduction/$$, 
 $cref/ExpApx.hpp/$$ and $cref/ExpApxRev/$$ sections.
 
 $head 07-12$$
@@ -184,7 +220,7 @@ This has been fixed.
 $pre
 
 $$
-The compiling instructions for the $xref/speed_/$$ routines have been improved.
+The compiling instructions for the $xref/Speed/$$ routines have been improved.
 $pre
 
 $$
@@ -215,7 +251,7 @@ $xref/GetStarted.cpp/$$ (to make it easier to start using CppAD).
 $pre
 
 $$
-In the $xref/introduction_/$$ example,
+In the $xref/Introduction/$$ example,
 $latex ExpApx$$ was changed to $latex {\rm ExpApx}$$.
 
 $head 06-05$$
@@ -277,12 +313,12 @@ Improve the $xref/GetStarted.cpp/$$ example and move
 it so that it is visible at the too level of the documentation.
 
 $head 04-26$$
-The programs in $xref/introduction_/$$ have been converted to automated
+The programs in $xref/Introduction/$$ have been converted to automated
 test that return true or false with the driver program 
 $xref/Introduction.cpp/$$.
 
 $head 04-25$$
-Add an $xref/introduction_/$$ section to the documentation
+Add an $xref/Introduction/$$ section to the documentation
 (replaces old example that was part of the $xref/Theory/$$ section).
 
 $head 04-19$$

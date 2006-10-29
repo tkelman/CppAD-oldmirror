@@ -11,8 +11,6 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 $begin WhatsNew04$$
 $spell
-	Adolc
-	Fadbad
 	deps
 	executables
 	Runge
@@ -233,7 +231,7 @@ developer documentation was brought up to date.
 $pre
 
 $$
-Links to the Adolc and Fadbad download pages were added
+Links to the ADOLC and FADBAD download pages were added
 to the $xref/InstallUnix//unix installation/$$ instructions.
 
 $head 09-29$$
@@ -647,7 +645,7 @@ default $xref/CppADvector/$$ template class.
 $pre
 
 $$
-A $xref/fadbad_/$$ correctness and speed comparison with CppAD
+A $xref/FADBAD/$$ correctness and speed comparison with CppAD
 was added.
 
 
@@ -789,11 +787,11 @@ $head 03-17$$
 Change the return type for $xref/SpeedTest/$$ from $code const char *$$
 to $code std::string$$.
 The memory required for the largest test cases was added to the
-$xref/speed_/$$ tests output.
+$xref/Speed/$$ tests output.
 
 $head 03-15$$
-The comparison between Adolc and CppAD for
-the $xref/DetLuAdolc.cpp//DetLu/$$ example was returning an error
+The comparison between ADOLC and CppAD for
+the $xref/DetLuADOLC.cpp//DetLu/$$ example was returning an error
 (because it was checking for exact equality of calculated derivatives
 instead of nearly equal).
 This has been fixed.
@@ -823,7 +821,7 @@ $pre
 
 $$
 Documentation errors in $xref/ForTwo/$$ and $xref/Reverse/$$ were fixed.
-The $xref/example_/$$ documentation was reorganized.
+The $xref/Example/$$ documentation was reorganized.
 
 
 $head 03-06$$
@@ -868,23 +866,23 @@ were moved below $xref/ADFun/$$ in the documentation.
 
 
 $head 03-01$$
-The $xref/DetLuAdolc.cpp//DetLu/$$ case was added to the Adolc
+The $xref/DetLuADOLC.cpp//DetLu/$$ case was added to the ADOLC
 comparison tests.
 
 $head 02-29$$
 Under certain optimization flag values, 
 and on certain systems,
 an error was reported by the
-$xref/ExampleAdolc.cpp//Adolc correctness comparison/$$.
+$xref/ExampleADOLC.cpp//ADOLC correctness comparison/$$.
 It turned out that CppAD was not initializing a particular index 
 when debugging was turned off. This has been fixed.
 
 
 $head 02-28$$
 A set of routines for comparing CppAD with 
-$xref/adolc_/$$ has been added to the distribution.
+$xref/ADOLC/$$ has been added to the distribution.
 In addition, documentation for compiling and linking the
-$xref/example_//Examples/$$ and $xref/speed_//Speed Tests/$$
+$xref/Example//Examples/$$ and $xref/Speed//Speed Tests/$$
 has been added.
 
 $head 02-21$$
@@ -1015,7 +1013,7 @@ The specifications for the routine $code FunForTwo$$
 was changed to use 
 $xref/glossary/Taylor Coefficient/Taylor coefficients/$$.
 This makes the interface to CppAD closer to the interface for
-$href%http://www.math.tu-dresden.de/~adol-c/%Adolc%$$.
+$href%http://www.math.tu-dresden.de/~adol-c/%ADOLC%$$.
 
 
 

@@ -46,7 +46,8 @@ then
 	diff AUTHORS    AUTHORS.tmp
 	mv   AUTHORS.tmp AUTHORS 
 	#
-	# CppAD/config.h
+	# update CppAD/config.h
+	# even though gets overwritten when configure runs.
 	sed CppAD/config.h > CppAD/config.tmp \
 	-e "s/\"[0-9][0-9]-[0-9][0-9]-[0-9][0-9]\"/\"$yy_mm_dd\"/" \
 	-e "s/ [0-9][0-9]-[0-9][0-9]-[0-9][0-9]\"/ $yy_mm_dd\"/"
