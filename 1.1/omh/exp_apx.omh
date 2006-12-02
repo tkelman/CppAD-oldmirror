@@ -1,0 +1,157 @@
+/* --------------------------------------------------------------------------
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+
+CppAD is distributed under multiple licenses. This distribution is under
+the terms of the 
+                    Common Public License Version 1.0.
+
+A copy of this license is included in the COPYING file of this distribution.
+Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
+-------------------------------------------------------------------------- */
+/*
+$begin ExpApx$$
+$spell
+	cppad-%yy%-%mm%-%dd%
+	hpp
+	Apx
+	cpp
+	const
+	exp
+	bool
+$$
+
+$section An Example Exponential Approximation$$
+
+$index ExpApx$$
+$index example, algorithm$$
+$index algorithm, example$$
+$index exp, example$$
+
+$head Syntax$$
+$syntax%# include "ExpApx.hpp"%$$
+$pre
+$$
+$syntax%%y% = ExpApx(%x%, %e%)%$$
+
+
+$head Purpose$$
+This is an example algorithm that is used to demonstrate 
+Algorithmic Differentiation. 
+
+$head Mathematical Form$$
+The exponential function can be defined by
+$latex \[
+	\exp (x) = 1 + x^1 / 1 ! + x^2 / 2 ! + \cdots 
+\] $$
+We define $latex k ( \varepsilon )  $$ as the smallest
+non-negative integer such that $latex \varepsilon \geq x^k / k !$$; i.e.,
+$latex \[
+k( \varepsilon ) = \min \{ k \in {\rm Z}_+ \; | \; \varepsilon \geq x^k / k ! \}
+\] $$
+The mathematical form for our approximation of the exponential function is
+$latex \[
+\begin{array}{rcl}
+{\rm ExpApx} (x , \varepsilon ) & = & \left\{
+\begin{array}{ll}
+\frac{1}{ {\rm ExpApx} (-x , \varepsilon ) } 
+	& {\rm if} \; x < 0 
+\\
+1 + x^1 / 1 ! + \cdots + x^{k( \varepsilon)} / k( \varepsilon ) !
+	& {\rm otherwise}
+\end{array}
+\right.
+\end{array}
+\] $$
+
+
+$head include$$
+The include command in the syntax is relative to 
+$syntax%
+	cppad-%yy%-%mm%-%dd%/introduction
+%$$
+where $syntax%cppad-%yy%-%mm%-%dd%$$ is the distribution directory
+created during the beginning steps of the
+$cref%installation%Install%$$ of CppAD.
+
+
+$head x$$
+The argument $italic x$$ has prototype
+$syntax%
+	const %Type% &%x%
+%$$
+(see $italic Type$$ below).
+It specifies the point at which to evaluate the 
+approximation for the exponential function.
+
+$head e$$
+The argument $italic e$$ has prototype
+$syntax%
+	const %Type% &%e%
+%$$
+It specifies the accuracy with which
+to approximate the exponential function value; i.e.,
+it is the value of $latex \varepsilon$$ in the 
+exponential function approximation defined above.
+
+$head y$$
+The result $italic y$$ has prototype
+$syntax%
+	%Type% %y%
+%$$
+It is the value of the exponential function 
+approximation defined above.
+
+$head Type$$
+If $italic u$$ and $italic v$$ are $italic Type$$ objects and $italic i$$
+is an $code int$$: 
+
+$table
+$bold Operation$$  $cnext $bold Result Type$$ $cnext $bold Description$$
+$rnext
+$syntax%%Type%(%i%)%$$ 
+	$cnext $italic Type$$
+	$cnext object with value equal to $italic i$$ 
+$rnext
+$syntax%%u% > %v%$$
+	$cnext $code bool$$
+	$cnext true,
+	if $italic u$$ greater than $italic v$$, an false otherwise
+$rnext
+$syntax%%u% = %v%$$
+	$cnext $italic Type$$ 
+	$cnext new $italic u$$ (and result) is value of $italic v$$
+$rnext
+$syntax%%u% * %v%$$
+	$cnext $italic Type$$
+	$cnext result is value of $latex u * v$$
+$rnext
+$syntax%%u% / %v%$$
+	$cnext $italic Type$$
+	$cnext result is value of $latex u / v$$
+$rnext
+$syntax%%u% + %v%$$
+	$cnext $italic Type$$
+	$cnext result is value of $latex u + v$$
+$rnext
+$syntax%-%u%$$
+	$cnext $italic Type$$
+	$cnext result is value of $latex - u$$
+$tend
+
+$children%
+	introduction/exp_apx.hpp%
+	introduction/exp_apx.cpp
+%$$
+
+$head Implementation$$
+The file $xref/ExpApx.hpp/$$
+contains a C++ implementation of this function.
+
+$head Example$$
+The file $xref/ExpApx.cpp/$$ 
+contains an example and test of this implementation.
+It returns true for success and false for failure.
+
+
+$end
+*/
