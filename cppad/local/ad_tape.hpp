@@ -532,9 +532,9 @@ private:
 	*/
 	// Identifier for the current tape
 	static size_t *Id(void)
-	{	// tape id is always greater than zero
-		static size_t id = 1;
-		return &id;
+	{	// tape id_ is always greater than zero
+		static size_t id_ = 1;
+		return &id_;
 	}
 
 	// add an empty operator at next tape location
@@ -685,7 +685,7 @@ void ADTape<Base>::RecordInvOp(AD<Base> &z)
 
 	// Make z correspond to a next variable in tape
 	z_taddr = Rec.PutOp(InvOp);
-	z.id    = *Id();
+	z.id_   = *Id();
 	z.taddr = z_taddr;
 
 	// no Ind values for this instruction
@@ -711,7 +711,7 @@ void ADTape<Base>::RecordLoadOp(
 
 	// Make z correspond to a next variable in tape
 	z_taddr = Rec.PutOp(op);
-	z.id    = *Id();
+	z.id_   = *Id();
 	z.taddr = z_taddr;
 
 	// Ind values for this instruction
@@ -768,7 +768,7 @@ inline void ADTape<Base>::RecordOp(
 
 	// Make z correspond to a next variable in tape
 	z_taddr = Rec.PutOp(op);
-	z.id    = *Id();
+	z.id_   = *Id();
 	z.taddr = z_taddr;
 
 	// Ind values for this instruction
@@ -817,7 +817,7 @@ inline void ADTape<Base>::RecordOp(
 
 	// Make z correspond to a next variable in tape
 	z_taddr = Rec.PutOp(op);
-	z.id    = *Id();
+	z.id_   = *Id();
 	z.taddr = z_taddr;
 
 	// Ind values for this instruction
@@ -866,7 +866,7 @@ inline void ADTape<Base>::RecordOp(
 
 	// Make z correspond to a next variable in tape
 	z_taddr = Rec.PutOp(op);
-	z.id    = *Id();
+	z.id_   = *Id();
 	z.taddr = z_taddr;
 
 	// Ind values for this instruction
@@ -934,7 +934,7 @@ inline void ADTape<Base>::RecordOp(
 
 	// Make z correspond to a next variable in tape
 	z_taddr = Rec.PutOp(op);
-	z.id    = *Id();
+	z.id_   = *Id();
 	z.taddr = z_taddr;
 
 	// Ind value for this instruction
@@ -959,7 +959,7 @@ void ADTape<Base>::RecordDisOp(
 
 	// Make z correspond to a next variable in tape
 	z_taddr = Rec.PutOp(DisOp);
-	z.id    = *Id();
+	z.id_   = *Id();
 	z.taddr = z_taddr;
 
 	// Ind values for this instruction

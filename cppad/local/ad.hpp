@@ -231,15 +231,15 @@ public:
 		CppADUnknownError( taddr_ > 0 );       // make sure valid taddr
 
 		taddr = taddr_;
-		id    = *ADTape<Base>::Id();
+		id_   = *ADTape<Base>::Id();
 	}
 
 	// Make this object correspond to a parameter
 	inline void MakeParameter( void )
 	{	CppADUnknownError( Variable(*this) ); // currently a variable
-		CppADUnknownError( id == *ADTape<Base>::Id() ); 
+		CppADUnknownError( id_ == *ADTape<Base>::Id() ); 
 
-		id = 0;
+		id_ = 0;
 	}
 
 private:
@@ -250,8 +250,8 @@ private:
 	size_t taddr;
 
 	// identifier corresponding to taddr
-	// This is a parameter if and only if id != *ADTape<Base>::Id()
-	size_t id;
+	// This is a parameter if and only if id_ != *ADTape<Base>::Id()
+	size_t id_;
 }; 
 // ---------------------------------------------------------------------------
 

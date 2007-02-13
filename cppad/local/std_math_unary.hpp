@@ -318,7 +318,7 @@ $end
 	inline AD<Base> AD<Base>::Name (void) const                       \
         {	using CppAD::Name;                                        \
 		AD<Base> result;                                          \
-		CppADUnknownError( result.id == 0 );                      \
+		CppADUnknownError( result.id_ == 0 );                      \
 		result.value = Name(value);                               \
 		if( Variable(*this) )                                     \
 			Tape()->RecordOp(Op, result, taddr);              \

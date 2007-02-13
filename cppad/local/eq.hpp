@@ -112,7 +112,7 @@ namespace CppAD { //  BEGIN CppAD namespace
 template <class Base>
 inline AD<Base>& AD<Base>::operator=(const AD<Base> &right)
 {	value   = right.value;
-	id      = right.id;
+	id_     = right.id_;
 	taddr   = right.taddr;
 
 	// check that all variables are parameters while tape is empty

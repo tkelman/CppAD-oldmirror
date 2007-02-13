@@ -38,23 +38,16 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Add copyright message to top of some script files.
+log_entry="change AD class member data name from id to id_
 
 svn_commit.sh: file that made this change.
-svn_merge.sh: change repository location form cppad to CppAD. 
-build.sh: correct typo in first line first line.
-svn_log.sh: change repository location form cppad to CppAD. 
-run_omhelp.sh: add missing first line.
 " 
 add_list="
 "
 #
 change_list="
 	svn_commit.sh
-	svn_merge.sh
-	build.sh
-	svn_log.sh
-	run_omhelp.sh
+	cppad/local
 "
 delete_list="
 "

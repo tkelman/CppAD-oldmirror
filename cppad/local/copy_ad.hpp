@@ -70,7 +70,7 @@ template <class Base>
 inline AD<Base>::AD(const AD &x) 
 {
 	value   = x.value;
-	id      = x.id;
+	id_     = x.id_;
 	taddr   = x.taddr;
 
 	return;

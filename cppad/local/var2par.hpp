@@ -80,7 +80,7 @@ inline AD<Base> Var2Par(const AD<Base> &x)
 template <class Base>
 inline AD<Base> Var2Par(const VecAD_reference<Base> &x)
 {	AD<Base> y(x.ADBase()); 
-	y.id = 0;
+	y.id_ = 0;
 }
 
 

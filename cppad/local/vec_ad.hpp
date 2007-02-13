@@ -376,7 +376,7 @@ public:
 			{	// check if we need to convert x to a variable
 				// note that x is mutable
 				if( Parameter(x) )
-				{	x.id = *ADTape<Base>::Id();
+				{	x.id_ = *ADTape<Base>::Id();
 					x.taddr = 
 					AD<Base>::Tape()->RecordParOp(x.value);
 				}
@@ -419,8 +419,8 @@ public:
 	{ }
 
 	// constructor 
-	VecAD(size_t n) : length(n) , id(0)
-	{	CppADUnknownError( *ADTape<Base>::Id() > id );
+	VecAD(size_t n) : length(n) , id_(0)
+	{	CppADUnknownError( *ADTape<Base>::Id() > id_ );
 		data  = CPPAD_NULL;
 		if( length > 0 )
 		{	size_t i;
@@ -464,7 +464,7 @@ public:
 	VecAD_reference<Base> operator[](const AD<Base> &x) 
 	{
 		CppADUnknownError( 
-			( id != *ADTape<Base>::Id() )
+			( id_ != *ADTape<Base>::Id() )
 			| ( AD<Base>::Tape()->State() == Recording )
 		);
 		CppADUsageError(
@@ -480,7 +480,7 @@ public:
 		if( (AD<Base>::Tape()->State() != Recording) )
 			return VecAD_reference<Base>(this, x);
 
-		if( id != *ADTape<Base>::Id() )
+		if( id_ != *ADTape<Base>::Id() )
 		{	// must place a copy of vector in tape
 			offset = AD<Base>::Tape()->AddVec(length, data);
 
@@ -488,8 +488,8 @@ public:
 			offset++; 
 			CppADUnknownError( offset > 0 );
 
-			// tape id corresponding to this offest
-			id = *ADTape<Base>::Id();
+			// tape id_ corresponding to this offest
+			id_ = *ADTape<Base>::Id();
 		}
 
 		return VecAD_reference<Base>(this, x); 
@@ -502,8 +502,8 @@ private:
 	// offset in cumulate vector corresponding to this object
 	size_t offset; 
 
-	// tape id corresponding to the offset
-	size_t id;
+	// tape id_ corresponding to the offset
+	size_t id_;
 };
 
 
