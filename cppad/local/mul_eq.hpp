@@ -113,13 +113,13 @@ AD<Base>& AD<Base>::operator *= (const AD<Base> &right)
 		{	if( ! IdenticalZero(left) )
 			{	if( IdenticalOne(left) )
 				{	// z = 1 * right
-					MakeVariable(right.taddr);
+					MakeVariable(right.taddr_);
 				}
 				else	Tape()->RecordOp(
 						MulpvOp, 
 						*this, 
 						left, 
-						right.taddr
+						right.taddr_
 				);
 			}
 		}
@@ -129,12 +129,12 @@ AD<Base>& AD<Base>::operator *= (const AD<Base> &right)
 		{	if( IdenticalZero(right.value) )
 				MakeParameter();
 			else	Tape()->RecordOp(MulvpOp, 
-					*this, taddr, right.value
+					*this, taddr_, right.value
 			);
 		}
 	}
 	else	Tape()->RecordOp(MulvvOp, 
-			*this, taddr, right.taddr
+			*this, taddr_, right.taddr_
 	);
 	return *this;
 }

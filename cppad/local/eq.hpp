@@ -113,7 +113,7 @@ template <class Base>
 inline AD<Base>& AD<Base>::operator=(const AD<Base> &right)
 {	value   = right.value;
 	id_     = right.id_;
-	taddr   = right.taddr;
+	taddr_  = right.taddr_;
 
 	// check that all variables are parameters while tape is empty
 	CppADUnknownError(

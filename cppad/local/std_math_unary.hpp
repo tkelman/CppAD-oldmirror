@@ -321,7 +321,7 @@ $end
 		CppADUnknownError( result.id_ == 0 );                      \
 		result.value = Name(value);                               \
 		if( Variable(*this) )                                     \
-			Tape()->RecordOp(Op, result, taddr);              \
+			Tape()->RecordOp(Op, result, taddr_);              \
 		return result;                                            \
 	}                                                                 \
 	template <class Base>                                             \

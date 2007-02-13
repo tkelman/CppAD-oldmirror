@@ -377,7 +377,7 @@ public:
 				// note that x is mutable
 				if( Parameter(x) )
 				{	x.id_ = *ADTape<Base>::Id();
-					x.taddr = 
+					x.taddr_ = 
 					AD<Base>::Tape()->RecordParOp(x.value);
 				}
 	
@@ -386,10 +386,10 @@ public:
 					LdvOp,
 					result,
 					vec->offset,
-					x.taddr
+					x.taddr_
 				);
 				CppADUnknownError( 
-					x.taddr > 0 && Variable(x)
+					x.taddr_ > 0 && Variable(x)
 				);
 			}
 		}
@@ -527,9 +527,9 @@ void VecAD_reference<Base>::operator=(const AD<Base> &y)
 	CppADUnknownError( vec->id == *ADTape<Base>::Id() );
 	CppADUnknownError( vec->offset > 0 );
 	if( Parameter(x) ) AD<Base>::Tape()->RecordStoreOp(
-			StpvOp, vec->offset, i, y.taddr );
+			StpvOp, vec->offset, i, y.taddr_ );
 	else	AD<Base>::Tape()->RecordStoreOp(
-			StvvOp, vec->offset, x.taddr, y.taddr );
+			StvvOp, vec->offset, x.taddr_, y.taddr_ );
 }
 
 template <class Base>
@@ -555,7 +555,7 @@ void VecAD_reference<Base>::operator=(const Base &y)
 	if( Parameter(x) ) AD<Base>::Tape()->RecordStoreOp(
 			StppOp, vec->offset, i, y_taddr );
 	else	AD<Base>::Tape()->RecordStoreOp(
-			StvpOp, vec->offset, x.taddr, y_taddr );
+			StvpOp, vec->offset, x.taddr_, y_taddr );
 }
 
 // fold this case into AD<Base> case above

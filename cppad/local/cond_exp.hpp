@@ -356,7 +356,7 @@ void ADTape<Base>::RecordCondExp(
 {	size_t   ind0, ind1, ind2, ind3, ind4, ind5;
 	size_t   returnValue_taddr;
 
-	// taddr of this variable
+	// taddr_ of this variable
 	returnValue_taddr = Rec.PutOp(CExpOp);
 
 	// ind[0] = cop
@@ -369,14 +369,14 @@ void ADTape<Base>::RecordCondExp(
 	// Make sure returnValue is in the list of variables and set its taddr
 	if( Parameter(returnValue) )
 		returnValue.MakeVariable( returnValue_taddr );
-	else	returnValue.taddr = returnValue_taddr;
+	else	returnValue.taddr_ = returnValue_taddr;
 
 	// ind[2] = left address
 	if( Parameter(left) )
 		ind2 = Rec.PutPar(left.value);
 	else
 	{	ind1 += 1;
-		ind2 = left.taddr;	
+		ind2 = left.taddr_;	
 	}
 
 	// ind[3] = right address
@@ -384,7 +384,7 @@ void ADTape<Base>::RecordCondExp(
 		ind3 = Rec.PutPar(right.value);
 	else
 	{	ind1 += 2;
-		ind3 = right.taddr;	
+		ind3 = right.taddr_;	
 	}
 
 	// ind[4] = trueCase address
@@ -392,7 +392,7 @@ void ADTape<Base>::RecordCondExp(
 		ind4 = Rec.PutPar(trueCase.value);
 	else
 	{	ind1 += 4;
-		ind4 = trueCase.taddr;	
+		ind4 = trueCase.taddr_;	
 	}
 
 	// ind[5] =  falseCase address
@@ -400,7 +400,7 @@ void ADTape<Base>::RecordCondExp(
 		ind5 = Rec.PutPar(falseCase.value);
 	else
 	{	ind1 += 8;
-		ind5 = falseCase.taddr;	
+		ind5 = falseCase.taddr_;	
 	}
 
 	CppADUnknownError( NumInd(CExpOp) == 6 );

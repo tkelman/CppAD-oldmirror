@@ -107,8 +107,8 @@ AD<Base> AD<Base>::operator *(const AD<Base> &right) const
 			Tape()->RecordOp(
 				MulvvOp, 
 				result, 
-				taddr, 
-				right.taddr
+				taddr_, 
+				right.taddr_
 			);
 		}
 		else if( IdenticalZero(right.value) )
@@ -117,7 +117,7 @@ AD<Base> AD<Base>::operator *(const AD<Base> &right) const
 		else if( IdenticalOne(right.value) )
 		{	// result = variable * 1
 			result.MakeVariable(	
-				taddr
+				taddr_
 			);
 		}
 		else
@@ -125,7 +125,7 @@ AD<Base> AD<Base>::operator *(const AD<Base> &right) const
 			Tape()->RecordOp(
 				MulvpOp, 
 				result, 
-				taddr, 
+				taddr_, 
 				right.value
 			);
 		}
@@ -137,7 +137,7 @@ AD<Base> AD<Base>::operator *(const AD<Base> &right) const
 		else if( IdenticalOne(value) )
 		{	// result = 1 * variable
 			result.MakeVariable(
-				right.taddr
+				right.taddr_
 			);
 		}
 		else
@@ -146,7 +146,7 @@ AD<Base> AD<Base>::operator *(const AD<Base> &right) const
 				MulpvOp, 
 				result, 
 				value, 
-				right.taddr
+				right.taddr_
 			);
 		}
 	}

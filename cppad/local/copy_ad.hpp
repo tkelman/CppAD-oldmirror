@@ -71,7 +71,7 @@ inline AD<Base>::AD(const AD &x)
 {
 	value   = x.value;
 	id_     = x.id_;
-	taddr   = x.taddr;
+	taddr_  = x.taddr_;
 
 	return;
 }

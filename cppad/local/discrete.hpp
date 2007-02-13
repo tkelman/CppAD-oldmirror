@@ -129,7 +129,7 @@ public:
 		if( Variable(x) )
 		{	AD<Base>::Tape()->RecordDisOp(
 				z,
-				x.taddr,
+				x.taddr_,
 				y_taddr
 			);
 		}

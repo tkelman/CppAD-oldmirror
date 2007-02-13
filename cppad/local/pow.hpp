@@ -126,18 +126,18 @@ pow(const AD<Base> &x, const AD<Base> &y)
 	{	if( Variable(y) )
 		{	// result = variable + variable
 			AD<Base>::Tape()-> 
-				RecordOp(PowvvOp, p, x.taddr, y.taddr);
+				RecordOp(PowvvOp, p, x.taddr_, y.taddr_);
 		}
 		// if IdenticalZero(y.value), p = variable^0 = 1
 		else if( ! IdenticalZero(y.value) )
 			AD<Base>::Tape()->
-				RecordOp(PowvpOp, p, x.taddr, y.value);
+				RecordOp(PowvpOp, p, x.taddr_, y.value);
 	}
 	else if( Variable(y) )
 	{	// if IdenticalZero(x.value), p = 0^variable = 0 
 		if( ! IdenticalZero(x.value) )
 			AD<Base>::Tape()->
-				RecordOp(PowpvOp, p, x.value, y.taddr);
+				RecordOp(PowpvOp, p, x.value, y.taddr_);
 	}
 
 	return p;

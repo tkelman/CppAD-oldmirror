@@ -158,7 +158,7 @@ ADFun<Base>::ADFun(const VectorAD &x, const VectorAD &y)
 	for(j = 0; j < n; j++)
 	{	CppADUnknownError( ind_taddr[j] == (j+1) );
 		CppADUsageError(
-			x[j].taddr == (j+1),
+			x[j].taddr_ == (j+1),
 			"ADFun<Base>: independent variable vector has changed"
 		);
 		Taylor[ ind_taddr[j] ]  = x[j].value;

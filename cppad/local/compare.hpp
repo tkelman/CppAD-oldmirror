@@ -149,7 +149,7 @@ void ADTape<Base>::RecordCompare(
 		ind2 = Rec.PutPar(left.value);
 	else
 	{	ind1 += 2;
-		ind2 =  left.taddr;
+		ind2 =  left.taddr_;
 	}
 
 	// ind[3] = right address
@@ -157,7 +157,7 @@ void ADTape<Base>::RecordCompare(
 		ind3 = Rec.PutPar(right.value);
 	else
 	{	ind1 += 4;
-		ind3 =  right.taddr;
+		ind3 =  right.taddr_;
 	}
 
 	// If both left and right are parameters, do not need to record

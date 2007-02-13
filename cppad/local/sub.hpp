@@ -105,24 +105,24 @@ AD<Base> AD<Base>::operator -(const AD<Base> &right) const
 	{	if( Variable(right) )
 		{	// result = variable - variable
 			Tape()->RecordOp(SubvvOp, 
-				result, taddr, right.taddr
+				result, taddr_, right.taddr_
 			);
 		}
 		else if( IdenticalZero(right.value) )
 		{	// result = variable - 0
-			result.MakeVariable(taddr);
+			result.MakeVariable(taddr_);
 		}
 		else
 		{	// result = variable - parameter
 			Tape()->RecordOp(SubvpOp, 
-				result, taddr, right.value
+				result, taddr_, right.value
 			);
 		}
 	}
 	else if( Variable(right) )
 	{	// result = parameter - variable
 		Tape()->RecordOp(SubpvOp, 
-			result, value, right.taddr
+			result, value, right.taddr_
 		);
 	}
 

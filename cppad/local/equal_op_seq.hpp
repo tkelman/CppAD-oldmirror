@@ -127,7 +127,7 @@ namespace CppAD {
 		else if( Parameter(y) )
 			return false;
 
-		return (x.taddr == y.taddr);
+		return (x.taddr_ == y.taddr_);
 	}
 		
 }

@@ -103,7 +103,7 @@ namespace CppAD {
 	{ 	if( AD<Base>::Tape()->State() == Recording )
 		{	if( Parameter(u) )
 				AD<Base>::Tape()->RecordPripOp(text, u.value);
-			else	AD<Base>::Tape()->RecordPrivOp(text, u.taddr);
+			else	AD<Base>::Tape()->RecordPrivOp(text, u.taddr_);
 		}
 	}
 	template <class Base>

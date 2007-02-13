@@ -142,7 +142,7 @@ void ADFun<Base>::Dependent(const ADvector &y)
 		{	y_taddr = AD<Base>::Tape()->RecordParOp( y[i].value );
 			totalNumVar++;
 		}
-		else	y_taddr = y[i].taddr;
+		else	y_taddr = y[i].taddr_;
 
 		CppADUnknownError( y_taddr > 0 );
 		CppADUnknownError( y_taddr < totalNumVar );

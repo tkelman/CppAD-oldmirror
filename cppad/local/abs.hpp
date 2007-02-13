@@ -184,7 +184,7 @@ AD<Base> AD<Base>::Abs (void) const
 	result.value = abs(value);
 	if( Variable(*this) ) 
 	{	// add this operation to the tape
-		Tape()->RecordOp(AbsOp, result, taddr);
+		Tape()->RecordOp(AbsOp, result, taddr_);
 
 	}
 	return result;

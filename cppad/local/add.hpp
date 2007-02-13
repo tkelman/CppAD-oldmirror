@@ -106,29 +106,29 @@ AD<Base> AD<Base>::operator +(const AD<Base> &right) const
 	{	if( Variable(right) )
 		{	// result = variable + variable
 			Tape()->RecordOp(AddvvOp, 
-				result, taddr, right.taddr
+				result, taddr_, right.taddr_
 			);
 		}
 		else if( IdenticalZero(right.value) )
 		{	// result = variable + 0
-			result.MakeVariable(taddr);
+			result.MakeVariable(taddr_);
 		}
 		else
 		{	// result = variable + parameter
 			Tape()->RecordOp(AddvpOp, 
-				result, taddr, right.value
+				result, taddr_, right.value
 			);
 		}
 	}
 	else if( Variable(right) )
 	{	if( IdenticalZero(value) )
 		{	// result = 0 + variable
-			result.MakeVariable(right.taddr);
+			result.MakeVariable(right.taddr_);
 		}
 		else
 		{	// result = parameter + variable
 			Tape()->RecordOp(AddpvOp, 
-				result, value, right.taddr
+				result, value, right.taddr_
 			);
 		}
 	}
