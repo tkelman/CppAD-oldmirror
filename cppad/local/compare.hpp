@@ -146,7 +146,7 @@ void ADTape<Base>::RecordCompare(
 
 	// ind[2] = left address
 	if( Parameter(left) )
-		ind2 = Rec.PutPar(left.value);
+		ind2 = Rec.PutPar(left.value_);
 	else
 	{	ind1 += 2;
 		ind2 =  left.taddr_;
@@ -154,7 +154,7 @@ void ADTape<Base>::RecordCompare(
 
 	// ind[3] = right address
 	if( Parameter(right) )
-		ind3 = Rec.PutPar(right.value);
+		ind3 = Rec.PutPar(right.value_);
 	else
 	{	ind1 += 4;
 		ind3 =  right.taddr_;
@@ -184,14 +184,14 @@ void ADTape<Base>::RecordCompare(
 
 template <class Base>
 inline bool AD<Base>::operator < (const AD<Base> &right) const
-{	bool result =  (value < right.value); 
+{	bool result =  (value_ < right.value_); 
 	return result;
 }
 
 # else
 template <class Base>
 inline bool AD<Base>::operator < (const AD<Base> &right) const
-{	bool result =  (value < right.value); 
+{	bool result =  (value_ < right.value_); 
 
 	if( AD<Base>::Tape()->State() == Empty )
 		return result;
@@ -210,14 +210,14 @@ CPPAD_FOLD_BINARY_OPERATOR(bool, <)
 
 template <class Base>
 inline bool AD<Base>::operator <= (const AD<Base> &right) const
-{ 	bool result =  (value <= right.value); 
+{ 	bool result =  (value_ <= right.value_); 
 	return result;
 }
 
 # else
 template <class Base>
 inline bool AD<Base>::operator <= (const AD<Base> &right) const
-{ 	bool result =  (value <= right.value); 
+{ 	bool result =  (value_ <= right.value_); 
 
 	if( AD<Base>::Tape()->State() == Empty )
 		return result;
@@ -237,14 +237,14 @@ CPPAD_FOLD_BINARY_OPERATOR(bool, <=)
 
 template <class Base>
 inline bool AD<Base>::operator > (const AD<Base> &right) const
-{	bool result =  (value > right.value); 
+{	bool result =  (value_ > right.value_); 
 	return result;
 }
 
 # else
 template <class Base>
 inline bool AD<Base>::operator > (const AD<Base> &right) const
-{	bool result =  (value > right.value); 
+{	bool result =  (value_ > right.value_); 
 
 	if( AD<Base>::Tape()->State() == Empty )
 		return result;
@@ -263,14 +263,14 @@ CPPAD_FOLD_BINARY_OPERATOR(bool, >)
 
 template <class Base>
 inline bool AD<Base>::operator >= (const AD<Base> &right) const
-{ 	bool result =  (value >= right.value); 
+{ 	bool result =  (value_ >= right.value_); 
 	return result;
 }
 
 # else
 template <class Base>
 inline bool AD<Base>::operator >= (const AD<Base> &right) const
-{ 	bool result =  (value >= right.value); 
+{ 	bool result =  (value_ >= right.value_); 
 
 	if( AD<Base>::Tape()->State() == Empty )
 		return result;
@@ -290,14 +290,14 @@ CPPAD_FOLD_BINARY_OPERATOR(bool, >=)
 
 template <class Base>
 inline bool AD<Base>::operator == (const AD<Base> &right) const
-{	bool result =  (value == right.value); 
+{	bool result =  (value_ == right.value_); 
 	return result;
 }
 
 # else 
 template <class Base>
 inline bool AD<Base>::operator == (const AD<Base> &right) const
-{	bool result =  (value == right.value); 
+{	bool result =  (value_ == right.value_); 
 
 	if( AD<Base>::Tape()->State() == Empty )
 		return result;
@@ -316,14 +316,14 @@ CPPAD_FOLD_BINARY_OPERATOR(bool, ==)
 
 template <class Base>
 inline bool AD<Base>::operator != (const AD<Base> &right) const
-{	bool result =  (value != right.value);
+{	bool result =  (value_ != right.value_);
 	return result;
 }
 
 # else
 template <class Base>
 inline bool AD<Base>::operator != (const AD<Base> &right) const
-{	bool result =  (value != right.value);
+{	bool result =  (value_ != right.value_);
 
 	if( AD<Base>::Tape()->State() == Empty )
 		return result;

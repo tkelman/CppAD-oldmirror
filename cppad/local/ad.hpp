@@ -120,7 +120,7 @@ class AD {
 
 public:
 	// type of value
-	typedef Base value_type;
+	typedef Base valuetype;
 
 	// comparison operators
 	CPPAD_COMPARE_MEMBER( <  )
@@ -243,8 +243,8 @@ public:
 	}
 
 private:
-	// value corresponding to this object
-	Base value;
+	// value_ corresponding to this object
+	Base value_;
 
 	// taddr_ in tape for this variable 
 	size_t taddr_;

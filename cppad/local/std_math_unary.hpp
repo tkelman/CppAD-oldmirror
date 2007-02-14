@@ -319,7 +319,7 @@ $end
         {	using CppAD::Name;                                        \
 		AD<Base> result;                                          \
 		CppADUnknownError( result.id_ == 0 );                      \
-		result.value = Name(value);                               \
+		result.value_ = Name(value_);                               \
 		if( Variable(*this) )                                     \
 			Tape()->RecordOp(Op, result, taddr_);              \
 		return result;                                            \

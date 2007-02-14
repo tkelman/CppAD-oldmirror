@@ -111,7 +111,7 @@ namespace CppAD { //  BEGIN CppAD namespace
 
 template <class Base>
 inline AD<Base>& AD<Base>::operator=(const AD<Base> &right)
-{	value   = right.value;
+{	value_   = right.value_;
 	id_     = right.id_;
 	taddr_  = right.taddr_;
 

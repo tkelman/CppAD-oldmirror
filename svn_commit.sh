@@ -38,7 +38,7 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="change AD class member data name from taddr to taddr_
+log_entry="change AD class member data name from value to value_
 
 svn_commit.sh: file that made this change.
 " 

@@ -118,7 +118,7 @@ $syntax%
 	void %Tape%.RecordInvOp(AD<%Base%> &%z%)
 %$$
 creates a tape record corresponding to a new independent variable.
-The field $syntax%%z%.value%$$ is an input and all the other
+The field $syntax%%z%.value_%$$ is an input and all the other
 fields of $italic z$$ are outputs.
 Upon return from $code RecordInvOp$$, 
 $italic z$$ is in the list of variables and
@@ -265,7 +265,7 @@ $syntax%
 where $italic x_taddr$$ is the taddr of $italic x$$ in the tape
 and $italic y_taddr$$ is the taddr of $italic y$$ in the tape
 (neither of these indices can be zero).
-The field $syntax%%z%.value%$$ is an input and all the other
+The field $syntax%%z%.value_%$$ is an input and all the other
 fields of $italic z$$ are outputs.
 Upon return from $code RecordOp$$, 
 $italic z$$ is in the list of variables and
@@ -301,7 +301,7 @@ $syntax%
 %$$ 
 where $italic x_taddr$$ is the taddr of $italic x$$ in the tape
 (this taddr can not be zero).
-The field $syntax%%z%.value%$$ is an input and all the other
+The field $syntax%%z%.value_%$$ is an input and all the other
 fields of $italic z$$ are outputs.
 Upon return from $code RecordOp$$, 
 $italic z$$ is in the list of variables and
@@ -338,7 +338,7 @@ $syntax%
 %$$ 
 where $italic y_taddr$$ is the taddr of $italic y$$ in the tape
 (this taddr can not be zero).
-The field $syntax%%z%.value%$$ is an input and all the other
+The field $syntax%%z%.value_%$$ is an input and all the other
 fields of $italic z$$ are outputs.
 Upon return from $code RecordOp$$, 
 $italic z$$ is in the list of variables and
@@ -388,7 +388,7 @@ $syntax%
 where $italic x_taddr$$ is the taddr of $italic x$$ in the tape
 (this taddr can not be zero) and $italic op$$ specifies the
 unary function.
-The field $syntax%%z%.value%$$ is an input and all the other
+The field $syntax%%z%.value_%$$ is an input and all the other
 fields of $italic z$$ are outputs.
 Upon return from $code RecordOp$$, 
 $italic z$$ is in the list of variables and
@@ -413,7 +413,7 @@ where $italic x_taddr$$ is the taddr of $italic x$$ in the tape
 and $italic y_taddr$$ is the taddr corresponding to the 
 Discrete function $italic f$$
 (the value $italic x_taddr$$ cannot be zero).
-The field $syntax%%z%.value%$$ is an input and all the other
+The field $syntax%%z%.value_%$$ is an input and all the other
 fields of $italic z$$ are outputs.
 Upon return from $code RecordDisOp$$, 
 $italic z$$ is in the list of variables and

@@ -107,8 +107,8 @@ template <class Base>
 AD<Base>& AD<Base>::operator /= (const AD<Base> &right)
 {	Base left;
 
-	left   = value;
-	value /= right.value;
+	left   = value_;
+	value_ /= right.value_;
 
 	if( Parameter(*this) )
 	{	if( Variable(right) )
@@ -120,9 +120,9 @@ AD<Base>& AD<Base>::operator /= (const AD<Base> &right)
 		}
 	}
 	else if( Parameter(right) )
-	{	if( ! IdenticalOne(right.value) )
+	{	if( ! IdenticalOne(right.value_) )
 		{	Tape()->RecordOp(DivvpOp, 
-				*this, taddr_, right.value
+				*this, taddr_, right.value_
 			);
 		}
 	}

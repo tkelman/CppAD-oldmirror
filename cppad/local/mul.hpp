@@ -99,7 +99,7 @@ AD<Base> AD<Base>::operator *(const AD<Base> &right) const
 	AD<Base> result;
 	CppADUnknownError( Parameter(result) );
 
-	result.value  = value * right.value;
+	result.value_  = value_ * right.value_;
 
 	if( Variable(*this) )
 	{	if( Variable(right) )
@@ -111,10 +111,10 @@ AD<Base> AD<Base>::operator *(const AD<Base> &right) const
 				right.taddr_
 			);
 		}
-		else if( IdenticalZero(right.value) )
+		else if( IdenticalZero(right.value_) )
 		{	// result = variable * 0
 		}
-		else if( IdenticalOne(right.value) )
+		else if( IdenticalOne(right.value_) )
 		{	// result = variable * 1
 			result.MakeVariable(	
 				taddr_
@@ -126,15 +126,15 @@ AD<Base> AD<Base>::operator *(const AD<Base> &right) const
 				MulvpOp, 
 				result, 
 				taddr_, 
-				right.value
+				right.value_
 			);
 		}
 	}
 	else if( Variable(right) )
-	{	if( IdenticalZero(value)  )
+	{	if( IdenticalZero(value_)  )
 		{	// result = 0 * variable
 		}
-		else if( IdenticalOne(value) )
+		else if( IdenticalOne(value_) )
 		{	// result = 1 * variable
 			result.MakeVariable(
 				right.taddr_
@@ -145,7 +145,7 @@ AD<Base> AD<Base>::operator *(const AD<Base> &right) const
 			Tape()->RecordOp(
 				MulpvOp, 
 				result, 
-				value, 
+				value_, 
 				right.taddr_
 			);
 		}

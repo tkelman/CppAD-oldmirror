@@ -69,7 +69,7 @@ namespace CppAD {
 template <class Base>
 inline AD<Base>::AD(const AD &x) 
 {
-	value   = x.value;
+	value_   = x.value_;
 	id_     = x.id_;
 	taddr_  = x.taddr_;
 

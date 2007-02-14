@@ -351,8 +351,8 @@ public:
 		size_t i = static_cast<size_t>( Integer(x) );
 		CppADUnknownError( i < vec->length );
 
-		// value corresponding to this element
-		result.value = *(vec->data + i);
+		// value_ corresponding to this element
+		result.value_ = *(vec->data + i);
 
 		// index corresponding to this element
 		if( AD<Base>::Tape()->State() == Empty )
@@ -378,7 +378,7 @@ public:
 				if( Parameter(x) )
 				{	x.id_ = *ADTape<Base>::Id();
 					x.taddr_ = 
-					AD<Base>::Tape()->RecordParOp(x.value);
+					AD<Base>::Tape()->RecordParOp(x.value_);
 				}
 	
 				// use variable indexing
@@ -419,8 +419,8 @@ public:
 	{ }
 
 	// constructor 
-	VecAD(size_t n) : length(n) , id_(0)
-	{	CppADUnknownError( *ADTape<Base>::Id() > id_ );
+	VecAD(size_t n) : length(n) , id(0)
+	{	CppADUnknownError( *ADTape<Base>::Id() > id );
 		data  = CPPAD_NULL;
 		if( length > 0 )
 		{	size_t i;
@@ -464,7 +464,7 @@ public:
 	VecAD_reference<Base> operator[](const AD<Base> &x) 
 	{
 		CppADUnknownError( 
-			( id_ != *ADTape<Base>::Id() )
+			( id != *ADTape<Base>::Id() )
 			| ( AD<Base>::Tape()->State() == Recording )
 		);
 		CppADUsageError(
@@ -480,7 +480,7 @@ public:
 		if( (AD<Base>::Tape()->State() != Recording) )
 			return VecAD_reference<Base>(this, x);
 
-		if( id_ != *ADTape<Base>::Id() )
+		if( id != *ADTape<Base>::Id() )
 		{	// must place a copy of vector in tape
 			offset = AD<Base>::Tape()->AddVec(length, data);
 
@@ -488,8 +488,8 @@ public:
 			offset++; 
 			CppADUnknownError( offset > 0 );
 
-			// tape id_ corresponding to this offest
-			id_ = *ADTape<Base>::Id();
+			// tape id corresponding to this offest
+			id = *ADTape<Base>::Id();
 		}
 
 		return VecAD_reference<Base>(this, x); 
@@ -497,13 +497,13 @@ public:
 
 private:
 	const  size_t   length; // size of this VecAD vector
-	Base           *data;   // value of elements of this vector 
+	Base           *data;   // value_ of elements of this vector 
 
 	// offset in cumulate vector corresponding to this object
 	size_t offset; 
 
-	// tape id_ corresponding to the offset
-	size_t id_;
+	// tape id corresponding to the offset
+	size_t id;
 };
 
 
@@ -511,7 +511,7 @@ template <class Base>
 void VecAD_reference<Base>::operator=(const AD<Base> &y)
 {
 	if( Parameter(y) )
-	{	*this = y.value;
+	{	*this = y.value_;
 		return;
 	}
 
@@ -521,7 +521,7 @@ void VecAD_reference<Base>::operator=(const AD<Base> &y)
 	CppADUnknownError( i < vec->length );
 
 	// assign value both in the element and the original array
-	*(vec->data + i) = y.value;
+	*(vec->data + i) = y.value_;
 
 	// record the setting of this array element
 	CppADUnknownError( vec->id == *ADTape<Base>::Id() );
