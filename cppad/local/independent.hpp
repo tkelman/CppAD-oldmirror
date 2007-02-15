@@ -125,12 +125,12 @@ inline void Independent(VectorAD &x)
 {	typedef typename VectorAD::value_type ADBase;
 	typedef typename ADBase::value_type   Base;
 	CppADUsageError(
-		ADBase::Tape() == CPPAD_NULL,
+		ADBase::tape_unique() == CPPAD_NULL,
 		"Attempt to start a new tape before finishing previous tape"
 	);
 	ADBase::tape_new( *(AD<Base>::Id()) );
-	CppADUnknownError( ADBase::Tape() != CPPAD_NULL );
-	ADBase::Tape()->Independent(x); 
+	CppADUnknownError( ADBase::tape_unique() != CPPAD_NULL );
+	ADBase::tape_unique()->Independent(x); 
 }
 
 

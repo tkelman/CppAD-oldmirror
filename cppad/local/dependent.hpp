@@ -111,19 +111,21 @@ namespace CppAD {
 template <typename Base>
 template <typename ADvector>
 void ADFun<Base>::Dependent(const ADvector &y)
-{	size_t   m = y.size();
-	size_t   n = AD<Base>::Tape()->size_independent;
+{	ADTape<Base> *tape = AD<Base>::tape_unique();
+	CppADUsageError(
+		tape != CPPAD_NULL,
+		"Can't store current operation sequence in this ADFun object"
+		"\nbecause corresponding tape is not currently recording."
+	);
+
+	size_t   m = y.size();
+	size_t   n = tape->size_independent;
 	size_t   i, j;
 	size_t   y_taddr;
 
 	// check ADvector is Simple Vector class with AD<Base> elements
 	CheckSimpleVector< AD<Base>, ADvector>();
 
-	CppADUsageError(
-		AD<Base>::Tape() != CPPAD_NULL,
-		"Can't store current operation sequence in this ADFun object"
-		"\nbecause corresponding tape is not currently recording."
-	);
 	CppADUsageError(
 		y.size() > 0,
 		"ADFun operation sequence dependent variable size is zero size"
@@ -135,11 +137,11 @@ void ADFun<Base>::Dependent(const ADvector &y)
 	CppADUnknownError( NumVar(ParOp) == 1 );
 	dep_parameter.resize(m);
 	dep_taddr.resize(m);
-	totalNumVar = AD<Base>::Tape()->Rec.TotNumVar();
+	totalNumVar = tape->Rec.TotNumVar();
 	for(i = 0; i < m; i++)
 	{	dep_parameter[i] = CppAD::Parameter(y[i]);
 		if( dep_parameter[i] )
-		{	y_taddr = AD<Base>::Tape()->RecordParOp( y[i].value_ );
+		{	y_taddr = tape->RecordParOp( y[i].value_ );
 			totalNumVar++;
 		}
 		else	y_taddr = y[i].taddr_;
@@ -151,7 +153,7 @@ void ADFun<Base>::Dependent(const ADvector &y)
 
 	// now that each dependent variable has a place in the tape,
 	// we can make a copy for this function and erase the tape.
-	Rec = AD<Base>::Tape()->Rec;
+	Rec = tape->Rec;
 
 	// now we can delete the tape
 	AD<Base>::tape_delete( *(AD<Base>::Id()) );

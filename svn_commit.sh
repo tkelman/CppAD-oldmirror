@@ -38,27 +38,38 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Move the tape Id() function from ADTape to AD class.
+log_entry="split AD<Base>::Tape() calls to tape_this() and tape_unique().
 
 svn_commit.sh: file that made this change.
-par_var.hpp: change ADTape<Base>::Id() to AD<Base>::Id().
-ad_tape.hpp: remove Id() function.
-ad.hpp: add the Id() function.
-independent.hpp: change ADTape<Base>::Id() to AD<Base>::Id().
-vec_ad.hpp: change ADTape<Base>::Id() to AD<Base>::Id().
-dependent.hpp: change ADTape<Base>::Id() to AD<Base>::Id().
+example.cpp: fix name change from one_test to test_one.
 " 
 add_list="
 "
 #
 change_list="
 	svn_commit.sh
-	cppad/local/par_var.hpp
 	cppad/local/ad_tape.hpp
+	cppad/local/cond_exp.hpp
+	cppad/local/add_eq.hpp
+	cppad/local/div.hpp
 	cppad/local/ad.hpp
+	cppad/local/add.hpp
+	cppad/local/discrete.hpp
+	cppad/local/eq.hpp
+	cppad/local/sub_eq.hpp
+	cppad/local/mul_eq.hpp
+	cppad/local/compare.hpp
 	cppad/local/independent.hpp
+	cppad/local/print_for.hpp
+	cppad/local/div_eq.hpp
 	cppad/local/vec_ad.hpp
+	cppad/local/sub.hpp
+	cppad/local/mul.hpp
+	cppad/local/abs.hpp
+	cppad/local/pow.hpp
 	cppad/local/dependent.hpp
+	cppad/local/std_math_unary.hpp
+	example/example.cpp
 "
 delete_list="
 "

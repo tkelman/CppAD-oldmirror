@@ -1,5 +1,5 @@
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -156,7 +156,7 @@ namespace {
 int main(void)
 {	bool ok = true;
 
-	// This line is used by one_test.sh
+	// This line is used by test_one.sh
 
 	// external compiled tests
 	ok &= Run( Abs,               "Abs"              );

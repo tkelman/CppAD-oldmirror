@@ -2,7 +2,7 @@
 # define CPPAD_ADD_EQ_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -114,19 +114,19 @@ AD<Base>& AD<Base>::operator += (const AD<Base> &right)
 			{	// z = 0 + right
 				MakeVariable(right.taddr_);
 			}
-			else	Tape()->RecordOp(AddpvOp, 
+			else	right.tape_this()->RecordOp(AddpvOp, 
 					*this, left, right.taddr_
 			);
 		}
 	}
 	else if( Parameter(right) )
 	{	if( ! IdenticalZero( right.value_ ) )
-		{	Tape()->RecordOp(AddvpOp, 
+		{	tape_this()->RecordOp(AddvpOp, 
 				*this, taddr_, right.value_
 			);
 		}
 	}
-	else	Tape()->RecordOp(AddvvOp, 
+	else	tape_this()->RecordOp(AddvvOp, 
 				*this, taddr_, right.taddr_
 	);
 	return *this;

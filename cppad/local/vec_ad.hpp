@@ -355,7 +355,8 @@ public:
 		result.value_ = *(vec->data + i);
 
 		// index corresponding to this element
-		if( AD<Base>::Tape() == CPPAD_NULL )
+		ADTape<Base> *tape = AD<Base>::tape_unique();
+		if( tape == CPPAD_NULL )
 		{	CppADUnknownError( vec->id != *AD<Base>::Id() );
 		}
 		else
@@ -364,7 +365,7 @@ public:
 	
 			if( IdenticalPar(x) )
 			{	// use parameter indexing
-				AD<Base>::Tape()->RecordLoadOp(
+				tape->RecordLoadOp(
 					LdpOp,
 					result,
 					vec->offset,
@@ -378,11 +379,11 @@ public:
 				if( Parameter(x) )
 				{	x.id_ = *AD<Base>::Id();
 					x.taddr_ = 
-					AD<Base>::Tape()->RecordParOp(x.value_);
+					tape->RecordParOp(x.value_);
 				}
 	
 				// use variable indexing
-				AD<Base>::Tape()->RecordLoadOp(
+				tape->RecordLoadOp(
 					LdvOp,
 					result,
 					vec->offset,
@@ -449,7 +450,7 @@ public:
 	Base &operator[](size_t i)
 	{
 		CppADUsageError( 
-			AD<Base>::Tape() == CPPAD_NULL,
+			AD<Base>::tape_unique() == CPPAD_NULL,
 			"VecAD: cannot use size_t indexing while recording"
 		);
 		CppADUsageError(
@@ -465,7 +466,7 @@ public:
 	{
 		CppADUnknownError( 
 			( id != *AD<Base>::Id() )
-			| ( AD<Base>::Tape() != CPPAD_NULL )
+			| ( AD<Base>::tape_unique() != CPPAD_NULL )
 		);
 		CppADUsageError(
 			0 <= Integer(x),
@@ -477,12 +478,12 @@ public:
 		);
 
 		// if no need to track indexing operation, return now
-		if( (AD<Base>::Tape() == CPPAD_NULL) )
+		if( (AD<Base>::tape_unique() == CPPAD_NULL) )
 			return VecAD_reference<Base>(this, x);
 
 		if( id != *AD<Base>::Id() )
 		{	// must place a copy of vector in tape
-			offset = AD<Base>::Tape()->AddVec(length, data);
+			offset = AD<Base>::tape_unique()->AddVec(length, data);
 
 			// advance pointer by one so is always nonzero
 			offset++; 
@@ -515,7 +516,7 @@ void VecAD_reference<Base>::operator=(const AD<Base> &y)
 		return;
 	}
 
-	CppADUnknownError( AD<Base>::Tape() != CPPAD_NULL );
+	CppADUnknownError( AD<Base>::tape_unique() != CPPAD_NULL );
 
 	size_t i = static_cast<size_t>( Integer(x) );
 	CppADUnknownError( i < vec->length );
@@ -526,9 +527,9 @@ void VecAD_reference<Base>::operator=(const AD<Base> &y)
 	// record the setting of this array element
 	CppADUnknownError( vec->id == *AD<Base>::Id() );
 	CppADUnknownError( vec->offset > 0 );
-	if( Parameter(x) ) AD<Base>::Tape()->RecordStoreOp(
+	if( Parameter(x) ) AD<Base>::tape_unique()->RecordStoreOp(
 			StpvOp, vec->offset, i, y.taddr_ );
-	else	AD<Base>::Tape()->RecordStoreOp(
+	else	AD<Base>::tape_unique()->RecordStoreOp(
 			StvvOp, vec->offset, x.taddr_, y.taddr_ );
 }
 
@@ -543,18 +544,18 @@ void VecAD_reference<Base>::operator=(const Base &y)
 	// assign value both in the element and the original array
 	*(vec->data + i) = y;
 
-	if( AD<Base>::Tape() == CPPAD_NULL )
+	if( AD<Base>::tape_unique() == CPPAD_NULL )
 		return;
 
 	// place a copy of y in the tape
-	y_taddr = AD<Base>::Tape()->Rec.PutPar(y);
+	y_taddr = AD<Base>::tape_unique()->Rec.PutPar(y);
 
 	// record the setting of this array element
 	CppADUnknownError( vec->id == *AD<Base>::Id() );
 	CppADUnknownError( vec->offset > 0 );
-	if( Parameter(x) ) AD<Base>::Tape()->RecordStoreOp(
+	if( Parameter(x) ) AD<Base>::tape_unique()->RecordStoreOp(
 			StppOp, vec->offset, i, y_taddr );
-	else	AD<Base>::Tape()->RecordStoreOp(
+	else	AD<Base>::tape_unique()->RecordStoreOp(
 			StvpOp, vec->offset, x.taddr_, y_taddr );
 }
 

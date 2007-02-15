@@ -215,10 +215,17 @@ public:
 
 		id_ = 0;
 	}
+
+	// tape corresponding to this AD object
+	ADTape<Base> *tape_this(void) const
+	{	CppADUnknownError( tape_ptr(id_) != CPPAD_NULL );
+		return tape_ptr(id_); 
+	}
+
 	//
-	// public functions connecting this AD class to its tape
+	// static public functions connecting this AD class to its tape
 	//
-	static ADTape<Base> *Tape(void)
+	static ADTape<Base> *tape_unique(void)
 	{	return tape_ptr( * (AD<Base>::Id()) ); }
 
 	static ADTape<Base> *tape_ptr(size_t id)

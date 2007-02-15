@@ -104,7 +104,7 @@ AD<Base> AD<Base>::operator *(const AD<Base> &right) const
 	if( Variable(*this) )
 	{	if( Variable(right) )
 		{	// result = variable * variable
-			Tape()->RecordOp(
+			tape_this()->RecordOp(
 				MulvvOp, 
 				result, 
 				taddr_, 
@@ -122,7 +122,7 @@ AD<Base> AD<Base>::operator *(const AD<Base> &right) const
 		}
 		else
 		{	// result = variable * parameter
-			Tape()->RecordOp(
+			tape_this()->RecordOp(
 				MulvpOp, 
 				result, 
 				taddr_, 
@@ -142,7 +142,7 @@ AD<Base> AD<Base>::operator *(const AD<Base> &right) const
 		}
 		else
 		{	// result = parameter * variable
-			Tape()->RecordOp(
+			right.tape_this()->RecordOp(
 				MulpvOp, 
 				result, 
 				value_, 

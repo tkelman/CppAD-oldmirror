@@ -117,7 +117,7 @@ inline AD<Base>& AD<Base>::operator=(const AD<Base> &right)
 
 	// check that all variables are parameters while tape is empty
 	CppADUnknownError(
-		Parameter(*this) | (Tape() != CPPAD_NULL)
+		Parameter(*this) || (tape_this() != CPPAD_NULL)
 	);
 
 	return *this;

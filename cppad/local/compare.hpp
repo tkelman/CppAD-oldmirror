@@ -193,10 +193,14 @@ template <class Base>
 inline bool AD<Base>::operator < (const AD<Base> &right) const
 {	bool result =  (value_ < right.value_); 
 
-	if( AD<Base>::Tape() == CPPAD_NULL )
-		return result;
+	ADTape<Base> *tape = CPPAD_NULL;
+	if( Variable(*this) )
+		tape = tape_this();
+	else if ( Variable(right) )
+		tape = right.tape_this();
 
-	AD<Base>::Tape()->RecordCompare(CompareLt, result, *this, right);
+	if( tape != CPPAD_NULL )
+		tape->RecordCompare(CompareLt, result, *this, right);
 
 	return result;
 }
@@ -219,10 +223,14 @@ template <class Base>
 inline bool AD<Base>::operator <= (const AD<Base> &right) const
 { 	bool result =  (value_ <= right.value_); 
 
-	if( AD<Base>::Tape() == CPPAD_NULL )
-		return result;
+	ADTape<Base> *tape = CPPAD_NULL;
+	if( Variable(*this) )
+		tape = tape_this();
+	else if ( Variable(right) )
+		tape = right.tape_this();
 
-	AD<Base>::Tape()->RecordCompare(CompareLe, result, *this, right);
+	if( tape != CPPAD_NULL )
+		tape->RecordCompare(CompareLe, result, *this, right);
 
 	return result;
 }
@@ -246,10 +254,15 @@ template <class Base>
 inline bool AD<Base>::operator > (const AD<Base> &right) const
 {	bool result =  (value_ > right.value_); 
 
-	if( AD<Base>::Tape() == CPPAD_NULL )
-		return result;
+	ADTape<Base> *tape = CPPAD_NULL;
+	if( Variable(*this) )
+		tape = tape_this();
+	else if ( Variable(right) )
+		tape = right.tape_this();
 
-	AD<Base>::Tape()->RecordCompare(CompareGt, result, *this, right);
+	if( tape != CPPAD_NULL )
+		tape->RecordCompare(CompareGt, result, *this, right);
+
 
 	return result;
 }
@@ -272,10 +285,14 @@ template <class Base>
 inline bool AD<Base>::operator >= (const AD<Base> &right) const
 { 	bool result =  (value_ >= right.value_); 
 
-	if( AD<Base>::Tape() == CPPAD_NULL )
-		return result;
+	ADTape<Base> *tape = CPPAD_NULL;
+	if( Variable(*this) )
+		tape = tape_this();
+	else if ( Variable(right) )
+		tape = right.tape_this();
 
-	AD<Base>::Tape()->RecordCompare(CompareGe, result, *this, right);
+	if( tape != CPPAD_NULL )
+		tape->RecordCompare(CompareGe, result, *this, right);
 
 	return result;
 }
@@ -299,10 +316,14 @@ template <class Base>
 inline bool AD<Base>::operator == (const AD<Base> &right) const
 {	bool result =  (value_ == right.value_); 
 
-	if( AD<Base>::Tape() == CPPAD_NULL )
-		return result;
+	ADTape<Base> *tape = CPPAD_NULL;
+	if( Variable(*this) )
+		tape = tape_this();
+	else if ( Variable(right) )
+		tape = right.tape_this();
 
-	AD<Base>::Tape()->RecordCompare(CompareEq, result, *this, right);
+	if( tape != CPPAD_NULL )
+		tape->RecordCompare(CompareEq, result, *this, right);
 
 	return result;
 }
@@ -325,10 +346,14 @@ template <class Base>
 inline bool AD<Base>::operator != (const AD<Base> &right) const
 {	bool result =  (value_ != right.value_);
 
-	if( AD<Base>::Tape() == CPPAD_NULL )
-		return result;
+	ADTape<Base> *tape = CPPAD_NULL;
+	if( Variable(*this) )
+		tape = tape_this();
+	else if ( Variable(right) )
+		tape = right.tape_this();
 
-	AD<Base>::Tape()->RecordCompare(CompareNe, result, *this, right);
+	if( tape != CPPAD_NULL )
+		tape->RecordCompare(CompareNe, result, *this, right);
 
 	return result;
 }

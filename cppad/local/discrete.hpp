@@ -127,7 +127,7 @@ public:
 
 		z.value_ = f(x.value_);
 		if( Variable(x) )
-		{	AD<Base>::Tape()->RecordDisOp(
+		{	x.tape_this()->RecordDisOp(
 				z,
 				x.taddr_,
 				y_taddr

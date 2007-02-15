@@ -325,20 +325,20 @@ inline AD<Base> CondExpOp(
 	returnValue.value_ = CondExpOp(cop, 
 		left.value_, right.value_, trueCase.value_, falseCase.value_);
 
-	// second case where do not need to tape this operation
-	if( AD<Base>::Tape() == CPPAD_NULL ) 
-		return returnValue;
+	ADTape<Base> *tape = CPPAD_NULL;
+	if( Variable(left) )
+		tape = left.tape_this();
+	if( Variable(right) )
+		tape = right.tape_this();
+	if( Variable(trueCase) )
+		tape = trueCase.tape_this();
+	if( Variable(falseCase) )
+		tape = falseCase.tape_this();
 
-	// third case where we do not need to tape this operation
-	if(	Parameter(left)      & 
-		Parameter(right)     & 
-		Parameter(trueCase)  & 
-		Parameter(falseCase) 
-	)	return returnValue;
-	
 	// add this operation to the tape
-	AD<Base>::Tape()-> RecordCondExp(cop, 
-		returnValue, left, right, trueCase, falseCase);
+	if( tape != CPPAD_NULL ) 
+		tape->RecordCondExp(cop, 
+			returnValue, left, right, trueCase, falseCase);
 
 	return returnValue;
 }

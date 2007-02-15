@@ -105,7 +105,7 @@ AD<Base> AD<Base>::operator +(const AD<Base> &right) const
 	if( Variable(*this) )
 	{	if( Variable(right) )
 		{	// result = variable + variable
-			Tape()->RecordOp(AddvvOp, 
+			tape_this()->RecordOp(AddvvOp, 
 				result, taddr_, right.taddr_
 			);
 		}
@@ -115,7 +115,7 @@ AD<Base> AD<Base>::operator +(const AD<Base> &right) const
 		}
 		else
 		{	// result = variable + parameter
-			Tape()->RecordOp(AddvpOp, 
+			tape_this()->RecordOp(AddvpOp, 
 				result, taddr_, right.value_
 			);
 		}
@@ -127,7 +127,7 @@ AD<Base> AD<Base>::operator +(const AD<Base> &right) const
 		}
 		else
 		{	// result = parameter + variable
-			Tape()->RecordOp(AddpvOp, 
+			right.tape_this()->RecordOp(AddpvOp, 
 				result, value_, right.taddr_
 			);
 		}

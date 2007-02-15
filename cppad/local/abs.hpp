@@ -2,7 +2,7 @@
 # define CPPAD_ABS_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -184,7 +184,7 @@ AD<Base> AD<Base>::Abs (void) const
 	result.value_ = abs(value_);
 	if( Variable(*this) ) 
 	{	// add this operation to the tape
-		Tape()->RecordOp(AbsOp, result, taddr_);
+		tape_this()->RecordOp(AbsOp, result, taddr_);
 
 	}
 	return result;

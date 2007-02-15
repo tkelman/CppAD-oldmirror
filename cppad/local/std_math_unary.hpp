@@ -2,7 +2,7 @@
 # define CPPAD_STD_MATH_UNARY_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -318,10 +318,10 @@ $end
 	inline AD<Base> AD<Base>::Name (void) const                       \
         {	using CppAD::Name;                                        \
 		AD<Base> result;                                          \
-		CppADUnknownError( result.id_ == 0 );                      \
-		result.value_ = Name(value_);                               \
+		CppADUnknownError( result.id_ == 0 );                     \
+		result.value_ = Name(value_);                             \
 		if( Variable(*this) )                                     \
-			Tape()->RecordOp(Op, result, taddr_);              \
+			tape_this()->RecordOp(Op, result, taddr_);        \
 		return result;                                            \
 	}                                                                 \
 	template <class Base>                                             \
