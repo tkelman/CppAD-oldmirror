@@ -2,7 +2,7 @@
 # define CPPAD_AD_TAPE_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -512,7 +512,7 @@ public:
 
 	// destructor
 	~ADTape(void)
-	{ }
+	{	Rec.Erase(); }
 
 	enum TapeState State(void) const
 	{	return state; }
@@ -520,6 +520,20 @@ public:
 	// public function only used by CppAD::Independent
 	template <typename VectorADBase>
 	void Independent(VectorADBase &u);
+
+	// Identifier for the current tape
+	static size_t *Id(void)
+	{	// assume initialized as zero
+		static size_t id;
+		if( id )
+			return &id;
+
+		// first call to Id()
+		id = 1;
+		AD<Base> tape_new(id);
+
+		return &id;
+	}
 
 private:
 	// private data
@@ -530,12 +544,6 @@ private:
 	/*
 	Private functions
 	*/
-	// Identifier for the current tape
-	static size_t *Id(void)
-	{	// tape id_ is always greater than zero
-		static size_t id_ = 1;
-		return &id_;
-	}
 
 	// add an empty operator at next tape location
 	void RecordNonOp(void);
@@ -642,8 +650,6 @@ private:
 		const Base   *data
 	);
 
-	// erase the tape
-	void Erase(void);
 };
 // ---------------------------------------------------------------------------
 // Private functions
@@ -1016,21 +1022,6 @@ size_t ADTape<Base>::AddVec(size_t length, const Base *data)
  
 	// return the taddr of the length (where the vector starts)
 	return start;
-}
-
-template <class Base>
-void ADTape<Base>::Erase(void)
-{	// make all the existing AD objects parmaeters
-	*Id() += 1;
-	CppADUnknownError( *Id() > 0 );
-
-	// change the state of the tape
-	state = Empty;
-
-	// erase the memory stored in Rec structure
-	Rec.Erase();
-
-	return;
 }
 
 

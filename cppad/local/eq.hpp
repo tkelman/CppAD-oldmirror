@@ -2,7 +2,7 @@
 # define CPPAD_EQ_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -117,7 +117,7 @@ inline AD<Base>& AD<Base>::operator=(const AD<Base> &right)
 
 	// check that all variables are parameters while tape is empty
 	CppADUnknownError(
-		Parameter(*this) | (Tape()->State() != Empty)
+		Parameter(*this) | (Tape() != CPPAD_NULL)
 	);
 
 	return *this;

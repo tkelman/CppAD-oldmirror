@@ -50,6 +50,7 @@ namespace CppAD {
 
 template <class Base>
 class AD {
+
 	// one argument functions
 	friend bool GreaterThanZero <Base> 
 		(const AD<Base> &u);
@@ -120,7 +121,7 @@ class AD {
 
 public:
 	// type of value
-	typedef Base valuetype;
+	typedef Base value_type;
 
 	// comparison operators
 	CPPAD_COMPARE_MEMBER( <  )
@@ -198,33 +199,6 @@ public:
 		const AD<Base> &x , const AD<Base> &y
 	);
 
-	// There is only one tape so construct it here
-	static ADTape<Base> *Tape(void)
-	{	// There seems to be a bug in g++ 3.4.4 with -O2 option,
-		// such that the following does not work:
-		// 	static ADTape<Base> tape;
-		// 	return &tape;
-		static ADTape<Base> *ptr;          // initially zero
-		if( ptr )                          // if already initialized
-			return ptr;                // just return its value
-
-		ptr = new ADTape<Base>;            // initialize 
-		DeleteTape();                      // make copy of ptr
-		atexit(DeleteTape);                // call again on exit
-		return ptr;
-	}
-
-	// Clean up the ptr in the previous function
-	static void DeleteTape(void)
-	{	static ADTape<Base> *ptr;
-		if( ptr )
-		{	delete ptr; // delete on second call
-			return;     // and we are done
-		}
-		ptr = Tape();       // copy on first call
-		return;
-	}
-
 	// Make this object correspond to a new variable on the tape
 	inline void MakeVariable( size_t taddr )
 	{	CppADUnknownError( Parameter(*this) ); // currently a parameter
@@ -241,6 +215,22 @@ public:
 
 		id_ = 0;
 	}
+	//
+	// public functions connecting this AD class to its tape
+	//
+	static ADTape<Base> *Tape(void)
+	{	return tape_ptr( * (ADTape<Base>::Id()) ); }
+
+	static ADTape<Base> *tape_ptr(size_t id)
+	{	return tape_table(id) [id]; }
+
+	static void tape_new(size_t id)
+	{	tape_table(id) [id] = new ADTape<Base>; }
+
+	static void tape_delete(size_t id)
+	{	delete tape_table(id) [id];
+		tape_table(id) [id] = CPPAD_NULL;
+	}
 
 private:
 	// value_ corresponding to this object
@@ -252,6 +242,83 @@ private:
 	// identifier corresponding to taddr
 	// This is a parameter if and only if id_ != *ADTape<Base>::Id()
 	size_t id_;
+	//
+	// private functions connecting this AD class to its tapes
+	//
+	static ADTape<Base> **tape_extend(size_t new_size)
+	{	static ADTape<Base> **table;
+		static size_t    size_table;
+		size_t i;
+
+		// check for call from tape_atexit
+		if( new_size == 0 )
+		{	CppADUnknownError( table != CPPAD_NULL );
+			for(i = 0; i < size_table; i++)
+			{	if( table[i] != CPPAD_NULL ) 
+					delete table[i];
+			}
+			delete [] table;
+			return CPPAD_NULL;
+		}
+
+		// check for first call to tape_extend
+		if( table == CPPAD_NULL )
+		{	table = new ADTape<Base>* [new_size]; 
+			for(i = 0; i < new_size; i++)
+				table[i] = CPPAD_NULL;
+
+			// set up tape_atexit
+			atexit(tape_atexit); 
+
+			return table;
+		}
+
+
+		// extend table to be long enough
+		ADTape<Base> **new_table = new ADTape<Base>* [ new_size ];
+
+		// copy data from old table
+		for(i = 0; i < size_table; i++)
+			new_table[i] = table[i];
+
+		// pointers not yet set in new table
+		for(i = size_table; i < new_size; i++)
+			new_table[i] = CPPAD_NULL;
+
+		// delete the old table
+		delete [] table;
+
+		// static values corresponding to new table
+		size_table = new_size;
+		table      = new_table;
+
+		return table;
+	}
+	static ADTape<Base> **tape_table(size_t id)
+	{	CppADUnknownError( CPPAD_NULL == 0);
+		static ADTape<Base> **table;         // inidially zero
+		static size_t size_table;            // initially zero
+
+		// fast case where table is already long enough
+		if( size_table > id ) 
+			return table;
+
+		// new table size
+		size_table = std::max(2 * size_table, id + 1);
+
+		// This is only call to tape_extend (except for atexit call)
+		// hence table here and in tape_extend are the same.
+		// (tape_extend is seperate so that tape_table may be inlined.)
+		table = tape_extend(size_table);
+
+		return table;
+	}
+
+	// clean up tape memory
+	static void tape_atexit(void)
+	{	tape_extend(0);		
+		return;
+	}
 }; 
 // ---------------------------------------------------------------------------
 

@@ -2,7 +2,7 @@
 # define CPPAD_PRINT_FOR_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -100,7 +100,7 @@ $end
 namespace CppAD { 
 	template <class Base>
 	void PrintFor(const char *text, const AD<Base> &u)
-	{ 	if( AD<Base>::Tape()->State() == Recording )
+	{ 	if( AD<Base>::Tape() != CPPAD_NULL )
 		{	if( Parameter(u) )
 				AD<Base>::Tape()->RecordPripOp(text, u.value_);
 			else	AD<Base>::Tape()->RecordPrivOp(text, u.taddr_);

@@ -2,7 +2,7 @@
 # define CPPAD_COND_EXP_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -326,7 +326,7 @@ inline AD<Base> CondExpOp(
 		left.value_, right.value_, trueCase.value_, falseCase.value_);
 
 	// second case where do not need to tape this operation
-	if( AD<Base>::Tape()->State() == Empty ) 
+	if( AD<Base>::Tape() == CPPAD_NULL ) 
 		return returnValue;
 
 	// third case where we do not need to tape this operation

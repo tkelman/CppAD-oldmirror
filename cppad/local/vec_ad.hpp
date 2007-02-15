@@ -355,7 +355,7 @@ public:
 		result.value_ = *(vec->data + i);
 
 		// index corresponding to this element
-		if( AD<Base>::Tape()->State() == Empty )
+		if( AD<Base>::Tape() == CPPAD_NULL )
 		{	CppADUnknownError( vec->id != *ADTape<Base>::Id() );
 		}
 		else
@@ -449,7 +449,7 @@ public:
 	Base &operator[](size_t i)
 	{
 		CppADUsageError( 
-			AD<Base>::Tape()->State() == Empty,
+			AD<Base>::Tape() == CPPAD_NULL,
 			"VecAD: cannot use size_t indexing while recording"
 		);
 		CppADUsageError(
@@ -465,7 +465,7 @@ public:
 	{
 		CppADUnknownError( 
 			( id != *ADTape<Base>::Id() )
-			| ( AD<Base>::Tape()->State() == Recording )
+			| ( AD<Base>::Tape() != CPPAD_NULL )
 		);
 		CppADUsageError(
 			0 <= Integer(x),
@@ -477,7 +477,7 @@ public:
 		);
 
 		// if no need to track indexing operation, return now
-		if( (AD<Base>::Tape()->State() != Recording) )
+		if( (AD<Base>::Tape() == CPPAD_NULL) )
 			return VecAD_reference<Base>(this, x);
 
 		if( id != *ADTape<Base>::Id() )
@@ -515,7 +515,7 @@ void VecAD_reference<Base>::operator=(const AD<Base> &y)
 		return;
 	}
 
-	CppADUnknownError( AD<Base>::Tape()->State() == Recording );
+	CppADUnknownError( AD<Base>::Tape() != CPPAD_NULL );
 
 	size_t i = static_cast<size_t>( Integer(x) );
 	CppADUnknownError( i < vec->length );
@@ -543,7 +543,7 @@ void VecAD_reference<Base>::operator=(const Base &y)
 	// assign value both in the element and the original array
 	*(vec->data + i) = y;
 
-	if( AD<Base>::Tape()->State() == Empty )
+	if( AD<Base>::Tape() == CPPAD_NULL )
 		return;
 
 	// place a copy of y in the tape

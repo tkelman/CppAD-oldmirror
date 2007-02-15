@@ -152,7 +152,12 @@ void ADFun<Base>::Dependent(const ADvector &y)
 	// now that each dependent variable has a place in the tape,
 	// we can make a copy for this function and erase the tape.
 	Rec = AD<Base>::Tape()->Rec;
-	AD<Base>::Tape()->Erase();
+
+	// now we can delete the tape
+	AD<Base>::tape_delete( *(ADTape<Base>::Id()) );
+
+	// increment the tape pointer
+	*(ADTape<Base>::Id()) += 1;
 
 	// total number of varables in this recording 
 	CppADUnknownError( totalNumVar == Rec.TotNumVar() );

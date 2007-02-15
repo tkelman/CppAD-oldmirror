@@ -38,16 +38,34 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="change AD class member data name from value to value_
+log_entry="Change static structure from a single tape to a table of tapes.
+(not yet implemented multiple tapes at once).
 
 svn_commit.sh: file that made this change.
+ad_tape.hpp: make Id() public (temporary), remove Erase, erase Rec on delete.
+cond_exp.hpp: change Tape()->State() != Empty to Tape() != CPPAD_NULL.
+ad.hpp: change to table of tapes. 
+eq.hpp: change Tape()->State() != Empty to Tape() != CPPAD_NULL.
+compare.hpp: change Tape()->State() != Empty to Tape() != CPPAD_NULL.
+independent.hpp: create tape before use.
+print_for.hpp: change Tape()->State() != Empty to Tape() != CPPAD_NULL.
+vec_ad.hpp: change Tape()->State() != Empty to Tape() != CPPAD_NULL.
+dependent.hpp: delete tape after use.
 " 
 add_list="
 "
 #
 change_list="
 	svn_commit.sh
-	cppad/local
+	cppad/local/ad_tape.hpp
+	cppad/local/cond_exp.hpp
+	cppad/local/ad.hpp
+	cppad/local/eq.hpp
+	cppad/local/compare.hpp
+	cppad/local/independent.hpp
+	cppad/local/print_for.hpp
+	cppad/local/vec_ad.hpp
+	cppad/local/dependent.hpp
 "
 delete_list="
 "

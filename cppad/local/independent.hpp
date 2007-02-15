@@ -2,7 +2,7 @@
 # define CPPAD_INDEPENDENT_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -94,10 +94,6 @@ void ADTape<Base>::Independent(VectorAD &x)
 	// check VectorAD is Simple Vector class with AD<Base> elements
 	CheckSimpleVector< AD<Base>, VectorAD>();
 
-	CppADUsageError(
-		State() == Empty ,
-		"Independent can only be used when tape is empty"
-	);
 	// dimension of the domain space
 	size_t n = x.size();
 	CppADUsageError(
@@ -128,6 +124,13 @@ void ADTape<Base>::Independent(VectorAD &x)
 template <typename VectorAD>
 inline void Independent(VectorAD &x)
 {	typedef typename VectorAD::value_type ADBase;
+	typedef typename ADBase::value_type   Base;
+	CppADUsageError(
+		ADBase::Tape() == CPPAD_NULL,
+		"Attempt to start a new tape before finishing previous tape"
+	);
+	ADBase::tape_new( *(ADTape<Base>::Id()) );
+	CppADUnknownError( ADBase::Tape() != CPPAD_NULL );
 	ADBase::Tape()->Independent(x); 
 }
 
