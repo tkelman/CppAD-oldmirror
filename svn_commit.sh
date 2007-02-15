@@ -38,19 +38,27 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Add id_ as a member variable in ADTape<Base>.
+log_entry="Move the tape Id() function from ADTape to AD class.
 
 svn_commit.sh: file that made this change.
-ad_tape.hpp: remove unecessary variable z_taddr and function call Id().
-ad.hpp: add id to tape constructor call.
+par_var.hpp: change ADTape<Base>::Id() to AD<Base>::Id().
+ad_tape.hpp: remove Id() function.
+ad.hpp: add the Id() function.
+independent.hpp: change ADTape<Base>::Id() to AD<Base>::Id().
+vec_ad.hpp: change ADTape<Base>::Id() to AD<Base>::Id().
+dependent.hpp: change ADTape<Base>::Id() to AD<Base>::Id().
 " 
 add_list="
 "
 #
 change_list="
 	svn_commit.sh
+	cppad/local/par_var.hpp
 	cppad/local/ad_tape.hpp
 	cppad/local/ad.hpp
+	cppad/local/independent.hpp
+	cppad/local/vec_ad.hpp
+	cppad/local/dependent.hpp
 "
 delete_list="
 "

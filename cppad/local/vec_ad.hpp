@@ -356,10 +356,10 @@ public:
 
 		// index corresponding to this element
 		if( AD<Base>::Tape() == CPPAD_NULL )
-		{	CppADUnknownError( vec->id != *ADTape<Base>::Id() );
+		{	CppADUnknownError( vec->id != *AD<Base>::Id() );
 		}
 		else
-		{	CppADUnknownError( vec->id == *ADTape<Base>::Id() );
+		{	CppADUnknownError( vec->id == *AD<Base>::Id() );
 			CppADUnknownError( vec->offset > 0  );
 	
 			if( IdenticalPar(x) )
@@ -376,7 +376,7 @@ public:
 			{	// check if we need to convert x to a variable
 				// note that x is mutable
 				if( Parameter(x) )
-				{	x.id_ = *ADTape<Base>::Id();
+				{	x.id_ = *AD<Base>::Id();
 					x.taddr_ = 
 					AD<Base>::Tape()->RecordParOp(x.value_);
 				}
@@ -420,7 +420,7 @@ public:
 
 	// constructor 
 	VecAD(size_t n) : length(n) , id(0)
-	{	CppADUnknownError( *ADTape<Base>::Id() > id );
+	{	CppADUnknownError( *AD<Base>::Id() > id );
 		data  = CPPAD_NULL;
 		if( length > 0 )
 		{	size_t i;
@@ -464,7 +464,7 @@ public:
 	VecAD_reference<Base> operator[](const AD<Base> &x) 
 	{
 		CppADUnknownError( 
-			( id != *ADTape<Base>::Id() )
+			( id != *AD<Base>::Id() )
 			| ( AD<Base>::Tape() != CPPAD_NULL )
 		);
 		CppADUsageError(
@@ -480,7 +480,7 @@ public:
 		if( (AD<Base>::Tape() == CPPAD_NULL) )
 			return VecAD_reference<Base>(this, x);
 
-		if( id != *ADTape<Base>::Id() )
+		if( id != *AD<Base>::Id() )
 		{	// must place a copy of vector in tape
 			offset = AD<Base>::Tape()->AddVec(length, data);
 
@@ -489,7 +489,7 @@ public:
 			CppADUnknownError( offset > 0 );
 
 			// tape id corresponding to this offest
-			id = *ADTape<Base>::Id();
+			id = *AD<Base>::Id();
 		}
 
 		return VecAD_reference<Base>(this, x); 
@@ -524,7 +524,7 @@ void VecAD_reference<Base>::operator=(const AD<Base> &y)
 	*(vec->data + i) = y.value_;
 
 	// record the setting of this array element
-	CppADUnknownError( vec->id == *ADTape<Base>::Id() );
+	CppADUnknownError( vec->id == *AD<Base>::Id() );
 	CppADUnknownError( vec->offset > 0 );
 	if( Parameter(x) ) AD<Base>::Tape()->RecordStoreOp(
 			StpvOp, vec->offset, i, y.taddr_ );
@@ -550,7 +550,7 @@ void VecAD_reference<Base>::operator=(const Base &y)
 	y_taddr = AD<Base>::Tape()->Rec.PutPar(y);
 
 	// record the setting of this array element
-	CppADUnknownError( vec->id == *ADTape<Base>::Id() );
+	CppADUnknownError( vec->id == *AD<Base>::Id() );
 	CppADUnknownError( vec->offset > 0 );
 	if( Parameter(x) ) AD<Base>::Tape()->RecordStoreOp(
 			StppOp, vec->offset, i, y_taddr );

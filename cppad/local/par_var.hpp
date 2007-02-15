@@ -2,7 +2,7 @@
 # define CPPAD_PAR_VAR_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -74,13 +74,13 @@ $end
 namespace CppAD {
 	template <class Base>
 	inline bool Parameter(const AD<Base> &x)
-	{	CppADUnknownError( x.id_ != *ADTape<Base>::Id() || x.taddr_ > 0 );
-		return ( x.id_ != *ADTape<Base>::Id() ); 
+	{	CppADUnknownError( x.id_ != *AD<Base>::Id() || x.taddr_ > 0 );
+		return ( x.id_ != *AD<Base>::Id() ); 
 	}
 	template <class Base>
 	inline bool Variable(const AD<Base> &x)
-	{	CppADUnknownError( x.id_ != *ADTape<Base>::Id() || x.taddr_ > 0 );
-		return ( x.id_ == *ADTape<Base>::Id() ); 
+	{	CppADUnknownError( x.id_ != *AD<Base>::Id() || x.taddr_ > 0 );
+		return ( x.id_ == *AD<Base>::Id() ); 
 	}
 } 
 // END CppAD namespace

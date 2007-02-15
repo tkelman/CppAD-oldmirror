@@ -486,20 +486,6 @@ public:
 	template <typename VectorADBase>
 	void Independent(VectorADBase &u);
 
-	// Identifier for the current tape
-	static size_t *Id(void)
-	{	// assume initialized as zero
-		static size_t id;
-		if( id )
-			return &id;
-
-		// first call to Id()
-		id = 1;
-		AD<Base> tape_new(id);
-
-		return &id;
-	}
-
 private:
 	// private data
 	size_t                      id_;

@@ -205,13 +205,13 @@ public:
 		CppADUnknownError( taddr > 0 );       // make sure valid taddr
 
 		taddr_ = taddr;
-		id_   = *ADTape<Base>::Id();
+		id_   = *AD<Base>::Id();
 	}
 
 	// Make this object correspond to a parameter
 	inline void MakeParameter( void )
 	{	CppADUnknownError( Variable(*this) ); // currently a variable
-		CppADUnknownError( id_ == *ADTape<Base>::Id() ); 
+		CppADUnknownError( id_ == *AD<Base>::Id() ); 
 
 		id_ = 0;
 	}
@@ -219,7 +219,7 @@ public:
 	// public functions connecting this AD class to its tape
 	//
 	static ADTape<Base> *Tape(void)
-	{	return tape_ptr( * (ADTape<Base>::Id()) ); }
+	{	return tape_ptr( * (AD<Base>::Id()) ); }
 
 	static ADTape<Base> *tape_ptr(size_t id)
 	{	return tape_table(id) [id]; }
@@ -232,6 +232,18 @@ public:
 		tape_table(id) [id] = CPPAD_NULL;
 	}
 
+	// Identifier for the current tape
+	static size_t *Id(void)
+	{	// assume initialized as zero
+		static size_t id;
+		if( id )
+			return &id;
+
+		// first call to Id()
+		id = 1;
+		return &id;
+	}
+
 private:
 	// value_ corresponding to this object
 	Base value_;
@@ -240,7 +252,7 @@ private:
 	size_t taddr_;
 
 	// identifier corresponding to taddr
-	// This is a parameter if and only if id_ != *ADTape<Base>::Id()
+	// This is a parameter if and only if id_ != *AD<Base>::Id()
 	size_t id_;
 	//
 	// private functions connecting this AD class to its tapes
