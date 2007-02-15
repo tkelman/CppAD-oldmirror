@@ -120,7 +120,7 @@ void ADFun<Base>::Dependent(const ADvector &y)
 	CheckSimpleVector< AD<Base>, ADvector>();
 
 	CppADUsageError(
-		AD<Base>::Tape()->state == Recording,
+		AD<Base>::Tape() != CPPAD_NULL,
 		"Can't store current operation sequence in this ADFun object"
 		"\nbecause corresponding tape is not currently recording."
 	);

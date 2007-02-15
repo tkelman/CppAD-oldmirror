@@ -117,7 +117,6 @@ void ADTape<Base>::Independent(VectorAD &x)
 	}
 
 	// done specifying all of the independent variables
-	state            = Recording;
 	size_independent = n;
 }
 

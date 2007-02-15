@@ -53,22 +53,10 @@ $syntax%ADTape<%Base%> %Tape%$$
 $head Description$$
 For each $italic Base$$ that is used in connection with
 $syntax%AD<%Base%>%$$, 
-there must be one and only one object with type
-$syntax%ADTape<%Base%>%$$.
+there must be one and only one $italic id$$ such that
+$syntax%ADBase<%Base%>::Tape() != CPPAD_NULL%$$.
 This object is used to record 
 $syntax%AD<%Base%>%$$ operations and compute derivatives.
-
-$head state$$
-The field
-$syntax%
-	TapeState %Tape%.state
-%$$
-contains the current state of the tape.
-The function
-$syntax%
-	TapeState %Tape%.State(void) const
-%$$
-can be used to access this value.
 
 $head Rec$$
 the $xref/TapeRec/$$ object $syntax%%Tape%.Rec%$$ contains
@@ -121,14 +109,8 @@ creates a tape record corresponding to a new independent variable.
 The field $syntax%%z%.value_%$$ is an input and all the other
 fields of $italic z$$ are outputs.
 Upon return from $code RecordInvOp$$, 
-$italic z$$ is in the list of variables and
 $syntax%%z%.taddr_%$$ 
 is the taddr of the new tape record. 
-$pre
-
-$$
-The tape state must be Empty.
-On input, the value $syntax%%z%.taddr_%$$ must be zero. 
 
 $subhead Loading Vector Element$$
 The procedure call
@@ -440,20 +422,6 @@ $syntax%
 %$$
 
 
-$head Erase$$
-$index Erase$$
-The operation 
-$syntax%
-	void %Tape%.Erase(void)
-%$$
-erases all the information stored in the CppAD tape.
-After this operation the tape is in the Empty state.
-When the tape is in the Empty state,
-all $syntax%AD<%Type>%$$ objects are parameters (not variables). 
-This is the initial state of the tape and an $code Erase$$
-is often preformed as soon as one is done with 
-a CppAD function that is stored in the tape.
-
 $end
 */
 
@@ -508,14 +476,11 @@ class ADTape {
 public:
 	// constructor
 	ADTape(void) 
-	{	state  = Empty; }
+	{ }
 
 	// destructor
 	~ADTape(void)
 	{	Rec.Erase(); }
-
-	enum TapeState State(void) const
-	{	return state; }
 
 	// public function only used by CppAD::Independent
 	template <typename VectorADBase>
@@ -537,7 +502,6 @@ public:
 
 private:
 	// private data
-	TapeState                 state;
 	size_t         size_independent;
 	TapeRec<Base>               Rec;
 
@@ -686,7 +650,6 @@ void ADTape<Base>::RecordInvOp(AD<Base> &z)
 
 	// in the independent variable case, should not already be in tape
 	CppADUnknownError( Parameter(z) );
-	CppADUnknownError( state == Empty );
 
 
 	// Make z correspond to a next variable in tape
@@ -712,7 +675,6 @@ void ADTape<Base>::RecordLoadOp(
 {	size_t z_taddr;
 
 	CppADUnknownError( (op == LdvOp) | (op == LdpOp) );
-	CppADUnknownError( state == Recording );
 	CppADUnknownError( NumInd(op) == 3 );
 
 	// Make z correspond to a next variable in tape
@@ -742,7 +704,6 @@ void ADTape<Base>::RecordStoreOp(
 		(op == StpvOp) | 
 		(op == StvvOp) 
 	);
-	CppADUnknownError( state == Recording );
 	CppADUnknownError( NumInd(op) == 3 );
 	CppADUnknownError( NumVar(op) == 0 );
 	CppADUnknownError( (op==StppOp) | (op==StpvOp) | (x_taddr!=0) );
@@ -766,7 +727,6 @@ inline void ADTape<Base>::RecordOp(
 {
 	size_t z_taddr;
 
-	CppADUnknownError( state == Recording );
 	CppADUnknownError( (x_taddr != 0) & (y_taddr != 0) );
 	CppADUnknownError( (op != InvOp) & (op != DisOp) );
 	CppADUnknownError( NumInd(op) == 2 );
@@ -792,7 +752,6 @@ inline void ADTape<Base>::RecordOp(
 )
 {
 
-	CppADUnknownError( state == Recording );
 	CppADUnknownError( (x_taddr != 0) & (y_taddr != 0) );
 	CppADUnknownError( (op != InvOp) & (op != DisOp) );
 	CppADUnknownError( NumInd(op) == 2 );
@@ -815,7 +774,6 @@ inline void ADTape<Base>::RecordOp(
 {
 	size_t z_taddr;
 
-	CppADUnknownError( state == Recording );
 	CppADUnknownError( x_taddr != 0 );
 	CppADUnknownError( (op != InvOp) & (op != DisOp) );
 	CppADUnknownError( NumInd(op) == 2 );
@@ -841,7 +799,6 @@ inline void ADTape<Base>::RecordOp(
 )
 {
 
-	CppADUnknownError( state == Recording );
 	CppADUnknownError( x_taddr != 0 );
 	CppADUnknownError( (op != InvOp) & (op != DisOp) );
 	CppADUnknownError( NumInd(op) == 2 );
@@ -864,7 +821,6 @@ inline void ADTape<Base>::RecordOp(
 {
 	size_t z_taddr;
 
-	CppADUnknownError( state == Recording );
 	CppADUnknownError( y_taddr != 0 );
 	CppADUnknownError( (op != InvOp) & (op != DisOp) );
 	CppADUnknownError( NumInd(op) == 2 );
@@ -890,7 +846,6 @@ inline void ADTape<Base>::RecordOp(
 )
 {
 
-	CppADUnknownError( state == Recording );
 	CppADUnknownError( y_taddr != 0 );
 	CppADUnknownError( (op != InvOp) & (op != DisOp) );
 	CppADUnknownError( NumInd(op) == 2 );
@@ -911,7 +866,6 @@ inline void ADTape<Base>::RecordOp(
 )
 {
 
-	CppADUnknownError( state == Recording );
 	CppADUnknownError( (op != InvOp) & (op != DisOp) );
 	CppADUnknownError( NumInd(op) == 2 );
 	CppADUnknownError( NumVar(op) == 0 );
@@ -932,7 +886,6 @@ inline void ADTape<Base>::RecordOp(
 {
 	size_t z_taddr;
 
-	CppADUnknownError( state == Recording );
 	CppADUnknownError( x_taddr != 0 );
 	CppADUnknownError( (op != InvOp) & (op != DisOp) );
 	CppADUnknownError( NumInd(op) == 1 );
@@ -959,7 +912,6 @@ void ADTape<Base>::RecordDisOp(
 {
 	size_t z_taddr;
 
-	CppADUnknownError( state == Recording );
 	CppADUnknownError( x_taddr != 0 );
 	CppADUnknownError( NumInd(DisOp) == 2 );
 
@@ -979,7 +931,6 @@ template <class Base>
 void ADTape<Base>::RecordPripOp(const char *text, const Base &x)
 {
 
-	CppADUnknownError( state == Recording );
 	CppADUnknownError( NumInd(PripOp) == 2 );
 
 	// put this operator in the tape
@@ -993,7 +944,6 @@ template <class Base>
 void ADTape<Base>::RecordPrivOp(const char *text, size_t x_taddr)
 {
 
-	CppADUnknownError( state == Recording );
 	CppADUnknownError( NumInd(PripOp) == 2 );
 
 	// put this operator in the tape
