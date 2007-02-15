@@ -225,7 +225,7 @@ public:
 	{	return tape_table(id) [id]; }
 
 	static void tape_new(size_t id)
-	{	tape_table(id) [id] = new ADTape<Base>; }
+	{	tape_table(id) [id] = new ADTape<Base>(id); }
 
 	static void tape_delete(size_t id)
 	{	delete tape_table(id) [id];

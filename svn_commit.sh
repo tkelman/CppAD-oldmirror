@@ -38,10 +38,11 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Remove the state member variable from the tape
-(now one merely tests AD<Base>::Tape() == CPPAD_NULL instead).
+log_entry="Add id_ as a member variable in ADTape<Base>.
 
 svn_commit.sh: file that made this change.
+ad_tape.hpp: remove unecessary variable z_taddr and function call Id().
+ad.hpp: add id to tape constructor call.
 " 
 add_list="
 "
@@ -49,8 +50,7 @@ add_list="
 change_list="
 	svn_commit.sh
 	cppad/local/ad_tape.hpp
-	cppad/local/independent.hpp
-	cppad/local/dependent.hpp
+	cppad/local/ad.hpp
 "
 delete_list="
 "

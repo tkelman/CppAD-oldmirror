@@ -475,7 +475,7 @@ class ADTape {
 
 public:
 	// constructor
-	ADTape(void) 
+	ADTape(size_t id) : id_(id)
 	{ }
 
 	// destructor
@@ -502,6 +502,7 @@ public:
 
 private:
 	// private data
+	size_t                      id_;
 	size_t         size_independent;
 	TapeRec<Base>               Rec;
 
@@ -646,16 +647,12 @@ size_t ADTape<Base>::RecordParOp(const Base &z)
 template  <class Base>
 void ADTape<Base>::RecordInvOp(AD<Base> &z)
 {
-	size_t z_taddr;
-
 	// in the independent variable case, should not already be in tape
 	CppADUnknownError( Parameter(z) );
 
-
 	// Make z correspond to a next variable in tape
-	z_taddr = Rec.PutOp(InvOp);
-	z.id_   = *Id();
-	z.taddr_ = z_taddr;
+	z.id_    = id_;
+	z.taddr_ = Rec.PutOp(InvOp);
 
 	// no Ind values for this instruction
 	CppADUnknownError( NumInd(InvOp) == 0 );
@@ -672,15 +669,13 @@ void ADTape<Base>::RecordLoadOp(
 	size_t     offset,
 	size_t     x_taddr
 )
-{	size_t z_taddr;
-
+{
 	CppADUnknownError( (op == LdvOp) | (op == LdpOp) );
 	CppADUnknownError( NumInd(op) == 3 );
 
 	// Make z correspond to a next variable in tape
-	z_taddr = Rec.PutOp(op);
-	z.id_   = *Id();
-	z.taddr_ = z_taddr;
+	z.id_    = id_;
+	z.taddr_ = Rec.PutOp(op);
 
 	// Ind values for this instruction
 	// (space reserved by third taddr is set by f.Forward(0, *) )
@@ -725,17 +720,13 @@ inline void ADTape<Base>::RecordOp(
 	size_t    y_taddr
 )
 {
-	size_t z_taddr;
-
 	CppADUnknownError( (x_taddr != 0) & (y_taddr != 0) );
 	CppADUnknownError( (op != InvOp) & (op != DisOp) );
 	CppADUnknownError( NumInd(op) == 2 );
 
-
 	// Make z correspond to a next variable in tape
-	z_taddr = Rec.PutOp(op);
-	z.id_   = *Id();
-	z.taddr_ = z_taddr;
+	z.id_    = id_;
+	z.taddr_ = Rec.PutOp(op);
 
 	// Ind values for this instruction
 	Rec.PutInd(x_taddr, y_taddr);
@@ -772,17 +763,13 @@ inline void ADTape<Base>::RecordOp(
 	const Base       &y
 )
 {
-	size_t z_taddr;
-
 	CppADUnknownError( x_taddr != 0 );
 	CppADUnknownError( (op != InvOp) & (op != DisOp) );
 	CppADUnknownError( NumInd(op) == 2 );
 
-
 	// Make z correspond to a next variable in tape
-	z_taddr = Rec.PutOp(op);
-	z.id_   = *Id();
-	z.taddr_ = z_taddr;
+	z.id_    = id_;
+	z.taddr_ = Rec.PutOp(op);
 
 	// Ind values for this instruction
 	Rec.PutInd(x_taddr, Rec.PutPar(y));
@@ -819,17 +806,13 @@ inline void ADTape<Base>::RecordOp(
 	size_t      y_taddr
 )
 {
-	size_t z_taddr;
-
 	CppADUnknownError( y_taddr != 0 );
 	CppADUnknownError( (op != InvOp) & (op != DisOp) );
 	CppADUnknownError( NumInd(op) == 2 );
 
-
 	// Make z correspond to a next variable in tape
-	z_taddr = Rec.PutOp(op);
-	z.id_   = *Id();
-	z.taddr_ = z_taddr;
+	z.id_    = id_;
+	z.taddr_ = Rec.PutOp(op);
 
 	// Ind values for this instruction
 	Rec.PutInd(Rec.PutPar(x), y_taddr);
@@ -884,17 +867,13 @@ inline void ADTape<Base>::RecordOp(
 	size_t      x_taddr
 )
 {
-	size_t z_taddr;
-
 	CppADUnknownError( x_taddr != 0 );
 	CppADUnknownError( (op != InvOp) & (op != DisOp) );
 	CppADUnknownError( NumInd(op) == 1 );
 
-
 	// Make z correspond to a next variable in tape
-	z_taddr = Rec.PutOp(op);
-	z.id_   = *Id();
-	z.taddr_ = z_taddr;
+	z.id_    = id_;
+	z.taddr_ = Rec.PutOp(op);
 
 	// Ind value for this instruction
 	Rec.PutInd(x_taddr);
@@ -910,15 +889,12 @@ void ADTape<Base>::RecordDisOp(
 	size_t      y_taddr
 )
 {
-	size_t z_taddr;
-
 	CppADUnknownError( x_taddr != 0 );
 	CppADUnknownError( NumInd(DisOp) == 2 );
 
 	// Make z correspond to a next variable in tape
-	z_taddr = Rec.PutOp(DisOp);
-	z.id_   = *Id();
-	z.taddr_ = z_taddr;
+	z.id_    = id_;
+	z.taddr_ = Rec.PutOp(DisOp);
 
 	// Ind values for this instruction
 	Rec.PutInd(x_taddr, y_taddr);
