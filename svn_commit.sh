@@ -38,38 +38,17 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="split AD<Base>::Tape() calls to tape_this() and tape_unique().
+log_entry="change VecAD member variables to use underscores.
 
 svn_commit.sh: file that made this change.
-example.cpp: fix name change from one_test to test_one.
+vec_ad.hpp: file containing the VecAD class.
 " 
 add_list="
 "
 #
 change_list="
 	svn_commit.sh
-	cppad/local/ad_tape.hpp
-	cppad/local/cond_exp.hpp
-	cppad/local/add_eq.hpp
-	cppad/local/div.hpp
-	cppad/local/ad.hpp
-	cppad/local/add.hpp
-	cppad/local/discrete.hpp
-	cppad/local/eq.hpp
-	cppad/local/sub_eq.hpp
-	cppad/local/mul_eq.hpp
-	cppad/local/compare.hpp
-	cppad/local/independent.hpp
-	cppad/local/print_for.hpp
-	cppad/local/div_eq.hpp
 	cppad/local/vec_ad.hpp
-	cppad/local/sub.hpp
-	cppad/local/mul.hpp
-	cppad/local/abs.hpp
-	cppad/local/pow.hpp
-	cppad/local/dependent.hpp
-	cppad/local/std_math_unary.hpp
-	example/example.cpp
 "
 delete_list="
 "
