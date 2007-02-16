@@ -11,6 +11,8 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 $begin whats_new_07$$
 $spell
+	Vec
+	openmp
 	dy
 	automake
 	makefile:wq
@@ -27,6 +29,20 @@ This section contains a list of the changes to CppAD during 2007
 (in reverse order by date).
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
+
+$head 02-16$$
+In the openmp branch (not yet in distribution),
+added $syntax%VecAD<%Base%>%$$ as a valid argument type for the
+$cref/Parameter and Variable/ParVar/$$ functions.
+In addition, $cref/size_t indexing/VecAD/size_t Indexing/$$
+is was extended to be allowed during taping so long as the
+VecAD object is a parameter.
+
+
+$head 02-15$$
+In the openmp branch (not yet in distribution),
+fixed the $code example/test_one.sh$$ script 
+(it was using its old name $code one_test$$).
 
 $head 02-06$$
 The $cref BenderQuad$$ documentation was improved by adding the fact

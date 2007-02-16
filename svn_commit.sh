@@ -38,16 +38,23 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Change VecAD from tape_unique to tape for its id.
+log_entry="Add and use Parameter(VecAD) and Variable(VecAD) functions.
 
 svn_commit.sh: file that made this change.
+whats_new_07.omh: user's view of the changes.
+par_var.hpp: add the new fucntions here.
+vec_ad.hpp: use the new functions here.
+par_var.cpp: example and test of new uses of Parameter and Variable.
 " 
 add_list="
 "
 #
 change_list="
 	svn_commit.sh
+	omh/whats_new_07.omh
+	cppad/local/par_var.hpp
 	cppad/local/vec_ad.hpp
+	example/par_var.cpp
 "
 delete_list="
 "
