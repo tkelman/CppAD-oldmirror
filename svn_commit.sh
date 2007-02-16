@@ -38,10 +38,9 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="change VecAD_reference member variables to use underscores.
+log_entry="Change VecAD from tape_unique to tape for its id.
 
 svn_commit.sh: file that made this change.
-vec_ad.hpp: file containing the VecAD_reference class.
 " 
 add_list="
 "

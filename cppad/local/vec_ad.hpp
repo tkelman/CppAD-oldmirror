@@ -513,11 +513,16 @@ template <class Base>
 void VecAD_reference<Base>::operator=(const AD<Base> &y)
 {
 	if( Parameter(y) )
-	{	*this = y.value_;
+	{	// fold into the Base type assignment
+		*this = y.value_;
 		return;
 	}
 
-	CppADUnknownError( AD<Base>::tape_unique() != CPPAD_NULL );
+	CppADUnknownError(
+	(AD<Base>::tape_ptr(y.id_) == CPPAD_NULL) | (vec_->id_ == y.id_)
+	);
+	vec_->id_ = y.id_;
+	ADTape<Base> *tape = AD<Base>::tape_ptr(y.id_);
 
 	size_t i = static_cast<size_t>( Integer(x_) );
 	CppADUnknownError( i < vec_->length_ );
@@ -528,9 +533,9 @@ void VecAD_reference<Base>::operator=(const AD<Base> &y)
 	// record the setting of this array element
 	CppADUnknownError( vec_->id_ == *AD<Base>::Id() );
 	CppADUnknownError( vec_->offset_ > 0 );
-	if( Parameter(x_) ) AD<Base>::tape_unique()->RecordStoreOp(
+	if( Parameter(x_) ) tape->RecordStoreOp(
 			StpvOp, vec_->offset_, i, y.taddr_ );
-	else	AD<Base>::tape_unique()->RecordStoreOp(
+	else	tape->RecordStoreOp(
 			StvvOp, vec_->offset_, x_.taddr_, y.taddr_ );
 }
 
@@ -545,18 +550,20 @@ void VecAD_reference<Base>::operator=(const Base &y)
 	// assign value both in the element and the original array
 	*(vec_->data_ + i) = y;
 
-	if( AD<Base>::tape_unique() == CPPAD_NULL )
+	// check if this ADVec object is a parameter
+	ADTape<Base> *tape = AD<Base>::tape_ptr(vec_->id_);
+	if( tape == CPPAD_NULL )
 		return;
 
 	// place a copy of y in the tape
-	y_taddr = AD<Base>::tape_unique()->Rec.PutPar(y);
+	y_taddr = tape->Rec.PutPar(y);
 
 	// record the setting of this array element
 	CppADUnknownError( vec_->id_ == *AD<Base>::Id() );
 	CppADUnknownError( vec_->offset_ > 0 );
-	if( Parameter(x_) ) AD<Base>::tape_unique()->RecordStoreOp(
+	if( Parameter(x_) ) tape->RecordStoreOp(
 			StppOp, vec_->offset_, i, y_taddr );
-	else	AD<Base>::tape_unique()->RecordStoreOp(
+	else	tape->RecordStoreOp(
 			StvpOp, vec_->offset_, x_.taddr_, y_taddr );
 }
 
