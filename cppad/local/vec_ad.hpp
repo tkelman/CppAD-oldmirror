@@ -157,13 +157,7 @@ instead of valid for all independent variables.
 
 $lend
 
-$head n$$
-The argument $italic n$$ has prototype
-$syntax%
-	size_t %n%
-%$$
-
-$head Constructors$$
+$head Constructor$$
 
 $subhead v$$
 The syntax 
@@ -174,7 +168,13 @@ creates an $code VecAD$$ object $italic v$$ with
 $italic n$$ elements.
 The initial value of the elements of $italic v$$ is unspecified.
 
-$subhead size$$
+$head n$$
+The argument $italic n$$ has prototype
+$syntax%
+	size_t %n%
+%$$
+
+$head size$$
 The syntax
 $syntax%
 	%v%.size()
@@ -376,10 +376,9 @@ public:
 		// index corresponding to this element
 		if( Variable(*vec_) )
 		{
-			ADTape<Base> *tape = AD<Base>::tape_unique();
+			ADTape<Base> *tape = AD<Base>::tape_ptr(vec_->id_);
 			CppADUnknownError( tape != CPPAD_NULL );
 
-			CppADUnknownError( vec_->id_ == *AD<Base>::Id() );
 			CppADUnknownError( vec_->offset_ > 0  );
 	
 			if( IdenticalPar(x_) )
@@ -396,7 +395,7 @@ public:
 			{	// check if we need to convert x to a variable
 				// note that x is mutable
 				if( Parameter(x_) )
-				{	x_.id_ = *AD<Base>::Id();
+				{	x_.id_ = vec_->id_;
 					x_.taddr_ = 
 					tape->RecordParOp(x_.value_);
 				}
@@ -437,12 +436,11 @@ public:
 
 	// default constructor
 	VecAD(void) : length_(0) , data_(CPPAD_NULL), offset_(0), id_(0)
-	{ }
+	{ CppADUnknownError( Parameter(*this) ); }
 
 	// constructor 
-	VecAD(size_t n) : length_(n) , id_(0)
-	{	CppADUnknownError( *AD<Base>::Id() > id_ );
-		data_  = CPPAD_NULL;
+	VecAD(size_t n) : length_(n), offset_(0), id_(0)
+	{	data_  = CPPAD_NULL;
 		if( length_ > 0 )
 		{	size_t i;
 			Base zero(0);
@@ -454,6 +452,7 @@ public:
 			for(i = 0; i < length_; i++)
 				data_[i] = zero;
 		}
+		CppADUnknownError( Parameter(*this) );
 	}
 
 	// destructor
@@ -485,10 +484,6 @@ public:
 	// taped elemement access
 	VecAD_reference<Base> operator[](const AD<Base> &x) 
 	{
-		CppADUnknownError( 
-			Parameter(*this)
-			| ( AD<Base>::tape_unique() != CPPAD_NULL )
-		);
 		CppADUsageError(
 			0 <= Integer(x),
 			"VecAD: element index is < zero"
@@ -505,13 +500,13 @@ public:
 		if( Parameter(*this) )
 		{	// must place a copy of vector in tape
 			offset_ = 
-			AD<Base>::tape_unique()->AddVec(length_, data_);
+			AD<Base>::tape_ptr(x.id_)->AddVec(length_, data_);
 
 			// advance pointer by one so is always > 0
 			offset_++; 
 
 			// tape id corresponding to this offest
-			id_ = *AD<Base>::Id();
+			id_ = x.id_;
 		}
 
 		return VecAD_reference<Base>(this, x); 
@@ -540,10 +535,11 @@ void VecAD_reference<Base>::operator=(const AD<Base> &y)
 
 	CppADUnknownError( Parameter(*vec_) | (vec_->id_ == y.id_) );
 
+	ADTape<Base> *tape = AD<Base>::tape_ptr(y.id_);
+	CppADUnknownError( tape != CPPAD_NULL );
 	if( Parameter(*vec_) )
 	{	// must place a copy of vector in tape
-		vec_->offset_ = 
-		AD<Base>::tape_unique()->AddVec(vec_->length_, vec_->data_);
+		vec_->offset_ = tape->AddVec(vec_->length_, vec_->data_);
 
 		// advance pointer by one so is always > 0
 		(vec_->offset_)++; 
@@ -553,7 +549,6 @@ void VecAD_reference<Base>::operator=(const AD<Base> &y)
 	}
 	CppADUnknownError( Variable(*vec_) );
 
-	ADTape<Base> *tape = AD<Base>::tape_ptr(y.id_);
 
 	size_t i = static_cast<size_t>( Integer(x_) );
 	CppADUnknownError( i < vec_->length_ );
@@ -562,7 +557,6 @@ void VecAD_reference<Base>::operator=(const AD<Base> &y)
 	*(vec_->data_ + i) = y.value_;
 
 	// record the setting of this array element
-	CppADUnknownError( vec_->id_ == *AD<Base>::Id() );
 	CppADUnknownError( vec_->offset_ > 0 );
 	if( Parameter(x_) ) tape->RecordStoreOp(
 			StpvOp, vec_->offset_, i, y.taddr_ );
@@ -592,7 +586,6 @@ void VecAD_reference<Base>::operator=(const Base &y)
 	y_taddr = tape->Rec.PutPar(y);
 
 	// record the setting of this array element
-	CppADUnknownError( vec_->id_ == *AD<Base>::Id() );
 	CppADUnknownError( vec_->offset_ > 0 );
 	if( Parameter(x_) ) tape->RecordStoreOp(
 			StppOp, vec_->offset_, i, y_taddr );
