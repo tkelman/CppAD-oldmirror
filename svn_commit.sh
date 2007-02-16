@@ -38,10 +38,10 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="change VecAD member variables to use underscores.
+log_entry="change VecAD_reference member variables to use underscores.
 
 svn_commit.sh: file that made this change.
-vec_ad.hpp: file containing the VecAD class.
+vec_ad.hpp: file containing the VecAD_reference class.
 " 
 add_list="
 "
