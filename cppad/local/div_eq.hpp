@@ -126,9 +126,16 @@ AD<Base>& AD<Base>::operator /= (const AD<Base> &right)
 			);
 		}
 	}
-	else	tape_this()->RecordOp(DivvvOp, 
+	else
+	{	CppADUsageError(
+			id_ == right.id_,
+			"Dividing AD objects that are"
+			" variables on different tapes."
+		);
+		tape_this()->RecordOp(DivvvOp, 
 			*this, taddr_, right.taddr_
-	);
+		);
+	}
 	return *this;
 }
 

@@ -125,8 +125,14 @@ pow(const AD<Base> &x, const AD<Base> &y)
 	if( Variable(x) )
 	{	if( Variable(y) )
 		{	// result = variable + variable
+			CppADUsageError(
+				x.id_ == y.id_,
+				"pow: arguments are AD objects that are"
+				" variables on different tapes."
+			);
 			x.tape_this()-> 
-				RecordOp(PowvvOp, p, x.taddr_, y.taddr_);
+				RecordOp(PowvvOp, p, x.taddr_, y.taddr_
+			);
 		}
 		// if IdenticalZero(y.value_), p = variable^0 = 1
 		else if( ! IdenticalZero(y.value_) )

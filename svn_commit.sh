@@ -38,26 +38,24 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Add id to make_varialbe call and remove AD<Base>::Id() function.
+log_entry="Check binary operations with two variables use same tape.
 
 svn_commit.sh: file that made this change.
-ad.hpp: remove AD<Base>::Id() and add id to make_variable call.
 " 
 add_list="
 "
 #
 change_list="
 	svn_commit.sh
-	cppad/local/cond_exp.hpp
 	cppad/local/add_eq.hpp
 	cppad/local/div.hpp
-	cppad/local/ad.hpp
 	cppad/local/add.hpp
+	cppad/local/sub_eq.hpp
 	cppad/local/mul_eq.hpp
-	cppad/local/independent.hpp
+	cppad/local/div_eq.hpp
 	cppad/local/sub.hpp
 	cppad/local/mul.hpp
-	cppad/local/dependent.hpp
+	cppad/local/pow.hpp
 "
 delete_list="
 "
