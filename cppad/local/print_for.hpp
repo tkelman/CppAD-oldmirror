@@ -100,13 +100,18 @@ $end
 namespace CppAD { 
 	template <class Base>
 	void PrintFor(const char *text, const AD<Base> &u)
-	{	if( AD<Base>::tape_active( *(AD<Base>::Id()) ) )
-		{	ADTape<Base> *tape = AD<Base>::tape_unique();
+	{	if( AD<Base>::tape_active_count(0) == 0 )
+			return;
+		CppADUsageError(
+			AD<Base>::tape_active_count(0) == 1,
+			"PrintFor: cannot use this function because more than"
+			"\none tape is recording at the current time."
+		);
+		ADTape<Base> *tape = AD<Base>::tape_any();
 
-			if( Parameter(u) )
-				tape->RecordPripOp(text, u.value_);
-			else	tape->RecordPrivOp(text, u.taddr_);
-		}
+		if( Parameter(u) )
+			tape->RecordPripOp(text, u.value_);
+		else	tape->RecordPrivOp(text, u.taddr_);
 	}
 	template <class Base>
 	void PrintFor(const char *text, const VecAD_reference<Base> &u)

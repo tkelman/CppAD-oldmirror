@@ -84,6 +84,15 @@ $xref/glossary/Independent Variable/independent variable/$$ values.
 This could be returned as an extra
 $xref/SeqProperty/$$.
 
+$head Optimization$$
+$index optimize, operation sequence$$
+$index tape, optimize$$
+$index sequence, optimize operations$$
+$index operation, optimize sequence$$
+A single $cref/RevSparseJac/$$ sweep could be used to determine
+which parts of the operation sequence in an
+$cref/ADFun/FunConstruct/$$ object can be removed.
+
 $head Software Guidelines$$
 
 $subhead Boost$$

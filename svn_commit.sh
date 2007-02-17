@@ -38,23 +38,23 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Convert tape buffers from extending to circular.
+log_entry="Replace tape_unique by tape_active_count and tape_any.
 
 svn_commit.sh: file that made this change.
-par_var.hpp: use AD<Base>::tape_active(id) to determine if variable.
-ad_tape.hpp: do not request tape pointer unless corresponding id is active.
-ad.hpp: use circular buffers, never reallocate (openmp preparation).
-independent.hpp: do not request tape pointer unless corresponding id is active.
-print_for.hpp: do not request tape pointer unless corresponding id is active.
-dependent.hpp: incrementing of ids is in AD<Base> class (now).
+wish_list.omh: add an unrelated item so that it does not get forgotten.
+whats_new_07.omh: mention the wish list item.
+ad.hpp: replace tape_unique by tape_active_count and tape_any.
+independent.hpp: replace tape_unique by tape_active_count and tape_any.
+print_for.hpp: replace tape_unique by tape_active_count and tape_any.
+dependent.hpp: replace tape_unique by tape_active_count and tape_any.
 " 
 add_list="
 "
 #
 change_list="
 	svn_commit.sh
-	cppad/local/par_var.hpp
-	cppad/local/ad_tape.hpp
+	omh/wish_list.omh
+	omh/whats_new_07.omh
 	cppad/local/ad.hpp
 	cppad/local/independent.hpp
 	cppad/local/print_for.hpp

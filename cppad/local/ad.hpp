@@ -222,13 +222,41 @@ public:
 	// regular member function  connecting this AD object to its tape
 	ADTape<Base> *tape_this(void) const
 	{	return tape_ptr(id_); }
-
 	//
 	// static public functions connecting this AD class to its tape
 	//
-	static ADTape<Base> *tape_unique(void)
-	{	return tape_ptr( * (AD<Base>::Id()) ); }
+	static size_t tape_active_count(int inc)
+	{	static size_t count       = 0;
+		static bool   link_atexit = true;
+		CppADUnknownError( (inc == -1) | (inc == 0) | (inc == 1) );
+		if( inc > 0 )
+		{	if( link_atexit )
+			{	atexit( tape_atexit );
+				link_atexit = false;
+			}
+			count++;
+			CppADUnknownError( count < CPPAD_LENGTH_TAPE_TABLE );
+		}
+		else if( inc < 0 )
+		{	CppADUnknownError( count > 0 );
+			count--;
+		}
 
+		return count;
+	}
+	static ADTape<Base> *tape_any(void)
+	{	static size_t i_previous = 0;
+		ADTape<Base> **table = tape_table();
+
+		size_t i = i_previous; 
+		while( table[i] == CPPAD_NULL )
+		{	i = (i + 1) % CPPAD_LENGTH_TAPE_TABLE;
+			if( i == i_previous )
+				return CPPAD_NULL;
+		}
+		i_previous = i;
+		return table[i];
+	}
 	// Identifier for the current tape
 	static size_t *Id(void)
 	{	// assume initialized as zero
@@ -237,7 +265,6 @@ public:
 			return &id;
 
 		// first call to Id()
-		atexit( tape_atexit );
 		id = 1;
 		return &id;
 	}
@@ -268,6 +295,7 @@ public:
 			{	CppADUnknownError( ! tape_active(id) );
 				table[i] = new ADTape<Base>(id); 
 				tape_id() [i] = id;
+				tape_active_count(+1);
 				return id;
 			}
 		}
@@ -286,6 +314,8 @@ public:
 		delete tape;
 		tape_table() [i] = CPPAD_NULL;
 		tape_id()    [i] = 0;
+		tape_active_count(-1);
+		return;
 	}
 
 
