@@ -163,7 +163,7 @@ void ADFun<Base>::Dependent(const ADvector &y)
 	Rec = tape->Rec;
 
 	// now we can delete the tape
-	AD<Base>::tape_delete( *(AD<Base>::Id()) );
+	AD<Base>::tape_delete( tape->id_ );
 
 	// total number of varables in this recording 
 	CppADUnknownError( totalNumVar == Rec.TotNumVar() );

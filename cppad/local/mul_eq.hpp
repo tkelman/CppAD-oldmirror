@@ -113,7 +113,7 @@ AD<Base>& AD<Base>::operator *= (const AD<Base> &right)
 		{	if( ! IdenticalZero(left) )
 			{	if( IdenticalOne(left) )
 				{	// z = 1 * right
-					MakeVariable(right.taddr_);
+					make_variable(right.id_, right.taddr_);
 				}
 				else	right.tape_this()->RecordOp(
 						MulpvOp, 

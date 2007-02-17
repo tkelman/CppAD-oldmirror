@@ -38,26 +38,25 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Replace tape_unique by tape_active_count and tape_any.
+log_entry="Add id to make_varialbe call and remove AD<Base>::Id() function.
 
 svn_commit.sh: file that made this change.
-wish_list.omh: add an unrelated item so that it does not get forgotten.
-whats_new_07.omh: mention the wish list item.
-ad.hpp: replace tape_unique by tape_active_count and tape_any.
-independent.hpp: replace tape_unique by tape_active_count and tape_any.
-print_for.hpp: replace tape_unique by tape_active_count and tape_any.
-dependent.hpp: replace tape_unique by tape_active_count and tape_any.
+ad.hpp: remove AD<Base>::Id() and add id to make_variable call.
 " 
 add_list="
 "
 #
 change_list="
 	svn_commit.sh
-	omh/wish_list.omh
-	omh/whats_new_07.omh
+	cppad/local/cond_exp.hpp
+	cppad/local/add_eq.hpp
+	cppad/local/div.hpp
 	cppad/local/ad.hpp
+	cppad/local/add.hpp
+	cppad/local/mul_eq.hpp
 	cppad/local/independent.hpp
-	cppad/local/print_for.hpp
+	cppad/local/sub.hpp
+	cppad/local/mul.hpp
 	cppad/local/dependent.hpp
 "
 delete_list="

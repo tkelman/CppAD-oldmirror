@@ -128,7 +128,7 @@ inline void Independent(VectorAD &x)
 		AD<Base>::tape_active_count(0) == 0 ,
 		"Attempt to start a new tape before finishing previous tape"
 	);
-	size_t id = *(AD<Base>::Id()) = ADBase::tape_new_id();
+	size_t id = ADBase::tape_new_id();
 
 	ADBase::tape_ptr(id)->Independent(x); 
 }

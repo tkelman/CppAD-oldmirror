@@ -111,7 +111,7 @@ AD<Base> AD<Base>::operator /(const AD<Base> &right) const
 		}
 		else if( IdenticalOne(right.value_) )
 		{	// result = variable / 1
-			result.MakeVariable(taddr_);
+			result.make_variable(id_, taddr_);
 		}
 		else
 		{	// result = variable / parameter

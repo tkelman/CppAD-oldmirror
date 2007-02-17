@@ -368,7 +368,7 @@ void ADTape<Base>::RecordCondExp(
 
 	// Make sure returnValue is in the list of variables and set its taddr
 	if( Parameter(returnValue) )
-		returnValue.MakeVariable( returnValue_taddr );
+		returnValue.make_variable(id_, returnValue_taddr );
 	else	returnValue.taddr_ = returnValue_taddr;
 
 	// ind[2] = left address

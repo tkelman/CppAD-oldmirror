@@ -203,18 +203,17 @@ public:
 	);
 
 	// Make this object correspond to a new variable on the tape
-	inline void MakeVariable( size_t taddr )
+	inline void make_variable(size_t id,  size_t taddr)
 	{	CppADUnknownError( Parameter(*this) ); // currently a parameter
-		CppADUnknownError( taddr > 0 );       // make sure valid taddr
+		CppADUnknownError( taddr > 0 );        // make sure valid taddr
 
 		taddr_ = taddr;
-		id_   = *AD<Base>::Id();
+		id_    = id;
 	}
 
 	// Make this object correspond to a parameter
 	inline void MakeParameter( void )
 	{	CppADUnknownError( Variable(*this) ); // currently a variable
-		CppADUnknownError( id_ == *AD<Base>::Id() ); 
 
 		id_ = 0;
 	}
@@ -257,17 +256,6 @@ public:
 		i_previous = i;
 		return table[i];
 	}
-	// Identifier for the current tape
-	static size_t *Id(void)
-	{	// assume initialized as zero
-		static size_t id;
-		if( id )
-			return &id;
-
-		// first call to Id()
-		id = 1;
-		return &id;
-	}
 
 	static bool tape_active(size_t id)
 	{	size_t i = id % CPPAD_LENGTH_TAPE_TABLE;
@@ -285,12 +273,13 @@ public:
 	}
 
 	static size_t tape_new_id()
-	{	ADTape<Base> **table = tape_table();
-		size_t id = *Id();
+	{	// new tape id is alwasy larger than the previous one
+		static size_t id = 0;
+		ADTape<Base> **table     = tape_table();
 		size_t i, j;
 		for(j = 1; j <= CPPAD_LENGTH_TAPE_TABLE; j++)
-		{	id++;
-			i = id % CPPAD_LENGTH_TAPE_TABLE;	 
+		{	id++;	
+			i = id % CPPAD_LENGTH_TAPE_TABLE;
 			if( table[i] == CPPAD_NULL )
 			{	CppADUnknownError( ! tape_active(id) );
 				table[i] = new ADTape<Base>(id); 
@@ -327,7 +316,7 @@ private:
 	size_t taddr_;
 
 	// identifier corresponding to taddr
-	// This is a parameter if and only if id_ != *AD<Base>::Id()
+	// This is a parameter if and only if tape_active(id_)
 	size_t id_;
 	//
 	// private functions connecting this AD class to its tapes
