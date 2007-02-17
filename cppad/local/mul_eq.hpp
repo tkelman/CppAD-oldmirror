@@ -133,9 +133,16 @@ AD<Base>& AD<Base>::operator *= (const AD<Base> &right)
 			);
 		}
 	}
-	else	tape_this()->RecordOp(MulvvOp, 
+	else
+	{	CppADUsageError(
+			id_ == right.id_,
+			"Multiplying AD objects that are"
+			" variables on different tapes."
+		);
+		tape_this()->RecordOp(MulvvOp, 
 			*this, taddr_, right.taddr_
-	);
+		);
+	}
 	return *this;
 }
 

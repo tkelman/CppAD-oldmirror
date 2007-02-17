@@ -105,6 +105,11 @@ AD<Base> AD<Base>::operator /(const AD<Base> &right) const
 	if( Variable(*this) )
 	{	if( Variable(right) )
 		{	// result = variable / variable
+			CppADUsageError(
+				id_ == right.id_,
+				"Dividing AD objects that are"
+				" variables on different tapes."
+			);
 			tape_this()->RecordOp(DivvvOp, 
 				result, taddr_, right.taddr_
 			);
