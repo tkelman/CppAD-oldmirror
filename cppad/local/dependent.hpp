@@ -111,12 +111,13 @@ namespace CppAD {
 template <typename Base>
 template <typename ADvector>
 void ADFun<Base>::Dependent(const ADvector &y)
-{	ADTape<Base> *tape = AD<Base>::tape_unique();
+{
 	CppADUsageError(
-		tape != CPPAD_NULL,
+		AD<Base>::tape_active( *(AD<Base>::Id()) ),
 		"Can't store current operation sequence in this ADFun object"
 		"\nbecause corresponding tape is not currently recording."
 	);
+	ADTape<Base> *tape = AD<Base>::tape_unique();
 
 	size_t   m = y.size();
 	size_t   n = tape->size_independent;
@@ -157,9 +158,6 @@ void ADFun<Base>::Dependent(const ADvector &y)
 
 	// now we can delete the tape
 	AD<Base>::tape_delete( *(AD<Base>::Id()) );
-
-	// increment the tape pointer
-	*(AD<Base>::Id()) += 1;
 
 	// total number of varables in this recording 
 	CppADUnknownError( totalNumVar == Rec.TotNumVar() );

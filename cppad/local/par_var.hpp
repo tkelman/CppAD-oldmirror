@@ -80,35 +80,20 @@ namespace CppAD {
 	// Parameter
 	template <class Base>
 	inline bool Parameter(const AD<Base> &x)
-	{	CppADUnknownError( 
-			x.id_ != *AD<Base>::Id() || x.taddr_ > 0 
-		);
-		return ( x.id_ != *AD<Base>::Id() ); 
-	}
+	{	return ! AD<Base>::tape_active(x.id_); }
+
 	template <class Base>
 	inline bool Parameter(const VecAD<Base> &x)
-	{	CppADUnknownError(
-		x.id_ != *AD<Base>::Id() || (x.offset_ != 0 && x.length_ != 0)
-		)
-		return (x.id_ != *AD<Base>::Id() ); 
-	}
+	{	return ! AD<Base>::tape_active(x.id_); }
+
 	// Variable
 	template <class Base>
 	inline bool Variable(const AD<Base> &x)
-	{	CppADUnknownError( 
-			x.id_ != *AD<Base>::Id() || x.taddr_ > 0 
-		);
-		return ( x.id_ == *AD<Base>::Id() ); 
-	}
+	{	return AD<Base>::tape_active(x.id_); }
+
 	template <class Base>
 	inline bool Variable(const VecAD<Base> &x)
-	{	CppADUnknownError(
-		x.id_ != *AD<Base>::Id() || (x.offset_ != 0 && x.length_ != 0)
-		)
-		return (x.id_ == *AD<Base>::Id() ); 
-	}
-
-	
+	{	return AD<Base>::tape_active(x.id_); }
 } 
 // END CppAD namespace
 

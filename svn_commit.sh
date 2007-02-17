@@ -38,17 +38,27 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Remove references to tape_unique from VecAD class.
+log_entry="Convert tape buffers from extending to circular.
 
 svn_commit.sh: file that made this change.
-vec_ad.hpp: remove references here.
+par_var.hpp: use AD<Base>::tape_active(id) to determine if variable.
+ad_tape.hpp: do not request tape pointer unless corresponding id is active.
+ad.hpp: use circular buffers, never reallocate (openmp preparation).
+independent.hpp: do not request tape pointer unless corresponding id is active.
+print_for.hpp: do not request tape pointer unless corresponding id is active.
+dependent.hpp: incrementing of ids is in AD<Base> class (now).
 " 
 add_list="
 "
 #
 change_list="
 	svn_commit.sh
-	cppad/local/vec_ad.hpp
+	cppad/local/par_var.hpp
+	cppad/local/ad_tape.hpp
+	cppad/local/ad.hpp
+	cppad/local/independent.hpp
+	cppad/local/print_for.hpp
+	cppad/local/dependent.hpp
 "
 delete_list="
 "

@@ -100,9 +100,10 @@ $end
 namespace CppAD { 
 	template <class Base>
 	void PrintFor(const char *text, const AD<Base> &u)
-	{	ADTape<Base> *tape = AD<Base>::tape_unique();
-	 	if( tape != CPPAD_NULL )
-		{	if( Parameter(u) )
+	{	if( AD<Base>::tape_active( *(AD<Base>::Id()) ) )
+		{	ADTape<Base> *tape = AD<Base>::tape_unique();
+
+			if( Parameter(u) )
 				tape->RecordPripOp(text, u.value_);
 			else	tape->RecordPrivOp(text, u.taddr_);
 		}

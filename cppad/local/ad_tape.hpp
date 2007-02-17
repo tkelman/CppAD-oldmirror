@@ -54,7 +54,7 @@ $head Description$$
 For each $italic Base$$ that is used in connection with
 $syntax%AD<%Base%>%$$, 
 there must be one and only one $italic id$$ such that
-$syntax%ADBase<%Base%>::tape_unique() != CPPAD_NULL%$$.
+$syntax%ADBase<%Base%>::tape_active(%id%)%$$ is true.
 This object is used to record 
 $syntax%AD<%Base%>%$$ operations and compute derivatives.
 

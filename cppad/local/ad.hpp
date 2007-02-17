@@ -21,6 +21,9 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 # include <cppad/local/tape_rec.hpp>
 # include <cppad/local/ad_tape.hpp>
 
+
+# define CPPAD_LENGTH_TAPE_TABLE 100
+
 // use this marco for assignment and computed assignment
 # define CPPAD_ASSIGN_MEMBER(Op)                              \
 	inline AD& operator Op (const AD &right);             \
@@ -215,29 +218,16 @@ public:
 
 		id_ = 0;
 	}
-
-	// tape corresponding to this AD object
+	//
+	// regular member function  connecting this AD object to its tape
 	ADTape<Base> *tape_this(void) const
-	{	CppADUnknownError( tape_ptr(id_) != CPPAD_NULL );
-		return tape_ptr(id_); 
-	}
+	{	return tape_ptr(id_); }
 
 	//
 	// static public functions connecting this AD class to its tape
 	//
 	static ADTape<Base> *tape_unique(void)
 	{	return tape_ptr( * (AD<Base>::Id()) ); }
-
-	static ADTape<Base> *tape_ptr(size_t id)
-	{	return tape_table(id) [id]; }
-
-	static void tape_new(size_t id)
-	{	tape_table(id) [id] = new ADTape<Base>(id); }
-
-	static void tape_delete(size_t id)
-	{	delete tape_table(id) [id];
-		tape_table(id) [id] = CPPAD_NULL;
-	}
 
 	// Identifier for the current tape
 	static size_t *Id(void)
@@ -247,9 +237,57 @@ public:
 			return &id;
 
 		// first call to Id()
+		atexit( tape_atexit );
 		id = 1;
 		return &id;
 	}
+
+	static bool tape_active(size_t id)
+	{	size_t i = id % CPPAD_LENGTH_TAPE_TABLE;
+		return ( (id > 0) & (tape_id() [i] == id) );
+	}
+
+	static ADTape<Base> *tape_ptr(size_t id)
+	{	CppADUnknownError( tape_active(id) );
+
+		size_t i = id % CPPAD_LENGTH_TAPE_TABLE;
+		ADTape<Base> *tape = tape_table() [i];
+
+		CppADUnknownError( tape != CPPAD_NULL );
+		return tape;
+	}
+
+	static size_t tape_new_id()
+	{	ADTape<Base> **table = tape_table();
+		size_t id = *Id();
+		size_t i, j;
+		for(j = 1; j <= CPPAD_LENGTH_TAPE_TABLE; j++)
+		{	id++;
+			i = id % CPPAD_LENGTH_TAPE_TABLE;	 
+			if( table[i] == CPPAD_NULL )
+			{	CppADUnknownError( ! tape_active(id) );
+				table[i] = new ADTape<Base>(id); 
+				tape_id() [i] = id;
+				return id;
+			}
+		}
+		CppADUsageError(
+			0,
+			"Request for too many AD tapes at the same time."
+		);
+		return 0;
+	}
+	static void tape_delete(size_t id)
+	{	CppADUnknownError( tape_active(id) );
+		size_t i = id % CPPAD_LENGTH_TAPE_TABLE;
+		ADTape<Base> *tape = tape_table() [i];
+
+		CppADUnknownError( tape != CPPAD_NULL );	
+		delete tape;
+		tape_table() [i] = CPPAD_NULL;
+		tape_id()    [i] = 0;
+	}
+
 
 private:
 	// value_ corresponding to this object
@@ -264,78 +302,24 @@ private:
 	//
 	// private functions connecting this AD class to its tapes
 	//
-	static ADTape<Base> **tape_extend(size_t new_size)
-	{	static ADTape<Base> **table;
-		static size_t    size_table;
-		size_t i;
-
-		// check for call from tape_atexit
-		if( new_size == 0 )
-		{	CppADUnknownError( table != CPPAD_NULL );
-			for(i = 0; i < size_table; i++)
-			{	if( table[i] != CPPAD_NULL ) 
-					delete table[i];
-			}
-			delete [] table;
-			return CPPAD_NULL;
-		}
-
-		// check for first call to tape_extend
-		if( table == CPPAD_NULL )
-		{	table = new ADTape<Base>* [new_size]; 
-			for(i = 0; i < new_size; i++)
-				table[i] = CPPAD_NULL;
-
-			// set up tape_atexit
-			atexit(tape_atexit); 
-
-			return table;
-		}
-
-
-		// extend table to be long enough
-		ADTape<Base> **new_table = new ADTape<Base>* [ new_size ];
-
-		// copy data from old table
-		for(i = 0; i < size_table; i++)
-			new_table[i] = table[i];
-
-		// pointers not yet set in new table
-		for(i = size_table; i < new_size; i++)
-			new_table[i] = CPPAD_NULL;
-
-		// delete the old table
-		delete [] table;
-
-		// static values corresponding to new table
-		size_table = new_size;
-		table      = new_table;
-
+	static size_t *tape_id(void)
+	{	// assume all id numbers are initially zero
+		static size_t table[CPPAD_LENGTH_TAPE_TABLE];
+		return table;
+	}	
+	static ADTape<Base> **tape_table(void)
+	{	// assume all pointers initially zero
+		static ADTape<Base> *table[CPPAD_LENGTH_TAPE_TABLE];
+		CppADUnknownError( CPPAD_NULL == 0 );
 		return table;
 	}
-	static ADTape<Base> **tape_table(size_t id)
-	{	CppADUnknownError( CPPAD_NULL == 0);
-		static ADTape<Base> **table;         // inidially zero
-		static size_t size_table;            // initially zero
-
-		// fast case where table is already long enough
-		if( size_table > id ) 
-			return table;
-
-		// new table size
-		size_table = std::max(2 * size_table, id + 1);
-
-		// This is only call to tape_extend (except for atexit call)
-		// hence table here and in tape_extend are the same.
-		// (tape_extend is seperate so that tape_table may be inlined.)
-		table = tape_extend(size_table);
-
-		return table;
-	}
-
-	// clean up tape memory
 	static void tape_atexit(void)
-	{	tape_extend(0);		
+	{	ADTape<Base> **table = tape_table();
+		size_t i;
+		for(i = 0; i < CPPAD_LENGTH_TAPE_TABLE; i++)
+		{	if( table[i] != CPPAD_NULL )
+				delete table[i];
+		}
 		return;
 	}
 }; 
