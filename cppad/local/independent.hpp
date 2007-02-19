@@ -35,14 +35,17 @@ $syntax%Independent(%x%)%$$
 
 
 $head Purpose$$
-Calling $code Independent$$ starts the recording 
-$xref/glossary/AD of Base/AD of/$$ $italic Base$$ operations
+Start a tape that records the 
+$xref/glossary/AD of Base/AD of Base/$$ operations
 with $italic x$$ as the vector of independent variables.
 Once the 
 AD of $italic Base$$
 $xref/glossary/Operation/Sequence/operation sequence/1/$$ is completed,
-it is transferred to a function object by calling the
-$syntax%ADFun<%Base%>%$$ $xref/FunConstruct//constructor/$$. 
+it must be transferred to a function object by declaring the dependent
+variables using
+$cref/ADFun<Base> f(x, y)/FunConstruct/$$ 
+or 
+$cref/f.Dependent(x, y)/Dependent/$$.
 
 $head x$$
 The vector $italic x$$ has prototype
@@ -61,14 +64,6 @@ $xref/SimpleVector/Elements of Specified Type/elements of type/$$
 $syntax%AD<%Base%>%$$.
 The routine $xref/CheckSimpleVector/$$ will generate an error message
 if this is not the case.
-
-$head Tape State$$
-$index state, tape$$
-$index tape, state$$
-The tape that records $xref/glossary/AD of Base/AD of/$$ $italic Base$$ operations must be 
-in the $xref/glossary/Tape State/Empty/empty state/1/$$ when
-$code Independent$$ is called.
-After this operation, the tape will be in the Recording state.
 
 $head Example$$
 $children%
@@ -124,10 +119,14 @@ template <typename VectorAD>
 inline void Independent(VectorAD &x)
 {	typedef typename VectorAD::value_type ADBase;
 	typedef typename ADBase::value_type   Base;
-	CppADUsageError(
-		AD<Base>::tape_active_count(0) == 0 ,
-		"Attempt to start a new tape before finishing previous tape"
+# ifndef NDEBUG
+	size_t j;
+	for(j = 0; j < x.size(); j++) CppADUsageError(
+		Parameter(x[j]),
+		"Independent: one of the argument components is a variable "
+		"\ncorresponding to a previous call to Independent"
 	);
+# endif
 	size_t id = ADBase::tape_new_id();
 
 	ADBase::tape_ptr(id)->Independent(x); 
