@@ -84,11 +84,10 @@ $syntax%
 
 $head Operation Sequence$$
 The result of this operation is a $code bool$$ value
-(not an $xref/glossary/AD of Base/AD of/$$ $italic Base$$ object).
-Thus it will not be recorded as part of the current
+(not an $xref/glossary/AD of Base/AD of Base/$$ object).
+Thus it will not be recorded as part of an
 AD of $italic Base$$
-$xref/glossary/Operation/Sequence/operation sequence/1/$$
-(even if the current $xref/glossary/Tape State/tape state/$$ is Recording).
+$xref/glossary/Operation/Sequence/operation sequence/1/$$.
 $pre
 
 $$
@@ -102,7 +101,9 @@ $syntax%
 		%y% = cos(%x%);
 	else	%y% = sin(%x%); 
 %$$
-only the assignment $syntax%%y% = cos(%x%)%$$ is recorded on the tape.
+only the assignment $syntax%%y% = cos(%x%)%$$ is recorded on the tape
+(if $italic x$$ is a $cref/parameter/glossary/Parameter/$$, 
+nothing is recorded).
 The $xref/CompareChange/$$ function can yield
 some information about changes in comparison operation results.
 You can use $xref/CondExp/$$ to obtain comparison operations

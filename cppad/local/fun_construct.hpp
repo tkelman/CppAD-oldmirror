@@ -85,8 +85,12 @@ $syntax%
 	ADFun<%Base%> %f%(%x%, %y%)
 %$$
 creates the $syntax%AD<%Base%>%$$ object $italic f$$,
-stops the recording of AD of $italic Base$$ operations,
-stores the corresponding operation sequence in the object $italic f$$.
+stops the recording of AD of $italic Base$$ operations
+corresponding to the call
+$syntax%
+	Independent(%x%)
+%$$
+and stores the corresponding operation sequence in the object $italic f$$.
 It then stores the first order Taylor coefficients 
 (corresponding to the value of $italic x$$) in $italic f$$.
 This is equivalent to the following steps using the default constructor:
@@ -159,6 +163,17 @@ ADFun<Base>::ADFun(const VectorAD &x, const VectorAD &y)
 	{	CppADUsageError(
 		x[j].taddr_ == (j+1),
 		"ADFun<Base>: independent variable vector has been changed."
+		);
+		CppADUsageError(
+		x[j].id_ == x[0].id_,
+		"ADFun<Base>: independent variable vector has been changed."
+		);
+	}
+	for(i = 0; i < y.size(); i++)
+	{	CppADUsageError(
+		CppAD::Parameter( y[i] ) | (y[i].id_ == x[0].id_) ,
+		"ADFun<Base>: dependent vector contains variables for"
+		"\na different tape than the independent variables."
 		);
 	}
 # endif

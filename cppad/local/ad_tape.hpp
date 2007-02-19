@@ -429,12 +429,6 @@ $end
 namespace CppAD {
 
 
-// declare outside class so can be used by AD class
-enum TapeState {
-	Empty,
-	Recording
-};
-
 template <class Base>
 class ADTape {
 

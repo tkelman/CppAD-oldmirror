@@ -57,11 +57,10 @@ variables.
 
 $head Operation Sequence$$
 The result of this operation is not an
-$xref/glossary/AD of Base/AD of/$$ $italic Base$$ object.
-Thus it will not be recorded as part of the current
+$xref/glossary/AD of Base/AD of Base/$$ object.
+Thus it will not be recorded as part of an
 AD of $italic Base$$
-$xref/glossary/Operation/Sequence/operation sequence/1/$$
-(even if the current $xref/glossary/Tape State/tape state/$$ is Recording).
+$xref/glossary/Operation/Sequence/operation sequence/1/$$.
 
 $head Example$$
 $children%

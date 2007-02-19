@@ -53,13 +53,13 @@ $syntax%%r% = %v%[%x%]%$$
 
 
 $head Purpose$$
-If the tape for $xref/glossary/AD of Base/AD of/$$ $italic Base$$ operations is in the
-$xref/glossary/Tape State/Recording State/$$,
+If either $italic v$$ or $italic x$$ is a 
+$cref/variable/glossary/Variable/$$,
 the indexing operation
 $syntax%
 	%y% = %v%[%x%]
 %$$
-is included in the
+is recorded in the corresponding
 AD of $italic Base$$
 $xref/glossary/Operation/Sequence/operation sequence/1/$$ and 
 transferred to the corresponding $xref/ADFun/$$ object $italic f$$.
@@ -497,6 +497,12 @@ public:
 		if( Parameter(*this) & Parameter(x) )
 			return VecAD_reference<Base>(this, x);
 
+		CppADUsageError( 
+			Parameter(*this) | Parameter(x) | id_ == x.id_,
+			"VecAD: vector and index are variables for"
+			" different tapes."
+		);
+
 		if( Parameter(*this) )
 		{	// must place a copy of vector in tape
 			offset_ = 
@@ -533,7 +539,11 @@ void VecAD_reference<Base>::operator=(const AD<Base> &y)
 		return;
 	}
 
-	CppADUnknownError( Parameter(*vec_) | (vec_->id_ == y.id_) );
+	CppADUsageError( 
+		Parameter(*vec_) | (vec_->id_ == y.id_),
+		"VecAD: vector and new element value are variables"
+		"\nfor different tapes."
+	);
 
 	ADTape<Base> *tape = AD<Base>::tape_ptr(y.id_);
 	CppADUnknownError( tape != CPPAD_NULL );

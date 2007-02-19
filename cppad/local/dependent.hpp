@@ -37,9 +37,11 @@ $syntax%%f%.Dependent(%x%, %y%)%$$
 $head Purpose$$
 Stop recording and the AD of $italic Base$$
 $xref/glossary/Operation/Sequence/operation sequence/1/$$
-started with the call
-$syntax%Independent(%x%)%$$
-and store the new operation sequence in $italic f$$.
+that started with the call
+$syntax%
+	Independent(%x%)
+%$$
+and store the operation sequence in $italic f$$.
 The operation sequence defines an 
 $xref/glossary/AD Function/AD function/$$
 $latex \[
@@ -159,11 +161,22 @@ void ADFun<Base>::Dependent(const ADvector &x, const ADvector &y)
 		"Dependent: independent variable vector has been changed."
 	);
 # ifndef NDEBUG
-	size_t j;
+	size_t i, j;
 	for(j = 0; j < x.size(); j++)
 	{	CppADUsageError(
 		x[j].taddr_ == (j+1),
-		"Dependent: independent variable vector has been changed."
+		"ADFun<Base>: independent variable vector has been changed."
+		);
+		CppADUsageError(
+		x[j].id_ == x[0].id_,
+		"ADFun<Base>: independent variable vector has been changed."
+		);
+	}
+	for(i = 0; i < y.size(); i++)
+	{	CppADUsageError(
+		Parameter( y[i].id_ ) | (y[i].id_ == x[0].id_) ,
+		"ADFun<Base>: dependent vector contains variables for"
+		"\na different tape than the independent variables."
 		);
 	}
 # endif

@@ -35,17 +35,33 @@ $syntax%Independent(%x%)%$$
 
 
 $head Purpose$$
-Start a tape that records the 
+Start a recording the 
 $xref/glossary/AD of Base/AD of Base/$$ operations
 with $italic x$$ as the vector of independent variables.
 Once the 
 AD of $italic Base$$
 $xref/glossary/Operation/Sequence/operation sequence/1/$$ is completed,
-it must be transferred to a function object by declaring the dependent
-variables using
-$cref/ADFun<Base> f(x, y)/FunConstruct/$$ 
-or 
-$cref/f.Dependent(x, y)/Dependent/$$.
+it must be transferred to a function object; see below.
+
+$head Variables for a Tape$$
+A tape is create by the call 
+$syntax%
+	Independent(%x%)
+%$$
+The corresponding operation sequence is transferred to a function object,
+and the tape is destroyed,
+using either (see $cref/ADFun<Base> f(x, y)/FunConstruct/$$)
+$syntax%
+	ADFun<%Base%> %f%( %x%, %y%)
+%$$
+or using (see $cref/f.Dependent(x, y)/Dependent/$$)
+$syntax%
+	%f%.Dependent( %x%, %y%)
+%$$
+Between when the tape is created and when it is destroyed,
+we refer to the elements of $italic x$$, 
+and the values that depend on the elements of $italic x$$,
+as variables for the tape created by the call to $code Independent$$. 
 
 $head x$$
 The vector $italic x$$ has prototype

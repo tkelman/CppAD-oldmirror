@@ -38,29 +38,27 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Check binary operations with two variables use same tape.
+log_entry="Remove references to tape state.
 
 svn_commit.sh: file that made this change.
-test_more/fun_check.cpp: test deprecated version of f.Dependent function.
-test_more/test_more.cpp: add FunCheck to list of tests, fix on_test->test_one.
-test_more/makefile.am: add fun_check.cpp to list of tests.
-omh/fun_deprecated.omh: add deprecated version of f.Dependent.
-ad_fun.hpp: add new verison of f.Dependent.
-fun_construct.hpp: use new version of f.Dependent (improve error messages).
-dependent.hpp: document new version of f.Dependent.
 " 
 add_list="
-	test_more/fun_check.cpp
 "
 #
 change_list="
 	svn_commit.sh
-	example/fun_check.cpp
-	test_more/test_more.cpp
-	test_more/makefile.am
-	omh/fun_deprecated.omh
-	cppad/local/ad_fun.hpp
+	cppad/local/par_var.hpp
+	cppad/local/ad_tape.hpp
+	cppad/local/bender_quad.hpp
+	cppad/local/near_equal_ext.hpp
+	cppad/local/bool_fun.hpp
+	cppad/local/compare.hpp
+	cppad/local/independent.hpp
+	cppad/local/value.hpp
+	cppad/local/vec_ad.hpp
 	cppad/local/fun_construct.hpp
+	cppad/local/integer.hpp
+	cppad/local/output.hpp
 	cppad/local/dependent.hpp
 "
 delete_list="
