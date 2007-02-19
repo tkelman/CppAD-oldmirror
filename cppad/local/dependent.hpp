@@ -174,7 +174,7 @@ void ADFun<Base>::Dependent(const ADvector &x, const ADvector &y)
 	}
 	for(i = 0; i < y.size(); i++)
 	{	CppADUsageError(
-		Parameter( y[i].id_ ) | (y[i].id_ == x[0].id_) ,
+		Parameter( y[i] ) | (y[i].id_ == x[0].id_) ,
 		"ADFun<Base>: dependent vector contains variables for"
 		"\na different tape than the independent variables."
 		);
