@@ -32,11 +32,13 @@ $index tape, stop recording$$
 $index Dependent$$
 
 $head Syntax$$
-$syntax%%f%.Dependent(%y%)%$$
+$syntax%%f%.Dependent(%x%, %y%)%$$
 
 $head Purpose$$
 Stop recording and the AD of $italic Base$$
 $xref/glossary/Operation/Sequence/operation sequence/1/$$
+started with the call
+$syntax%Independent(%x%)%$$
 and store the new operation sequence in $italic f$$.
 The operation sequence defines an 
 $xref/glossary/AD Function/AD function/$$
@@ -60,6 +62,20 @@ it becomes the operation sequence corresponding to $italic f$$.
 If a previous operation sequence was stored in $italic f$$,
 it is deleted. 
 
+$head x$$
+The argument $italic x$$ 
+must be the vector argument in a previous call to
+$cref/Independent/$$.
+Neither its size, or any of its values, are allowed to change
+between calling
+$syntax%
+	Independent(%x%)
+%$$
+and 
+$syntax%
+	%f%.Dependent(%x%, %y%)
+%$$.
+
 $head y$$
 The vector $italic y$$ has prototype
 $syntax%
@@ -76,15 +92,12 @@ $syntax%AD<%Base%>%$$.
 The routine $xref/CheckSimpleVector/$$ will generate an error message
 if this is not the case.
 
-$head Tape State$$
-The tape that records 
-$xref/glossary/AD of Base/AD of Base/$$ operations must be in the 
-$xref/glossary/Tape State/Recording/recording state/1/$$
-when this operation is preformed.
-The recording will stop and
-the AD operation sequence will be stored in $italic f$$.
-The tape will be in the $xref/glossary/Tape State/Empty/empty state/1/$$
-after this operation is preformed.
+$head Taping$$
+The tape,
+that was created when $syntax%Independent(%x%)%$$ was called, 
+will stop recording.
+The AD operation sequence will be transferred from
+the tape to the object $italic f$$ and the tape will then be deleted.
 
 $head Forward$$
 No $xref/Forward/$$ calculation is preformed during this operation.
@@ -111,8 +124,7 @@ namespace CppAD {
 template <typename Base>
 template <typename ADvector>
 void ADFun<Base>::Dependent(const ADvector &y)
-{
-	CppADUsageError(
+{	CppADUsageError(
 		AD<Base>::tape_active_count(0) != 0,
 		"Can't store current operation sequence in this ADFun object"
 		"\nbecause corresponding tape is not currently recording."
@@ -125,6 +137,46 @@ void ADFun<Base>::Dependent(const ADvector &y)
 	ADTape<Base> *tape = AD<Base>::tape_any();
 	CppADUnknownError( tape != CPPAD_NULL );
 
+	// code above just determines the tape and checks for errors
+	Dependent(tape, y);
+}
+
+template <typename Base>
+template <typename ADvector>
+void ADFun<Base>::Dependent(const ADvector &x, const ADvector &y)
+{
+	CppADUsageError(
+		x.size() > 0,
+		"Dependent: independent variable vector has size zero."
+	);
+	CppADUsageError(
+		Variable(x[0]),
+		"Dependent: independent variable vector has been changed."
+	);
+	ADTape<Base> *tape = AD<Base>::tape_ptr(x[0].id_);
+	CppADUsageError(
+		tape->size_independent == x.size(),
+		"Dependent: independent variable vector has been changed."
+	);
+# ifndef NDEBUG
+	size_t j;
+	for(j = 0; j < x.size(); j++)
+	{	CppADUsageError(
+		x[j].taddr_ == (j+1),
+		"Dependent: independent variable vector has been changed."
+		);
+	}
+# endif
+
+	// code above just determines the tape and checks for errors
+	Dependent(tape, y);
+}
+		
+
+template <typename Base>
+template <typename ADvector>
+void ADFun<Base>::Dependent(ADTape<Base> *tape, const ADvector &y)
+{
 	size_t   m = y.size();
 	size_t   n = tape->size_independent;
 	size_t   i, j;

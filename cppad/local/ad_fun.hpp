@@ -83,7 +83,10 @@ public:
 
 	// assign a new operation sequence
 	template <typename ADvector>
-	void Dependent(const ADvector &y);
+	void Dependent(const ADvector &y);  // deprecated 
+
+	template <typename ADvector>
+	void Dependent(const ADvector &x, const ADvector &y);
 
 	// forward mode sweep
 	template <typename VectorBase>
@@ -236,6 +239,10 @@ private:
 
 	// results of the forward mode Jacobian sparsity calculations
 	Pack *ForJac;
+
+
+	template <typename ADvector>
+	void Dependent(ADTape<Base> *tape, const ADvector &y);
 };
 // ---------------------------------------------------------------------------
 

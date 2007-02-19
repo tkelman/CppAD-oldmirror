@@ -141,8 +141,30 @@ ADFun<Base>::ADFun(const VectorAD &x, const VectorAD &y)
 : totalNumVar(0), Taylor(CPPAD_NULL), ForJac(CPPAD_NULL)
 {	size_t i, j, m, n;
 
+	CppADUsageError(
+		x.size() > 0,
+		"ADFun<Base>: independent variable vector has size zero."
+	);
+	CppADUsageError(
+		Variable(x[0]),
+		"ADFun<Base>: independent variable vector has been changed."
+	);
+	ADTape<Base> *tape = AD<Base>::tape_ptr(x[0].id_);
+	CppADUsageError(
+		tape->size_independent == x.size(),
+		"ADFun<Base>: independent variable vector has been changed."
+	);
+# ifndef NDEBUG
+	for(j = 0; j < x.size(); j++)
+	{	CppADUsageError(
+		x[j].taddr_ == (j+1),
+		"ADFun<Base>: independent variable vector has been changed."
+		);
+	}
+# endif
+
 	// stop the tape and store the operation sequence
-	Dependent(y);
+	Dependent(tape, y);
 
 	// allocate memory for one zero order Taylor coefficient
 	taylor_per_var= 1;
@@ -151,16 +173,10 @@ ADFun<Base>::ADFun(const VectorAD &x, const VectorAD &y)
 
 	// set zero order coefficients corresponding to indpendent variables
 	n = ind_taddr.size();
-	CppADUsageError(
-		n == x.size(),
-		"ADFun<Base>: independent variable vector has changed"
-	);
+	CppADUnknownError( n == x.size() );
 	for(j = 0; j < n; j++)
 	{	CppADUnknownError( ind_taddr[j] == (j+1) );
-		CppADUsageError(
-			x[j].taddr_ == (j+1),
-			"ADFun<Base>: independent variable vector has changed"
-		);
+		CppADUnknownError( x[j].taddr_  == (j+1) );
 		Taylor[ ind_taddr[j] ]  = x[j].value_;
 	}
 
@@ -174,8 +190,8 @@ ADFun<Base>::ADFun(const VectorAD &x, const VectorAD &y)
 	m = dep_taddr.size();
 	for(i = 0; i < m; i++) CppADUsageError(
 		Taylor[dep_taddr[i]] == y[i].value_,
-		"independent variable not equal its tape evaluation"
-		", it may be nan"
+		"An independent variable is not equal its tape evaluation"
+		", it may be nan."
 	);
 }
 

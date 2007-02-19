@@ -41,21 +41,27 @@
 log_entry="Check binary operations with two variables use same tape.
 
 svn_commit.sh: file that made this change.
+test_more/fun_check.cpp: test deprecated version of f.Dependent function.
+test_more/test_more.cpp: add FunCheck to list of tests, fix on_test->test_one.
+test_more/makefile.am: add fun_check.cpp to list of tests.
+omh/fun_deprecated.omh: add deprecated version of f.Dependent.
+ad_fun.hpp: add new verison of f.Dependent.
+fun_construct.hpp: use new version of f.Dependent (improve error messages).
+dependent.hpp: document new version of f.Dependent.
 " 
 add_list="
+	test_more/fun_check.cpp
 "
 #
 change_list="
 	svn_commit.sh
-	cppad/local/add_eq.hpp
-	cppad/local/div.hpp
-	cppad/local/add.hpp
-	cppad/local/sub_eq.hpp
-	cppad/local/mul_eq.hpp
-	cppad/local/div_eq.hpp
-	cppad/local/sub.hpp
-	cppad/local/mul.hpp
-	cppad/local/pow.hpp
+	example/fun_check.cpp
+	test_more/test_more.cpp
+	test_more/makefile.am
+	omh/fun_deprecated.omh
+	cppad/local/ad_fun.hpp
+	cppad/local/fun_construct.hpp
+	cppad/local/dependent.hpp
 "
 delete_list="
 "
