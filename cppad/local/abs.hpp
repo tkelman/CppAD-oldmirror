@@ -47,7 +47,7 @@ $code float$$ and $code double$$
 is included in the $code CppAD$$ namespace
 (the corresponding results has the same type as the arguments).
 The type $italic Base$$ can be any type in the 
-$xref/glossary/AD Type Sequence/AD type sequence/$$
+$cref/AD levels above/glossary/AD Levels Above Base/$$
 above $code float$$ or $code double$$.
 
 
@@ -58,7 +58,7 @@ $syntax%
 	const VecAD<%Base%>::reference &%x%
 %$$
 where $italic Base$$ is $code float$$, $code double$$ or in the 
-$xref/glossary/AD Type Sequence/AD type sequences/$$
+$cref/AD levels above/glossary/AD Levels Above Base/$$
 above $code float$$ or $code double$$; for example,
 $code AD<double>$$.
 

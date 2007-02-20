@@ -57,7 +57,7 @@ for the template class $syntax%AD<%Base%>%$$ are
 $code float$$, $code std::complex<float>$$, $code double$$, 
 and $code std::complex<double>$$. 
 In addition, $italic Base$$ can be any type in the 
-$cref/AD type sequence/glossary/AD Type Sequence/$$ above
+$cref/AD levels above/glossary/AD Levels Above Base/$$ 
 any of these types.
 If a user has need of some other base type, contact the CppAD mailing list
 $code cppad@list.coin-or.org$$.

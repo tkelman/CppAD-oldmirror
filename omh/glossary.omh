@@ -1,5 +1,5 @@
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -45,11 +45,11 @@ either $syntax%AD<%Base%>%$$ (see $xref/Constructor/$$)
 or $syntax%VecAD<%Base%>::reference%$$ (see $xref/VecAD/$$)
 for some $italic Base$$ type.
 
-$head AD Type Sequence$$
-$index sequence, AD Type$$
-$index type, AD sequence$$
-$index AD, type sequence$$
-If $italic Base$$ is a type, the AD type sequence above $italic Base$$ 
+$head AD Levels Above Base$$
+$index level, AD$$
+$index AD, level$$
+If $italic Base$$ is a type, 
+the AD levels above $italic Base$$ 
 is the following sequence of types:
 $syntax%
 	AD<%Base%> %,% AD< AD<%Base%> > %,% AD< AD< AD<%Base%> > > %,% %...%

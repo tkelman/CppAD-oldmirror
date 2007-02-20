@@ -90,7 +90,7 @@ extern bool LuSolve(void);
 extern bool LuVecADOk(void);
 extern bool Mul(void);
 extern bool MulEq(void);
-extern bool MulTape(void);
+extern bool mul_level(void);
 extern bool Near_Equal(void);
 extern bool NearEqualExt(void);
 extern bool NumericType(void);
@@ -213,7 +213,7 @@ int main(void)
 	ok &= Run( LuVecADOk,         "LuVecADOk"        );
 	ok &= Run( Mul,               "Mul"              );
 	ok &= Run( MulEq,             "MulEq"            );
-	ok &= Run( MulTape,           "MulTape"          );
+	ok &= Run( mul_level,         "mul_level"        );
 	ok &= Run( Near_Equal,        "Near_Equal"       );
 	ok &= Run( NearEqualExt,      "NearEqualExt"     );
 	ok &= Run( NumericType,       "NumericType"      );

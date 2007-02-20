@@ -24,11 +24,15 @@
 # where dir is replaced by the name of the directory. 
 # Then use add_list to add the files within that directory.
 #
-# change_list
-# List of files that are currently in repository and change during this commit.
-#
 # delete_list
 # List of files that will be deleted from the repository during this commit.
+#
+# move_list
+# List of files that have been moved in local copy, just the old names. 
+# The new file names should go in the change_list.
+#
+# change_list
+# List of files that are currently in repository and change during this commit.
 #
 # copy_branch
 # You may specify up one other branch that should receive a copy of all that 
@@ -38,30 +42,42 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Remove references to tape state.
+log_entry="Change old multple tapes (mul_tape) to multple level (mul_level).
 
-svn_commit.sh: file that made this change.
+svn_commt.sh: add the move_list argument.
+glossary.omh: change AD sequence above to AD levels above.
 " 
 add_list="
+"
+delete_list="
+"
+move_list="
+	example/mul_tape.cpp
+	omh/mul_tape.omh
 "
 #
 change_list="
 	svn_commit.sh
-	cppad/local/par_var.hpp
-	cppad/local/ad_tape.hpp
-	cppad/local/bender_quad.hpp
-	cppad/local/near_equal_ext.hpp
-	cppad/local/bool_fun.hpp
-	cppad/local/compare.hpp
-	cppad/local/independent.hpp
-	cppad/local/value.hpp
-	cppad/local/vec_ad.hpp
-	cppad/local/fun_construct.hpp
-	cppad/local/integer.hpp
-	cppad/local/output.hpp
-	cppad/local/dependent.hpp
-"
-delete_list="
+	example/mul_level.cpp
+	omh/mul_level.omh
+	example/makefile.am
+	example/example.vcproj
+	example/example.cpp
+	omh/glossary.omh
+	omh/example_list.omh
+	omh/whats_new_03.omh
+	omh/whats_new_04.omh
+	omh/whats_new_05.omh
+	omh/whats_new_06.omh
+	omh/whats_new_07.omh
+	omh/faq.omh
+	cppad/local/cond_exp.hpp
+	cppad/local/atan2.hpp
+	cppad/local/lu_ratio.hpp
+	cppad/local/abs.hpp
+	cppad/local/erf.hpp
+	cppad/local/std_math_unary.hpp
+	doc.omh
 "
 #
 copy_branch="" 
@@ -120,7 +136,7 @@ do
 		echo "cp $file ../branches/$copy_branch/$file ?"
 	fi
 done
-for file in $delete_list
+for file in $delete_list $move_list
 do
 	echo "svn delete $file ?"
 	if [ "$copy_branch" != "" ]
@@ -195,7 +211,7 @@ then
 		cp $file $target
 		copy_list="$copy_list $target"
 	done
-	for file in $delete_list
+	for file in $delete_list $move_list
 	do
 		svn delete $target
 		target="../branches/$copy_branch/$file"

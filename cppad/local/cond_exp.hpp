@@ -86,7 +86,7 @@ $italic left$$, $italic right$$, $italic trueCase$$, and $italic falseCase$$
 (which must all have the same type). 
 This type must be
 $code float$$, $code double$$, or in the 
-$xref/glossary/AD Type Sequence/AD type sequences/$$
+$cref/AD levels above/glossary/AD Levels Above Base/$$
 above $code float$$ or $code double$$.
 
 $head Op$$
