@@ -42,10 +42,9 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Change old multple tapes (mul_tape) to multple level (mul_level).
+log_entry="missing from previous commit.
 
-svn_commt.sh: add the move_list argument.
-glossary.omh: change AD sequence above to AD levels above.
+svn_commt.sh: include move_list at end of script commit.
 " 
 add_list="
 "
@@ -57,27 +56,6 @@ move_list="
 "
 #
 change_list="
-	svn_commit.sh
-	example/mul_level.cpp
-	omh/mul_level.omh
-	example/makefile.am
-	example/example.vcproj
-	example/example.cpp
-	omh/glossary.omh
-	omh/example_list.omh
-	omh/whats_new_03.omh
-	omh/whats_new_04.omh
-	omh/whats_new_05.omh
-	omh/whats_new_06.omh
-	omh/whats_new_07.omh
-	omh/faq.omh
-	cppad/local/cond_exp.hpp
-	cppad/local/atan2.hpp
-	cppad/local/lu_ratio.hpp
-	cppad/local/abs.hpp
-	cppad/local/erf.hpp
-	cppad/local/std_math_unary.hpp
-	doc.omh
 "
 #
 copy_branch="" 
@@ -219,4 +197,4 @@ then
 	done
 	
 fi
-svn commit --username bradbell --file svn_commit.log $add_list $change_list $delete_list $copy_list
+svn commit --username bradbell --file svn_commit.log $add_list $change_list $delete_list $move_list $copy_list
