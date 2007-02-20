@@ -38,7 +38,7 @@ Record the evaluation of a discrete function as part
 of an AD of $italic Base$$
 $xref/glossary/Operation/Sequence/operation sequence/1/$$.
 The value of a discrete function can depend on the
-$xref/glossary/Independent Variable/independent variables/$$,
+$cref/independent variables/glossary/Tape/Independent Variable/$$,
 but its derivative is identically zero.
 For example, suppose that the integer part of $italic x$$ is the 
 index into an array of values. 

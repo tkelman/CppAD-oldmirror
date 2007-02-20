@@ -42,20 +42,39 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="missing from previous commit.
+log_entry="Change glossary allow for multiple tapes with same AD type.
 
-svn_commt.sh: include move_list at end of script commit.
+svn_commt.sh: file that made this commit.
 " 
 add_list="
 "
 delete_list="
 "
 move_list="
-	example/mul_tape.cpp
-	omh/mul_tape.omh
 "
 #
 change_list="
+	svn_commit.sh
+	omh/forward.omh
+	omh/glossary.omh
+	omh/wish_list.omh
+	omh/whats_new_03.omh
+	omh/whats_new_06.omh
+	omh/faq.omh
+	cppad/local/cond_exp.hpp
+	cppad/local/bender_quad.hpp
+	cppad/local/equal_op_seq.hpp
+	cppad/local/discrete.hpp
+	cppad/local/eq.hpp
+	cppad/local/fun_check.hpp
+	cppad/local/compare.hpp
+	cppad/local/cap_taylor.hpp
+	cppad/local/print_for.hpp
+	cppad/local/value.hpp
+	cppad/local/vec_ad.hpp
+	cppad/local/user_ad.hpp
+	cppad/local/copy_ad.hpp
+	doc.omh
 "
 #
 copy_branch="" 

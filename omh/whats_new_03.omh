@@ -242,7 +242,7 @@ $head 11-02$$
 It is now legal to differentiate a 
 $xref/glossary/Parameter/parameter/$$
 with respect to an
-$xref/glossary/Independent Variable/independent variable/$$
+$cref/independent variable/glossary/Tape/Independent Variable/$$
 (parameter derivatives are always equal to zero).
 This is an extension of the
 $code Reverse$$,
@@ -274,8 +274,7 @@ $pre
 
 $$
 The $xref/Value/$$ function was changed so that it can
-be called when the tape is in the
-$xref/glossary/Tape State/Empty/empty state/1/$$
+be called when the tape is in the Empty state.
 
 $head 10-10$$
 The $code atan$$ function was added to the 
@@ -696,7 +695,7 @@ If the
 $xref/CopyAD/$$ constructor or 
 $xref/Eq//assignment/$$ operator
 used an
-$xref/glossary/Independent Variable/independent variable/$$
+$cref/independent variable/glossary/Tape/Independent Variable/$$
 for its source value,
 the result was also an independent variable.
 This has been fixed so that the result is

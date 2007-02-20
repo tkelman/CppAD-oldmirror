@@ -104,7 +104,7 @@ Evaluation of user defined unary
 $xref/Discrete//discrete functions/$$ can also be included
 in the sequence of operations; i.e.,
 functions that depend on the
-$xref/glossary/Independent Variable/independent variables/$$
+$cref/independent variables/glossary/Tape/Independent Variable/$$
 but which have identically zero derivatives
 (e.g., a step function).
 Derivatives of functions that are defined in terms of other derivatives

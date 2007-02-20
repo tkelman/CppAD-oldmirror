@@ -47,13 +47,11 @@ that it works with complex AD types.
 $head Exceptions$$
 When the function
 $xref/Independent/$$ is called,  
-the resulting $syntax%AD<%Base%>%$$ 
-$xref/glossary/Tape State/tape state/$$ is $code Recording$$.
+a new tape is created.
 If an exception occurs before the call to the corresponding
-$xref/ADFun/$$ constructor, the tape will be stuck 
-in the $code Recording$$ state.
-Thus, there should be a way to abort the current
-$syntax%AD<%Base%>%$$ recording.
+$xref/ADFun/$$ constructor or $cref/Dependent/$$, 
+the tape recording will be never stop.
+Thus, there should be a way to abort a tape recording.
 
 
 $head Multiple Tapes With Same Base Type$$
@@ -80,7 +78,7 @@ It is possible to detect if the
 AD of $italic Base$$ 
 $xref/glossary/Operation/Sequence/operation sequence/1/$$ 
 does not depend on any of the
-$xref/glossary/Independent Variable/independent variable/$$ values.
+$cref/independent variable/glossary/Tape/Independent Variable/$$ values.
 This could be returned as an extra
 $xref/SeqProperty/$$.
 

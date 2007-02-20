@@ -61,7 +61,7 @@ would not be included in the $code Value$$ result (see above).
 For this reason,
 the argument $italic x$$ must be a $xref/glossary/Parameter/parameter/$$; i.e.,
 it cannot depend on the current
-$xref/glossary/Independent Variable/independent variables/$$.
+$cref/independent variables/glossary/Tape/Independent Variable/$$.
 
 $head Example$$
 $children%

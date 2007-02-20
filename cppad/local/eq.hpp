@@ -39,7 +39,7 @@ $syntax%%y% = %x%$$
 $head Purpose$$
 Assigns a new value to the AD object $italic y$$.
 The object $italic y$$ will have the same dependence on the 
-$xref/glossary/Independent Variable/independent variables/$$ as $italic x$$
+$cref/independent variables/glossary/Tape/Independent Variable/$$ as $italic x$$
 ($italic y$$ is a 
 $xref/glossary/Variable/variable/$$ if and only if $italic x$$ is a variable).
 

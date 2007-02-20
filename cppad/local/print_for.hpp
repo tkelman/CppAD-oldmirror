@@ -40,7 +40,7 @@ This operation may be part of the
 $xref/glossary/Operation/Sequence/operation sequence/1/$$
 that is transferred to an $xref/ADFun/$$ object $italic f$$.
 The $code ADFun$$ object can be evaluated at different values for the
-$xref/glossary/Independent Variable/independent variables/$$.
+$cref/independent variables/glossary/Tape/Independent Variable/$$.
 This may result in a corresponding value for $italic y$$ 
 that is different from when the operation sequence was recorded.
 The routine $code PrintFor$$ requests a printing,

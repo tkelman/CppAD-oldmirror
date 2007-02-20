@@ -66,7 +66,7 @@ transferred to the corresponding $xref/ADFun/$$ object $italic f$$.
 Such an index can change each time
 zero order $xref/Forward//f.Forward/$$ is used; i.e.,
 $italic f$$ is evaluated with new value for the 
-$xref/glossary/Independent Variable/independent variables/$$. 
+$cref/independent variables/glossary/Tape/Independent Variable/$$. 
 Note that the value of $italic y$$ depends on the value of $italic x$$
 in a discrete fashion and CppAD computes its partial derivative with 
 respect to $italic x$$ as zero.
@@ -98,13 +98,11 @@ $subhead Exceptions$$
 $list number$$
 The object $italic y$$ cannot be used with the
 $xref/Value/$$ function to compute the corresponding $italic Base$$ value.
-This function can only be use while the corresponding tape is in the 
-$xref/glossary/Tape State/Empty state/$$.  
-In this case, the syntax
+If $italic v$$ is not a $cref/variable/glossary/Variable/$$
 $syntax%
 	v[%i%]
 %$$
-should be used to compute the corresponding $italic Base$$ value.
+can be used to compute the corresponding $italic Base$$ value.
 
 $lnext
 The object $italic y$$ cannot be used

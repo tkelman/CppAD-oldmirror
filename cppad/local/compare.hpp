@@ -108,7 +108,7 @@ The $xref/CompareChange/$$ function can yield
 some information about changes in comparison operation results.
 You can use $xref/CondExp/$$ to obtain comparison operations
 that depends on the 
-$xref/glossary/Independent Variable/independent variable/$$ 
+$cref/independent variable/glossary/Tape/Independent Variable/$$ 
 values with out re-taping the AD sequence of operations.
 
 $head Assumptions$$

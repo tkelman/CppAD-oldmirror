@@ -76,7 +76,7 @@ AD operation sequence,
 the choice in an AD conditional expression is made each time
 $xref/Forward//f.Forward/$$ is used to evaluate the zero order Taylor
 coefficients with new values for the 
-$xref/glossary/Independent Variable/independent variables/$$.
+$cref/independent variables/glossary/Tape/Independent Variable/$$.
 This is in contrast to the $xref/Compare//AD comparison operators/$$
 which are boolean valued and not included in the AD operation sequence. 
 
