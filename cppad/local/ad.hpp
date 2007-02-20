@@ -195,11 +195,11 @@ public:
 	inline AD sinh(void) const;
 	inline AD sqrt(void) const;
 
-	/*
+	/* ----------------------------------------------------------
 	Functions declared public so can be accessed by user through
 	a macro interface not not intended for direct use.
-	Macro interface is documented in BoolFun.h.
-	Developer documentation for these fucntions is in BoolFunLink.h
+	Macro interface is documented in bool_fun.hpp.
+	Developer documentation for these fucntions is in  bool_fun_link.hpp
 	*/
 	static inline bool UnaryBool(
 		bool FunName(const Base &x),
@@ -209,22 +209,8 @@ public:
 		bool FunName(const Base &x, const Base &y),
 		const AD<Base> &x , const AD<Base> &y
 	);
+	// -----------------------------------------------------------
 
-	// Make this object correspond to a new variable on the tape
-	inline void make_variable(size_t id,  size_t taddr)
-	{	CppADUnknownError( Parameter(*this) ); // currently a parameter
-		CppADUnknownError( taddr > 0 );        // make sure valid taddr
-
-		taddr_ = taddr;
-		id_    = id;
-	}
-
-	// Make this object correspond to a parameter
-	inline void MakeParameter( void )
-	{	CppADUnknownError( Variable(*this) ); // currently a variable
-
-		id_ = 0;
-	}
 
 private:
 	// value_ corresponding to this object
@@ -236,6 +222,23 @@ private:
 	// tape identifier corresponding to taddr
 	// This is a parameter if and only if tape_active(id_)
 	size_t id_;
+	//
+	// Make this variable a parameter
+	//
+	void make_parameter(void)
+	{	CppADUnknownError( Variable(*this) );  // currently a variable
+		id_ = 0;
+	}
+	//
+	// Make this parameter a new variable 
+	//
+	void make_variable(size_t id,  size_t taddr)
+	{	CppADUnknownError( Parameter(*this) ); // currently a parameter
+		CppADUnknownError( taddr > 0 );        // make sure valid taddr
+
+		taddr_ = taddr;
+		id_    = id;
+	}
 	//
 	// regular member function  connecting this AD object to its tape
 	//

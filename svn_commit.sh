@@ -42,12 +42,12 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Change all AD<Base>::tape_? functions from public to private
+log_entry="Change some more AD<Base> functions from public to private
 
 svn_commt.sh: file that made this commit.
-example.vcproj: remove references to test that were moved to ../speed.
-ad.hpp: move the functions.
-vec_ad.hpp: fix a warning by MS compiler.
+ad.hpp: move make_variable and make_parameter to private section.
+declare.hpp: forward declaration of Variable and Parameter for VecAD case.
+mul_eq.hpp: change MakeParameter to make_parameter.
 " 
 add_list="
 "
@@ -58,9 +58,9 @@ move_list="
 #
 change_list="
 	svn_commit.sh
-	example/example.vcproj
 	cppad/local/ad.hpp
-	cppad/local/vec_ad.hpp
+	cppad/local/declare.hpp
+	cppad/local/mul_eq.hpp
 "
 #
 copy_branch="" 

@@ -127,7 +127,7 @@ AD<Base>& AD<Base>::operator *= (const AD<Base> &right)
 	else if( Parameter(right) )
 	{	if( ! IdenticalOne(right.value_) )
 		{	if( IdenticalZero(right.value_) )
-				MakeParameter();
+				make_parameter();
 			else	tape_this()->RecordOp(MulvpOp, 
 					*this, taddr_, right.value_
 			);
