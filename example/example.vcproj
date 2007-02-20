@@ -177,24 +177,6 @@
 				RelativePath=".\default.cpp">
 			</File>
 			<File
-				RelativePath=".\det_by_lu.cpp">
-			</File>
-			<File
-				RelativePath=".\det_by_lu.hpp">
-			</File>
-			<File
-				RelativePath=".\det_by_minor.cpp">
-			</File>
-			<File
-				RelativePath=".\det_by_minor.hpp">
-			</File>
-			<File
-				RelativePath=".\det_of_minor.cpp">
-			</File>
-			<File
-				RelativePath=".\det_of_minor.hpp">
-			</File>
-			<File
 				RelativePath=".\div.cpp">
 			</File>
 			<File

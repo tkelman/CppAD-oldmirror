@@ -496,7 +496,7 @@ public:
 			return VecAD_reference<Base>(this, x);
 
 		CppADUsageError( 
-			Parameter(*this) | Parameter(x) | id_ == x.id_,
+			Parameter(*this) | Parameter(x) | (id_ == x.id_),
 			"VecAD: vector and index are variables for"
 			" different tapes."
 		);

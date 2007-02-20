@@ -42,9 +42,12 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Change glossary allow for multiple tapes with same AD type.
+log_entry="Change all AD<Base>::tape_? functions from public to private
 
 svn_commt.sh: file that made this commit.
+example.vcproj: remove references to test that were moved to ../speed.
+ad.hpp: move the functions.
+vec_ad.hpp: fix a warning by MS compiler.
 " 
 add_list="
 "
@@ -55,26 +58,9 @@ move_list="
 #
 change_list="
 	svn_commit.sh
-	omh/forward.omh
-	omh/glossary.omh
-	omh/wish_list.omh
-	omh/whats_new_03.omh
-	omh/whats_new_06.omh
-	omh/faq.omh
-	cppad/local/cond_exp.hpp
-	cppad/local/bender_quad.hpp
-	cppad/local/equal_op_seq.hpp
-	cppad/local/discrete.hpp
-	cppad/local/eq.hpp
-	cppad/local/fun_check.hpp
-	cppad/local/compare.hpp
-	cppad/local/cap_taylor.hpp
-	cppad/local/print_for.hpp
-	cppad/local/value.hpp
+	example/example.vcproj
+	cppad/local/ad.hpp
 	cppad/local/vec_ad.hpp
-	cppad/local/user_ad.hpp
-	cppad/local/copy_ad.hpp
-	doc.omh
 "
 #
 copy_branch="" 

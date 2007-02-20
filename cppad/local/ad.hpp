@@ -54,29 +54,37 @@ namespace CppAD {
 template <class Base>
 class AD {
 
+	// template friend functions where template parameter is not bound
+	template <class VectorAD>
+	friend void Independent(VectorAD &x);
+
 	// one argument functions
-	friend bool GreaterThanZero <Base> 
-		(const AD<Base> &u);
-	friend bool LessThanZero  <Base> 
-		(const AD<Base> &u);
-	friend bool LessThanOrZero  <Base> 
-		(const AD<Base> &u);
+	friend bool GreaterThanZero    <Base> 
+		(const AD<Base>    &u);
+	friend bool LessThanZero       <Base> 
+		(const AD<Base>    &u);
+	friend bool LessThanOrZero     <Base> 
+		(const AD<Base>    &u);
 	friend bool GreaterThanOrZero  <Base> 
-		(const AD<Base> &u);
-	friend bool Parameter     <Base> 
-		(const AD<Base> &u);
-	friend bool Variable      <Base> 
-		(const AD<Base> &u);
-	friend bool IdenticalPar  <Base> 
-		(const AD<Base> &u);
-	friend bool IdenticalZero <Base> 
-		(const AD<Base> &u);
-	friend bool IdenticalOne  <Base> 
-		(const AD<Base> &u);
-	friend int  Integer       <Base> 
-		(const AD<Base> &u);
-	friend AD Var2Par         <Base>
-		(const AD<Base> &u);
+		(const AD<Base>    &u);
+	friend bool Parameter          <Base> 
+		(const AD<Base>    &u);
+	friend bool Parameter          <Base>
+		(const VecAD<Base> &u);
+	friend bool Variable           <Base> 
+		(const AD<Base>    &u);
+	friend bool Variable           <Base> 
+		(const VecAD<Base> &u);
+	friend bool IdenticalPar       <Base> 
+		(const AD<Base>    &u);
+	friend bool IdenticalZero      <Base> 
+		(const AD<Base>    &u);
+	friend bool IdenticalOne       <Base> 
+		(const AD<Base>    &u);
+	friend int  Integer            <Base> 
+		(const AD<Base>    &u);
+	friend AD   Var2Par            <Base>
+		(const AD<Base>    &u);
 
 	// power function
 	friend AD pow <Base>
@@ -217,13 +225,45 @@ public:
 
 		id_ = 0;
 	}
+
+private:
+	// value_ corresponding to this object
+	Base value_;
+
+	// taddr_ in tape for this variable 
+	size_t taddr_;
+
+	// tape identifier corresponding to taddr
+	// This is a parameter if and only if tape_active(id_)
+	size_t id_;
 	//
 	// regular member function  connecting this AD object to its tape
+	//
 	ADTape<Base> *tape_this(void) const
 	{	return tape_ptr(id_); }
 	//
-	// static public functions connecting this AD class to its tape
+	// static member functions connecting this AD class to its tapes
 	//
+	static size_t *tape_id(void)
+	{	// assume all id numbers are initially zero
+		static size_t table[CPPAD_LENGTH_TAPE_TABLE];
+		return table;
+	}	
+	static ADTape<Base> **tape_table(void)
+	{	// assume all pointers initially zero
+		static ADTape<Base> *table[CPPAD_LENGTH_TAPE_TABLE];
+		CppADUnknownError( CPPAD_NULL == 0 );
+		return table;
+	}
+	static void tape_atexit(void)
+	{	ADTape<Base> **table = tape_table();
+		size_t i;
+		for(i = 0; i < CPPAD_LENGTH_TAPE_TABLE; i++)
+		{	if( table[i] != CPPAD_NULL )
+				delete table[i];
+		}
+		return;
+	}
 	static size_t tape_active_count(int inc)
 	{	static size_t count       = 0;
 		static bool   link_atexit = true;
@@ -243,35 +283,10 @@ public:
 
 		return count;
 	}
-	static ADTape<Base> *tape_any(void)
-	{	static size_t i_previous = 0;
-		ADTape<Base> **table = tape_table();
-
-		size_t i = i_previous; 
-		while( table[i] == CPPAD_NULL )
-		{	i = (i + 1) % CPPAD_LENGTH_TAPE_TABLE;
-			if( i == i_previous )
-				return CPPAD_NULL;
-		}
-		i_previous = i;
-		return table[i];
-	}
-
 	static bool tape_active(size_t id)
 	{	size_t i = id % CPPAD_LENGTH_TAPE_TABLE;
 		return ( (id > 0) & (tape_id() [i] == id) );
 	}
-
-	static ADTape<Base> *tape_ptr(size_t id)
-	{	CppADUnknownError( tape_active(id) );
-
-		size_t i = id % CPPAD_LENGTH_TAPE_TABLE;
-		ADTape<Base> *tape = tape_table() [i];
-
-		CppADUnknownError( tape != CPPAD_NULL );
-		return tape;
-	}
-
 	static size_t tape_new_id()
 	{	// new tape id is alwasy larger than the previous one
 		static size_t id = 0;
@@ -306,40 +321,27 @@ public:
 		tape_active_count(-1);
 		return;
 	}
+	static ADTape<Base> *tape_ptr(size_t id)
+	{	CppADUnknownError( tape_active(id) );
 
+		size_t i = id % CPPAD_LENGTH_TAPE_TABLE;
+		ADTape<Base> *tape = tape_table() [i];
 
-private:
-	// value_ corresponding to this object
-	Base value_;
-
-	// taddr_ in tape for this variable 
-	size_t taddr_;
-
-	// identifier corresponding to taddr
-	// This is a parameter if and only if tape_active(id_)
-	size_t id_;
-	//
-	// private functions connecting this AD class to its tapes
-	//
-	static size_t *tape_id(void)
-	{	// assume all id numbers are initially zero
-		static size_t table[CPPAD_LENGTH_TAPE_TABLE];
-		return table;
-	}	
-	static ADTape<Base> **tape_table(void)
-	{	// assume all pointers initially zero
-		static ADTape<Base> *table[CPPAD_LENGTH_TAPE_TABLE];
-		CppADUnknownError( CPPAD_NULL == 0 );
-		return table;
+		CppADUnknownError( tape != CPPAD_NULL );
+		return tape;
 	}
-	static void tape_atexit(void)
-	{	ADTape<Base> **table = tape_table();
-		size_t i;
-		for(i = 0; i < CPPAD_LENGTH_TAPE_TABLE; i++)
-		{	if( table[i] != CPPAD_NULL )
-				delete table[i];
+	static ADTape<Base> *tape_any(void)
+	{	static size_t i_previous = 0;
+		ADTape<Base> **table = tape_table();
+
+		size_t i = i_previous; 
+		while( table[i] == CPPAD_NULL )
+		{	i = (i + 1) % CPPAD_LENGTH_TAPE_TABLE;
+			if( i == i_previous )
+				return CPPAD_NULL;
 		}
-		return;
+		i_previous = i;
+		return table[i];
 	}
 }; 
 // ---------------------------------------------------------------------------
