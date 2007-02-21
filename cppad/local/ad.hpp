@@ -21,9 +21,6 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 # include <cppad/local/tape_rec.hpp>
 # include <cppad/local/ad_tape.hpp>
 
-
-# define CPPAD_LENGTH_TAPE_TABLE 100
-
 // use this marco for assignment and computed assignment
 # define CPPAD_ASSIGN_MEMBER(Op)                              \
 	inline AD& operator Op (const AD &right);             \
@@ -195,6 +192,9 @@ public:
 	inline AD sinh(void) const;
 	inline AD sqrt(void) const;
 
+	// user function to set maximum number of active tapes
+	static size_t tape_max_active(size_t max_number);
+
 	/* ----------------------------------------------------------
 	Functions declared public so can be accessed by user through
 	a macro interface not not intended for direct use.
@@ -209,18 +209,6 @@ public:
 		bool FunName(const Base &x, const Base &y),
 		const AD<Base> &x , const AD<Base> &y
 	);
-	// -----------------------------------------------------------
-	// user function to set maximum number of active tapes
-	static size_t  tape_max_active(size_t value)
-	{	static size_t max_active = 1;
-		CppADUsageError(
-			value < CPPAD_LENGTH_TAPE_TABLE,
-			"tape_max_active: argument is to large."
-		);
-		if( value > 0 )
-			max_active = value;
-		return max_active;
-	}
 
 private:
 	// value_ corresponding to this object

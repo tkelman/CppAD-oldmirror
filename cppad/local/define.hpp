@@ -33,7 +33,13 @@ $section Macros Used by CppAD Implementation$$
 $head CPPAD_NULL$$
 The preprocessor symbol $code CPPAD_NULL$$ is used for a null pointer. 
 If it is not yet defined,
-it is defined when $code cppad/local/Define.h$$ is included is included.
+it is defined when $code cppad/local/define.hpp/$$ is included.
+
+$head CPPAD_LENGHT_TAPE_TABLE$$
+The preprocessor symbol $code CPPAD_LENGHT_TAPE_TABLE$$ 
+is used dimension the active tape buffers.
+If it is not yet defined,
+it is defined when $code cppad/local/define.hpp/$$ is included.
 
 $head CPPAD_FOLD_BINARY_OPERATOR$$
 The syntax
@@ -76,6 +82,10 @@ $end
 
 # ifndef CPPAD_NULL
 # define CPPAD_NULL     0
+# endif
+
+# ifndef CPPAD_LENGHT_TAPE_TABLE
+# define CPPAD_LENGTH_TAPE_TABLE 100
 # endif
 
 

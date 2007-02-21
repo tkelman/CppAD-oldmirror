@@ -30,6 +30,14 @@ This section contains a list of the changes to CppAD during 2007
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
 
+$head 02-21$$
+In the openmp branch (not yet in distribution),
+have added the user interface change the
+$cref/maximum number of active tapes/max_active/$$.
+This needs to be tested in a multi-threading environment to
+be sure that it works there.
+Then the openmp branch changes can be copied to the trunk.
+
 
 $head 02-17$$
 In the openmp branch (not yet in distribution),

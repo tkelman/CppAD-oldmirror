@@ -42,19 +42,23 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Add simulate multile threading example.
+log_entry="Add user interface and documentation for multiple tapes.
+
+makefile.am: add max_active.hpp to distribution.
 
 svn_commt.sh: file that made this commit.
-makefile.am: add mul_thread.cpp.
-example.vcproj: add mul_thread.cpp.
-example.cpp: add mul_thread.cpp.
-ad.hpp: new user function tape_max_active (not yet documented).
-independent.hpp: user tape_max_active.
-print_for.hpp: improve error message.
-dependent.hpp: improve error message.
+max_active.hpp: move tape_max_active to separate file for user documentation.
+mul_thread.cpp: improve comments in example.
+example_list.omh: add mul_thread.cpp example to user documentation.
+?_op: add comment that this is developer (not user) documentation.
+ad_fun.hpp: add max_active to include and user documentation.
+ad.hpp: move tape_max_active to separate file for user documentation.
+undef.hpp: undefine CPPAD_LENGTH_TAPE_TABLE when CppAD include is done.
+define.hpp: move definition of CPPAD_LENGTH_TAPE_TABLE here.
+cppad.hpp: fix some comments about included files.
 " 
 add_list="
-	example/mul_thread.cpp
+	cppad/local/max_active.hpp
 "
 delete_list="
 "
@@ -63,13 +67,26 @@ move_list="
 #
 change_list="
 	svn_commit.sh
-	example/makefile.am
-	example/example.vcproj
-	example/example.cpp
+	example/mul_thread.cpp
+	omh/example_list.omh
+	omh/whats_new_07.omh
+	cppad/local/exp_op.hpp
+	cppad/local/mul_op.hpp
+	cppad/local/ad_fun.hpp
+	cppad/local/abs_op.hpp
+	cppad/local/div_op.hpp
 	cppad/local/ad.hpp
-	cppad/local/independent.hpp
-	cppad/local/print_for.hpp
-	cppad/local/dependent.hpp
+	cppad/local/asin_op.hpp
+	cppad/local/undef.hpp
+	cppad/local/atan_op.hpp
+	cppad/local/sqrt_op.hpp
+	cppad/local/add_op.hpp
+	cppad/local/define.hpp
+	cppad/local/op.hpp
+	cppad/local/log_op.hpp
+	cppad/local/acos_op.hpp
+	cppad/local/sub_op.hpp
+	cppad/config.h
 "
 #
 copy_branch="" 
