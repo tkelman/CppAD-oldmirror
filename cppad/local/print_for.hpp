@@ -105,7 +105,7 @@ namespace CppAD {
 		CppADUsageError(
 			AD<Base>::tape_active_count(0) == 1,
 			"PrintFor: cannot use this function because more than"
-			"\none tape is recording at the current time."
+			"\none tape is currently active."
 		);
 		ADTape<Base> *tape = AD<Base>::tape_any();
 

@@ -285,6 +285,9 @@
 				RelativePath=".\mul_level.cpp">
 			</File>
 			<File
+				RelativePath=".\mul_thread.cpp">
+			</File>
+			<File
 				RelativePath=".\near_equal.cpp">
 			</File>
 			<File

@@ -143,6 +143,11 @@ inline void Independent(VectorAD &x)
 		"\ncorresponding to a previous call to Independent"
 	);
 # endif
+	CppADUsageError(
+		ADBase::tape_active_count(0) < ADBase::tape_max_active(0),
+		"Independent: cannot create another tape because the"
+		"\nmaximum allowable number of tapes are currently active."
+	);
 	size_t id = ADBase::tape_new_id();
 
 	ADBase::tape_ptr(id)->Independent(x); 

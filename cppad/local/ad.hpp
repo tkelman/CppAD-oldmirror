@@ -210,7 +210,17 @@ public:
 		const AD<Base> &x , const AD<Base> &y
 	);
 	// -----------------------------------------------------------
-
+	// user function to set maximum number of active tapes
+	static size_t  tape_max_active(size_t value)
+	{	static size_t max_active = 1;
+		CppADUsageError(
+			value < CPPAD_LENGTH_TAPE_TABLE,
+			"tape_max_active: argument is to large."
+		);
+		if( value > 0 )
+			max_active = value;
+		return max_active;
+	}
 
 private:
 	// value_ corresponding to this object
@@ -268,13 +278,13 @@ private:
 		return;
 	}
 	static size_t tape_active_count(int inc)
-	{	static size_t count       = 0;
-		static bool   link_atexit = true;
+	{	static size_t count      = 0;
+		static bool   first_call = true;
 		CppADUnknownError( (inc == -1) | (inc == 0) | (inc == 1) );
 		if( inc > 0 )
-		{	if( link_atexit )
+		{	if( first_call )
 			{	atexit( tape_atexit );
-				link_atexit = false;
+				first_call  = false;
 			}
 			count++;
 			CppADUnknownError( count < CPPAD_LENGTH_TAPE_TABLE );
@@ -292,6 +302,7 @@ private:
 	}
 	static size_t tape_new_id()
 	{	// new tape id is alwasy larger than the previous one
+		// (note that tape_active_count gets called before return)
 		static size_t id = 0;
 		ADTape<Base> **table     = tape_table();
 		size_t i, j;
@@ -306,10 +317,7 @@ private:
 				return id;
 			}
 		}
-		CppADUsageError(
-			0,
-			"Request for too many AD tapes at the same time."
-		);
+		CppADUnknownError( 0 );
 		return 0;
 	}
 	static void tape_delete(size_t id)

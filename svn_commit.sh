@@ -42,14 +42,19 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Change some more AD<Base> functions from public to private
+log_entry="Add simulate multile threading example.
 
 svn_commt.sh: file that made this commit.
-ad.hpp: move make_variable and make_parameter to private section.
-declare.hpp: forward declaration of Variable and Parameter for VecAD case.
-mul_eq.hpp: change MakeParameter to make_parameter.
+makefile.am: add mul_thread.cpp.
+example.vcproj: add mul_thread.cpp.
+example.cpp: add mul_thread.cpp.
+ad.hpp: new user function tape_max_active (not yet documented).
+independent.hpp: user tape_max_active.
+print_for.hpp: improve error message.
+dependent.hpp: improve error message.
 " 
 add_list="
+	example/mul_thread.cpp
 "
 delete_list="
 "
@@ -58,9 +63,13 @@ move_list="
 #
 change_list="
 	svn_commit.sh
+	example/makefile.am
+	example/example.vcproj
+	example/example.cpp
 	cppad/local/ad.hpp
-	cppad/local/declare.hpp
-	cppad/local/mul_eq.hpp
+	cppad/local/independent.hpp
+	cppad/local/print_for.hpp
+	cppad/local/dependent.hpp
 "
 #
 copy_branch="" 

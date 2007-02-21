@@ -129,12 +129,12 @@ void ADFun<Base>::Dependent(const ADvector &y)
 {	CppADUsageError(
 		AD<Base>::tape_active_count(0) != 0,
 		"Can't store current operation sequence in this ADFun object"
-		"\nbecause corresponding tape is not currently recording."
+		"\nbecause there is no tape currently active."
 	);
 	CppADUsageError(
 		AD<Base>::tape_active_count(0) == 1,
 		"Dependent: cannot use with just one argument because"
-		"\nmore that one tape is recording at this time."
+		"\nmore that one tape is currently active."
 	);
 	ADTape<Base> *tape = AD<Base>::tape_any();
 	CppADUnknownError( tape != CPPAD_NULL );

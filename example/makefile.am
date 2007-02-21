@@ -83,6 +83,7 @@ example_SOURCES   = \
 	mul.cpp \
 	mul_eq.cpp \
 	mul_level.cpp \
+	mul_thread.cpp \
 	near_equal.cpp \
 	near_equal_ext.cpp \
 	numeric_type.cpp \
