@@ -237,115 +237,29 @@ private:
 		taddr_ = taddr;
 		id_    = id;
 	}
+	// ---------------------------------------------------------------
+	// tape linking functions
+	// 
+	// not static
+	ADTape<Base> *tape_this(void) const;
 	//
-	// regular member function  connecting this AD object to its tape
-	//
-	ADTape<Base> *tape_this(void) const
-	{	return tape_ptr(id_); }
-	//
-	// static member functions connecting this AD class to its tapes
-	//
-	static size_t *tape_id(void)
-	{	// assume all id numbers are initially zero
-		static size_t table[CPPAD_LENGTH_TAPE_TABLE];
-		return table;
-	}	
-	static ADTape<Base> **tape_table(void)
-	{	// assume all pointers initially zero
-		static ADTape<Base> *table[CPPAD_LENGTH_TAPE_TABLE];
-		CppADUnknownError( CPPAD_NULL == 0 );
-		return table;
-	}
-	static void tape_atexit(void)
-	{	ADTape<Base> **table = tape_table();
-		size_t i;
-		for(i = 0; i < CPPAD_LENGTH_TAPE_TABLE; i++)
-		{	if( table[i] != CPPAD_NULL )
-				delete table[i];
-		}
-		return;
-	}
-	static size_t tape_active_count(int inc)
-	{	static size_t count      = 0;
-		static bool   first_call = true;
-		CppADUnknownError( (inc == -1) | (inc == 0) | (inc == 1) );
-		if( inc > 0 )
-		{	if( first_call )
-			{	atexit( tape_atexit );
-				first_call  = false;
-			}
-			count++;
-			CppADUnknownError( count < CPPAD_LENGTH_TAPE_TABLE );
-		}
-		else if( inc < 0 )
-		{	CppADUnknownError( count > 0 );
-			count--;
-		}
-
-		return count;
-	}
-	static bool tape_active(size_t id)
-	{	size_t i = id % CPPAD_LENGTH_TAPE_TABLE;
-		return ( (id > 0) & (tape_id() [i] == id) );
-	}
-	static size_t tape_new_id()
-	{	// new tape id is alwasy larger than the previous one
-		// (note that tape_active_count gets called before return)
-		static size_t id = 0;
-		ADTape<Base> **table     = tape_table();
-		size_t i, j;
-		for(j = 1; j <= CPPAD_LENGTH_TAPE_TABLE; j++)
-		{	id++;	
-			i = id % CPPAD_LENGTH_TAPE_TABLE;
-			if( table[i] == CPPAD_NULL )
-			{	CppADUnknownError( ! tape_active(id) );
-				table[i] = new ADTape<Base>(id); 
-				tape_id() [i] = id;
-				tape_active_count(+1);
-				return id;
-			}
-		}
-		CppADUnknownError( 0 );
-		return 0;
-	}
-	static void tape_delete(size_t id)
-	{	CppADUnknownError( tape_active(id) );
-		size_t i = id % CPPAD_LENGTH_TAPE_TABLE;
-		ADTape<Base> *tape = tape_table() [i];
-
-		CppADUnknownError( tape != CPPAD_NULL );	
-		delete tape;
-		tape_table() [i] = CPPAD_NULL;
-		tape_id()    [i] = 0;
-		tape_active_count(-1);
-		return;
-	}
-	static ADTape<Base> *tape_ptr(size_t id)
-	{	CppADUnknownError( tape_active(id) );
-
-		size_t i = id % CPPAD_LENGTH_TAPE_TABLE;
-		ADTape<Base> *tape = tape_table() [i];
-
-		CppADUnknownError( tape != CPPAD_NULL );
-		return tape;
-	}
-	static ADTape<Base> *tape_any(void)
-	{	static size_t i_previous = 0;
-		ADTape<Base> **table = tape_table();
-
-		size_t i = i_previous; 
-		while( table[i] == CPPAD_NULL )
-		{	i = (i + 1) % CPPAD_LENGTH_TAPE_TABLE;
-			if( i == i_previous )
-				return CPPAD_NULL;
-		}
-		i_previous = i;
-		return table[i];
-	}
+	// static 
+	static size_t        *tape_id(void);
+	static ADTape<Base> **tape_table(void);
+	static void           tape_atexit(void);
+	static size_t         tape_active_count(int inc);
+	static bool           tape_active(size_t id);
+	static size_t         tape_new_id();
+	static void           tape_delete(size_t id);
+	static ADTape<Base>  *tape_ptr(size_t id);
+	static ADTape<Base>  *tape_any(void);
 }; 
 // ---------------------------------------------------------------------------
 
 } // END CppAD namespace
+
+// tape linking private functions
+# include <cppad/local/tape_link.hpp>
 
 // operations that expect the AD template class to be defined
 

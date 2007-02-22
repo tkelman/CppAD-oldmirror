@@ -42,23 +42,17 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Add user interface and documentation for multiple tapes.
-
-makefile.am: add max_active.hpp to distribution.
+log_entry="Split out tape_link and add developer documentation to it.
 
 svn_commt.sh: file that made this commit.
-max_active.hpp: move tape_max_active to separate file for user documentation.
-mul_thread.cpp: improve comments in example.
-example_list.omh: add mul_thread.cpp example to user documentation.
-?_op: add comment that this is developer (not user) documentation.
-ad_fun.hpp: add max_active to include and user documentation.
-ad.hpp: move tape_max_active to separate file for user documentation.
-undef.hpp: undefine CPPAD_LENGTH_TAPE_TABLE when CppAD include is done.
-define.hpp: move definition of CPPAD_LENGTH_TAPE_TABLE here.
-cppad.hpp: fix some comments about included files.
+tape_link.hpp: routiens that link AD<Base> to its tapes.
+makefile.am: add tape_link.hpp to distribution.
+ad.hpp: move tape link routines to tape_link.hpp.
+cppad.hpp: fix some comments.
+dev.omh: include tape_link.hpp in developer documentation.
 " 
 add_list="
-	cppad/local/max_active.hpp
+	cppad/local/tape_link.hpp
 "
 delete_list="
 "
@@ -67,26 +61,11 @@ move_list="
 #
 change_list="
 	svn_commit.sh
-	example/mul_thread.cpp
-	omh/example_list.omh
-	omh/whats_new_07.omh
-	cppad/local/exp_op.hpp
-	cppad/local/mul_op.hpp
-	cppad/local/ad_fun.hpp
-	cppad/local/abs_op.hpp
-	cppad/local/div_op.hpp
+	makefile.am
 	cppad/local/ad.hpp
-	cppad/local/asin_op.hpp
-	cppad/local/undef.hpp
-	cppad/local/atan_op.hpp
-	cppad/local/sqrt_op.hpp
-	cppad/local/add_op.hpp
-	cppad/local/define.hpp
-	cppad/local/op.hpp
-	cppad/local/log_op.hpp
-	cppad/local/acos_op.hpp
-	cppad/local/sub_op.hpp
-	cppad/config.h
+	cppad/cppad.hpp
+	dev.omh
+
 "
 #
 copy_branch="" 
