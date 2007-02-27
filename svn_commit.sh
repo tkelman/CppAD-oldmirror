@@ -42,17 +42,14 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Split out tape_link and add developer documentation to it.
+log_entry="Minor changes.
 
 svn_commt.sh: file that made this commit.
-tape_link.hpp: routiens that link AD<Base> to its tapes.
-makefile.am: add tape_link.hpp to distribution.
-ad.hpp: move tape link routines to tape_link.hpp.
-cppad.hpp: fix some comments.
-dev.omh: include tape_link.hpp in developer documentation.
+whats_new_07.omh: user's view of the changes.
+speed_test.hpp: correct director for include command.
+tape_link.hpp: more indexing in developer documentation.
 " 
 add_list="
-	cppad/local/tape_link.hpp
 "
 delete_list="
 "
@@ -61,11 +58,9 @@ move_list="
 #
 change_list="
 	svn_commit.sh
-	makefile.am
-	cppad/local/ad.hpp
-	cppad/cppad.hpp
-	dev.omh
-
+	omh/whats_new_07.omh
+	cppad/speed_test.hpp
+	cppad/local/tape_link.hpp
 "
 #
 copy_branch="" 

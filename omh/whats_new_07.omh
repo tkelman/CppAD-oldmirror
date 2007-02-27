@@ -30,6 +30,18 @@ This section contains a list of the changes to CppAD during 2007
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
 
+$head 02-22$$
+In the openmp branch (not yet in distribution),
+the include command in the $cref/speed_test/$$ documentation was
+$codep
+	# include <speed/speed_test.hpp>
+$$
+but it should have been
+$codep
+	# include <cppad/speed_test.hpp>
+$$
+This has been fixed.
+
 $head 02-21$$
 In the openmp branch (not yet in distribution),
 have added the user interface change the

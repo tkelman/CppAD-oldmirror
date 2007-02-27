@@ -2,7 +2,7 @@
 # define CPPAD_SPEED_TEST_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -35,7 +35,7 @@ $index test, speed$$
 $section Run One Speed Test and Return Results$$
 
 $head Syntax$$
-$code # include <speed/speed_test.hpp>$$
+$code # include <cppad/speed_test.hpp>$$
 $pre
 $$
 $syntax%%rate_vec% = speed_test(%test%, %size_vec%, %time_min%)%$$

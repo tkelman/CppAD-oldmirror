@@ -21,6 +21,7 @@ $spell
 $$
 
 $head tape_this$$
+$index tape_this$$
 The syntax
 $syntax%
 	%ptr% = %x%.tape_this()
@@ -34,6 +35,7 @@ $syntax%
 The argument $italic x$$ must a variable.
 
 $head tape_id$$
+$index tape_id$$
 The syntax
 $syntax%
 	%id_tbl% = AD<%Base%>::tape_id()
@@ -53,6 +55,7 @@ $syntax%
 
 
 $head tape_table$$
+$index tape_table$$
 The syntax
 $syntax%
 	%tape_tbl% = AD<%Base%>::tape_table()
@@ -66,6 +69,7 @@ Furthermore $syntax%%id_table%[%i%]% == 0%$$ if and only if
 $syntax%%tape_tbl%[%i%]% == CPPAD_NULL%$$.
 
 $head tape_atexit$$
+$index tape_atexit$$
 The function $code tape_atexit$$ has the prototype
 $syntax%
 	void AD<%Base%>::tape_atexit(void)
@@ -75,6 +79,7 @@ store in the $cref/tape_table/tape_link/tape_table/$$
 and are not equal to $code CPPAD_NULL$$.
 
 $head tape_active_count$$
+$index tape_active_count$$
 The syntax
 $syntax%
 	%count% = AD<%Base%>::tape_active_count(%inc%)
@@ -92,6 +97,7 @@ The resulting value for the counter must be
 greater than or equal zero and less than $code CPPAD_LENGTH_TAPE_TABLE$$.
 
 $head tape_active$$
+$index tape_active$$
 The syntax
 $syntax%
 	%flag% = AD<%Base%>::tape_active(%id%)
@@ -106,6 +112,7 @@ $syntax%
 %$$
 
 $head tape_new_id$$
+$index tape_new_id$$
 The syntax
 $syntax%
 	%id% = AD<%Base%>::tape_new_id()
@@ -119,6 +126,7 @@ $syntax%
 %$$
 
 $head tape_delete$$
+$index tape_delete$$
 The syntax
 $syntax%
 	AD<%Base%>::tape_delete(%id%)
@@ -128,6 +136,7 @@ The corresponding $code tape_id$$ entry is set to zero
 and the corresponding $code tape_table$$ entry is st to $code CPPAD_NULL$$.
 
 $head tape_ptr$$
+$index tape_ptr$$
 The syntax
 $syntax%
 	%ptr% = AD<%Base%>::tape_ptr(%id%)
@@ -136,6 +145,7 @@ returns the pointer to the tape corresponding to the tape identifier
 $italic id$$ (the tape must be active).
 
 $head tape_any$$
+$index tape_any$$
 The syntax
 $syntax%
 	%ptr% = AD<%Base%>::tape_any(%id%)
