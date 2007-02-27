@@ -123,7 +123,14 @@ $syntax%
 %$$
 is the ratio of $italic repeat$$ divided by execution time in seconds
 for the problem with size $syntax%%size_vec%[%i%]%$$.
-The execution time is measured by the difference in
+
+$head Clock$$
+If the preprocessor symbol $code _OPENMP$$ is defined
+(you are using OpenMP multi-threading)
+the routine
+$code omp_get_wtime()$$ is used for wall clock timing of the execution.
+Otherwise,
+the execution time is measured by the difference in
 $codep
 	(double) clock() / (double) CLOCKS_PER_SEC
 $$
@@ -141,17 +148,28 @@ $end
 */
 
 # include <cstddef>
-# include <ctime>
 # include <cmath>
 
 // For an unknown reason, cannot move other includes (using Sun's CC compiler)
 # include <cppad/speed_test.hpp>
 # include <cppad/check_simple_vector.hpp>
 
+# ifdef _OPENMP
+# include <omp.h>
+# else
+# include <sys/time.h>
+# endif
+
+
 namespace CppAD { // BEGIN CppAD namespace
 
 inline double speed_test_second(void)
-{	return (double) clock() / (double) CLOCKS_PER_SEC;
+{
+# ifdef _OPENMP
+	return omp_get_wtime();
+# else
+	return (double) clock() / (double) CLOCKS_PER_SEC;
+# endif
 }
 
 // implemented as an inline so that can include in multiple link modules

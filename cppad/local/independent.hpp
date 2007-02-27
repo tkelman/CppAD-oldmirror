@@ -135,20 +135,12 @@ template <typename VectorAD>
 inline void Independent(VectorAD &x)
 {	typedef typename VectorAD::value_type ADBase;
 	typedef typename ADBase::value_type   Base;
-# ifndef NDEBUG
-	size_t j;
-	for(j = 0; j < x.size(); j++) CppADUsageError(
-		Parameter(x[j]),
-		"Independent: one of the argument components is a variable "
-		"\ncorresponding to a previous call to Independent"
-	);
-# endif
 	CppADUsageError(
-		ADBase::tape_active_count(0) < ADBase::tape_max_active(0),
-		"Independent: cannot create another tape because the"
-		"\nmaximum allowable number of tapes are currently active."
+		ADBase::tape_ptr() == CPPAD_NULL,
+		"Independent: cannot create a new tape because"
+		"\na previous tape is still active (for this thread)."
 	);
-	size_t id = ADBase::tape_new_id();
+	size_t id = ADBase::tape_new();
 
 	ADBase::tape_ptr(id)->Independent(x); 
 }

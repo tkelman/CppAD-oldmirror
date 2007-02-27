@@ -100,14 +100,12 @@ $end
 namespace CppAD { 
 	template <class Base>
 	void PrintFor(const char *text, const AD<Base> &u)
-	{	if( AD<Base>::tape_active_count(0) == 0 )
-			return;
+	{	ADTape<Base> *tape = AD<Base>::tape_ptr();
 		CppADUsageError(
-			AD<Base>::tape_active_count(0) == 1,
-			"PrintFor: cannot use this function because more than"
-			"\none tape is currently active."
+			tape != CPPAD_NULL,
+			"PrintFor: cannot use this function because no tape"
+			"\nis currently active (for this thread)."
 		);
-		ADTape<Base> *tape = AD<Base>::tape_any();
 
 		if( Parameter(u) )
 			tape->RecordPripOp(text, u.value_);

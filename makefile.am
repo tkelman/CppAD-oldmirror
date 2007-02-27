@@ -110,7 +110,6 @@ nobase_include_HEADERS =  \
 	cppad/local/integer.hpp \
 	cppad/local/jacobian.hpp \
 	cppad/local/log_op.hpp \
-	cppad/local/max_active.hpp \
 	cppad/local/mul.hpp \
 	cppad/local/mul_eq.hpp \
 	cppad/local/mul_op.hpp \

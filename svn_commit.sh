@@ -42,16 +42,40 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Minor changes.
+log_entry="Use buffers with one entry per tape thread.
+
+mul_thread.cpp: simulated multi-threading example no longer works.
+max_active.hpp: change to only one tape per thread so not needed.
 
 svn_commt.sh: file that made this commit.
+mul_thread.cpp: this simulated multi-threading example no longer works.
+example/makefile.am: remove mul_thread.cpp example.
+example.vcproj: remove mul_thread.cpp example.
+example.cpp: remove mul_thread.cpp example.
+makefile.am: remove max_active.hpp.
+wish_list.omh: add an entry about the speed include files.
+example_list.omh: remove mul_thread.cpp example.
 whats_new_07.omh: user's view of the changes.
-speed_test.hpp: correct director for include command.
-tape_link.hpp: more indexing in developer documentation.
+ad_fun.hpp: remove max_active.hpp.
+ad.hpp: remove tape_atexit, tape_active_count, map tape_any to tape_ptr(void).
+undef.hpp: change CPPAD_LENGTH_TAPE_TABLE to CPPAD_MAX_NUM_THREADS.
+independent.hpp: use new tape_ptr(void) and tape_new_id -> tape_new;
+print_for.hpp: use new tape_ptr(void) for simple error detection.
+define.hpp: change CPPAD_LENGTH_TAPE_TABLE to CPPAD_MAX_NUM_THREADS.
+dependent.hpp: use new tape_ptr(void) for simple error detection.
+error_handler.hpp: make sure only master thread writes to output streams.
+track_new_del.hpp: use separate tracking for each thread.
+
+tape_link.hpp:
+Change CPPAD_LENGTH_TAPE_TABLE to CPPAD_MAX_NUM_THREADS, remove tape_atexit, 
+remove tape_active_count, change tape_new_id to tape_new, 
+change tape_any to tape_ptr with no argument.
 " 
 add_list="
 "
 delete_list="
+	example/mul_thread.cpp
+	cppad/local/max_active.hpp
 "
 move_list="
 "
@@ -59,8 +83,24 @@ move_list="
 change_list="
 	svn_commit.sh
 	omh/whats_new_07.omh
+	example/makefile.am
+	example/example.vcproj
+	example/example.cpp
+	makefile.am
+	omh/wish_list.omh
+	omh/example_list.omh
+	omh/whats_new_07.omh
 	cppad/speed_test.hpp
+	cppad/local/ad_fun.hpp
+	cppad/local/ad.hpp
+	cppad/local/undef.hpp
+	cppad/local/independent.hpp
+	cppad/local/print_for.hpp
+	cppad/local/define.hpp
+	cppad/local/dependent.hpp
 	cppad/local/tape_link.hpp
+	cppad/error_handler.hpp
+	cppad/track_new_del.hpp
 "
 #
 copy_branch="" 

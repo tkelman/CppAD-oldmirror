@@ -159,6 +159,10 @@ $end
 ----------------------------------------------------------------------------
 */
 
+# ifdef _OPENMP
+# include <omp.h>
+# endif
+
 // BEGIN CppAD namespace
 namespace CppAD { 
 
@@ -173,108 +177,85 @@ ADTape<Base> *AD<Base>::tape_this(void) const
 template <class Base>
 size_t * AD<Base>::tape_id(void)
 {	// assume all id numbers are initially zero
-	static size_t table[CPPAD_LENGTH_TAPE_TABLE];
+	static size_t table[CPPAD_MAX_NUM_THREADS];
 	return table;
 }	
 template <class Base>
 ADTape<Base> ** AD<Base>::tape_table(void)
 {	// assume all pointers initially zero
-	static ADTape<Base> *table[CPPAD_LENGTH_TAPE_TABLE];
+	static ADTape<Base> *table[CPPAD_MAX_NUM_THREADS];
 	CppADUnknownError( CPPAD_NULL == 0 );
 	return table;
 }
 template <class Base>
-void  AD<Base>::tape_atexit(void)
-{	ADTape<Base> **table = tape_table();
-	size_t i;
-	for(i = 0; i < CPPAD_LENGTH_TAPE_TABLE; i++)
-	{	if( table[i] != CPPAD_NULL )
-			delete table[i];
-	}
-	return;
+bool AD<Base>::tape_active(size_t id)
+{	size_t thread = id % CPPAD_MAX_NUM_THREADS;
+	return ( id > 0)  & (tape_id() [thread] == id );
 }
 template <class Base>
-size_t  AD<Base>::tape_active_count(int inc)
-{	static size_t count      = 0;
-	static bool   first_call = true;
-	CppADUnknownError( (inc == -1) | (inc == 0) | (inc == 1) );
-	if( inc > 0 )
-	{	if( first_call )
-		{	atexit( tape_atexit );
-			first_call  = false;
-		}
-		count++;
-		CppADUnknownError( count < CPPAD_LENGTH_TAPE_TABLE );
-	}
-	else if( inc < 0 )
-	{	CppADUnknownError( count > 0 );
-		count--;
+size_t  AD<Base>::tape_new(void)
+{
+# ifdef _OPENMP
+	size_t thread = static_cast<size_t> ( omp_get_thread_num() );
+# else
+	size_t thread = 0;
+# endif
+	// check for this error even in optimized code because 
+	// it is not yet part of user documentation.
+	if( thread >= CPPAD_MAX_NUM_THREADS )
+	{	bool known       = true;
+		int  line        = __LINE__;
+        	const char *file = __FILE__;
+		const char *exp  = "thread < CPPAD_MAX_NUM_THREADS";
+        	const char *msg  = "too many threads are active.";
+		ErrorHandler::Call(known, line, file, exp, msg);
 	}
 
-	return count;
+	// initialize so that id > 0 and thread == id % CPPAD_MAX_NUM_THREADS
+	size_t *id_table = tape_id();
+	if( id_table[thread] == 0 )
+		id_table[thread] = thread + CPPAD_MAX_NUM_THREADS;
+
+	// tape for this thread must be null at the start
+	CppADUnknownError( tape_table() [ thread ] == CPPAD_NULL );
+	tape_table() [thread] = new ADTape<Base>( id_table[thread] );
+
+	return id_table[thread];
 }
-template <class Base>
-bool  AD<Base>::tape_active(size_t id)
-{	size_t i = id % CPPAD_LENGTH_TAPE_TABLE;
-	return ( (id > 0) & (tape_id() [i] == id) );
-}
-template <class Base>
-size_t  AD<Base>::tape_new_id()
-{	// new tape id is alwasy larger than the previous one
-	// (note that tape_active_count gets called before return)
-	static size_t id = 0;
-	ADTape<Base> **table     = tape_table();
-	size_t i, j;
-	for(j = 1; j <= CPPAD_LENGTH_TAPE_TABLE; j++)
-	{	id++;	
-		i = id % CPPAD_LENGTH_TAPE_TABLE;
-		if( table[i] == CPPAD_NULL )
-		{	CppADUnknownError( ! tape_active(id) );
-			table[i] = new ADTape<Base>(id); 
-			tape_id() [i] = id;
-			tape_active_count(+1);
-			return id;
-		}
-	}
-	CppADUnknownError( 0 );
-	return 0;
-}
+
 template <class Base>
 void  AD<Base>::tape_delete(size_t id)
-{	CppADUnknownError( tape_active(id) );
-	size_t i = id % CPPAD_LENGTH_TAPE_TABLE;
-	ADTape<Base> *tape = tape_table() [i];
+{	size_t thread = id % CPPAD_MAX_NUM_THREADS;
+	CppADUnknownError( tape_table() [thread] != CPPAD_NULL );
 
-	CppADUnknownError( tape != CPPAD_NULL );	
-	delete tape;
-	tape_table() [i] = CPPAD_NULL;
-	tape_id()    [i] = 0;
-	tape_active_count(-1);
+	delete ( tape_table() [thread] );
+	tape_table() [thread] = CPPAD_NULL;
+
+	// increase the id for this thread in a way such that 
+	// thread = id_table[thread] % CPPAD_MAX_NUM_THREADS
+	tape_id() [thread] += CPPAD_MAX_NUM_THREADS;
+
 	return;
 }
 template <class Base>
 ADTape<Base> * AD<Base>::tape_ptr(size_t id)
 {	CppADUnknownError( tape_active(id) );
 
-	size_t i = id % CPPAD_LENGTH_TAPE_TABLE;
-	ADTape<Base> *tape = tape_table() [i];
+	size_t thread = id % CPPAD_MAX_NUM_THREADS;
+	ADTape<Base> *tape = tape_table() [thread];
 
 	CppADUnknownError( tape != CPPAD_NULL );
 	return tape;
 }
 template <class Base>
-ADTape<Base> * AD<Base>::tape_any(void)
-{	static size_t i_previous = 0;
-	ADTape<Base> **table = tape_table();
-
-	size_t i = i_previous; 
-	while( table[i] == CPPAD_NULL )
-	{	i = (i + 1) % CPPAD_LENGTH_TAPE_TABLE;
-		if( i == i_previous )
-			return CPPAD_NULL;
-	}
-	i_previous = i;
-	return table[i];
+ADTape<Base> *AD<Base>::tape_ptr(void)
+{
+# ifdef _OPENMP
+	size_t thread = static_cast<size_t> ( omp_get_thread_num() );
+# else
+	size_t thread = 0;
+# endif
+	return tape_table() [thread];
 }
 
 } // END CppAD namespace

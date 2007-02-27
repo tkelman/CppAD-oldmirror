@@ -188,6 +188,11 @@ $syntax%
 	CppAD::TrackCount(__FILE__, __LINE__)
 %$$
 
+$head OpenMP$$
+In the case of multi-threading with OpenMP,
+$code TrackCount$$ will only report the results for the current thread.
+
+
 $head Example$$
 $children%
 	example/track_new_del.cpp
@@ -203,10 +208,18 @@ $end
 # include <sstream>
 # include <string>
 
+# ifdef _OPENMP
+# include <omp.h>
+# endif
+
 # define CppADDebugTrack 0
 
 # ifndef CPPAD_NULL
 # define CPPAD_NULL	0
+# endif
+
+# ifndef CPPAD_MAX_NUM_THREADS
+# define CPPAD_MAX_NUM_THREADS 16
 # endif
 
 # define CppADTrackNewVec(newlen, oldptr) \
@@ -244,8 +257,17 @@ public:
 
 	// There is only one tracking list and it starts it here
 	static TrackElement *Root(void)
-	{	static TrackElement root;
-		return &root;
+	{	static TrackElement root[CPPAD_MAX_NUM_THREADS];
+# ifdef _OPENMP
+		size_t thread = static_cast<size_t> ( omp_get_thread_num() );
+# else
+		size_t thread = 0;
+# endif
+		CppADUsageError(
+			thread < CPPAD_MAX_NUM_THREADS,
+			"too many OpenMP threads are active."
+		);
+		return root + thread;
 	}
 
 	// Print the linked list

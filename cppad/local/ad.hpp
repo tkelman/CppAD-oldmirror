@@ -192,9 +192,6 @@ public:
 	inline AD sinh(void) const;
 	inline AD sqrt(void) const;
 
-	// user function to set maximum number of active tapes
-	static size_t tape_max_active(size_t max_number);
-
 	/* ----------------------------------------------------------
 	Functions declared public so can be accessed by user through
 	a macro interface not not intended for direct use.
@@ -246,13 +243,11 @@ private:
 	// static 
 	static size_t        *tape_id(void);
 	static ADTape<Base> **tape_table(void);
-	static void           tape_atexit(void);
-	static size_t         tape_active_count(int inc);
 	static bool           tape_active(size_t id);
-	static size_t         tape_new_id();
+	static size_t         tape_new(void);
 	static void           tape_delete(size_t id);
 	static ADTape<Base>  *tape_ptr(size_t id);
-	static ADTape<Base>  *tape_any(void);
+	static ADTape<Base>  *tape_ptr(void);
 }; 
 // ---------------------------------------------------------------------------
 

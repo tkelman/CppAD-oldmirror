@@ -30,6 +30,19 @@ This section contains a list of the changes to CppAD during 2007
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
 
+$head 02-27$$
+In the openmp branch (not yet in distribution),
+The $cref/speed/$$ include files are currently being distributed
+above the $code cppad$$ include directory. 
+A $cref/wish list item/WishList/Speed/$$ to fix this has been added.
+$pre
+
+$$
+The multiple active tapes required a lot of multi-threading acess
+management for the tapes. This was made simpler (and faster)
+by having at most one tape per thread.
+
+
 $head 02-22$$
 In the openmp branch (not yet in distribution),
 the include command in the $cref/speed_test/$$ documentation was
@@ -44,10 +57,10 @@ This has been fixed.
 
 $head 02-21$$
 In the openmp branch (not yet in distribution),
-have added the user interface change the
-$cref/maximum number of active tapes/max_active/$$.
+have the $syntax%AD<%Base%>::tape_max_active$$ user interface change the
+maximum number of active tapes (later removed).
 This needs to be tested in a multi-threading environment to
-be sure that it works there.
+be sure that it works there (never did work).
 Then the openmp branch changes can be copied to the trunk.
 
 

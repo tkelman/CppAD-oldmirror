@@ -126,18 +126,12 @@ namespace CppAD {
 template <typename Base>
 template <typename ADvector>
 void ADFun<Base>::Dependent(const ADvector &y)
-{	CppADUsageError(
-		AD<Base>::tape_active_count(0) != 0,
-		"Can't store current operation sequence in this ADFun object"
-		"\nbecause there is no tape currently active."
-	);
+{	ADTape<Base> *tape = AD<Base>::tape_ptr();
 	CppADUsageError(
-		AD<Base>::tape_active_count(0) == 1,
-		"Dependent: cannot use with just one argument because"
-		"\nmore that one tape is currently active."
+		tape != CPPAD_NULL,
+		"Can't store current operation sequence in this ADFun object"
+		"\nbecause there is no active tape (for this thread)."
 	);
-	ADTape<Base> *tape = AD<Base>::tape_any();
-	CppADUnknownError( tape != CPPAD_NULL );
 
 	// code above just determines the tape and checks for errors
 	Dependent(tape, y);
@@ -175,8 +169,8 @@ void ADFun<Base>::Dependent(const ADvector &x, const ADvector &y)
 	for(i = 0; i < y.size(); i++)
 	{	CppADUsageError(
 		CppAD::Parameter( y[i] ) | (y[i].id_ == x[0].id_) ,
-		"ADFun<Base>: dependent vector contains variables for"
-		"\na different tape than the independent variables."
+		"ADFun<Base>: dependent vector contains a variable for"
+		"\na different tape (thread) than the independent variables."
 		);
 	}
 # endif

@@ -24,6 +24,7 @@ $spell
 	std
 	const
 	Op
+	OpenMp
 $$
 $aindex head$$
 
@@ -35,9 +36,10 @@ The preprocessor symbol $code CPPAD_NULL$$ is used for a null pointer.
 If it is not yet defined,
 it is defined when $code cppad/local/define.hpp/$$ is included.
 
-$head CPPAD_LENGHT_TAPE_TABLE$$
-The preprocessor symbol $code CPPAD_LENGHT_TAPE_TABLE$$ 
-is used dimension the active tape buffers.
+$head CPPAD_MAX_NUM_THREADS$$
+The preprocessor symbol $code CPPAD_MAX_NUM_THREADS$$ 
+is is the maximum number of OpenMp threads that can
+be used with CppAD.
 If it is not yet defined,
 it is defined when $code cppad/local/define.hpp/$$ is included.
 
@@ -84,8 +86,8 @@ $end
 # define CPPAD_NULL     0
 # endif
 
-# ifndef CPPAD_LENGHT_TAPE_TABLE
-# define CPPAD_LENGTH_TAPE_TABLE 100
+# ifndef CPPAD_MAX_NUM_THREADS
+# define CPPAD_MAX_NUM_THREADS 16
 # endif
 
 

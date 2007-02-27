@@ -91,6 +91,12 @@ A single $cref/RevSparseJac/$$ sweep could be used to determine
 which parts of the operation sequence in an
 $cref/ADFun/FunConstruct/$$ object can be removed.
 
+$head Speed$$
+Move the $cref/speed/$$ include file from $code speed$$
+to $code cppad/speed$$
+so that all the install puts all the
+include files are below $code include/cppad$$.
+
 $head Software Guidelines$$
 
 $subhead Boost$$
