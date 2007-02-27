@@ -38,7 +38,7 @@ it is defined when $code cppad/local/define.hpp/$$ is included.
 
 $head CPPAD_MAX_NUM_THREADS$$
 The preprocessor symbol $code CPPAD_MAX_NUM_THREADS$$ 
-is is the maximum number of OpenMp threads that can
+is the maximum number of OpenMp threads that can
 be used with CppAD.
 If it is not yet defined,
 it is defined when $code cppad/local/define.hpp/$$ is included.

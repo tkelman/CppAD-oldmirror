@@ -35,7 +35,7 @@ $index test, speed$$
 $section Run One Speed Test and Return Results$$
 
 $head Syntax$$
-$code # include <cppad/speed_test.hpp>$$
+$code # include <speed/speed_test.hpp>$$
 $pre
 $$
 $syntax%%rate_vec% = speed_test(%test%, %size_vec%, %time_min%)%$$
@@ -123,14 +123,7 @@ $syntax%
 %$$
 is the ratio of $italic repeat$$ divided by execution time in seconds
 for the problem with size $syntax%%size_vec%[%i%]%$$.
-
-$head Clock$$
-If the preprocessor symbol $code _OPENMP$$ is defined
-(you are using OpenMP multi-threading)
-the routine
-$code omp_get_wtime()$$ is used for wall clock timing of the execution.
-Otherwise,
-the execution time is measured by the difference in
+The execution time is measured by the difference in
 $codep
 	(double) clock() / (double) CLOCKS_PER_SEC
 $$
@@ -148,25 +141,28 @@ $end
 */
 
 # include <cstddef>
+# include <sys/time.h>
 # include <cmath>
 
 // For an unknown reason, cannot move other includes (using Sun's CC compiler)
 # include <cppad/speed_test.hpp>
 # include <cppad/check_simple_vector.hpp>
-
 # ifdef _OPENMP
 # include <omp.h>
-# else
-# include <sys/time.h>
 # endif
 
+// Document use of gettimeofday and move determination of this value to 
+// configure script
+# define CPPAD_GETTIMEOFADY 0
 
 namespace CppAD { // BEGIN CppAD namespace
 
 inline double speed_test_second(void)
 {
-# ifdef _OPENMP
-	return omp_get_wtime();
+# if CPPAD_GETTIMEOFDAY
+	struct timeval value;
+	gettimeofday(&value, CPPAD_NULL);
+	return double(value.tv_sec) + double(value.tv_usec) * 1e-6;
 # else
 	return (double) clock() / (double) CLOCKS_PER_SEC;
 # endif

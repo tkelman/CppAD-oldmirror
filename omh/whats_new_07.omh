@@ -38,7 +38,7 @@ A $cref/wish list item/WishList/Speed/$$ to fix this has been added.
 $pre
 
 $$
-The multiple active tapes required a lot of multi-threading acess
+Multiple active tapes required a lot of multi-threading access
 management for the tapes. This was made simpler (and faster)
 by having at most one tape per thread.
 
@@ -57,7 +57,7 @@ This has been fixed.
 
 $head 02-21$$
 In the openmp branch (not yet in distribution),
-have the $syntax%AD<%Base%>::tape_max_active$$ user interface change the
+have the $syntax%AD<%Base%>::tape_max_active%$$ user interface change the
 maximum number of active tapes (later removed).
 This needs to be tested in a multi-threading environment to
 be sure that it works there (never did work).
