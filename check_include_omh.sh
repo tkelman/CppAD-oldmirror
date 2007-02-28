@@ -23,6 +23,7 @@ list="
 	cppad/PowInt.h
 	cppad/*.hpp
 	cppad/local/*.hpp
+	cppad/speed/*.hpp
 	example/*.cpp
 	example/*.hpp
 	introduction/get_started/*.cpp
@@ -33,7 +34,6 @@ list="
 	openmp/*.sh
 	print_for/*.cpp
 	speed_cppad/*.cpp
-	speed/*.hpp
 	speed/*.cpp
 	speed/adolc/*.cpp
 	speed/cppad/*.cpp

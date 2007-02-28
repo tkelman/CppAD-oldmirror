@@ -42,44 +42,72 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="More cleaning up user interface to OpenMP multi-threading.
+log_entry="Fix speed include file location wish list item.
 
+In all files, change speed/?.hpp to cppad/speed/?.hpp where ? is one of
+det_by_minor.hpp, det_grad_33.hpp, uniform_01.hpp, det_of_minor.hpp
+det_by_lu.hpp
+
+move from speed to cppad/speed
+det_by_minor.hpp, det_grad_33.hpp, uniform_01.hpp, det_of_minor.hpp
+det_by_lu.hpp
 
 svn_commt.sh: file that made this commit.
+whish_list.omh: remove items that have been completed.
 whats_new_07.omh: users view of the changes.
-configure.ac: add automatic determination of gettimeofday availability.
-check_include_def.sh: add openmp directory to check list.
-check_include_omh.sh: add openmp directory to check list.
-speed_test.hpp: added gettimeofday where available.
-preprocessor.hpp: undefined everything in config.h
-omp_max_thread.hpp: fix omhelp cross reference.
-define.hpp: increase maximum number of threads to 100.
-track_new_del.hpp: increase maximum number of threads to 100.
-multi_newton.cpp: change title and order of arguments.
-multi_newton.hpp: add documentation and change argument order.
-run.sh: add documentation.
+config.h: include for new CPPAD_GETTIMEOFDAY symbol.
+dos_format.sh: use add -f flag to remove command (force it).
 " 
 add_list="
 "
 delete_list="
 "
 move_list="
+	speed/det_by_minor.hpp
+	speed/det_grad_33.hpp
+	speed/uniform_01.hpp
+	speed/det_of_minor.hpp
+	speed/det_by_lu.hpp
 "
 #
 change_list="
 	svn_commit.sh
-	configure.ac
+	makefile.am
 	check_include_def.sh
+	check_include_file.sh
 	check_include_omh.sh
+	dos_format.sh
+	example/lu_vec_ad_ok.cpp
+	example/hes_lu_det.cpp
+	example/jac_minor_det.cpp
+	example/hes_minor_det.cpp
+	example/jac_lu_det.cpp
+	omh/speed_utility.omh
+	omh/uniform_01_hpp.omh
+	omh/wish_list.omh
+	omh/det_by_minor_hpp.omh
+	omh/det_grad_33_hpp.omh
+	omh/det_of_minor_hpp.omh
 	omh/whats_new_07.omh
-	cppad/speed_test.hpp
-	cppad/local/preprocessor.hpp
-	cppad/local/omp_max_thread.hpp
-	cppad/local/define.hpp
-	cppad/track_new_del.hpp
-	openmp/multi_newton.cpp
-	openmp/multi_newton.hpp
-	openmp/run.sh
+	omh/det_by_lu_hpp.omh
+	cppad/config.h
+	cppad/speed/det_by_minor.hpp
+	cppad/speed/det_grad_33.hpp
+	cppad/speed/uniform_01.hpp
+	cppad/speed/det_of_minor.hpp
+	cppad/speed/det_by_lu.hpp
+	speed/fadbad/det_minor.cpp
+	speed/fadbad/poly.cpp
+	speed/fadbad/det_lu.cpp
+	speed/adolc/det_minor.cpp
+	speed/adolc/poly.cpp
+	speed/adolc/det_lu.cpp
+	speed/cppad/det_minor.cpp
+	speed/cppad/poly.cpp
+	speed/cppad/det_lu.cpp
+	speed/example/det_of_minor.cpp
+	speed/example/det_by_lu.cpp
+	speed/example/det_by_minor.cpp
 "
 #
 copy_branch="" 

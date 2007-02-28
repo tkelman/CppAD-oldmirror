@@ -12,13 +12,13 @@
 echo "Differences between include file names and directives"
 echo "-----------------------------------------------------"
 grep '^# *ifndef *CPPAD_[0-9a-zA-Z_]*_INCLUDED$' \
-	cppad/*.hpp cppad/local/*.hpp speed/*.hpp example/*.hpp openmp/*.hpp \
+cppad/*.hpp cppad/local/*.hpp cppad/speed/*.hpp example/*.hpp openmp/*.hpp \
 	| sed -e 's|.*# *ifndef *CPPAD_\([0-9a-zA-Z_]*\)_INCLUDED$|\1|' \
 	| tr [a-zA-Z] [A-Za-z] \
 	| sort -u \
 	> junk.1
  
-ls cppad/*.hpp cppad/local/*.hpp speed/*.hpp example/*.hpp openmp/*.hpp \
+ls cppad/*.hpp cppad/local/*.hpp cppad/speed/*.hpp example/*.hpp openmp/*.hpp \
 	| sed -e 's|.*/||' -e 's|\.hpp||' \
 	| sort -u \
 	> junk.2

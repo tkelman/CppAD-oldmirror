@@ -149,11 +149,11 @@ nobase_include_HEADERS =  \
 	cppad/local/undef.hpp \
 	cppad/local/value.hpp \
 	cppad/local/var2par.hpp \
-	speed/det_by_lu.hpp \
-	speed/det_by_minor.hpp \
-	speed/det_grad_33.hpp \
-	speed/det_of_minor.hpp \
-	speed/uniform_01.hpp
+	cppad/speed/det_by_lu.hpp \
+	cppad/speed/det_by_minor.hpp \
+	cppad/speed/det_grad_33.hpp \
+	cppad/speed/det_of_minor.hpp \
+	cppad/speed/uniform_01.hpp
 #
 #
 # Did user specify --with-Introduction

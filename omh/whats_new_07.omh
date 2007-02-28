@@ -47,20 +47,32 @@ $$
 The $code speed_test$$ routines $cref/timing/speed_test/Timing/$$ was
 changed to use $code gettimeofday$$ if it is available.
 ($code gettimeofday$$ measures wall clock time 
-which is better in a multi-threading enviroment).
+which is better in a multi-threading environment).
 $pre
 
 $$
 Added the user multi-threading interface
 $cref/omp_max_thread/$$ along with its examples 
 which are distributed in the directory $code openmp$$.
+$pre
+
+$$
+The $syntax%speed/%*%.hpp%$$ files have been moved to
+$syntax%cppad/speed/%*%.hpp%$$ and the corresponding wish list
+item has been removed.
+$pre
+
+$$ 
+The multiple tapes with the same base type wish list item 
+have been removed (it's purpose was multi-threading which
+has been implemented).
 
 
 $head 02-27$$
 In the openmp branch (not yet in distribution),
 The $cref/speed/$$ include files are currently being distributed
 above the $code cppad$$ include directory. 
-A $cref/wish list item/WishList/Speed/$$ to fix this has been added.
+A fix this wish list item has been added.
 $pre
 
 $$

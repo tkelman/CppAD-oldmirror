@@ -54,23 +54,6 @@ the tape recording will be never stop.
 Thus, there should be a way to abort a tape recording.
 
 
-$head Multiple Tapes With Same Base Type$$
-$index multiple, tape$$
-$index tape, multiple$$
-Some users have expressed an interest in having multiple tapes,
-with the same base type,
-recording at the same time. 
-The idea is something like this:
-$codep
-	Independent(x);    // perhaps in thread 1
-	Independent(y);    // perhaps in thread 2
-	z = x * x;         // operation on tape corresponding to x
-	w = y * y;         // operation on tape corresponding to y
-	a = w * z;         // would generate an error because cannot mix tapes
-$$
-One application of this is where each of the tapes is on a different
-processor in a shared memory multiple processor application.
-
 $head Operation Sequence$$
 $index sequence, operation$$
 $index operation, sequence$$
@@ -90,12 +73,6 @@ $index operation, optimize sequence$$
 A single $cref/RevSparseJac/$$ sweep could be used to determine
 which parts of the operation sequence in an
 $cref/ADFun/FunConstruct/$$ object can be removed.
-
-$head Speed$$
-Move the $cref/speed/$$ include file from $code speed$$
-to $code cppad/speed$$
-so that all the install puts all the
-include files are below $code include/cppad$$.
 
 $head Software Guidelines$$
 
