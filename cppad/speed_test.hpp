@@ -153,7 +153,7 @@ $end
 
 // Document use of gettimeofday and move determination of this value to 
 // configure script
-# define CPPAD_GETTIMEOFADY 0
+# define CPPAD_GETTIMEOFDAY 0
 
 namespace CppAD { // BEGIN CppAD namespace
 
