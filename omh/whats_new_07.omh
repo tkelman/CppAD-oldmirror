@@ -11,6 +11,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 $begin whats_new_07$$
 $spell
+	ifndef
 	Vec
 	openmp
 	dy
@@ -29,6 +30,17 @@ This section contains a list of the changes to CppAD during 2007
 (in reverse order by date).
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
+
+$head 07-28$$
+In the openmp branch (not yet in distribution),
+the condition include commands were missing on some include files; for example
+$codep
+	# ifndef CPPAD_BENDER_QUAD_INCLUDED
+	# define CPPAD_BENDER_QUAD_INCLUDED
+$$
+was missing at the beginning of the $cref/BenderQuad/$$ include file.
+This has been fixed.
+
 
 $head 02-27$$
 In the openmp branch (not yet in distribution),

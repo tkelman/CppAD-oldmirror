@@ -1,6 +1,34 @@
+/* --------------------------------------------------------------------------
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
+
+CppAD is distributed under multiple licenses. This distribution is under
+the terms of the 
+                    Common Public License Version 1.0.
+
+A copy of this license is included in the COPYING file of this distribution.
+Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
+-------------------------------------------------------------------------- */
+
+/*
+$begin multi_newton.cpp$$
+
+$section OpenMP Example of Multi-Threaded Newton's Method$$
+
+$code
+$verbatim%openmp/multi_newton.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
+$$
+
+$end
+*/
+// BEGIN PROGRAM
+
 # include <cppad/cppad.hpp>
 # include <cmath>
-# include "newton.hpp"
+# include "multi_newton.hpp"
+
+# ifdef _OPENMP
+# include <omp.h>
+# endif
 
 using CppAD::vector;
 
@@ -24,7 +52,7 @@ void test_once(CppAD::vector<double> &xout, size_t size)
 	double epsilon = 1e-6;
 	size_t max_itr = 20;
 
-	newton_multiple(
+	multi_newton(
 		xout    ,
 		fun     ,
 		xlow    ,
@@ -56,11 +84,16 @@ int main(void)
 	size_vec[1] = 20;
 
 # ifdef _OPENMP
-	cout << "OpenMP: version = "         << _OPENMP
-	<< ", omp_get_max_threads() = " << omp_get_max_threads()
-	          << endl;
+	// No tapes are currently active,
+	// so we can set the maximum number of threads
+	int i = omp_get_max_threads();
+	assert( i > 0 );
+	CppAD::AD<double>::omp_max_thread(size_t(i));
+	cout << "OpenMP: version = "       << _OPENMP << endl;
+	cout << "omp_get_max_threads() = " << i       << endl;
 # else
-	cout << "_OPENMP is not defined" << endl;
+	cout << "_OPENMP is not defined"       << endl;
+	cout << "running in single tread mode" << endl;
 # endif
 
 	// solve once to check for correctness
@@ -82,3 +115,5 @@ int main(void)
 
 	return 0;
 }
+
+// END PROGRAM

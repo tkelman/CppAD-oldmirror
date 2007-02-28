@@ -1,3 +1,6 @@
+# ifndef CPPAD_BENDER_QUAD_INCLUDED
+# define CPPAD_BENDER_QUAD_INCLUDED
+
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
 
@@ -383,3 +386,5 @@ void BenderQuad(
 }
 	
 } // END CppAD namespace
+
+# endif

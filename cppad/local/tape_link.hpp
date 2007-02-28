@@ -1,3 +1,6 @@
+# ifndef CPPAD_TAPE_LINK_INCLUDED
+# define CPPAD_TAPE_LINK_INCLUDED
+
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
 
@@ -13,6 +16,7 @@ $begin tape_link$$ $comment CppAD Developer Documentation$$
 
 $section Routines that Link AD<Base> and ADTape<Base> Objects$$
 $spell
+	omp
 	bool
 	ptr
 	const
@@ -38,19 +42,21 @@ $head tape_id$$
 $index tape_id$$
 The syntax
 $syntax%
-	%id_tbl% = AD<%Base%>::tape_id()
+	%id_table% = AD<%Base%>::tape_id()
 %$$
 returns the table of tape identifiers
-where $italic id_tbl$$ has the prototype
+where $italic id_table$$ has the prototype
 $syntax%
-	size_t %id_tbl%[CPPAD_LENGTH_TAPE_TABLE] 
+	size_t %id_table%[CPPAD_MAX_NUM_THREADS] 
 %$$
-If $syntax%%id% = %id_table%[%i%]%$$
-either $italic id$$ is zero or it is the identifier
-for an active tape.
-Furthermore, if $italic id$$ corresponds to an active tape,
+Furthermore, if $italic id$$ is the identifier corresponding to an active
+tape, $syntax%%id% > 0%$$,
 $syntax%
-	%i% = mod( %id%, CPPAD_LENGTH_TAPE_TABLE )
+	%thread% = mod( %id%, omp_max_thread() )
+%$$
+is the corresponding OpenMP thread number, and
+$syntax%
+	%id% == %id_table%[%thread%]
 %$$
 
 
@@ -58,43 +64,21 @@ $head tape_table$$
 $index tape_table$$
 The syntax
 $syntax%
-	%tape_tbl% = AD<%Base%>::tape_table()
+	%tape_table% = AD<%Base%>::tape_table()
 %$$
 returns the table of tape pointers
-where $italic tape_tbl$$ has the prototype
+where $italic tape_table$$ has the prototype
 $syntax%
-	ADTape<%Base%> *%tape_tbl%[CPPAD_LENGTH_TAPE_TABLE] 
+	ADTape<%Base%> *%tape_table%[CPPAD_MAX_NUM_THREADS] 
 %$$
-Furthermore $syntax%%id_table%[%i%]% == 0%$$ if and only if
-$syntax%%tape_tbl%[%i%]% == CPPAD_NULL%$$.
-
-$head tape_atexit$$
-$index tape_atexit$$
-The function $code tape_atexit$$ has the prototype
+Furthermore, if $italic id$$ corresponds to an active tape and
 $syntax%
-	void AD<%Base%>::tape_atexit(void)
+	%thread% = mod(%id%, omp_max_thread() )
 %$$
-It deletes all of the tape pointer that records that are currently 
-store in the $cref/tape_table/tape_link/tape_table/$$
-and are not equal to $code CPPAD_NULL$$.
-
-$head tape_active_count$$
-$index tape_active_count$$
-The syntax
-$syntax%
-	%count% = AD<%Base%>::tape_active_count(%inc%)
-%$$
-increments the active tape counter by $italic inc$$
-and returns the resulting count.
-The argument $italic inc$$ and return value $italic count$$ 
-have the following prototypes:
-$syntax%
-	int    %inc%
-	size_t %count%
-%$$
-The argument $italic inc$$ must be -1, 0, or +1.
-The resulting value for the counter must be 
-greater than or equal zero and less than $code CPPAD_LENGTH_TAPE_TABLE$$.
+then
+$syntax%%
+	tape_table%[%thread%]% != CPPAD_NULL
+%$$.
 
 $head tape_active$$
 $index tape_active$$
@@ -111,19 +95,21 @@ $syntax%
 	bool   %flag%
 %$$
 
-$head tape_new_id$$
-$index tape_new_id$$
+$head tape_new$$
+$index tape_new$$
 The syntax
 $syntax%
-	%id% = AD<%Base%>::tape_new_id()
+	%id% = AD<%Base%>::tape_new()
 %$$
 creates a new tape and returns the corresponding tape identifier.
 The resulting tape identifier is not equal to zero or to any
-of the previous values return by $code tape_new_id$$.
+of the previous values return by $code tape_new$$.
 The return value $italic id$$ has prototype
 $syntax%
 	size_t %id%
 %$$
+This function is only called by the user $code Independent$$ routine
+and hence usage errors can be reported as coming from that routine.
 
 $head tape_delete$$
 $index tape_delete$$
@@ -132,8 +118,8 @@ $syntax%
 	AD<%Base%>::tape_delete(%id%)
 %$$
 deletes the tape corresponding to the tape identifier $italic id$$.
-The corresponding $code tape_id$$ entry is set to zero
-and the corresponding $code tape_table$$ entry is st to $code CPPAD_NULL$$.
+The corresponding $code tape_id$$ entry is set to a value larger
+than any previous tape identifier that corresponds to the same thread.
 
 $head tape_ptr$$
 $index tape_ptr$$
@@ -142,18 +128,19 @@ $syntax%
 	%ptr% = AD<%Base%>::tape_ptr(%id%)
 %$$
 returns the pointer to the tape corresponding to the tape identifier 
-$italic id$$ (the tape must be active).
+$italic id$$ (the corresponding tape must be active).
+$pre
 
-$head tape_any$$
-$index tape_any$$
+$$
 The syntax
 $syntax%
-	%ptr% = AD<%Base%>::tape_any(%id%)
+	%ptr% = AD<%Base%>::tape_ptr()
 %$$
-returns the a pointer to one of the active tapes
-If $cref/tape_active_count/tape_link/tape_active_count/$$ is one,
-this is the only active tape.
-If it is zero, $code tape_any$$ returns $code CPPAD_NULL$$.
+returns the a pointer to the tape corresponding to the current thread.
+The corresponding tape is active if and only if $syntax%%ptr% == CPPAD_NULL%$$.
+Note that if you know the corresponding tape identifier, it is faster
+to use the other $code tape_ptr$$ syntax (because the current thread
+need not be determined by an OpenMP system call).
 
 $end
 ----------------------------------------------------------------------------
@@ -189,7 +176,7 @@ ADTape<Base> ** AD<Base>::tape_table(void)
 }
 template <class Base>
 bool AD<Base>::tape_active(size_t id)
-{	size_t thread = id % CPPAD_MAX_NUM_THREADS;
+{	size_t thread = id % omp_max_thread(0);
 	return ( id > 0)  & (tape_id() [thread] == id );
 }
 template <class Base>
@@ -200,16 +187,10 @@ size_t  AD<Base>::tape_new(void)
 # else
 	size_t thread = 0;
 # endif
-	// check for this error even in optimized code because 
-	// it is not yet part of user documentation.
-	if( thread >= CPPAD_MAX_NUM_THREADS )
-	{	bool known       = true;
-		int  line        = __LINE__;
-        	const char *file = __FILE__;
-		const char *exp  = "thread < CPPAD_MAX_NUM_THREADS";
-        	const char *msg  = "too many threads are active.";
-		ErrorHandler::Call(known, line, file, exp, msg);
-	}
+	CppADUsageError(
+	thread < omp_max_thread(0),
+	"Independent: OpenMP thread number is >= omp_max_thread setting"
+	);
 
 	// initialize so that id > 0 and thread == id % CPPAD_MAX_NUM_THREADS
 	size_t *id_table = tape_id();
@@ -259,3 +240,5 @@ ADTape<Base> *AD<Base>::tape_ptr(void)
 }
 
 } // END CppAD namespace
+
+# endif

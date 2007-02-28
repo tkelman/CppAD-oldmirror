@@ -6,7 +6,7 @@
 # endif
 
 template <class Fun>
-void newton_one(double &fcur, double &xcur, Fun *fun, 
+void one_newton(double &fcur, double &xcur, Fun *fun, 
 	double xlow, double xin, double xup, double epsilon, size_t max_itr)
 {	using CppAD::AD;
 	using CppAD::vector;
@@ -51,7 +51,7 @@ void newton_one(double &fcur, double &xcur, Fun *fun,
 }
 
 template <class Fun>
-void newton_multiple(
+void multi_newton(
 	CppAD::vector<double> &xout , 
 	Fun *fun                    , 
 	double xlow                 , 
@@ -66,13 +66,6 @@ void newton_multiple(
 	// OpenMP uses integers in place of size_t
 	int i, n = int(n_grid);
 
-# if 0
-	// for version that used tape_max_active
-	i = omp_get_max_threads();
-	assert( i > 0 );
-	CppAD::AD<double>::tape_max_active(size_t(i));
-# endif
-
 	// set up grid
 	vector<double> grid(n_grid + 1);
 	vector<double> fcur(n_grid), xcur(n_grid), xmid(n_grid);
@@ -86,7 +79,7 @@ void newton_multiple(
 
 # pragma omp parallel for 
 	for(i = 0; i < n; i++) 
-	{	newton_one(
+	{	one_newton(
 			fcur[i]   ,
 			xcur[i]   ,
 			fun       , 

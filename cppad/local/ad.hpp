@@ -192,12 +192,14 @@ public:
 	inline AD sinh(void) const;
 	inline AD sqrt(void) const;
 
-	/* ----------------------------------------------------------
-	Functions declared public so can be accessed by user through
-	a macro interface not not intended for direct use.
-	Macro interface is documented in bool_fun.hpp.
-	Developer documentation for these fucntions is in  bool_fun_link.hpp
-	*/
+	// ----------------------------------------------------------
+	// static public member functions
+	static size_t      omp_max_thread(size_t number);
+
+	// These functions declared public so can be accessed by user through
+	// a macro interface and are not intended for direct use.
+	// The macro interface is documented in bool_fun.hpp.
+	// Developer documentation for these fucntions is in  bool_fun_link.hpp
 	static inline bool UnaryBool(
 		bool FunName(const Base &x),
 		const AD<Base> &x
@@ -241,7 +243,7 @@ private:
 	ADTape<Base> *tape_this(void) const;
 	//
 	// static 
-	static size_t        *tape_id(void);
+	static size_t        *tape_id (void);
 	static ADTape<Base> **tape_table(void);
 	static bool           tape_active(size_t id);
 	static size_t         tape_new(void);

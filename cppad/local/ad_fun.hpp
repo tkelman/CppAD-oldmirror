@@ -48,6 +48,7 @@ $childtable%
 	cppad/local/fun_eval.hpp%
 	cppad/local/drivers.hpp%
 	cppad/local/fun_check.hpp%
+	cppad/local/omp_max_thread.hpp%
 	omh/fun_deprecated.omh
 %$$
 
@@ -263,5 +264,6 @@ private:
 # include <cppad/local/fun_eval.hpp>
 # include <cppad/local/drivers.hpp>
 # include <cppad/local/fun_check.hpp>
+# include <cppad/local/omp_max_thread.hpp>
 
 # endif
