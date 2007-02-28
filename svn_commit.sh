@@ -42,53 +42,44 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Start cleaning up user interface to OpenMP multi-threading.
+log_entry="More cleaning up user interface to OpenMP multi-threading.
 
-omp_max_thread.hpp: set maximum number of threads.
 
 svn_commt.sh: file that made this commit.
-check_include_def.sh: update to version where all file names are lower case.
-makefile.am: include omp_max_thread.hpp and openmp directory in distribution.
 whats_new_07.omh: users view of the changes.
-ad_fun.hpp: include omp_max_thread.hpp with cppad.hpp and in documentation.
-omp_max_thread.hpp: fix # ifdef at beginning of file.
-bender_quad.hpp:  fix # ifdef at beginning of file.
-ad.hpp: include omh_max_thread in member functions.
-preprocessor.hpp:  fix # ifdef at beginning of file.
-tape_link.hpp: fix developer doc, # ifdef, and use omh_max_thread.
-newton.hpp: move to multi_newton.hpp
-multi_newton.hpp: change name to multi_newton (need to add user doc).
-multi_newton.cpp: add some omhelp commands at beginning.
-newton.cpp: move to multi_newton.cpp
-run.sh: delete multi_newton executable after running (so not in distribution).
-det_grad_33.hpp: remove space at end of # ifdef.
-uniform_01.hpp: remove space at end of # ifdef.
+configure.ac: add automatic determination of gettimeofday availability.
+check_include_def.sh: add openmp directory to check list.
+check_include_omh.sh: add openmp directory to check list.
+speed_test.hpp: added gettimeofday where available.
+preprocessor.hpp: undefined everything in config.h
+omp_max_thread.hpp: fix omhelp cross reference.
+define.hpp: increase maximum number of threads to 100.
+track_new_del.hpp: increase maximum number of threads to 100.
+multi_newton.cpp: change title and order of arguments.
+multi_newton.hpp: add documentation and change argument order.
+run.sh: add documentation.
 " 
 add_list="
-	cppad/local/omp_max_thread.hpp
 "
 delete_list="
 "
 move_list="
-	openmp/newton.hpp
-	openmp/newton.cpp
 "
 #
 change_list="
 	svn_commit.sh
+	configure.ac
 	check_include_def.sh
-	makefile.am
+	check_include_omh.sh
 	omh/whats_new_07.omh
-	cppad/local/ad_fun.hpp
-	cppad/local/bender_quad.hpp
-	cppad/local/ad.hpp
+	cppad/speed_test.hpp
 	cppad/local/preprocessor.hpp
-	cppad/local/tape_link.hpp
+	cppad/local/omp_max_thread.hpp
+	cppad/local/define.hpp
+	cppad/track_new_del.hpp
 	openmp/multi_newton.cpp
 	openmp/multi_newton.hpp
 	openmp/run.sh
-	speed/det_grad_33.hpp
-	speed/uniform_01.hpp
 "
 #
 copy_branch="" 

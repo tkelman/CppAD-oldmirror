@@ -15,6 +15,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin speed_test$$
 $spell
+	gettimeofday
 	vec
 	cppad.hpp
 	Microsoft
@@ -35,7 +36,7 @@ $index test, speed$$
 $section Run One Speed Test and Return Results$$
 
 $head Syntax$$
-$code # include <speed/speed_test.hpp>$$
+$code # include <cppad/speed_test.hpp>$$
 $pre
 $$
 $syntax%%rate_vec% = speed_test(%test%, %size_vec%, %time_min%)%$$
@@ -121,9 +122,14 @@ For $latex i = 0 , \ldots , n-1$$,
 $syntax%
 	%rate_vec%[%i%]
 %$$
-is the ratio of $italic repeat$$ divided by execution time in seconds
+is the ratio of $italic repeat$$ divided by time in seconds
 for the problem with size $syntax%%size_vec%[%i%]%$$.
-The execution time is measured by the difference in
+
+$head Timing$$
+If your system supports the unix $code gettimeofday$$ function,
+it will be used to measure time. 
+Otherwise, 
+time is measured by the difference in
 $codep
 	(double) clock() / (double) CLOCKS_PER_SEC
 $$
@@ -144,16 +150,19 @@ $end
 # include <sys/time.h>
 # include <cmath>
 
-// For an unknown reason, cannot move other includes (using Sun's CC compiler)
-# include <cppad/speed_test.hpp>
 # include <cppad/check_simple_vector.hpp>
-# ifdef _OPENMP
-# include <omp.h>
+
+// undo preprocessor symbols that config.h needs to define
+# ifndef CPPAD_CPPAD_INCLUDED
+# include <cppad/local/preprocessor.hpp>
 # endif
 
-// Document use of gettimeofday and move determination of this value to 
-// configure script
-# define CPPAD_GETTIMEOFDAY 0
+// use config.h to define CPPAD_GETIMEOFDAY preprocessor symbol
+# include <cppad/config.h>
+
+# ifndef CPPAD_NULL
+# define CPPAD_NULL	0
+# endif
 
 namespace CppAD { // BEGIN CppAD namespace
 

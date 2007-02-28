@@ -11,6 +11,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 $begin whats_new_07$$
 $spell
+	gettimeofday
 	ifndef
 	Vec
 	openmp
@@ -40,6 +41,19 @@ $codep
 $$
 was missing at the beginning of the $cref/BenderQuad/$$ include file.
 This has been fixed.
+$pre
+
+$$
+The $code speed_test$$ routines $cref/timing/speed_test/Timing/$$ was
+changed to use $code gettimeofday$$ if it is available.
+($code gettimeofday$$ measures wall clock time 
+which is better in a multi-threading enviroment).
+$pre
+
+$$
+Added the user multi-threading interface
+$cref/omp_max_thread/$$ along with its examples 
+which are distributed in the directory $code openmp$$.
 
 
 $head 02-27$$

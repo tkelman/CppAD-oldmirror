@@ -12,8 +12,18 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin multi_newton.cpp$$
 
-$section OpenMP Example of Multi-Threaded Newton's Method$$
+$section Multi-Threaded Newton's Method Main Program$$
 
+$head Subroutines$$
+$children%
+	openmp/multi_newton.hpp
+%$$
+$table
+$rref multi_newton$$
+$rref multi_newton.hpp$$
+$tend
+
+$head Example Source$$
 $code
 $verbatim%openmp/multi_newton.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
 $$
@@ -32,7 +42,7 @@ $end
 
 using CppAD::vector;
 
-# define LENGTH_OF_SUMMATION 10
+# define LENGTH_OF_SUMMATION 10   // larger values make fun(x) take longer
 
 // A slow version of the sine function
 CppAD::AD<double> fun(const CppAD::AD<double> &x)
@@ -46,18 +56,18 @@ CppAD::AD<double> fun(const CppAD::AD<double> &x)
 
 void test_once(CppAD::vector<double> &xout, size_t size)
 {	double pi      = 4. * atan(1.); 
+	size_t n_grid  = size;
 	double xlow    = 0.;
 	double xup     = 7. * pi;
-	size_t n_grid  = size;
 	double epsilon = 1e-6;
 	size_t max_itr = 20;
 
 	multi_newton(
 		xout    ,
 		fun     ,
+		n_grid  ,
 		xlow    ,
 		xup     ,
-		n_grid  ,
 		epsilon ,
 		max_itr
 	);

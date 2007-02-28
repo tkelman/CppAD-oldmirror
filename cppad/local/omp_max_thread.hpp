@@ -33,7 +33,7 @@ $syntax%AD<%Base%>::omp_max_thread(%number%)
 
 $head Purpose$$
 By default, for each $syntax%AD<%Base%>%$$ class there is only one 
-tape that records $syntax/AD of Base/glossary/AD of Base/$$ operations.
+tape that records $cref/AD of Base/glossary/AD of Base/$$ operations.
 This tape is a global variable and hence it cannot be used
 by multiple OpenMP threads at the same time. 
 The $code omp_max_thread$$ function is used to set the 
@@ -67,6 +67,7 @@ $cref/active/glossary/Tape/Active/$$ when this function is called.
 
 $head Example$$
 $children%
+	openmp/run.sh%
 	openmp/multi_newton.cpp
 %$$
 The file $cref/multi_newton.cpp/$$ contains an example and test
