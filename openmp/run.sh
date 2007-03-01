@@ -22,9 +22,7 @@
 # $section Compile and Run an OpenMP example$$
 #
 # $head Syntax$$
-# $syntax%cd openmp
-# %$$
-# $syntax%./run.sh %name% %openmp% %optimize%$$
+# $syntax%openmp/run.sh %name% %openmp% %optimize%$$
 #
 # $head Purpose$$
 # The script file $code openmp/run.sh$$ compiles and runs one of the openmp
@@ -53,27 +51,32 @@
 # $head Example$$
 # The following is an example $code run.sh$$ command 
 # $codep
-#	./run.sh multi_newton false false
+#	openmp/run.sh multi_newton false false
 # $$
 # The following is the corresponding output
 # $codep
-#	g++ -I.. multi_newton.cpp -o multi_newton  -g
-#	./multi_newton
-#	_OPENMP is not defined
-#	running in single tread mode
-#	Zeros found for sin(x) in the interval [0, 7*pi]
-#	{ 0, 6.28319, 12.5664, 18.8496 }
-#	size_vec = { 10, 20 }
-#	rate_vec = { 48, 23 }
-#	rm multi_newton.exe
+#	g++ -I.. openmp/multi_newton.cpp -o openmp/multi_newton  -g
+#	openmp/multi_newton
+#	_OPENMP is not defined, running in single tread mode
+#	n_grid           = { 20, 40 }
+#	Execution Speed  = { 72, 43 }
+#	Correctness Test Passed
+#	rm openmp/multi_newton.exe
 # $$	
 #
 # $end
+if [ ! -e openmp/run.sh ]
+then
+	echo "must execute this program from the CppAD distribution directory"
+	exit 1
+fi
+cd openmp
+#
 for flag in "$2" "$3"
 do
 	if [ "$flag" != "true"  ] && [ "$flag" != "false" ]
 	then
-		echo "usage: run.sh name openmp optimize"
+		echo "usage: openmp/run.sh name openmp optimize"
 		echo "name     the C++ file name wthout extension,"
 		echo "openmp   true (use openmp) or false (do not use), and"
 		echo "optimize true (optimized compile) or false (debugging)"
@@ -97,7 +100,10 @@ echo "g++ -I.. $1.cpp -o $1 $flags"
 g++ -I.. $1.cpp -o $1 $flags
 #
 echo "./$1"
-./$1
+if ! ./$1
+then
+	exit 1
+fi
 #
 if [ -e "$1.exe" ]
 then

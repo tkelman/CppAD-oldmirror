@@ -372,6 +372,12 @@ then
 		# add a new line between program outputs
 		echo ""  >> ../build_test.log
 	done
+	echo "running openmp/run.sh multi_newton false false"
+	echo "openmp/run.sh multi_newton false false" >> ../build_test.log
+	if !  openmp/run.sh multi_newton false false  >> ../build_test.log
+	then
+		ok="no"
+	fi
 	if ! ./run_omhelp.sh doc
 	then
 		ok="no"

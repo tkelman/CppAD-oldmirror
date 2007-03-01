@@ -43,6 +43,7 @@ $end
 using CppAD::vector;
 
 # define LENGTH_OF_SUMMATION 10   // larger values make fun(x) take longer
+# define NUMBER_OF_ZEROS     10   // number of zeros of fun(x) in interval
 
 // A slow version of the sine function
 CppAD::AD<double> fun(const CppAD::AD<double> &x)
@@ -55,10 +56,10 @@ CppAD::AD<double> fun(const CppAD::AD<double> &x)
 }
 
 void test_once(CppAD::vector<double> &xout, size_t size)
-{	double pi      = 4. * atan(1.); 
+{	double pi      = 4. * std::atan(1.); 
 	size_t n_grid  = size;
 	double xlow    = 0.;
-	double xup     = 7. * pi;
+	double xup     = (NUMBER_OF_ZEROS - 1) * pi;
 	double epsilon = 1e-6;
 	size_t max_itr = 20;
 
@@ -90,8 +91,8 @@ int main(void)
 
 	// size of the test cases
 	vector<size_t> size_vec(2);
-	size_vec[0] = 10;
-	size_vec[1] = 20;
+	size_vec[0] = 20;
+	size_vec[1] = 40;
 
 # ifdef _OPENMP
 	// No tapes are currently active,
@@ -99,18 +100,25 @@ int main(void)
 	int i = omp_get_max_threads();
 	assert( i > 0 );
 	CppAD::AD<double>::omp_max_thread(size_t(i));
-	cout << "OpenMP: version = "       << _OPENMP << endl;
-	cout << "omp_get_max_threads() = " << i       << endl;
+	cout << "OpenMP: version = "         << _OPENMP;
+	cout << ", max number of threads = " << i << endl;
 # else
-	cout << "_OPENMP is not defined"       << endl;
+	cout << "_OPENMP is not defined, ";
 	cout << "running in single tread mode" << endl;
+	int i;
 # endif
 
-	// solve once to check for correctness
+	// Correctness check
 	vector<double> xout;
 	test_once(xout, size_vec[0]);
-	cout << "Zeros found for sin(x) in the interval [0, 7*pi] " << endl;
-	cout << xout << endl;
+	double epsilon = 1e-6;
+	double pi      = 4. * std::atan(1.);
+	bool   ok      = (xout.size() == NUMBER_OF_ZEROS);
+	i              = 0;
+	while( ok & (i < NUMBER_OF_ZEROS) )
+	{	ok &= std::fabs( xout[i] - pi * i) <= 2 * epsilon;
+		++i;
+	}
 
 	// minimum time for test
 	double time_min = 1.;
@@ -120,10 +128,13 @@ int main(void)
 	rate_vec = CppAD::speed_test(test_repeat, size_vec, time_min);
 
 	// results
-	cout << "size_vec = " << size_vec << endl;
-	cout << "rate_vec = " << rate_vec << endl;
+	cout << "n_grid           = " << size_vec << endl;
+	cout << "Execution Speed  = " << rate_vec << endl;
+	if( ok )
+		cout << "Correctness Test Passed" << endl;
+	else	cout << "Correctness Test Failed" << endl;
 
-	return 0;
+	return (! ok);
 }
 
 // END PROGRAM

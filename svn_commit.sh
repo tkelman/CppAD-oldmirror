@@ -45,9 +45,14 @@
 log_entry="Fix use of CPPAD_MAX_NUM_THREADS where should be omp_max_thread(0).
 
 svn_commit.sh: file that made this commit.
-makefile.am: need to remove .svn sudirectory for openmp distribtuion.
-tape_link.hpp: location of the bug (should have been changed earlier).
-multi_newton.hpp: fix syntax in documentation.
+build.sh: include ompemp/run.sh in list of tests.
+omp_max_thread.hpp: improved error checking in the debugging case.
+multi_newton.cpp: automated check correctness and set exit flag.
+multi_newton.hpp: fix bug in case where derivative is negative.
+run.sh: change output for the example.
+speed_test.hpp: fix so that works with MS distribution.
+config.h: change default value for CPPAD_GETTIMEOFDAY , (for MS distribution).
+install_subversion.omh: suggest checking config.h file.
 " 
 add_list="
 "
@@ -58,9 +63,14 @@ move_list="
 #
 change_list="
 	svn_commit.sh
-	makefile.am
-	cppad/local/tape_link.hpp
+	build.sh
+	cppad/local/omp_max_thread.hpp
+	openmp/multi_newton.cpp
 	openmp/multi_newton.hpp
+	openmp/run.sh
+	cppad/speed_test.hpp
+	cppad/config.h
+	omh/install_subversion.omh
 "
 #
 copy_branch="" 

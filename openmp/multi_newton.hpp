@@ -193,12 +193,15 @@ void one_newton(double &fcur, double &xcur, Fun &fun,
 			return; 
 		if( (xcur == xup)  & (fcur * dfcur < 0.) )
 			return; 
+		if( dfcur == 0. )
+			return;
 		// next Newton iterate
-		if( dfcur * (xcur - xlow) <= fcur )
+		double delta_x = - fcur / dfcur;
+		if( xlow - xcur >= delta_x )
 			xcur = xlow;
-		else if( dfcur * (xcur - xup) >= fcur )
+		else if( xup - xcur <= delta_x )
 			xcur = xup;
-		else	xcur = xcur - fcur / dfcur;
+		else	xcur = xcur + delta_x;
 	}
 	return;
 }
@@ -222,11 +225,10 @@ void multi_newton(
 	// set up grid
 	vector<double> grid(n_grid + 1);
 	vector<double> fcur(n_grid), xcur(n_grid), xmid(n_grid);
-	size_t i_grid;
 	double dx = (xup - xlow) / double(n_grid);
-	for(i_grid = 0; i_grid < n_grid; i_grid++)
-	{	grid[i_grid] = xlow + i_grid * dx;
-		xmid[i_grid] = xlow + (i_grid + .5) * dx;
+	for(i = 0; i < n_grid; i++)
+	{	grid[i] = xlow + i * dx;
+		xmid[i] = xlow + (i + .5) * dx;
 	}
 	grid[n_grid] = xup;
 
@@ -248,10 +250,10 @@ void multi_newton(
 	// remove duplicates and points that are not solutions
 	double xlast  = xlow - fabs(xlow) - 1.;
 	size_t n_zero = 0;
-	for(i_grid = 0; i_grid < n_grid; i_grid++)
+	for(i = 0; i < n_grid; i++)
 	{
-		if( abs( fcur[i_grid] ) <= epsilon && xcur[i_grid] != xlast )
-			xcur[n_zero++] = xlast = xcur[i_grid];
+		if( abs( fcur[i] ) <= epsilon && xcur[i] != xlast )
+			xcur[n_zero++] = xlast = xcur[i];
 	}
 
 	// resize output vector and set its values

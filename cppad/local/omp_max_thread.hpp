@@ -87,10 +87,20 @@ size_t AD<Base>::omp_max_thread(size_t number)
 
 	// number equal zero case is not part of user interface
 	if( number > 0 )
-	{	CppADUsageError(
+	{
+# ifndef NDEBUG
+		CppADUsageError(
 			number <= CPPAD_MAX_NUM_THREADS,
-			"omp_max_thread arbument is too large."
+			"omp_max_thread argument is too large."
 		);
+		size_t i;
+		for(i = 0; i < max_thread; i++) CppADUsageError(
+			tape_table() [i] == CPPAD_NULL,
+			"Can not call omp_max_thread because there is an "
+			"\nactive tape (currently recording)."
+		);
+# endif
+
 		max_thread = number;
 	}
 

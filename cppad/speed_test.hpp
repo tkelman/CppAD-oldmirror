@@ -147,7 +147,6 @@ $end
 */
 
 # include <cstddef>
-# include <sys/time.h>
 # include <cmath>
 
 # include <cppad/check_simple_vector.hpp>
@@ -159,6 +158,12 @@ $end
 
 // use config.h to define CPPAD_GETIMEOFDAY preprocessor symbol
 # include <cppad/config.h>
+
+# if CPPAD_GETTIMEOFDAY
+# include <sys/time.h>
+# else
+# include <ctime>
+# endif
 
 # ifndef CPPAD_NULL
 # define CPPAD_NULL	0
