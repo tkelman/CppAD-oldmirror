@@ -32,7 +32,7 @@ $section Multi-Threaded Newton's Method Routine$$
 
 $head Syntax$$
 $syntax%multi_newton(%
-xout%, %fun%, %max_itr%, %n_grid%, %xlow%, %xup%, %epsilon%, %max_itr%)%$$
+	xout%, %fun%, %n_grid%, %xlow%, %xup%, %epsilon%, %max_itr%)%$$
 
 
 $head Purpose$$
@@ -64,7 +64,10 @@ $syntax%
 The input size and value of the elements of $italic xout$$ do not matter.
 Upon return from $code multi_newton$$,
 the size of $italic xout$$ is less than $latex n$$ and
-for $latex | f( xout[i] ) | \leq epsilon$$ for each valid index $italic i$$.
+$latex \[
+	| f( xout[i] ) | \leq epsilon
+\] $$ 
+for each valid index $italic i$$.
 
 $head fun$$
 The argument $italic fun$$ has prototype

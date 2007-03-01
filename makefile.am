@@ -252,7 +252,7 @@ EXTRA_DIST = \
 	uw_copy_040507.html
 #
 dist-hook:
-	rm -rf `find $(distdir)/omh -name .svn`
+	rm -rf `find $(distdir)/omh $(distdir)/openmp -name .svn`
 #
 if CppAD_DOCUMENTATION
 mydocdir     = $(datadir)/doc

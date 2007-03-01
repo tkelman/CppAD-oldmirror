@@ -42,72 +42,25 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Fix speed include file location wish list item.
+log_entry="Fix use of CPPAD_MAX_NUM_THREADS where should be omp_max_thread(0).
 
-In all files, change speed/?.hpp to cppad/speed/?.hpp where ? is one of
-det_by_minor.hpp, det_grad_33.hpp, uniform_01.hpp, det_of_minor.hpp
-det_by_lu.hpp
-
-move from speed to cppad/speed
-det_by_minor.hpp, det_grad_33.hpp, uniform_01.hpp, det_of_minor.hpp
-det_by_lu.hpp
-
-svn_commt.sh: file that made this commit.
-whish_list.omh: remove items that have been completed.
-whats_new_07.omh: users view of the changes.
-config.h: include for new CPPAD_GETTIMEOFDAY symbol.
-dos_format.sh: use add -f flag to remove command (force it).
+svn_commit.sh: file that made this commit.
+makefile.am: need to remove .svn sudirectory for openmp distribtuion.
+tape_link.hpp: location of the bug (should have been changed earlier).
+multi_newton.hpp: fix syntax in documentation.
 " 
 add_list="
 "
 delete_list="
 "
 move_list="
-	speed/det_by_minor.hpp
-	speed/det_grad_33.hpp
-	speed/uniform_01.hpp
-	speed/det_of_minor.hpp
-	speed/det_by_lu.hpp
 "
 #
 change_list="
 	svn_commit.sh
 	makefile.am
-	check_include_def.sh
-	check_include_file.sh
-	check_include_omh.sh
-	dos_format.sh
-	example/lu_vec_ad_ok.cpp
-	example/hes_lu_det.cpp
-	example/jac_minor_det.cpp
-	example/hes_minor_det.cpp
-	example/jac_lu_det.cpp
-	omh/speed_utility.omh
-	omh/uniform_01_hpp.omh
-	omh/wish_list.omh
-	omh/det_by_minor_hpp.omh
-	omh/det_grad_33_hpp.omh
-	omh/det_of_minor_hpp.omh
-	omh/whats_new_07.omh
-	omh/det_by_lu_hpp.omh
-	cppad/config.h
-	cppad/speed/det_by_minor.hpp
-	cppad/speed/det_grad_33.hpp
-	cppad/speed/uniform_01.hpp
-	cppad/speed/det_of_minor.hpp
-	cppad/speed/det_by_lu.hpp
-	speed/fadbad/det_minor.cpp
-	speed/fadbad/poly.cpp
-	speed/fadbad/det_lu.cpp
-	speed/adolc/det_minor.cpp
-	speed/adolc/poly.cpp
-	speed/adolc/det_lu.cpp
-	speed/cppad/det_minor.cpp
-	speed/cppad/poly.cpp
-	speed/cppad/det_lu.cpp
-	speed/example/det_of_minor.cpp
-	speed/example/det_by_lu.cpp
-	speed/example/det_by_minor.cpp
+	cppad/local/tape_link.hpp
+	openmp/multi_newton.hpp
 "
 #
 copy_branch="" 
