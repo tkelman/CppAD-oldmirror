@@ -87,7 +87,11 @@ $end
 # endif
 
 # ifndef CPPAD_MAX_NUM_THREADS
-# define CPPAD_MAX_NUM_THREADS 16
+# ifdef _OPENMP
+# define CPPAD_MAX_NUM_THREADS 32
+# else
+# define CPPAD_MAX_NUM_THREADS 1
+# endif
 # endif
 
 

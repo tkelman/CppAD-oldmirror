@@ -217,7 +217,7 @@ private:
 	size_t taddr_;
 
 	// tape identifier corresponding to taddr
-	// This is a parameter if and only if tape_active(id_)
+	// This is a variable if and only if id_ == *id_handle()
 	size_t id_;
 	//
 	// Make this variable a parameter
@@ -245,7 +245,6 @@ private:
 	// static 
 	inline static size_t        *id_handle (void);
 	inline static ADTape<Base> **tape_handle(void);
-	inline static bool           tape_active(size_t id);
 	static size_t         tape_new(void);
 	static void           tape_delete(size_t id);
 	inline static ADTape<Base>  *tape_ptr(void);

@@ -42,12 +42,14 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="
+log_entry="More low level optimization and simplification.
 
 svn_commit.sh: file that made this commit.
-build.sh: fix setting of error flag mistake in previous commit.
-ad.hpp: use handle as name for the static pointer functions.
-tape_link.hpp: document change to tapeprivate version.
+par_var.hpp: use id_handle() in order to make more efficient.
+ad.hpp: remove tape_active as per comment for par_var.hpp.
+define.hpp: if not using OpenMP, set max number of threads to one.
+tape_link.hpp: simplify and optimize.
+track_new_del.hpp: if not using OpenMP, set max number of threads to one.
 " 
 add_list="
 "
@@ -58,9 +60,11 @@ move_list="
 #
 change_list="
 	svn_commit.sh
-	build.sh
+	cppad/local/par_var.hpp
 	cppad/local/ad.hpp
+	cppad/local/define.hpp
 	cppad/local/tape_link.hpp
+	cppad/track_new_del.hpp
 "
 #
 copy_branch="" 

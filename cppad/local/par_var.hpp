@@ -79,20 +79,20 @@ namespace CppAD {
 	// Parameter
 	template <class Base>
 	inline bool Parameter(const AD<Base> &x)
-	{	return ! AD<Base>::tape_active(x.id_); }
+	{	return x.id_ != * AD<Base>::id_handle(); }
 
 	template <class Base>
 	inline bool Parameter(const VecAD<Base> &x)
-	{	return ! AD<Base>::tape_active(x.id_); }
+	{	return x.id_ != * AD<Base>::id_handle(); }
 
 	// Variable
 	template <class Base>
 	inline bool Variable(const AD<Base> &x)
-	{	return AD<Base>::tape_active(x.id_); }
+	{	return x.id_ == * AD<Base>::id_handle(); }
 
 	template <class Base>
 	inline bool Variable(const VecAD<Base> &x)
-	{	return AD<Base>::tape_active(x.id_); }
+	{	return x.id_ == * AD<Base>::id_handle(); }
 } 
 // END CppAD namespace
 
