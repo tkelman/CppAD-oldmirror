@@ -33,52 +33,43 @@ $syntax%
 returns the tape corresponding to $italic x$$
 where $italic x$$ and $italic ptr$$ have the prototypes
 $syntax%
-	const AD<%Base%> %x%
+	const AD<%Base%> &%x%
 	ADTape<%Base%>  *%ptr%
 %$$
 The argument $italic x$$ must a variable.
 
-$head tape_id$$
-$index tape_id$$
+$head id_handle$$
+$index id_handle$$
 The syntax
 $syntax%
-	%id_table% = AD<%Base%>::tape_id()
+	%id% = AD<%Base%>::id_handle()
 %$$
-returns the table of tape identifiers
-where $italic id_table$$ has the prototype
+returns a pointer to the currently active tape identifier
+(for the current OpenMP thread).
+If no tape is currently active, it is the identifier for the next
+active tape.
+The return value $italic id$$ has prototype
 $syntax%
-	size_t %id_table%[CPPAD_MAX_NUM_THREADS] 
-%$$
-Furthermore, if $italic id$$ is the identifier corresponding to an active
-tape, $syntax%%id% > 0%$$,
-$syntax%
-	%thread% = mod( %id%, CPPAD_MAX_NUM_THREADS)
-%$$
-is the corresponding OpenMP thread number, and
-$syntax%
-	%id% == %id_table%[%thread%]
+	size_t *%id%
 %$$
 
 
-$head tape_table$$
-$index tape_table$$
+$head tape_handle$$
+$index tape_handle$$
 The syntax
 $syntax%
-	%tape_table% = AD<%Base%>::tape_table()
+	%tape% = AD<%Base%>::tape_handle()
 %$$
-returns the table of tape pointers
-where $italic tape_table$$ has the prototype
-$syntax%
-	ADTape<%Base%> *%tape_table%[CPPAD_MAX_NUM_THREADS] 
-%$$
-Furthermore, if $italic id$$ corresponds to an active tape and
-$syntax%
-	%thread% = mod(%id%, CPPAD_MAX_NUM_THREADS )
-%$$
-then
+returns a pointer to a pointer to the current tape
+(for the current OpenMP thread).
+The return value has prototype
 $syntax%%
-	tape_table%[%thread%]% != CPPAD_NULL
+	ADTape<%Base%> **tape
 %$$.
+If the tape is not currently active,
+$syntax%
+	*%tape% == CPPAD_NULL
+%$$
 
 $head tape_active$$
 $index tape_active$$
@@ -125,22 +116,22 @@ $head tape_ptr$$
 $index tape_ptr$$
 The syntax
 $syntax%
-	%ptr% = AD<%Base%>::tape_ptr(%id%)
-%$$
-returns the pointer to the tape corresponding to the tape identifier 
-$italic id$$ (the corresponding tape must be active).
-$pre
-
-$$
-The syntax
-$syntax%
 	%ptr% = AD<%Base%>::tape_ptr()
 %$$
 returns the a pointer to the tape corresponding to the current thread.
 The corresponding tape is active if and only if $syntax%%ptr% == CPPAD_NULL%$$.
-Note that if you know the corresponding tape identifier, it is faster
-to use the other $code tape_ptr$$ syntax (because the current thread
-need not be determined by an OpenMP system call).
+The syntax
+$syntax%
+	%ptr% = AD<%Base%>::tape_ptr(%id%)
+%$$
+does the same thing but if NDEBUG is not defined, it also check that
+the $italic id$$ is the corresponding tape identifier and that $italic ptr$$
+is not equal to $code CPPAD_NULL$$.
+The argument $italic id$$ has prototype
+$syntax%
+	size_t %id%
+%$$
+
 
 $end
 ----------------------------------------------------------------------------
@@ -156,13 +147,16 @@ namespace CppAD {
 // ----------------------------------------------------------------------
 template <class Base>
 inline ADTape<Base> *AD<Base>::tape_this(void) const
-{	return tape_ptr(id_); }
+{	CppADUnknownError( tape_active(id_) );
+	CppADUnknownError( *tape_handle() != CPPAD_NULL );
 
+	return *tape_handle();
+}
 // ----------------------------------------------------------------------
 // Static functions
 //
 template <class Base>
-inline size_t * AD<Base>::id_table(void)
+inline size_t * AD<Base>::id_handle(void)
 {	// assume all id numbers are initially zero
 	static size_t id;
 # ifdef _OPENMP
@@ -171,7 +165,7 @@ inline size_t * AD<Base>::id_table(void)
 	return &id;
 }	
 template <class Base>
-inline ADTape<Base> ** AD<Base>::tape_table(void)
+inline ADTape<Base> ** AD<Base>::tape_handle(void)
 {	// assume all pointers initially zero
 	static ADTape<Base> *tape;
 # ifdef _OPENMP
@@ -182,7 +176,7 @@ inline ADTape<Base> ** AD<Base>::tape_table(void)
 }
 template <class Base>
 inline bool AD<Base>::tape_active(size_t id)
-{	size_t check  = *id_table();
+{	size_t check  = *id_handle();
 	return (id > 0)  & (check == id );
 }
 template <class Base>
@@ -199,12 +193,12 @@ size_t  AD<Base>::tape_new(void)
 	);
 
 	// initialize so that id > 0 and thread == id % CPPAD_MAX_NUM_THREADS
-	size_t *id = id_table();
+	size_t *id = id_handle();
 	if( *id == 0 )
 		*id = thread + CPPAD_MAX_NUM_THREADS;
 
 	// tape for this thread must be null at the start
-	ADTape<Base> **tape = tape_table();
+	ADTape<Base> **tape = tape_handle();
 	CppADUnknownError( *tape  == CPPAD_NULL );
 	*tape = new ADTape<Base>( *id );
 
@@ -214,7 +208,7 @@ size_t  AD<Base>::tape_new(void)
 template <class Base>
 void  AD<Base>::tape_delete(size_t id)
 {
-	ADTape<Base> **tape = tape_table();
+	ADTape<Base> **tape = tape_handle();
 
 	CppADUnknownError( *tape != CPPAD_NULL );
 
@@ -223,23 +217,19 @@ void  AD<Base>::tape_delete(size_t id)
 
 	// increase the id for this thread in a way such that 
 	// thread = id % CPPAD_MAX_NUM_THREADS
-	*id_table() += CPPAD_MAX_NUM_THREADS;
+	*id_handle() += CPPAD_MAX_NUM_THREADS;
 
 	return;
 }
 template <class Base>
-inline ADTape<Base> * AD<Base>::tape_ptr(size_t id)
-{	CppADUnknownError( tape_active(id) );
-
-	ADTape<Base> **tape = tape_table();
-
-	CppADUnknownError( *tape != CPPAD_NULL );
-	return *tape;
-}
-template <class Base>
 inline ADTape<Base> *AD<Base>::tape_ptr(void)
-{
-	return *tape_table();
+{	return *tape_handle(); }
+
+template <class Base>
+inline ADTape<Base> *AD<Base>::tape_ptr(size_t id)
+{	CppADUnknownError( tape_active(id) );
+	CppADUnknownError( *tape_handle() != CPPAD_NULL );
+	return *tape_handle(); 
 }
 
 } // END CppAD namespace

@@ -42,15 +42,12 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Changes for better speed (in both multi and single thread case).
+log_entry="
 
 svn_commit.sh: file that made this commit.
-build.sh: add an empty line after the openmp test output in the log.
-ad.hpp: add inline to all the static tape accessors (except new and delete).
-omp_max_thread.hpp: no longer can do this error check.
-define.hpp: change maximum number of tapes constant.
-tape_link.hpp: use threadprivate instead of table one for each thread.
-track_new_del.hpp:  change maximum number of tapes constant.
+build.sh: fix setting of error flag mistake in previous commit.
+ad.hpp: use handle as name for the static pointer functions.
+tape_link.hpp: document change to tapeprivate version.
 " 
 add_list="
 "
@@ -63,10 +60,7 @@ change_list="
 	svn_commit.sh
 	build.sh
 	cppad/local/ad.hpp
-	cppad/local/omp_max_thread.hpp
-	cppad/local/define.hpp
 	cppad/local/tape_link.hpp
-	cppad/track_new_del.hpp
 "
 #
 copy_branch="" 

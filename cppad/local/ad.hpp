@@ -243,13 +243,13 @@ private:
 	inline ADTape<Base> *tape_this(void) const;
 	//
 	// static 
-	inline static size_t        *id_table (void);
-	inline static ADTape<Base> **tape_table(void);
+	inline static size_t        *id_handle (void);
+	inline static ADTape<Base> **tape_handle(void);
 	inline static bool           tape_active(size_t id);
 	static size_t         tape_new(void);
 	static void           tape_delete(size_t id);
-	inline static ADTape<Base>  *tape_ptr(size_t id);
 	inline static ADTape<Base>  *tape_ptr(void);
+	inline static ADTape<Base>  *tape_ptr(size_t id);
 }; 
 // ---------------------------------------------------------------------------
 
