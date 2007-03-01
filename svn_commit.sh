@@ -42,17 +42,15 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Fix use of CPPAD_MAX_NUM_THREADS where should be omp_max_thread(0).
+log_entry="Changes for better speed (in both multi and single thread case).
 
 svn_commit.sh: file that made this commit.
-build.sh: include ompemp/run.sh in list of tests.
-omp_max_thread.hpp: improved error checking in the debugging case.
-multi_newton.cpp: automated check correctness and set exit flag.
-multi_newton.hpp: fix bug in case where derivative is negative.
-run.sh: change output for the example.
-speed_test.hpp: fix so that works with MS distribution.
-config.h: change default value for CPPAD_GETTIMEOFDAY , (for MS distribution).
-install_subversion.omh: suggest checking config.h file.
+build.sh: add an empty line after the openmp test output in the log.
+ad.hpp: add inline to all the static tape accessors (except new and delete).
+omp_max_thread.hpp: no longer can do this error check.
+define.hpp: change maximum number of tapes constant.
+tape_link.hpp: use threadprivate instead of table one for each thread.
+track_new_del.hpp:  change maximum number of tapes constant.
 " 
 add_list="
 "
@@ -64,13 +62,11 @@ move_list="
 change_list="
 	svn_commit.sh
 	build.sh
+	cppad/local/ad.hpp
 	cppad/local/omp_max_thread.hpp
-	openmp/multi_newton.cpp
-	openmp/multi_newton.hpp
-	openmp/run.sh
-	cppad/speed_test.hpp
-	cppad/config.h
-	omh/install_subversion.omh
+	cppad/local/define.hpp
+	cppad/local/tape_link.hpp
+	cppad/track_new_del.hpp
 "
 #
 copy_branch="" 

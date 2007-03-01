@@ -375,6 +375,7 @@ then
 	echo "running openmp/run.sh multi_newton false false"
 	echo "openmp/run.sh multi_newton false false" >> ../build_test.log
 	if !  openmp/run.sh multi_newton false false  >> ../build_test.log
+	echo ""                                       >> ../build_test.log
 	then
 		ok="no"
 	fi
