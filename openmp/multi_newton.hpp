@@ -23,10 +23,9 @@ $spell
 	const
 $$
 
-$index OpenMP, Newton$$
-$index multi-thread, Newton$$
-$index zeros, Newton$$
-$index Newton, multi-thread$$
+$index OpenMP, Newton's method$$
+$index multi-thread, Newton's method$$
+$index example, OpenMP Newton's method$$
 
 $section Multi-Threaded Newton's Method Routine$$
 
@@ -36,7 +35,7 @@ $syntax%multi_newton(%
 
 
 $head Purpose$$
-Determine the argument values $latex x \in [a, b]$$
+Determine the argument values $latex x \in [a, b]$$ (where $latex a < b$$)
 such that $latex f(x) = 0$$.
 
 $head Method$$
@@ -68,6 +67,9 @@ $latex \[
 	| f( xout[i] ) | \leq epsilon
 \] $$ 
 for each valid index $italic i$$.
+Two $latex x$$ solutions are considered equal (and joined as one) if
+the absolute difference between the solutions is less than
+$latex (b - a) / n$$.
 
 $head fun$$
 The argument $italic fun$$ has prototype
@@ -142,7 +144,7 @@ $index multi-thread, example$$
 $section OpenMP Multi-Threading Newton's Method Source Code$$
 
 $code
-$verbatim%openmp/multi_newton.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
+$verbatim%openmp/multi_newton.hpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
 $$
 $end
 ---------------------------------------------------------------------------
@@ -219,6 +221,10 @@ void multi_newton(
 	using CppAD::vector;
 	using CppAD::abs;
 
+	// check argument values
+	assert( xlow < xup );
+	assert( n_grid > 0 );
+
 	// OpenMP uses integers in place of size_t
 	int i, n = int(n_grid);
 
@@ -248,12 +254,24 @@ void multi_newton(
 // end omp parallel for
 
 	// remove duplicates and points that are not solutions
-	double xlast  = xlow - fabs(xlow) - 1.;
+	double xlast  = xlow;
+	size_t ilast  = 0;
 	size_t n_zero = 0;
 	for(i = 0; i < n_grid; i++)
-	{
-		if( abs( fcur[i] ) <= epsilon && xcur[i] != xlast )
-			xcur[n_zero++] = xlast = xcur[i];
+	{	if( abs( fcur[i] ) <= epsilon )
+		{	if( n_zero == 0 )
+			{	xcur[n_zero++] = xlast = xcur[i];
+				ilast = i;
+			}
+			else if( fabs( xcur[i] - xlast ) > dx ) 
+			{	xcur[n_zero++] = xlast = xcur[i];
+				ilast = i;
+			}
+			else if( fabs( fcur[i] ) < fabs( fcur[ilast] ) )
+			{	xcur[n_zero - 1] = xlast = xcur[i]; 
+				ilast = i;
+			}
+		}
 	}
 
 	// resize output vector and set its values

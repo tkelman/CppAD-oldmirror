@@ -84,6 +84,16 @@ $syntax%
 %$$
 This argument is used to identify the type $italic Type$$.
 
+$subhead OpenMP$$
+$index OpenMP, TrackNewDel$$
+$index TrackNewDel, OpenMP$$ 
+In the case of multi-threading with OpenMP,
+calls with the argument $italic oldptr$$ must be made with the
+same thread as when $italic oldptr$$ was created
+(except for $code TrackNewVec$$ where the value of $italic oldptr$$
+does not matter).
+
+
 $head newlen$$
 The argument $italic newlen$$ has prototype
 $syntax%
@@ -116,7 +126,8 @@ $index TrackNewVec$$
 $index NDEBUG$$
 This routine is used to start the tracking of memory allocation 
 using $code new[]$$.
-The value of $italic oldptr$$ does not matter for this case.
+The value of $italic oldptr$$ does not matter for this case
+(except that it is used to identify $italic Type$$).
 If $code NDEBUG$$ is not defined and the memory cannot be allocated,
 $xref/ErrorHandler/$$ is used to generate a message
 stating that there was not sufficient memory.
@@ -188,9 +199,13 @@ $syntax%
 	CppAD::TrackCount(__FILE__, __LINE__)
 %$$
 
-$head OpenMP$$
+$subhead OpenMP$$
+$index OpenMP, TrackCount$$
+$index TrackCount, OpenMP$$
 In the case of multi-threading with OpenMP,
-$code TrackCount$$ will only report the results for the current thread.
+the information for all of the threads is checked 
+so only one thread can be running
+when this routine is called.
 
 
 $head Example$$
@@ -212,7 +227,6 @@ $end
 # include <omp.h>
 # endif
 
-# define CppADDebugTrack 0
 
 # ifndef CPPAD_NULL
 # define CPPAD_NULL	0
@@ -225,6 +239,8 @@ $end
 # define CPPAD_MAX_NUM_THREADS 1
 # endif
 # endif
+
+# define CPPAD_TRACK_DEBUG 0
 
 # define CppADTrackNewVec(newlen, oldptr) \
 	CppAD::TrackNewVec(__FILE__, __LINE__, newlen, oldptr)
@@ -260,8 +276,15 @@ public:
 	}
 
 	// There is only one tracking list and it starts it here
-	static TrackElement *Root(void)
+	static TrackElement *root_for(size_t thread)
 	{	static TrackElement root[CPPAD_MAX_NUM_THREADS];
+		CppADUnknownError( thread < CPPAD_MAX_NUM_THREADS );
+		return root + thread;
+	}
+
+	// There is only one tracking list and it starts it here
+	static TrackElement *Root(void)
+	{
 # ifdef _OPENMP
 		size_t thread = static_cast<size_t> ( omp_get_thread_num() );
 # else
@@ -269,24 +292,27 @@ public:
 # endif
 		CppADUsageError(
 			thread < CPPAD_MAX_NUM_THREADS,
-			"too many OpenMP threads are active."
+			"TrackNewDel: too many OpenMP threads are active."
 		);
-		return root + thread;
+		return root_for(thread); 
 	}
 
 	// Print the linked list
-	static void Print(void)
-	{	TrackElement *E = Root();
-		std::cout << "Begin Track List" << std::endl;
+	static void Print(size_t thread)
+	{	using std::cout;
+		using std::endl;
+		TrackElement *E = Root();
+		cout << "Begin Track List for thread " << thread << endl;
 		while( E->next != CPPAD_NULL )
 		{	E = E->next;
-			std::cout << "next = " << E->next;
-			std::cout << ", ptr  = " << E->ptr;
-			std::cout << ", line = " << E->line;
-			std::cout << ", file = " << E->file;
-			std::cout << std::endl;
+			cout << "next = " << E->next;
+			cout << ", ptr  = " << E->ptr;
+			cout << ", line = " << E->line;
+			cout << ", file = " << E->file;
+			cout << endl;
 		}
-		std::cout << "End Track List:" << std::endl;
+		cout << "End Track List for thread " << thread << endl;
+		cout << endl;
 	}
 }; 
 
@@ -440,16 +466,20 @@ Type *TrackExtend(
 // TrackCount --------------------------------------------------------------
 inline size_t TrackCount(const char *file, int line)
 {
-	TrackElement *E = TrackElement::Root();
 	size_t count = 0;
-	while( E->next != CPPAD_NULL ) 
+	size_t thread;
+	for(thread = 0; thread < CPPAD_MAX_NUM_THREADS; thread++)
 	{
-# if CppADTrackDebug
-		std::cout << "Before TrackCount:" << std::endl;
-		TrackElement::Print();
+		TrackElement *E = TrackElement::root_for(thread);
+# if CPPAD_TRACK_DEBUG
+		if( E->next != CPPAD_NULL )
+			TrackElement::Print(thread);
 # endif
-		++count;
-		E = E->next;
+
+		while( E->next != CPPAD_NULL ) 
+		{	++count;
+			E = E->next;
+		}
 	}
 	return count;
 }

@@ -42,14 +42,16 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="More low level optimization and simplification.
+log_entry="Cleaning up user interface, documentation, and example.
 
 svn_commit.sh: file that made this commit.
-par_var.hpp: use id_handle() in order to make more efficient.
-ad.hpp: remove tape_active as per comment for par_var.hpp.
-define.hpp: if not using OpenMP, set max number of threads to one.
-tape_link.hpp: simplify and optimize.
-track_new_del.hpp: if not using OpenMP, set max number of threads to one.
+example.cpp: add checking for error leak to test output and count.
+independent.hpp: document need to stop tape in same thread.
+fun_construct.hpp: document need to start tape in same thread.
+track_new_del.hpp: report memory leaks for all threads.
+multi_newton.cpp: test for memory leak at end of program.
+multi_newton.hpp: join solutions that are within one grid spacing.
+run.sh: add indexing to documentation.
 " 
 add_list="
 "
@@ -60,11 +62,14 @@ move_list="
 #
 change_list="
 	svn_commit.sh
-	cppad/local/par_var.hpp
-	cppad/local/ad.hpp
-	cppad/local/define.hpp
-	cppad/local/tape_link.hpp
+	example/example.cpp
+	omh/example_list.omh
+	cppad/local/independent.hpp
+	cppad/local/fun_construct.hpp
 	cppad/track_new_del.hpp
+	openmp/multi_newton.cpp
+	openmp/multi_newton.hpp
+	openmp/run.sh
 "
 #
 copy_branch="" 

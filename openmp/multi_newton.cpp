@@ -11,6 +11,10 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 /*
 $begin multi_newton.cpp$$
+$index OpenMP, example program$$
+$index example, OpenMP program$$
+$index program, OpenMP example$$
+
 
 $section Multi-Threaded Newton's Method Main Program$$
 
@@ -89,10 +93,11 @@ int main(void)
 	using std::endl;
 	using CppAD::vector;
 
-	// size of the test cases
-	vector<size_t> size_vec(2);
-	size_vec[0] = 20;
-	size_vec[1] = 40;
+	// minimum time for test (repeat until this much time)
+	double time_min = 1.;
+
+	// minimum size for test (minimum value for n_grid in multi_newton)
+	size_t size_min = 20;
 
 # ifdef _OPENMP
 	// No tapes are currently active,
@@ -108,33 +113,44 @@ int main(void)
 	int i;
 # endif
 
-	// Correctness check
-	vector<double> xout;
-	test_once(xout, size_vec[0]);
-	double epsilon = 1e-6;
-	double pi      = 4. * std::atan(1.);
-	bool   ok      = (xout.size() == NUMBER_OF_ZEROS);
-	i              = 0;
-	while( ok & (i < NUMBER_OF_ZEROS) )
-	{	ok &= std::fabs( xout[i] - pi * i) <= 2 * epsilon;
-		++i;
+	// sub-block so vectors get deallocated before call to CppADTrackCount
+	bool ok = true;
+	{	// Correctness check
+		vector<double> xout;
+		test_once(xout, size_min);
+		double epsilon = 1e-6;
+		double pi      = 4. * std::atan(1.);
+		ok            &= (xout.size() == NUMBER_OF_ZEROS);
+		i              = 0;
+		while( ok & (i < NUMBER_OF_ZEROS) )
+		{	ok &= std::fabs( xout[i] - pi * i) <= 2 * epsilon;
+			++i;
+		}
+
+		// size of the test cases
+		vector<size_t> size_vec(2);
+		size_vec[0] = 20;
+		size_vec[1] = 40;
+
+		// run the test cases
+		vector<size_t> rate_vec( size_vec.size() );
+		rate_vec = CppAD::speed_test(test_repeat, size_vec, time_min);
+
+		// results
+		cout << "n_grid           = " << size_vec << endl;
+		cout << "Execution Speed  = " << rate_vec << endl;
 	}
 
-	// minimum time for test
-	double time_min = 1.;
-
-	// run the test cases
-	vector<size_t> rate_vec( size_vec.size() );
-	rate_vec = CppAD::speed_test(test_repeat, size_vec, time_min);
-
-	// results
-	cout << "n_grid           = " << size_vec << endl;
-	cout << "Execution Speed  = " << rate_vec << endl;
+	// check all the threads for a CppAD memory leak
+	if( CppADTrackCount() != 0 )
+	{	ok = false;
+		cout << "Error: memory leak detected" << endl;
+	}
 	if( ok )
 		cout << "Correctness Test Passed" << endl;
 	else	cout << "Correctness Test Failed" << endl;
 
-	return (! ok);
+	return static_cast<int>( ! ok );
 }
 
 // END PROGRAM

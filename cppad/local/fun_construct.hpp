@@ -116,6 +116,24 @@ equal to the corresponding elements of $italic x$$
 (see $xref/Forward/$$).
 $lend
 
+$head OpenMP$$
+$index OpenMP, Dependent$$
+$index Dependent, OpenMP$$
+$index OpenMP, ADFun$$
+$index ADFun, OpenMP$$
+In the case of multi-threading with OpenMP,
+the call to $code Independent$$
+and the corresponding call to
+$syntax%
+	ADFun<%Base%> %f%( %x%, %y%)
+%$$
+or 
+$syntax%
+	%f%.Dependent( %x%, %y%)
+%$$
+must be preformed by the same thread.
+
+
 $head Example$$
 
 $subhead Sequence Constructor$$

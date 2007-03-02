@@ -18,6 +18,9 @@
 #	false false
 #	cpp
 # $$
+# $index OpenMP, compile example$$
+# $index compile, OpenMP example$$
+# $index example, compile OpenMP$$
 #
 # $section Compile and Run an OpenMP example$$
 #

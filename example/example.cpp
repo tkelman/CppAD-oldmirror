@@ -259,9 +259,16 @@ int main(void)
 	// check for errors
 	using std::cout;
 	using std::endl;
-	if( CppADTrackCount() != 0 )
-		cout << "Error: memroy leak detected" << endl;
 	assert( ok || (Run_error_count > 0) );
+	if( CppADTrackCount() == 0 )
+	{	Run_ok_count++;
+		cout << "Ok:    " << "No memory leak detected" << endl;
+	}
+	else
+	{	ok = false;
+		Run_error_count++;
+		cout << "Error: " << "memory leak detected" << endl;
+	}
 	if( ok )
 		cout << "All " << Run_ok_count << " tests passed." << endl;
 	else	cout << Run_error_count << " tests failed." << endl;

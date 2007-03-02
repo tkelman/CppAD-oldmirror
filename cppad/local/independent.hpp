@@ -49,7 +49,7 @@ $syntax%
 	Independent(%x%)
 %$$
 The corresponding operation sequence is transferred to a function object,
-and the tape is destroyed,
+and the tape is deleted,
 using either (see $cref/ADFun<Base> f(x, y)/FunConstruct/$$)
 $syntax%
 	ADFun<%Base%> %f%( %x%, %y%)
@@ -73,13 +73,39 @@ The size of the vector $italic x$$, must be greater than zero,
 and is the number of independent variables for this
 AD operation sequence.
 
-
 $head VectorAD$$
 The type $italic VectorAD$$ must be a $xref/SimpleVector/$$ class with
 $xref/SimpleVector/Elements of Specified Type/elements of type/$$
 $syntax%AD<%Base%>%$$.
 The routine $xref/CheckSimpleVector/$$ will generate an error message
 if this is not the case.
+
+$head Memory Leak$$
+A memory leak will result if
+a tape is create by a call to $code Independent$$
+and not deleted by a corresponding call to 
+$syntax%
+	ADFun<%Base%> %f%( %x%, %y%)
+%$$
+or using 
+$syntax%
+	%f%.Dependent( %x%, %y%)
+%$$
+
+$head OpenMP$$
+$index OpenMP, Independent$$
+$index Independent, OpenMP$$
+In the case of multi-threading with OpenMP,
+the call to $code Independent$$
+and the corresponding call to
+$syntax%
+	ADFun<%Base%> %f%( %x%, %y%)
+%$$
+or 
+$syntax%
+	%f%.Dependent( %x%, %y%)
+%$$
+must be preformed by the same thread.
 
 $head Example$$
 $children%
