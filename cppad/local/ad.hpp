@@ -213,12 +213,12 @@ private:
 	// value_ corresponding to this object
 	Base value_;
 
-	// taddr_ in tape for this variable 
-	size_t taddr_;
-
 	// tape identifier corresponding to taddr
 	// This is a variable if and only if id_ == *id_handle()
 	size_t id_;
+
+	// taddr_ in tape for this variable 
+	size_t taddr_;
 	//
 	// Make this variable a parameter
 	//

@@ -45,8 +45,9 @@
 log_entry="Cleaning up user interface, documentation, and example.
 
 svn_commit.sh: file that made this commit.
-omh_max_thread.hpp: mention run.sh in example text.
-run.sh: show output both with and with out OpenMP.
+copy_base.hpp: set taddr_ to avoid warning on gcc 4.1 compiler.
+ad.hpp: change order of id_ and taddr_ to be same as in initialization.
+main.cpp: fix include: <speed/uniform_01.hpp> ->  <cppad/speed/uniform_01.hpp>
 " 
 add_list="
 "
@@ -57,8 +58,9 @@ move_list="
 #
 change_list="
 	svn_commit.sh
-	cppad/local/omp_max_thread.hpp
-	openmp/run.sh
+	cppad/local/copy_base.hpp
+	cppad/local/ad.hpp
+	speed/main.cpp
 "
 #
 copy_branch="" 
