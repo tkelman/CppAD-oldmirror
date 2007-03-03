@@ -45,13 +45,8 @@
 log_entry="Cleaning up user interface, documentation, and example.
 
 svn_commit.sh: file that made this commit.
-example.cpp: add checking for error leak to test output and count.
-independent.hpp: document need to stop tape in same thread.
-fun_construct.hpp: document need to start tape in same thread.
-track_new_del.hpp: report memory leaks for all threads.
-multi_newton.cpp: test for memory leak at end of program.
-multi_newton.hpp: join solutions that are within one grid spacing.
-run.sh: add indexing to documentation.
+omh_max_thread.hpp: mention run.sh in example text.
+run.sh: show output both with and with out OpenMP.
 " 
 add_list="
 "
@@ -62,13 +57,7 @@ move_list="
 #
 change_list="
 	svn_commit.sh
-	example/example.cpp
-	omh/example_list.omh
-	cppad/local/independent.hpp
-	cppad/local/fun_construct.hpp
-	cppad/track_new_del.hpp
-	openmp/multi_newton.cpp
-	openmp/multi_newton.hpp
+	cppad/local/omp_max_thread.hpp
 	openmp/run.sh
 "
 #

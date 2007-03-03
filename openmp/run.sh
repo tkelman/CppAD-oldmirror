@@ -16,6 +16,8 @@
 #	exe
 #	rm
 #	false false
+#	true true
+#	fopenmp
 #	cpp
 # $$
 # $index OpenMP, compile example$$
@@ -52,19 +54,45 @@
 # run in an MSDOS box.
 #
 # $head Example$$
-# The following is an example $code run.sh$$ command 
+# The two example runs below were run in quick succession on a machine
+# with $code g++ --version$$ equal to
 # $codep
-#	openmp/run.sh multi_newton false false
+#	g++ (GCC) 4.1.1 20070105 (Red Hat 4.1.1-51)
+# $$
+#
+#
+# $subhead Without OpenMP$$
+# The following is an example $code run.sh$$ command 
+# with $italic openmp$$ false and $italic optimize$$ true:
+# $codep
+#	openmp/run.sh multi_newton false true
 # $$
 # The following is the corresponding output
 # $codep
-#	g++ -I.. openmp/multi_newton.cpp -o openmp/multi_newton  -g
-#	openmp/multi_newton
+#	g++ -I.. multi_newton.cpp -o multi_newton  -DNDEBUG -O2
+#	./multi_newton
 #	_OPENMP is not defined, running in single tread mode
 #	n_grid           = { 20, 40 }
-#	Execution Speed  = { 72, 43 }
+#	Execution Speed  = { 2729, 1823 }
 #	Correctness Test Passed
-#	rm openmp/multi_newton.exe
+#	rm multi_newton
+# $$	
+#
+# $subhead With OpenMP$$
+# The following is an example $code run.sh$$ command 
+# with $italic openmp$$ true and $italic optimize$$ true:
+# $codep
+#	openmp/run.sh multi_newton true true
+# $$
+# The following is the corresponding output
+# $codep
+#	g++ -I.. multi_newton.cpp -o multi_newton -fopenmp -DNDEBUG -O2
+#	./multi_newton
+#	OpenMP: version = 200505, max number of threads = 2
+#	n_grid           = { 20, 40 }
+#	Execution Speed  = { 3791, 2470 }
+#	Correctness Test Passed
+#	rm multi_newton
 # $$	
 #
 # $end

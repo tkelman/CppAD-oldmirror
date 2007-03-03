@@ -70,9 +70,10 @@ $children%
 	openmp/run.sh%
 	openmp/multi_newton.cpp
 %$$
-The file $cref/multi_newton.cpp/$$ contains an example and test
-of this operation.
-It returns true if it succeeds and false otherwise.
+The shell script $cref/openmp_run.sh/$$ can be used to 
+run the program $cref/multi_newton.cpp/$$.
+This program contains an example, speed test, and correctness test
+of using OpenMP with CppAD.
 
 $end
 -----------------------------------------------------------------------------
