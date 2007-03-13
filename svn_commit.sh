@@ -42,12 +42,11 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Cleaning up user interface, documentation, and example.
+log_entry="Changes for trunk version.
 
 svn_commit.sh: file that made this commit.
-copy_base.hpp: set taddr_ to avoid warning on gcc 4.1 compiler.
-ad.hpp: change order of id_ and taddr_ to be same as in initialization.
-main.cpp: fix include: <speed/uniform_01.hpp> ->  <cppad/speed/uniform_01.hpp>
+svn_merge.sh: commands that made the merge for previous commit.
+whats_new_07.omh: change comments so now in trunk instead of openmp branch.
 " 
 add_list="
 "
@@ -58,9 +57,8 @@ move_list="
 #
 change_list="
 	svn_commit.sh
-	cppad/local/copy_base.hpp
-	cppad/local/ad.hpp
-	speed/main.cpp
+	svn_merge.sh
+	omh/whats_new_07.omh
 "
 #
 copy_branch="" 
