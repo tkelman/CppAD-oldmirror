@@ -42,11 +42,16 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Changes for trunk version.
+log_entry="Remove thread private (see if this runs on Kipp Martin's machine)
 
 svn_commit.sh: file that made this commit.
-svn_merge.sh: commands that made the merge for previous commit.
-whats_new_07.omh: change comments so now in trunk instead of openmp branch.
+cond_exp.hpp: change check to use Parameter functions (not id value).
+copy_base.hpp: change initial id_ value to one (not equal static default).
+vec_ad.hpp: change initial id_ value to one (not equal static default).
+default.hpp: change initial id_ value to one (not equal static default).
+abs.hpp: change check to use Parameter functions (not id value).
+tape_link.hpp: use array [ omp_get_thread_num() ] in place of threadprivate. 
+std_math_unary.hpp: change check to use Parameter functions (not id value).
 " 
 add_list="
 "
@@ -57,8 +62,13 @@ move_list="
 #
 change_list="
 	svn_commit.sh
-	svn_merge.sh
-	omh/whats_new_07.omh
+	cppad/local/cond_exp.hpp
+	cppad/local/copy_base.hpp
+	cppad/local/vec_ad.hpp
+	cppad/local/default.hpp
+	cppad/local/abs.hpp
+	cppad/local/tape_link.hpp
+	cppad/local/std_math_unary.hpp
 "
 #
 copy_branch="" 
