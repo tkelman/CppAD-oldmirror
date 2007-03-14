@@ -42,17 +42,13 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Fix some Microsoft compiler warnings.
+log_entry="Try to speed up OpenMP case.
 
 svn_commit.sh: file that made this commit.
-rosen_34.cpp: explicitly convert int(size_t).
-ode_gear.cpp: explicitly convert int(size_t).
-example.cpp: explicitly convert int(size_t).
-whats_new_07.cpp: users view of the changes (and ones for previous commit).
-speed_test.hpp: override GETTIMEOFDAY setting in the _MSC_VER case.
-tape_link.hpp: use simplier (and possible faster) construct for single thread.
-track_new_del.hpp: explicitly convert int(size_t).
-configure.ac: add comments in config.h about overriding GETTIMEOFDAY.
+whats_new_07.omh: users view of the changes.
+par_var.hpp: use new version of id_handle().
+ad.hpp: declare new version of id_handle and tape_handle.
+tape_link.hpp: pass in thread so do not omp_get_thread_num() every time.
 " 
 add_list="
 "
@@ -63,14 +59,10 @@ move_list="
 #
 change_list="
 	svn_commit.sh
-	example/rosen_34.cpp
-	example/ode_gear.cpp
-	example/example.cpp
 	omh/whats_new_07.omh
-	cppad/speed_test.hpp
+	cppad/local/par_var.hpp
+	cppad/local/ad.hpp
 	cppad/local/tape_link.hpp
-	cppad/track_new_del.hpp
-	configure.ac
 "
 #
 copy_branch="" 

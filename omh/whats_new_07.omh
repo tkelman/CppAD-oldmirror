@@ -45,6 +45,10 @@ In the Microsoft compiler case, the $code cppad/config.h$$ file had
 the wrong setting of $code GETTIMEOFDAY$$.
 The setting is now overridden (and always false) when the 
 $code _MSC_VER$$ preprocessor symbol is defined.
+$pre
+
+$$
+Some minor changes were made in an effort to speed up the multi-threading case.
 
 $head 07-13$$
 Started a new openmp branch and created a version of CppAD 
