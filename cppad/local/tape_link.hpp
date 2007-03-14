@@ -155,27 +155,31 @@ inline ADTape<Base> *AD<Base>::tape_this(void) const
 //
 template <class Base>
 inline size_t * AD<Base>::id_handle(void)
-{	static size_t id_table[CPPAD_MAX_NUM_THREADS];
+{
 # ifdef _OPENMP
+	static size_t id_table[CPPAD_MAX_NUM_THREADS];
 	size_t thread = static_cast<size_t> ( omp_get_thread_num() );
-# else
-	size_t thread = 0;
-# endif
 	CppADUnknownError( 
 		(id_table[thread] == 0)
 		| (id_table[thread] % CPPAD_MAX_NUM_THREADS == thread)
 	); 
 	return id_table + thread;
+# else
+	static size_t id;
+	return &id;
+# endif
 }	
 template <class Base>
 inline ADTape<Base> ** AD<Base>::tape_handle(void)
-{	static ADTape<Base> *tape_table[CPPAD_MAX_NUM_THREADS];
+{
 # ifdef _OPENMP
+	static ADTape<Base> *tape_table[CPPAD_MAX_NUM_THREADS];
 	size_t thread = static_cast<size_t> ( omp_get_thread_num() );
-# else
-	size_t thread = 0;
-# endif
 	return tape_table + thread;
+# else
+	static ADTape<Base> *tape;
+	return &tape;
+# endif
 }
 template <class Base>
 size_t  AD<Base>::tape_new(void)

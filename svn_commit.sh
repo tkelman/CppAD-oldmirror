@@ -42,16 +42,17 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Remove thread private (see if this runs on Kipp Martin's machine)
+log_entry="Fix some Microsoft compiler warnings.
 
 svn_commit.sh: file that made this commit.
-cond_exp.hpp: change check to use Parameter functions (not id value).
-copy_base.hpp: change initial id_ value to one (not equal static default).
-vec_ad.hpp: change initial id_ value to one (not equal static default).
-default.hpp: change initial id_ value to one (not equal static default).
-abs.hpp: change check to use Parameter functions (not id value).
-tape_link.hpp: use array [ omp_get_thread_num() ] in place of threadprivate. 
-std_math_unary.hpp: change check to use Parameter functions (not id value).
+rosen_34.cpp: explicitly convert int(size_t).
+ode_gear.cpp: explicitly convert int(size_t).
+example.cpp: explicitly convert int(size_t).
+whats_new_07.cpp: users view of the changes (and ones for previous commit).
+speed_test.hpp: override GETTIMEOFDAY setting in the _MSC_VER case.
+tape_link.hpp: use simplier (and possible faster) construct for single thread.
+track_new_del.hpp: explicitly convert int(size_t).
+configure.ac: add comments in config.h about overriding GETTIMEOFDAY.
 " 
 add_list="
 "
@@ -62,13 +63,14 @@ move_list="
 #
 change_list="
 	svn_commit.sh
-	cppad/local/cond_exp.hpp
-	cppad/local/copy_base.hpp
-	cppad/local/vec_ad.hpp
-	cppad/local/default.hpp
-	cppad/local/abs.hpp
+	example/rosen_34.cpp
+	example/ode_gear.cpp
+	example/example.cpp
+	omh/whats_new_07.omh
+	cppad/speed_test.hpp
 	cppad/local/tape_link.hpp
-	cppad/local/std_math_unary.hpp
+	cppad/track_new_del.hpp
+	configure.ac
 "
 #
 copy_branch="" 
