@@ -287,7 +287,14 @@ void  AD<Base>::tape_delete(size_t id_old)
 }
 template <class Base>
 inline ADTape<Base> *AD<Base>::tape_ptr(void)
-{	return *tape_handle(); }
+{
+# ifdef _OPENMP
+	size_t thread = static_cast<size_t> ( omp_get_thread_num() );
+	return *tape_handle(thread); 
+# else
+	return *tape_handle();
+# endif
+}
 
 template <class Base>
 inline ADTape<Base> *AD<Base>::tape_ptr(size_t id)

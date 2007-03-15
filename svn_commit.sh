@@ -42,13 +42,10 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Improve flexibility of openmp test case.
+log_entry="Fix erorr in _OPENMP case.
 
 svn_commit.sh: file that made this commit.
-whats_new_07.omh: users view of the changes.
-build.sh: change runing of openmp case and report which program failed.
-multi_newton.cpp: add command line arguments and doc for them.
-run.sh: add command line arguments to running of multi_newton.
+tape_link.hpp: error was here.
 " 
 add_list="
 "
@@ -59,10 +56,7 @@ move_list="
 #
 change_list="
 	svn_commit.sh
-	omh/whats_new_07.omh
-	build.sh
-	openmp/multi_newton.cpp
-	openmp/run.sh
+	cppad/local/tape_link.hpp
 "
 #
 copy_branch="" 
