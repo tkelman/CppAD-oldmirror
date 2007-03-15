@@ -42,13 +42,13 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Try to speed up OpenMP case.
+log_entry="Improve flexibility of openmp test case.
 
 svn_commit.sh: file that made this commit.
 whats_new_07.omh: users view of the changes.
-par_var.hpp: use new version of id_handle().
-ad.hpp: declare new version of id_handle and tape_handle.
-tape_link.hpp: pass in thread so do not omp_get_thread_num() every time.
+build.sh: change runing of openmp case and report which program failed.
+multi_newton.cpp: add command line arguments and doc for them.
+run.sh: add command line arguments to running of multi_newton.
 " 
 add_list="
 "
@@ -60,9 +60,9 @@ move_list="
 change_list="
 	svn_commit.sh
 	omh/whats_new_07.omh
-	cppad/local/par_var.hpp
-	cppad/local/ad.hpp
-	cppad/local/tape_link.hpp
+	build.sh
+	openmp/multi_newton.cpp
+	openmp/run.sh
 "
 #
 copy_branch="" 

@@ -35,6 +35,10 @@ This section contains a list of the changes to CppAD during 2007
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
 
+$head 07-15$$
+Add command line arguments to $cref/multi_newton.cpp/$$, and
+modified $cref/openmp_run.sh/$$ to allow for more flexible testing. 
+
 $head 07-14$$
 Fixed some Microsoft compiler warnings by explicitly converting from 
 $code size_t$$ to $code int$$.
