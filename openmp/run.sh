@@ -161,6 +161,10 @@ then
 fi
 echo "./multi_newton $n_thread $repeat $n_zero $n_grid $n_sum"
 if ! ./multi_newton $n_thread $repeat $n_zero $n_grid $n_sum
+then
+	echo "Error in multi_newton."
+	exit 1
+fi
 if [ "$repeat" != "automatic" ]
 then
 	date

@@ -42,10 +42,11 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Fix erorr in _OPENMP case.
+log_entry="Fix error detection and reporting in openmp/run.sh
 
 svn_commit.sh: file that made this commit.
-tape_link.hpp: error was here.
+run.sh.hpp: error was here.
+multi_newton.cpp: check command line arguments with asserts.
 " 
 add_list="
 "
@@ -56,7 +57,8 @@ move_list="
 #
 change_list="
 	svn_commit.sh
-	cppad/local/tape_link.hpp
+	openmp/run.sh
+	openmp/multi_newton.cpp
 "
 #
 copy_branch="" 
