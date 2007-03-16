@@ -171,21 +171,21 @@ int main(int argc, char *argv[])
 	if( strcmp(*argv, "automatic") == 0 )
 		repeat = 0;
 	else
-	{	assert( std::atoi(argv) > 0 );
+	{	assert( std::atoi(*argv) > 0 );
 		repeat = std::atoi(*argv);
 	}
 	argv++;
 
 	// n_zero command line argument 
-	assert( std::atoi(argv) > 1 );
+	assert( std::atoi(*argv) > 1 );
 	n_zero = std::atoi(*argv++);
 
 	// n_grid command line argument
-	assert( std::atoi(argv) > 0 );
+	assert( std::atoi(*argv) > 0 );
 	size_t n_grid = std::atoi(*argv++);
        
 	// n_sum command line argument 
-	assert( std::atoi(argv) > 0 );
+	assert( std::atoi(*argv) > 0 );
 	n_sum = std::atoi(*argv++);
 
 	// minimum time for test (repeat until this much time)
