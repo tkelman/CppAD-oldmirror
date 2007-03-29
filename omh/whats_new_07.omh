@@ -1,0 +1,227 @@
+/* --------------------------------------------------------------------------
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
+
+CppAD is distributed under multiple licenses. This distribution is under
+the terms of the 
+                    Common Public License Version 1.0.
+
+A copy of this license is included in the COPYING file of this distribution.
+Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
+-------------------------------------------------------------------------- */
+
+$begin whats_new_07$$
+$spell
+	Microsoft
+	threadprivate
+	gettimeofday
+	ifndef
+	Vec
+	openmp
+	dy
+	automake
+	makefile:wq
+	CppAD
+	cygwin
+	cppad.hpp
+	config.h
+	dd
+	Adolc
+$$
+
+$section Changes and Additions to CppAD During 2007$$
+
+
+$head Introduction$$
+This section contains a list of the changes to CppAD during 2007
+(in reverse order by date).
+The purpose of this section is to
+assist you in learning about changes between various versions of CppAD.
+
+$head 03-29$$
+Fixed entries in this file where the year was mistakenly used for the month.
+To be more specific, $syntax%07-%dd%$$ was changed to $syntax%03-%dd%$$
+for some of the entries directly below.
+$pre
+
+$$
+Corrected some places where $code CppAD$$ was used in stead of $code Adolc$$
+in the $cref/adolc_poly.cpp/$$ documentation.
+$pre
+
+$$
+Added an $cref/Introduction/WishList/Introduction/$$ and 
+$cref/Tracing/WishList/Tracing/$$ entry to the wish list.
+
+$head 03-20$$
+$cref/Example A.1.1c/example_a11c.cpp/$$,
+from the OpenMP 2.5 standards document,
+was added to the tests that can be run using $cref/openmp_run.sh/$$.
+
+$head 03-15$$
+Included the changes from openmp branch
+so that so CppAD does not use the OpenMP $code threadprivate$$ command
+(some systems do not support this command).
+
+$subhead 03-15$$
+Add command line arguments to $cref/multi_newton.cpp/$$, and
+modified $cref/openmp_run.sh/$$ to allow for more flexible testing. 
+
+$subhead 03-14$$
+Fixed some Microsoft compiler warnings by explicitly converting from 
+$code size_t$$ to $code int$$.
+$pre
+
+$$
+In the Microsoft compiler case, the $code cppad/config.h$$ file had 
+the wrong setting of $code GETTIMEOFDAY$$.
+The setting is now overridden (and always false) when the 
+$code _MSC_VER$$ preprocessor symbol is defined.
+$pre
+
+$$
+Some minor changes were made in an effort to speed up the multi-threading case.
+
+$subhead 03-13$$
+Started a new openmp branch and created a version of CppAD 
+that does not use the OpenMP $code threadprivate$$ command
+(not supported on some systems).
+
+$head 03-09$$
+Included the changes from openmp branch
+so that OpenMP can be used with CppAD,
+see $cref/omp_max_thread/$$.
+The changes
+dated between $cref/02-15/whats_new_07/03-09/02-15/$$ and 03-28 below
+were made in the openmp branch and transferred to the trunk on 03-09.
+
+
+$subhead 03-28$$
+The conditional include commands were missing on some include files; 
+for example
+$codep
+	# ifndef CPPAD_BENDER_QUAD_INCLUDED
+	# define CPPAD_BENDER_QUAD_INCLUDED
+$$
+was missing at the beginning of the $cref/BenderQuad/$$ include file.
+This has been fixed.
+$pre
+
+$$
+The $code speed_test$$ routines $cref/timing/speed_test/Timing/$$ was
+changed to use $code gettimeofday$$ if it is available.
+($code gettimeofday$$ measures wall clock time 
+which is better in a multi-threading environment).
+$pre
+
+$$
+Added the user multi-threading interface
+$cref/omp_max_thread/$$ along with its examples 
+which are distributed in the directory $code openmp$$.
+$pre
+
+$$
+The $syntax%speed/%*%.hpp%$$ files have been moved to
+$syntax%cppad/speed/%*%.hpp%$$ and the corresponding wish list
+item has been removed.
+$pre
+
+$$ 
+The multiple tapes with the same base type wish list item 
+have been removed (it's purpose was multi-threading which
+has been implemented).
+
+
+$subhead 02-27$$
+The $cref/speed/$$ include files are currently being distributed
+above the $code cppad$$ include directory. 
+A fix this wish list item has been added.
+$pre
+
+$$
+Multiple active tapes required a lot of multi-threading access
+management for the tapes. This was made simpler (and faster)
+by having at most one tape per thread.
+
+
+$subhead 02-22$$
+The include command in the $cref/speed_test/$$ documentation was
+$codep
+	# include <speed/speed_test.hpp>
+$$
+but it should have been
+$codep
+	# include <cppad/speed_test.hpp>
+$$
+This has been fixed.
+
+$subhead 02-17$$
+An entry about $cref/optimizing/WishList/Optimization/$$ the operation
+sequence in an $cref/ADFun/FunConstruct/$$ object was added.
+$pre
+
+$$
+Change the argument syntax for $cref/Dependent/$$ and deprecate the 
+$cref/old Dependent syntax/FunDeprecated/Dependent/$$.
+
+
+$subhead 02-16$$
+Added $syntax%VecAD<%Base%>%$$ as a valid argument type for the
+$cref/Parameter and Variable/ParVar/$$ functions.
+In addition, $cref/size_t indexing/VecAD/size_t Indexing/$$
+is was extended to be allowed during taping so long as the
+VecAD object is a parameter.
+
+
+$subhead 02-15$$
+Fixed the $code example/test_one.sh$$ script 
+(it was using its old name $code one_test$$).
+
+$head 02-06$$
+The $cref BenderQuad$$ documentation was improved by adding the fact
+that the $italic x$$ and $italic y$$ arguments to the $syntax%f%.dy%$$
+member function are equal to the $italic x$$ and $italic y$$ arguments
+to $code BenderQuad$$. Hence values depending on them can be stored
+as private objects in $italic f$$ and need not be recalculated.
+
+$head 02-04$$
+The method for distributing the documentation needed to be
+changed in the top level $code makefile.am$$ in order to
+be compatible with automake version 1.10.
+
+$head 02-03$$
+The change on $cref/02-01/whats_new_07/02-01/$$ had a new, saved as a static
+pointer, with no corresponding delete. 
+This was not a bug, but it has been changed to avoid
+an error message when using CppAD with 
+$href%http://valgrind.org/%valgrind%$$.
+$pre
+
+$$
+The change to the $code pow$$ function on
+$cref/06-12-10/whats_new_06/12-10/$$ did not include the
+necessary changes to the $cref/Sparsity/Sparse/$$ calculations.
+This has been fixed.
+
+$head 02-02$$
+Fix minor errors and improve
+$cref/profiling/InstallUnix/--with-profiling/$$ documentation.
+Also change the problem sizes used for the $cref/speed/$$ tests.
+
+$head 02-01$$
+There seems to be a bug in the cygwin version of g++ version 3.4.4
+with the -O2 flag whereby some static variables in static member functions 
+sometimes do not get constructed before being used. This has been
+avoided by using a static pointer and the new operator in cppad/local/ad.hpp.
+
+$head 01-29$$
+The copyright message was missing from some of the distribution files
+for some new files added on $cref%06-12-15%whats_new_06%12-15%$$.
+This resulted in the 
+$cref%unix%InstallUnix%Download Current Version%$$
+and
+$cref%windows%InstallWindows%Download Current Version%$$
+download files not existing for a period of time.
+The automated tests have been extended so that this should not happen again.
+
+$end
+
