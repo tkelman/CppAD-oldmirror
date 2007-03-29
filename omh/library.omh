@@ -1,20 +1,13 @@
-/* -----------------------------------------------------------------------
-CppAD: C++ Algorithm Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+/* --------------------------------------------------------------------------
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
 
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
+CppAD is distributed under multiple licenses. This distribution is under
+the terms of the 
+                    Common Public License Version 1.0.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
------------------------------------------------------------------------- */
+A copy of this license is included in the COPYING file of this distribution.
+Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
+-------------------------------------------------------------------------- */
 
 $begin library$$
 $spell
@@ -30,29 +23,31 @@ $index library, numerical C++ template$$
 $section The CppAD General Purpose Library$$
 
 $children%
-	CppAD/ErrorHandler.h%
+	cppad/error_handler.hpp%
 
-	CppAD/NearEqual.h%
-	CppAD/SpeedTest.h%
+	cppad/near_equal.hpp%
+	cppad/speed_test.hpp%
 
-	omh/NumericType.omh%
-	CppAD/CheckNumericType.h%
-	omh/SimpleVector.omh%
-	CppAD/CheckSimpleVector.h%
+	omh/numeric_type.omh%
+	cppad/check_numeric_type.hpp%
+	omh/simple_vector.omh%
+	cppad/check_simple_vector.hpp%
 
-	CppAD/PowInt.h%
-	CppAD/Poly.h%
-	omh/LuDetAndSolve.omh%
-	CppAD/RombergOne.h%
-	CppAD/RombergMul.h%
-	CppAD/Runge45.h%
-	CppAD/Rosen34.h%
-	CppAD/OdeErrControl.h%
-	CppAD/OdeGear.h%
-	CppAD/OdeGearControl.h%
+	cppad/poly.hpp%
+	omh/lu_det_and_solve.omh%
+	cppad/romberg_one.hpp%
+	cppad/romberg_mul.hpp%
+	cppad/runge_45.hpp%
+	cppad/rosen_34.hpp%
+	cppad/ode_err_control.hpp%
+	cppad/ode_gear.hpp%
+	cppad/ode_gear_control.hpp%
 
-	CppAD/CppAD_vector.h%
-	CppAD/TrackNewDel.h
+	cppad/local/bender_quad.hpp%
+	cppad/local/lu_ratio.hpp%
+
+	cppad/vector.hpp%
+	cppad/track_new_del.hpp
 %$$
 
 $head Error Handler$$
@@ -66,6 +61,7 @@ $head Some Testing Utilities$$
 The routines listed below are general purpose numerical testing routines:
 $table
 $rref NearEqual$$
+$rref speed_test$$
 $rref SpeedTest$$
 $tend
 
@@ -98,6 +94,14 @@ $rref Rosen34$$
 $rref OdeErrControl$$
 $rref OdeGear$$
 $rref OdeGearControl$$
+$tend
+
+$head Numerical AD Library$$
+The routines listed below are numerical routines that are specially
+designed to work with CppAD in particular.
+$table
+$rref BenderQuad$$
+$rref LuRatio$$
 $tend
 
 $head CppAD Support Template Library$$

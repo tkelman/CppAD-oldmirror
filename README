@@ -1,46 +1,49 @@
-$begin Readme$$
-$spell
-	CppAD
-	Readme
-	seanet
-	bradbell
-$$
+CppAD is available with both the CPL and GPL licenses; see the CppAD home page.
 
-$section CppAD Readme File$$
+http://www.coin-or.org/CppAD
+This is the CppAD home page.
 
-
-$head Project Name$$
-CppAD 
-
-$head Brief Description$$
-C++ Algorithmic Differentiation (AD) by operator overloading. 
-
-$head Intended Use$$
-Obtain the derivatives of a function defined by C++ source code.
-
-$head Project Manager$$
-The current project manager for CppAD is Brad Bell. 
-He can be reached at $code bradbell$$ at $code seanet.com$$.
-
-$head Project Web Page$$
-The current project web page is
-$href%
-	http://www.seanet.com/~bradbell/CppAD/cppad.htm
-%$$
-
-$head Support$$
-Questions, bug reports, and requests for new features
-should be directed to the project manager.
-
-$head Required Software$$
-A C++ compiler.
-
-$head Revision History$$
-See
-$href%
-	http://www.seanet.com/~bradbell/CppAD/whatsnew05.htm
-%$$
+cppad@list.coin-or.org
+This mailing list is used for CppAD discussion and bug reporting. You must
+first join the mailing list using its general information page
+	http://list.coin-or.org/mailman/listinfo/CppAD
+(this avoids having spam on the mailing list).
 
 
+File        Description
+==========  ===========
+AUTHORS     Statement of authorship and copyright.
+COPYING     Statement of user license to use software.
+ChangeLog   Pointer to log of recent changes.
+INSTALL     Pointer to installation instructions.
+NEWS        Pointer to log of recent changes.
+README      This file
+cpl1.0.txt  A copy of the CPL license.
+gpl2.txt    A copy of the GPL license.
 
-$end
+doc
+sub-directory containing the documentation for this version of CppAD.
+
+doc/*.htm
+Files in the doc directory with with the .htm extension
+represent mathematics using LaTex, for example see doc/poly.htm.
+
+doc/*.xml
+Files in the doc directory with with the .xml extension
+represent mathematics using LaTex, for example see doc/poly.xml.
+
+doc/(cppad.xml or cppad.htm)
+Is the top (root) of the documentation tree for CppAD.
+
+doc/(getstarted.cpp.xml or getstarted.cpp.htm)
+Contains an example for getting started using CppAD.
+
+doc/(introduction.xml or introduction.htm)
+Contains an introduction by example to Algorithmic Differentiation.
+
+doc/(whats_new.xml or whats_new.htm)
+Contains a list of changes and additions to CppAD in reverse order by date.
+
+doc/(installunix.xml or installunix.htm)
+Contains documentation for the configure options which can be used to build
+the examples and tests for CppAD (using the source distribution). 
