@@ -117,7 +117,10 @@
 				RelativePath=".\exp_apx.cpp">
 			</File>
 			<File
-				RelativePath=".\exp_apx_ad.cpp">
+				RelativePath=".\exp_apx.hpp">
+			</File>
+			<File
+				RelativePath=".\exp_apx_cppad.cpp">
 			</File>
 			<File
 				RelativePath=".\exp_apx_for.cpp">

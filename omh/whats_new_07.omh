@@ -11,6 +11,8 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 $begin whats_new_07$$
 $spell
+	vcproj
+	exp_apx
 	Microsoft
 	threadprivate
 	gettimeofday
@@ -36,6 +38,16 @@ This section contains a list of the changes to CppAD during 2007
 (in reverse order by date).
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
+
+$head 03-30$$
+Changes made in $code branches/intro$$:
+
+$subhead 03-30$$
+The Microsoft project file $code introduction/exp_apx/exp_apx.vcproj$$
+was referencing $code exp_apx_ad.cpp$$ which no longer exists.
+It has been changed to reference $code exp_apx_cppad.cpp$$
+which is the new name for that file.
+
 
 $head 03-29$$
 Fixed entries in this file where the year was mistakenly used for the month.

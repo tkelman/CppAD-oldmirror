@@ -42,25 +42,27 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Extend wish list and fix minor documentation error.
+log_entry="Fix some Microsoft project file problems in the introduction.
 
 svn_commit.sh: file that made this commit.
+introduction.vcproj: obsolete.
+exp_apx.vcproj: change exp_apx_ad to exp_apx_cppad.
+introduction.sln: obsolete.
 whats_new_07.omh: user's view of the changes.
-wish_list.omh: Add and Introduction and Tracing entry.
-poly.cpp: change references to CppAD that should be Adolc.
 " 
 add_list="
 "
 delete_list="
+	introduction/introduction.vcproj
+	introduction/introduction.sln
 "
 move_list="
 "
 #
 change_list="
 	svn_commit.sh
-	omh/wish_list.omh
+	introduction/exp_apx/exp_apx.vcproj
 	omh/whats_new_07.omh
-	speed/adolc/poly.cpp
 "
 #
 copy_branch="" 
