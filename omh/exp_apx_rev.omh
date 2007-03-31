@@ -1,5 +1,5 @@
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -8,12 +8,12 @@ the terms of the
 A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
-$begin exp_apx_rev$$
+$begin exp_eps_rev$$
 $spell
-	exp_apx_rev
+	exp_eps_rev
 $$
 
-$section exp_apx: First Order Reverse Mode$$
+$section exp_eps: First Order Reverse Mode$$
 
 $index first, order reverse$$
 $index order, first reverse$$
@@ -21,9 +21,9 @@ $index reverse, first order$$
 
 $head First Order Reverse$$
 First order reverse mode uses the 
-$cref/operation sequence/exp_apx_seq/Trace/Operation/$$
+$cref/operation sequence/exp_eps_seq/Trace/Operation/$$
 and zero order forward sweep values
-$cref/value_0/exp_apx_seq/Trace/Value_0/$$
+$cref/value_0/exp_eps_seq/Trace/Value_0/$$
 to compute the first order derivative
 of one dependent variables with respect to all the independent variables. 
 The computations are done in the reverse order of the original algorithm.
@@ -33,7 +33,7 @@ The symbols
 $latex \[
 	s_0, r_0, k_0, k_1, k_2, k_3
 \] $$
-are  operation sequence $xref/exp_apx_seq/Parameter/parameters/$$.
+are  operation sequence $xref/exp_eps_seq/Parameter/parameters/$$.
 Hence they are not included in our function definitions below.
 In addition, the operation sequence depends on $italic e$$
 but the individual operations do not.
@@ -44,7 +44,7 @@ Hence it also is left out of our function definitions below.
 $head f_0$$
 In reverse mode we choose one dependent variable and
 compute its derivative with respect to all the independent variables.
-For our example, we chose the value returned by $cref/exp_apx.hpp/$$
+For our example, we chose the value returned by $cref/exp_eps.hpp/$$
 which is equal to the symbol $latex s_2$$ in the operation sequence.
 We begin with the function $latex f_0 $$ where $latex s_2$$ 
 is both an argument and the value of the function; i.e.,
@@ -64,7 +64,7 @@ $latex \[
 	k_2 = k_1 + 1 
 \] $$
 Because $latex k_2$$ is a 
-$cref/parameter/exp_apx_seq/Parameter/$$, 
+$cref/parameter/exp_eps_seq/Parameter/$$, 
 we do not need to include it in this reverse mode representation.
 
 $head Index 8: f_1$$
@@ -111,7 +111,7 @@ f_2 =
 f_1 [ x, a_0 , q_1 , r_1 , s_1 , q_2 , r_2 ( q_2 ) ]
 \] $$
 Note that $latex k_1 = 2$$ is an operation sequence 
-$xref/exp_apx_seq/Parameter/parameter/$$ 
+$xref/exp_eps_seq/Parameter/parameter/$$ 
 so we have not included it an argument to the function $latex r_2$$.
 It follows that 
 $latex \[
@@ -172,7 +172,7 @@ $latex \[
 	k_1 = k_0 + 1 
 \] $$
 Because $latex k_1$$ is a 
-$cref/parameter/exp_apx_seq/Parameter/$$, 
+$cref/parameter/exp_eps_seq/Parameter/$$, 
 we do not need to include it in this reverse mode representation.
 
 $head Index 4: f_4$$
@@ -189,7 +189,7 @@ f_4 =
 f_3 [ x, a_0 , q_1 , r_1 , s_1 (r_1 ) ]
 \] $$
 Note that $latex s_0 $$ is a 
-$xref/exp_apx_seq/Parameter/parameter/$$ 
+$xref/exp_eps_seq/Parameter/parameter/$$ 
 so we have not included as an argument to the function $latex s_1 $$.
 It follows that
 $latex \[
@@ -225,7 +225,7 @@ f_5 =
 f_4 [ x, a_0 , q_1 , r_1 ( q_1 )]
 \] $$
 Note that $latex k_0 = 1 $$ is a 
-$xref/exp_apx_seq/Parameter/parameter/$$ 
+$xref/exp_eps_seq/Parameter/parameter/$$ 
 so we have not included as an argument to the function $latex r_1 $$.
 It follows that 
 $latex \[
@@ -257,7 +257,7 @@ f_6 =
 f_5 [ x, a_0 , q_1 ( a_0 ) ]
 \] $$
 Note that $latex r_0 = 1 $$ is a 
-$xref/exp_apx_seq/Parameter/parameter/$$ 
+$xref/exp_eps_seq/Parameter/parameter/$$ 
 so we have not included as an argument to the function $latex q_1 $$.
 It follows that 
 $latex \[
@@ -306,10 +306,10 @@ same result for this partial derivative.
 
 
 $children%
-	introduction/exp_apx/exp_apx_rev.cpp
+	introduction/exp_apx/exp_eps_rev.cpp
 %$$
 $head Verification$$
-The file $xref/exp_apx_rev.cpp/$$ contains a routine 
+The file $xref/exp_eps_rev.cpp/$$ contains a routine 
 which verifies the values computed above.
 It returns true for success and false for failure.
 It only tests the partial derivatives of
@@ -350,16 +350,16 @@ $latex \[
 \] $$
 $lnext
 Create a modified version of 
-$cref/exp_apx_rev.cpp/$$ 
+$cref/exp_eps_rev.cpp/$$ 
 that verifies the values you obtained for the previous exercise.
 Also create and run a main program that reports the result
 of calling the modified version of
-$cref/exp_apx_rev.cpp/$$.
+$cref/exp_eps_rev.cpp/$$.
 $lnext
 Suppose that $latex x = .1$$ and $latex e = .2$$,
 and use the operation sequence corresponding to
 $syntax%
-	exp_apx(%x%, %e%)
+	exp_eps(%x%, %e%)
 %$$
 What are the function definitions of all the $latex f_j$$
 corresponding to a first order reverse mode sweep for this 

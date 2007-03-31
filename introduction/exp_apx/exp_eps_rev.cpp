@@ -1,5 +1,5 @@
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -9,7 +9,7 @@ A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 /*
-$begin exp_apx_rev.cpp$$
+$begin exp_eps_rev.cpp$$
 $spell
 	cstddef
 	cmath
@@ -19,19 +19,19 @@ $spell
 	ir
 	ia
 	df
-	exp_apx_rev
+	exp_eps_rev
 	bool
 	std
 	fabs
 $$
 
-$section exp_apx Reverse Mode Verification$$
+$section exp_eps Reverse Mode Verification$$
 $codep */
 # include <cstddef>                         // for size_t
 # include <cmath>                           // for fabs function
-extern bool exp_apx_seq(void);              // prototype for exp_apx_seq
-extern double a[1], q[3], r[3], s[3], k[3]; // global vars set by exp_apx_seq
-bool exp_apx_rev(void)
+extern bool exp_eps_seq(void);              // prototype for exp_eps_seq
+extern double a[1], q[3], r[3], s[3], k[3]; // global vars set by exp_eps_seq
+bool exp_eps_rev(void)
 {	bool ok = true;
 
 	// ordering of arguments is: 
@@ -39,8 +39,8 @@ bool exp_apx_rev(void)
 	// corresponding index offsets for each of the parameters
 	size_t ia = 0, iq = ia+1, ir = iq+3, is = ir+3;
 
-	// make sure global variables have been computed by exp_apx_seq
-	ok &= exp_apx_seq();
+	// make sure global variables have been computed by exp_eps_seq
+	ok &= exp_eps_seq();
 
 	// initial all partial derivatives as zero
 	double df[10];

@@ -1,5 +1,5 @@
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -9,20 +9,20 @@ A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 /*
-$begin exp_apx_seq.cpp$$
+$begin exp_eps_seq.cpp$$
 $spell
 	std
-	exp_apx_seq
+	exp_eps_seq
 	cmath
 	bool
 	fabs
 $$
-$section Source: exp_apx Zero Order Forward Sweep$$
+$section Source: exp_eps Zero Order Forward Sweep$$
 $codep */
 
 # include <cmath>                    // for fabs function
 double a[1], q[3], r[3], s[3], k[3]; // global variables set by call
-bool exp_apx_seq(void)
+bool exp_eps_seq(void)
 {	bool  ok = true;
 	double x = .5;
 

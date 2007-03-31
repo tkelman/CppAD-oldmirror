@@ -1,5 +1,5 @@
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -9,30 +9,30 @@ A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 /*
-$begin exp_apx.cpp$$
+$begin exp_eps.cpp$$
 $spell
-	exp_apx
+	exp_eps
 $$
 
-$section exp_apx: Example and Test$$
+$section exp_eps: Example and Test$$
 
-$index exp_apx, introduction$$
-$index introduction, exp_apx$$
+$index exp_eps, introduction$$
+$index introduction, exp_eps$$
 
 $code
-$verbatim%introduction/exp_apx/exp_apx.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
+$verbatim%introduction/exp_apx/exp_eps.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
 $$
 
 $end
 */
 // BEGIN PROGRAM
 # include <cmath>             // for fabs function
-# include "exp_apx.hpp"       // definition of exp_apx algorithm
-bool exp_apx(void)
+# include "exp_eps.hpp"       // definition of exp_eps algorithm
+bool exp_eps(void)
 {	double x     = .5;
 	double e     = .2;
 	double check = 1 + .5 + .125; // include 1 and only 1 term less than e
-	bool   ok    = std::fabs( exp_apx(x, e) - check ) <= 1e-10; 
+	bool   ok    = std::fabs( exp_eps(x, e) - check ) <= 1e-10; 
 	return ok;
 }
 // END PROGRAM

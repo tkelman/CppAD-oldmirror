@@ -42,14 +42,25 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Add CppAD calculation of forward and reverse for exp_2.
+log_entry="Change the exp_apx function to exp_eps.
 
 svn_commit.sh: file that made this commit.
-exp_2_cppad.cpp: CppAD calculation.
-exp_2.hpp: add exp_cppad to list.
-main.cpp: add exp_2_cppad to list.
-exp_apc.vcproj: add exp_2_cppad to list.
-makefile.am: add exp_2_cppad to list.
+exp_eps.cpp: move here from exp_apx.cpp.
+exp_apx.cpp: move to exp_eps.cpp.
+exp_eps.hpp: move here from exp_apx.hpp.
+exp_apx.hpp: move to exp_eps.hpp.
+exp_eps_for.cpp: move here from exp_apx_for.cpp.
+exp_apx_for.cpp: move to exp_eps_for.cpp.
+exp_eps_cppad.cpp: move here from exp_apx_cppad.cpp.
+exp_apx_cppad.cpp: move to exp_eps_cppad.cpp.
+exp_eps_seq.cpp: move here from exp_apx_seq.cpp.
+exp_apx_seq.cpp: move to exp_eps_seq.cpp.
+exp_eps_rev.cpp: move here from exp_apx_rev.cpp.
+exp_apx_rev.cpp: move to exp_eps_rev.cpp.
+
+Change exp_apx to exp_eps:
+main.cpp, exp_apx.vcproj, makefile.am, exp_apx_rev.omh, exp_apx.omh
+exp_apx_for.omh, exp_apx_seq.omh, whats_new_06.omh, introduction.omh.
 " 
 add_list="
 	introduction/exp_apx/exp_2_cppad.cpp
@@ -57,14 +68,31 @@ add_list="
 delete_list="
 "
 move_list="
+	introduction/exp_apx/exp_apx.cpp
+	introduction/exp_apx/exp_apx.hpp
+	introduction/exp_apx/exp_apx_for.cpp
+	introduction/exp_apx/exp_apx_cppad.cpp
+	introduction/exp_apx/exp_apx_seq.cpp
+	introduction/exp_apx/exp_apx_rev.cpp
 "
 #
 change_list="
 	svn_commit.sh
-	introduction/exp_apx/exp_2.omh
+	introduction/exp_apx/exp_eps.cpp
+	introduction/exp_apx/exp_eps.hpp
+	introduction/exp_apx/exp_eps_for.cpp
+	introduction/exp_apx/exp_eps_cppad.cpp
+	introduction/exp_apx/exp_eps_seq.cpp
+	introduction/exp_apx/exp_eps_rev.cpp
 	introduction/exp_apx/main.cpp
 	introduction/exp_apx/exp_apx.vcproj
 	introduction/exp_apx/makefile.am
+	omh/exp_apx_rev.omh
+	omh/exp_apx.omh
+	omh/exp_apx_for.omh
+	omh/exp_apx_seq.omh
+	omh/whats_new_06.omh
+	omh/introduction.omh
 "
 #
 copy_branch="" 

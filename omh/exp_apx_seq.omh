@@ -1,5 +1,5 @@
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -9,16 +9,16 @@ A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 /*
-$begin exp_apx_seq$$
+$begin exp_eps_seq$$
 $spell
 	cpp
-	exp_apx_seq
+	exp_eps_seq
 	bool
 $$
 
-$section exp_apx: Operation Sequence and Zero Order Forward Mode$$
+$section exp_eps: Operation Sequence and Zero Order Forward Mode$$
 
-$index exp_apx, operation sequence$$
+$index exp_eps, operation sequence$$
 $index example, operation sequence$$
 $index operation, sequence example$$
 $index sequence, example operation$$
@@ -39,7 +39,7 @@ If $italic Type$$ is clear from the context,
 we drop it and just refer to the operation sequence.
 
 $head Corresponding Function$$
-Suppose that we use the algorithm $xref/exp_apx.hpp/$$
+Suppose that we use the algorithm $xref/exp_eps.hpp/$$
 to compute $latex {\rm exp\_apx} (x, e)$$ 
 with $latex x$$ is equal to .5
 and $latex e$$ is equal to .2. 
@@ -57,7 +57,7 @@ $head Notation$$
 We use the symbol $latex v_j$$ for the value assigned
 to the object $latex v$$ in the $th j$$ execution of 
 the $code while$$ loop in the algorithm defined by 
-$cref/exp_apx.hpp/$$.
+$cref/exp_eps.hpp/$$.
 We use $latex v_0$$ for values that are assigned before
 the $code while$$ loop.
 The initialization section always sets
@@ -77,7 +77,7 @@ $head Variable$$
 We refer to other symbols as operation sequence variables. 
 
 $head Trace$$
-We consider the case where $cref/exp_apx.hpp/$$ is executed with
+We consider the case where $cref/exp_eps.hpp/$$ is executed with
 $latex x = .5$$ and $latex e = .2$$.
 The table below contains a trace of the corresponding operation sequence
 and zero order forward sweep values.
@@ -179,7 +179,7 @@ $codep
 $$
 This in turn would result in a different operation sequence.
 Thus the operation sequence above only corresponds to 
-$cref/exp_apx.hpp/$$
+$cref/exp_eps.hpp/$$
 for values of $latex x$$ and $latex e$$ within a certain range.
 Note that there is a neighborhood
 of $latex x = 0.5$$ for which the comparisons would have the 
@@ -200,10 +200,10 @@ Note that each time a $italic Type$$ object is assigned a value
 there is a different symbol corresponding to the assignment.
 
 $children%
-	introduction/exp_apx/exp_apx_seq.cpp
+	introduction/exp_apx/exp_eps_seq.cpp
 %$$
 $head Verification$$
-The file $xref/exp_apx_seq.cpp/$$ contains a routine 
+The file $xref/exp_eps_seq.cpp/$$ contains a routine 
 which verifies the values computed above.
 It returns true for success and false for failure.
 
@@ -218,12 +218,12 @@ $latex \[
 \]$$
 $lnext
 Create a modified version of 
-$cref/exp_apx_seq.cpp/$$ that verifies the values you obtained
+$cref/exp_eps_seq.cpp/$$ that verifies the values you obtained
 for the previous exercise.
 $lnext
 Create and run a main program that reports the result of calling 
 the modified version 
-of $cref/exp_apx_seq.cpp/$$ in the previous exercise.
+of $cref/exp_eps_seq.cpp/$$ in the previous exercise.
 $lend
 
 

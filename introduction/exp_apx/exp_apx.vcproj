@@ -132,22 +132,22 @@
 				RelativePath=".\exp_2_seq.cpp">
 			</File>
 			<File
-				RelativePath=".\exp_apx.cpp">
+				RelativePath=".\exp_eps.cpp">
 			</File>
 			<File
-				RelativePath=".\exp_apx.hpp">
+				RelativePath=".\exp_eps.hpp">
 			</File>
 			<File
-				RelativePath=".\exp_apx_cppad.cpp">
+				RelativePath=".\exp_eps_cppad.cpp">
 			</File>
 			<File
-				RelativePath=".\exp_apx_for.cpp">
+				RelativePath=".\exp_eps_for.cpp">
 			</File>
 			<File
-				RelativePath=".\exp_apx_rev.cpp">
+				RelativePath=".\exp_eps_rev.cpp">
 			</File>
 			<File
-				RelativePath=".\exp_apx_seq.cpp">
+				RelativePath=".\exp_eps_seq.cpp">
 			</File>
 			<File
 				RelativePath=".\main.cpp">

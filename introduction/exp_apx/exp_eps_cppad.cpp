@@ -1,5 +1,5 @@
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -9,13 +9,13 @@ A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 /*
-$begin exp_apx_cppad.cpp$$
+$begin exp_eps_cppad.cpp$$
 $spell
 	cppad.hpp
 	cmath
 	fabs
 	bool
-	exp_apx_cppad
+	exp_eps_cppad
 	du
 	dv
 	dw
@@ -26,9 +26,10 @@ $spell
 	std
 	www
 	CppAD
+	apx
 $$
 
-$section exp_apx: CppAD First Order Forward and Reverse$$.
+$section exp_eps: CppAD First Order Forward and Reverse$$.
 
 $head Purpose$$
 Use CppAD forward and reverse modes to compute the
@@ -36,9 +37,9 @@ partial derivative with respect to $latex x$$,
 at the point $latex x = .5$$ and $latex e = .2$$,
 of the function 
 $syntax%
-	exp_apx(%x%, %e%)
+	exp_eps(%x%, %e%)
 %$$
-as defined by the $cref/exp_apx.hpp/$$ include file.
+as defined by the $cref/exp_eps.hpp/$$ include file.
 
 $head Exercises$$
 $list number$$
@@ -47,7 +48,7 @@ partial derivative with respect to $latex x$$,
 at the point $latex x = .1$$ and $latex e = .2$$,
 of the function 
 $syntax%
-	exp_apx(%x%, %e%)
+	exp_eps(%x%, %e%)
 %$$
 $lnext
 Create and test a modified version of the routine below that computes
@@ -66,8 +67,8 @@ $lend
 $codep */
 
 # include <cppad/cppad.hpp>  // http://www.coin-or.org/CppAD/ 
-# include "exp_apx.hpp"      // our example exponential function approximation
-bool exp_apx_cppad(void)
+# include "exp_eps.hpp"      // our example exponential function approximation
+bool exp_eps_cppad(void)
 {	bool ok = true;
 	using CppAD::AD;
 	using CppAD::vector;    // can use any simple vector template class
@@ -85,7 +86,7 @@ bool exp_apx_cppad(void)
 	// evaluate our exponential approximation
 	AD<double> x   = U[0];
 	AD<double> e   = U[1];
-	AD<double> apx = exp_apx(x, e);  
+	AD<double> apx = exp_eps(x, e);  
 
 	// range space vector
 	size_t m = 1;  // dimension of the range space
@@ -102,7 +103,7 @@ bool exp_apx_cppad(void)
 	vector<double> dv(m);  // differential in range space
 	du[0] = 1.;  // x direction in domain space
 	du[1] = 0.;
-	// partial of exp_apx(x, e) with respect to x
+	// partial of exp_eps(x, e) with respect to x
 	dv    = f.Forward(1, du);
 	double check = 1.5;
 	ok   &= NearEqual(dv[0], check, 1e-10, 1e-10);
@@ -111,11 +112,11 @@ bool exp_apx_cppad(void)
 	vector<double>  w(m);   // weights for components of the range
 	vector<double> dw(n);   // derivative of the weighted function
 	w[0] = 1.;   // only one weight and it is one
-	// derivative of w[0] * exp_apx(x, e)
+	// derivative of w[0] * exp_eps(x, e)
 	dw   = f.Reverse(1, w);
-	check = 1.5;  // partial of exp_apx(x, e) with respect to x
+	check = 1.5;  // partial of exp_eps(x, e) with respect to x
 	ok   &= NearEqual(dw[0], check, 1e-10, 1e-10);
-	check = 0.;   // partial of exp_apx(x, e) with respect to e
+	check = 0.;   // partial of exp_eps(x, e) with respect to e
 	ok   &= NearEqual(dw[1], check, 1e-10, 1e-10);
 
 	return ok;
