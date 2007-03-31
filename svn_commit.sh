@@ -42,17 +42,17 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Add reverse mode section for exp_2.
+log_entry="Add CppAD calculation of forward and reverse for exp_2.
 
 svn_commit.sh: file that made this commit.
-exp_2_rev.cpp: verification of reverse mode calculation.
-exp_2.omh: add the section exp_2_rev here.
-main.cpp: add exp_2_rev to list.
-exp_apc.vcproj: add exp_2_rev to list.
-makefile.am: add exp_2_rev to list.
+exp_2_cppad.cpp: CppAD calculation.
+exp_2.hpp: add exp_cppad to list.
+main.cpp: add exp_2_cppad to list.
+exp_apc.vcproj: add exp_2_cppad to list.
+makefile.am: add exp_2_cppad to list.
 " 
 add_list="
-	introduction/exp_apx/exp_2_rev.cpp
+	introduction/exp_apx/exp_2_cppad.cpp
 "
 delete_list="
 "
