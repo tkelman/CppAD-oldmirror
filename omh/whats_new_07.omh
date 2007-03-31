@@ -39,8 +39,13 @@ This section contains a list of the changes to CppAD during 2007
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
 
-$head 03-30$$
+$head 03-31$$
 Changes made in $code branches/intro$$:
+
+$subhead 03-31$$
+Create the a simpler exponential approximation in the $cref/introduction/$$
+called $cref/exp_2/$$ which has a different program 
+variable for each variable in the operation sequence.
 
 $subhead 03-30$$
 The Microsoft project file $code introduction/exp_apx/exp_apx.vcproj$$

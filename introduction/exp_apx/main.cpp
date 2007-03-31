@@ -1,5 +1,5 @@
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -34,6 +34,7 @@ $end
 # include <iostream>
 
 // external complied tests
+extern bool exp_2(void);
 extern bool exp_apx(void);
 extern bool exp_apx_cppad(void);
 extern bool exp_apx_for(void);
@@ -67,14 +68,15 @@ int main(void)
 	// This comment is used by OneTest 
 
 	// external compiled tests
+	ok &= Run( exp_2,           "exp_2"          );
 	ok &= Run( exp_apx,         "exp_apx"        );
 	ok &= Run( exp_apx_cppad,   "exp_apx_cppad"  );
 	ok &= Run( exp_apx_for,     "exp_apx_for"    );
 	ok &= Run( exp_apx_seq,     "exp_apx_seq"    );
 	ok &= Run( exp_apx_rev,     "exp_apx_rev"    );
 	if( ok )
-		cout << "All " << Run_ok_count << " tests passed." << endl;
-	else	cout << Run_error_count << " tests failed." << endl;
+		cout << "All " << int(Run_ok_count) << " tests passed." << endl;
+	else	cout << int(Run_error_count) << " tests failed." << endl;
 
 	return static_cast<int>( ! ok );
 }

@@ -42,27 +42,36 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Fix some Microsoft project file problems in the introduction.
+log_entry="Add a second order exponential approximation to the introduction.
 
 svn_commit.sh: file that made this commit.
-introduction.vcproj: obsolete.
-exp_apx.vcproj: change exp_apx_ad to exp_apx_cppad.
-introduction.sln: obsolete.
 whats_new_07.omh: user's view of the changes.
+exp_2.cpp: test of exp_2.
+exp_2.omh: specifications for exp_2.
+exp_2.hpp: implementation for exp_2.
+main.cpp: add exp_2.
+exp_apx.vcproj: add exp_2.
+makefile.am: add exp_2.
+introduction.omh: add exp_2.
 " 
 add_list="
+	introduction/exp_apx/exp_2.cpp
+	introduction/exp_apx/exp_2.omh
+	introduction/exp_apx/exp_2.hpp
 "
 delete_list="
-	introduction/introduction.vcproj
-	introduction/introduction.sln
 "
 move_list="
 "
 #
 change_list="
 	svn_commit.sh
-	introduction/exp_apx/exp_apx.vcproj
 	omh/whats_new_07.omh
+	introduction/exp_apx/main.cpp
+	introduction/exp_apx/exp_apx.vcproj
+	introduction/exp_apx/makefile.am
+	omh/introduction.omh
+	doc.omh
 "
 #
 copy_branch="" 
