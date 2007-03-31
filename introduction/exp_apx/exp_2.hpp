@@ -107,7 +107,8 @@ $syntax%%u% + %v%$$
 $tend
 
 $childtable%
-	introduction/exp_apx/exp_2.omh
+	introduction/exp_apx/exp_2.omh%
+	introduction/exp_apx/exp_2_cppad.cpp
 %$$
 
 
