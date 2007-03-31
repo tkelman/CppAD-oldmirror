@@ -13,7 +13,7 @@ $spell
 	exp
 $$
 
-$section Implementation of exp_2$$
+$section exp_2: Implementation$$
 $index implementation, exp_2$$
 $index exp_2, implementation$$
 
@@ -28,7 +28,7 @@ $spell
 	exp
 $$
 
-$section Test of exp_2$$
+$section exp_2: Test$$
 $index test, exp_2$$
 $index exp_2, test$$
 
@@ -100,7 +100,7 @@ The Operation column contains the
 mathematical function corresponding to each atomic operation in the sequence.
 
 $subhead Zero Order$$
-The Order Zero column contains the variable value
+The Zero Order column contains the variable value
 corresponding to each atomic operation in the sequence.
 These are also called the zero order forward mode values.
 Forward mode refers to the fact that

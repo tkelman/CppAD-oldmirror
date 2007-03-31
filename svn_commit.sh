@@ -42,56 +42,43 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Change the exp_apx function to exp_eps.
+log_entry="Improve exp_eps operation sequence.
 
 svn_commit.sh: file that made this commit.
-exp_eps.cpp: move here from exp_apx.cpp.
-exp_apx.cpp: move to exp_eps.cpp.
-exp_eps.hpp: move here from exp_apx.hpp.
-exp_apx.hpp: move to exp_eps.hpp.
-exp_eps_for.cpp: move here from exp_apx_for.cpp.
-exp_apx_for.cpp: move to exp_eps_for.cpp.
-exp_eps_cppad.cpp: move here from exp_apx_cppad.cpp.
-exp_apx_cppad.cpp: move to exp_eps_cppad.cpp.
-exp_eps_seq.cpp: move here from exp_apx_seq.cpp.
-exp_apx_seq.cpp: move to exp_eps_seq.cpp.
-exp_eps_rev.cpp: move here from exp_apx_rev.cpp.
-exp_apx_rev.cpp: move to exp_eps_rev.cpp.
-
-Change exp_apx to exp_eps:
-main.cpp, exp_apx.vcproj, makefile.am, exp_apx_rev.omh, exp_apx.omh
-exp_apx_for.omh, exp_apx_seq.omh, whats_new_06.omh, introduction.omh.
+check_include_omh.sh: include introduction/exp_apx/?.omh in check.
+exp_eps.hpp: use v_1, ..., v_7 & multiple letter variable names in exp_eps.hpp.
+exp_eps.cpp: use v_1, ..., v_7 & multiple letter variable names in exp_eps.hpp.
+exp_eps_cppad.cpp: change e to epsilon
+exp_2.omh: minor edits.
+exp_2.hpp: minor edits.
+makefile.am: include exp_eps.omh.
+exp_apx.omh: move text into exp_eps.omh.
+exp_apx_seq.omh: move text into exp_eps.omh.
+introduction.omh: remove references to exp_apx.omh and exp_apx_seq.omh.
+exp_apx_rev.omh: fix crossreference to parameter:
+exp_apx_for.omh: fix crossreference to parameter:
 " 
 add_list="
-	introduction/exp_apx/exp_2_cppad.cpp
+	introduction/exp_apx/exp_eps.omh
 "
 delete_list="
 "
 move_list="
-	introduction/exp_apx/exp_apx.cpp
-	introduction/exp_apx/exp_apx.hpp
-	introduction/exp_apx/exp_apx_for.cpp
-	introduction/exp_apx/exp_apx_cppad.cpp
-	introduction/exp_apx/exp_apx_seq.cpp
-	introduction/exp_apx/exp_apx_rev.cpp
+	omh/exp_apx.omh
+	omh/exp_apx_seq.omh
 "
 #
 change_list="
 	svn_commit.sh
+	check_include_omh.sh
 	introduction/exp_apx/exp_eps.cpp
 	introduction/exp_apx/exp_eps.hpp
-	introduction/exp_apx/exp_eps_for.cpp
 	introduction/exp_apx/exp_eps_cppad.cpp
-	introduction/exp_apx/exp_eps_seq.cpp
-	introduction/exp_apx/exp_eps_rev.cpp
-	introduction/exp_apx/main.cpp
-	introduction/exp_apx/exp_apx.vcproj
+	introduction/exp_apx/exp_2.omh
+	introduction/exp_apx/exp_2.hpp
 	introduction/exp_apx/makefile.am
 	omh/exp_apx_rev.omh
-	omh/exp_apx.omh
 	omh/exp_apx_for.omh
-	omh/exp_apx_seq.omh
-	omh/whats_new_06.omh
 	omh/introduction.omh
 "
 #

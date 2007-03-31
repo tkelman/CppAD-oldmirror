@@ -25,7 +25,7 @@ to compute $latex {\rm exp\_apx} (x, e)$$
 with $latex x$$ is equal to .5
 and $latex e$$ is equal to .2. 
 For this case, the 
-$cref/exp_eps operation sequence/exp_eps_seq/Trace/Operation/$$
+$cref/exp_eps operation sequence/exp_eps_seq/Operation Sequence/$$
 corresponds to the following function and partial derivative:
 $latex \[
 \begin{array}{rclll}
@@ -46,9 +46,10 @@ $head Trace$$
 We consider the case where $cref/exp_eps.hpp/$$ is executed with
 $latex x = .5$$ and $latex e = .2$$.
 The corresponding 
-$cref/operation sequence/exp_eps_seq/Trace/Operation/$$
-and zero order forward sweep values
-$cref/value_0/exp_eps_seq/Trace/Value_0/$$
+$cref/operation sequence/exp_eps_seq/Operation Sequence/$$
+and 
+$cref/zero order/exp_eps_seq/Operation Sequence/Zero Order/$$
+forward sweep values
 are inputs that are need by a first order sweep.
 A first order sweep 
 computes the first order partial derivative

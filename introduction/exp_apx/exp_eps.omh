@@ -1,0 +1,209 @@
+-----------------------------------------------------------------------------
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
+
+CppAD is distributed under multiple licenses. This distribution is under
+the terms of the 
+                    Common Public License Version 1.0.
+
+A copy of this license is included in the COPYING file of this distribution.
+Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
+-----------------------------------------------------------------------------
+$begin exp_eps.hpp$$
+$spell
+	exp_eps
+$$
+
+$section exp_eps: Implementation$$
+$index implementation, exp_eps$$
+$index exp_eps, implementation$$
+
+$code
+$verbatim%introduction/exp_apx/exp_eps.hpp%0%// BEGIN PROGRAM%// END PROGRAM%$$
+$$
+
+$end
+-----------------------------------------------------------------------------
+$begin exp_eps.cpp$$
+$spell
+	exp_eps
+$$
+
+$section exp_eps: Test of exp_eps$$
+$index test, exp_eps$$
+$index exp_eps, test$$
+
+$code
+$verbatim%introduction/exp_apx/exp_eps.cpp%0%// BEGIN PROGRAM%// END PROGRAM%$$
+$$
+
+$end
+-----------------------------------------------------------------------------
+$begin exp_eps_seq$$
+$spell
+	cpp
+	exp_eps_seq
+	bool
+$$
+
+$section exp_eps: Operation Sequence and Zero Order Forward Mode$$
+
+$index exp_eps, operation sequence$$
+$index example, operation sequence$$
+$index operation, sequence example$$
+$index sequence, example operation$$
+
+$index zero, order forward$$
+$index order, zero forward$$
+$index forward, zero order$$
+
+$head Mathematical Function$$
+Suppose tat we use algorithm $cref/exp_eps.hpp/$$
+to compute the derivative 
+of the mathematical function 
+$cref/exp_eps/exp_eps/Mathematical Function/$$.
+An algorithmic differentiation package does not operate
+on the mathematical function, but rather the particular
+algorithm use to compute it.
+
+$head Operation Sequence$$
+We consider the 
+$cref/operation sequence/glossary/Operation/Sequence/$$
+corresponding to the algorithm $xref/exp_eps.hpp/$$
+with the argument $italic x$$ is equal to .5
+and $italic epsilon$$ is equal to .2. 
+For this case, our approximation of the exponential function is
+$latex \[
+{\rm exp\_apx} (x , epsilon) =   1 + x + x^2 / 2 
+=   1 + .5 + .25 / 2 
+=   1.625
+\] $$
+
+$subhead Variable$$
+We refer to values that depend on the input variables
+$italic x$$ and $italic epsilon$$ as variables.
+
+$subhead Parameter$$
+We refer to values that do not depend on the input variables
+$italic x$$ or $italic epsilon$$ as parameters.
+Operations where the result is a parameter are not traced
+in the operation sequence below.
+
+
+$subhead Index$$
+The Index column contains the index in the operation sequence
+of the corresponding atomic operation and variable. 
+A Forward sweep starts with the first operation 
+and ends with the last.
+
+$subhead Code$$
+The Code column contains the C++ source code corresponding 
+to the corresponding atomic operation in the sequence. 
+
+$subhead Operation$$
+The Operation column contains the 
+mathematical function corresponding to each atomic operation in the sequence.
+
+$subhead Zero Order$$
+The Zero Order column contains the variable value
+corresponding to each atomic operation in the sequence.
+These are also called the zero order forward mode values.
+Forward mode refers to the fact that
+the computations are done in the same order as the original algorithm; i.e,
+in order of increasing index.
+Zero order refers to the fact that variable values are
+zero order derivatives.
+
+
+$subhead Trace$$
+$center
+$table
+$bold Index$$
+	$cnext $pre  $$ $cnext $bold Code$$ 
+	$cnext $pre  $$ $cnext $bold Operation$$
+	$cnext $pre  $$ $cnext $bold Zero Order$$
+$rnext
+1
+	$cnext $pre  $$ $cnext $code abs_x = x;$$
+	$cnext $cnext $latex v_1 = x $$ 
+	$cnext $cnext = 0.5      
+$rnext
+2
+	$cnext $pre  $$ $cnext $code temp  = term * abs_x;$$
+	$cnext $cnext $latex v_2 = 1 * v_1 $$ 
+	$cnext $cnext = 0.5      
+$rnext
+3
+	$cnext $pre  $$ $cnext $code term = temp / Type(k);$$
+	$cnext $cnext $latex v_3 = v_2 / 1$$ 
+	$cnext $cnext = 0.5      
+$rnext
+4
+	$cnext $pre  $$ $cnext $code sum  = sum + term;$$
+	$cnext $cnext $latex v_4 = 1 + v_3 $$ 
+	$cnext $cnext = 1.5      
+$rnext
+5
+	$cnext $pre  $$ $cnext  $code temp  = term * abs_x;$$
+	$cnext $cnext $latex v_5 = v_3 * v_1 $$ 
+	$cnext $cnext = 0.25     
+$rnext
+6
+	$cnext $pre  $$ $cnext $code term = temp / Type(k);$$
+	$cnext $cnext $latex v_6 = v_5 / 2$$ 
+	$cnext $cnext = 0.125    
+$rnext
+7
+	$cnext $pre  $$ $cnext $code sum  = sum + term;$$
+	$cnext $cnext $latex v_7 = v_4 + v_6 $$ 
+	$cnext $cnext = 1.625    
+$tend
+$$
+
+$head Return  Value$$
+The return value of the algorithm for this case is
+$latex v_7$$ which is equal to 1.625.
+
+$head Comparisons$$
+If $italic x$$ were negative,
+or if $italic epsilon$$ were a much smaller or much larger value,
+the results of the following comparisons could be different:
+$codep
+	if( Type(0) > x ) 
+	while(term > epsilon)
+$$
+This in turn would result in a different operation sequence.
+Thus the operation sequence above only corresponds to 
+$cref/exp_eps.hpp/$$
+for values of $italic x$$ and $italic epsilon$$ within a certain range.
+Note that there is a neighborhood
+of $latex x = 0.5$$ for which the comparisons would have the 
+same result and hence the operation sequence would be the same.
+
+$children%
+	introduction/exp_apx/exp_eps_seq.cpp
+%$$
+
+$head Verification$$
+The file $xref/exp_eps_seq.cpp/$$ contains a routine 
+that verifies the values computed above.
+It returns true for success and false for failure.
+
+$head Exercises$$
+$list number$$
+Suppose that $latex x = .1$$,
+what is the result of a zero order forward sweep for 
+the operation sequence above; 
+i.e., what are the corresponding values for
+$latex v_1 , v_2 , \ldots , v_7$$.
+$lnext
+Create a modified version of 
+$cref/exp_eps_seq.cpp/$$ that verifies the values you obtained
+for the previous exercise.
+$lnext
+Create and run a main program that reports the result of calling 
+the modified version 
+of $cref/exp_eps_seq.cpp/$$ in the previous exercise.
+$lend
+
+$end
+-----------------------------------------------------------------------------

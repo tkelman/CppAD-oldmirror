@@ -38,8 +38,9 @@ $syntax%%y% = exp_2(%x%)%$$
 
 
 $head Purpose$$
-This is an example algorithm that is used to demonstrate 
-Algorithmic Differentiation. 
+This is a simple example algorithm that is used to demonstrate 
+Algorithmic Differentiation
+(see $cref exp_eps$$ for a more complex example).
 
 $head Mathematical Form$$
 The exponential function can be defined by

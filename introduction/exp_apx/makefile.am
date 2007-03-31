@@ -14,7 +14,8 @@
 EXTRA_DIST        = \
 	exp_apx.sln \
 	exp_apx.vcproj \
-	exp_2.omh
+	exp_2.omh \
+	exp_eps.omh
 #
 noinst_PROGRAMS   = exp_apx 
 #

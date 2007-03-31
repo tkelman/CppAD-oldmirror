@@ -84,9 +84,9 @@ bool exp_eps_cppad(void)
 	CppAD::Independent(U);
 
 	// evaluate our exponential approximation
-	AD<double> x   = U[0];
-	AD<double> e   = U[1];
-	AD<double> apx = exp_eps(x, e);  
+	AD<double> x       = U[0];
+	AD<double> epsilon = U[1];
+	AD<double> apx = exp_eps(x, epsilon);  
 
 	// range space vector
 	size_t m = 1;  // dimension of the range space
@@ -103,7 +103,7 @@ bool exp_eps_cppad(void)
 	vector<double> dv(m);  // differential in range space
 	du[0] = 1.;  // x direction in domain space
 	du[1] = 0.;
-	// partial of exp_eps(x, e) with respect to x
+	// partial of exp_eps(x, epsilon) with respect to x
 	dv    = f.Forward(1, du);
 	double check = 1.5;
 	ok   &= NearEqual(dv[0], check, 1e-10, 1e-10);
@@ -112,11 +112,11 @@ bool exp_eps_cppad(void)
 	vector<double>  w(m);   // weights for components of the range
 	vector<double> dw(n);   // derivative of the weighted function
 	w[0] = 1.;   // only one weight and it is one
-	// derivative of w[0] * exp_eps(x, e)
+	// derivative of w[0] * exp_eps(x, epsilon)
 	dw   = f.Reverse(1, w);
-	check = 1.5;  // partial of exp_eps(x, e) with respect to x
+	check = 1.5;  // partial of exp_eps(x, epsilon) with respect to x
 	ok   &= NearEqual(dw[0], check, 1e-10, 1e-10);
-	check = 0.;   // partial of exp_eps(x, e) with respect to e
+	check = 0.;   // partial of exp_eps(x, epsilon) with respect to epsilon
 	ok   &= NearEqual(dw[1], check, 1e-10, 1e-10);
 
 	return ok;
