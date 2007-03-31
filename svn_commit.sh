@@ -42,22 +42,19 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Add a second order exponential approximation to the introduction.
+log_entry="Add operation seqeunce section for exp_2.
 
 svn_commit.sh: file that made this commit.
 whats_new_07.omh: user's view of the changes.
-exp_2.cpp: test of exp_2.
-exp_2.omh: specifications for exp_2.
-exp_2.hpp: implementation for exp_2.
-main.cpp: add exp_2.
-exp_apx.vcproj: add exp_2.
-makefile.am: add exp_2.
-introduction.omh: add exp_2.
+exp_2.omh: add exp_2 operation sequence section.
+exp_2.hpp: slightly modify example adn change comments.
+main.cpp: add exp_2_seq.
+exp_apx.vcproj: add exp_2_seq.
+makefile.am: add exp_2_seq.
+exp_2_seq.cpp: test the operation sequence values.
 " 
 add_list="
-	introduction/exp_apx/exp_2.cpp
-	introduction/exp_apx/exp_2.omh
-	introduction/exp_apx/exp_2.hpp
+	introduction/exp_apx/exp_2_seq.cpp
 "
 delete_list="
 "
@@ -67,11 +64,11 @@ move_list="
 change_list="
 	svn_commit.sh
 	omh/whats_new_07.omh
+	introduction/exp_apx/exp_2.omh
+	introduction/exp_apx/exp_2.hpp
 	introduction/exp_apx/main.cpp
 	introduction/exp_apx/exp_apx.vcproj
 	introduction/exp_apx/makefile.am
-	omh/introduction.omh
-	doc.omh
 "
 #
 copy_branch="" 

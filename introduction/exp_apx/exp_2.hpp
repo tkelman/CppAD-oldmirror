@@ -125,7 +125,7 @@ $head Exercises$$
 $list number$$
 Suppose that we make the call 
 $codep
-	double x = .01;
+	double x = .1;
 	double y = exp_2(x);
 $$
 What is the value assigned to 
@@ -154,12 +154,13 @@ $end
 */
 // BEGIN PROGRAM
 template <class Type>
-Type exp_2(const Type &v_1)            // exp_2(x)
-{       Type v_2  = Type(1) + v_1;     // sum_1    = 1 + x
-        Type v_3  = v_1 * v_1;         // square   = x * x
-        Type v_4  = v_3 / Type(2);     // term_2   = square / 2 
-        Type v_5  = v_2 + v_4;         // sum_2    = sum_1 + term_2
-        return v_5;                    // return sum_2
+Type exp_2(const Type &x) 
+{       Type v_1  = x;                 // v_1 = x
+        Type v_2  = Type(1) + v_1;     // v_2 = 1 + x
+        Type v_3  = v_1 * v_1;         // v_3 = x^2
+        Type v_4  = v_3 / Type(2);     // v_4 = x^2 / 2 
+        Type v_5  = v_2 + v_4;         // v_5 = 1 + x + x^2 / 2
+        return v_5;                    // exp_2(x) = 1 + x + x^2 / 2
 }
 // END PROGRAM
 

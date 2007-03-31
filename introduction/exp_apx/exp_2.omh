@@ -13,9 +13,9 @@ $spell
 	exp
 $$
 
-$section Implementation of Second Order Exponential Approximation$$
-$index example, exp approximation$$
-$index exp, example approximation$$
+$section Implementation of exp_2$$
+$index implementation, exp_2$$
+$index exp_2, implementation$$
 
 $code
 $verbatim%introduction/exp_apx/exp_2.hpp%0%// BEGIN PROGRAM%// END PROGRAM%$$
@@ -28,12 +28,152 @@ $spell
 	exp
 $$
 
-$section Test of Second Order Exponential Approximation$$
-$index test, exp approximation$$
-$index exp, test approximation$$
+$section Test of exp_2$$
+$index test, exp_2$$
+$index exp_2, test$$
 
 $code
 $verbatim%introduction/exp_apx/exp_2.cpp%0%// BEGIN PROGRAM%// END PROGRAM%$$
 $$
+
+$end
+-------------------------------------------------------------------------- */
+$begin exp_2_seq$$
+$spell
+	cpp
+	exp_2_seq
+	bool
+$$
+
+$section exp_2: Operation Sequence and Zero Order Forward Mode$$
+
+$index exp_2, operation sequence$$
+$index example, operation sequence$$
+$index operation, sequence example$$
+$index sequence, example operation$$
+
+$index zero, order forward$$
+$index order, zero forward$$
+$index forward, zero order$$
+
+$head Operation Sequence$$
+An atomic $italic Type$$ operation is an operation
+that has a $italic Type$$ result and is not made up of 
+other more basic operations.
+A sequence of atomic $italic Type$$ operations is called a
+$italic Type$$ operation sequence.
+Given an C++ algorithm and its inputs,
+there is a corresponding $italic Type$$ operation sequence for each type. 
+If $italic Type$$ is clear from the context, 
+we drop it and just refer to the operation sequence.
+
+$head Corresponding Function$$
+Suppose that we use the algorithm $xref/exp_2.hpp/$$
+to compute 
+$latex \[
+	f(x) = 1 + x + x^2 / 2
+\] $$
+An algorithmic differentiation package
+does not operate on the mathematical function $latex f(x)$$
+but rather on the particular algorithm used to compute the function 
+(in this case $cref/exp_2.hpp/$$).
+
+$head Trace$$
+We consider the case where $cref/exp_2.hpp/$$ is executed with
+$latex x = .5$$.
+The table below contains a trace of the corresponding operation sequence
+and zero order forward sweep values.
+
+$subhead Index$$
+The Index column contains the index in the operation sequence
+of the corresponding atomic operation and variable. 
+A Forward sweep starts with the first operation 
+and ends with the last.
+
+$subhead Code$$
+The Code column contains the C++ source code corresponding 
+to the corresponding atomic operation in the sequence. 
+
+$subhead Operation$$
+The Operation column contains the 
+mathematical function corresponding to each atomic operation in the sequence.
+
+$subhead Zero Order$$
+The Order Zero column contains the variable value
+corresponding to each atomic operation in the sequence.
+These are also called the zero order forward mode values.
+Forward mode refers to the fact that
+the computations are done in the same order as the original algorithm; i.e,
+in order of increasing index.
+Zero order refers to the fact that variable values are
+zero order derivatives.
+
+$subhead Table$$
+$center
+$table
+$bold Index$$
+	$cnext $pre  $$ $cnext $bold Code$$ 
+	$cnext $pre  $$ $cnext $bold Operation$$
+	$cnext $pre  $$ $cnext $bold Zero Order$$
+$rnext
+1
+	$cnext $pre  $$ $cnext $code Type v_1  = x;$$
+	$cnext $cnext $latex v_1 = x $$ 
+	$cnext $cnext = 0.5      
+$rnext
+2
+	$cnext $pre  $$ $cnext $code Type v_2  = Type(1) + v_1;$$
+	$cnext $cnext $latex v_2 = 1 + v_1 $$ 
+	$cnext $cnext = 1.5      
+$rnext
+3
+	$cnext $pre  $$ $cnext $code Type v_3  = v_1 * v_1;$$
+	$cnext $cnext $latex v_3 = v_1 * v_1 $$ 
+	$cnext $cnext = 0.25      
+$rnext
+4
+	$cnext $pre  $$ $cnext $code Type v_4  = v_3 / Type(2);$$
+	$cnext $cnext $latex v_4 = v_3 / 2$$ 
+	$cnext $cnext = 0.125      
+$rnext
+5
+	$cnext $pre  $$ $cnext $code  Type v_5  = v_2 + v_4;$$
+	$cnext $cnext $latex v_5 = v_2 + v_4 $$ 
+	$cnext $cnext = 1.625        
+$tend
+$$
+
+$head Return Value$$
+The return value of the algorithm for this case is
+$latex v_5$$ which is equal to 1.625.
+
+$children%
+	introduction/exp_apx/exp_2_seq.cpp
+%$$
+
+$head Verification$$
+The file $xref/exp_2_seq.cpp/$$ contains a routine 
+that verifies the values computed above.
+It returns true for success and false for failure.
+
+$head Exercises$$
+$list number$$
+Suppose that $latex x = .2$$,
+what is the result of a zero order forward sweep for 
+the operation sequence above; 
+i.e., what are the corresponding values for
+$latex \[
+	v_1 , v_2 , \cdots , v_5
+\]$$
+$lnext
+Create a modified version of 
+$cref/exp_2_seq.cpp/$$ that verifies the values you obtained
+for the previous exercise.
+$lnext
+Create and run a main program that reports the result of calling 
+the modified version 
+of $cref/exp_2_seq.cpp/$$ in the previous exercise.
+$lend
+
 
 $end

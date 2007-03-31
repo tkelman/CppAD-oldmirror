@@ -35,6 +35,7 @@ $end
 
 // external complied tests
 extern bool exp_2(void);
+extern bool exp_2_seq(void);
 extern bool exp_apx(void);
 extern bool exp_apx_cppad(void);
 extern bool exp_apx_for(void);
@@ -69,6 +70,7 @@ int main(void)
 
 	// external compiled tests
 	ok &= Run( exp_2,           "exp_2"          );
+	ok &= Run( exp_2_seq,       "exp_2_seq"      );
 	ok &= Run( exp_apx,         "exp_apx"        );
 	ok &= Run( exp_apx_cppad,   "exp_apx_cppad"  );
 	ok &= Run( exp_apx_for,     "exp_apx_for"    );
