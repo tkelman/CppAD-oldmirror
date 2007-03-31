@@ -123,6 +123,9 @@
 				RelativePath=".\exp_2_for.cpp">
 			</File>
 			<File
+				RelativePath=".\exp_2_rev.cpp">
+			</File>
+			<File
 				RelativePath=".\exp_2_seq.cpp">
 			</File>
 			<File

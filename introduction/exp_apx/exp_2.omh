@@ -196,6 +196,14 @@ $index order, first forward$$
 $index forward, first order$$
 
 
+$head Purpose$$
+First order forward mode uses the 
+$cref/operation sequence/exp_2_seq/Operation Sequence/$$,
+and zero order forward sweep values,
+to compute the first order partial derivative
+of all the dependent variables with respect to one independent variable. 
+The computations are done in the same order as the original algorithm.
+
 $head Mathematical Form$$
 Suppose that we use the algorithm $xref/exp_2.hpp/$$ to compute 
 $latex \[
@@ -322,6 +330,199 @@ the derivative values from the previous exercise.
 Also create and run a main program that reports the result
 of calling the modified version of
 $cref/exp_2_for.cpp/$$.
+$lend
+
+$end
+------------------------------------------------------------------------------
+$begin exp_2_rev$$
+$spell
+	exp_2_rev
+$$
+
+$section exp_2: First Order Reverse Mode$$
+
+$index exp_2, reverse mode$$
+$index example, reverse mode$$
+$index reverse, mode example$$
+$index mode, example reverse$$
+
+$index first, order reverse$$
+$index order, first reverse$$
+$index reverse, first order$$
+
+
+$head Purpose$$
+First order reverse mode uses the 
+$cref/operation sequence/exp_2_seq/Operation Sequence/$$
+and zero order forward sweep values
+to compute the first order derivative
+of one dependent variable with respect to all the independent variables. 
+The computations are done in the reverse order of the original algorithm.
+
+$head f_5$$
+In reverse mode we choose one dependent variable and
+compute its derivative with respect to all the independent variables.
+For our example, we chose the value returned by $cref/exp_2.hpp/$$
+which is equal to the symbol $latex v_5$$ in the
+$cref/exp_2 operation sequence/exp_2_seq/Operation Sequence/$$.
+We begin with the function $latex f_5 $$ where $latex v_5$$ 
+is both an argument and the value of the function; i.e.,
+$latex \[
+\begin{array}{rcl}
+f_5 ( v_1 , v_2 , v_3 , v_4 , v_5 ) & = & v_5 
+\\
+\D{f_5}{v_5} & = & 1
+\end{array}
+\] $$
+All the other partial derivatives of $latex f_5 $$ are zero.
+
+$head Index 5: f_4$$
+Reverse mode starts with the last operation in the sequence.
+For the case in question, this is the operation with index 5,
+$latex \[
+	v_5 = v_2 + v_4
+\] $$
+We define the function 
+$latex f_4 ( v_1 , v_2 , v_3 , v_4 ) $$
+as equal to $latex f_5 $$
+except that $latex v_5 $$ is eliminated using 
+this operation; i.e.
+$latex \[
+f_4  = 
+f_5 [  v_1 , v_2 , v_3 , v_4 , v_5 ( v_2 , v_4 ) ]
+\] $$
+It follows that 
+$latex \[
+\begin{array}{rcll}
+\D{f_4}{v_2} 
+& = & \D{f_5}{v_2} + 
+	\D{f_5}{v_5} * \D{v_5}{v_2} 
+& = 1
+\\
+\D{f_4}{v_4} 
+& = & \D{f_5}{v_4} + 
+	\D{f_5}{v_5} * \D{v_5}{v_4} 
+& = 1
+\end{array}
+\] $$
+All the other partial derivatives of $latex f_4$$ are zero.
+
+$head Index 4: f_3$$
+The next operation has index 4, 
+$latex \[
+	v_4 = v_3 / 2
+\] $$
+We define the function 
+$latex f_3 (  v_1 , v_2 , v_3 ) $$
+as equal to $latex f_4 $$
+except that $latex v_4 $$ is eliminated using this operation; i.e.,
+$latex \[
+f_3 = 
+f_4 [ v_1 , v_2 , v_3 , v_4 ( v_3 ) ]
+\] $$
+It follows that 
+$latex \[
+\begin{array}{rcll}
+\D{f_3}{v_1}
+& = & \D{f_4}{v_1}
+& = 0
+\\
+\D{f_3}{v_2} 
+& = & \D{f_4}{v_2}
+& = 1
+\\
+\D{f_3}{v_3} 
+& = & \D{f_4}{v_3} + 
+	\D{f_4}{v_4} * \D{v_4}{v_3} 
+& = 0.5
+\end{array}
+\] $$
+
+$head Index 3: f_2$$
+The next operation has index 3,
+$latex \[
+	v_3 = v_1 * v_1
+\] $$
+We define the function 
+$latex f_2 ( v_1 , v_2 ) $$
+as equal to $latex f_3 $$
+except that $latex v_3 $$ is eliminated using this operation; i.e.,
+$latex \[
+f_2 = 
+f_2 [ v_1 , v_2 , v_3 ( v_1 ) ]
+\] $$
+Note that the value of $latex v_1$$ is equal to $latex x$$
+which is .5 for this evaluation.
+It follows that 
+$latex \[
+\begin{array}{rcll}
+\D{f_2}{v_1}
+& = & \D{f_3}{v_1} +
+	\D{f_3}{v_3} * \D{v_3}{v_1} 
+& = 0.5
+\\
+\D{f_2}{v_2} 
+& = & \D{f_3}{v_2}
+& = 1
+\end{array}
+\] $$
+
+$head Index 2: f_1$$
+The next operation has index 2,
+$latex \[
+	v_2 = 1 + v_1
+\] $$
+We define the function 
+$latex f_1 ( v_1 ) $$
+as equal to $latex f_2 $$
+except that $latex v_2 $$ is eliminated using this operation; i.e.,
+$latex \[
+f_1 = 
+f_2 [ v_1 , v_2 ( v_1 ) ]
+\] $$
+It follows that 
+$latex \[
+\begin{array}{rcll}
+\D{f_1}{v_1}
+& = & \D{f_2}{v_1} +
+	\D{f_2}{v_2} * \D{v_2}{v_1} 
+& = 1.5
+\end{array}
+\] $$
+Note that $latex v_1$$ is equal to $latex x$$,
+so the derivative of this is the derivative of
+the function defined by $cref/exp_2.hpp/$$ at $latex x = .5$$.
+
+$children%
+	introduction/exp_apx/exp_2_rev.cpp
+%$$
+$head Verification$$
+The file $xref/exp_2_rev.cpp/$$ contains a routine 
+which verifies the values computed above.
+It returns true for success and false for failure.
+It only tests the partial derivatives of
+$latex f_k$$ that are different from those of $latex f_{k+1}$$.
+
+$head Exercises$$
+$list number$$
+Which statement in the routine defined by $cref/exp_2_rev.cpp/$$ uses 
+the values that are calculated by the routine 
+defined by $cref/exp_2_seq.cpp/$$ ?
+$lnext
+Consider the case where $latex x = .1$$
+and we first preform a zero order forward mode sweep
+for the operation sequence used above (in reverse order).
+What are the results of a 
+first order reverse mode sweep; i.e.,
+what are the corresponding derivatives of
+$latex f_5 , f_4 , \ldots , f_1$$.
+$lnext
+Create a modified version of 
+$cref/exp_2_rev.cpp/$$ 
+that verifies the values you obtained for the previous exercise.
+Also create and run a main program that reports the result
+of calling the modified version of
+$cref/exp_2_rev.cpp/$$.
 $lend
 
 $end
