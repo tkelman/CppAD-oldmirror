@@ -12,7 +12,6 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 $begin exp_2_for.cpp$$
 $spell
 	std
-	vars
 	exp_2_for
 	cmath
 	fabs
@@ -22,9 +21,9 @@ $$
 $section exp_2 Forward Mode Verification$$
 $codep */
 
-# include <cmath>               // for fabs function
-extern bool exp_2_seq(void);    // for evaluating elements of v
-extern double v[6];             // global vars set by exp_2_seq
+# include <cmath>               // prototype for fabs
+extern bool exp_2_seq(void);    // prototype for exp_2_seq
+extern double v[6];             // global variables set by exp_2_seq
 bool exp_2_for(void)
 {	bool ok = true;
 	double v_x[6];
