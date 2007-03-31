@@ -21,6 +21,7 @@ $$
 
 $section exp_2: Reverse Mode Verification$$
 $codep */
+# include <cstddef>              // define size_t
 # include <cmath>                // prototype for fabs
 extern bool exp_2_seq(void);     // prototype for exp_2_seq
 extern double v[6];              // global variables set by exp_2_seq
