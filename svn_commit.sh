@@ -42,19 +42,17 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Add operation seqeunce section for exp_2.
+log_entry="Add forward mode section for exp_2.
 
 svn_commit.sh: file that made this commit.
-whats_new_07.omh: user's view of the changes.
-exp_2.omh: add exp_2 operation sequence section.
-exp_2.hpp: slightly modify example adn change comments.
-main.cpp: add exp_2_seq.
-exp_apx.vcproj: add exp_2_seq.
-makefile.am: add exp_2_seq.
-exp_2_seq.cpp: test the operation sequence values.
+exp_2_for.cpp: verification of forward mode calculation.
+exp_2.omh: add the section exp_2_for here.
+main.cpp: add exp_2_for to list.
+exp_apc.vcproj: add exp_2_for to list.
+makefile.am: add exp_2_for to list.
 " 
 add_list="
-	introduction/exp_apx/exp_2_seq.cpp
+	introduction/exp_apx/exp_2_for.cpp
 "
 delete_list="
 "
@@ -63,9 +61,7 @@ move_list="
 #
 change_list="
 	svn_commit.sh
-	omh/whats_new_07.omh
 	introduction/exp_apx/exp_2.omh
-	introduction/exp_apx/exp_2.hpp
 	introduction/exp_apx/main.cpp
 	introduction/exp_apx/exp_apx.vcproj
 	introduction/exp_apx/makefile.am
