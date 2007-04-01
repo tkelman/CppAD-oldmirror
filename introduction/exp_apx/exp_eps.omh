@@ -56,14 +56,21 @@ $index zero, order forward$$
 $index order, zero forward$$
 $index forward, zero order$$
 
-$head Mathematical Function$$
-Suppose tat we use algorithm $cref/exp_eps.hpp/$$
-to compute the derivative 
-of the mathematical function 
-$cref/exp_eps/exp_eps/Mathematical Function/$$.
-An algorithmic differentiation package does not operate
-on the mathematical function, but rather the particular
-algorithm use to compute it.
+$head Mathematical Form$$
+Suppose that we use the algorithm $xref/exp_eps.hpp/$$
+to compute $syntax%exp_eps(%x%, %epsilon%)%$$
+with $italic x$$ is equal to .5
+and $italic epsilon$$ is equal to .2. 
+For this case, function corresponding to the $code exp_eps$$
+has the following form and function value:
+$latex \[
+\begin{array}{rclll}
+{\rm exp\_apx} ( x , \varepsilon ) & = &   1 + x + x^2 / 2  
+	& =   1 + .5 + 0.125 
+	& =   1.625
+\end{array}
+\] $$
+
 
 $head Operation Sequence$$
 We consider the 
@@ -71,12 +78,6 @@ $cref/operation sequence/glossary/Operation/Sequence/$$
 corresponding to the algorithm $xref/exp_eps.hpp/$$
 with the argument $italic x$$ is equal to .5
 and $italic epsilon$$ is equal to .2. 
-For this case, our approximation of the exponential function is
-$latex \[
-{\rm exp\_apx} (x , epsilon) =   1 + x + x^2 / 2 
-=   1 + .5 + .25 / 2 
-=   1.625
-\] $$
 
 $subhead Variable$$
 We refer to values that depend on the input variables
@@ -203,6 +204,175 @@ $lnext
 Create and run a main program that reports the result of calling 
 the modified version 
 of $cref/exp_eps_seq.cpp/$$ in the previous exercise.
+$lend
+
+$end
+-----------------------------------------------------------------------------
+$begin exp_eps_for$$
+$spell
+	exp_eps_for
+$$
+
+$section exp_eps: First Order Forward Mode$$
+
+$index first, order forward$$
+$index order, first forward$$
+$index forward, first order$$
+
+$head Mathematical Form$$
+Suppose that we use the algorithm $xref/exp_eps.hpp/$$
+to compute $syntax%exp_eps(%x%, %epsilon%)%$$
+with $italic x$$ is equal to .5
+and $italic epsilon$$ is equal to .2. 
+For this case, function corresponding to the 
+$cref/exp_eps operation sequence/exp_eps_seq/Operation Sequence/$$
+has the following form and partial derivative:
+$latex \[
+\begin{array}{rclll}
+{\rm exp\_apx} ( x , \varepsilon ) & = &   1 + x + x^2 / 2  
+\\
+\partial_x {\rm exp\_apx} ( x , \varepsilon ) & = &   1 + x 
+	& =   1 + .5 
+	& =   1.5
+\end{array}
+\] $$
+
+$head Operation Sequence$$
+The corresponding 
+$cref/operation sequence/exp_eps_seq/Operation Sequence/$$
+and 
+$cref/zero order/exp_eps_seq/Operation Sequence/Zero Order/$$
+forward sweep values
+are inputs that are need by a first order sweep.
+A first order sweep 
+computes the first order partial derivative
+of all the dependent variables with respect to one independent variable. 
+The $code exp_eps$$ operation sequence depends on $italic epsilon$$,
+but for a given the operation sequence,
+the values computed do not depend on $italic epsilon$$.
+Thus, the partial derivative with respect to $italic epsilon$$,
+of any of the variables in the operation sequence,
+is zero.
+
+$subhead Index$$
+The Index column contains the index in the operation sequence
+of the corresponding atomic operation. 
+A Forward sweep starts with the first operation 
+and ends with the last.
+
+$subhead Operation$$
+The Operation column contains the 
+mathematical function corresponding to each atomic operation in the sequence.
+
+$subhead Zero Order$$
+The Zero Order column contains the function value
+(zero order forward sweep value)
+corresponding to each atomic operation in the sequence.
+
+$subhead Partial$$
+The Partial column contains the
+mathematical function corresponding to the partial derivative
+with respect to $italic x$$ for each operation in the sequence.
+
+$subhead First Order$$
+The First Order column contains the partial derivative value
+(first order forward sweep value)
+corresponding to each atomic operation in the sequence.
+
+$subhead Trace$$
+
+$center
+$table
+$bold Index$$
+	$cnext $pre  $$ $cnext $bold Operation$$ 
+	$cnext $pre  $$ $cnext $bold Zero Order$$
+	$cnext $pre  $$ $cnext $bold Partial$$
+	$cnext $pre  $$ $cnext $bold First Order$$
+$rnext
+1
+	$cnext $pre  $$ $cnext $latex v_1 = x $$
+	$cnext $cnext = 0.5
+	$cnext $cnext 
+	$latex \partial_x v_1 = \partial_x x  $$
+	$cnext $cnext = 1
+$rnext
+2
+	$cnext $pre  $$ $cnext $latex v_2 = 1 * v_1$$
+	$cnext $cnext = 0.5
+	$cnext $cnext 
+	$latex \partial_x v_2 = 1 * \partial_x v_1$$
+	$cnext $cnext = 1
+$rnext
+3
+	$cnext $pre  $$ $cnext $latex v_3 = v_2 / 1$$
+	$cnext $cnext = 0.5
+	$cnext $cnext 
+	$latex \partial_x v_3 = ( \partial_x v_2 ) / 1$$
+	$cnext $cnext = 1
+$rnext
+4
+	$cnext $pre  $$ $cnext $latex v_4 = 1 + v_3$$
+	$cnext $cnext = 1.5
+	$cnext $cnext 
+	$latex \partial_x v_4 = \partial_x v_3 $$
+	$cnext $cnext = 1
+$rnext
+5
+	$cnext $pre  $$ $cnext $latex v_5 = v_3 * v_1$$
+	$cnext $cnext = 0.25
+	$cnext $cnext 
+$latex \partial_x v_5 = ( \partial_x v_3 ) * v_1 + v_3 * ( \partial_x v_1 )$$
+	$cnext $cnext = 1
+$rnext
+6
+	$cnext $pre  $$ $cnext $latex v_6 = v_5 / 2$$
+	$cnext $cnext = 0.125
+	$cnext $cnext 
+	$latex \partial_x v_6 = ( \partial_x v_5 ) / 2$$
+	$cnext $cnext = 0.5
+$rnext
+7
+	$cnext $pre  $$ $cnext $latex v_7 = v_4 + v_6$$
+	$cnext $cnext = 1.625
+	$cnext $cnext 
+	$latex  \partial_x v_7 = \partial_x v_4 + \partial_x v_6$$
+	$cnext $cnext = 1.5
+$tend
+$$
+Thus forward mode returns
+1.5 as the derivative of the return value $latex v_7$$ 
+for this case.
+
+
+$children%
+	introduction/exp_apx/exp_eps_for.cpp
+%$$
+
+$head Verification$$
+The file $xref/exp_eps_for.cpp/$$ contains a routine 
+that verifies the values computed above.
+It returns true for success and false for failure.
+
+$head Exercises$$
+$list number$$
+Suppose that $latex x = .1$$,
+what are the results of a zero and first order forward mode sweep for 
+the operation sequence above; 
+i.e., what are the corresponding values for
+$latex v_1 , v_2 , \cdots , v_7$$ and
+$latex \partial_x v_1 , \partial_x v_2 , \cdots , \partial_x v_7$$ ?
+$lnext
+Create a modified version of $cref/exp_eps_for.cpp/$$ that verifies 
+the derivative values from the previous exercise.
+Also create and run a main program that reports the result
+of calling the modified version of
+$cref/exp_eps_for.cpp/$$.
+$lnext
+Suppose that $latex x = .1$$ and $latex epsilon = .2$$,
+what is the operation sequence corresponding to 
+$syntax%
+	exp_eps(%x%, %epsilon%)
+%$$
 $lend
 
 $end

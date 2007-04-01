@@ -23,7 +23,7 @@ $section exp_2: Reverse Mode Verification$$
 $codep */
 # include <cstddef>               // define size_t
 # include <cmath>                 // prototype for fabs
-extern bool exp_2_seq(double *v); // prototype for exp_2_seq
+extern bool exp_2_seq(double *v); // computes zero order forward sweep
 bool exp_2_rev(void)
 {	bool ok = true;
 

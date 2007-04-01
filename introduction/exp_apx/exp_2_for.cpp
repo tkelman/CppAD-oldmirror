@@ -18,11 +18,15 @@ $spell
 	bool
 $$
 
-$section exp_2 Forward Mode Verification$$
-$codep */
+$section exp_2: Verify First Order Forward Sweep$$
 
+$index first, order exp_2$$
+$index order, first exp_2$$
+$index exp_2, first order$$
+
+$codep */
 # include <cmath>                 // prototype for fabs
-extern bool exp_2_seq(double *v); // prototype for exp_2_seq
+extern bool exp_2_seq(double *v); // computes zero order forward sweep
 bool exp_2_for(void)
 {	bool ok = true;
 	double v[6], v_x[6];

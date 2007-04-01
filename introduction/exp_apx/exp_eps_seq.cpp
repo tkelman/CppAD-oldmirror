@@ -34,7 +34,7 @@ bool exp_eps_seq(double *v)    // double v[8]
 	v[1] = x;                                  // abs_x = x;
 	ok  &= std::fabs( v[1] - 0.5) < 1e-10;
 
-	v[2] = 1. * v[1];                          // temp = term * abx_x;
+	v[2] = 1. * v[1];                          // temp = term * abs_x;
 	ok  &= std::fabs( v[2] - 0.5) < 1e-10;
 
 	v[3] = v[2] / 1.;                          // term = temp / Type(k);

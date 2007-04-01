@@ -42,31 +42,33 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Use v_1, ... , v_7 in exp_eps_seq.
+log_entry="Use v_1, ... , v_7 in exp_eps_for.
 
 svn_commit.sh: file that made this commit.
-exp_eps_for.cpp: change name of old version of exp_eps_seq.
-exp_eps_seq.cpp: new version of exp_eps_seq (plus old with different name).
-exp_eps_rev.cpp: change name of old version of exp_eps_seq.
-exp_2_for.cpp: pass v as argument to exp_2_seq.
-exp_2_seq.cpp: make v an argument.
-exp_2_rev.cpp: pass v as argument to exp_2_seq.
+exp_eps.omh: move exp_eps_for section from exp_apx_for.omh to here.
+exp_eps_for.cpp: use v_1, ... , v_7 notation.
+exp_eps_seq.cpp: minor edit.
+exp_2_for.cpp: minor edit.
+exp_2_rev.cpp: minor edit.
+exp_apx_for.omh: move information into exp_eps.omh.
+introduction.omh: remove reference to exp_apx_for.omh.
 " 
 add_list="
 "
 delete_list="
 "
 move_list="
+	omh/exp_apx_for.omh
 "
 #
 change_list="
 	svn_commit.sh
+	introduction/exp_apx/exp_eps.omh
 	introduction/exp_apx/exp_eps_for.cpp
 	introduction/exp_apx/exp_eps_seq.cpp
-	introduction/exp_apx/exp_eps_rev.cpp
 	introduction/exp_apx/exp_2_for.cpp
-	introduction/exp_apx/exp_2_seq.cpp
 	introduction/exp_apx/exp_2_rev.cpp
+	omh/introduction.omh
 "
 #
 copy_branch="" 

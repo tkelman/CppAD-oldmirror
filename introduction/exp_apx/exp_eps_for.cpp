@@ -19,42 +19,42 @@ $spell
 	bool
 $$
 
-$section exp_eps Forward Mode Verification$$
-$codep */
+$section exp_eps: Verify First Order Forward Sweep$$
 
-# include <cmath>                           // for fabs function
-extern bool exp_eps_seq_old(void);              // prototype for exp_eps_seq
-extern double a[1], q[3], r[3], s[3], k[3]; // global vars set by exp_eps_seq
+$index first, order exp_2$$
+$index order, first exp_2$$
+$index exp_2, first order$$
+
+$codep */
+# include <cmath>                   // for fabs function
+extern bool exp_eps_seq(double *v); // computes zero order forward sweep
 bool exp_eps_for(void)
 {	bool ok = true;
-	double a_x[1], q_x[3], r_x[3], s_x[3];
+	double v[8], v_x[8];
 
-	// make sure global variables have been computed by exp_eps_seq
-	ok &= exp_eps_seq_old();
+	// set the value of v[j] for j = 1 , ... , 7
+	ok &= exp_eps_seq(v);
 
-	// initial r and s values are parameters
-	r_x[0] = s_x[0] = 0.;
+	v_x[1] = 1.;                                       // v_1 = x
+	ok    &= std::fabs( v_x[1] - 1. ) <= 1e-10;
 
-	a_x[0] = 1.;                                         // a = x
-	ok    &= std::fabs( a_x[0] - 1. ) <= 1e-10;
+	v_x[2] = 1. * v_x[1];                              // v_2 = 1 * v_1
+	ok    &= std::fabs( v_x[2] - 1. ) <= 1e-10;
 
-	q_x[1] = r_x[0] * a[0] + r[0] * a_x[0];              // q = r * a
-	ok    &= std::fabs( q_x[1] - 1. ) <= 1e-10;
+	v_x[3] = v_x[2] / 1.;                              // v_3 = v_2 / 1
+	ok    &= std::fabs( v_x[3] - 1. ) <= 1e-10;
 
-	r_x[1] = q_x[1] / k[0];                              // r = q / k
-	ok    &= std::fabs( r_x[1] - 1. ) <= 1e-10;
+	v_x[4] = v_x[3];                                   // v_4 = 1 + v_3
+	ok    &= std::fabs( v_x[4] - 1. ) <= 1e-10;
 
-	s_x[1] = s_x[0] + r_x[1];                           // s = s + r
-	ok    &= std::fabs( r_x[1] - 1. ) <= 1e-10;
+	v_x[5] = v_x[3] * v[1] + v[3] * v_x[1];            // v_5 = v_3 * v_1
+	ok    &= std::fabs( v_x[5] - 1. ) <= 1e-10;
 
-	q_x[2] = r_x[1] * a[0] + r[1] * a_x[0];              // q = r * a
-	ok    &= std::fabs( q_x[2] - 1. ) <= 1e-10;
+	v_x[6] = v_x[5] / 2.;                              // v_6 = v_5 / 2
+	ok    &= std::fabs( v_x[6] - 0.5 ) <= 1e-10;
 
-	r_x[2] = q_x[2] / k[1];                              // r = q / k
-	ok    &= std::fabs( r_x[2] - 0.5 ) <= 1e-10;
-
-	s_x[2] = s_x[1] + r_x[2];                           // s = s + r
-	ok    &= std::fabs( s_x[2] - 1.5 ) <= 1e-10;
+	v_x[7] = v_x[4] + v_x[6];                          // v_7 = v_4 + v_6
+	ok    &= std::fabs( v_x[7] - 1.5 ) <= 1e-10;
 
 	return ok;
 }
