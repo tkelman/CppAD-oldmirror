@@ -377,3 +377,253 @@ $lend
 
 $end
 -----------------------------------------------------------------------------
+$begin exp_eps_rev$$
+$spell
+	exp_eps_rev
+$$
+
+$section exp_eps: First Order Reverse Mode$$
+
+$index first, order reverse$$
+$index order, first reverse$$
+$index reverse, first order$$
+
+$head First Order Reverse$$
+First order reverse mode uses the 
+$cref/operation sequence/exp_eps_seq/Operation Sequence/$$
+and 
+$cref/zero order/exp_eps_seq/Operation Sequence/Zero Order/$$
+forward sweep values
+to compute the first order derivative
+of one dependent variables with respect to all the independent variables. 
+The computations are done in the reverse order of the original algorithm.
+
+$head f_7$$
+In reverse mode we choose one dependent variable and
+compute its derivative with respect to all the independent variables.
+For our example, we chose the value returned by $cref/exp_eps.hpp/$$
+which is $latex v_7$$.
+We begin with the function $latex f_7$$ where $latex v_7$$ 
+is both an argument and the value of the function; i.e.,
+$latex \[
+\begin{array}{rcl}
+f_7 ( v_1 , v_2 , v_3 , v_4 , v_5 , v_6 , v_7 ) & = & v_7 
+\\
+\D{f_7}{v_7} & = & 1
+\end{array}
+\] $$
+All the other partial derivatives of $latex f_7$$ are zero.
+
+$head Index 7: f_6$$
+The last operation has index 7, 
+$latex \[
+	v_7 =   v_4 + v_6  
+\] $$
+We define the function 
+$latex f_6 ( v_1 , v_2 , v_3 , v_4 , v_5 , v_6 ) $$
+as equal to $latex f_7$$
+except that $latex v_7$$ is eliminated using 
+this operation; i.e.
+$latex \[
+f_6  = 
+f_7 [ v_1 , v_2 , v_3 , v_4 , v_5 , v_6 , v_7 ( v_4 , v_6 ) ]
+\] $$
+It follows that 
+$latex \[
+\begin{array}{rcll}
+\D{f_6}{v_4} 
+& = & \D{f_7}{v_4} + 
+	\D{f_7}{v_7} * \D{v_7}{v_4} 
+& = 1
+\\
+\D{f_6}{v_6} 
+& = & \D{f_7}{v_6} + 
+	\D{f_7}{v_7} * \D{v_7}{v_6} 
+& = 1
+\end{array}
+\] $$
+All the other partial derivatives of $latex f_6$$ are zero.
+
+$head Index 6: f_5$$
+The previous operation has index 6, 
+$latex \[
+	v_6 = v_5 / 2
+\] $$
+We define the function 
+$latex f_5 (  v_1 , v_2 , v_3 , v_4 , v_5 ) $$
+as equal to $latex f_6 $$
+except that $latex v_6 $$ is eliminated using this operation; i.e.,
+$latex \[
+f_5 = 
+f_6 [  v_1 , v_2 , v_3 , v_4 , v_5 , v_6 ( v_5 ) ]
+\] $$
+It follows that 
+$latex \[
+\begin{array}{rcll}
+\D{f_5}{v_4} 
+& = & \D{f_6}{v_4} 
+& = 1
+\\
+\D{f_5}{v_5} 
+& = & \D{f_6}{v_5} + 
+	\D{f_6}{v_6} * \D{v_6}{v_5} 
+& = 0.5
+\end{array}
+\] $$
+All the other partial derivatives of $latex f_5$$ are zero.
+
+$head Index 5: f_4$$
+The previous operation has index 5,
+$latex \[
+	v_5 = v_3 * v_1
+\] $$
+We define the function 
+$latex f_4 (  v_1 , v_2 , v_3 , v_4 ) $$
+as equal to $latex f_5 $$
+except that $latex v_5 $$ is eliminated using this operation; i.e.,
+$latex \[
+f_4 = 
+f_5 [  v_1 , v_2 , v_3 , v_4 , v_5 ( v_3 , v_1 )  ]
+\] $$
+Given the information from the forward sweep, we have
+$latex v_3 =  0.5 $$ and $latex v_1 = 0.5 $$.
+It follows that 
+$latex \[
+\begin{array}{rcll}
+\D{f_4}{v_1} 
+& = & \D{f_5}{v_1} + 
+	\D{f_5}{v_5} * \D{v_5}{v_1} 
+& =  0.25
+\\
+\D{f_4}{v_2} & = & \D{f_5}{v_2}  & = 0
+\\
+\D{f_4}{v_3} 
+& = & \D{f_5}{v_3} + 
+	\D{f_5}{v_5} * \D{v_5}{v_3} 
+& =  0.25
+\\
+\D{f_4}{v_4}
+& = & \D{f_5}{v_4} 
+& = 1
+\end{array}
+\] $$
+
+$head Index 4: f_3$$
+The previous operation has index 4,
+$latex \[
+	v_4 = 1 + v_3
+\] $$
+We define the function 
+$latex f_3 (  v_1 , v_2 , v_3 ) $$
+as equal to $latex f_4 $$
+except that $latex v_4 $$ is eliminated using this operation; i.e.,
+$latex \[
+f_3 = 
+f_4 [  v_1 , v_2 , v_3 , v_4 ( v_3 )  ]
+\] $$
+It follows that 
+$latex \[
+\begin{array}{rcll}
+\D{f_3}{v_1} 
+& = & \D{f_4}{v_1} 
+& =  0.25
+\\
+\D{f_3}{v_2} & = & \D{f_4}{v_2}  & = 0
+\\
+\D{f_3}{v_3} 
+& = & \D{f_4}{v_3} + 
+	\D{f_4}{v_4} * \D{v_4}{v_3} 
+& =  1.25
+\end{array}
+\] $$
+
+
+$head Index 3: f_2$$
+The previous operation has index 3,
+$latex \[
+	v_3 = v_2 / 1
+\] $$
+We define the function 
+$latex f_2 (  v_1 , v_2 ) $$
+as equal to $latex f_3 $$
+except that $latex v_3 $$ is eliminated using this operation; i.e.,
+$latex \[
+f_2 = 
+f_4 [  v_1 , v_2 , v_3 ( v_2 )  ]
+\] $$
+It follows that 
+$latex \[
+\begin{array}{rcll}
+\D{f_2}{v_1} 
+& = & \D{f_3}{v_1} 
+& =  0.25
+\\
+\D{f_2}{v_2} & = & \D{f_3}{v_2}  +
+	\D{f_3}{v_3} * \D{v_3}{v_2}
+& = 1.25
+\end{array}
+\] $$
+
+$head Index 2: f_1$$
+The previous operation has index 1,
+$latex \[
+	v_2 = 1 * v_1
+\] $$
+We define the function 
+$latex f_1 (  v_1 ) $$
+as equal to $latex f_2 $$
+except that $latex v_2 $$ is eliminated using this operation; i.e.,
+$latex \[
+f_1 = 
+f_2 [  v_1 , v_2 ( v_1 )  ]
+\] $$
+It follows that 
+$latex \[
+\begin{array}{rcll}
+\D{f_1}{v_1} & = & \D{f_2}{v_1}  +
+	\D{f_2}{v_2} * \D{v_2}{v_1}
+& = 1.5
+\end{array}
+\] $$
+
+Note that $latex v_1$$ is equal to $latex x$$,
+so the derivative of $syntax%exp_eps(%x%, %epsilon%)%$$ 
+at $italic x$$ equal to .5 and $italic epsilon$$ equal .2 is
+1.5 in the $italic x$$ direction and zero in the $italic epsilon$$ direction.
+We also note that 
+$cref/forward/exp_eps_for/$$ forward mode gave the 
+same result for the partial in the $italic x$$ direction.
+
+
+$children%
+	introduction/exp_apx/exp_eps_rev.cpp
+%$$
+
+$head Verification$$
+The file $xref/exp_eps_rev.cpp/$$ contains a routine 
+that verifies the values computed above.
+It returns true for success and false for failure.
+It only tests the partial derivatives of
+$latex f_j$$ that are different from those of $latex f_{j+1}$$.
+
+$head Exercises$$
+$list number$$
+Consider the case where $latex x = .1$$
+and we first preform a zero order forward mode sweep
+for the operation sequence used above (in reverse order).
+What are the results of a 
+first order reverse mode sweep; i.e.,
+what are the corresponding values for 
+$latex \D{f_j}{v_k}$$ for all $latex j, k$$ such that
+$latex \D{f_j}{v_k} \neq 0$$.
+$lnext
+Create a modified version of 
+$cref/exp_eps_rev.cpp/$$ 
+that verifies the values you obtained for the previous exercise.
+Also create and run a main program that reports the result
+of calling the modified version of
+$cref/exp_eps_rev.cpp/$$.
+$lend
+
+$end
+-----------------------------------------------------------------------------

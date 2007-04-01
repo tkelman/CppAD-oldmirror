@@ -111,7 +111,6 @@ $childtable%
 	introduction/get_started/get_started.cpp%
 	introduction/exp_apx/exp_2.hpp%
 	introduction/exp_apx/exp_eps.hpp%
-	omh/exp_apx_rev.omh%
 	introduction/exp_apx/exp_eps_cppad.cpp%
 	introduction/exp_apx/main.cpp
 %$$

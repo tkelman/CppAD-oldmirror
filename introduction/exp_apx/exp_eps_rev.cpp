@@ -25,60 +25,59 @@ $spell
 	fabs
 $$
 
-$section exp_eps Reverse Mode Verification$$
+$section exp_eps: Reverse Mode Verification$$
+
+$index reverse, exp_eps$$
+$index exp_eps, reverse$$
+
 $codep */
-# include <cstddef>                         // for size_t
-# include <cmath>                           // for fabs function
-extern bool exp_eps_seq_old(void);              // prototype for exp_eps_seq
-extern double a[1], q[3], r[3], s[3], k[3]; // global vars set by exp_eps_seq
+# include <cstddef>                   // define size_t
+# include <cmath>                     // for fabs function
+extern bool exp_eps_seq(double *v);   // computes zero order forward sweep
 bool exp_eps_rev(void)
 {	bool ok = true;
 
-	// ordering of arguments is: 
-	// a0, q0, q1, q2, r0, r1, r2, s0, s1, s2 
-	// corresponding index offsets for each of the parameters
-	size_t ia = 0, iq = ia+1, ir = iq+3, is = ir+3;
-
-	// make sure global variables have been computed by exp_eps_seq
-	ok &= exp_eps_seq_old();
+	// set the value of v[j] for j = 1 , ... , 7
+	double v[8];
+	ok &= exp_eps_seq(v);
 
 	// initial all partial derivatives as zero
-	double df[10];
+	double f_v[8];
 	size_t j;
-	for(j = 0; j < 10; j++)
-		df[j] = 0.;
+	for(j = 0; j < 8; j++)
+		f_v[j] = 0.;
 
-	// f0
-	df[is+2] = 1.;
-	ok &= std::fabs( df[is+2] - 1. ) <= 1e-10;    // f0_s2
+	// set partial derivative for f7
+	f_v[7] = 1.;
+	ok    &= std::fabs( f_v[7] - 1. ) <= 1e-10;     // f7_v7
 
-	// remove s2 = s1 + r2 from f0 to get f1
-	df[is+1] += df[is+2];
-	df[ir+2] += df[is+2];
-	ok &= std::fabs( df[is+1] - 1. ) <= 1e-10;    // f1_s1
-	ok &= std::fabs( df[ir+2] - 1. ) <= 1e-10;    // f1_r2
+	// f6( v1 , v2 , v3 , v4 , v5 , v6 )
+	f_v[4] += f_v[7] * 1.;
+	f_v[6] += f_v[7] * 1.;
+	ok     &= std::fabs( f_v[4] - 1.  ) <= 1e-10;   // f6_v4
+	ok     &= std::fabs( f_v[6] - 1.  ) <= 1e-10;   // f6_v6
 
-	// remove r2 = q2 / k1 from f1 to get f2
-	df[iq+2] += df[ir+2] / k[1];
-	ok &= std::fabs( df[iq+2] - 0.5 ) <= 1e-10;   // f2_q2
+	// f5( v1 , v2 , v3 , v4 , v5 )
+	f_v[5] += f_v[6] / 2.;
+	ok     &= std::fabs( f_v[5] - 0.5 ) <= 1e-10;   // f5_v5
 
-	// remove q2 = r1 * a0 from f2 to get f3
-	df[ir+1] += df[iq+2] * a[0];
-	df[ia+0] += r[1] * df[iq+2];
-	ok &= std::fabs( df[ir+1] - 0.25 ) <= 1e-10;  // f3_r1
-	ok &= std::fabs( df[ia+0] - 0.25 ) <= 1e-10;  // f3_a0
+	// f4( v1 , v2 , v3 , v4 )
+	f_v[1] += f_v[5] * v[3];
+	f_v[3] += f_v[5] * v[1];
+	ok     &= std::fabs( f_v[1] - 0.25) <= 1e-10;   // f4_v1
+	ok     &= std::fabs( f_v[3] - 0.25) <= 1e-10;   // f4_v3
 
-	// remove s1 = s0 + r1 from f3 to get f4
-	df[ir+1] += df[is+1];
-	ok &= std::fabs( df[ir+1] - 1.25 ) <= 1e-10;  // f4_r1
+	// f3( v1 , v2 , v3 )
+	f_v[3] += f_v[4] * 1.;
+	ok     &= std::fabs( f_v[3] - 1.25) <= 1e-10;   // f3_v3
 
-	// remove r1 = q1 / k0 from f4 to get f5
-	df[iq+1] += df[ir+1] / k[0];
-	ok &= std::fabs( df[iq+1] - 1.25 ) <= 1e-10;  // f5_q1
+	// f2( v1 , v2 )
+	f_v[2] += f_v[3] / 1.;
+	ok     &= std::fabs( f_v[2] - 1.25) <= 1e-10;   // f2_v2
 
-	// remove q1 = r0 * a0 from f5 to get f6
-	df[ia+0] += r[0] * df[iq+1];
-	ok &= std::fabs( df[ia+0] - 1.5 ) <= 1e-10;   // f6_a0
+	// f1( v1 )
+	f_v[1] += f_v[2] * 1.;
+	ok     &= std::fabs( f_v[1] - 1.5 ) <= 1e-10;   // f2_v2
 
 	return ok;
 }

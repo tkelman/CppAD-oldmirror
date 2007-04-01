@@ -20,6 +20,11 @@ $spell
 $$
 
 $section exp_2: Reverse Mode Verification$$
+
+$index reverse, exp_2$$
+$index exp_2, reverse mode$$
+
+
 $codep */
 # include <cstddef>               // define size_t
 # include <cmath>                 // prototype for fabs
