@@ -22,7 +22,7 @@ $spell
 	bool
 $$
 
-$section An Example Exponential Approximation$$
+$section An Epsilon Accurate Exponential Approximation$$
 
 $index exp_eps$$
 $index example, algorithm$$
@@ -144,7 +144,8 @@ $syntax%-%u%$$
 $tend
 
 $children%
-	introduction/exp_apx/exp_eps.omh
+	introduction/exp_apx/exp_eps.omh%
+	introduction/exp_apx/exp_eps_cppad.cpp
 %$$
 
 $head Implementation$$

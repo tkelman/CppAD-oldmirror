@@ -42,29 +42,26 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Use v_1, ... , v_7 in exp_eps_rev.
+log_entry="Clean up exp_eps.
 
 svn_commit.sh: file that made this commit.
-exp_apx_rev.omh: move into part of exp_eps_rev.omh.
-exp_eps.omh: move text from exp_apx_rev.omh here.
-exp_eps_rev.cpp: use v_1, ... , v_7 in exp_eps_rev.
-exp_2_rev.cpp: minor edit.
-introduction.omh: remove reference to exp_apx_rev.omh.
+exp_eps.hpp: move exp_eps_cppad.cpp below exp_eps section.
+exp_eps_cppad.cpp: change references from e to epsilon.
+makefile.am: alphabetize file names.
+introduction.omh: move reference to exp_eps_cppad.cpp from here to exp_eps.hpp.
 " 
 add_list="
 "
 delete_list="
 "
 move_list="
-	omh/exp_apx_rev.omh
 "
 #
 change_list="
 	svn_commit.sh
-	introduction/exp_apx/exp_eps.omh
-	introduction/exp_apx/exp_eps_seq.cpp
-	introduction/exp_apx/exp_eps_rev.cpp
-	introduction/exp_apx/exp_2_rev.cpp
+	introduction/exp_apx/exp_eps.hpp
+	introduction/exp_apx/exp_eps_cppad.cpp
+	introduction/exp_apx/makefile.am
 	omh/introduction.omh
 "
 #
