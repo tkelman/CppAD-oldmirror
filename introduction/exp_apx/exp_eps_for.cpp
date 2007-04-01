@@ -23,14 +23,14 @@ $section exp_eps Forward Mode Verification$$
 $codep */
 
 # include <cmath>                           // for fabs function
-extern bool exp_eps_seq(void);              // prototype for exp_eps_seq
+extern bool exp_eps_seq_old(void);              // prototype for exp_eps_seq
 extern double a[1], q[3], r[3], s[3], k[3]; // global vars set by exp_eps_seq
 bool exp_eps_for(void)
 {	bool ok = true;
 	double a_x[1], q_x[3], r_x[3], s_x[3];
 
 	// make sure global variables have been computed by exp_eps_seq
-	ok &= exp_eps_seq();
+	ok &= exp_eps_seq_old();
 
 	// initial r and s values are parameters
 	r_x[0] = s_x[0] = 0.;

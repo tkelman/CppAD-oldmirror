@@ -27,8 +27,7 @@ $index exp_2, zero order$$
 
 $codep */
 # include <cmath>          // for fabs function
-double v[6];               // global variables set by this call
-bool exp_2_seq(void)
+bool exp_2_seq(double *v)  // double v[6]
 {	bool  ok = true;
 	double x = .5;
 
@@ -48,6 +47,10 @@ bool exp_2_seq(void)
 	ok  &= std::fabs( v[5] - 1.625) < 1e-10;
 
 	return ok;
+}
+bool exp_2_seq(void)
+{	double v[6];
+	return exp_2_seq(v);
 }
 /* $$
 $end

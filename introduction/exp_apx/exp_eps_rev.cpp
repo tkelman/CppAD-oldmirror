@@ -29,7 +29,7 @@ $section exp_eps Reverse Mode Verification$$
 $codep */
 # include <cstddef>                         // for size_t
 # include <cmath>                           // for fabs function
-extern bool exp_eps_seq(void);              // prototype for exp_eps_seq
+extern bool exp_eps_seq_old(void);              // prototype for exp_eps_seq
 extern double a[1], q[3], r[3], s[3], k[3]; // global vars set by exp_eps_seq
 bool exp_eps_rev(void)
 {	bool ok = true;
@@ -40,7 +40,7 @@ bool exp_eps_rev(void)
 	size_t ia = 0, iq = ia+1, ir = iq+3, is = ir+3;
 
 	// make sure global variables have been computed by exp_eps_seq
-	ok &= exp_eps_seq();
+	ok &= exp_eps_seq_old();
 
 	// initial all partial derivatives as zero
 	double df[10];

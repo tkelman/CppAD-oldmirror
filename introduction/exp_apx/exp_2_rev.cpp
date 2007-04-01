@@ -21,15 +21,15 @@ $$
 
 $section exp_2: Reverse Mode Verification$$
 $codep */
-# include <cstddef>              // define size_t
-# include <cmath>                // prototype for fabs
-extern bool exp_2_seq(void);     // prototype for exp_2_seq
-extern double v[6];              // global variables set by exp_2_seq
+# include <cstddef>               // define size_t
+# include <cmath>                 // prototype for fabs
+extern bool exp_2_seq(double *v); // prototype for exp_2_seq
 bool exp_2_rev(void)
 {	bool ok = true;
 
 	// set the value of v[j] for j = 1 , ... , 5
-	ok &= exp_2_seq();
+	double v[6];
+	ok &= exp_2_seq(v);
 
 	// initial all partial derivatives as zero
 	double f_v[6];

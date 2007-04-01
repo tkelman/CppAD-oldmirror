@@ -42,44 +42,31 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Improve exp_eps operation sequence.
+log_entry="Use v_1, ... , v_7 in exp_eps_seq.
 
 svn_commit.sh: file that made this commit.
-check_include_omh.sh: include introduction/exp_apx/?.omh in check.
-exp_eps.hpp: use v_1, ..., v_7 & multiple letter variable names in exp_eps.hpp.
-exp_eps.cpp: use v_1, ..., v_7 & multiple letter variable names in exp_eps.hpp.
-exp_eps_cppad.cpp: change e to epsilon
-exp_2.omh: minor edits.
-exp_2.hpp: minor edits.
-makefile.am: include exp_eps.omh.
-exp_apx.omh: move text into exp_eps.omh.
-exp_apx_seq.omh: move text into exp_eps.omh.
-introduction.omh: remove references to exp_apx.omh and exp_apx_seq.omh.
-exp_apx_rev.omh: fix crossreference to parameter:
-exp_apx_for.omh: fix crossreference to parameter:
+exp_eps_for.cpp: change name of old version of exp_eps_seq.
+exp_eps_seq.cpp: new version of exp_eps_seq (plus old with different name).
+exp_eps_rev.cpp: change name of old version of exp_eps_seq.
+exp_2_for.cpp: pass v as argument to exp_2_seq.
+exp_2_seq.cpp: make v an argument.
+exp_2_rev.cpp: pass v as argument to exp_2_seq.
 " 
 add_list="
-	introduction/exp_apx/exp_eps.omh
 "
 delete_list="
 "
 move_list="
-	omh/exp_apx.omh
-	omh/exp_apx_seq.omh
 "
 #
 change_list="
 	svn_commit.sh
-	check_include_omh.sh
-	introduction/exp_apx/exp_eps.cpp
-	introduction/exp_apx/exp_eps.hpp
-	introduction/exp_apx/exp_eps_cppad.cpp
-	introduction/exp_apx/exp_2.omh
-	introduction/exp_apx/exp_2.hpp
-	introduction/exp_apx/makefile.am
-	omh/exp_apx_rev.omh
-	omh/exp_apx_for.omh
-	omh/introduction.omh
+	introduction/exp_apx/exp_eps_for.cpp
+	introduction/exp_apx/exp_eps_seq.cpp
+	introduction/exp_apx/exp_eps_rev.cpp
+	introduction/exp_apx/exp_2_for.cpp
+	introduction/exp_apx/exp_2_seq.cpp
+	introduction/exp_apx/exp_2_rev.cpp
 "
 #
 copy_branch="" 
