@@ -42,38 +42,26 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Change file names in prepration for second order example.
+log_entry="Use zero Taylor coefficients in introduction.
 
 svn_commit.sh: file that made this commit.
-
+exp_2_for0.cpp: denote zero order coefficient values by v0[j].
+exp_eps.omh: denote zero order coefficient values by v_j^{(0)}.
+exp_2.omh: denote zero order coefficient values by v_j^{(0)}.
 " 
 add_list="
 "
 delete_list="
 "
 move_list="
-	introduction/exp_apx/exp_eps_for.cpp
-	introduction/exp_apx/exp_eps_rev.cpp
-	introduction/exp_apx/exp_eps_seq.cpp
-	introduction/exp_apx/exp_2_for.cpp
-	introduction/exp_apx/exp_2_rev.cpp
-	introduction/exp_apx/exp_2_seq.cpp
 "
 #
 change_list="
 	svn_commit.sh
-	introduction/exp_apx/exp_eps_rev1.cpp
 	introduction/exp_apx/exp_2_for0.cpp
-	introduction/exp_apx/exp_2_for1.cpp
 	introduction/exp_apx/exp_eps.omh
-	introduction/exp_apx/exp_2_rev1.cpp
 	introduction/exp_apx/exp_2.omh
-	introduction/exp_apx/main.cpp
-	introduction/exp_apx/makefile.am
 	introduction/exp_apx/exp_eps_for0.cpp
-	introduction/exp_apx/exp_eps_for1.cpp
-	omh/whats_new_06.omh
-	omh/introduction.omh
 "
 #
 copy_branch="" 

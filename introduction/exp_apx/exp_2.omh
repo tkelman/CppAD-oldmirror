@@ -40,6 +40,7 @@ $end
 -----------------------------------------------------------------------------
 $begin exp_2_for0$$
 $spell
+	Taylor
 	cpp
 	exp_2_seq
 	bool
@@ -56,9 +57,11 @@ $index zero, order forward$$
 $index order, zero forward$$
 $index forward, zero order$$
 
-$head Mathematical Function$$
-Suppose that we use the algorithm $xref/exp_2.hpp/$$
-to compute 
+
+$head Mathematical Form$$
+The operation sequence (see below) corresponding to
+the algorithm $xref/exp_2.hpp/$$ is the same for all values of $italic x$$.
+The mathematical form for the corresponding function is
 $latex \[
 	f(x) = 1 + x + x^2 / 2
 \] $$
@@ -66,6 +69,23 @@ An algorithmic differentiation package
 does not operate on the mathematical function $latex f(x)$$
 but rather on the particular algorithm used to compute the function 
 (in this case $cref/exp_2.hpp/$$).
+
+$head Zero Order Taylor Coefficients$$
+$index Taylor, zero order$$
+$index zero, order Taylor$$
+$index order, zero Taylor$$
+In general, a zero order forward sweep is given a vector
+$latex x^{(0)} \in \R^n$$ and it returns the corresponding vector
+$latex y^{(0)} \in \R^m$$ given by
+$latex \[
+	y^{(0)} = f( x^{(0)} )
+\]$$
+The superscript $latex (0)$$ denotes zero order Taylor coefficient which
+is like a zero order derivative; i.e., it is equal to the value
+of the corresponding variable.
+For the example we are considering here, 
+both $latex n$$ and $latex m$$ are equal to one.
+
 
 $head Operation Sequence$$
 An atomic $italic Type$$ operation is an operation
@@ -81,9 +101,9 @@ $pre
 
 $$
 We consider the case where $cref/exp_2.hpp/$$ is executed with
-$latex x = .5$$.
+$latex x^{(0)} = .5$$.
 The table below contains a trace of the corresponding operation sequence
-and zero order forward sweep values.
+and zero order Taylor coefficients.
 
 $subhead Index$$
 The Index column contains the index in the operation sequence
@@ -100,53 +120,52 @@ The Operation column contains the
 mathematical function corresponding to each atomic operation in the sequence.
 
 $subhead Zero Order$$
-The Zero Order column contains the variable value
-corresponding to each atomic operation in the sequence.
-These are also called the zero order forward mode values.
+The Zero Order column contains the zero order Taylor coefficient for
+the corresponding variable in the operation sequence.
 Forward mode refers to the fact that
-the computations are done in the same order as the original algorithm; i.e,
-in order of increasing index.
-Zero order refers to the fact that variable values are
-zero order derivatives.
+these coefficients are computed in the same order as the original algorithm; 
+i.e, in order of increasing index in the operation sequence.
 
 $subhead Trace$$
 $center
 $table
 $bold Index$$
-	$cnext $pre  $$ $cnext $bold Code$$ 
+	$cnext $pre  $$ $cnext $bold Code$$
 	$cnext $pre  $$ $cnext $bold Operation$$
 	$cnext $pre  $$ $cnext $bold Zero Order$$
 $rnext
 1
 	$cnext $pre  $$ $cnext $code Type v1  = x;$$
-	$cnext $cnext $latex v_1 = x $$ 
-	$cnext $cnext = 0.5      
+	$cnext $cnext $latex v_1 = x $$
+	$cnext $cnext $latex v_1^{(0)} = 0.5$$
 $rnext
 2
 	$cnext $pre  $$ $cnext $code Type v2  = Type(1) + v1;$$
-	$cnext $cnext $latex v_2 = 1 + v_1 $$ 
-	$cnext $cnext = 1.5      
+	$cnext $cnext $latex v_2 = 1 + v_1 $$
+	$cnext $cnext $latex v_2^{(0)} = 1.5$$
 $rnext
 3
 	$cnext $pre  $$ $cnext $code Type v3  = v1 * v1;$$
-	$cnext $cnext $latex v_3 = v_1 * v_1 $$ 
-	$cnext $cnext = 0.25      
+	$cnext $cnext $latex v_3 = v_1 * v_1 $$
+	$cnext $cnext $latex v_3^{(0)} = 0.25$$
 $rnext
 4
 	$cnext $pre  $$ $cnext $code Type v4  = v3 / Type(2);$$
-	$cnext $cnext $latex v_4 = v_3 / 2$$ 
-	$cnext $cnext = 0.125      
+	$cnext $cnext $latex v_4 = v_3 / 2$$
+	$cnext $cnext $latex v_4^{(0)} = 0.125$$
 $rnext
 5
 	$cnext $pre  $$ $cnext $code  Type v5  = v2 + v4;$$
-	$cnext $cnext $latex v_5 = v_2 + v_4 $$ 
-	$cnext $cnext = 1.625        
+	$cnext $cnext $latex v_5 = v_2 + v_4 $$
+	$cnext $cnext $latex v_5^{(0)} = 1.625$$
 $tend
 $$
 
 $head Return Value$$
-The return value of the algorithm for this case is
-$latex v_5$$ which is equal to 1.625.
+The return value for this case is
+$latex \[
+	y^{(0)} = f( x^{(0)} ) = v_5^{(0)} = 1.625
+\] $$
 
 $children%
 	introduction/exp_apx/exp_2_for0.cpp
@@ -159,12 +178,12 @@ It returns true for success and false for failure.
 
 $head Exercises$$
 $list number$$
-Suppose that $latex x = .2$$,
+Suppose that $latex x^{(0)} = .2$$,
 what is the result of a zero order forward sweep for 
 the operation sequence above; 
 i.e., what are the corresponding values for
 $latex \[
-	v_1 , v_2 , \cdots , v_5
+	v_1^{(0)} , v_2^{(0)} , \cdots , v_5^{(0)}
 \]$$
 $lnext
 Create a modified version of 

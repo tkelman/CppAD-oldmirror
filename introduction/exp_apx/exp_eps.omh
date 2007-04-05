@@ -40,6 +40,7 @@ $end
 -----------------------------------------------------------------------------
 $begin exp_eps_for0$$
 $spell
+	Taylor
 	cpp
 	exp_eps_seq
 	bool
@@ -61,15 +62,15 @@ Suppose that we use the algorithm $xref/exp_eps.hpp/$$
 to compute $syntax%exp_eps(%x%, %epsilon%)%$$
 with $italic x$$ is equal to .5
 and $italic epsilon$$ is equal to .2. 
-For this case, function corresponding to the $code exp_eps$$
-has the following form and function value:
+For this case, 
+the mathematical form for the operation sequence 
+corresponding to the $code exp_eps$$ is
 $latex \[
-\begin{array}{rclll}
-{\rm exp\_apx} ( x , \varepsilon ) & = &   1 + x + x^2 / 2  
-	& =   1 + .5 + 0.125 
-	& =   1.625
-\end{array}
+	f( x , \varepsilon ) = 1 + x + x^2 / 2  
 \] $$
+Note that, for these particular values of $italic x$$ and $italic epsilon$$,
+this is the same as the mathematical form for
+$cref/exp_2/exp_2_for0/Mathematical Form/$$.
 
 
 $head Operation Sequence$$
@@ -105,14 +106,12 @@ The Operation column contains the
 mathematical function corresponding to each atomic operation in the sequence.
 
 $subhead Zero Order$$
-The Zero Order column contains the variable value
-corresponding to each atomic operation in the sequence.
-These are also called the zero order forward mode values.
+The Zero Order column contains the 
+$cref/zero order Taylor coefficient/exp_2_for0/Zero Order Taylor Coefficients/$$
+for the corresponding variable in the operation sequence.
 Forward mode refers to the fact that
-the computations are done in the same order as the original algorithm; i.e,
-in order of increasing index.
-Zero order refers to the fact that variable values are
-zero order derivatives.
+these coefficients are computed in the same order as the original algorithm;
+i.e., in order of increasing index.
 
 
 $subhead Trace$$
@@ -125,44 +124,46 @@ $bold Index$$
 $rnext
 1
 	$cnext $pre  $$ $cnext $code abs_x = x;$$
-	$cnext $cnext $latex v_1 = x $$ 
-	$cnext $cnext = 0.5      
+	$cnext $cnext $latex v_1 = x $$
+	$cnext $cnext $latex v_1^{(0)} = 0.5$$
 $rnext
 2
 	$cnext $pre  $$ $cnext $code temp  = term * abs_x;$$
-	$cnext $cnext $latex v_2 = 1 * v_1 $$ 
-	$cnext $cnext = 0.5      
+	$cnext $cnext $latex v_2 = 1 * v_1 $$
+	$cnext $cnext $latex v_2^{(0)} = 0.5$$
 $rnext
 3
 	$cnext $pre  $$ $cnext $code term = temp / Type(k);$$
-	$cnext $cnext $latex v_3 = v_2 / 1$$ 
-	$cnext $cnext = 0.5      
+	$cnext $cnext $latex v_3 = v_2 / 1$$
+	$cnext $cnext $latex v_3^{(0)} = 0.5$$
 $rnext
 4
 	$cnext $pre  $$ $cnext $code sum  = sum + term;$$
-	$cnext $cnext $latex v_4 = 1 + v_3 $$ 
-	$cnext $cnext = 1.5      
+	$cnext $cnext $latex v_4 = 1 + v_3 $$
+	$cnext $cnext $latex v_4^{(0)} = 1.5$$
 $rnext
 5
 	$cnext $pre  $$ $cnext  $code temp  = term * abs_x;$$
-	$cnext $cnext $latex v_5 = v_3 * v_1 $$ 
-	$cnext $cnext = 0.25     
+	$cnext $cnext $latex v_5 = v_3 * v_1 $$
+	$cnext $cnext $latex v_5^{(0)} = 0.25$$
 $rnext
 6
 	$cnext $pre  $$ $cnext $code term = temp / Type(k);$$
-	$cnext $cnext $latex v_6 = v_5 / 2$$ 
-	$cnext $cnext = 0.125    
+	$cnext $cnext $latex v_6 = v_5 / 2$$
+	$cnext $cnext $latex v_6^{(0)} = 0.125$$
 $rnext
 7
 	$cnext $pre  $$ $cnext $code sum  = sum + term;$$
-	$cnext $cnext $latex v_7 = v_4 + v_6 $$ 
-	$cnext $cnext = 1.625    
+	$cnext $cnext $latex v_7 = v_4 + v_6 $$
+	$cnext $cnext $latex v_7^{(0)} = 1.625$$
 $tend
 $$
 
 $head Return  Value$$
-The return value of the algorithm for this case is
-$latex v_7$$ which is equal to 1.625.
+The return value for this case is
+$latex \[
+y^{(0)} = f ( x^{(0)} , \varepsilon^{(0)} ) = v_7^{(0)} = 1.625
+\] $$
 
 $head Comparisons$$
 If $italic x$$ were negative,
@@ -191,11 +192,11 @@ It returns true for success and false for failure.
 
 $head Exercises$$
 $list number$$
-Suppose that $latex x = .1$$,
+Suppose that $latex x^{(0)} = .1$$,
 what is the result of a zero order forward sweep for 
 the operation sequence above; 
 i.e., what are the corresponding values for
-$latex v_1 , v_2 , \ldots , v_7$$.
+$latex v_1^{(0)} , v_2^{(0)} , \ldots , v_7^{(0)}$$.
 $lnext
 Create a modified version of 
 $cref/exp_eps_for0.cpp/$$ that verifies the values you obtained
