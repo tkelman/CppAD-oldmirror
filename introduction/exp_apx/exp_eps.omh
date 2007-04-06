@@ -276,10 +276,10 @@ $subhead Derivative$$
 The Derivative column contains the
 mathematical function corresponding to the derivative
 with respect to $latex t$$,
-at $latex t = 0$$, for each operation in the sequence.
+at $latex t = 0$$, for each variable in the sequence.
 
 $subhead First Order$$
-The First Order column contains the First order derivatives
+The First Order column contains the first order derivatives
 for the corresponding variable in the operation sequence; i.e.,
 $latex \[
 	v_j (t) = v_j^{(0)} + v_j^{(1)} t

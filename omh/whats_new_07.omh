@@ -39,6 +39,21 @@ This section contains a list of the changes to CppAD during 2007
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
 
+$head 04-06$$
+Working in $code branches/intro$$ (again).
+
+$subhead 04-06$$
+Fixed a problem with the Microsoft Visual Studio project file 
+$code introduction/exp_apx/exp_apx.vcproj$$
+(it did not track the file name changes of the form 
+$code exp_apx/exp_2_for$$ to $code exp_apx/exp_2_for1$$ 
+on 04-05).
+
+$subhead 04-05$$
+Use order expansions in introduction; e.g., the
+$cref/second order expansion/exp_2_for2/Second Order Expansion/$$ 
+for the $cref/exp_2/$$ example.
+
 $head 03-31$$
 Merge in changes made in $code branches/intro$$
 and remove the corresponding Introduction item from the wish list:

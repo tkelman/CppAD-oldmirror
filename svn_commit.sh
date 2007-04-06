@@ -42,14 +42,20 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Clean up and prepration for second order calculations.
+log_entry="Add second order forward sweep for exp_2.
 
-exp_eps_rev1.cpp: change v to v0 to emphasize result of zero order sweep.
-exp_eps.omh: add derivative of mathematical form to presentation.
-exp_2_rev1.cpp: change v to v0 to emphasize result of zero order sweep.
-exp_2.omh: add derivative of mathematical form to presentation.
+svn_commit.sh: file that made this commit.
+exp_eps.omh: refer to derivative of variables instead of operations.
+exp_2_for1.cpp: make first order results a parameter.
+exp_2.omh: add second order forward sweep section.
+main.cpp: add exp_2_for2 and align columns.
+exp_apx.vcproj: redo all source files (has been out of date).
+makefile.am: add exp_2_for2.
+doc.omh: add latex macro and reference to wikipedia.
+whats_new_07.omh
 " 
 add_list="
+	introduction/exp_apx/exp_2_for2.cpp
 "
 delete_list="
 "
@@ -58,10 +64,14 @@ move_list="
 #
 change_list="
 	svn_commit.sh
-	introduction/exp_apx/exp_eps_rev1.cpp
 	introduction/exp_apx/exp_eps.omh
-	introduction/exp_apx/exp_2_rev1.cpp
+	introduction/exp_apx/exp_2_for1.cpp
 	introduction/exp_apx/exp_2.omh
+	introduction/exp_apx/main.cpp
+	introduction/exp_apx/exp_apx.vcproj
+	introduction/exp_apx/makefile.am
+	doc.omh
+	omh/whats_new_07.omh
 "
 #
 copy_branch="" 

@@ -277,10 +277,10 @@ $subhead Derivative$$
 The Derivative column contains the
 mathematical function corresponding to the derivative
 with respect to $latex t$$,
-at $latex t = 0$$, for each operation in the sequence.
+at $latex t = 0$$, for each variable in the sequence.
 
 $subhead First Order$$
-The First Order column contains the First order derivatives
+The First Order column contains the first order derivatives
 for the corresponding variable in the operation sequence; i.e.,
 $latex \[
 	v_j (t) = v_j^{(0)} + v_j^{(1)} t
@@ -573,6 +573,212 @@ that verifies the values you obtained for the previous exercise.
 Also create and run a main program that reports the result
 of calling the modified version of
 $cref/exp_2_rev1.cpp/$$.
+$lend
+
+$end
+------------------------------------------------------------------------------
+$begin exp_2_for2$$
+$spell
+	Taylor
+	exp_2_for
+$$
+
+$section exp_2: Second Order Forward Mode$$
+
+$index exp_2, forward mode$$
+$index example, forward mode$$
+$index forward, mode example$$
+$index mode, example forward$$
+$index forward, second order$$
+
+
+$head Second Order Expansion$$
+$index second, order expansion$$
+$index order, second expansion$$
+$index expansion, second order$$
+We are given a Taylor expansion for $latex x(t)$$ near $latex t = 0$$
+defined by
+$latex \[
+	x(t) = x^{(0)} + x^{(1)} * t + x^{(1)} * t^2 / 2
+\]$$
+It follows that for $latex k = 0 , 1 , 2$$,
+$latex \[
+	x^{(k)} = \dpow{k}{t} x (0)
+\] $$
+
+$head Purpose$$
+In general, a second order forward sweep is given the
+$cref/first order expansion/exp_2_for1/First Order Expansion/$$
+for all of the variables in an operation sequence,
+and the second order derivatives for the independent variables.
+It uses these to compute the second order derivative,
+and thereby obtain the second order expansion,
+for all the variables in the operation sequence.
+
+$head Mathematical Form$$
+Suppose that we use the algorithm $xref/exp_2.hpp/$$ to compute 
+$latex \[
+	f(x) = 1 + x + x^2 / 2
+\] $$
+The corresponding second derivative function is 
+$latex \[
+	\Dpow{2}{x} f (x) =   1
+\] $$
+
+$head Operation Sequence$$
+We consider the case where $cref/exp_2.hpp/$$ is executed with
+$latex x = .5$$.
+The corresponding operation sequence,
+zero order forward sweep values,
+and first order forward sweep values
+are inputs and are used by a second order forward sweep.
+
+$subhead Index$$
+The Index column contains the index in the operation sequence
+of the corresponding atomic operation. 
+A Forward sweep starts with the first operation 
+and ends with the last.
+
+$subhead Operation$$
+The Operation column contains the 
+mathematical function corresponding to each atomic operation in the sequence.
+
+$subhead Zero$$
+The Zero column contains the zero order sweep results
+for the corresponding variable in the operation sequence
+(see $cref/zero order trace/exp_2_for0/Operation Sequence/Trace/$$).
+
+$subhead First$$
+The First column contains the first order sweep results
+for the corresponding variable in the operation sequence
+(see $cref/first order trace/exp_2_for1/Operation Sequence/Trace/$$).
+
+$subhead Derivative$$
+The Derivative column contains the
+mathematical function corresponding to the second derivative
+with respect to $latex t$$,
+at $latex t = 0$$, for each variable in the sequence.
+
+$subhead Second$$
+The Second column contains the second order derivatives
+for the corresponding variable in the operation sequence; i.e.,
+the second order expansion for the $th i$$ variable is given by
+$latex \[
+	v_i (t) = v_i^{(0)} + v_i^{(1)} * t +  v_i^{(2)} * t^2 / 2
+\] $$
+We use $latex x^{(0)} = 1$$, and $latex x^{(2)} = 0$$
+so that second order differentiation
+with respect to $latex t$$, at $latex t = 0$$, 
+is the same as the second partial differentiation 
+with respect to $latex x$$ at $latex x = x^{(0)}$$.
+
+
+$subhead Trace$$
+In the trace below we use the fact that
+$latex \[
+\begin{array}{rcl}
+v_3 (t) 
+& = & 
+\left( v_1^{(0)} + v_1^{(1)} * t + v_1^{(2)} * t^2 / 2 \right)^2
+\\
+\dpow{1}{t} v_3 (t) 
+& = & 
+2 \left( v_1^{(0)} + v_1^{(1)} * t + v_1^{(2)} * t^2 / 2 \right) 
+* \left( v_1^{(1)} + v_1^{(2)} * t \right)
+\\
+\dpow{2}{t} v_3 (t) 
+& = &
+2 \left( v_1^{(1)} + v_1^{(2)} * t \right)^2 
++
+2 \left( v_1^{(0)} + v_1^{(1)} * t + v_1^{(2)} * t^2 / 2 \right) * v_1^{(2)}
+\\
+\dpow{2}{t} v_3 (0)
+& = &
+2 * \left( v_1^{(1)} * v_1^{(1)} + v_1^{(0)} * v_1^{(2)} \right)
+\end{array}
+\] $$
+
+$center
+$table
+$bold Index$$
+	$cnext $pre  $$ $cnext $bold Operation$$ 
+	$cnext $pre  $$ $cnext $bold Zero$$
+	$cnext $pre  $$ $cnext $bold First$$
+	$cnext $pre  $$ $cnext $bold Derivative$$
+	$cnext $pre  $$ $cnext $bold Second$$
+$rnext
+1
+	$cnext $pre  $$ $cnext $latex v_1 = x $$
+	$cnext $cnext 0.5
+	$cnext $cnext 1
+	$cnext $cnext 
+	$latex v_1^{(2)} = x^{(2)}$$
+	$cnext $cnext $latex v_1^{(2)} = 0$$
+$rnext
+2
+	$cnext $pre  $$ $cnext $latex v_2 = 1 + v_1$$
+	$cnext $cnext 1.5
+	$cnext $cnext 1
+	$cnext $cnext 
+	$latex v_2^{(2)} = v_1^{(2)}$$
+	$cnext $cnext $latex v_2^{(2)} = 0$$
+$rnext
+3
+	$cnext $pre  $$ $cnext $latex v_3 = v_1 * v_1$$
+	$cnext $cnext 0.25
+	$cnext $cnext 1
+	$cnext $cnext 
+$latex v_3^{(2)} = 2 * (v_1^{(1)} * v_1^{(1)} + v_1^{(0)} * v_1^{(2)} )$$
+	$cnext $cnext $latex v_3^{(2)} = 2$$
+$rnext
+4
+	$cnext $pre  $$ $cnext $latex v_4 = v_3 / 2$$
+	$cnext $cnext 0.125
+	$cnext $cnext .5
+	$cnext $cnext 
+	$latex v_4^{(2)} = v_3^{(2)} / 2$$
+	$cnext $cnext $latex v_4^{(2)} = 1$$
+$rnext
+5	$cnext $pre $$  $cnext $latex v_5 = v_2 + v_4$$
+	$cnext $cnext 1.625
+	$cnext $cnext 1.5
+	$cnext $cnext
+	$latex v_5^{(2)} = v_2^{(2)} + v_4^{(2)}$$
+	$cnext $cnext $latex v_5^{(2)} = 1$$
+$tend
+$$
+
+$head Return Value$$
+The return value for this case is
+$latex \[
+	y^{(2)} = \Dpow{2}{x} f ( x^{(0)} ) = v_5^{(2)} = 1
+\] $$
+
+$children%
+	introduction/exp_apx/exp_2_for2.cpp
+%$$
+$head Verification$$
+The file $xref/exp_2_for2.cpp/$$ contains a routine 
+which verifies the values computed above.
+It returns true for success and false for failure.
+
+$head Exercises$$
+$list number$$
+Which statement in the routine defined by $cref/exp_2_for2.cpp/$$ uses 
+the values that are calculated by the routine 
+defined by $cref/exp_2_for1.cpp/$$ ?
+$lnext
+Suppose that $latex x = .1$$,
+what are the results of a zero, first, and second order forward mode sweep for 
+the operation sequence above; 
+i.e., what are the corresponding values for
+$latex v_i^{(k)}$$ for $latex i = 1, \ldots , 5$$ and $latex k = 0, 1, 2$$.
+$lnext
+Create a modified version of $cref/exp_2_for2.cpp/$$ that verifies 
+the derivative values from the previous exercise.
+Also create and run a main program that reports the result
+of calling the modified version of
+$cref/exp_2_for2.cpp/$$.
 $lend
 
 $end
