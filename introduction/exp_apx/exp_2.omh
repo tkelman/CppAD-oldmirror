@@ -69,10 +69,10 @@ does not operate on the mathematical function $latex f(x)$$
 but rather on the particular algorithm used to compute the function 
 (in this case $cref/exp_2.hpp/$$).
 
-$head Zero Order Derivative$$
-$index derivative, zero order$$
-$index zero, order derivative$$
-$index order, zero derivative$$
+$head Zero Order Expansion$$
+$index expansion, zero order$$
+$index zero, order expansion$$
+$index order, zero expansion$$
 In general, a zero order forward sweep is given a vector
 $latex x^{(0)} \in \R^n$$ and it returns the corresponding vector
 $latex y^{(0)} \in \R^m$$ given by
@@ -212,22 +212,23 @@ $index mode, example forward$$
 $index forward, first order$$
 
 
-$head First Order Derivative$$
-$index first, order derivative$$
-$index order, first derivative$$
-$index derivative, first order$$
+$head First Order Expansion$$
+$index first, order expansion$$
+$index order, first expansion$$
+$index expansion, first order$$
 We are given a Taylor expansion for $latex x(t)$$ near $latex t = 0$$
 defined by
 $latex \[
 	x(t) = x^{(0)} + x^{(1)} * t
 \]$$
-we call $latex x^{(0)}$$ the zero,
+it follows that $latex x^{(0)}$$ is the zero,
 and $latex x^{(1)}$$ the first,
-order derivative for $latex x(t)$$.
+order derivative of $latex x(t)$$
+at $latex t = 0$$.
 
 $head Purpose$$
 In general, a first order forward sweep is given the
-$cref/zero order derivative/exp_2_for0/Zero Order Derivative/$$
+$cref/zero order derivative/exp_2_for0/Zero Order Expansion/$$
 for all of the variables in an operation sequence,
 and the first order derivatives for the independent variables.
 It uses these to compute the first order derivatives for 
@@ -268,14 +269,15 @@ The Operation column contains the
 mathematical function corresponding to each atomic operation in the sequence.
 
 $subhead Zero Order$$
-The Zero Order column contains the Zero order derivatives
+The Zero Order column contains the zero order derivatives
 for the corresponding variable in the operation sequence
 (see $cref/zero order trace/exp_2_for0/Operation Sequence/Trace/$$).
 
 $subhead Derivative$$
 The Derivative column contains the
 mathematical function corresponding to the derivative
-with respect to $latex t$$ for each operation in the sequence.
+with respect to $latex t$$,
+at $latex t = 0$$, for each operation in the sequence.
 
 $subhead First Order$$
 The First Order column contains the First order derivatives
@@ -284,8 +286,9 @@ $latex \[
 	v_j (t) = v_j^{(0)} + v_j^{(1)} t
 \] $$
 We use $latex x^{(0)} = 1$$ so that differentiation
-with respect to $latex t$$ is the same partial differentiation 
-with respect to $latex x$$.
+with respect to $latex t$$,
+at $latex t = 0$$, is the same partial differentiation 
+with respect to $latex x$$ at $latex x = x^{(0)}$$.
 
 
 

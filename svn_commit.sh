@@ -42,12 +42,7 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Use zero Taylor coefficients in introduction.
-
-svn_commit.sh: file that made this commit.
-exp_2_for0.cpp: denote zero order coefficient values by v0[j].
-exp_eps.omh: denote zero order coefficient values by v_j^{(0)}.
-exp_2.omh: denote zero order coefficient values by v_j^{(0)}.
+log_entry="Improve notation in preparation for first order reverse changes.
 " 
 add_list="
 "
@@ -58,10 +53,8 @@ move_list="
 #
 change_list="
 	svn_commit.sh
-	introduction/exp_apx/exp_2_for0.cpp
-	introduction/exp_apx/exp_eps.omh
 	introduction/exp_apx/exp_2.omh
-	introduction/exp_apx/exp_eps_for0.cpp
+	introduction/exp_apx/exp_eps.omh
 "
 #
 copy_branch="" 
