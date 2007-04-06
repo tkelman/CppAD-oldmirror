@@ -42,7 +42,12 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Improve notation in preparation for first order reverse changes.
+log_entry="Clean up and prepration for second order calculations.
+
+exp_eps_rev1.cpp: change v to v0 to emphasize result of zero order sweep.
+exp_eps.omh: add derivative of mathematical form to presentation.
+exp_2_rev1.cpp: change v to v0 to emphasize result of zero order sweep.
+exp_2.omh: add derivative of mathematical form to presentation.
 " 
 add_list="
 "
@@ -53,8 +58,10 @@ move_list="
 #
 change_list="
 	svn_commit.sh
-	introduction/exp_apx/exp_2.omh
+	introduction/exp_apx/exp_eps_rev1.cpp
 	introduction/exp_apx/exp_eps.omh
+	introduction/exp_apx/exp_2_rev1.cpp
+	introduction/exp_apx/exp_2.omh
 "
 #
 copy_branch="" 

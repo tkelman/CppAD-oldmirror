@@ -245,15 +245,17 @@ Suppose that we use the algorithm $xref/exp_eps.hpp/$$
 to compute $syntax%exp_eps(%x%, %epsilon%)%$$
 with $italic x$$ is equal to .5
 and $italic epsilon$$ is equal to .2. 
-For this case, the mathematical form for the operation sequence
+For this case, the mathematical function for the operation sequence
 corresponding to $code exp_eps$$ is
 $latex \[
 f ( x , \varepsilon ) =   1 + x + x^2 / 2  
 \] $$
+The corresponding partial derivative and the value of the derivative are
+$latex \[
+\partial_x f ( x , \varepsilon ) =   1 + x  = 1.5
+\] $$
 
 $head Operation Sequence$$
-We consider the case where $cref/exp_eps.hpp/$$ is executed
-with $latex x = .5$$ and $latex \varepsilon = .2$$.
 
 $subhead Index$$
 The Index column contains the index in the operation sequence
@@ -285,7 +287,8 @@ $latex \[
 We use $latex x^{(0)} = 1$$ and $latex \varepsilon^{(1)} = 0$$,
 so that differentiation with respect to $latex t$$,
 at $latex t = 0$$, 
-is the same partial differentiation with respect to $latex x$$ at $latex x = x^{(0)}$$.
+is the same partial differentiation with respect to $latex x$$ 
+at $latex x = x^{(0)}$$.
 
 
 $subhead Trace$$
@@ -403,12 +406,38 @@ $index reverse, first order$$
 $head First Order Reverse$$
 First order reverse mode uses the 
 $cref/operation sequence/exp_eps_for0/Operation Sequence/$$
-and 
-$cref/zero order/exp_eps_for0/Operation Sequence/Zero Order/$$
-forward sweep values
+and zero order forward sweep values,
 to compute the first order derivative
-of one dependent variables with respect to all the independent variables. 
-The computations are done in the reverse order of the original algorithm.
+of one dependent variable with respect to all the independent variables. 
+The computations are done in reverse 
+of the order of the computations in the original algorithm.
+
+$head Mathematical Form$$
+Suppose that we use the algorithm $xref/exp_eps.hpp/$$
+to compute $syntax%exp_eps(%x%, %epsilon%)%$$
+with $italic x$$ is equal to .5
+and $italic epsilon$$ is equal to .2. 
+For this case, the mathematical function for the operation sequence
+corresponding to $code exp_eps$$ is
+$latex \[
+f ( x , \varepsilon ) =   1 + x + x^2 / 2  
+\] $$
+The corresponding partial derivatives and the value of the derivative are
+$latex \[
+\begin{array}{rcl}
+\partial_x f ( x , \varepsilon ) & = &  1 + x  = 1.5
+\\
+\partial_\varepsilon f ( x , \varepsilon ) & = &  0
+\end{array}
+\] $$
+
+$head epsilon$$
+Since $latex \varepsilon$$ is an independent variable,
+it could included as an argument to all of the
+$latex f_j$$ functions below.
+The result would be that all the partials with respect to 
+$latex \varepsilon$$ would be zero and hence we drop it to simplify
+the presentation.
 
 $head f_7$$
 In reverse mode we choose one dependent variable and
