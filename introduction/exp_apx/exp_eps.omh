@@ -40,7 +40,6 @@ $end
 -----------------------------------------------------------------------------
 $begin exp_eps_for0$$
 $spell
-	Taylor
 	cpp
 	exp_eps_seq
 	bool
@@ -107,7 +106,7 @@ mathematical function corresponding to each atomic operation in the sequence.
 
 $subhead Zero Order$$
 The Zero Order column contains the 
-$cref/zero order Taylor coefficient/exp_2_for0/Zero Order Taylor Coefficients/$$
+$cref/zero order derivative/exp_2_for0/Zero Order Derivative/$$
 for the corresponding variable in the operation sequence.
 Forward mode refers to the fact that
 these coefficients are computed in the same order as the original algorithm;
@@ -211,6 +210,7 @@ $end
 -----------------------------------------------------------------------------
 $begin exp_eps_for1$$
 $spell
+	Taylor
 	exp_eps_for
 $$
 
@@ -220,40 +220,38 @@ $index first, order forward$$
 $index order, first forward$$
 $index forward, first order$$
 
+
+$head First Order Derivative$$
+$index first, order derivative$$
+$index order, first derivative$$
+$index derivative, first order$$
+We are given a Taylor expansion for $latex [ x(t) , \varepsilon(t) ]$$ 
+near $latex t = 0$$ defined by
+$latex \[
+\begin{array}{rcl}
+	x(t) & = & x^{(0)} + x^{(1)} * t 
+	\\
+	\varepsilon(t) & = & \varepsilon^{(0)} + \varepsilon^{(1)} * t
+\end{array}
+\]$$
+we call $latex x^{(0)}$$ ($latex \varepsilon^{(0)}$$) the zero,
+and $latex x^{(1)}$$  ($latex \varepsilon^{(1)}$$) the first,
+order derivative for $latex x(t)$$ ($latex \varepsilon (t)$$).
+
 $head Mathematical Form$$
 Suppose that we use the algorithm $xref/exp_eps.hpp/$$
 to compute $syntax%exp_eps(%x%, %epsilon%)%$$
 with $italic x$$ is equal to .5
 and $italic epsilon$$ is equal to .2. 
-For this case, function corresponding to the 
-$cref/exp_eps operation sequence/exp_eps_for0/Operation Sequence/$$
-has the following form and partial derivative:
+For this case, the mathematical form for the operation sequence
+corresponding to $code exp_eps$$ is
 $latex \[
-\begin{array}{rclll}
-{\rm exp\_apx} ( x , \varepsilon ) & = &   1 + x + x^2 / 2  
-\\
-\partial_x {\rm exp\_apx} ( x , \varepsilon ) & = &   1 + x 
-	& =   1 + .5 
-	& =   1.5
-\end{array}
+f ( x , \varepsilon ) =   1 + x + x^2 / 2  
 \] $$
 
 $head Operation Sequence$$
-The corresponding 
-$cref/operation sequence/exp_eps_for0/Operation Sequence/$$
-and 
-$cref/zero order/exp_eps_for0/Operation Sequence/Zero Order/$$
-forward sweep values
-are inputs that are need by a first order sweep.
-A first order sweep 
-computes the first order partial derivative
-of all the dependent variables with respect to one independent variable. 
-The $code exp_eps$$ operation sequence depends on $italic epsilon$$,
-but for a given the operation sequence,
-the values computed do not depend on $italic epsilon$$.
-Thus, the partial derivative with respect to $italic epsilon$$,
-of any of the variables in the operation sequence,
-is zero.
+We consider the case where $cref/exp_eps.hpp/$$ is executed
+with $latex x = .5$$ and $latex \varepsilon = .2$$.
 
 $subhead Index$$
 The Index column contains the index in the operation sequence
@@ -266,19 +264,25 @@ The Operation column contains the
 mathematical function corresponding to each atomic operation in the sequence.
 
 $subhead Zero Order$$
-The Zero Order column contains the function value
-(zero order forward sweep value)
-corresponding to each atomic operation in the sequence.
+The Zero Order column contains the Zero order derivatives
+for the corresponding variable in the operation sequence
+(see $cref/zero order trace/exp_2_for1/Operation Sequence/Trace/$$).
 
-$subhead Partial$$
-The Partial column contains the
-mathematical function corresponding to the partial derivative
-with respect to $italic x$$ for each operation in the sequence.
+$subhead Derivative$$
+The Derivative column contains the
+mathematical function corresponding to the derivative
+with respect to $latex t$$ for each operation in the sequence.
 
 $subhead First Order$$
-The First Order column contains the partial derivative value
-(first order forward sweep value)
-corresponding to each atomic operation in the sequence.
+The First Order column contains the First order derivatives
+for the corresponding variable in the operation sequence; i.e.,
+$latex \[
+	v_j (t) = v_j^{(0)} + v_j^{(1)} t
+\] $$
+We use $latex x^{(0)} = 1$$ and $latex \varepsilon^{(1)} = 0$$,
+so that differentiation with respect to $latex t$$ 
+is the same partial differentiation with respect to $latex x$$.
+
 
 $subhead Trace$$
 
@@ -287,62 +291,65 @@ $table
 $bold Index$$
 	$cnext $pre  $$ $cnext $bold Operation$$ 
 	$cnext $pre  $$ $cnext $bold Zero Order$$
-	$cnext $pre  $$ $cnext $bold Partial$$
+	$cnext $pre  $$ $cnext $bold Derivative$$
 	$cnext $pre  $$ $cnext $bold First Order$$
 $rnext
 1
 	$cnext $pre  $$ $cnext $latex v_1 = x $$
-	$cnext $cnext = 0.5
+	$cnext $cnext 0.5
 	$cnext $cnext 
-	$latex \partial_x v_1 = \partial_x x  $$
-	$cnext $cnext = 1
+	$latex v_1^{(1)} = x^{(1)}  $$
+	$cnext $cnext  $latex v_1^{(1)} = 1$$
 $rnext
 2
 	$cnext $pre  $$ $cnext $latex v_2 = 1 * v_1$$
-	$cnext $cnext = 0.5
+	$cnext $cnext 0.5
 	$cnext $cnext 
-	$latex \partial_x v_2 = 1 * \partial_x v_1$$
-	$cnext $cnext = 1
+	$latex v_2^{(1)} = 1 * v_1^{(1)}$$
+	$cnext $cnext $latex v_2^{(1)} = 1$$
 $rnext
 3
 	$cnext $pre  $$ $cnext $latex v_3 = v_2 / 1$$
-	$cnext $cnext = 0.5
+	$cnext $cnext 0.5
 	$cnext $cnext 
-	$latex \partial_x v_3 = ( \partial_x v_2 ) / 1$$
-	$cnext $cnext = 1
+	$latex v_3^{(1)} = v_2^{(1)} / 1$$
+	$cnext $cnext $latex v_3^{(1)} = 1$$
 $rnext
 4
 	$cnext $pre  $$ $cnext $latex v_4 = 1 + v_3$$
-	$cnext $cnext = 1.5
+	$cnext $cnext 1.5
 	$cnext $cnext 
-	$latex \partial_x v_4 = \partial_x v_3 $$
-	$cnext $cnext = 1
+	$latex v_4^{(1)} = v_3^{(1)} $$
+	$cnext $cnext $latex v_4^{(1)} = 1$$
 $rnext
 5
 	$cnext $pre  $$ $cnext $latex v_5 = v_3 * v_1$$
-	$cnext $cnext = 0.25
+	$cnext $cnext 0.25
 	$cnext $cnext 
-$latex \partial_x v_5 = ( \partial_x v_3 ) * v_1 + v_3 * ( \partial_x v_1 )$$
-	$cnext $cnext = 1
+	$latex v_5^{(1)} = v_3^{(1)} * v_1^{(0)} + v_3^{(0)} * v_1^{(1)}$$
+	$cnext $cnext $latex v_5^{(1)} = 1$$
 $rnext
 6
 	$cnext $pre  $$ $cnext $latex v_6 = v_5 / 2$$
-	$cnext $cnext = 0.125
+	$cnext $cnext 0.125
 	$cnext $cnext 
-	$latex \partial_x v_6 = ( \partial_x v_5 ) / 2$$
-	$cnext $cnext = 0.5
+	$latex v_6^{(1)} = v_5^{(1)} / 2$$
+	$cnext $cnext $latex v_6^{(1)} = 0.5$$
 $rnext
 7
 	$cnext $pre  $$ $cnext $latex v_7 = v_4 + v_6$$
-	$cnext $cnext = 1.625
+	$cnext $cnext 1.625
 	$cnext $cnext 
-	$latex  \partial_x v_7 = \partial_x v_4 + \partial_x v_6$$
-	$cnext $cnext = 1.5
+	$latex  v_7^{(1)} = v_4^{(1)} + v_6^{(1)}$$
+	$cnext $cnext $latex  v_7^{(1)} = 1.5$$
 $tend
 $$
-Thus forward mode returns
-1.5 as the derivative of the return value $latex v_7$$ 
-for this case.
+
+$head Return Value$$
+The return value for this case is
+$latex \[
+	y^{(1)} = \partial_x f ( x^{(0)} ) = v_7^{(1)} = 1.5
+\] $$
 
 
 $children%
@@ -360,8 +367,8 @@ Suppose that $latex x = .1$$,
 what are the results of a zero and first order forward mode sweep for 
 the operation sequence above; 
 i.e., what are the corresponding values for
-$latex v_1 , v_2 , \cdots , v_7$$ and
-$latex \partial_x v_1 , \partial_x v_2 , \cdots , \partial_x v_7$$ ?
+$latex v_1^{(0)}, v_2^{(0)}, \cdots , v_7^{(0)}$$ and
+$latex v_1^{(1)}, v_2^{(1)}, \cdots , v_7^{(1)}$$ ?
 $lnext
 Create a modified version of $cref/exp_eps_for1.cpp/$$ that verifies 
 the derivative values from the previous exercise.
