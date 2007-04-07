@@ -42,6 +42,10 @@ assist you in learning about changes between various versions of CppAD.
 $head 04-06$$
 Working in $code branches/intro$$ (again).
 
+$subhead 04-07$$
+Added a preliminary version of $cref/exp_2_rev2/$$
+(does not yet have verification or exercises).
+
 $subhead 04-06$$
 Fixed a problem with the Microsoft Visual Studio project file 
 $code introduction/exp_apx/exp_apx.vcproj$$

@@ -42,14 +42,13 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Use first derivative as base operation for second derivative.
+log_entry="Preliminary version of exp_2 second order reverse.
 
 svn_commit.sh: file that made this commit.
-exp_eps.omh: refer to derivative of variables instead of operations.
-exp_2.omh: add second order forward sweep section.
+whats_new_07.omh: user's view of the changes.
+exp_2.omh: add second order reverse sweep section exp_2_rev2.
 " 
 add_list="
-	introduction/exp_apx/exp_2_for2.cpp
 "
 delete_list="
 "
@@ -59,7 +58,6 @@ move_list="
 change_list="
 	svn_commit.sh
 	omh/whats_new_07.omh
-	introduction/exp_apx/exp_eps.omh
 	introduction/exp_apx/exp_2.omh
 "
 #
