@@ -101,8 +101,8 @@ $pre
 $$
 We consider the case where $cref/exp_2.hpp/$$ is executed with
 $latex x^{(0)} = .5$$.
-The table below contains a trace of the corresponding operation sequence
-and zero order derivatives.
+The table below contains the corresponding operation sequence
+and the results of a zero order sweep.
 
 $subhead Index$$
 The Index column contains the index in the operation sequence
@@ -125,7 +125,7 @@ Forward mode refers to the fact that
 these coefficients are computed in the same order as the original algorithm; 
 i.e, in order of increasing index in the operation sequence.
 
-$subhead Trace$$
+$subhead Sweep$$
 $center
 $table
 $bold Index$$
@@ -255,7 +255,7 @@ We consider the case where $cref/exp_2.hpp/$$ is executed with
 $latex x = .5$$.
 The corresponding operation sequence and 
 zero order forward mode values
-(see $cref/zero order trace/exp_2_for0/Operation Sequence/Trace/$$)
+(see $cref/zero order sweep/exp_2_for0/Operation Sequence/Sweep/$$)
 are inputs and are used by a first order forward mode sweep.
 
 $subhead Index$$
@@ -271,7 +271,7 @@ mathematical function corresponding to each atomic operation in the sequence.
 $subhead Zero Order$$
 The Zero Order column contains the zero order derivatives
 for the corresponding variable in the operation sequence
-(see $cref/zero order trace/exp_2_for0/Operation Sequence/Trace/$$).
+(see $cref/zero order sweep/exp_2_for0/Operation Sequence/Sweep/$$).
 
 $subhead Derivative$$
 The Derivative column contains the
@@ -292,7 +292,7 @@ with respect to $latex x$$ at $latex x = x^{(0)}$$.
 
 
 
-$subhead Trace$$
+$subhead Sweep$$
 
 $center
 $table
@@ -639,19 +639,19 @@ of the corresponding atomic operation.
 A Forward sweep starts with the first operation 
 and ends with the last.
 
-$subhead Operation$$
-The Operation column contains the 
-mathematical function corresponding to each atomic operation in the sequence.
-
 $subhead Zero$$
 The Zero column contains the zero order sweep results
 for the corresponding variable in the operation sequence
-(see $cref/zero order trace/exp_2_for0/Operation Sequence/Trace/$$).
+(see $cref/zero order sweep/exp_2_for0/Operation Sequence/Sweep/$$).
+
+$subhead Operation$$
+The Operation column contains the 
+first order sweep operation for this variable.
 
 $subhead First$$
 The First column contains the first order sweep results
 for the corresponding variable in the operation sequence
-(see $cref/first order trace/exp_2_for1/Operation Sequence/Trace/$$).
+(see $cref/first order sweep/exp_2_for1/Operation Sequence/Sweep/$$).
 
 $subhead Derivative$$
 The Derivative column contains the
@@ -673,74 +673,52 @@ is the same as the second partial differentiation
 with respect to $latex x$$ at $latex x = x^{(0)}$$.
 
 
-$subhead Trace$$
-In the trace below we use the fact that
-$latex \[
-\begin{array}{rcl}
-v_3 (t) 
-& = & 
-\left( v_1^{(0)} + v_1^{(1)} * t + v_1^{(2)} * t^2 / 2 \right)^2
-\\
-\dpow{1}{t} v_3 (t) 
-& = & 
-2 \left( v_1^{(0)} + v_1^{(1)} * t + v_1^{(2)} * t^2 / 2 \right) 
-* \left( v_1^{(1)} + v_1^{(2)} * t \right)
-\\
-\dpow{2}{t} v_3 (t) 
-& = &
-2 \left( v_1^{(1)} + v_1^{(2)} * t \right)^2 
-+
-2 \left( v_1^{(0)} + v_1^{(1)} * t + v_1^{(2)} * t^2 / 2 \right) * v_1^{(2)}
-\\
-\dpow{2}{t} v_3 (0)
-& = &
-2 * \left( v_1^{(1)} * v_1^{(1)} + v_1^{(0)} * v_1^{(2)} \right)
-\end{array}
-\] $$
+$subhead Sweep$$
 
 $center
 $table
 $bold Index$$
-	$cnext $pre  $$ $cnext $bold Operation$$ 
 	$cnext $pre  $$ $cnext $bold Zero$$
+	$cnext $pre  $$ $cnext $bold Operation$$ 
 	$cnext $pre  $$ $cnext $bold First$$
 	$cnext $pre  $$ $cnext $bold Derivative$$
 	$cnext $pre  $$ $cnext $bold Second$$
 $rnext
 1
-	$cnext $pre  $$ $cnext $latex v_1 = x $$
 	$cnext $cnext 0.5
+	$cnext $pre  $$ $cnext $latex v_1^{(1)} = x^{(1)} $$
 	$cnext $cnext 1
 	$cnext $cnext 
 	$latex v_1^{(2)} = x^{(2)}$$
 	$cnext $cnext $latex v_1^{(2)} = 0$$
 $rnext
 2
-	$cnext $pre  $$ $cnext $latex v_2 = 1 + v_1$$
 	$cnext $cnext 1.5
+	$cnext $pre  $$ $cnext $latex v_2^{(1)} = v_1^{(1)}$$
 	$cnext $cnext 1
 	$cnext $cnext 
 	$latex v_2^{(2)} = v_1^{(2)}$$
 	$cnext $cnext $latex v_2^{(2)} = 0$$
 $rnext
 3
-	$cnext $pre  $$ $cnext $latex v_3 = v_1 * v_1$$
 	$cnext $cnext 0.25
+	$cnext $pre  $$ $cnext $latex v_3^{(1)} = 2 * v_1^{(0)} * v_1^{(1)}$$
 	$cnext $cnext 1
 	$cnext $cnext 
 $latex v_3^{(2)} = 2 * (v_1^{(1)} * v_1^{(1)} + v_1^{(0)} * v_1^{(2)} )$$
 	$cnext $cnext $latex v_3^{(2)} = 2$$
 $rnext
 4
-	$cnext $pre  $$ $cnext $latex v_4 = v_3 / 2$$
 	$cnext $cnext 0.125
+	$cnext $pre  $$ $cnext $latex v_4^{(1)} = v_3^{(1)} / 2$$
 	$cnext $cnext .5
 	$cnext $cnext 
 	$latex v_4^{(2)} = v_3^{(2)} / 2$$
 	$cnext $cnext $latex v_4^{(2)} = 1$$
 $rnext
-5	$cnext $pre $$  $cnext $latex v_5 = v_2 + v_4$$
+5
 	$cnext $cnext 1.625
+	$cnext $pre $$  $cnext $latex v_5^{(1)} = v_2^{(1)} + v_4^{(1)}$$
 	$cnext $cnext 1.5
 	$cnext $cnext
 	$latex v_5^{(2)} = v_2^{(2)} + v_4^{(2)}$$

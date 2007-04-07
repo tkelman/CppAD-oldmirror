@@ -86,8 +86,8 @@ $italic x$$ and $italic epsilon$$ as variables.
 $subhead Parameter$$
 We refer to values that do not depend on the input variables
 $italic x$$ or $italic epsilon$$ as parameters.
-Operations where the result is a parameter are not traced
-in the operation sequence below.
+Operations where the result is a parameter are not included
+in the zero order sweep below.
 
 
 $subhead Index$$
@@ -113,7 +113,7 @@ these coefficients are computed in the same order as the original algorithm;
 i.e., in order of increasing index.
 
 
-$subhead Trace$$
+$subhead Sweep$$
 $center
 $table
 $bold Index$$
@@ -270,7 +270,7 @@ mathematical function corresponding to each atomic operation in the sequence.
 $subhead Zero Order$$
 The Zero Order column contains the zero order derivatives
 for the corresponding variable in the operation sequence
-(see $cref/zero order trace/exp_2_for1/Operation Sequence/Trace/$$).
+(see $cref/zero order sweep/exp_2_for1/Operation Sequence/Sweep/$$).
 
 $subhead Derivative$$
 The Derivative column contains the
@@ -291,7 +291,7 @@ is the same partial differentiation with respect to $latex x$$
 at $latex x = x^{(0)}$$.
 
 
-$subhead Trace$$
+$subhead Sweep$$
 
 $center
 $table

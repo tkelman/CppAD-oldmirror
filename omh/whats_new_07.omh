@@ -48,6 +48,10 @@ $code introduction/exp_apx/exp_apx.vcproj$$
 (it did not track the file name changes of the form 
 $code exp_apx/exp_2_for$$ to $code exp_apx/exp_2_for1$$ 
 on 04-05).
+$pre
+
+$$
+Added $cref/exp_2_for2/$$ to introduction.
 
 $subhead 04-05$$
 Use order expansions in introduction; e.g., the
