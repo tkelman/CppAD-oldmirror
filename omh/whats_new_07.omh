@@ -39,8 +39,16 @@ This section contains a list of the changes to CppAD during 2007
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
 
-$head 04-06$$
+$head 04-10$$
 Working in $code branches/intro$$ (again).
+
+$subhead 04-10$$
+Finished off $cref/exp_2_rev2/$$ and
+added $cref/exp_2_rev2.cpp/$$ which verifies its calculations.
+$pre
+
+$$
+Added second order calculations to $cref/exp_2_cppad/$$.
 
 $subhead 04-07$$
 Added a preliminary version of $cref/exp_2_rev2/$$
