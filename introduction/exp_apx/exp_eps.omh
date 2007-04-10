@@ -45,7 +45,7 @@ $spell
 	bool
 $$
 
-$section exp_eps: Operation Sequence and Zero Order Forward Mode$$
+$section exp_eps: Operation Sequence and Zero Order Forward Sweep$$
 
 $index exp_eps, operation sequence$$
 $index example, operation sequence$$
@@ -210,11 +210,10 @@ $end
 -----------------------------------------------------------------------------
 $begin exp_eps_for1$$
 $spell
-	Taylor
 	exp_eps_for
 $$
 
-$section exp_eps: First Order Forward Mode$$
+$section exp_eps: First Order Forward Sweep$$
 
 $index first, order forward$$
 $index order, first forward$$
@@ -225,8 +224,8 @@ $head First Order Expansion$$
 $index first, order expansion$$
 $index order, first expansion$$
 $index expansion, first order$$
-We are given a first order expansion for $latex [ x(t) , \varepsilon(t) ]$$ 
-near $latex t = 0$$ defined by
+We define $latex x(t)$$ and $latex \varepsilon(t) ]$$ near $latex t = 0$$ 
+by the first order expansions
 $latex \[
 \begin{array}{rcl}
 	x(t) & = & x^{(0)} + x^{(1)} * t 
@@ -250,7 +249,8 @@ corresponding to $code exp_eps$$ is
 $latex \[
 f ( x , \varepsilon ) =   1 + x + x^2 / 2  
 \] $$
-The corresponding partial derivative and the value of the derivative are
+The corresponding partial derivative with respect to $latex x$$,
+and the value of the derivative, are
 $latex \[
 \partial_x f ( x , \varepsilon ) =   1 + x  = 1.5
 \] $$
@@ -397,7 +397,7 @@ $spell
 	exp_eps_rev
 $$
 
-$section exp_eps: First Order Reverse Mode$$
+$section exp_eps: First Order Reverse Sweep$$
 
 $index first, order reverse$$
 $index order, first reverse$$
@@ -422,7 +422,8 @@ corresponding to $code exp_eps$$ is
 $latex \[
 f ( x , \varepsilon ) =   1 + x + x^2 / 2  
 \] $$
-The corresponding partial derivatives and the value of the derivative are
+The corresponding partial derivatives,
+and the value of the derivatives, are
 $latex \[
 \begin{array}{rcl}
 \partial_x f ( x , \varepsilon ) & = &  1 + x  = 1.5
@@ -668,3 +669,213 @@ $lend
 
 $end
 -----------------------------------------------------------------------------
+$begin exp_eps_for2$$
+$spell
+	exp_eps_for
+$$
+
+$section exp_eps: Second Order Forward Mode$$
+
+$index exp_eps, forward mode$$
+$index example, forward mode$$
+$index forward, mode example$$
+$index mode, example forward$$
+$index forward, second order$$
+
+
+$head Second Order Expansion$$
+$index second, order expansion$$
+$index order, second expansion$$
+$index expansion, second order$$
+
+We define $latex x(t)$$ and $latex \varepsilon(t) ]$$ near $latex t = 0$$ 
+by the second order expansions
+$latex \[
+\begin{array}{rcl}
+	x(t) & = & x^{(0)} + x^{(1)} * t  + x^{(2)} * t^2 / 2
+	\\
+	\varepsilon(t) & = & \varepsilon^{(0)} + \varepsilon^{(1)} * t
+	                 +   \varepsilon^{(2)} * t^2 / 2
+\end{array}
+\]$$
+It follows that for $latex k = 0 , 1 , 2$$,
+$latex \[
+\begin{array}{rcl}
+	x^{(k)}  & = & \dpow{k}{t} x (0)
+	\\
+	\varepsilon^{(k)}  & = & \dpow{k}{t} \varepsilon (0)
+\end{array}
+\] $$
+
+$head Purpose$$
+In general, a second order forward sweep is given the
+$cref/first order expansion/exp_2_for1/First Order Expansion/$$
+for all of the variables in an operation sequence,
+and the second order derivatives for the independent variables.
+It uses these to compute the second order derivative,
+and thereby obtain the second order expansion,
+for all the variables in the operation sequence.
+
+$head Mathematical Form$$
+Suppose that we use the algorithm $xref/exp_eps.hpp/$$
+to compute $syntax%exp_eps(%x%, %epsilon%)%$$
+with $italic x$$ is equal to .5
+and $italic epsilon$$ is equal to .2. 
+For this case, the mathematical function for the operation sequence
+corresponding to $code exp_eps$$ is
+$latex \[
+f ( x , \varepsilon ) =   1 + x + x^2 / 2  
+\] $$
+The corresponding second partial derivative with respect to $latex x$$,
+and the value of the derivative, are
+$latex \[
+\Dpow{2}{xx} f ( x , \varepsilon ) =   1.
+\] $$
+
+$head Operation Sequence$$
+
+$subhead Index$$
+The Index column contains the index in the operation sequence
+of the corresponding atomic operation. 
+A Forward sweep starts with the first operation 
+and ends with the last.
+
+$subhead Zero$$
+The Zero column contains the zero order sweep results
+for the corresponding variable in the operation sequence
+(see $cref/zero order sweep/exp_2_for0/Operation Sequence/Sweep/$$).
+
+$subhead Operation$$
+The Operation column contains the 
+first order sweep operation for this variable.
+
+$subhead First$$
+The First column contains the first order sweep results
+for the corresponding variable in the operation sequence
+(see $cref/first order sweep/exp_2_for1/Operation Sequence/Sweep/$$).
+
+$subhead Derivative$$
+The Derivative column contains the
+mathematical function corresponding to the second derivative
+with respect to $latex t$$,
+at $latex t = 0$$, for each variable in the sequence.
+
+$subhead Second$$
+The Second column contains the second order derivatives
+for the corresponding variable in the operation sequence; i.e.,
+the second order expansion for the $th i$$ variable is given by
+$latex \[
+	v_i (t) = v_i^{(0)} + v_i^{(1)} * t +  v_i^{(2)} * t^2 / 2
+\] $$
+We use $latex x^{(0)} = 1$$, and $latex x^{(2)} = 0$$
+so that second order differentiation
+with respect to $latex t$$, at $latex t = 0$$, 
+is the same as the second partial differentiation 
+with respect to $latex x$$ at $latex x = x^{(0)}$$.
+
+
+$subhead Sweep$$
+
+$center
+$table
+$bold Index$$
+	$cnext $pre  $$ $cnext $bold Zero$$
+	$cnext $pre  $$ $cnext $bold Operation$$ 
+	$cnext $pre  $$ $cnext $bold First$$
+	$cnext $pre  $$ $cnext $bold Derivative$$
+	$cnext $pre  $$ $cnext $bold Second$$
+$rnext
+1
+	$cnext $cnext 0.5
+	$cnext $cnext 
+	$latex v_1^{(1)} = x^{(1)}  $$
+	$cnext $cnext 1
+	$latex v_2^{(2)} = x^{(2)}  $$
+	$cnext $cnext 0
+$rnext
+2
+	$cnext $cnext 0.5
+	$cnext $cnext 
+	$latex v_2^{(1)} = 1 * v_1^{(1)}$$
+	$cnext $cnext 1
+	$latex v_2^{(2)} = 1 * v_1^{(2)}$$
+	$cnext $cnext 0
+$rnext
+3
+	$cnext $cnext 0.5
+	$cnext $cnext 
+	$latex v_3^{(1)} = v_2^{(1)} / 1$$
+	$cnext $cnext 1
+	$latex v_3^{(2)} = v_2^{(2)} / 1$$
+	$cnext $cnext 0
+$rnext
+4
+	$cnext $cnext 1.5
+	$cnext $cnext 
+	$latex v_4^{(1)} = v_3^{(1)} $$
+	$cnext $cnext 1
+	$latex v_4^{(2)} = v_3^{(2)} $$
+	$cnext $cnext 0
+$rnext
+5
+	$cnext $cnext 0.25
+	$cnext $cnext 
+	$latex v_5^{(1)} = v_3^{(1)} * v_1^{(0)} + v_3^{(0)} * v_1^{(1)}$$
+	$cnext $cnext 1
+	$latex v_5^{(2)} = v_3^{(2)} * v_1^{(0)} + 2 * v_3^{(1)} * v_1^{(1)}
+	                 + v_3^{(0)} * v_1^{(2)}$$
+	$cnext $cnext 2
+$rnext
+6
+	$cnext $cnext 0.125
+	$cnext $cnext 
+	$latex v_6^{(1)} = v_5^{(1)} / 2$$
+	$cnext $cnext 0.5
+	$latex v_6^{(2)} = v_5^{(2)} / 2$$
+	$cnext $cnext 1
+$rnext
+7
+	$cnext $cnext 1.625
+	$cnext $cnext 
+	$latex  v_7^{(1)} = v_4^{(1)} + v_6^{(1)}$$
+	$cnext $cnext 1.5
+	$latex  v_7^{(2)} = v_4^{(2)} + v_6^{(2)}$$
+	$cnext $cnext 1
+$tend
+$$
+
+$head Return Value$$
+The return value for this case is
+$latex \[
+	y^{(2)} = \Dpow{2}{xx} f ( x^{(0)} ) = v_7^{(2)} = 1
+\] $$
+
+$children%
+	introduction/exp_apx/exp_eps_for2.cpp
+%$$
+$head Verification$$
+The file $xref/exp_eps_for2.cpp/$$ contains a routine 
+which verifies the values computed above.
+It returns true for success and false for failure.
+
+$head Exercises$$
+$list number$$
+Which statement in the routine defined by $cref/exp_eps_for2.cpp/$$ uses 
+the values that are calculated by the routine 
+defined by $cref/exp_eps_for1.cpp/$$ ?
+$lnext
+Suppose that $latex x = .1$$,
+what are the results of a zero, first, and second order forward sweep for 
+the operation sequence above; 
+i.e., what are the corresponding values for
+$latex v_i^{(k)}$$ for $latex i = 1, \ldots , 7$$ and $latex k = 0, 1, 2$$.
+$lnext
+Create a modified version of $cref/exp_eps_for2.cpp/$$ that verifies 
+the derivative values from the previous exercise.
+Also create and run a main program that reports the result
+of calling the modified version of
+$cref/exp_eps_for2.cpp/$$.
+$lend
+
+$end
+------------------------------------------------------------------------------

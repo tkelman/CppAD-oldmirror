@@ -147,6 +147,9 @@
 				RelativePath=".\exp_eps_for1.cpp">
 			</File>
 			<File
+				RelativePath=".\exp_eps_for2.cpp">
+			</File>
+			<File
 				RelativePath=".\exp_eps_rev1.cpp">
 			</File>
 			<File

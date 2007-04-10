@@ -45,10 +45,9 @@ Working in $code branches/intro$$ (again).
 $subhead 04-10$$
 Finished off $cref/exp_2_rev2/$$ and
 added $cref/exp_2_rev2.cpp/$$ which verifies its calculations.
-$pre
-
-$$
 Added second order calculations to $cref/exp_2_cppad/$$.
+Added $cref/exp_eps_for2/$$ and its verification routine.
+
 
 $subhead 04-07$$
 Added a preliminary version of $cref/exp_2_rev2/$$

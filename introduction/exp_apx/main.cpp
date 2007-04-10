@@ -45,6 +45,7 @@ extern bool exp_2_for0(void);
 extern bool exp_eps(void);
 extern bool exp_eps_cppad(void);
 extern bool exp_eps_for1(void);
+extern bool exp_eps_for2(void);
 extern bool exp_eps_for0(void);
 extern bool exp_eps_rev1(void);
 
@@ -86,6 +87,7 @@ int main(void)
 	ok &= Run( exp_eps_cppad,   "exp_eps_cppad"  );
 	ok &= Run( exp_eps_for0,    "exp_eps_for0"   );
 	ok &= Run( exp_eps_for1,    "exp_eps_for1"   );
+	ok &= Run( exp_eps_for2,    "exp_eps_for2"   );
 	ok &= Run( exp_eps_rev1,    "exp_eps_rev1"   );
 	if( ok )
 		cout << "All " << int(Run_ok_count) << " tests passed." << endl;

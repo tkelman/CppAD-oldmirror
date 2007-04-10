@@ -28,9 +28,9 @@ $index exp_2, first order$$
 $codep */
 # include <cmath>                     // for fabs function
 extern bool exp_eps_for0(double *v0); // computes zero order forward sweep
-bool exp_eps_for1(void)
+bool exp_eps_for1(double *v1)         // double v[8]
 {	bool ok = true;
-	double v0[8], v1[8];
+	double v0[8];
 
 	// set the value of v0[j] for j = 1 , ... , 7
 	ok &= exp_eps_for0(v0);
@@ -57,6 +57,10 @@ bool exp_eps_for1(void)
 	ok    &= std::fabs( v1[7] - 1.5 ) <= 1e-10;
 
 	return ok;
+}
+bool exp_eps_for1(void)
+{	double v1[8];
+	return exp_eps_for1(v1);
 }
 /* $$
 $end

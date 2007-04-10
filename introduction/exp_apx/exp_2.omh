@@ -199,7 +199,6 @@ $end
 ------------------------------------------------------------------------------
 $begin exp_2_for1$$
 $spell
-	Taylor
 	exp_2_for
 $$
 
@@ -216,8 +215,7 @@ $head First Order Expansion$$
 $index first, order expansion$$
 $index order, first expansion$$
 $index expansion, first order$$
-We are given a Taylor expansion for $latex x(t)$$ near $latex t = 0$$
-defined by
+We define $latex x(t)$$ near $latex t = 0$$ by the first order expansion
 $latex \[
 	x(t) = x^{(0)} + x^{(1)} * t
 \]$$
@@ -231,8 +229,9 @@ In general, a first order forward sweep is given the
 $cref/zero order derivative/exp_2_for0/Zero Order Expansion/$$
 for all of the variables in an operation sequence,
 and the first order derivatives for the independent variables.
-It uses these to compute the first order derivatives for 
-all the other variables in the operation sequence.
+It uses these to compute the first order derivatives,
+and thereby obtain the first order expansion,
+for all the other variables in the operation sequence.
 
 $head Mathematical Form$$
 Suppose that we use the algorithm $xref/exp_2.hpp/$$ to compute 
@@ -579,7 +578,6 @@ $end
 ------------------------------------------------------------------------------
 $begin exp_2_for2$$
 $spell
-	Taylor
 	exp_2_for
 $$
 
@@ -596,10 +594,9 @@ $head Second Order Expansion$$
 $index second, order expansion$$
 $index order, second expansion$$
 $index expansion, second order$$
-We are given a Taylor expansion for $latex x(t)$$ near $latex t = 0$$
-defined by
+We define $latex x(t)$$ near $latex t = 0$$ by the second order expansion
 $latex \[
-	x(t) = x^{(0)} + x^{(1)} * t + x^{(1)} * t^2 / 2
+	x(t) = x^{(0)} + x^{(1)} * t + x^{(2)} * t^2 / 2
 \]$$
 It follows that for $latex k = 0 , 1 , 2$$,
 $latex \[
@@ -622,7 +619,7 @@ $latex \[
 \] $$
 The corresponding second derivative function is 
 $latex \[
-	\Dpow{2}{x} f (x) =   1
+	\Dpow{2}{xx} f (x) =   1
 \] $$
 
 $head Operation Sequence$$
@@ -729,7 +726,7 @@ $$
 $head Return Value$$
 The return value for this case is
 $latex \[
-	y^{(2)} = \Dpow{2}{x} f ( x^{(0)} ) = v_5^{(2)} = 1
+	y^{(2)} = \Dpow{2}{xx} f ( x^{(0)} ) = v_5^{(2)} = 1
 \] $$
 
 $children%
@@ -986,9 +983,9 @@ so the second derivative of
 the function defined by $cref/exp_2.hpp/$$ at $latex x = .5$$
 is given by
 $latex \[
-\Dpow{2}{x} v_5^{(0)} 
+\Dpow{2}{xx} v_5^{(0)} 
 =
-\D{ v_5^{(1)} }{x} 
+\D{ v_5^{(1)} }{xx} 
 =
 \D{ v_5^{(1)} }{v_1^{(0)}} 
 = 
