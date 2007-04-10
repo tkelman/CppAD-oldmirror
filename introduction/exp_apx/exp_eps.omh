@@ -729,7 +729,7 @@ f ( x , \varepsilon ) =   1 + x + x^2 / 2
 The corresponding second partial derivative with respect to $latex x$$,
 and the value of the derivative, are
 $latex \[
-\Dpow{2}{xx} f ( x , \varepsilon ) =   1.
+\Dpow{2}{x} f ( x , \varepsilon ) =   1.
 \] $$
 
 $head Operation Sequence$$
@@ -790,6 +790,7 @@ $rnext
 	$cnext $cnext 
 	$latex v_1^{(1)} = x^{(1)}  $$
 	$cnext $cnext 1
+	$cnext $cnext
 	$latex v_2^{(2)} = x^{(2)}  $$
 	$cnext $cnext 0
 $rnext
@@ -798,6 +799,7 @@ $rnext
 	$cnext $cnext 
 	$latex v_2^{(1)} = 1 * v_1^{(1)}$$
 	$cnext $cnext 1
+	$cnext $cnext
 	$latex v_2^{(2)} = 1 * v_1^{(2)}$$
 	$cnext $cnext 0
 $rnext
@@ -806,6 +808,7 @@ $rnext
 	$cnext $cnext 
 	$latex v_3^{(1)} = v_2^{(1)} / 1$$
 	$cnext $cnext 1
+	$cnext $cnext
 	$latex v_3^{(2)} = v_2^{(2)} / 1$$
 	$cnext $cnext 0
 $rnext
@@ -814,6 +817,7 @@ $rnext
 	$cnext $cnext 
 	$latex v_4^{(1)} = v_3^{(1)} $$
 	$cnext $cnext 1
+	$cnext $cnext
 	$latex v_4^{(2)} = v_3^{(2)} $$
 	$cnext $cnext 0
 $rnext
@@ -822,6 +826,7 @@ $rnext
 	$cnext $cnext 
 	$latex v_5^{(1)} = v_3^{(1)} * v_1^{(0)} + v_3^{(0)} * v_1^{(1)}$$
 	$cnext $cnext 1
+	$cnext $cnext
 	$latex v_5^{(2)} = v_3^{(2)} * v_1^{(0)} + 2 * v_3^{(1)} * v_1^{(1)}
 	                 + v_3^{(0)} * v_1^{(2)}$$
 	$cnext $cnext 2
@@ -831,6 +836,7 @@ $rnext
 	$cnext $cnext 
 	$latex v_6^{(1)} = v_5^{(1)} / 2$$
 	$cnext $cnext 0.5
+	$cnext $cnext
 	$latex v_6^{(2)} = v_5^{(2)} / 2$$
 	$cnext $cnext 1
 $rnext
@@ -839,6 +845,7 @@ $rnext
 	$cnext $cnext 
 	$latex  v_7^{(1)} = v_4^{(1)} + v_6^{(1)}$$
 	$cnext $cnext 1.5
+	$cnext $cnext
 	$latex  v_7^{(2)} = v_4^{(2)} + v_6^{(2)}$$
 	$cnext $cnext 1
 $tend
@@ -847,7 +854,7 @@ $$
 $head Return Value$$
 The return value for this case is
 $latex \[
-	y^{(2)} = \Dpow{2}{xx} f ( x^{(0)} ) = v_7^{(2)} = 1
+	y^{(2)} = \Dpow{2}{x} f ( x^{(0)} ) = v_7^{(2)} = 1
 \] $$
 
 $children%

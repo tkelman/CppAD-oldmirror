@@ -619,7 +619,7 @@ $latex \[
 \] $$
 The corresponding second derivative function is 
 $latex \[
-	\Dpow{2}{xx} f (x) =   1
+	\Dpow{2}{x} f (x) =   1
 \] $$
 
 $head Operation Sequence$$
@@ -726,7 +726,7 @@ $$
 $head Return Value$$
 The return value for this case is
 $latex \[
-	y^{(2)} = \Dpow{2}{xx} f ( x^{(0)} ) = v_5^{(2)} = 1
+	y^{(2)} = \Dpow{2}{x} f ( x^{(0)} ) = v_5^{(2)} = 1
 \] $$
 
 $children%
@@ -983,9 +983,9 @@ so the second derivative of
 the function defined by $cref/exp_2.hpp/$$ at $latex x = .5$$
 is given by
 $latex \[
-\Dpow{2}{xx} v_5^{(0)} 
+\Dpow{2}{x} v_5^{(0)} 
 =
-\D{ v_5^{(1)} }{xx} 
+\D{ v_5^{(1)} }{x} 
 =
 \D{ v_5^{(1)} }{v_1^{(0)}} 
 = 

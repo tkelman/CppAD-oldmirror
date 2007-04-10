@@ -42,19 +42,11 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Add exp_eps_for2.
+log_entry="Fix second order partial notation and specing in exp_eps_for2 table.
 
 svn_commit.sh: file that made this commit.
-whats_new_07.omh: user's view of the changes.
-exp_eps.omh: add exp_eps_for2.
-exp_2.omh: minor changes that were also made in exp_eps.omh.
-main.cpp: add exp_eps_for2.
-exp_apx.vcproj: add exp_eps_for2.
-makefile.am: add exp_eps_for2.
-exp_eps_for1.cpp: add version with first order coefficients as arguments.
 " 
 add_list="
-	introduction/exp_apx/exp_eps_for2.cpp
 "
 delete_list="
 "
@@ -63,13 +55,8 @@ move_list="
 #
 change_list="
 	svn_commit.sh
-	omh/whats_new_07.omh
 	introduction/exp_apx/exp_eps.omh
 	introduction/exp_apx/exp_2.omh
-	introduction/exp_apx/main.cpp
-	introduction/exp_apx/exp_apx.vcproj
-	introduction/exp_apx/makefile.am
-	introduction/exp_apx/exp_eps_for1.cpp
 "
 #
 copy_branch="" 
