@@ -40,6 +40,7 @@ extern bool exp_2_cppad(void);
 extern bool exp_2_for1(void);
 extern bool exp_2_for2(void);
 extern bool exp_2_rev1(void);
+extern bool exp_2_rev2(void);
 extern bool exp_2_for0(void);
 extern bool exp_eps(void);
 extern bool exp_eps_cppad(void);
@@ -80,6 +81,7 @@ int main(void)
 	ok &= Run( exp_2_for1,      "exp_2_for1"     );
 	ok &= Run( exp_2_for2,      "exp_2_for2"     );
 	ok &= Run( exp_2_rev1,      "exp_2_rev1"     );
+	ok &= Run( exp_2_rev2,      "exp_2_rev2"     );
 	ok &= Run( exp_eps,         "exp_eps"        );
 	ok &= Run( exp_eps_cppad,   "exp_eps_cppad"  );
 	ok &= Run( exp_eps_for0,    "exp_eps_for0"   );

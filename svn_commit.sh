@@ -42,13 +42,19 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Preliminary version of exp_2 second order reverse.
+log_entry="Add example for exp_2_rev2.
 
 svn_commit.sh: file that made this commit.
 whats_new_07.omh: user's view of the changes.
+exp_eps_rev1.cpp: fix f2 to f1 in comment.
+exp_2_rev1.cpp: fix f2 to f1 in comment.
 exp_2.omh: add second order reverse sweep section exp_2_rev2.
+main.cpp: add exp_2_rev.
+exp_apx.vcproj: add exp_2_rev.
+makefile.am: add exp_2_rev.
 " 
 add_list="
+	introduction/exp_apx/exp_2_rev2.cpp
 "
 delete_list="
 "
@@ -58,7 +64,12 @@ move_list="
 change_list="
 	svn_commit.sh
 	omh/whats_new_07.omh
+	introduction/exp_apx/exp_eps_rev1.cpp
+	introduction/exp_apx/exp_2_rev1.cpp
 	introduction/exp_apx/exp_2.omh
+	introduction/exp_apx/main.cpp
+	introduction/exp_apx/exp_apx.vcproj
+	introduction/exp_apx/makefile.am
 "
 #
 copy_branch="" 

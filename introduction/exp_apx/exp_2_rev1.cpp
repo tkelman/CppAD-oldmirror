@@ -62,7 +62,7 @@ bool exp_2_rev1(void)
 
 	// f1 = f2( v1 , 1 + v1 )
 	f_v[1] += f_v[2] * 1.;
-	ok &= std::fabs( f_v[1] - 1.5) <= 1e-10; // f2_v1
+	ok &= std::fabs( f_v[1] - 1.5) <= 1e-10; // f1_v1
 
 	return ok;
 }

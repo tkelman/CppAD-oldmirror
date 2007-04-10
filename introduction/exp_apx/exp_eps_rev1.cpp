@@ -77,7 +77,7 @@ bool exp_eps_rev1(void)
 
 	// f1( v1 )
 	f_v[1] += f_v[2] * 1.;
-	ok     &= std::fabs( f_v[1] - 1.5 ) <= 1e-10;   // f2_v2
+	ok     &= std::fabs( f_v[1] - 1.5 ) <= 1e-10;   // f1_v2
 
 	return ok;
 }

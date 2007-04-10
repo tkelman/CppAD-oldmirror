@@ -36,6 +36,7 @@ exp_apx_SOURCES   = \
 	exp_2_for1.cpp \
 	exp_2_for2.cpp \
 	exp_2_rev1.cpp \
+	exp_2_rev2.cpp \
 	exp_2_for0.cpp \
 	exp_eps.cpp  \
 	exp_eps.hpp \

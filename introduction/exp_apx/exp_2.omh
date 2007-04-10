@@ -256,7 +256,7 @@ $latex x = .5$$.
 The corresponding operation sequence and 
 zero order forward mode values
 (see $cref/zero order sweep/exp_2_for0/Operation Sequence/Sweep/$$)
-are inputs and are used by a first order forward mode sweep.
+are inputs and are used by a first order forward sweep.
 
 $subhead Index$$
 The Index column contains the index in the operation sequence
@@ -359,7 +359,7 @@ the values that are calculated by the routine
 defined by $cref/exp_2_for0.cpp/$$ ?
 $lnext
 Suppose that $latex x = .1$$,
-what are the results of a zero and first order forward mode sweep for 
+what are the results of a zero and first order forward sweep for 
 the operation sequence above; 
 i.e., what are the corresponding values for
 $latex v_1^{(0)}, v_2^{(0)}, \cdots , v_5^{(0)}$$ and
@@ -560,10 +560,10 @@ the values that are calculated by the routine
 defined by $cref/exp_2_for0.cpp/$$ ?
 $lnext
 Consider the case where $latex x = .1$$
-and we first preform a zero order forward mode sweep
-for the operation sequence used above (in reverse order).
+and we first preform a zero order forward sweep
+for the operation sequence used above.
 What are the results of a 
-first order reverse mode sweep; i.e.,
+first order reverse sweep; i.e.,
 what are the corresponding derivatives of
 $latex f_5 , f_4 , \ldots , f_1$$.
 $lnext
@@ -747,7 +747,7 @@ the values that are calculated by the routine
 defined by $cref/exp_2_for1.cpp/$$ ?
 $lnext
 Suppose that $latex x = .1$$,
-what are the results of a zero, first, and second order forward mode sweep for 
+what are the results of a zero, first, and second order forward sweep for 
 the operation sequence above; 
 i.e., what are the corresponding values for
 $latex v_i^{(k)}$$ for $latex i = 1, \ldots , 5$$ and $latex k = 0, 1, 2$$.
@@ -999,6 +999,41 @@ the other partial of $latex f_1$$ is equal to the
 first derivative of 
 the function defined by $cref/exp_2.hpp/$$ at $latex x = .5$$.
 
+
+$children%
+	introduction/exp_apx/exp_2_rev2.cpp
+%$$
+$head Verification$$
+The file $xref/exp_2_rev2.cpp/$$ contains a routine 
+which verifies the values computed above.
+It returns true for success and false for failure.
+It only tests the partial derivatives of
+$latex f_k$$ that are different from those of $latex f_{k+1}$$.
+
+$head Exercises$$
+$list number$$
+Which statement in the routine defined by $cref/exp_2_rev2.cpp/$$ uses 
+the values that are calculated by the routine 
+defined by $cref/exp_2_for0.cpp/$$ ?
+Which statements use values that are calculate by the routine
+defined in $cref/exp_2_for1.cpp/$$ ?
+$lnext
+Consider the case where $latex x = .1$$
+and we first preform a zero order forward sweep,
+then a first order sweep,
+for the operation sequence used above.
+What are the results of a 
+second order reverse sweep; i.e.,
+what are the corresponding derivatives of
+$latex f_5 , f_4 , \ldots , f_1$$.
+$lnext
+Create a modified version of 
+$cref/exp_2_rev2.cpp/$$ 
+that verifies the values you obtained for the previous exercise.
+Also create and run a main program that reports the result
+of calling the modified version of
+$cref/exp_2_rev2.cpp/$$.
+$lend
 
 $end
 ------------------------------------------------------------------------------
