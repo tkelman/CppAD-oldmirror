@@ -399,13 +399,18 @@ $$
 
 $section exp_eps: First Order Reverse Sweep$$
 
+$index exp_eps, reverse mode$$
+$index example, reverse mode$$
+$index reverse, mode example$$
+$index mode, reverse example$$
+
 $index first, order reverse$$
 $index order, first reverse$$
 $index reverse, first order$$
 
-$head First Order Reverse$$
+$head Purpose$$
 First order reverse mode uses the 
-$cref/operation sequence/exp_eps_for0/Operation Sequence/$$
+$cref/operation sequence/exp_eps_for0/Operation Sequence/$$,
 and zero order forward sweep values,
 to compute the first order derivative
 of one dependent variable with respect to all the independent variables. 
@@ -646,7 +651,10 @@ The file $xref/exp_eps_rev1.cpp/$$ contains a routine
 that verifies the values computed above.
 It returns true for success and false for failure.
 It only tests the partial derivatives of
-$latex f_j$$ that are different from those of $latex f_{j+1}$$.
+$latex f_j$$ that might not be equal to the corresponding
+partials of $latex f_{j+1}$$; i.e., the
+other partials of $latex f_j$$ must be equal to the corresponding
+partials of $latex f_{j+1}$$.
 
 $head Exercises$$
 $list number$$
@@ -885,4 +893,389 @@ $cref/exp_eps_for2.cpp/$$.
 $lend
 
 $end
-------------------------------------------------------------------------------
+-----------------------------------------------------------------------------
+$begin exp_eps_rev2$$
+$spell
+	exp_eps_rev
+$$
+
+$section exp_eps: Second Order Reverse Sweep$$
+
+$index exp_eps, reverse mode$$
+$index example, reverse mode$$
+$index reverse, mode example$$
+$index mode, reverse example$$
+
+$index second, order reverse$$
+$index order, second reverse$$
+$index reverse, second order$$
+
+$head Purpose$$
+In general, a second order reverse sweep is given the
+$cref/first order expansion/exp_eps_for1/First Order Expansion/$$
+for all of the variables in an operation sequence.
+Given a choice of a particular variable, 
+it computes the derivative, 
+of that variables first order expansion coefficient, 
+with respect to all of the independent variables.
+
+$head Mathematical Form$$
+Suppose that we use the algorithm $xref/exp_eps.hpp/$$
+to compute $syntax%exp_eps(%x%, %epsilon%)%$$
+with $italic x$$ is equal to .5
+and $italic epsilon$$ is equal to .2. 
+For this case, the mathematical function for the operation sequence
+corresponding to $code exp_eps$$ is
+$latex \[
+f ( x , \varepsilon ) =   1 + x + x^2 / 2  
+\] $$
+The corresponding derivative of the
+partial derivative with respect to $latex x$$ is
+$latex \[
+\begin{array}{rcl}
+\Dpow{2}{x} f ( x , \varepsilon ) & = &  1
+\\
+\partial_\varepsilon \partial_x f ( x , \varepsilon ) & = &  0
+\end{array}
+\] $$
+
+$head epsilon$$
+Since $latex \varepsilon$$ is an independent variable,
+it could included as an argument to all of the
+$latex f_j$$ functions below.
+The result would be that all the partials with respect to 
+$latex \varepsilon$$ would be zero and hence we drop it to simplify
+the presentation.
+
+$head f_7$$
+In reverse mode we choose one dependent variable and
+compute its derivative with respect to all the independent variables.
+For our example, we chose the value returned by $cref/exp_eps.hpp/$$
+which is $latex v_7$$.
+We begin with the function $latex f_7$$ where $latex v_7$$ 
+is both an argument and the value of the function; i.e.,
+$latex \[
+\begin{array}{rcl}
+f_7 \left( 
+	v_1^{(0)} , v_1^{(1)} , \ldots , v_7^{(0)} , v_7^{(1)} 
+\right) 
+& = & v_7^{(1)} 
+\\
+\D{f_7}{v_7^{(1)}} & = & 1
+\end{array}
+\] $$
+All the other partial derivatives of $latex f_7$$ are zero.
+
+$head Index 7: f_6$$
+The last operation has index 7,
+$latex \[
+\begin{array}{rcl}
+	v_7^{(0)} & = &   v_4^{(0)} + v_6^{(0)}  
+	\\
+	v_7^{(1)} & = &   v_4^{(1)} + v_6^{(1)}  
+\end{array}
+\] $$
+We define the function 
+$latex f_6 \left( v_1^{(0)} , \ldots , v_6^{(1)} \right) $$
+as equal to $latex f_7$$
+except that $latex v_7^{(0)}$$ and $latex v_7^{(1)}$$ are eliminated using 
+this operation; i.e.
+$latex \[
+f_6  = 
+f_7 \left[ v_1^{(0)} , \ldots , v_6^{(1)} , 
+	v_7^{(0)} \left( v_4^{(0)} , v_6^{(0)} \right)  ,
+	v_7^{(1)} \left( v_4^{(1)} , v_6^{(1)} \right)  
+\right]
+\] $$
+It follows that 
+$latex \[
+\begin{array}{rcll}
+\D{f_6}{v_4^{(1)}} 
+& = & \D{f_7}{v_4^{(1)}} + 
+	\D{f_7}{v_7^{(1)}} * \D{v_7^{(1)}}{v_4^{(1)}} 
+& = 1
+\\
+\D{f_6}{v_6^{(1)}} 
+& = & \D{f_7}{v_6^{(1)}} + 
+	\D{f_7}{v_7^{(1)}} * \D{v_7^{(1)}}{v_6^{(1)}} 
+& = 1
+\end{array}
+\] $$
+All the other partial derivatives of $latex f_6$$ are zero.
+
+$head Index 6: f_5$$
+The previous operation has index 6, 
+$latex \[
+\begin{array}{rcl}
+	v_6^{(0)} & = & v_5^{(0)} / 2
+	\\
+	v_6^{(1)} & = & v_5^{(1)} / 2
+\end{array}
+\] $$
+We define the function 
+$latex f_5 \left( v_1^{(0)} , \ldots , v_5^{(1)} \right) $$
+as equal to $latex f_6 $$
+except that $latex v_6^{(0)}$$ and $latex v_6^{(1)}$$ are eliminated using 
+this operation; i.e.
+$latex \[
+f_5 = 
+f_6 \left[ v_1^{(0)} , \ldots , v_5^{(1)} , 
+	v_6^{(0)} \left( v_5^{(0)} \right) ,
+	v_6^{(1)} \left( v_5^{(1)} \right) 
+\right]
+\] $$
+It follows that 
+$latex \[
+\begin{array}{rcll}
+\D{f_5}{v_4^{(1)}} 
+& = & \D{f_6}{v_4^{(1)}} 
+& = 1
+\\
+\D{f_5}{v_5^{(1)}} 
+& = & \D{f_6}{v_5} + 
+	\D{f_6}{v_6^{(1)}} * \D{v_6^{(1)}}{v_5^{(1)}} 
+& = 0.5
+\end{array}
+\] $$
+All the other partial derivatives of $latex f_5$$ are zero.
+
+$head Index 5: f_4$$
+The previous operation has index 5,
+$latex \[
+\begin{array}{rcl}
+	v_5^{(0)} & = & v_3^{(0)} * v_1^{(0)}
+	\\
+	v_5^{(1)} & = & v_3^{(1)} * v_1^{(0)} + v_3^{(0)} * v_1^{(1)}
+\end{array}
+\] $$
+We define the function 
+$latex f_4 \left( v_1^{(0)} , \ldots , v_4^{(1)} \right) $$
+as equal to $latex f_5 $$
+except that $latex v_5^{(0)}$$ and $latex v_5^{(1)}$$ are eliminated using 
+this operation; i.e.
+$latex \[
+f_4 = 
+f_5 \left[  v_1^{(0)} , \ldots , v_4^{(1)} ,
+	v_5^{(0)} \left( v_1^{(0)}, v_3^{(0)} \right) ,
+	v_5^{(1)} \left( v_1^{(0)}, v_1^{(1)}, v_3^{(0)} , v_3^{(1)} \right) ,
+\right]
+\] $$
+Given the information from the forward sweep, we have
+$latex v_1^{(0)} =  0.5$$,
+$latex v_3^{(0)} =  0.5$$,
+$latex v_1^{(1)} =  1$$,
+$latex v_3^{(1)} =  1$$,
+and the fact that the partial of $latex f_5$$ with respect to
+$latex v_5^{(0)}$$ is zero, we have
+$latex \[
+\begin{array}{rcll}
+\D{f_4}{v_1^{(0)}}
+& = & \D{f_5}{v_1^{(0)}}
+  +   \D{f_5}{v_5^{(1)}} * \D{v_5^{(1)}}{v_1^{(0)}} 
+& = 0.5
+\\
+\D{f_4}{v_1^{(1)}}
+& = & \D{f_5}{v_1^{(1)}}
+  +   \D{f_5}{v_5^{(1)}} * \D{v_5^{(1)}}{v_1^{(1)}} 
+& = 0.25
+\\
+\D{f_4}{v_3^{(0)}}
+& = & \D{f_5}{v_3^{(0)}}
+  +   \D{f_5}{v_5^{(1)}} * \D{v_5^{(1)}}{v_3^{(0)}} 
+& = 0.5
+\\
+\D{f_4}{v_3^{(1)}}
+& = & \D{f_3}{v_1^{(1)}}
+  +   \D{f_5}{v_5^{(1)}} * \D{v_5^{(1)}}{v_3^{(1)}} 
+& = 0.25
+\\
+\D{f_4}{v_4^{(1)}}
+& = & \D{f_5}{v_4^{(1)}}
+& = 1
+\end{array}
+\] $$
+All the other partial derivatives of $latex f_5$$ are zero.
+
+$head Index 4: f_3$$
+The previous operation has index 4,
+$latex \[
+\begin{array}{rcl}
+	v_4^{(0)} = 1 + v_3^{(0)}
+	\\
+	v_4^{(1)} = v_3^{(1)}
+\end{array}
+\] $$
+We define the function 
+$latex f_3 \left( v_1^{(0)} , \ldots , v_3^{(1)} \right) $$
+as equal to $latex f_4 $$
+except that $latex v_4^{(0)}$$ and $latex v_4^{(1)}$$ are eliminated using 
+this operation; i.e.
+$latex \[
+f_3 = 
+f_4 \left[ v_1^{(0)} , \ldots , v_3^{(1)} ,
+	v_4^{(0)} \left( v_3^{(0)} \right) ,
+	v_4^{(1)} \left( v_3^{(1)} \right)  
+\right]
+\] $$
+It follows that 
+$latex \[
+\begin{array}{rcll}
+\D{f_3}{v_1^{(0)}} 
+& = & \D{f_4}{v_1^{(0)}}
+& =  0.5
+\\
+\D{f_3}{v_1^{(1)}} 
+& = & \D{f_4}{v_1^{(1)}}
+& =  0.25
+\\
+\D{f_3}{v_2^{(0)}} 
+& = & \D{f_4}{v_2^{(0)}}  
+& = 0
+\\
+\D{f_3}{v_2^{(1)}} 
+& = & \D{f_4}{v_2^{(1)}}  
+& = 0
+\\
+\D{f_3}{v_3^{(0)}} 
+& = & \D{f_4}{v_3^{(0)}} 
+  +   \D{f_4}{v_4^{(0)}} * \D{v_4^{(0)}}{v_3^{(0)}} 
+& = 0.5
+\\
+\D{f_3}{v_3^{(1)}} 
+& = & \D{f_4}{v_3^{(1)}} 
+  +   \D{f_4}{v_4^{(1)}} * \D{v_4^{(1)}}{v_3^{(1)}} 
+& = 1.25
+\end{array}
+\] $$
+
+
+$head Index 3: f_2$$
+The previous operation has index 3,
+$latex \[
+\begin{array}{rcl}
+	v_3^{(0)} & = & v_2^{(0)} / 1
+	\\
+	v_3^{(1)} & = & v_2^{(1)} / 1
+\end{array}
+\] $$
+We define the function 
+$latex f_2 \left( v_1^{(0)} , \ldots , v_2^{(1)} \right) $$
+as equal to $latex f_3 $$
+except that $latex v_3^{(0)}$$ and $latex v_3^{(1)}$$ are eliminated using 
+this operation; i.e.
+$latex \[
+f_2 = 
+f_3 \left[ v_1^{(0)} , \ldots , v_2^{(1)} ,
+	v_3^{(0)} \left( v_2^{(0)} \right) ,
+	v_3^{(1)} \left( v_2^{(1)} \right)
+\right]
+\] $$
+It follows that 
+$latex \[
+\begin{array}{rcll}
+\D{f_2}{v_1^{(0)}} 
+& = & \D{f_3}{v_1^{(0)}}
+& =  0.5
+\\
+\D{f_2}{v_1^{(1)}} 
+& = & \D{f_3}{v_1^{(1)}}
+& =  0.25
+\\
+\D{f_2}{v_2^{(0)}} 
+& = & \D{f_3}{v_2^{(0)}}  
+  +   \D{f_3}{v_3^{(0)}} * \D{v_3^{(0)}}{v_2^{(0)}}
+& = 0.5
+\\
+\D{f_2}{v_2^{(1)}} 
+& = & \D{f_3}{v_2^{(1)}}  
+  +   \D{f_3}{v_3^{(1)}} * \D{v_3^{(1)}}{v_2^{(0)}}
+& = 1.25
+\end{array}
+\] $$
+
+$head Index 2: f_1$$
+The previous operation has index 1,
+$latex \[
+\begin{array}{rcl}
+	v_2^{(0)} & = & 1 * v_1^{(0)}
+	\\
+	v_2^{(1)} & = & 1 * v_1^{(1)}
+\end{array}
+\] $$
+We define the function 
+$latex f_1 \left( v_1^{(0)} , v_1^{(1)} \right) $$
+as equal to $latex f_2 $$
+except that $latex v_2^{(0)}$$ and $latex v_2^{(1)}$$ are eliminated using 
+this operation; i.e.
+$latex \[
+f_1 = 
+f_2 \left[  v_1^{(0)} , v_1^{(1)} , 
+	v_2^{(0)} \left( v_1^{(0)} \right)  ,
+	v_2^{(1)} \left( v_1^{(1)} \right)  
+\right]
+\] $$
+It follows that 
+$latex \[
+\begin{array}{rcll}
+\D{f_1}{v_1^{(0)}} 
+& = & \D{f_2}{v_1^{(0)}}
+  +   \D{f_2}{v_2^{(0)}} * \D{v_2^{(0)}}{v_1^{(0)}}
+& =  1
+\\
+\D{f_1}{v_1^{(1)}} 
+& = & \D{f_2}{v_1^{(1)}}
+  +   \D{f_2}{v_2^{(1)}} * \D{v_2^{(1)}}{v_1^{(1)}}
+& = 1.5
+\end{array}
+\] $$
+Note that $latex v_1$$ is equal to $latex x$$,
+so the second partial derivative of 
+$syntax%exp_eps(%x%, %epsilon%)%$$ 
+at $italic x$$ equal to .5 and $italic epsilon$$ equal .2 is 
+$latex \[
+\Dpow{2}{x} v_7^{(0)}
+= \D{v_7^{(1)}}{x} 
+= \D{f_1}{v_1^{(0)}}
+= 1
+\] $$
+There is a theorem about algorithmic differentiation that explains why
+the other partial of $latex f_1$$ is equal to the first partial of
+$syntax%exp_eps(%x%, %epsilon%)%$$ 
+with respect to $latex x$$.
+
+
+$children%
+	introduction/exp_apx/exp_eps_rev2.cpp
+%$$
+
+$head Verification$$
+The file $xref/exp_eps_rev2.cpp/$$ contains a routine 
+that verifies the values computed above.
+It returns true for success and false for failure.
+It only tests the partial derivatives of
+$latex f_j$$ that might not be equal to the corresponding
+partials of $latex f_{j+1}$$; i.e., the
+other partials of $latex f_j$$ must be equal to the corresponding
+partials of $latex f_{j+1}$$.
+
+$head Exercises$$
+$list number$$
+Consider the case where $latex x = .1$$
+and we first preform a zero order forward mode sweep
+for the operation sequence used above (in reverse order).
+What are the results of a 
+first order reverse mode sweep; i.e.,
+what are the corresponding values for 
+$latex \D{f_j}{v_k}$$ for all $latex j, k$$ such that
+$latex \D{f_j}{v_k} \neq 0$$.
+$lnext
+Create a modified version of 
+$cref/exp_eps_rev2.cpp/$$ 
+that verifies the values you obtained for the previous exercise.
+Also create and run a main program that reports the result
+of calling the modified version of
+$cref/exp_eps_rev2.cpp/$$.
+$lend
+
+$end
+-----------------------------------------------------------------------------

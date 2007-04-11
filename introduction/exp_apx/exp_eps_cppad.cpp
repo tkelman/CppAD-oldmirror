@@ -29,7 +29,7 @@ $spell
 	apx
 $$
 
-$section exp_eps: CppAD First Order Forward and Reverse$$.
+$section exp_eps: CppAD First and Reverse Sweeps$$.
 
 $head Purpose$$
 Use CppAD forward and reverse modes to compute the

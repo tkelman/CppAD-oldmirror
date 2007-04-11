@@ -42,11 +42,24 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Fix second order partial notation and specing in exp_eps_for2 table.
+log_entry="Add exp_eps_rev2 and its example.
 
 svn_commit.sh: file that made this commit.
+whats_new_07.omh: user's view of the changes.
+exp_eps_rev2.cpp: second order reverse sweep verification.
+exp_eps_rev1.cpp: make title more specific.
+exp_eps.omh: minor improvements plus creation of exp_eps_rev2.
+exp_eps_cppad.cpp: make title more specific.
+exp_2_rev1.cpp: make title more specific.
+exp_2_rev2.cpp: make title more specific plust minor improvements.
+exp_2.omh: improve description of which reverse mode partials are verified.
+main.cpp: add exp_eps_rev2.
+exp_apx.vcproj: add exp_eps_rev2.
+makefile.am: add exp_eps_rev2.
+exp_eps_for2.cpp: make title more specific.
 " 
 add_list="
+	introduction/exp_apx/exp_eps_rev2.cpp
 "
 delete_list="
 "
@@ -55,8 +68,17 @@ move_list="
 #
 change_list="
 	svn_commit.sh
+	omh/whats_new_07.omh
+	introduction/exp_apx/exp_eps_rev1.cpp
 	introduction/exp_apx/exp_eps.omh
+	introduction/exp_apx/exp_eps_cppad.cpp
+	introduction/exp_apx/exp_2_rev1.cpp
+	introduction/exp_apx/exp_2_rev2.cpp
 	introduction/exp_apx/exp_2.omh
+	introduction/exp_apx/main.cpp
+	introduction/exp_apx/exp_apx.vcproj
+	introduction/exp_apx/makefile.am
+	introduction/exp_apx/exp_eps_for2.cpp
 "
 #
 copy_branch="" 

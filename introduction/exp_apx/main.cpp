@@ -17,7 +17,7 @@ $spell
 	apx
 $$
 
-$section Run All the exp_2 and exp_eps Tests$$
+$section Run the exp_2 and exp_eps Tests$$
 
 $index exp_apx, main test$$
 $index run, exp_apx test$$
@@ -48,6 +48,7 @@ extern bool exp_eps_for1(void);
 extern bool exp_eps_for2(void);
 extern bool exp_eps_for0(void);
 extern bool exp_eps_rev1(void);
+extern bool exp_eps_rev2(void);
 
 namespace {
 	// function that runs one test
@@ -89,6 +90,7 @@ int main(void)
 	ok &= Run( exp_eps_for1,    "exp_eps_for1"   );
 	ok &= Run( exp_eps_for2,    "exp_eps_for2"   );
 	ok &= Run( exp_eps_rev1,    "exp_eps_rev1"   );
+	ok &= Run( exp_eps_rev2,    "exp_eps_rev2"   );
 	if( ok )
 		cout << "All " << int(Run_ok_count) << " tests passed." << endl;
 	else	cout << int(Run_error_count) << " tests failed." << endl;

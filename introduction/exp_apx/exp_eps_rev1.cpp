@@ -25,7 +25,7 @@ $spell
 	fabs
 $$
 
-$section exp_eps: Reverse Mode Verification$$
+$section exp_eps: Verify First Order Reverse Sweep$$
 
 $index reverse, exp_eps$$
 $index exp_eps, reverse$$

@@ -44,4 +44,5 @@ exp_apx_SOURCES   = \
 	exp_eps_for1.cpp \
 	exp_eps_for2.cpp \
 	exp_eps_for0.cpp \
-	exp_eps_rev1.cpp
+	exp_eps_rev1.cpp \
+	exp_eps_rev2.cpp

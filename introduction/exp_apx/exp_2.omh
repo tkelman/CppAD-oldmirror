@@ -550,7 +550,10 @@ The file $xref/exp_2_rev1.cpp/$$ contains a routine
 which verifies the values computed above.
 It returns true for success and false for failure.
 It only tests the partial derivatives of
-$latex f_k$$ that are different from those of $latex f_{k+1}$$.
+$latex f_j$$ that might not be equal to the corresponding
+partials of $latex f_{j+1}$$; i.e., the
+other partials of $latex f_j$$ must be equal to the corresponding
+partials of $latex f_{j+1}$$.
 
 $head Exercises$$
 $list number$$
@@ -789,9 +792,9 @@ Suppose that we use the algorithm $xref/exp_2.hpp/$$ to compute
 $latex \[
 	f(x) = 1 + x + x^2 / 2
 \] $$
-The corresponding second derivative function is 
+The corresponding second derivative is 
 $latex \[
-	\partial_x f (x) =   1
+	\Dpow{2}{x} f (x) =   1
 \] $$
 
 $head f_5$$
@@ -1005,7 +1008,10 @@ The file $xref/exp_2_rev2.cpp/$$ contains a routine
 which verifies the values computed above.
 It returns true for success and false for failure.
 It only tests the partial derivatives of
-$latex f_k$$ that are different from those of $latex f_{k+1}$$.
+$latex f_j$$ that might not be equal to the corresponding
+partials of $latex f_{j+1}$$; i.e., the
+other partials of $latex f_j$$ must be equal to the corresponding
+partials of $latex f_{j+1}$$.
 
 $head Exercises$$
 $list number$$

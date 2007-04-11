@@ -19,7 +19,7 @@ $spell
 	bool
 $$
 
-$section exp_eps: Verify First Order Forward Sweep$$
+$section exp_eps: Verify Second Order Forward Sweep$$
 
 $index first, order exp_2$$
 $index order, first exp_2$$

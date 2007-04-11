@@ -39,8 +39,12 @@ This section contains a list of the changes to CppAD during 2007
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
 
-$head 04-10$$
+$head 04-11$$
 Working in $code branches/intro$$ (again).
+
+$subhead 04-11$$
+Add $cref/exp_eps_rev2/$$ and its verification routine 
+$cref/exp_eps_rev2.cpp/$$.
 
 $subhead 04-10$$
 Finished off $cref/exp_2_rev2/$$ and

@@ -19,7 +19,7 @@ $spell
 	fabs
 $$
 
-$section exp_2: Reverse Mode Verification$$
+$section exp_2: Verify Second Order Reverse Sweep$$
 
 $index reverse, exp_2$$
 $index exp_2, reverse mode$$
@@ -39,15 +39,14 @@ bool exp_2_rev2(void)
 	ok &= exp_2_for1(v1);
 
 	// initial all partial derivatives as zero
-	double f_v0[6];
-	double f_v1[6];
+	double f_v0[6], f_v1[6];
 	size_t j;
 	for(j = 0; j < 6; j++)
 	{	f_v0[j] = 0.;
 		f_v1[j] = 0.;
 	}
 
-	// set partial derivative for f5
+	// set partial derivative for f_5
 	f_v1[5] = 1.;
 	ok &= std::fabs( f_v1[5] - 1. ) <= 1e-10; // partial f_5 w.r.t v_5^1
 
