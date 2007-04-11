@@ -42,11 +42,11 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Add second order calculations to exp_eps_cppad.cpp.
+log_entry="Minor edits.
 
 svn_commit.sh: file that made this commit.
-exp_eps_cppad.cpp: add second order calculations.
-exp_2_cppad.cpp: minor edits.
+exp_eps.omh: change epsilon to varepsilon in latex mode.
+exp_eps_cppad.cpp: fix some italic that should have been latex.
 " 
 add_list="
 "
@@ -57,8 +57,8 @@ move_list="
 #
 change_list="
 	svn_commit.sh
+	introduction/exp_apx/exp_eps.omh
 	introduction/exp_apx/exp_eps_cppad.cpp
-	introduction/exp_apx/exp_2_cppad.cpp
 "
 #
 copy_branch="" 

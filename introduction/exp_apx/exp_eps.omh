@@ -383,7 +383,7 @@ Also create and run a main program that reports the result
 of calling the modified version of
 $cref/exp_eps_for1.cpp/$$.
 $lnext
-Suppose that $latex x = .1$$ and $latex epsilon = .2$$,
+Suppose that $latex x = .1$$ and $latex \epsilon = .2$$,
 what is the operation sequence corresponding to 
 $syntax%
 	exp_eps(%x%, %epsilon%)

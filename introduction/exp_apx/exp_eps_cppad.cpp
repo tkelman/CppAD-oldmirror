@@ -33,12 +33,12 @@ $spell
 	apx
 $$
 
-$section exp_eps: CppAD First and Reverse Sweeps$$.
+$section exp_eps: CppAD Forward and Reverse Sweeps$$.
 
 $head Purpose$$
 Use CppAD forward and reverse modes to compute the
 partial derivative with respect to $latex x$$,
-at the point $latex x = .5$$ and $latex epsilon = .2$$,
+at the point $latex x = .5$$ and $latex \varepsilon = .2$$,
 of the function 
 $syntax%
 	exp_eps(%x%, %epsilon%)
@@ -48,18 +48,18 @@ as defined by the $cref/exp_eps.hpp/$$ include file.
 $head Exercises$$
 $list number$$
 Create and test a modified version of the routine below that computes
-the same order derivatives with respect to $italic x$$,
-at the point $italic x = .1$$ and $italic epsilon = .2$$,
+the same order derivatives with respect to $latex x$$,
+at the point $latex x = .1$$ and $latex \varepsilon = .2$$,
 of the function 
 $syntax%
 	exp_eps(%x%, %epsilon%)
 %$$
 $lnext
 Create and test a modified version of the routine below that computes
-partial derivative with respect to $italic x$$,
-at the point $italic x = .1$$ and $italic epsilon = .2$$,
+partial derivative with respect to $latex x$$,
+at the point $latex x = .1$$ and $latex \varepsilon = .2$$,
 of the function corresponding to the operation sequence 
-for $latex x = .5$$ and $latex epsilon = .2$$.
+for $latex x = .5$$ and $latex \varepsilon = .2$$.
 Hint: you could define a vector u with two components and use
 $syntax%
 	%f%.Forward(0, %u%)
