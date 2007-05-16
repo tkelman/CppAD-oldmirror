@@ -48,7 +48,8 @@ $children%
 	cppad/local/lu_ratio.hpp%
 
 	cppad/vector.hpp%
-	cppad/track_new_del.hpp
+	cppad/track_new_del.hpp%
+	cppad/allocator.hpp
 %$$
 
 $head Error Handler$$
@@ -110,6 +111,7 @@ The classes listed are used to support CppAD calculations:
 $table
 $rref CppAD_vector$$
 $rref TrackNewDel$$
+$rref allocator$$
 $tend
 
 $end

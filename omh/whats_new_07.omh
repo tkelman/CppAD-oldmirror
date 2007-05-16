@@ -43,6 +43,20 @@ This section contains a list of the changes to CppAD during 2007
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
 
+$head 05-15$$
+
+$subhead 05-15$$
+Create allocator branch as copy of trunk version 937.
+$pre
+
+$$
+Add missing file $code example/reverse_two.cpp$$ to the
+Microsoft project file $code example/example.vcproj$$.
+$pre
+
+$$
+The first version of the CppAD $cref/allocator/$$ was added.
+
 $head 05-08$$
 Reverse mode does not work with the 
 $cref/pow/$$ function when the base is less than or equal zero

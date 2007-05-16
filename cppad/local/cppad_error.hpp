@@ -2,7 +2,7 @@
 # define CPPAD_CPPAD_ERROR_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -14,7 +14,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 /*
 -------------------------------------------------------------------------------
-$begin CppADError$$
+$begin cppad_error$$
 $spell
 	cppad.hpp
 	cassert
@@ -37,7 +37,7 @@ $spell
 	endif
 $$
 
-$index CppADError$$
+$index cppad_error$$
 $index error, assert macro$$
 $index assert, error macro$$
 $index macro, error assert$$
@@ -45,7 +45,7 @@ $index macro, error assert$$
 $section CppAD Error Detection and Reporting$$
 
 $head Syntax$$
-$code # include <cppad/CppADError.h>$$ $pre
+$code # include <cppad/local/cppad_error.hpp>$$ $pre
 $$
 $syntax%CppADUnknownError(%exp%)%$$ $pre
 $$
@@ -53,8 +53,9 @@ $syntax%CppADUsageError(%exp%, %msg%)%$$
 
 
 $head Description$$
-These macros defined in the file $code cppad/local/CppADError.h$$
-are used to support two types of error detection and reporting:
+These macros defined in the file $code cppad/local/cppad_error.hpp$$
+(which can be included separately with out the rest of CppAD).
+They are used to support two types of error detection and reporting:
 
 $subhead CppADUsageError$$
 The first error type occurs when a routine in the $code CppAD$$ namespace

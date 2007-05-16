@@ -126,6 +126,9 @@
 				RelativePath=".\add_eq.cpp">
 			</File>
 			<File
+				RelativePath=".\allocator.cpp">
+			</File>
+			<File
 				RelativePath=".\asin.cpp">
 			</File>
 			<File
@@ -346,6 +349,9 @@
 			</File>
 			<File
 				RelativePath=".\reverse_one.cpp">
+			</File>
+			<File
+				RelativePath=".\reverse_two.cpp">
 			</File>
 			<File
 				RelativePath=".\romberg_mul.cpp">
