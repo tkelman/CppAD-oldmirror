@@ -42,23 +42,13 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Add first version of allocator
+log_entry="
 
 svn_commit.sh: file that made this commit.
-whats_new_07.omh: user's view of the changes.
-allocator.cpp: test of allocator.
-example/makefile.am: add allocator test.
-example.vcproj: add allocator test.
-example.cpp: add allocator test.
-build.sh: use current directory for build_test.log output.
-makefile.am: add allocator.hpp and sort.
-library.omh: add allocator to library.
-allocator.hpp: the allocator soruce and documentation.
-cppad_error.hpp: fix developer documentation.
+build.sh: fix errors introduced in previous commit.
+allocator.hpp: fix cross reference error.
 " 
 add_list="
-	example/allocator.cpp
-	cppad/allocator.hpp
 "
 delete_list="
 "
@@ -67,14 +57,8 @@ move_list="
 #
 change_list="
 	svn_commit.sh
-	omh/whats_new_07.omh
-	example/makefile.am
-	example/example.vcproj
-	example/example.cpp
 	build.sh
-	makefile.am
-	omh/library.omh
-	cppad/local/cppad_error.hpp
+	cppad/allocator.hpp
 "
 #
 copy_branch="" 

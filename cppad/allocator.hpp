@@ -75,7 +75,7 @@ $syntax%
 constructs an allocator $italic c$$ of type $italic A$$ where
 the argument $italic b$$ is $code const$$.
 The expression $syntax%%c% == %b%$$ must return true
-(see $cref/allocator/Equal/$$ below).
+(see $cref/allocator/allocator/Equal/$$ below).
 
 $head address$$
 If $italic p$$ and $italic r$$ have prototypes

@@ -336,7 +336,7 @@ then
 		cat make_error.log
 		exit 1
 	fi
-	cat make_error.log   >> build_test.log
+	cat make_error.log   >> ../build_test.log
 	failed="no"
 	list="
 		introduction/get_started/get_started
@@ -347,13 +347,13 @@ then
 	for program in $list
 	do
 		echo "running $program"
-		echo "$program"   >> build_test.log
-		if ! ./$program   >> build_test.log
+		echo "$program"   >> ../build_test.log
+		if ! ./$program   >> ../build_test.log
 		then
 			failed="$program"
 		fi
 		# add a new line between program outputs
-		echo ""  >> build_test.log
+		echo ""  >> ../build_test.log
 	done
 	list="
 		adolc
@@ -364,27 +364,27 @@ then
 	for name in $list
 	do
 		echo "running speed/$name/$name correct"
-		echo "./speed/$name/$name correct" >> build_test.log
-		if ! ./speed/$name/$name correct   >> build_test.log
+		echo "./speed/$name/$name correct" >> ../build_test.log
+		if ! ./speed/$name/$name correct   >> ../build_test.log
 		then
 			failed="speed/$name/$name"
 		fi
 		# add a new line between program outputs
-		echo ""  >> build_test.log
+		echo ""  >> ../build_test.log
 	done
 	echo "openmp/run.sh"
-	echo "openmp/run.sh" >> build_test.log
-	if !  openmp/run.sh  >> build_test.log
+	echo "openmp/run.sh" >> ../build_test.log
+	if !  openmp/run.sh >> ../build_test.log
 	then
 		failed="openmp/run.sh $program"
 	fi
-	echo "" >> build_test.log
+	echo "" >> ../build_test.log
 	#
 	if ! ./run_omhelp.sh doc
 	then
 		failed="run_omhelp.sh"
 	fi
-	cat omhelp_doc.log        >> build_test.log
+	cat omhelp_doc.log        >> ../build_test.log
 	#
 	# None of the cases get past this point
 	cd ..
