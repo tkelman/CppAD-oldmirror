@@ -24,7 +24,7 @@ bool CondExp_pvvv(void)
 	using namespace CppAD;
 
 	// independent variable vector
-	CppADvector< AD<double> > X(3);
+	CPPAD_TEST_VECTOR< AD<double> > X(3);
 	X[0]     = 0.;
 	X[1]     = 1.;
 	X[2]     = 2.;
@@ -34,7 +34,7 @@ bool CondExp_pvvv(void)
 	AD<double> one = 1.; 
 
 	// dependent variable vector 
-	CppADvector< AD<double> > Y(5);
+	CPPAD_TEST_VECTOR< AD<double> > Y(5);
 
 	// CondExp(parameter, variable, variable, variable)
 	Y[0] = CondExpLt(one, X[0], X[1], X[2]);
@@ -47,12 +47,12 @@ bool CondExp_pvvv(void)
 	ADFun<double> f(X, Y);
 
 	// vectors for function values
-	CppADvector<double> v( f.Domain() );
-	CppADvector<double> w( f.Range() );
+	CPPAD_TEST_VECTOR<double> v( f.Domain() );
+	CPPAD_TEST_VECTOR<double> w( f.Range() );
 
 	// vectors for derivative values
-	CppADvector<double> dv( f.Domain() );
-	CppADvector<double> dw( f.Range() );
+	CPPAD_TEST_VECTOR<double> dv( f.Domain() );
+	CPPAD_TEST_VECTOR<double> dw( f.Range() );
 
 	// check original function values
 	ok &= Y[0] == X[2];
@@ -102,7 +102,7 @@ bool CondExp_vpvv(void)
 	using namespace CppAD;
 
 	// independent variable vector
-	CppADvector< AD<double> > X(3);
+	CPPAD_TEST_VECTOR< AD<double> > X(3);
 	X[0]     = 0.;
 	X[1]     = 1.;
 	X[2]     = 2.;
@@ -112,7 +112,7 @@ bool CondExp_vpvv(void)
 	AD<double> one = 1.; 
 
 	// dependent variable vector 
-	CppADvector< AD<double> > Y(5);
+	CPPAD_TEST_VECTOR< AD<double> > Y(5);
 
 	// CondExp(variable, parameter, variable, variable)
 	Y[0] = CondExpLt(X[0], one, X[1], X[2]);
@@ -125,12 +125,12 @@ bool CondExp_vpvv(void)
 	ADFun<double> f(X, Y);
 
 	// vectors for function values
-	CppADvector<double> v( f.Domain() );
-	CppADvector<double> w( f.Range() );
+	CPPAD_TEST_VECTOR<double> v( f.Domain() );
+	CPPAD_TEST_VECTOR<double> w( f.Range() );
 
 	// vectors for derivative values
-	CppADvector<double> dv( f.Domain() );
-	CppADvector<double> dw( f.Range() );
+	CPPAD_TEST_VECTOR<double> dv( f.Domain() );
+	CPPAD_TEST_VECTOR<double> dw( f.Range() );
 
 	// check original function values
 	ok &= Y[0] == X[1];
@@ -180,7 +180,7 @@ bool CondExp_vvpv(void)
 	using namespace CppAD;
 
 	// independent variable vector
-	CppADvector< AD<double> > X(3);
+	CPPAD_TEST_VECTOR< AD<double> > X(3);
 	X[0]     = 0.;
 	X[1]     = 1.;
 	X[2]     = 2.;
@@ -190,7 +190,7 @@ bool CondExp_vvpv(void)
 	AD<double> three = 3.; 
 
 	// dependent variable vector 
-	CppADvector< AD<double> > Y(5);
+	CPPAD_TEST_VECTOR< AD<double> > Y(5);
 
 	// CondExp(variable, variable, parameter, variable)
 	Y[0] = CondExpLt(X[0], X[1], three, X[2]);
@@ -203,12 +203,12 @@ bool CondExp_vvpv(void)
 	ADFun<double> f(X, Y);
 
 	// vectors for function values
-	CppADvector<double> v( f.Domain() );
-	CppADvector<double> w( f.Range() );
+	CPPAD_TEST_VECTOR<double> v( f.Domain() );
+	CPPAD_TEST_VECTOR<double> w( f.Range() );
 
 	// vectors for derivative values
-	CppADvector<double> dv( f.Domain() );
-	CppADvector<double> dw( f.Range() );
+	CPPAD_TEST_VECTOR<double> dv( f.Domain() );
+	CPPAD_TEST_VECTOR<double> dw( f.Range() );
 
 	// check original function values
 	ok &= Y[0] == three;
@@ -258,7 +258,7 @@ bool CondExp_vvvp(void)
 	using namespace CppAD;
 
 	// independent variable vector
-	CppADvector< AD<double> > X(3);
+	CPPAD_TEST_VECTOR< AD<double> > X(3);
 	X[0]     = 0.;
 	X[1]     = 1.;
 	X[2]     = 2.;
@@ -268,7 +268,7 @@ bool CondExp_vvvp(void)
 	AD<double> three = 3.; 
 
 	// dependent variable vector 
-	CppADvector< AD<double> > Y(5);
+	CPPAD_TEST_VECTOR< AD<double> > Y(5);
 
 	// CondExp(variable, variable, variable, parameter)
 	Y[0] = CondExpLt(X[0], X[1], X[2], three);
@@ -281,12 +281,12 @@ bool CondExp_vvvp(void)
 	ADFun<double> f(X, Y);
 
 	// vectors for function values
-	CppADvector<double> v( f.Domain() );
-	CppADvector<double> w( f.Range() );
+	CPPAD_TEST_VECTOR<double> v( f.Domain() );
+	CPPAD_TEST_VECTOR<double> w( f.Range() );
 
 	// vectors for derivative values
-	CppADvector<double> dv( f.Domain() );
-	CppADvector<double> dw( f.Range() );
+	CPPAD_TEST_VECTOR<double> dv( f.Domain() );
+	CPPAD_TEST_VECTOR<double> dw( f.Range() );
 
 	// check original function values
 	ok &= Y[0] == X[2];

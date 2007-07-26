@@ -25,13 +25,13 @@ bool CompareChange(void)
 	// ------------------------------- < ----------------------------
 
 	// create independent variables
-	CppADvector< AD<double> > X(2);
+	CPPAD_TEST_VECTOR< AD<double> > X(2);
 	X[0] = 3.;
 	X[1] = 4.;
 	Independent(X);
 
 	// create dependent variables
-	CppADvector< AD<double> > Y(6);
+	CPPAD_TEST_VECTOR< AD<double> > Y(6);
 
 	// CondExp would never require retaping 
 	if( X[0] < X[1] )      // True variable < variable
@@ -58,12 +58,12 @@ bool CompareChange(void)
 	f = new ADFun<double>(X, Y);
 
 	// new argument value
-	CppADvector<double> x( X.size() );
+	CPPAD_TEST_VECTOR<double> x( X.size() );
 	x[0] = 4.;
 	x[1] = 3.;
 
 	// evaluate the function at new argument
-	CppADvector<double> y( Y.size() );
+	CPPAD_TEST_VECTOR<double> y( Y.size() );
 	y = f->Forward(0, x);
 
 	// check results

@@ -51,6 +51,11 @@ This section contains a list of the changes to CppAD during 2007
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
 
+$head 07-26$$
+Change all occurrences of $code CppADvector$$,
+in the $syntax%test_more/%*%.cpp%$$ files,
+to $code CPPAD_TEST_VECTOR$$.
+
 $head 07-25$$
 Deprecate the preprocessor symbol $code CppADvector$$ 
 and start changing it to
