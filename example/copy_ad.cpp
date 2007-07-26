@@ -37,7 +37,7 @@ bool CopyAD(void)
 
 	// domain space vector
 	size_t n = 1;
-	CppADvector< AD<double> > x(n);
+	CPPAD_TEST_VECTOR< AD<double> > x(n);
 	x[0]     = 2.;
 
 	// declare independent variables and start tape recording
@@ -56,14 +56,14 @@ bool CopyAD(void)
 
 	// range space vector
 	size_t m = 2;
-	CppADvector< AD<double> > y(m);
+	CPPAD_TEST_VECTOR< AD<double> > y(m);
 	y[0]  = u;
 	y[1]  = v;
 
 	// create f: x -> y and vectors used for derivative calculations
 	CppAD::ADFun<double> f(x, y);
-	CppADvector<double> dx(n);
-	CppADvector<double> dy(m);
+	CPPAD_TEST_VECTOR<double> dx(n);
+	CPPAD_TEST_VECTOR<double> dy(m);
  
  	// check parameters flags
  	ok &= ! f.Parameter(0);

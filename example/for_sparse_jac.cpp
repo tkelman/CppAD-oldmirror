@@ -43,7 +43,7 @@ bool ForSparseJacCases(void)
 
 	// domain space vector
 	size_t n = 2; 
-	CppADvector< AD<double> > X(n);
+	CPPAD_TEST_VECTOR< AD<double> > X(n);
 	X[0] = 0.; 
 	X[1] = 1.;
 
@@ -52,7 +52,7 @@ bool ForSparseJacCases(void)
 
 	// range space vector
 	size_t m = 3;
-	CppADvector< AD<double> > Y(m);
+	CPPAD_TEST_VECTOR< AD<double> > Y(m);
 	Y[0] = X[0];
 	Y[1] = X[0] * X[1];
 	Y[2] = X[1];

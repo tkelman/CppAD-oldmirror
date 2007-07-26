@@ -48,20 +48,20 @@ bool ComplexPoly(void)
 	size_t deg = 4;
 
 	// polynomial coefficients
-	CppADvector< Complex >     a   (deg + 1); // coefficients for p(z)
-	CppADvector< AD<Complex> > A   (deg + 1); 
+	CPPAD_TEST_VECTOR< Complex >     a   (deg + 1); // coefficients for p(z)
+	CPPAD_TEST_VECTOR< AD<Complex> > A   (deg + 1); 
 	size_t i;
 	for(i = 0; i <= deg; i++)
 		A[i] = a[i] = Complex(i, i);
 
 	// independent variable vector, indices, values, and declaration
-	CppADvector< AD<Complex> > Z(1);
+	CPPAD_TEST_VECTOR< AD<Complex> > Z(1);
 	size_t z = 0;
  	Z[z]     = Complex(1., 1.);
 	Independent(Z);
 
 	// dependent variable vector and indices
-	CppADvector< AD<Complex> > P(1);
+	CPPAD_TEST_VECTOR< AD<Complex> > P(1);
 	size_t p = 0;
 
 	// dependent variable values
@@ -69,8 +69,8 @@ bool ComplexPoly(void)
 
 	// create f: Z -> P and vectors used for derivative calculations
 	ADFun<Complex> f(Z, P);
-	CppADvector<Complex> v( f.Domain() );
-	CppADvector<Complex> w( f.Range() );
+	CPPAD_TEST_VECTOR<Complex> v( f.Domain() );
+	CPPAD_TEST_VECTOR<Complex> w( f.Range() );
 
 	// check first derivative w.r.t z
 	v[z] = 1.;

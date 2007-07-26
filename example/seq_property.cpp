@@ -53,7 +53,7 @@ bool SeqProperty(void)
 
 	// domain space vector
 	size_t n = 2;
-	CppADvector< AD<double> > x(n);
+	CPPAD_TEST_VECTOR< AD<double> > x(n);
 	x[0]     = 0.;
 	x[1]     = 1.;
 
@@ -68,7 +68,7 @@ bool SeqProperty(void)
 
 	// range space vector
 	size_t m = 3;
-	CppADvector< AD<double> > y(m);
+	CPPAD_TEST_VECTOR< AD<double> > y(m);
 	y[0]   = 1.;          // a parameter value   
 	y[1]   = u;           // use same variable as x[0]
 	y[2]   = w;           // use same variable as w

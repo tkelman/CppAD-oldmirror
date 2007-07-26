@@ -19,7 +19,7 @@ $spell
 	Rhs
 	logdet
 	Cpp
-	CppADvector
+	CPPAD_TEST_VECTOR
 $$
 
 $index LuVecAD$$
