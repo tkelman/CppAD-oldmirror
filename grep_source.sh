@@ -31,7 +31,8 @@ do
 	for string in $*
 	do
 		grep -s "$string" \
-			$dir/*.hpp $dir/*.cpp $dir/*.omh >> grep_source.tmp
+			$dir/*.hpp $dir/*.cpp $dir/*.omh $dir/*.sh  \
+			>> grep_source.tmp
 	done
 done
 sed -e 's/:.*//' < grep_source.tmp | sort -u

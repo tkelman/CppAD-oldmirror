@@ -206,8 +206,8 @@ $subhead Test Vector Preprocessor Symbol$$
 $index CPPAD_TEST_VECTOR$$
 $index preprocessor, symbols$$
 $index symbols, preprocessor$$
-Why do you use $code CppADvector$$ instead of a namespace for
-the CppAD vector class ?
+Why do you use $code CPPAD_TEST_VECTOR$$ instead of a namespace for
+the CppAD $cref/test_vector/$$ class ?
 $pre
 
 $$
@@ -216,9 +216,8 @@ $small $cref/CPPAD_TEST_VECTOR/test_vector/$$ $$
 determines which
 $xref/SimpleVector/$$ template class is used for extensive testing.
 The default definition for $code CPPAD_TEST_VECTOR$$ is the
-$xref/CppAD_vector//CppAD::vector/$$ template class; 
-i.e., it is in the vector class defined in the $code CppAD$$ namespace.
-All preprocessor symbols that are defined or used
+$xref/CppAD_vector//CppAD::vector/$$ template class, but it can be changed.
+Note that all the preprocessor symbols that are defined or used
 by CppAD begin with either $code CPPAD$$
 (some old deprecated symbols begin with $code CppAD$$).
 

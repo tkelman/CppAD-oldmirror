@@ -53,8 +53,12 @@ assist you in learning about changes between various versions of CppAD.
 
 $head 07-26$$
 Change all occurrences of $code CppADvector$$,
-in the $syntax%test_more/%*%.cpp%$$ files,
-to $code CPPAD_TEST_VECTOR$$.
+in the files $syntax%test_more/%*%.cpp%$$ and $syntax%speed/%*%/%*%.cpp%$$,
+where changed to $code CPPAD_TEST_VECTOR$$.
+All occurrences of the $code CppADvector$$ in the documentation
+were edited to reflect that fact that it has been deprecated.
+The documentation index and search for
+deprecated items has been improved.
 
 $head 07-25$$
 Deprecate the preprocessor symbol $code CppADvector$$ 

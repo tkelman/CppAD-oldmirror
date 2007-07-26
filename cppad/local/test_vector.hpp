@@ -91,7 +91,8 @@ Specifying $italic BoostDir$$ will increase the amount of
 Ublas vector testing. 
 
 $head Deprecated$$
-$index CppADvector$$
+$index CppADvector, deprecated$$
+$index deprecated, CppADvector$$
 The preprocessor symbol $code CppADvector$$ is defined to
 have the same value as $code CPPAD_TEST_VECTOR$$ but its use is deprecated
 $codep */

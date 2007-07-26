@@ -42,15 +42,11 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Convert some macros to use all upper case; to be specific,
+log_entry="Finish converting CppADvector to CPPAD_VECTOR.
 
-CppADTrackNewVec -> CPPAD_TRACK_NEW_VEC
-CppADTrackDelVec -> CPPAD_TRACK_DEL_VEC
-CppADTrackExtend -> CPPAD_TRACK_EXTEND
-
-svn_commit.sh: this file (include for list of files with edits).
 whats_new_07.omh: user's view of the changes.
-build.sh: more clean up of the automated testing done before commit.
+fun_deprecated.omh: improve syntax and indexing.
+grep_source.sh: include *.sh files in search.
 " 
 add_list="
 "
@@ -62,29 +58,26 @@ move_list="
 change_list="
 	svn_commit.sh
 	omh/whats_new_07.omh
-	build.sh
-	cppad/local/ad_fun.hpp
-	cppad/local/cap_taylor.hpp
-	cppad/local/dependent.hpp
-	cppad/local/for_jac_sweep.hpp
-	cppad/local/for_sparse_jac.hpp
-	cppad/local/forward_sweep.hpp
-	cppad/local/fun_construct.hpp
-	cppad/local/rev_sparse_hes.hpp
-	cppad/local/rev_sparse_jac.hpp
-	cppad/local/reverse.hpp
-	cppad/local/tape_rec.hpp
-	cppad/local/vec_ad.hpp
-	cppad/track_new_del.hpp
-	cppad/vector.hpp
-	example/example.cpp
-	example/mul_level_adolc.cpp
-	example/ode_taylor_adolc.cpp
-	example/track_new_del.cpp
+	print_for/print_for.cpp
+	omh/mul_level.omh
+	omh/example.omh
 	omh/wish_list.omh
-	speed/example/example.cpp
-	test_more/base_adolc.cpp
-	test_more/test_more.cpp
+	omh/fun_deprecated.omh
+	omh/install_unix.omh
+	omh/whats_new_05.omh
+	omh/whats_new_07.omh
+	omh/faq.omh
+	grep_source.sh
+	cppad/local/test_vector.hpp
+	cppad/local/bender_quad.hpp
+	cppad/config.h
+	speed/fadbad/poly.cpp
+	speed/adolc/poly.cpp
+	speed/cppad/det_minor.cpp
+	speed/cppad/poly.cpp
+	speed/cppad/det_lu.cpp
+	speed/example/det_by_lu.cpp
+	speed/example/det_by_minor.cpp
 "
 #
 copy_branch="" 

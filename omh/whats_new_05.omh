@@ -637,8 +637,7 @@ improved.
 $head 07-05$$
 The $xref/Rosen34.cpp/$$ example mixed the 
 $xref/CppAD_vector//CppAD::vector/$$ and 
-$small $cref/CPPAD_TEST_VECTOR/test_vector/$$ $$
-vector types.
+$code CppADvector$$ vector types.
 This caused the compilation of the examples to fail when 
 $code CppADvector$$ was defined as something other than 
 $code CppAD::vector$$ (found by Jon Pearce).
@@ -758,8 +757,7 @@ has fixed this problem in later versions of their C++ compiler.
 $head 06-06$$
 Converted the routines
 $xref/Forward/$$ and $xref/Reverse/$$ to allow for any
-$xref/SimpleVector/$$ instead of just 
-$small $cref/CPPAD_TEST_VECTOR/test_vector/$$ $$.
+$xref/SimpleVector/$$ instead of just $code CppADvector$$.
 In addition, separated the syntax of the function call
 from the prototype for each of the arguments.
 This was also done for all the easy to use $xref/Drivers/$$
