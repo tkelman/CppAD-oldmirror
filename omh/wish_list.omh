@@ -10,6 +10,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 $begin WishList$$
 $spell
+	Bool
 	Adolc
 	Fadbad
 	cygwin
@@ -37,6 +38,10 @@ $index atan2$$
 The $xref/Atan2//atan2/$$ function could be made faster by adding
 a special operator for it.
 
+$head BenderQuad$$
+See the $cref/problem/BenderQuad/Problem/$$ with the 
+current $code BenderQuad$$ specifications.
+
 $head CondExp$$
 $index CondExp$$
 Extend the conditional expressions $xref/CondExp/$$ so that they are 
@@ -44,13 +49,26 @@ valid for complex types by comparing real parts.
 In addition, use this change to extend $xref/LuRatio/$$ so 
 that it works with complex AD types.
 
+$head Computed Assignment$$
+If the $italic Base$$ type is not $code double$$,
+the $cref/computed assignment/compute_assign/$$ operators do not
+always allow for $code double$$ operands. For example,
+if $italic x$$ has type $code AD< AD<double> >$$
+$syntax%
+	%x% += .5;
+%$$
+will slice the value $code .5$$ to an $code int$$
+and then convert it to an $code AD< AD<double> >$$.
+Hence, zero will be added to $italic x$$.
+
+
 $head Exceptions$$
 When the function
 $xref/Independent/$$ is called,  
 a new tape is created.
 If an exception occurs before the call to the corresponding
 $xref/ADFun/$$ constructor or $cref/Dependent/$$, 
-the tape recording will be never stop.
+the tape recording will never stop.
 Thus, there should be a way to abort a tape recording.
 
 $head Operation Sequence$$
@@ -91,23 +109,16 @@ $lnext
 Template parameter names should begin with an uppercase letter.
 
 $lnext
-Macro names (gasp!) names should use all uppercase.
-(This was done,  as a test case, 
-in the filename branch for the cppad/local directory at the end of 2006-08. 
-The macro's that are part of the
-CppAD user interface were left in their original case. In addition,
-the macros $code CppADUsageError$$ and $code CppADUnknownError$$
-were not changed.
-These will need to be changed throughout the source
-code and should done as one separate operation.)
-
-$lnext
 Use spaces rather than tabs.  
 
 $lend
 
 $subhead Member Variables$$
-Change member variable names so that they all end with an underscore.
+Change private member variables names
+(not part of the user interface)
+so that they all end with an underscore.
+(This has been done for the $code AD$$ and $code VecAD$$ template class,
+but not yet for the other classes.) 
 
 $head Vector Element Type$$
 Change cross references from 
@@ -119,5 +130,12 @@ $head Tracing$$
 Add forward and reverse mode operation tracing to the developer documentation
 (perhaps it will eventually become part of 
 the user interface and documentation).
+
+$head VecAD$$
+Make assignment operation in $cref/VecAD/$$ like
+assignment in $cref/ad_copy/$$.
+This will fix slicing to $code int$$ when assigning
+from $code double$$ to 
+$code VecAD< AD<double> >::reference$$ object.
 
 $end

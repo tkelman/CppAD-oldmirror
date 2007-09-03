@@ -126,9 +126,6 @@
 				RelativePath=".\add_eq.cpp">
 			</File>
 			<File
-				RelativePath=".\allocator.cpp">
-			</File>
-			<File
 				RelativePath=".\asin.cpp">
 			</File>
 			<File

@@ -172,8 +172,8 @@ void ADTape<Base>::RecordCompare(
 	// ind[0] = cop 
 	ind0 = size_t (cop);
 
-	CppADUnknownError( ind1 > 1 );
-	CppADUnknownError( NumInd(ComOp) == 4 );
+	CPPAD_ASSERT_UNKNOWN( ind1 > 1 );
+	CPPAD_ASSERT_UNKNOWN( NumInd(ComOp) == 4 );
 
 	// put the operator in the tape
 	Rec.PutOp(ComOp);
@@ -208,7 +208,7 @@ inline bool AD<Base>::operator < (const AD<Base> &right) const
 # endif
 
 // convert other cases into the case above
-CPPAD_FOLD_BINARY_OPERATOR(bool, <)
+CPPAD_FOLD_BOOL_VALUED_BINARY_OPERATOR(<)
 
 // -------------------------------- <= -------------------------
 # ifdef NDEBUG
@@ -238,7 +238,7 @@ inline bool AD<Base>::operator <= (const AD<Base> &right) const
 # endif
 
 // convert other cases into the case above
-CPPAD_FOLD_BINARY_OPERATOR(bool, <=)
+CPPAD_FOLD_BOOL_VALUED_BINARY_OPERATOR(<=)
 
 
 // -------------------------------- > -------------------------
@@ -270,7 +270,7 @@ inline bool AD<Base>::operator > (const AD<Base> &right) const
 # endif
 
 // convert other cases into the case above
-CPPAD_FOLD_BINARY_OPERATOR(bool, >)
+CPPAD_FOLD_BOOL_VALUED_BINARY_OPERATOR(>)
 
 // -------------------------------- >= -------------------------
 # ifdef NDEBUG
@@ -300,7 +300,7 @@ inline bool AD<Base>::operator >= (const AD<Base> &right) const
 # endif
 
 // convert other cases into the case above
-CPPAD_FOLD_BINARY_OPERATOR(bool, >=)
+CPPAD_FOLD_BOOL_VALUED_BINARY_OPERATOR(>=)
 
 
 // -------------------------------- == -------------------------
@@ -331,7 +331,7 @@ inline bool AD<Base>::operator == (const AD<Base> &right) const
 # endif
 
 // convert other cases into the case above
-CPPAD_FOLD_BINARY_OPERATOR(bool, ==)
+CPPAD_FOLD_BOOL_VALUED_BINARY_OPERATOR(==)
 
 // -------------------------------- != -------------------------
 # ifdef NDEBUG
@@ -361,7 +361,7 @@ inline bool AD<Base>::operator != (const AD<Base> &right) const
 # endif
 
 // convert other cases into the case above
-CPPAD_FOLD_BINARY_OPERATOR(bool, !=)
+CPPAD_FOLD_BOOL_VALUED_BINARY_OPERATOR(!=)
 
 } // END CppAD namespace
 

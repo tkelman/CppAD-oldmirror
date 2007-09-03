@@ -33,7 +33,9 @@ $code CppAD$$ or with $code CPPAD_$$.
 
 $head Example$$
 For example,
-the preprocessor symbol $xref/CppADvector/$$ determines which
+the preprocessor symbol 
+$small $cref/CPPAD_TEST_VECTOR/test_vector/$$ $$ 
+determines which
 $xref/SimpleVector/$$ template class is extensively used 
 by the tests in the $code Example$$ and $code TestMore$$ directories.
 
@@ -57,6 +59,6 @@ $end
 
 // other preprocessor symbols defined in config.h
 # undef CPPAD_GETTIMEOFDAY
-# undef CppAD_BOOSTVECTOR
-# undef CppAD_CPPADVECTOR
-# undef CppAD_STDVECTOR
+# undef CPPAD_BOOSTVECTOR
+# undef CPPAD_CPPADVECTOR
+# undef CPPAD_STDVECTOR

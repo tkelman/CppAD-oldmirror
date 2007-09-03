@@ -59,7 +59,7 @@ $index CppAD$$
 $index version, CppAD$$
 
 $section 
-A Package for Differentiation of C++ Algorithms: cppad-20070414
+A Package for Differentiation of C++ Algorithms: cppad-20070726
 $$ 
 
 $head Syntax$$
@@ -114,13 +114,13 @@ but which have identically zero derivatives
 Derivatives of functions that are defined in terms of other derivatives
 can be computed using multiple levels of AD
 (see $xref/mul_level.cpp/$$ for a simple example
-and $xref/OdeTaylor.cpp//$$ for a more realistic example).
+and $xref/ode_taylor.cpp//$$ for a more realistic example).
 
 $lnext
 Includes a C++ $xref/library/$$ that is useful
 for general operator overloaded numerical method.
 Allows for replacement of the
-$xref/CppADvector//CppADvector/$$ 
+$cref/test_vector/$$ 
 template vector class which is used for extensive testing; 
 for example, you can do your testing with the
 $href%http://www.boost.org/libs/numeric/ublas/doc/index.htm%uBlas%$$ 

@@ -102,25 +102,17 @@ $end
 namespace CppAD {
 
 // copy of standard functions in CppAD namespace
-inline float pow(float x, float y)
+inline float pow(const float &x, const float &y)
 {	return std::pow(x, y); }
 
-inline double pow(double x, double y)
-{	return std::pow(x, y); }
-
-inline std::complex<float> 
-pow(std::complex<float> x, std::complex<float> y)
-{	return std::pow(x, y); }
-
-inline std::complex<double> 
-pow(std::complex<double> x, std::complex<double> y)
+inline double pow(const double &x, const double &y)
 {	return std::pow(x, y); }
 
 // case where x and y are AD<Base> -----------------------------------------
 template <class Base> AD<Base> 
 pow(const AD<Base> &x, const AD<Base> &y)
 {	AD<Base> p;
-	CppADUnknownError( Parameter(p) );
+	CPPAD_ASSERT_UNKNOWN( Parameter(p) );
 
 	// base type result
 	p.value_  = pow(x.value_, y.value_);
@@ -128,7 +120,7 @@ pow(const AD<Base> &x, const AD<Base> &y)
 	if( Variable(x) )
 	{	if( Variable(y) )
 		{	// result = variable + variable
-			CppADUsageError(
+			CPPAD_ASSERT_KNOWN(
 				x.id_ == y.id_,
 				"pow: arguments are AD objects that are"
 				" variables on different tapes."

@@ -16,19 +16,24 @@
 # These defaults are development system dependent and can be changed.
 ADOLC_DIR=$HOME/adolc_base
 FADBAD_DIR=$HOME/include
-BOOST_DIR=/usr/include/boost-1_33
+BOOST_DIR=/usr/include/boost-1_33_1
 #
 #
 # date currently in configure.ac
 version=`grep "^ *AC_INIT(" configure.ac | \
 	sed -e "s/.*, *\([0-9]\{8\}\) *,.*/\1/"`
 #
-if [ "$1" = "test" ] || ( [ "$1" = "all" ] && [ "$2" = "test" ] )
+if [ "$1" = "all" ] && [ "$2" != "" ] && [ "$2" != "test" ]
 then
-	if [ -e build_test.log ]
-	then
-		rm build_test.log
-	fi
+	echo "./build.sh $1 $2"
+	echo "is not valid, build.sh with no arguments lists valid choices."
+	exit 1
+fi
+#
+# Check if we are running all the test cases. 
+if [ "$1" = "test" ] || ( [ "$1" = "all" ] & [ "$2" = "test" ] )
+then
+	date > build_test.log
 	if [ -e cppad-$version ]
 	then
 		rm -rf cppad-$version
@@ -84,7 +89,7 @@ then
 		rm configure
 	fi
 	#
-	if [ "$1" != "all" ]
+	if [ "$1" = "version" ]
 	then
 		exit 0
 	fi
@@ -108,7 +113,7 @@ then
 		exit 1
 	fi
 	#
-	if [ "$1" != "all" ]
+	if [ "$1" = "omhelp" ]
 	then
 		exit 0
 	fi
@@ -151,7 +156,7 @@ then
 		exit 1
 	fi
 	#
-	if [ "$1" != "all" ]
+	if [ "$1" = "automake" ]
 	then
 		exit 0
 	fi
@@ -161,7 +166,7 @@ fi
 #
 if [ "$1" = "configure" ] || [ "$1" = "all" ]
 then
-	if [ "$1" = "configure" ] && [ "$2" == "test" ]
+	if [ "$2" = "test" ]
 	then
 		echo "build.sh configure test"
 	else
@@ -169,7 +174,7 @@ then
 	fi
 	#
 	TEST=""
-	if [ "$1" = "configure" ] && [ "$2" == "test" ]
+	if [ "$1" = "configure" ] && [ "$2" = "test" ]
 	then
 		TEST="
 			--with-Documentation
@@ -212,7 +217,7 @@ then
 	echo "fix_makefile.sh"
 	./fix_makefile.sh
 	#
-	if [ "$1" != "all" ]
+	if [ "$1" = "configure" ]
 	then
 		exit 0
 	fi
@@ -230,7 +235,7 @@ then
 		exit 1
 	fi
 	#
-	if [ "$1" != "all" ]
+	if [ "$1" = "make" ]
 	then
 		exit 0
 	fi
@@ -281,7 +286,7 @@ then
 	fi
 	#
 	#
-	if [ "$1" != "all" ]
+	if [ "$1" = "dist" ]
 	then
 		exit 0
 	fi
@@ -312,11 +317,19 @@ then
 		fi
 	fi
 	#
-	# Start build_test.log with include file checks
-	# (must do this before extracting copy of distribution directory).
-	./check_include_def.sh   > build_test.log
-	./check_include_file.sh >> build_test.log
-	./check_include_omh.sh  >> build_test.log
+	# check include files
+	if ! ./check_include_def.sh  >> build_test.log
+	then
+		exit 1
+	fi
+	if ! ./check_include_file.sh >> build_test.log
+	then
+		exit 1
+	fi
+	if ! ./check_include_omh.sh  >> build_test.log
+	then
+		exit 1
+	fi
 	# add a new line after last include file check
 	echo ""                 >> build_test.log
 	#
@@ -329,15 +342,20 @@ then
 	cd cppad-$version
 	if ! ./build.sh configure test
 	then
+		echo "Error: build.sh configure test"  >> ../build_test.log
+		echo "Error: build.sh configure test" 
 		exit 1
 	fi
+	# gcc 3.4.4 with optimization generates incorrect warning; see 
+	# 	http://cygwin.com/ml/cygwin-apps/2005-06/msg00161.html
+	# The sed commands below are intended to remove them.
 	if ! make            2>  make_error.log
 	then
-		cat make_error.log
+		sed -e '/stl_uninitialized.h:/d' make_error.log
 		exit 1
 	fi
-	cat make_error.log   >> ../build_test.log
-	failed="no"
+	sed -e '/stl_uninitialized.h:/d' make_error.log >> ../build_test.log
+	#
 	list="
 		introduction/get_started/get_started
 		introduction/exp_apx/exp_apx
@@ -351,6 +369,9 @@ then
 		if ! ./$program   >> ../build_test.log
 		then
 			failed="$program"
+			echo "Error: $failed failed."
+			echo "Error: $failed failed." >> ../build_test.log
+			exit 1
 		fi
 		# add a new line between program outputs
 		echo ""  >> ../build_test.log
@@ -368,6 +389,9 @@ then
 		if ! ./speed/$name/$name correct   >> ../build_test.log
 		then
 			failed="speed/$name/$name"
+			echo "Error: $failed failed."
+			echo "Error: $failed failed." >> ../build_test.log
+			exit 1
 		fi
 		# add a new line between program outputs
 		echo ""  >> ../build_test.log
@@ -377,25 +401,30 @@ then
 	if !  openmp/run.sh >> ../build_test.log
 	then
 		failed="openmp/run.sh $program"
+		echo "Error: $failed failed."
+		echo "Error: $failed failed." >> ../build_test.log
+		exit 1
 	fi
 	echo "" >> ../build_test.log
 	#
 	if ! ./run_omhelp.sh doc
 	then
 		failed="run_omhelp.sh"
+		echo "Error: $failed failed."
+		echo "Error: $failed failed." >> ../build_test.log
+		exit 1
 	fi
 	cat omhelp_doc.log        >> ../build_test.log
 	#
-	# None of the cases get past this point
 	cd ..
-	dir=`pwd`
-	echo "Check the file $dir/build_test.log for errors and warnings."
-	if [ "$failed" == "no" ]
+	if [ "$1" = "test" ]
 	then
-		echo "All of the test programs executed."
-	else
-		echo "Error: $failed had an execution error."
-		exit 1
+		# end the build_test.log file with the date and time
+		date >> build_test.log
+		#
+		dir=`pwd`
+		echo "Check $dir/build_test.log for errors and warnings."
+		exit 0
 	fi
 fi
 if [ "$1" = "gpl+dos" ] || [ "$1" = "all" ]
@@ -404,15 +433,37 @@ then
 	echo "gpl_license.sh"
 	if ! ./gpl_license.sh
 	then
+		echo "Error: gpl_license.sh failed."
+		if [ "$2" = "test" ]
+		then
+			echo "Error: gpl_license.sh failed." >> build_test.log
+		fi
 		exit 1
+	else
+		echo "Ok: gpl_license.sh."
+		if [ "$2" = "test" ]
+		then
+			echo "Ok: gpl_license.sh." >> build_test.log
+		fi
 	fi
 	echo "./dos_format.sh"
 	if ! ./dos_format.sh
 	then
+		echo "Error: dos_format.sh failed."
+		if [ "$2" = "test" ]
+		then
+			echo "Error: dos_format.sh failed." >> build_test.log
+		fi
 		exit 1
+	else
+		echo "Ok: dos_format.sh."
+		if [ "$2" = "test" ]
+		then
+			echo "Ok: dos_format.sh." >> build_test.log
+		fi
 	fi
 	#
-	if [ "$1" != "all" ]
+	if [ "$1" = "gpl+dos" ]
 	then
 		exit 0
 	fi
@@ -431,17 +482,26 @@ then
 		echo "mv $file doc/$file"
 		if ! mv $file doc/$file
 		then
-			echo "cannot move $file to doc/$file"
+			echo "Error: mv $file doc."
+			if [ "$2" = "test" ]
+			then
+				echo "Error: mv $file doc." >> build_test.log
+			fi
 			exit 1
 		fi
 	done
-       if [ "$1" != "all" ]
-       then
-               exit 0
-       fi
+	if [ "$1" = "move" ]
+	then
+		exit 0
+	fi
 fi
 if [ "$1" = "all" ]
 then
+	if [ "$2" = "test" ]
+	then
+		# end the build_test.log file with the date and time
+		date >> build_test.log
+	fi
 	exit 0
 fi
 #

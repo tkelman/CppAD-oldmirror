@@ -11,6 +11,16 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 $begin whats_new_07$$
 $spell
+	Ginac
+	xi
+	Bool
+	CppADvector
+	inv
+	namespace
+	det_lu
+	adouble
+	Adolc
+	op
 	sqrt
 	eps
 	mega
@@ -25,13 +35,14 @@ $spell
 	openmp
 	dy
 	automake
-	makefile:wq
+	makefile
 	CppAD
 	cygwin
 	cppad.hpp
 	config.h
 	dd
 	Adolc
+	Taylor
 $$
 
 $section Changes and Additions to CppAD During 2007$$
@@ -43,19 +54,283 @@ This section contains a list of the changes to CppAD during 2007
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
 
-$head 05-15$$
-
-$subhead 05-15$$
-Create allocator branch as copy of trunk version 937.
+$head 08-09$$
+Let user detect and handel the case where an ODE initial vector $italic xi$$
+contains  not a number $code nan$$
+(see $cref/Runge45/$$, $cref/Rosen34/$$, and $cref/OdeErrControl/$$).
 $pre
 
 $$
-Add missing file $code example/reverse_two.cpp$$ to the
-Microsoft project file $code example/example.vcproj$$.
+Use the $code ||$$ operation instead of $code |$$
+operator in the $code nan$$ function 
+(The Ginac library seems to use an alias for the type $code bool$$ and
+does not have $code |$$ defined for this alias).
 $pre
 
 $$
-The first version of the CppAD $cref/allocator/$$ was added.
+The file $code test_more/ode_err_control.cpp$$ was using the 
+wrong include file name since the change on 08/07. 
+This has been fixed.
+
+$head 08-07$$
+Sometimes an ODE solver takes to large a step and this results
+in invalid values for the variables being integrated.
+The ODE solvers $cref/Runge45/$$ and $cref/Rosen34/$$ have been 
+modified to abort
+and return $cref/nan/$$ when it is returned by the differential
+equation evaluation.
+The solver $cref/OdeErrControl/$$ have been modified to try smaller steps 
+when this happens. 
+$pre
+
+$$
+Fix an $cref/Sequence Constructor/FunConstruct/Sequence Constructor/$$
+referenced to $code Dependent$$ in documentation
+(was using the $cref/FunDeprecated/$$ one argument syntax).
+$pre
+
+$$
+Add comment about mixing debug and non-debug versions of
+CppAD in $cref/TrackDelVec/TrackNewDel/TrackDelVec/$$ error message.
+
+
+$head 07-30$$
+$code CppADCreateBinaryBool$$ and $code CppADCreateUnaryBool$$
+have been replaced by $code CPPAD_BOOL_BINARY$$ and
+$code CPPAD_BOOL_UNARY$$ respectively.
+In addition, the $cref/WishList/$$ item for conversion
+of all preprocessor macros to upper case been completed and removed.
+
+$head 07-29$$
+The preprocessor macros 
+$code CppADUsageError$$ and $code CppADUnknownError$$
+have been replaced by $code CPPAD_ASSERT_KNOWN$$ and
+$code CPPAD_ASSERT_UNKNOWN$$ respectively.
+The meaning for these macros 
+has been included in the $cref/cppad_assert/$$ section.
+In addition, the $italic known$$ argument to $cref/ErrorHandler/$$
+was wrong for the unknown case.
+$pre
+
+$$
+The $cref/WishList/$$ item 
+for conversion of all preprocessor macros to upper case
+has been changes (to an item that was previous missing).
+
+$head 07-28$$
+The preprocessor macro $code CPPAD_DISCRETE_FUNCTIOIN$$ was defined
+as a replacement for $code CppADCreateDiscrete$$ 
+which has been deprecated.
+
+$head 07-26$$
+Merge in changes made in $code branches/test_vector$$.
+
+$subhead 07-26$$
+Change all occurrences of $code CppADvector$$,
+in the files $syntax%test_more/%*%.cpp%$$ and $syntax%speed/%*%/%*%.cpp%$$,
+where changed to $code CPPAD_TEST_VECTOR$$.
+All occurrences of the $code CppADvector$$ in the documentation
+were edited to reflect that fact that it has been deprecated.
+The documentation index and search for
+deprecated items has been improved.
+
+$subhead 07-25$$
+Deprecate the preprocessor symbol $code CppADvector$$ 
+and start changing it to
+$small $cref/CPPAD_TEST_VECTOR/test_vector/$$ $$.
+$pre
+
+$$
+Change all occurrences of $code CppADvector$$,
+in the $syntax%example/%*%.cpp%$$ files,
+to $code CPPAD_TEST_VECTOR$$.
+
+$head 07-23$$
+The $cref/TrackNewDel/$$ macros
+$code CppADTrackNewVec$$,
+$code CppADTrackDelVec$$, and
+$code CppADTrackExtend$$ have been deprecated.
+The new macros names to use are 
+$code CPPAD_TRACK_NEW_VEC$$,
+$code CPPAD_TRACK_DEL_VEC$$, and
+$code CPPAD_TRACK_EXTEND$$ respectively.
+This item has been removed from the 
+$cref/software guidelines/WishList/Software Guidelines/$$
+section of the wish list.
+$pre
+
+$$
+The 
+$cref/member variables/WishList/Software Guidelines/Member Variables/$$ 
+wish list item has be brought up to date.
+
+$head 07-22$$
+Minor improvements to the $cref/ode_taylor_adolc.cpp/$$ example.
+
+$head 07-21$$
+The $cref/openmp_run.sh/$$ example programs
+$code example_a11c.cpp$$, 
+$code multi_newton.cpp$$, and 
+$code sum_i_inv.cpp$$
+have been changed so that they run on more systems
+(are C++ standard compliant).
+$pre
+
+$$
+The $code IdenticalEqual$$ function,
+in the $cref/base_require/$$ specification,
+was changed to $code IdenticalEqualPar$$
+(note the $cref/warning/base_require/Warning/$$ in the 
+$italic Base$$ requirement specifications).
+$pre
+
+$$
+Implementation of the $cref/base requirements/base_require/$$ for complex types
+were moved into the $cref/base_complex.hpp/$$ example.
+
+
+
+$head 07-20$$
+The download for CppAD was still broken.
+It turned out that the copyright message was missing from the file
+$cref/base_adolc.hpp/$$ and this stopped the creation of the download files.
+This has been fixed.
+In addition, the automated testing procedure has been modified so 
+that missing copyright messages and test program failures will
+be more obvious in the test log.
+
+$head 07-19$$
+The download for CppAD has been broken since the example 
+$code ode_taylor_adolc.cpp$$ was added because the
+$code example/example$$ program was failing.
+This has been fixed.
+
+$head 07-18$$
+A realistic example using Adolc with CppAD
+$cref/ode_taylor_adolc.cpp/$$ was added.
+The documentation for $cref/TrackNewDel/$$ was improved.
+
+$head 07-14$$
+Add a discussion at the beginning of
+$cref/ode_taylor.cpp/$$ example
+(and improve the notation used in the example).
+
+$head 07-13$$
+Separate the include file
+$cref/base_adolc.hpp/$$ 
+from the $cref/mul_level_adolc.cpp/$$ example 
+so that it can be used by other examples.
+
+$head 06-22$$
+Add $cref/mul_level_adolc.cpp/$$, an example that demonstrates using
+$code adouble$$ and for the $cref/Base/base_require/$$ type.
+$pre
+
+$$
+The $cref/get_started/InstallUnix/--with-Introduction/get_started/$$ 
+example did not build when
+the $code -with-Introduction$$ and 
+$code BOOST_DIR$$ options were included on the 
+$cref/configure/InstallUnix/Configure/$$ command line.
+In fact, some of the $cref/speed/$$ tests also had compilation errors
+when $code BOOST_DIR$$ was include in the configure command.
+This has been fixed.
+$pre
+
+$$
+There was a namespace reference missing in the files
+that could have caused compilation errors in the files
+$code speed/cppad/det_minor.cpp$$ and
+$code speed/cppad/det_lu.cpp$$.
+This has been fixed.
+
+$head 06-20$$
+The MS project 
+$code test_more/test_more.vcproj$$ would not build because
+the file $code test_more/fun_check.cpp$$ was missing;
+this has been fixed. 
+In addition, 
+fix warnings generated by the MS compiler when compiling the 
+$code test_more/test_more.cpp$$ file.
+$pre
+
+$$
+Add a section defining the $cref/Base type requirements/base_require/$$.
+Remove the $italic Base$$ type restrictions from the $cref/Faq/$$.
+Make all the prototype for the default Base types agree with
+the specifications in the Base type requirements.
+$pre
+
+$$
+Fix the description of the $code tan$$ function in 
+$cref/StdMathUnary/$$.
+
+
+$head 06-14$$
+The routine $cref/Rosen34/$$ ( $cref/Runge45/$$ ) had a division
+of a $code size_t$$ ( $code int$$ ) by a $italic Scalar$$,
+where $italic Scalar$$ was any $cref/NumericType/$$.
+Such an operation may not be valid for a particular numeric type.
+This has been fixed by explicitly converting the 
+$code size_t$$ to an $code int$$,
+then converting the $code int$$ to a $italic Scalar$$,
+and then preforming the division.
+(The conversion of an $code int$$ to any numeric type must be valid.)
+
+$head 05-26$$
+If the $italic Base$$ type is not $code double$$,
+the $cref/computed assignment/compute_assign/$$ operators did not
+always allow for $code double$$ operands. For example,
+if $italic x$$ had type $code AD< AD<double> >$$
+$syntax%
+	%x% += .5;
+%$$
+would slice the value $code .5$$ to an $code int$$
+and then convert it to an $code AD< AD<double> >$$.
+This has been fixed.
+$pre
+
+$$
+This slicing has also been fixed in the 
+$cref/assignment/ad_copy/Syntax/Assignment/$$ operation.
+In addition, the assignment and copy operations
+have been grouped together in the documentation; see $cref/ad_copy/$$.
+
+
+$head 05-25$$
+Document usage of $code double$$ with
+binary arithmetic operators,
+and combine all those operators into one section ($cref/ad_binary/$$).
+$pre
+
+$$
+The documentation for all the $cref/computed assignment/compute_assign/$$
+operators has been grouped together.
+In addition, a 
+computed assignment wish list item has been added
+(it was completed and removed with the 
+$cref/05-26/whats_new_07/05-26/$$ update.)
+
+
+$head 05-24$$
+Suppose that $italic op$$ is a binary operation and we have
+$syntax%
+	%left% %op% %right%
+%$$
+where one of the operands was $code AD< AD<double> >$$ and 
+the other operand was $code double$$.
+There was a bug in this case that caused the $code double$$
+operand to be converted to $code int$$ before
+being converted to $code AD< AD<double> >$$.
+This has been fixed.
+
+$head 05-22$$
+The Microsoft 
+$cref/examples and testing/InstallWindows/Examples and Testing/$$ 
+project file $code example/example.vcproj$$ 
+was missing a reference to the
+source code file $code example/reverse_two.cpp$$.
+This has been fixed.  
 
 $head 05-08$$
 Reverse mode does not work with the 

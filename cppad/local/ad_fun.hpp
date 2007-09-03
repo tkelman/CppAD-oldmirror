@@ -77,9 +77,9 @@ public:
 	// destructor
 	~ADFun(void)
 	{	if( Taylor != CPPAD_NULL )
-			CppADTrackDelVec(Taylor);
+			CPPAD_TRACK_DEL_VEC(Taylor);
 		if( ForJac != CPPAD_NULL )
-			CppADTrackDelVec(ForJac);
+			CPPAD_TRACK_DEL_VEC(ForJac);
 	}
 
 	// assign a new operation sequence
@@ -134,7 +134,7 @@ public:
 
 	// is variable a parameter
 	bool Parameter(size_t i)
-	{	CppADUsageError(
+	{	CPPAD_ASSERT_KNOWN(
 			i < dep_taddr.size(),
 			"Argument to Parameter is >= dimension of range space"
 		);

@@ -2,7 +2,7 @@
 # define CPPAD_ODE_GEAR_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -33,13 +33,12 @@ $index equation, differential$$
 $section An Arbitrary Order Gear Method$$
 
 $head Syntax$$
-$code # include <cppad/ode_gear.hpp>$$
-$pre
-$$
+$syntax%# include <cppad/ode_gear.hpp>
+%$$
 $syntax%OdeGear(%F%, %m%, %n%, %T%, %X%, %e%)%$$
 
 
-$head Description$$
+$head Purpose$$
 This routine applies
 $xref/OdeGear/Gear's Method/Gear's Method/$$
 to solve an explicit set of ordinary differential equations.
@@ -49,7 +48,7 @@ This routine solves the following initial value problem
 $latex \[
 \begin{array}{rcl}
 	x( t_{m-1} )  & = & x^0    \\
-	x \prime (t)  & = & f[t , x(t)] 
+	x^\prime (t)  & = & f[t , x(t)] 
 \end{array}
 \] $$
 for the value of $latex x( t_m )$$.
@@ -97,7 +96,7 @@ On input and output, $italic f$$ is a vector of size $italic n$$
 and the input values of the elements of $italic f$$ do not matter.
 On output,
 $italic f$$ is set equal to $latex f(t, x)$$
-(see $italic f(t, x)$$ in $xref/OdeGear/Description/Description/$$). 
+(see $italic f(t, x)$$ in $xref/OdeGear/Purpose/Purpose/$$). 
 
 $subhead f_x$$
 The argument $italic f_x$$ has prototype
@@ -108,7 +107,7 @@ On input and output, $italic f_x$$ is a vector of size $latex n * n$$
 and the input values of the elements of $italic f_x$$ do not matter.
 On output, 
 $latex \[
-	f_x [i * n + j] = \partial_{x(j)} f_i ( t , x )
+	f\_x [i * n + j] = \partial_{x(j)} f_i ( t , x )
 \] $$ 
 
 $subhead Warning$$
@@ -234,9 +233,9 @@ x_j
 	\prod_{i \neq j} ( t_j - t_i ) 
 }
 \] $$
-The derivative $latex p \prime (t)$$ is given by
+The derivative $latex p^\prime (t)$$ is given by
 $latex \[
-p \prime (t) = 
+p^\prime (t) = 
 \sum_{j=0}^m 
 x_j
 \frac{ 
@@ -248,7 +247,7 @@ x_j
 Evaluating the derivative at the point $latex t_\ell$$ we have
 $latex \[
 \begin{array}{rcl}
-p \prime ( t_\ell ) & = & 
+p^\prime ( t_\ell ) & = & 
 x_\ell
 \frac{ 
 	\sum_{i \neq \ell} \prod_{k \neq i,\ell} ( t_\ell - t_k )
@@ -300,7 +299,7 @@ $latex \[
 \] $$
 It follows that
 $latex \[
-	p \prime ( t_m ) = \alpha_0 x_0 + \cdots + \alpha_m x_m
+	p^\prime ( t_m ) = \alpha_0 x_0 + \cdots + \alpha_m x_m
 \] $$
 Gear's method determines $latex x_m$$ by solving the following 
 nonlinear equation
@@ -338,7 +337,7 @@ $latex \[
 \] $$
 It follows that
 $latex \[
-	p \prime ( t_{m-1} ) = \beta_0 x_0 + \cdots + \beta_m x_m
+	p^\prime ( t_{m-1} ) = \beta_0 x_0 + \cdots + \beta_m x_m
 \] $$
 We solve the following approximation of the equation above to determine
 $latex x_m^0$$:
@@ -360,7 +359,7 @@ $end
 */
 
 # include <cstddef>
-# include <cppad/local/cppad_error.hpp>
+# include <cppad/local/cppad_assert.hpp>
 # include <cppad/check_simple_vector.hpp>
 # include <cppad/check_numeric_type.hpp>
 # include <cppad/vector.hpp>
@@ -389,23 +388,23 @@ void OdeGear(
 	// check simple vector class specifications
 	CheckSimpleVector<Scalar, Vector>();
 
-	CppADUsageError(
+	CPPAD_ASSERT_KNOWN(
 		m >= 1,
 		"OdeGear: m is less than one"
 	);
-	CppADUsageError(
+	CPPAD_ASSERT_KNOWN(
 		n > 0,
 		"OdeGear: n is equal to zero"
 	);
-	CppADUsageError(
+	CPPAD_ASSERT_KNOWN(
 		T.size() >= (m+1),
 		"OdeGear: size of T is not greater than or equal (m+1)"
 	);
-	CppADUsageError(
+	CPPAD_ASSERT_KNOWN(
 		X.size() >= (m+1) * n,
 		"OdeGear: size of X is not greater than or equal (m+1) * n"
 	);
-	for(j = 0; j < m; j++) CppADUsageError(
+	for(j = 0; j < m; j++) CPPAD_ASSERT_KNOWN(
 		T[j] < T[j+1],
 		"OdeGear: the array T is not monotone increasing"
 	);
@@ -489,7 +488,7 @@ void OdeGear(
 	int sign;
 	CppAD::vector<size_t> ip(n) , jp(n);
 	sign = LuFactor(ip, jp, A);
-	CppADUsageError(
+	CPPAD_ASSERT_KNOWN(
 		sign != 0,
 		"OdeGear: step size is to large"
 	);

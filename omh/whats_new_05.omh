@@ -636,8 +636,8 @@ improved.
 
 $head 07-05$$
 The $xref/Rosen34.cpp/$$ example mixed the 
-$xref/CppAD_vector//CppAD::vector/$$ and $xref/CppADvector/$$
-vector types.
+$xref/CppAD_vector//CppAD::vector/$$ and 
+$code CppADvector$$ vector types.
 This caused the compilation of the examples to fail when 
 $code CppADvector$$ was defined as something other than 
 $code CppAD::vector$$ (found by Jon Pearce).
@@ -704,9 +704,9 @@ is no longer supported by CppAD.
 $pre
 
 $$
-The $xref/CopyBase/$$ section was split into the $xref/Default//default/$$ 
+The copy base section was split into the $xref/Default//default/$$ 
 constructor and the 
-$xref/CopyBase//construction for the base type/$$.
+construction for the base type.
 The construction from base type has been
 extended to include any type that is convertible to the base type.
 As a special case, this provides the previous wish list item of
@@ -757,7 +757,7 @@ has fixed this problem in later versions of their C++ compiler.
 $head 06-06$$
 Converted the routines
 $xref/Forward/$$ and $xref/Reverse/$$ to allow for any
-$xref/SimpleVector/$$ instead of just $xref/CppADVector/$$.
+$xref/SimpleVector/$$ instead of just $code CppADvector$$.
 In addition, separated the syntax of the function call
 from the prototype for each of the arguments.
 This was also done for all the easy to use $xref/Drivers/$$
@@ -816,11 +816,10 @@ improve $code OdeErrControl$$ choice of step size and documentation.
 
 $head 05-12$$
 Using profiling, the 
-$xref/Mul//multiplication operator/$$ was show to take a significant
+$cref/multiplication operator/ad_binary/$$ was show to take a significant
 amount of time. It was reorganized in order to make it faster.
 The profiling indicated an improvement so that same change was made 
-to the following operators:
-$mref/Add/AddEq/Sub/SubEq/MulEq/Div/DivEq/$$.
+to the $cref/ad_binary/$$ and $cref/compute_assign/$$ operators.
 
 
 $head 05-06$$

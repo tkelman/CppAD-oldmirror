@@ -250,9 +250,10 @@ $pre
 
 $$
 The prototype for $code int$$ arguments in binary operations
-(for example $cref/Add/$$) was documented as
+(for example $cref/addition/ad_binary/$$) was documented as
 $syntax const int &$$ but was actually just plain $code int$$.
 This has been fixed.
+(Later changed to $code double$$.)
 
 $head 12-07$$
 Fix bug in the 
@@ -940,17 +941,13 @@ Extend $xref/erf/$$ to include $code float$$, $code double$$,
 and $syntax%VecAD<%Base%>::reference%$$.
 
 $head 03-28$$
-Mention the $xref/VecAD/VecAD<Base>::reference/VecAD<Base>::reference/$$ case in 
+Mention the 
+$xref/VecAD/VecAD<Base>::reference/VecAD<Base>::reference/$$ case in 
 documentation and examples for
 $xref/UnaryPlus/$$,
 $xref/UnaryMinus/$$,
-$xref/Sub/$$,
-$xref/Mul/$$,
-$xref/Div/$$,
-$xref/AddEq/$$,
-$xref/SubEq/$$,
-$xref/MulEq/$$,
-$xref/DivEq/$$, and 
+$cref/ad_binary/$$,
+$xref/compute_assign/$$, and
 $xref/StdMathUnary/$$
 
 
@@ -962,7 +959,7 @@ $pre
 $$
 Mention the $xref/VecAD/VecAD<Base>::reference/VecAD<Base>::reference/$$ case 
 and generally improve 
-$xref/Add/$$ documentation and examples.
+$cref/addition/ad_binary/$$ documentation and examples.
 
 
 $head 03-26$$
@@ -976,7 +973,7 @@ $pre
 $$
 Mention the $xref/VecAD/VecAD<Base>::reference/VecAD<Base>::reference/$$ case 
 and generally improve 
-$xref/Value/$$, $xref/Output/$$ and $xref/Eq/$$ documentation
+$xref/Value/$$, $xref/Output/$$ and $cref/assignment/ad_copy/Syntax/Assignment/$$ documentation
 and examples.
 $pre
 
@@ -1086,13 +1083,13 @@ The $xref/Compare/$$ documentation and example have been improved.
 
 $head 02-24$$
 The documentation and examples have been improved for the following sections:
-$xref/Div/$$, $xref/SubEq/$$, $xref/MulEq/$$, and $xref/DivEq/$$. 
+$cref/division/ad_binary/$$, $cref/-=/compute_assign/$$, $cref/*=/compute_assign/$$, and $cref%/=%compute_assign%$$. 
 
 $head 02-23$$
-The $xref/Mul/$$ documentation and example have been improved. 
+The $cref/multiplication/ad_binary/$$ documentation and example have been improved. 
 
 $head 02-21$$
-The $xref/Sub/$$ documentation and example have been improved. 
+The $cref/subtraction/ad_binary/$$ documentation and example have been improved. 
 $pre
 
 $$
@@ -1107,10 +1104,10 @@ and the problem has been fixed.
 
 
 $head 02-15$$
-The $xref/AddEq/$$ documentation and example have been improved. 
+The $cref/+=/compute_assign/$$ documentation and example have been improved. 
 
 $head 02-14$$
-The $xref/Add/$$ documentation and example have been improved. 
+The $cref/addition/ad_binary/$$ documentation and example have been improved. 
 
 
 $head 02-13$$
@@ -1120,18 +1117,20 @@ $pre
 
 $$
 The documentation and examples have been improved for the following sections:
-$xref/Eq/$$, $xref/UnaryPlus/$$, $xref UnaryMinus$$.
+$cref/assignment/ad_copy/Syntax/Assignment/$$, $xref/UnaryPlus/$$, $xref UnaryMinus$$.
 
 $head 02-11$$
 The documentation and examples have been improved for the following sections:
-$xref/Default/$$, $xref/CopyBase/$$, $xref/CopyAD/$$, and
+$xref/Default/$$, 
+$cref/ad_copy/$$, and
 $xref/Value/$$.
 
 $head 02-10$$
 This is the beginning of a pass to improve the documentation: 
 The documentation sections 
-The $xref/CopyBase/$$ (formerly FromBase) and 
-$xref/CopyAD/$$ (formerly Copy) documentation has been modified.
+The CopyBase (formerly FromBase and now part of $cref/ad_copy/$$) and 
+$cref/AD copy constructor/ad_copy/Syntax/Constructor/$$ 
+(formerly Copy) documentation has been modified.
 $pre
 
 $$

@@ -176,7 +176,8 @@ $end
 namespace CppAD {
 
 // ------------ CondExpOp(cop, left, right, trueCase, falseCase) --------------
-
+// CompareType and ResultType are different for the forward and reverse
+// sparese calculations.
 template <class CompareType, class ResultType>
 inline ResultType CondExpTemplate( 
 	enum  CompareOp            cop ,
@@ -218,7 +219,7 @@ inline ResultType CondExpTemplate(
 		break;
 
 		default:
-		CppADUnknownError(0);
+		CPPAD_ASSERT_UNKNOWN(0);
 		returnValue = trueCase;
 	}
 	return returnValue;
@@ -242,33 +243,6 @@ inline double CondExpOp(
 {	return CondExpTemplate(cop, left, right, trueCase, falseCase);
 }
 
-inline std::complex<float> CondExpOp(
-	enum CompareOp             cop       ,
-	const std::complex<float> &left      ,
-	const std::complex<float> &right     ,
-	const std::complex<float> &trueCase  ,
-	const std::complex<float> &falseCase )
-{	CppADUsageError(
-		0,
-		"Error: cannot use CondExp with a complex type"
-	);
-	return std::complex<float>(0);
-}
-
-
-inline std::complex<double> CondExpOp(
-	enum CompareOp             cop        ,
-	const std::complex<double> &left      ,
-	const std::complex<double> &right     ,
-	const std::complex<double> &trueCase  ,
-	const std::complex<double> &falseCase )
-{	CppADUsageError(
-		0,
-		"Error: cannot use CondExp with a complex type"
-	);
-	return std::complex<double>(0);
-}
-
 template <class Base>
 inline AD<Base> CondExpOp(
 	enum  CompareOp cop       ,
@@ -278,7 +252,7 @@ inline AD<Base> CondExpOp(
 	const AD<Base> &falseCase )
 {
 	AD<Base> returnValue;
-	CppADUnknownError( Parameter(returnValue) );
+	CPPAD_ASSERT_UNKNOWN( Parameter(returnValue) );
 
 	// check first case where do not need to tape
 	if( IdenticalPar(left) & IdenticalPar(right) )
@@ -315,7 +289,7 @@ inline AD<Base> CondExpOp(
 			break;
 
 			default:
-			CppADUnknownError(0);
+			CPPAD_ASSERT_UNKNOWN(0);
 			returnValue = trueCase;
 		}
 		return returnValue;
@@ -403,12 +377,12 @@ void ADTape<Base>::RecordCondExp(
 		ind5 = falseCase.taddr_;	
 	}
 
-	CppADUnknownError( NumInd(CExpOp) == 6 );
-	CppADUnknownError( ind1 > 0 );
+	CPPAD_ASSERT_UNKNOWN( NumInd(CExpOp) == 6 );
+	CPPAD_ASSERT_UNKNOWN( ind1 > 0 );
 	Rec.PutInd(ind0, ind1, ind2, ind3, ind4, ind5);
 
 	// check that returnValue is a dependent variable
-	CppADUnknownError( Variable(returnValue) );
+	CPPAD_ASSERT_UNKNOWN( Variable(returnValue) );
 }
 
 // ------------ CondExpOp(left, right, trueCase, falseCase) ----------------

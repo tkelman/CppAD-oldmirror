@@ -21,30 +21,6 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 # include <cppad/local/tape_rec.hpp>
 # include <cppad/local/ad_tape.hpp>
 
-// use this marco for assignment and computed assignment
-# define CPPAD_ASSIGN_MEMBER(Op)                              \
-	inline AD& operator Op (const AD &right);             \
-	inline AD& operator Op (int right)                    \
-	{	return *this Op AD(right); }                  \
-	inline AD& operator Op (const Base &right)            \
-	{	return *this Op AD(right); }                  \
-	inline AD& operator Op (const VecAD_reference<Base> &right) \
-	{	return *this Op right.ADBase(); }
-
-// use this marco for binary operators 
-# define CPPAD_BINARY_MEMBER(Op)                                   \
-	inline AD operator Op (const AD &right) const;             \
-	inline AD operator Op (int right) const;                   \
-	inline AD operator Op (const Base &right) const;           \
-	inline AD operator Op (const VecAD_reference<Base> &right) const;
-
-// use this marco for comparison operators 
-# define CPPAD_COMPARE_MEMBER(Op)                                    \
-	inline bool operator Op (const AD &right) const;             \
-	inline bool operator Op (int right) const;                   \
-	inline bool operator Op (const Base &right) const;           \
-	inline bool operator Op (const VecAD_reference<Base> &right) const;
-
 //  BEGIN CppAD namespace
 namespace CppAD {
 
@@ -87,8 +63,8 @@ class AD {
 	friend AD pow <Base>
 		(const AD<Base> &x, const AD<Base> &y);
 
-	// IdenticalEqual function
-	friend bool IdenticalEqual <Base> 
+	// IdenticalEqualPar function
+	friend bool IdenticalEqualPar <Base> 
 		(const AD<Base> &u, const AD<Base> &v);
 
 	// EqualOpSeq function
@@ -132,44 +108,46 @@ public:
 	typedef Base value_type;
 
 	// comparison operators
-	CPPAD_COMPARE_MEMBER( <  )
-	CPPAD_COMPARE_MEMBER( <= )
-	CPPAD_COMPARE_MEMBER( >  )
-	CPPAD_COMPARE_MEMBER( >= )
-	CPPAD_COMPARE_MEMBER( == )
-	CPPAD_COMPARE_MEMBER( != )
+	inline bool operator <  (const AD &right) const;
+	inline bool operator <= (const AD &right) const;
+	inline bool operator >  (const AD &right) const;
+	inline bool operator >= (const AD &right) const;
+	inline bool operator == (const AD &right) const;
+	inline bool operator != (const AD &right) const;
 
 	// binary operators
-	CPPAD_BINARY_MEMBER(+)
-	CPPAD_BINARY_MEMBER(-)
-	CPPAD_BINARY_MEMBER(*)
-	CPPAD_BINARY_MEMBER(/)
+	inline AD operator + (const AD &right) const;
+	inline AD operator - (const AD &right) const;
+	inline AD operator * (const AD &right) const;
+	inline AD operator / (const AD &right) const;
 
 	// default constructor
 	inline AD(void);
 
-	// construction from base type
-	inline AD(const Base &b);
-
-	// use default copy constructor
+	// use default copy constructor and assignment operator
 	// inline AD(const AD &x);
+	// inline AD& operator=(const AD &x);
 
-	// contructor from VecAD<Base>::reference
+	// construction and assingment from base type
+	inline AD(const Base &b);
+	inline AD& operator=(const Base &b); 
+
+	// contructor and assignment from VecAD<Base>::reference
 	inline AD(const VecAD_reference<Base> &x);
+	inline AD& operator=(const VecAD_reference<Base> &x);
 
-	// construction from some other type
-	template <class T>
-	inline AD(const T &t);
+	// construction and assignment from some other type
+	template <class T> inline AD(const T &t);
+	template <class T> inline AD& operator=(const T &right);
 
 	// base type corresponding to an AD object
 	friend Base Value <Base> (const AD<Base> &x);
 
-	// binary operators implemented as member functions
-	CPPAD_ASSIGN_MEMBER(  = )
-	CPPAD_ASSIGN_MEMBER( += )
-	CPPAD_ASSIGN_MEMBER( -= )
-	CPPAD_ASSIGN_MEMBER( *= )
-	CPPAD_ASSIGN_MEMBER( /= )
+	// computed assignment operators
+	inline AD& operator += (const AD &right);
+	inline AD& operator -= (const AD &right);
+	inline AD& operator *= (const AD &right);
+	inline AD& operator /= (const AD &right);
 
 	// unary operators
 	inline AD operator +(void) const;
@@ -223,15 +201,15 @@ private:
 	// Make this variable a parameter
 	//
 	void make_parameter(void)
-	{	CppADUnknownError( Variable(*this) );  // currently a variable
+	{	CPPAD_ASSERT_UNKNOWN( Variable(*this) );  // currently a var
 		id_ = 0;
 	}
 	//
 	// Make this parameter a new variable 
 	//
 	void make_variable(size_t id,  size_t taddr)
-	{	CppADUnknownError( Parameter(*this) ); // currently a parameter
-		CppADUnknownError( taddr > 0 );        // make sure valid taddr
+	{	CPPAD_ASSERT_UNKNOWN( Parameter(*this) ); // currently a par
+		CPPAD_ASSERT_UNKNOWN( taddr > 0 );        // sure valid taddr
 
 		taddr_ = taddr;
 		id_    = id;
@@ -259,8 +237,5 @@ private:
 
 // operations that expect the AD template class to be defined
 
-# undef CPPAD_ASSIGN_MEMBER
-# undef CPPAD_BINARY_MEMBER
-# undef CPPAD_COMPARE_MEMBER
 
 # endif

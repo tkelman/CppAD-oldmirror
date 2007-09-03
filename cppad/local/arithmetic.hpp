@@ -2,7 +2,7 @@
 # define CPPAD_ARITHMETIC_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -33,14 +33,8 @@ $section AD Arithmetic Operators and Computed Assignments$$
 $childtable%
 	cppad/local/unary_plus.hpp%
 	cppad/local/unary_minus.hpp%
-	cppad/local/add.hpp%
-	cppad/local/sub.hpp%
-	cppad/local/mul.hpp%
-	cppad/local/div.hpp%
-	cppad/local/add_eq.hpp%
-	cppad/local/sub_eq.hpp%
-	cppad/local/mul_eq.hpp%
-	cppad/local/div_eq.hpp
+	cppad/local/ad_binary.hpp%
+	cppad/local/compute_assign.hpp
 %$$
 
 $end
@@ -48,13 +42,7 @@ $end
 */
 # include <cppad/local/unary_plus.hpp>
 # include <cppad/local/unary_minus.hpp>
-# include <cppad/local/add.hpp>
-# include <cppad/local/sub.hpp>
-# include <cppad/local/mul.hpp>
-# include <cppad/local/div.hpp>
-# include <cppad/local/add_eq.hpp>
-# include <cppad/local/sub_eq.hpp>
-# include <cppad/local/mul_eq.hpp>
-# include <cppad/local/div_eq.hpp>
+# include <cppad/local/ad_binary.hpp>
+# include <cppad/local/compute_assign.hpp>
 
 # endif

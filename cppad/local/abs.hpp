@@ -145,41 +145,24 @@ $end
 //  BEGIN CppAD namespace
 namespace CppAD {
 
-inline float abs(float x)
+inline float abs(const float &x)
 {	if( x < 0. )
 		return - x;
 	return x;
 }
 
-inline double abs(double x)
+inline double abs(const double &x)
 {	if( x < 0. )
 		return - x;
 	return x;
 }
-
-inline std::complex<float>  abs(std::complex<float> x)
-{	CppADUsageError(
-		0,
-		"CppAD::abs: attempt to use with std::complex<float> argument"
-	);
-	return std::complex<float>(0);
-}
-
-inline std::complex<double>  abs(std::complex<double> x)
-{	CppADUsageError(
-		0,
-		"CppAD::abs: attempt to use with std::complex<float> argument"
-	);
-	return std::complex<double>(0);
-}
-
 
 template <class Base>
 AD<Base> AD<Base>::Abs (void) const
 {	using CppAD::abs;
 
 	AD<Base> result;
-	CppADUnknownError( Parameter(result) );
+	CPPAD_ASSERT_UNKNOWN( Parameter(result) );
 
 	result.value_ = abs(value_);
 	if( Variable(*this) ) 

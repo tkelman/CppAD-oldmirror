@@ -25,7 +25,7 @@ $section General Examples$$
 $head Description$$
 Most of the examples in CppAD are part of the documentation
 for a specific feature; for example, $xref/Add.cpp/$$ is an 
-example using the $xref/Add//addition operator/$$.
+example using the $cref/addition operator/ad_binary/$$.
 The examples list in this section are of a more general nature.
 
 $childtable%
@@ -36,8 +36,8 @@ $childtable%
 	example/hes_lu_det.cpp%
 	example/ode_stiff.cpp%
 	example/ode_taylor.cpp%
+	example/ode_taylor_adolc.cpp%
 	example/stack_machine.cpp%
-	example/complex_poly.cpp%
 	omh/mul_level.omh
 %$$
 
@@ -78,6 +78,8 @@ $rref AddEq.cpp$$
 $rref Asin.cpp$$
 $rref Atan.cpp$$
 $rref Atan2.cpp$$
+$rref base_adolc.hpp$$
+$rref base_complex.hpp$$
 $rref BenderQuad.cpp$$
 $rref BoolFun.cpp$$
 $rref CheckNumericType.cpp$$
@@ -130,6 +132,7 @@ $rref LuVecADOk.cpp$$
 $rref Mul.cpp$$
 $rref MulEq.cpp$$
 $rref mul_level.cpp$$
+$rref mul_level_adolc.cpp$$
 $rref multi_newton.cpp$$
 $rref NearEqualExt.cpp$$
 $rref Near_Equal.cpp$$
@@ -139,7 +142,8 @@ $rref OdeErrMaxabs.cpp$$
 $rref OdeGear.cpp$$
 $rref OdeGearControl.cpp$$
 $rref OdeStiff.cpp$$
-$rref OdeTaylor.cpp$$
+$rref ode_taylor.cpp$$
+$rref ode_taylor_adolc.cpp$$
 $rref Output.cpp$$
 $rref ParVar.cpp$$
 $rref Piecewise.cpp$$

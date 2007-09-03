@@ -15,7 +15,7 @@ $spell
 	Cpp
 $$
 
-$section Program That Runs all the CppAD Example$$
+$section Program That Runs the CppAD Examples$$
 $index example, run all$$
 
 $code
@@ -40,7 +40,6 @@ extern bool Abs(void);
 extern bool Acos(void);
 extern bool Add(void);
 extern bool AddEq(void);
-extern bool allocator(void);
 extern bool Asin(void);
 extern bool Atan(void);
 extern bool Atan2(void);
@@ -100,7 +99,7 @@ extern bool OdeErrMaxabs(void);
 extern bool OdeGear(void);
 extern bool OdeGearControl(void);
 extern bool OdeStiff(void);
-extern bool OdeTaylor(void);
+extern bool ode_taylor(void);
 extern bool Output(void);
 extern bool ParVar(void);
 extern bool Piecewise(void);
@@ -135,6 +134,11 @@ extern bool Value(void);
 extern bool Var2Par(void);
 extern bool VecAD(void);
 
+# ifdef CPPAD_ADOLC_EXAMPLES
+extern bool mul_level_adolc(void);
+extern bool ode_taylor_adolc(void);
+# endif
+
 namespace {
 	// function that runs one test
 	static size_t Run_ok_count    = 0;
@@ -165,7 +169,6 @@ int main(void)
 	ok &= Run( Acos,              "Acos"             );
 	ok &= Run( Add,               "Add"              );
 	ok &= Run( AddEq,             "AddEq"            );
-	ok &= Run( allocator,         "allocator"        );
 	ok &= Run( Asin,              "Asin"             );
 	ok &= Run( Atan,              "Atan"             );
 	ok &= Run( Atan2,             "Atan2"            );
@@ -225,7 +228,7 @@ int main(void)
 	ok &= Run( OdeGear,           "OdeGear"          );
 	ok &= Run( OdeGearControl,    "OdeGearControl"   );
 	ok &= Run( OdeStiff,          "OdeStiff"         );
-	ok &= Run( OdeTaylor,         "OdeTaylor"        );
+	ok &= Run( ode_taylor,        "ode_taylor"       );
 	ok &= Run( Output,            "Output"           );
 	ok &= Run( ParVar,            "ParVar"           );
 	ok &= Run( Piecewise,         "Piecewise"        );
@@ -259,6 +262,11 @@ int main(void)
 	ok &= Run( Value,             "Value"            );
 	ok &= Run( Var2Par,           "Var2Par"          );
 	ok &= Run( VecAD,             "VecAD"            );
+
+# ifdef CPPAD_ADOLC_EXAMPLES
+	ok &= Run( mul_level_adolc,   "mul_level_adolc"  );
+	ok &= Run( ode_taylor_adolc,  "ode_taylor_adolc" );
+# endif
 
 	// check for errors
 	using std::cout;

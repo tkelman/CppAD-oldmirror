@@ -17,7 +17,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 # include <cppad/check_numeric_type.hpp>
 # include <cppad/check_simple_vector.hpp>
-# include <cppad/local/cppad_error.hpp>
+# include <cppad/local/cppad_assert.hpp>
 # include <cppad/lu_solve.hpp>
 # include <cppad/near_equal.hpp>
 # include <cppad/ode_err_control.hpp>
@@ -52,7 +52,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 # include <cppad/local/define.hpp>
 
 // vectors used with CppAD
-# include <cppad/local/cppad_vector.hpp>
+# include <cppad/local/test_vector.hpp>
 
 // Declare classes and fucntions that are used before defined
 # include <cppad/local/declare.hpp>
@@ -67,6 +67,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 # include <cppad/local/op.hpp>       // executes taped operations
 # include <cppad/local/user_ad.hpp>  // AD class methods available to the user
 # include <cppad/local/ad_fun.hpp>   // ADFun objects
+# include <cppad/local/base_complex.hpp> // allow form complex Base types
 
 // ---------------------------------------------------------------------------
 // library routines that require the rest of CppAD
