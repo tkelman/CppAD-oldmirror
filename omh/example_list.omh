@@ -75,6 +75,7 @@ $rref Abs.cpp$$
 $rref Acos.cpp$$
 $rref Add.cpp$$
 $rref AddEq.cpp$$
+$rref allocator.cpp$$
 $rref Asin.cpp$$
 $rref Atan.cpp$$
 $rref Atan2.cpp$$

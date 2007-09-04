@@ -40,6 +40,7 @@ extern bool Abs(void);
 extern bool Acos(void);
 extern bool Add(void);
 extern bool AddEq(void);
+extern bool allocator(void);
 extern bool Asin(void);
 extern bool Atan(void);
 extern bool Atan2(void);
@@ -169,6 +170,7 @@ int main(void)
 	ok &= Run( Acos,              "Acos"             );
 	ok &= Run( Add,               "Add"              );
 	ok &= Run( AddEq,             "AddEq"            );
+	ok &= Run( allocator,         "allocator"        );
 	ok &= Run( Asin,              "Asin"             );
 	ok &= Run( Atan,              "Atan"             );
 	ok &= Run( Atan2,             "Atan2"            );

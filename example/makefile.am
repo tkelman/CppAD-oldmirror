@@ -53,6 +53,7 @@ example_SOURCES   = \
 	acos.cpp \
 	add.cpp \
 	add_eq.cpp \
+	allocator.cpp \
 	asin.cpp \
 	atan.cpp \
 	atan_2.cpp \
