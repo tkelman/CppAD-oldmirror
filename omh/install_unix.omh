@@ -430,7 +430,6 @@ $codep
 	make install
 $$
 This will install CppAD in the location specified by 
-$cref/PrefixDir/InstallUnix/PrefixDir/$$ and
-$cref/PostfixDir/InstallUnix/PostfixDir/$$.
+$cref/PrefixDir/InstallUnix/PrefixDir/$$.
 
 $end
