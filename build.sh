@@ -387,6 +387,7 @@ then
 		cppad
 		fadbad
 		profile
+		sacado
 	"
 	seed="123"
 	for name in $list

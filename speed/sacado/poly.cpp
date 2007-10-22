@@ -11,11 +11,9 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin sacado_poly.cpp$$
 $spell
-	std
 	cppad
 	cpp
 	tadiff
-	std
 	ddp
 	Taylor
 	dz
@@ -30,6 +28,9 @@ $spell
 	hpp
 	const
 	bool
+	Tay
+	resize
+	Coeff
 $$
 
 $section Sacado Speed: Derivative of a Polynomial$$

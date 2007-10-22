@@ -21,6 +21,10 @@ $spell
 	diff
 	bool
 	srand
+	Sacado
+	ADvar
+	Tay
+	Gradcomp
 $$
 
 $section Sacado Speed: Gradient of Determinant Using Lu Factorization$$

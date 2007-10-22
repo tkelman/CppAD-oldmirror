@@ -12,7 +12,6 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 $begin sacado_det_minor.cpp$$
 $spell
 	cppad
-	std
 	det
 	const
 	CppAD
@@ -20,6 +19,9 @@ $spell
 	diff
 	bool
 	srand
+	Sacado.hpp
+	ADvar
+	Gradcomp
 $$
 
 $section Sacado Speed: Gradient of Determinant Using Expansion by Minors$$
@@ -56,7 +58,7 @@ void compute_det_minor(
 
 	// object for computing determinant
 	typedef Sacado::Rad::ADvar<double>    ADScalar; 
-	typedef std::vector<ADScalar>         ADVector; 
+	typedef CppAD::vector<ADScalar>        ADVector; 
 	CppAD::det_by_minor<ADScalar>         Det(size);
 
 	size_t i;                // temporary index
