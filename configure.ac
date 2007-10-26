@@ -251,7 +251,8 @@ AC_CONFIG_FILES([
 	speed/profile/makefile
 	test_more/makefile 
 ])
-
+dnl END AC_CONFIG_FILES
+dnl the comment line above is used by ./new_stable.sh
 
 dnl create all the requested output files
 AC_OUTPUT
