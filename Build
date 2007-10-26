@@ -25,7 +25,49 @@ ADOLC_DIR=$HOME/adolc_base
 FADBAD_DIR=$HOME
 BOOST_DIR=/usr/include/boost-1_33
 #
-version="1.0"
+# date currently in configure.ac
+AcDate=`grep "^ *AC_INIT(" configure.ac | \
+	sed -e "s/.*, *\([0-9][0-9]-[0-9][0-9]-[0-9][0-9]\) *,.*/\1/"`
+#
+# version
+#
+if [ "$1" = "version" ] || [ "$1" = "all" ]
+then
+	echo "Build version"
+	#
+	# Today's date in yy-mm-dd decimal digit format with leading zeros
+	Today=`date +%g-%m-%d`
+	#
+	sed configure.ac > configure.tmp -e \
+	"s/(CppAD, [0-9][0-9]-[0-9][0-9]-[0-9][0-9],/(CppAD, $Today,/"
+	#
+	diff configure.ac  configure.tmp
+	mv   configure.tmp configure.ac
+	#
+	# change Autoconf date to today
+	AcDate=$Today
+	#
+	for name in Doc omh/InstallUnix omh/InstallWindows
+	do
+		sed $name.omh > $name.tmp \
+	-e "s/\([^0-9]\)[0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/\1$Today/g" \
+	-e "s/\([^0-9]\)[0-9][0-9]-[0-9][0-9]-[0-9][0-9]\([^0-9]\)/\1$Today\2/g" 
+	#
+		diff $name.omh $name.tmp
+		mv   $name.tmp $name.omh
+	done
+	#
+	# configure file is out of date so remove it
+	if [ -e configure ]
+	then
+		rm configure
+	fi
+	#
+	if [ "$1" != "all" ]
+	then
+		exit 0
+	fi
+fi
 #
 # automake
 #

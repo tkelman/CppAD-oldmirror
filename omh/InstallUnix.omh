@@ -60,22 +60,24 @@ $index install, unix CppAD$$
 $section Unix Installation and Testing$$
 
 $head Download Current Version$$
-To date, the only way to obtain version 1.0 is using subversion.
-If you have subversion, execute the following commands
-$nospell
-$codep
-	svn checkout http://www.coin-or.org/svn/CppAD/stable/1.0 CppAD-1.0
-	cd CppAD-1.0
-	./time_stamp.sh
-$$
-$$
-(The $code time_stamp.sh$$ command adjusts some non source code files
-time stamps to when $code make$$ expects them to have been created.)
-This creates the distribution directory
-$syntax%
-	CppAD-1.0
+$index download, unix$$
+Download the file
+$href%
+	http://www.coin-or.org/Tarballs/CppAD/CppAD-06-06-16.tar.gz%
+	CppAD-06-06-16.tar.gz
 %$$
-Note that $code 1.0$$ is the version number for CppAD.
+
+$head Extraction$$
+Use the command
+$codep
+	tar -xvzf CppAD-06-06-16.tar.gz
+$$
+to decompress and extract the unix format version
+into the distribution directory
+$syntax%
+	cppad-06-06-16
+%$$
+Note that $code 06-06-16$$ is the version number for CppAD.
 All of the commands below are to be executed starting from this
 directory.
 
@@ -86,6 +88,10 @@ The files $syntax%Doc/%*%.htm%$$ are in HTML format.
 If your browser supports XHTML+MATHML format,
 an easier to read copy is available in the files
 $syntax%Doc/%*%.xml%$$.
+
+$head Developer Documentation$$
+The $code Dev$$ sub-directory of the distribution directory
+contains developer documentation for CppAD. 
 
 $head Configure$$
 $index configure$$
@@ -111,13 +117,6 @@ $syntax%
 where only the $code configure$$ command need appear.
 The entries one each of the other lines are optional
 and the text in italic is replaced values that you choose.
-A very simple default test and install can be done with the following commands:
-$codep
-        ./configure
-        make test
-        make install
-$$
-
 
 $head PrefixDir and PostfixDir$$
 $index configure, prefix$$

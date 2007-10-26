@@ -16,9 +16,9 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 # ---------------------------------------------------------------------------
 #
-if [ "$1" != "Doc.new" ] && [ "$1" != "Dev" ]
+if [ "$1" != "Doc" ] && [ "$1" != "Dev" ]
 then
-	echo "RunOMhelp target: where target is Doc.new or Dev"
+	echo "RunOMhelp target: where target is Doc or Dev"
 	exit
 fi
 if [ "$1" = Dev ]
@@ -42,14 +42,14 @@ then
 		echo "See the complete warning messages in OMhelp.Dev.log."
 	fi
 fi
-if [ "$1" = Doc.new ]
+if [ "$1" = Doc ]
 then
 	#
-	rm -r -f Doc.new
+	rm -r -f Doc
 	echo "Building user documentation"
 	#
-	mkdir Doc.new
-	cd    Doc.new
+	mkdir Doc
+	cd    Doc
 	if ! omhelp ../Doc.omh > ../OMhelp.Doc.log \
 		-l http://www.coin-or.org/CppAD/ \
 		-noframe \

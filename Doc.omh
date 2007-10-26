@@ -68,7 +68,7 @@ uses operator overloading to compute derivatives of algorithms defined in C++.
 It is distributed under the $xref/License//GNU General Public License/$$
 by the $href%http://www.coin-or.org/foundation.html%COIN-OR Foundation%$$.
 Installation procedures are provided for both
-$xref/InstallUnix//Unix/$$ and windows
+$xref/InstallUnix//Unix/$$ and $xref/InstallWindows//MS Windows/$$
 operating systems.
 Extensive user and developer documentation is included.
 

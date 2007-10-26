@@ -26,7 +26,10 @@
 # on your local machine. If copy_branch is empty; i.e., copy_branch="", 
 # the changes will not be copied (and commited) into another branch.
 # ----------------------------------------------------------------------
-log_entry="Remove cross references to InstallWindows and InstallUnix/Extraction
+log_entry="Remove spaces after ( and before ) in configure.ac.
+Leading spaces are always ignored but trailing spaces in the macro call
+	AC_CONFIG_SRCDIR( CppAD/CppAD.h )
+were causing problems on some systems.
 "
 # 
 add_list="
@@ -34,37 +37,7 @@ add_list="
 #
 change_list="
 	SvnCommit
-	Doc.omh
-	omh/ExpApx.omh
-	omh/InstallUnix.omh
-	omh/WhatsNew04.omh
-	omh/WhatsNew05.omh
-	omh/WhatsNew06.omh
-	Doc/cppad.xml
-	Doc/expapx.htm
-	Doc/whatsnew05.htm
-	Doc/whatsnew06.htm
-	Doc/_contents.htm
-	Doc/_reference.xml
-	Doc/_installunix_xml.js
-	Doc/error.wrd
-	Doc/_search.htm.js
-	Doc/installunix.xml
-	Doc/whatsnew04.xml
-	Doc/_index.xml
-	Doc/expapx.xml
-	Doc/whatsnew05.xml
-	Doc/_search.xml.js
-	Doc/whatsnew06.xml
-	Doc/_contents_xml.htm
-	Doc/index.htm
-	Doc/cppad.htm
-	Doc/_reference.htm
-	Doc/_installunix_htm.js
-	Doc/installunix.htm
-	Doc/whatsnew04.htm
-	Doc/index.xml
-	Doc/_index.htm
+	configure.ac
 "
 #
 delete_list="

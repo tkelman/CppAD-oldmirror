@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /*
 $begin ExpApx$$
 $spell
-	cppad
+	omhelp-%yy%-%mm%-%dd%
 	hpp
 	Apx
 	cpp
@@ -74,12 +74,12 @@ $latex \[
 $head include$$
 The include command in the syntax is relative to 
 $syntax%
-	CppAD-1.0/Introduction
+	omhelp-%yy%-%mm%-%dd%/Introduction
 %$$
-where $code CppAD-1.0$$ is the distribution directory
+where $syntax%omhelp-%yy%-%mm%-%dd%$$ is the distribution directory
 created during the extraction step of a 
-Unix or 
-Window 
+$cref/Unix/InstallUnix/Extraction/$$ or 
+$cref/Window/InstallWindows/Extraction/$$ 
 installation of CppAD.
 
 
