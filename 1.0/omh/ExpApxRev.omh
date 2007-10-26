@@ -1,0 +1,275 @@
+/* -----------------------------------------------------------------------
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+------------------------------------------------------------------------ */
+$begin ExpApxRev$$
+$spell
+	ExpApxRev
+$$
+
+$section An Example Reverse Mode Sweep$$
+
+$index ExpApx, reverse sweep$$
+$index example, reverse sweep$$
+$index reverse, sweep$$
+$index sweep, reverse$$
+
+
+$head Reverse Example$$
+Reverse mode uses the
+$xref/ExpApxSeq/Operation Sequence/ExpApx operation sequence/$$
+in reverse order to compute the entire derivative of
+one dependent variable with respect to all of the independent variables.
+The symbols
+$latex \[
+	s_0, r_0, k_0, k_1, k_2, k_3
+\] $$
+are  operation sequence $xref/ExpApxSeq/Parameter/parameters/$$.
+Hence they are not included in our function definitions below.
+In addition, the operation sequence depends on $italic e$$
+but the individual operations do not.
+Thus, 
+all of the partial derivatives with respect to $italic e$$ are zero.
+Hence it also is left out of our function definitions below.
+
+$head f_0 $$
+In reverse mode we choose one of the dependent variable and
+compute its derivative with respect to all the independent variables.
+For our example, we chose the value returned by $code Exp$$
+which is equal to the symbol $latex s_2$$ in the operation sequence.
+We begin with the function $latex f_0 $$ where $latex s_2$$ 
+is both an argument and the value of the function; i.e.,
+$latex \[
+\begin{array}{rcl}
+f_0 ( a_0 , q_1 , r_1 , s_1 , q_2 , r_2 , s_2 ) & = & s_2 
+\\
+\D{f_0}{s_2} & = & 1
+\end{array}
+\] $$
+All the other partial derivatives of $latex f_0 $$ are zero.
+
+$head f_1 $$
+We define the function 
+$latex f_1 ( a_0 , q_1 , r_1 , s_1 , q_2 , r_2 ) $$
+as equal to $latex f_0 $$
+except that $latex s_2 $$ is eliminated using 
+its functional representation in the operation sequence i.e.
+$latex \[
+\begin{array}{rcl}
+f_1 &  =  &
+f_0 [ a_0 , q_1 , r_1 , s_1 , q_2 , r_2 , s_2 ( s_1, r_2 ) ]
+\\
+s_2 & =   & s_1 + r_2  
+\end{array}
+\] $$
+It follows that 
+$latex \[
+\begin{array}{rcll}
+\D{f_1}{s_1} 
+& = & \D{f_0}{s_1} + 
+	\D{f_0}{s_2} * \D{s_2}{s_1} 
+& = 1
+\\
+\D{f_1}{r_2} 
+& = & \D{f_0}{r_2} + 
+	\D{f_0}{s_2} * \D{s_2}{r_2} 
+& = 1
+\end{array}
+\] $$
+All the other partial derivatives of $latex f_1 $$ are zero.
+
+$head f_2 $$
+We define the function 
+$latex f_2 ( a_0 , q_1 , r_1 , s_1 , q_2 ) $$
+as equal to $latex f_1 $$
+except that $latex r_2 $$ is eliminated using 
+its functional representation in the operation sequence i.e.
+$latex \[
+\begin{array}{rcl}
+f_2 &  =  &
+f_1 [ a_0 , q_1 , r_1 , s_1 , q_2 , r_2 ( q_2 ) ]
+\\
+r_2 & =   & q_2 / k_1  
+\end{array}
+\] $$
+Note that $latex k_1 = 2 $$ is an operation sequence 
+$xref/ExpApxSeq/Parameter/parameter/$$ 
+so we have not included it an argument to the function $latex r_2 $$.
+It follows that 
+$latex \[
+\begin{array}{rcll}
+\D{f_2}{q_2} 
+& = & \D{f_1}{q_2} + 
+	\D{f_1}{r_2} * \D{r_2}{q_2} 
+& = 0.5
+\\
+\D{f_2}{s_1}
+& = & \D{f_1}{s_1} 
+& = 1
+\end{array}
+\] $$
+All the other partial derivatives of $latex f_2 $$ are zero.
+
+$head f_3 $$
+We define the function 
+$latex f_3 ( a_0 , q_1 , r_1 , s_1 ) $$
+as equal to $latex f_2 $$
+except that $latex q_2 $$ is eliminated using 
+its functional representation in the operation sequence i.e.
+$latex \[
+\begin{array}{rcl}
+f_3 &  =  &
+f_2 [ a_0 , q_1 , r_1 , s_1 , q_2 (r_1, a_0 )  ]
+\\
+q_2  & = & r_1 * a_0
+\end{array}
+\] $$
+Given the independent variable values and the operation sequence,
+$latex r_1 =  0.5 $$ and $latex a_0 = 0.5 $$.
+It follows that 
+$latex \[
+\begin{array}{rcll}
+\D{f_3}{a_0} 
+& = & \D{f_2}{a_0} + 
+	\D{f_2}{q_2} * \D{q_2}{a_0} 
+& =  0.25
+\\
+\D{f_3}{q_1} & = & \D{f_2}{q_1}  & = 0
+\\
+\D{f_3}{r_1} 
+& = & \D{f_2}{r_1} + 
+	\D{f_2}{q_2} * \D{q_2}{r_1} 
+& =  0.25
+\\
+\D{f_3}{s_1}
+& = & \D{f_2}{s_1} 
+& = 1
+\end{array}
+\] $$
+
+$head f_4 $$
+We define the function 
+$latex f_4 ( a_0 , q_1 , r_1 ) $$
+as equal to $latex f_3 $$
+except that $latex s_1 $$ is eliminated using 
+its functional representation in the operation sequence i.e.
+$latex \[
+\begin{array}{rcl}
+f_4 &  =  &
+f_3 [ a_0 , q_1 , r_1 , s_1 (r_1 ) ]
+\\
+s_1  & = &  s_0 + r_1 
+\end{array}
+\] $$
+Note that $latex s_0 $$ is a 
+$xref/ExpApxSeq/Parameter/parameter/$$ 
+so we have not included as an argument to the function $latex s_1 $$.
+It follows that
+$latex \[
+\begin{array}{rcll}
+\D{f_4}{a_0} 
+& = & \D{f_3}{a_0}
+& =  0.25
+\\
+\D{f_4}{q_1} 
+& = & \D{f_3}{q_1}
+& =  0
+\\
+\D{f_4}{r_1} 
+& = & \D{f_3}{r_1} + 
+	\D{f_3}{s_1} * \D{s_1}{r_1} 
+& =  1.25
+\end{array}
+\] $$
+
+$head f_5 $$
+We define the function 
+$latex f_5 ( a_0 , q_1 ) $$
+as equal to $latex f_4 $$
+except that $latex r_1 $$ is eliminated using 
+its functional representation in the operation sequence i.e.
+$latex \[
+\begin{array}{rcl}
+f_5 &  =  &
+f_4 [ a_0 , q_1 , r_1 ( q_1 )]
+\\
+r_1 & =  & q_1 / k_0 
+\end{array}
+\] $$
+Note that $latex k_0 = 1 $$ is a 
+$xref/ExpApxSeq/Parameter/parameter/$$ 
+so we have not included as an argument to the function $latex r_1 $$.
+It follows that 
+$latex \[
+\begin{array}{rcll}
+\D{f_5}{q_1} 
+& = & \D{f_4}{q_1} + 
+	\D{f_4}{r_1} * \D{r_1}{q_1}
+& =  1.25
+\\
+\D{f_5}{a_0} 
+& = & \D{f_4}{a_0} 
+& =  0.25
+\end{array}
+\] $$
+
+$head f_6 $$
+We define the function 
+$latex f_6 ( a_0 ) $$
+as equal to $latex f_5 $$
+except that $latex q_1 $$ is eliminated using 
+its functional representation in the operation sequence i.e.
+$latex \[
+\begin{array}{rcl}
+f_6 &  =  &
+f_5 [ a_0 , q_1 ( a_0 ) ]
+\\
+q_1 & = & r_0 * a_0
+\end{array}
+\] $$
+Note that $latex r_0 = 1 $$ is a 
+$xref/ExpApxSeq/Parameter/parameter/$$ 
+so we have not included as an argument to the function $latex q_1 $$.
+It follows that 
+$latex \[
+\begin{array}{rcll}
+\D{f_6}{a_0} 
+& = & \D{f_5}{a_0} + 
+	\D{f_5}{q_1} * \D{q_1}{a_0}
+& =  1.5
+\end{array}
+\] $$
+Note that,
+for the argument value $latex x = 0.5$$,
+$latex a_0$$ is equal to $latex x$$ and  
+$latex \[
+\D{f_6}{a_0} = \D{ {\rm ExpApx} (x, .2) }{x} 
+\] $$
+We also note that both reverse and forward mode give the 
+same result for this partial derivative.
+
+
+$children%
+	Introduction/ExpApxRev.cpp
+%$$
+$head Verification$$
+The file $xref/ExpApxFor.cpp/$$ contains a routine 
+which verifies the values computed above.
+It returns true for success and false for failure.
+It only tests the partial derivatives of
+$latex f_j$$ that are different from those of $latex f_{j-1}$$.
+
+$end
