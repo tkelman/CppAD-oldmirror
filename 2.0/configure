@@ -4616,7 +4616,6 @@ esac
 ac_config_files="$ac_config_files makefile example/makefile introduction/get_started/makefile introduction/exp_apx/makefile print_for/makefile speed/adolc/makefile speed/cppad/makefile speed/example/makefile speed/fadbad/makefile speed/profile/makefile test_more/makefile"
 
 
-
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
