@@ -11,7 +11,7 @@ dnl ---------------------------------------------------------------------------
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl   package   version              bug-report
-AC_INIT(CppAD, 20070623, cppad@list.coin-or.org)
+AC_INIT(CppAD, 20071016, cppad@list.coin-or.org)
 
 dnl Set the default install prefix to the installers home directory
 dnl cygwin begin delete:
