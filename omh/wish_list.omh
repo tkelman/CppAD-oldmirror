@@ -10,7 +10,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 $begin WishList$$
 $spell
-	CppADvector
+	Bool
 	Adolc
 	Fadbad
 	cygwin
@@ -68,7 +68,7 @@ $xref/Independent/$$ is called,
 a new tape is created.
 If an exception occurs before the call to the corresponding
 $xref/ADFun/$$ constructor or $cref/Dependent/$$, 
-the tape recording will be never stop.
+the tape recording will never stop.
 Thus, there should be a way to abort a tape recording.
 
 $head Operation Sequence$$
@@ -109,30 +109,16 @@ $lnext
 Template parameter names should begin with an uppercase letter.
 
 $lnext
-Macro names (gasp!) names should use all uppercase.
-(This was done,  as a test case, 
-in the filename branch for the cppad/local directory at the end of 2006-08. 
-The macro's that are part of the
-CppAD user interface were left in their original case; to be specific,
-$code CppADTrackNewVec$$,
-$code CppADTrackDelVec$$,
-$code CppADTrackExtend$$,
-$code CppADTrackCount$$,
-$code CppADvector$$,
-$code CppADCreateDiscrete$$.
-In addition,
-the macros $code CppADUsageError$$ and $code CppADUnknownError$$
-were not changed.
-The macro names above should be changed to use entirely upper case names.
-
-
-$lnext
 Use spaces rather than tabs.  
 
 $lend
 
 $subhead Member Variables$$
-Change member variable names so that they all end with an underscore.
+Change private member variables names
+(not part of the user interface)
+so that they all end with an underscore.
+(This has been done for the $code AD$$ and $code VecAD$$ template class,
+but not yet for the other classes.) 
 
 $head Vector Element Type$$
 Change cross references from 

@@ -24,8 +24,8 @@ bool base_adolc()
 	typedef CppAD::AD<ADdouble> ADDdouble; // for second level of taping
 	size_t n = 4;                          // number independent variables
 
-	CppADvector<ADdouble>   a_x(n);
-	CppADvector<ADDdouble> aa_x(n);
+	CPPAD_TEST_VECTOR<ADdouble>   a_x(n);
+	CPPAD_TEST_VECTOR<ADDdouble> aa_x(n);
 
 	// value of the independent variables
 	int tag = 0;                         // Adolc setup
@@ -41,7 +41,7 @@ bool base_adolc()
 
 	// compute function
 	size_t m = 5;
-	CppADvector<ADDdouble> aa_f(m);    // dependent variables
+	CPPAD_TEST_VECTOR<ADDdouble> aa_f(m);    // dependent variables
 
 	// different cases of conditional expressions
 	aa_f[0] = CondExpLt(aa_x[0], aa_x[1], aa_x[2], aa_x[3]);
@@ -62,8 +62,8 @@ bool base_adolc()
 
 	// arrays for Adolc zos_forward
 	double *x, *y;
-	x = CppADTrackNewVec(n, x);
-	y = CppADTrackNewVec(m, y);
+	x = CPPAD_TRACK_NEW_VEC(n, x);
+	y = CPPAD_TRACK_NEW_VEC(m, y);
 
 	// switch order of arguments from when taping was done
 	for(j = 0; j < n; j++)
@@ -96,8 +96,8 @@ bool base_adolc()
 	// CondExpGt(1, 1, 2, 3)
 	ok &= (y[4] == double(3));
 
-	CppADTrackDelVec(x);
-	CppADTrackDelVec(y);
+	CPPAD_TRACK_DEL_VEC(x);
+	CPPAD_TRACK_DEL_VEC(y);
 	return ok;
 }
 // END PROGRAM

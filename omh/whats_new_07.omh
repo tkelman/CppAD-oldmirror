@@ -11,6 +11,10 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 $begin whats_new_07$$
 $spell
+	Ginac
+	xi
+	Bool
+	CppADvector
 	inv
 	namespace
 	det_lu
@@ -31,7 +35,7 @@ $spell
 	openmp
 	dy
 	automake
-	makefile:wq
+	makefile
 	CppAD
 	cygwin
 	cppad.hpp
@@ -50,6 +54,142 @@ This section contains a list of the changes to CppAD during 2007
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
 
+$head 10-16$$
+Add $italic seed$$ argument and
+improve $cref/speed_main/$$ documentation.
+
+$head 10-13$$
+Fix the title in $cref/adolc_det_lu.cpp/$$.
+Add the package name to each test case result printed by
+$cref/speed_main/$$.
+
+$head 10-05$$
+Added and example using complex calculations for a 
+function that is not complex differentiable ($cref/not_complex_ad.cpp/$$).
+
+$head 10-02$$ 
+Extend the $cref/pow/$$ function to work for any case where one argument
+is $syntax%AD<%Base%>%$$ and the other is $code double$$ 
+(as do the binary operators).
+
+$head 09-06$$
+If the $cref/method.step/OdeErrControl/Method/step/$$ function returned
+$code nan$$ (not a number),
+it was possible for $cref/OdeErrControl/$$ to drop into an infinite loop.
+This has been fixed.
+
+$head 08-09$$
+Let user detect and handel the case where an ODE initial vector $italic xi$$
+contains  not a number $code nan$$
+(see $cref/Runge45/$$, $cref/Rosen34/$$, and $cref/OdeErrControl/$$).
+$pre
+
+$$
+Use the $code ||$$ operation instead of $code |$$
+operator in the $code nan$$ function 
+(The Ginac library seems to use an alias for the type $code bool$$ and
+does not have $code |$$ defined for this alias).
+$pre
+
+$$
+The file $code test_more/ode_err_control.cpp$$ was using the 
+wrong include file name since the change on 08/07. 
+This has been fixed.
+
+$head 08-07$$
+Sometimes an ODE solver takes to large a step and this results
+in invalid values for the variables being integrated.
+The ODE solvers $cref/Runge45/$$ and $cref/Rosen34/$$ have been 
+modified to abort
+and return $cref/nan/$$ when it is returned by the differential
+equation evaluation.
+The solver $cref/OdeErrControl/$$ have been modified to try smaller steps 
+when this happens. 
+$pre
+
+$$
+Fix an $cref/Sequence Constructor/FunConstruct/Sequence Constructor/$$
+referenced to $code Dependent$$ in documentation
+(was using the $cref/FunDeprecated/$$ one argument syntax).
+$pre
+
+$$
+Add comment about mixing debug and non-debug versions of
+CppAD in $cref/TrackDelVec/TrackNewDel/TrackDelVec/$$ error message.
+
+
+$head 07-30$$
+$code CppADCreateBinaryBool$$ and $code CppADCreateUnaryBool$$
+have been replaced by $code CPPAD_BOOL_BINARY$$ and
+$code CPPAD_BOOL_UNARY$$ respectively.
+In addition, the $cref/WishList/$$ item for conversion
+of all preprocessor macros to upper case been completed and removed.
+
+$head 07-29$$
+The preprocessor macros 
+$code CppADUsageError$$ and $code CppADUnknownError$$
+have been replaced by $code CPPAD_ASSERT_KNOWN$$ and
+$code CPPAD_ASSERT_UNKNOWN$$ respectively.
+The meaning for these macros 
+has been included in the $cref/cppad_assert/$$ section.
+In addition, the $italic known$$ argument to $cref/ErrorHandler/$$
+was wrong for the unknown case.
+$pre
+
+$$
+The $cref/WishList/$$ item 
+for conversion of all preprocessor macros to upper case
+has been changes (to an item that was previous missing).
+
+$head 07-28$$
+The preprocessor macro $code CPPAD_DISCRETE_FUNCTIOIN$$ was defined
+as a replacement for $code CppADCreateDiscrete$$ 
+which has been deprecated.
+
+$head 07-26$$
+Merge in changes made in $code branches/test_vector$$.
+
+$subhead 07-26$$
+Change all occurrences of $code CppADvector$$,
+in the files $syntax%test_more/%*%.cpp%$$ and $syntax%speed/%*%/%*%.cpp%$$,
+where changed to $code CPPAD_TEST_VECTOR$$.
+All occurrences of the $code CppADvector$$ in the documentation
+were edited to reflect that fact that it has been deprecated.
+The documentation index and search for
+deprecated items has been improved.
+
+$subhead 07-25$$
+Deprecate the preprocessor symbol $code CppADvector$$ 
+and start changing it to
+$small $cref/CPPAD_TEST_VECTOR/test_vector/$$ $$.
+$pre
+
+$$
+Change all occurrences of $code CppADvector$$,
+in the $syntax%example/%*%.cpp%$$ files,
+to $code CPPAD_TEST_VECTOR$$.
+
+$head 07-23$$
+The $cref/TrackNewDel/$$ macros
+$code CppADTrackNewVec$$,
+$code CppADTrackDelVec$$, and
+$code CppADTrackExtend$$ have been deprecated.
+The new macros names to use are 
+$code CPPAD_TRACK_NEW_VEC$$,
+$code CPPAD_TRACK_DEL_VEC$$, and
+$code CPPAD_TRACK_EXTEND$$ respectively.
+This item has been removed from the 
+$cref/software guidelines/WishList/Software Guidelines/$$
+section of the wish list.
+$pre
+
+$$
+The 
+$cref/member variables/WishList/Software Guidelines/Member Variables/$$ 
+wish list item has be brought up to date.
+
+$head 07-22$$
+Minor improvements to the $cref/ode_taylor_adolc.cpp/$$ example.
 
 $head 07-21$$
 The $cref/openmp_run.sh/$$ example programs

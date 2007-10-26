@@ -2,7 +2,7 @@
 # define CPPAD_CHECK_SIMPLE_VECTOR_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -76,7 +76,7 @@ $end
 ---------------------------------------------------------------------------
 */
 
-# include <cppad/local/cppad_error.hpp>
+# include <cppad/local/cppad_assert.hpp>
 
 namespace CppAD {
 
@@ -93,7 +93,10 @@ namespace CppAD {
 
 	template <class Scalar, class Vector>
 	void CheckSimpleVector(void)
-	{	// only need execute once per value Scalar, Vector pair
+	{	Scalar zero = Scalar(0);
+		Scalar one  = Scalar(1);
+
+		// only need execute once per value Scalar, Vector pair
 		static bool runOnce = false;
 		if( runOnce )
 			return;
@@ -109,7 +112,7 @@ namespace CppAD {
 		Vector d;
 
 		// size member function
-		CppADUsageError(
+		CPPAD_ASSERT_KNOWN(
 			d.size() == 0,
 			"default construtor result does not have size zero"
 		);
@@ -121,26 +124,26 @@ namespace CppAD {
 		Vector s(1);
 
 		// check element assignment
-		s[0] = Scalar(1);
-		CppADUsageError(
-			s[0] == Scalar(1),
+		s[0] = one;
+		CPPAD_ASSERT_KNOWN(
+			s[0] == one,
 			"element assignment failed"
 		);
 
 		// check copy constructor
-		s[0] = Scalar(0);
+		s[0] = zero;
 		const Vector c(s);
-		s[0] = Scalar(1);
-		CppADUsageError(
-			c[0] == Scalar(0),
+		s[0] = one;
+		CPPAD_ASSERT_KNOWN(
+			c[0] == zero,
 			"copy constructor is shallow"
 		);
 
 		// vector assignment operator
 		s = c;
-		s[0] = Scalar(1);
-		CppADUsageError(
-			c[0] == Scalar(0),
+		s[0] = one;
+		CPPAD_ASSERT_KNOWN(
+			c[0] == zero,
 			"assignment operator is shallow"
 		);
 

@@ -128,8 +128,8 @@ namespace CppAD {
 // Must define a specializatgion of LeqZero,AbsGeq for the ADComplex case
 typedef std::complex<double>     Complex;
 typedef CppAD::AD<Complex>     ADComplex;
-CppADCreateUnaryBool(Complex,  LeqZero )
-CppADCreateBinaryBool(Complex, AbsGeq )
+CPPAD_BOOL_UNARY(Complex,  LeqZero )
+CPPAD_BOOL_BINARY(Complex, AbsGeq )
 
 template <class Scalar>
 class det_by_lu {
@@ -156,7 +156,7 @@ public:
 			n, m, A, B, X, logdet);
 
 		// make sure the martix is not singular
-		CppADUsageError( 
+		CPPAD_ASSERT_KNOWN( 
 			signdet != 0,
 			"det_by_lu: matrix is singular"
 		);

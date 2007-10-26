@@ -1,5 +1,5 @@
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -19,7 +19,7 @@ $spell
 	Rhs
 	logdet
 	Cpp
-	CppADvector
+	CPPAD_TEST_VECTOR
 $$
 
 $index LuVecAD$$
@@ -228,7 +228,7 @@ AD<double> LuVecAD(
 		for(i = p; i < N; i += 1.)
 		{	itmp = ip[i] * N;
 			for(j = p; j < N; j += 1.)
-			{	CppADUnknownError(
+			{	CPPAD_ASSERT_UNKNOWN(
 					(ip[i] < N) & (jp[j] < N)
 				);
 				index = itmp + jp[j];

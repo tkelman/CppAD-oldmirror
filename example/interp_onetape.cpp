@@ -10,16 +10,26 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
 /*
-$begin Piecewise.cpp$$
+$begin interp_onetape.cpp$$
+$spell
+	retaping
+	retape
+$$
 
-$section Piecewise Linear Interpolation: Example and Test$$
+$section Interpolation With Out Retaping: Example and Test$$
 
-$index piecewise, linear interpolate$$
-$index linear, piecewise interpolate$$
-$index interpolate, piecewise linear$$
+$index interpolate, example$$
+$index interpolate, test$$
+$index tape, interpolate$$
+$index retape, interpolate$$
 
+$head See Also$$
+$cref/interp_retape.cpp/$$
+$pre
+
+$$
 $code
-$verbatim%example/piecewise.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
+$verbatim%example/interp_onetape.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
 $$
 
 $end
@@ -74,13 +84,13 @@ namespace {
 		double dy = FunctionValue[j+1] - FunctionValue[j];
 		return dy / dx;
 	}
-	CppADCreateDiscrete(double, Argument)
-	CppADCreateDiscrete(double, Function)
-	CppADCreateDiscrete(double, Slope)
+	CPPAD_DISCRETE_FUNCTION(double, Argument)
+	CPPAD_DISCRETE_FUNCTION(double, Function)
+	CPPAD_DISCRETE_FUNCTION(double, Slope)
 }
 
 
-bool Piecewise(void)
+bool interp_onetape(void)
 {	bool ok = true;
 
 	using CppAD::AD;
@@ -88,7 +98,7 @@ bool Piecewise(void)
 
 	// domain space vector
 	size_t n = 1;
-	CppADvector< AD<double> > X(n);
+	CPPAD_TEST_VECTOR< AD<double> > X(n);
 	X[0] = .4 * ArgumentValue[1] + .6 * ArgumentValue[2];
 
 	// declare independent variables and start tape recording
@@ -102,17 +112,17 @@ bool Piecewise(void)
 
 	// range space vector
 	size_t m = 1;
-	CppADvector< AD<double> > Y(m);
+	CPPAD_TEST_VECTOR< AD<double> > Y(m);
 	Y[0] = I;
 
 	// create f: X -> Y and stop tape recording
 	CppAD::ADFun<double> f(X, Y);
 
 	// vectors for arguments to the function object f
-	CppADvector<double> x(n);   // argument values
-	CppADvector<double> y(m);   // function values 
-	CppADvector<double> dx(n);  // differentials in x space
-	CppADvector<double> dy(m);  // differentials in y space
+	CPPAD_TEST_VECTOR<double> x(n);   // argument values
+	CPPAD_TEST_VECTOR<double> y(m);   // function values 
+	CPPAD_TEST_VECTOR<double> dx(n);  // differentials in x space
+	CPPAD_TEST_VECTOR<double> dy(m);  // differentials in y space
 
 	// to check function value we use the fact that X[0] is between 
 	// ArgumentValue[1] and ArgumentValue[2]

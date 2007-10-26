@@ -119,6 +119,8 @@ $rref Hessian.cpp$$
 $rref Independent.cpp$$
 $rref Integer.cpp$$
 $rref Interface2C.cpp$$
+$rref interp_onetape.cpp$$
+$rref interp_retape.cpp$$
 $rref JacLuDet.cpp$$
 $rref JacMinorDet.cpp$$
 $rref Jacobian.cpp$$
@@ -136,6 +138,7 @@ $rref mul_level_adolc.cpp$$
 $rref multi_newton.cpp$$
 $rref NearEqualExt.cpp$$
 $rref Near_Equal.cpp$$
+$rref not_complex_ad.cpp$$
 $rref NumericType.cpp$$
 $rref OdeErrControl.cpp$$
 $rref OdeErrMaxabs.cpp$$
@@ -146,7 +149,6 @@ $rref ode_taylor.cpp$$
 $rref ode_taylor_adolc.cpp$$
 $rref Output.cpp$$
 $rref ParVar.cpp$$
-$rref Piecewise.cpp$$
 $rref Poly.cpp$$
 $rref Pow.cpp$$
 $rref pow_int.cpp$$

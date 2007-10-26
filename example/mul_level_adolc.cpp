@@ -46,9 +46,13 @@ Adolc uses raw memory arrays that depend on the number of
 dependent and independent variables, hence $code new$$ and $code delete$$
 are used to allocate this memory.
 The preprocessor macros 
-$cref/CppADTrackNewVec/TrackNewDel/TrackNewVec/$$ 
+$small
+$cref/CPPAD_TRACK_NEW_VEC/TrackNewDel/TrackNewVec/$$ 
+$$
 and
-$cref/CppADTrackDelVec/TrackNewDel/TrackDelVec/$$ 
+$small
+$cref/CPPAD_TRACK_DEL_VEC/TrackNewDel/TrackDelVec/$$ 
+$$
 are used to check for errors in the
 use of $code new$$ and $code delete$$ when the example is compiled for
 debugging (when $code NDEBUG$$ is not defined).
@@ -75,7 +79,7 @@ namespace { // put this function in the empty namespace
 
 	// f(x) = |x|^2 = .5 * ( x[0]^2 + ... + x[n-1]^2 + .5 )
 	template <class Type>
-	Type f(CppADvector<Type> &x)
+	Type f(CPPAD_TEST_VECTOR<Type> &x)
 	{	Type sum;
 
 		// check assignment of AD< AD<double> > = double
@@ -101,9 +105,9 @@ bool mul_level_adolc()
 	typedef CppAD::AD<ADdouble> ADDdouble; // for second level of taping
 	size_t n = 5;                          // number independent variables
 
-	CppADvector<double>       x(n);
-	CppADvector<ADdouble>   a_x(n);
-	CppADvector<ADDdouble> aa_x(n);
+	CPPAD_TEST_VECTOR<double>       x(n);
+	CPPAD_TEST_VECTOR<ADdouble>   a_x(n);
+	CPPAD_TEST_VECTOR<ADDdouble> aa_x(n);
 
 	// value of the independent variables
 	int tag = 0;                         // Adolc setup
@@ -119,18 +123,18 @@ bool mul_level_adolc()
 	CppAD::Independent(aa_x);          // aa_x is independent for ADDdouble
 
 	// compute function
-	CppADvector<ADDdouble> aa_f(1);    // scalar valued function
+	CPPAD_TEST_VECTOR<ADDdouble> aa_f(1);    // scalar valued function
 	aa_f[0] = f(aa_x);                 // has only one component
 
 	// declare inner function (corresponding to ADDdouble calculation)
 	CppAD::ADFun<ADdouble> a_F(aa_x, aa_f);
 
 	// compute f'(x) 
-	size_t p = 1;                  // order of derivative of a_F
-	CppADvector<ADdouble> a_w(1);  // weight vector for a_F
-	CppADvector<ADdouble> a_df(n); // value of derivative
-	a_w[0] = 1;                    // weighted function is same as a_F
-	a_df   = a_F.Reverse(p, a_w);  // gradient of f
+	size_t p = 1;                        // order of derivative of a_F
+	CPPAD_TEST_VECTOR<ADdouble> a_w(1);  // weight vector for a_F
+	CPPAD_TEST_VECTOR<ADdouble> a_df(n); // value of derivative
+	a_w[0] = 1;                          // weighted function same as a_F
+	a_df   = a_F.Reverse(p, a_w);        // gradient of f
 
 	// declare outter function 
 	// (corresponding to the tape of adouble operations)
@@ -140,10 +144,10 @@ bool mul_level_adolc()
 	trace_off();
 
 	// compute the d/dx of f'(x) * v = f''(x) * v
-	size_t m      = n;                   // # dependent variables in f'(x)
+	size_t m      = n;                     // # dependent in f'(x)
 	double *v, *ddf_v;
-	v     = CppADTrackNewVec(m, v);      // track v = new double[m]
-	ddf_v = CppADTrackNewVec(n, ddf_v);  // track ddf_v = new double[n]
+	v     = CPPAD_TRACK_NEW_VEC(m, v);     // track v = new double[m]
+	ddf_v = CPPAD_TRACK_NEW_VEC(n, ddf_v); // track ddf_v = new double[n]
 	for(j = 0; j < n; j++)
 		v[j] = double(n - j);
 	fos_reverse(tag, int(m), int(n), v, ddf_v);
@@ -154,8 +158,8 @@ bool mul_level_adolc()
 	for(j = 0; j < n; j++)
 		ok &= CppAD::NearEqual(ddf_v[j], v[j], 1e-10, 1e-10);
 
-	CppADTrackDelVec(v);                 // check usage of delete
-	CppADTrackDelVec(ddf_v);
+	CPPAD_TRACK_DEL_VEC(v);                 // check usage of delete
+	CPPAD_TRACK_DEL_VEC(ddf_v);
 	return ok;
 }
 // END PROGRAM

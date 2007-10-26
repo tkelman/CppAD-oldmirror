@@ -33,15 +33,12 @@ $index memory, track$$
 $head Syntax$$
 $syntax%# include <cppad/track_new_del.hpp>
 %$$
-$syntax%%newptr% = TrackNewVec(%file%, %line%, %newlen%, %oldptr%)%$$
-$pre
-$$
-$syntax%TrackDelVec(%file%, %line%, %oldptr%)%$$
-$pre
-$$
-$syntax%%newptr% = TrackExtend(%file%, %line%, %newlen%, %ncopy%, %oldptr%)%$$
-$pre
-$$
+$syntax%%newptr% = TrackNewVec(%file%, %line%, %newlen%, %oldptr%)
+%$$
+$syntax%TrackDelVec(%file%, %line%, %oldptr%)
+%$$
+$syntax%%newptr% = TrackExtend(%file%, %line%, %newlen%, %ncopy%, %oldptr%)
+%$$
 $syntax%%count% = TrackCount(%file%, %line%)%$$
 
 
@@ -136,16 +133,24 @@ In this case, if memory cannot be allocated
 $xref/ErrorHandler/$$ is used to generate a message
 stating that there was not sufficient memory.
 
-$subhead CppADTrackNewVec$$
+$subhead Macro$$
+$index CPPAD_TRACK_NEW_VEC$$
 The preprocessor macro call
 $syntax%
-	CppADTrackNewVec(%newlen%, %oldptr%)
+	CPPAD_TRACK_NEW_VEC(%newlen%, %oldptr%)
 %$$
 expands to
 $syntax%
 	CppAD::TrackNewVec(__FILE__, __LINE__, %newlen%, %oldptr%)
 %$$
 
+$subhead Deprecated$$
+$index  CppADTrackNewVec$$
+The preprocessor macro $code CppADTrackNewVec$$ is the
+same as $code CPPAD_TRACK_NEW_VEC$$.
+It has been deprecated; i.e.,
+it is still defined in the CppAD distribution, but it should
+not be used.
 
 $head TrackDelVec$$
 $index TrackDelVec$$
@@ -161,15 +166,24 @@ and has not yet been freed.
 If this is not the case,
 $xref/ErrorHandler/$$ is used to generate an error message.
 
-$subhead CppADTrackDelVec$$
+$subhead Macro$$
+$index CPPAD_TRACK_DEL_VEC$$
 The preprocessor macro call
 $syntax%
-	CppADTrackDelVec(%oldptr%)
+	CPPAD_TRACK_DEL_VEC(%oldptr%)
 %$$
 expands to
 $syntax%
 	CppAD::TrackDelVec(__FILE__, __LINE__, %oldptr%)
 %$$
+
+$subhead Deprecated$$
+$index  CppADTrackDelVec$$
+The preprocessor macro $code CppADTrackDelVec$$ is the
+same as $code CPPAD_TRACK_DEL_VEC$$.
+It has been deprecated; i.e.,
+it is still defined in the CppAD distribution, but it should
+not be used.
 
 $head TrackExtend$$
 $index TrackExtend$$
@@ -185,15 +199,24 @@ Note that the dependence of $code TrackExtend$$ on $code NDEBUG$$
 is indirectly through the routines $code TrackNewVec$$ and 
 $code TrackDelVec$$.
 
-$subhead CppADTrackExtend$$
+$subhead Macro$$
+$index CPPAD_TRACK_EXTEND$$
 The preprocessor macro call
 $syntax%
-	CppADTrackExtend(%newlen%, %ncopy%, %oldptr%)
+	CPPAD_TRACK_EXTEND(%newlen%, %ncopy%, %oldptr%)
 %$$
 expands to
 $syntax%
 	CppAD::TrackExtend(__FILE__, __LINE__, %newlen%, %ncopy%, %oldptr%)
 %$$
+
+$subhead Deprecated$$
+$index  CppADTrackExtend$$
+The preprocessor macro $code CppADTrackExtend$$ is the
+same as $code CPPAD_TRACK_EXTEND$$.
+It has been deprecated; i.e.,
+it is still defined in the CppAD distribution, but it should
+not be used.
 
 $head TrackCount$$
 $index TrackCount$$
@@ -224,7 +247,6 @@ the information for all of the threads is checked
 so only one thread can be running
 when this routine is called.
 
-
 $head Example$$
 $children%
 	example/track_new_del.cpp
@@ -236,7 +258,7 @@ It returns true, if it succeeds, and false otherwise.
 $end
 ------------------------------------------------------------------------------
 */
-# include <cppad/local/cppad_error.hpp>
+# include <cppad/local/cppad_assert.hpp>
 # include <sstream>
 # include <string>
 
@@ -259,18 +281,23 @@ $end
 
 # define CPPAD_TRACK_DEBUG 0
 
-# define CppADTrackNewVec(newlen, oldptr) \
+// -------------------------------------------------------------------------
+# define CPPAD_TRACK_NEW_VEC(newlen, oldptr) \
 	CppAD::TrackNewVec(__FILE__, __LINE__, newlen, oldptr)
 
-# define CppADTrackDelVec(oldptr) \
+# define CPPAD_TRACK_DEL_VEC(oldptr) \
 	CppAD::TrackDelVec(__FILE__, __LINE__, oldptr)
 
-# define CppADTrackExtend(newlen, ncopy, oldptr) \
+# define CPPAD_TRACK_EXTEND(newlen, ncopy, oldptr) \
 	CppAD::TrackExtend(__FILE__, __LINE__, newlen, ncopy, oldptr)
 
 # define CppADTrackCount() \
 	CppAD::TrackCount(__FILE__, __LINE__)
-
+// -------------------------------------------------------------------------
+# define CppADTrackNewVec CPPAD_TRACK_NEW_VEC
+# define CppADTrackDelVec CPPAD_TRACK_DEL_VEC
+# define CppADTrackExtend CPPAD_TRACK_EXTEND
+// -------------------------------------------------------------------------
 namespace CppAD { // Begin CppAD namespace
 
 // TrackElement ------------------------------------------------------------
@@ -289,13 +316,13 @@ public:
 	
 	TrackElement(const char *f, int l, void *p)
 	: file(f), line(l), ptr(p), next(CPPAD_NULL)
-	{	CppADUnknownError( p != CPPAD_NULL);
+	{	CPPAD_ASSERT_UNKNOWN( p != CPPAD_NULL);
 	}
 
 	// There is only one tracking list and it starts it here
 	static TrackElement *root_for(size_t thread)
 	{	static TrackElement root[CPPAD_MAX_NUM_THREADS];
-		CppADUnknownError( thread < CPPAD_MAX_NUM_THREADS );
+		CPPAD_ASSERT_UNKNOWN( thread < CPPAD_MAX_NUM_THREADS );
 		return root + thread;
 	}
 
@@ -307,7 +334,7 @@ public:
 # else
 		size_t thread = 0;
 # endif
-		CppADUsageError(
+		CPPAD_ASSERT_KNOWN(
 			thread < CPPAD_MAX_NUM_THREADS,
 			"TrackNewDel: too many OpenMP threads are active."
 		);
@@ -357,7 +384,7 @@ inline void TrackError(
 	for(i = 0; i < n; i++)
 		message[i] = str[i];
 	message[n] = '\0';
-	CppADUsageError( false , message);
+	CPPAD_ASSERT_KNOWN( false , message);
 }
 
 // TrackNewVec ---------------------------------------------------------------
@@ -433,7 +460,8 @@ void TrackDelVec(
 	// check if pointer was not in list
 	if( E == CPPAD_NULL || E->ptr != vptr ) TrackError(
 		"TrackDelVec", file, line, 
-		"Invalid value for the argument oldptr"
+		"Invalid value for the argument oldptr.\n"
+		"Possible linking of debug and NDEBUG compliations of CppAD."
 	); 
 
 	// remove tracking element from list
@@ -459,7 +487,7 @@ Type *TrackExtend(
 	size_t      ncopy   ,
 	Type       *oldptr  ) 
 {	// check size of ncopy
-	CppADUsageError( 
+	CPPAD_ASSERT_KNOWN( 
 		ncopy <= newlen,
 		"TrackExtend: ncopy is greater than newlen."
 	);

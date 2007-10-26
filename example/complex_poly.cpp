@@ -1,6 +1,5 @@
-// BEGIN SHORT COPYRIGHT
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -9,7 +8,6 @@ the terms of the
 A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
-// END SHORT COPYRIGHT
 
 /*
 $begin ComplexPoly.cpp$$
@@ -19,13 +17,17 @@ $$
 
 $section Complex Polynomial: Example and Test$$
 
-$mindex complex polynomial$$
+$index complex, polynomial$$
+$index polynomial, complex$$
 $index example, complex polynomial$$
 $index test, complex polynomial$$
 
+$head See Also$$
+$cref/not_complex_ad.cpp/$$
+
+$head Poly$$
 Select this link to view specifications for $xref/Poly/$$:
 
-$comment This file is in the Example subdirectory$$ 
 $code
 $verbatim%example/complex_poly.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
 $$
@@ -37,50 +39,49 @@ $end
 # include <cppad/cppad.hpp>
 # include <complex>
 
-// define abbreviation for doubler precision complex
-typedef std::complex<double> Complex; 
-
-bool ComplexPoly(void)
-{	bool ok = true;
-
-	using namespace CppAD;
-
+bool complex_poly(void)
+{	bool ok    = true;
 	size_t deg = 4;
 
+	using CppAD::AD;
+	using CppAD::Poly;
+	typedef std::complex<double> Complex; 
+
 	// polynomial coefficients
-	CppADvector< Complex >     a   (deg + 1); // coefficients for p(z)
-	CppADvector< AD<Complex> > A   (deg + 1); 
+	CPPAD_TEST_VECTOR< Complex >     a   (deg + 1); // coefficients for p(z)
+	CPPAD_TEST_VECTOR< AD<Complex> > A   (deg + 1); 
 	size_t i;
 	for(i = 0; i <= deg; i++)
 		A[i] = a[i] = Complex(i, i);
 
-	// independent variable vector, indices, values, and declaration
-	CppADvector< AD<Complex> > Z(1);
-	size_t z = 0;
- 	Z[z]     = Complex(1., 1.);
+	// independent variable vector
+	CPPAD_TEST_VECTOR< AD<Complex> > Z(1);
+	Complex z = Complex(1., 2.);
+ 	Z[0]      = z;
 	Independent(Z);
 
 	// dependent variable vector and indices
-	CppADvector< AD<Complex> > P(1);
-	size_t p = 0;
+	CPPAD_TEST_VECTOR< AD<Complex> > P(1);
 
 	// dependent variable values
-	P[p] = Poly(0, A, Z[z]);
+	P[0] = Poly(0, A, Z[0]);
 
 	// create f: Z -> P and vectors used for derivative calculations
-	ADFun<Complex> f(Z, P);
-	CppADvector<Complex> v( f.Domain() );
-	CppADvector<Complex> w( f.Range() );
+	CppAD::ADFun<Complex> f(Z, P);
+	CPPAD_TEST_VECTOR<Complex> v( f.Domain() );
+	CPPAD_TEST_VECTOR<Complex> w( f.Range() );
 
 	// check first derivative w.r.t z
-	v[z] = 1.;
-	w    = f.Forward(1, v);
-	ok &= ( w[p]  == Poly(1, a, Value(Z[z]) ) );
+	v[0]      = 1.;
+	w         = f.Forward(1, v);
+	Complex p = Poly(1, a, z);
+	ok &= ( w[0]  == p );
 
 	// second derivative w.r.t z is 2 times its second order Taylor coeff
-	v[z] = 0.;
+	v[0] = 0.;
 	w    = f.Forward(2, v);
-	ok &= ( 2. * w[p]  == Poly(2, a, Value(Z[z]) ) );
+	p    = Poly(2, a, z);
+	ok &= ( 2. * w[0]  == p );
 
 	return ok;
 }

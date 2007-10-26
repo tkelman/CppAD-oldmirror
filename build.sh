@@ -23,14 +23,17 @@ BOOST_DIR=/usr/include/boost-1_33_1
 version=`grep "^ *AC_INIT(" configure.ac | \
 	sed -e "s/.*, *\([0-9]\{8\}\) *,.*/\1/"`
 #
-if [ "$1" = "test" ] || ( [ "$1" != "configure" ] & [ "$2" != "test" ] )
+if [ "$1" = "all" ] && [ "$2" != "" ] && [ "$2" != "test" ]
 then
-	# start new build_test.log file with the date and time
-	# (Note that "configure test" is run by "build all test".)
-	date > build_test.log
+	echo "./build.sh $1 $2"
+	echo "is not valid, build.sh with no arguments lists valid choices."
+	exit 1
 fi
-if [ "$1" = "test" ] || ( [ "$1" = "all" ] && [ "$2" = "test" ] )
+#
+# Check if we are running all the test cases. 
+if [ "$1" = "test" ] || ( [ "$1" = "all" ] & [ "$2" = "test" ] )
 then
+	date > build_test.log
 	if [ -e cppad-$version ]
 	then
 		rm -rf cppad-$version
@@ -86,7 +89,7 @@ then
 		rm configure
 	fi
 	#
-	if [ "$1" != "all" ]
+	if [ "$1" = "version" ]
 	then
 		exit 0
 	fi
@@ -110,7 +113,7 @@ then
 		exit 1
 	fi
 	#
-	if [ "$1" != "all" ]
+	if [ "$1" = "omhelp" ]
 	then
 		exit 0
 	fi
@@ -153,7 +156,7 @@ then
 		exit 1
 	fi
 	#
-	if [ "$1" != "all" ]
+	if [ "$1" = "automake" ]
 	then
 		exit 0
 	fi
@@ -163,7 +166,7 @@ fi
 #
 if [ "$1" = "configure" ] || [ "$1" = "all" ]
 then
-	if [ "$2" == "test" ]
+	if [ "$2" = "test" ]
 	then
 		echo "build.sh configure test"
 	else
@@ -171,7 +174,7 @@ then
 	fi
 	#
 	TEST=""
-	if [ "$1" = "configure" ] && [ "$2" == "test" ]
+	if [ "$1" = "configure" ] && [ "$2" = "test" ]
 	then
 		TEST="
 			--with-Documentation
@@ -214,7 +217,7 @@ then
 	echo "fix_makefile.sh"
 	./fix_makefile.sh
 	#
-	if [ "$1" != "all" ]
+	if [ "$1" = "configure" ]
 	then
 		exit 0
 	fi
@@ -232,7 +235,7 @@ then
 		exit 1
 	fi
 	#
-	if [ "$1" != "all" ]
+	if [ "$1" = "make" ]
 	then
 		exit 0
 	fi
@@ -283,7 +286,7 @@ then
 	fi
 	#
 	#
-	if [ "$1" != "all" ]
+	if [ "$1" = "dist" ]
 	then
 		exit 0
 	fi
@@ -315,9 +318,18 @@ then
 	fi
 	#
 	# check include files
-	./check_include_def.sh  >> build_test.log
-	./check_include_file.sh >> build_test.log
-	./check_include_omh.sh  >> build_test.log
+	if ! ./check_include_def.sh  >> build_test.log
+	then
+		exit 1
+	fi
+	if ! ./check_include_file.sh >> build_test.log
+	then
+		exit 1
+	fi
+	if ! ./check_include_omh.sh  >> build_test.log
+	then
+		exit 1
+	fi
 	# add a new line after last include file check
 	echo ""                 >> build_test.log
 	#
@@ -370,11 +382,12 @@ then
 		fadbad
 		profile
 	"
+	seed="123"
 	for name in $list
 	do
-		echo "running speed/$name/$name correct"
-		echo "./speed/$name/$name correct" >> ../build_test.log
-		if ! ./speed/$name/$name correct   >> ../build_test.log
+		echo "running speed/$name/$name correct $seed"
+		echo "./speed/$name/$name correct $seed" >> ../build_test.log
+		if ! ./speed/$name/$name correct  $seed  >> ../build_test.log
 		then
 			failed="speed/$name/$name"
 			echo "Error: $failed failed."
@@ -451,7 +464,7 @@ then
 		fi
 	fi
 	#
-	if [ "$1" != "all" ]
+	if [ "$1" = "gpl+dos" ]
 	then
 		exit 0
 	fi
@@ -478,7 +491,7 @@ then
 			exit 1
 		fi
 	done
-	if [ "$1" != "move" ]
+	if [ "$1" = "move" ]
 	then
 		exit 0
 	fi
