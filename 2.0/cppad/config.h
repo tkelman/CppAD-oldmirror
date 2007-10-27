@@ -2,13 +2,13 @@
 /* cppad/config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* is CppADvector == boost::numeric::ublas::vector */
-#define CPPAD_BOOSTVECTOR 1
+#define CPPAD_BOOSTVECTOR 0
 
 /* is CppADvector == CppAD::vector */
-#define CPPAD_CPPADVECTOR 0
+#define CPPAD_CPPADVECTOR 1
 
 /* does system support gettimeofday (overidden if _MSC_VER defined) */
-#define CPPAD_GETTIMEOFDAY 1
+#define CPPAD_GETTIMEOFDAY 0
 
 /* is CppADvector == std::vector */
 #define CPPAD_STDVECTOR 0
