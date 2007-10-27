@@ -33,15 +33,12 @@ sed                                                           \
 	-e '/^[?].*\/stamp-h1$/d'                             \
 	-e '/^[?].*\/makefile$/d'                             \
 	-e '/^[?].*\/_adolc-*/d'                              \
-	-e '/^[?] *install-sh$/d'                             \
 	-e '/^[?] *makefile$/d'                               \
 	-e '/^[?] *depcomp$/d'                                \
-	-e '/^[?] *missing$/d'                                \
 	-e '/^[?].*\/junk$/d'                                 \
 	-e '/^[?] *junk$/d'                                   \
 	-e '/^[?].*\/junk\.[0-9a-zA-Z]*$/d'                   \
 	-e '/^[?] *junk\.[0-9a-zA-Z]*$/d'                     \
-	-e '/^[?] *configure$/d'                              \
 	-e '/^[?] *dev$/d'                                    \
 	-e '/^[?] *config.status$/d'                          \
 	-e '/^[?] *Doc$/d'                                    \
@@ -50,15 +47,5 @@ sed                                                           \
 	-e '/^[?] *aclocal.m4$/d'                             \
 	-e '/cygwin_package$/d'                               \
 	-e '/^[?] *cppad-[0-9]\{8\}$/d'                       \
-	-e '/^M *AUTHORS$/d'                                  \
-	-e '/^M *configure.ac$/d'                             \
-	-e '/^M *doc.omh$/d'                                  \
-	-e '/^M *omh[/]install_unix.omh$/d'                   \
-	-e '/^M *omh[/]install_windows.omh$/d'
 #
 # Add differences for automatically updated files
-./diff_today.sh AUTHORS
-./diff_today.sh doc.omh
-./diff_today.sh configure.ac
-./diff_today.sh omh/install_unix.omh
-./diff_today.sh omh/install_windows.omh
