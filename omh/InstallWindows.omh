@@ -69,8 +69,8 @@ just follow all of the $xref/InstallUnix//Unix installation/$$ steps.
 Otherwise,
 download the file
 $href%
-	http://www.coin-or.org/Tarballs/CppAD/CppAD-06-06-16.zip%
-	CppAD-06-06-16.zip
+	http://www.coin-or.org/Tarballs/CppAD/cppad-20060913.zip%
+	cppad-20060913.zip
 %$$
 
 $head Extraction$$
@@ -80,7 +80,7 @@ $href%
 	WinZip
 %$$
 or some other program to decompress the archive
-$code CppAD-06-06-16.zip$$.
+$code cppad-20060913.zip$$.
 This will create the distribution directory 
 $syntax%
 	cppad-06-06-16
