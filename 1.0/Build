@@ -36,7 +36,7 @@ then
 	echo "Build version"
 	#
 	# Today's date in yy-mm-dd decimal digit format with leading zeros
-	Today=`date +%g-%m-%d`
+	Today="20060913"
 	#
 	sed configure.ac > configure.tmp -e \
 	"s/(CppAD, [0-9][0-9]-[0-9][0-9]-[0-9][0-9],/(CppAD, $Today,/"

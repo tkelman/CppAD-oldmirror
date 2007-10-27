@@ -25,7 +25,6 @@ sed                                                           \
 	-e '/^[?] *junk$/d'                                   \
 	-e '/^[?].*\/junk\.[0-9a-zA-Z]*$/d'                   \
 	-e '/^[?] *junk\.[0-9a-zA-Z]*$/d'                     \
-	-e '/^[?] *configure$/d'                              \
 	-e '/^[?] *Dev$/d'                                    \
 	-e '/^[?] *config.status$/d'                          \
 	-e '/^[?] *Doc$/d'                                    \
@@ -33,7 +32,4 @@ sed                                                           \
 	-e '/^[?] *cppad-[0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/d' 
 #
 # Add differences for automatically updated files
-./diffToday Doc.omh
-./diffToday configure.ac
-./diffToday omh/InstallUnix.omh
 ./diffToday omh/InstallWindows.omh
