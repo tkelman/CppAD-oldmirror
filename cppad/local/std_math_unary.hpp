@@ -302,16 +302,49 @@ $end
 	inline AD<Base> Name(const VecAD_reference<Base> &x)              \
 	{	return Name( x.ADBase() ); }
 
+// Second is a Base expression for the zero order value of the second variable.
+// See forward mode for each operator to find meaning of the second variable.
+# define CPPAD_STANDARD_MATH_UNARY_AD_TEMPLATE(Name, Op, Second)  \
+    template <class Base>                                         \
+    inline AD<Base> AD<Base>::Name (void) const                   \
+    {   using CppAD::Name;                                        \
+        AD<Base> result;                                          \
+        result.value_ = Name(value_);                             \
+        CPPAD_ASSERT_UNKNOWN( Parameter(result) );                \
+                                                                  \
+        if( Variable(*this) )                                     \
+        {   CPPAD_ASSERT_UNKNOWN( NumVar(AcosOp) == 2 );          \
+            CPPAD_ASSERT_UNKNOWN( NumInd(AcosOp) == 1 );          \
+            ADTape<Base> *tape = tape_this();                     \
+            tape->Rec.PutInd(taddr_);                             \
+            result.taddr_ = tape->Rec.PutOp(                      \
+                Op, result.value_, Second                         \
+            );                                                    \
+            result.id_    = tape->id_;                            \
+        }                                                         \
+        return result;                                            \
+    }                                                             \
+    template <class Base>                                         \
+    inline AD<Base> Name(const AD<Base> &x)                       \
+    {   return x.Name(); }                                        \
+    template <class Base>                                         \
+    inline AD<Base> Name(const VecAD_reference<Base> &x)          \
+    {   return Name( x.ADBase() ); }
+
 //  BEGIN CppAD namespace
 namespace CppAD {
 
         // acos
         CPPAD_STANDARD_MATH_UNARY_BASE(acos)
-        CPPAD_STANDARD_MATH_UNARY_BASE_TEMPLATE(acos, AcosOp)
+        CPPAD_STANDARD_MATH_UNARY_AD_TEMPLATE(
+		acos, AcosOp, Base(1) - value_ * value_
+	)
 
         // asin
         CPPAD_STANDARD_MATH_UNARY_BASE(asin)
-        CPPAD_STANDARD_MATH_UNARY_BASE_TEMPLATE(asin, AsinOp)
+        CPPAD_STANDARD_MATH_UNARY_AD_TEMPLATE(
+		asin, AsinOp, Base(1) - value_ * value_
+	)
 
         // atan
         CPPAD_STANDARD_MATH_UNARY_BASE(atan)

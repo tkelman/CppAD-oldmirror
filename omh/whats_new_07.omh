@@ -61,6 +61,11 @@ This section contains a list of the changes to CppAD during 2007
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
 
+$head 11-13$$
+Create the $code tape_values$$ branch in which we will test
+storing variable values during taping so that they need not be recalculated
+after taping is completed.
+
 $head 11-06$$
 Added the $code -DRAD_EQ_ALIAS$$ compiler flag to the 
 $cref/Sacado speed tests/speed_sacado/$$.

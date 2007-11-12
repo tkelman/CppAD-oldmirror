@@ -51,17 +51,18 @@ bool AddEq(void)
 	// range space vector 
 	size_t m = 2;
 	CPPAD_TEST_VECTOR< AD<double> > y(m);
-	y[0] = x[0];         // initial value
-	y[0] += 2;           // AD<double> += int
-	y[0] += 4.;          // AD<double> += double
+        y[0] = 1.;           // initial value
+	y[0] += x[0];        // parameter += variable
+	y[0] += 2;           // variable  += int
+	y[0] += 4.;          // variable  += double
 	y[1] = y[0] += x[0]; // use the result of a computed assignment
 
 	// create f: x -> y and stop tape recording
 	CppAD::ADFun<double> f(x, y); 
 
 	// check value 
-	ok &= NearEqual(y[0] , x0+2.+4.+x0,  1e-10 , 1e-10);
-	ok &= NearEqual(y[1] ,        y[0],  1e-10 , 1e-10);
+	ok &= NearEqual(y[0] , 1.+x0+2.+4.+x0,  1e-10 , 1e-10);
+	ok &= NearEqual(y[1] ,           y[0],  1e-10 , 1e-10);
 
 	// forward computation of partials w.r.t. x[0]
 	CPPAD_TEST_VECTOR<double> dx(n);

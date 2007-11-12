@@ -256,6 +256,8 @@ public:
 	TapeRec(void) 
 	{	
 		TotalNumberVar = 0;
+		LengthVar      = 0;
+		Var            = CPPAD_NULL;
 
 		NumberOp       = 0;
 		LengthOp       = 0;
@@ -281,7 +283,9 @@ public:
 
 	// destructor
 	~TapeRec(void)
-	{	if( LengthOp > 0 )
+	{	if( LengthVar > 0 )
+			CPPAD_TRACK_DEL_VEC(Var);
+		if( LengthOp > 0 )
 			CPPAD_TRACK_DEL_VEC(Op);
 		if( LengthVecInd > 0 )
 			CPPAD_TRACK_DEL_VEC(VecInd);
@@ -297,6 +301,8 @@ public:
 	void operator=(const TapeRec &Other)
 	{	size_t i;
 
+		if( LengthVar > 0 )
+			CPPAD_TRACK_DEL_VEC(Var);
 		if( LengthOp > 0 )
 			CPPAD_TRACK_DEL_VEC(Op);
 		if( LengthVecInd > 0 )
@@ -310,6 +316,7 @@ public:
 
 		// Var
 		TotalNumberVar  = Other.TotalNumberVar;
+		LengthVar       = Other.LengthVar;
 
 		// Op
 		NumberOp        = Other.NumberOp;
@@ -332,6 +339,9 @@ public:
 		LengthTxt       = Other.NumberTxt;
 
 		// Allocate the memory
+		if( LengthVar == 0 )
+			Var = CPPAD_NULL;
+		else	Var = CPPAD_TRACK_NEW_VEC(LengthVar,      Var);
 		if( LengthOp == 0 )
 			Op = CPPAD_NULL;
 		else	Op = CPPAD_TRACK_NEW_VEC(LengthOp,      Op);
@@ -349,6 +359,9 @@ public:
 		else	Txt = CPPAD_TRACK_NEW_VEC(LengthTxt,       Txt);
 
 		// Copy the data
+		i = TotalNumberVar;
+		while(i--)
+			Var[i] = Other.Var[i];
 		i = NumberOp;
 		while(i--)
 			Op[i] = Other.Op[i];
@@ -376,6 +389,8 @@ public:
 		NumberPar       = 0;
 		NumberTxt       = 0;
 
+		if( LengthVar > 0 )
+			CPPAD_TRACK_DEL_VEC(Var);
 		if( LengthOp > 0 )
 			CPPAD_TRACK_DEL_VEC(Op);
 		if( LengthVecInd > 0 )
@@ -387,6 +402,7 @@ public:
 		if( LengthTxt > 0 )
 			CPPAD_TRACK_DEL_VEC(Txt);
 
+		LengthVar       = 0;
 		LengthOp        = 0;
 		LengthVecInd    = 0;
 		LengthInd       = 0;
@@ -396,6 +412,11 @@ public:
 
 	// add information to recording
 	inline size_t PutOp(OpCode op);
+	inline size_t PutOp(OpCode op, const Base &v1);
+	inline size_t PutOp(OpCode op, const Base &v1, const Base &v2);
+	inline size_t PutOp(
+		OpCode op, const Base &v1, const Base &v2, const Base &v3
+	);
 	inline size_t PutVecInd(size_t vecInd);
 	inline size_t PutPar(const Base &par);
 	inline void PutInd(size_t ind0); 
@@ -466,6 +487,8 @@ public:
 
 private:
 	size_t    TotalNumberVar;
+	size_t    LengthVar;
+	Base     *Var;
 
 	size_t    NumberOp;
 	size_t    LengthOp;
@@ -499,7 +522,86 @@ inline size_t TapeRec<Base>::PutOp(OpCode op)
 	}
 	CPPAD_ASSERT_UNKNOWN( NumberOp < LengthOp );
 	Op[NumberOp++]  = op;
-	TotalNumberVar += NumVar(op);
+
+	// stuff below here will not be needed once all cases with
+	// NumVar(op) > 0 use the calls with values specified.
+	size_t n_var    = NumVar(op);
+	if( TotalNumberVar + n_var >= LengthVar )
+	{	LengthVar = 2 * LengthVar + 3;
+		Var = CPPAD_TRACK_EXTEND(LengthVar, TotalNumberVar, Var);
+	}
+	TotalNumberVar += n_var;
+
+	return varIndex;
+}
+
+template <class Base>
+inline size_t TapeRec<Base>::PutOp(OpCode op, const Base &v1)
+{	size_t varIndex = TotalNumberVar;
+	CPPAD_ASSERT_UNKNOWN( NumVar(op) == 1 );
+	
+	CPPAD_ASSERT_UNKNOWN( NumberOp <= LengthOp );
+	if( NumberOp == LengthOp )
+	{	LengthOp = 2 * LengthOp + 8;
+		Op = CPPAD_TRACK_EXTEND(LengthOp, NumberOp, Op);
+	}
+	CPPAD_ASSERT_UNKNOWN( NumberOp < LengthOp );
+	Op[NumberOp++]  = op;
+
+	if( TotalNumberVar + 1 >= LengthVar )
+	{	LengthVar = 2 * LengthVar + 1;
+		Var = CPPAD_TRACK_EXTEND(LengthVar, TotalNumberVar, Var);
+	}
+	Var[TotalNumberVar++] = v1;
+
+	return varIndex;
+}
+
+template <class Base>
+inline size_t TapeRec<Base>::PutOp(OpCode op, const Base &v1, const Base &v2)
+{	size_t varIndex = TotalNumberVar;
+	CPPAD_ASSERT_UNKNOWN( NumVar(op) == 2 );
+	
+	CPPAD_ASSERT_UNKNOWN( NumberOp <= LengthOp );
+	if( NumberOp == LengthOp )
+	{	LengthOp = 2 * LengthOp + 8;
+		Op = CPPAD_TRACK_EXTEND(LengthOp, NumberOp, Op);
+	}
+	CPPAD_ASSERT_UNKNOWN( NumberOp < LengthOp );
+	Op[NumberOp++]  = op;
+
+	if( TotalNumberVar + 2 >= LengthVar )
+	{	LengthVar = 2 * LengthVar + 2;
+		Var = CPPAD_TRACK_EXTEND(LengthVar, TotalNumberVar, Var);
+	}
+	Var[TotalNumberVar++] = v1;
+	Var[TotalNumberVar++] = v2;
+
+	return varIndex;
+}
+
+template <class Base>
+inline size_t TapeRec<Base>::PutOp(
+	OpCode op, const Base &v1, const Base &v2, const Base &v3
+)
+{	size_t varIndex = TotalNumberVar;
+	CPPAD_ASSERT_UNKNOWN( NumVar(op) == 3 );
+	
+	CPPAD_ASSERT_UNKNOWN( NumberOp <= LengthOp );
+	if( NumberOp == LengthOp )
+	{	LengthOp = 2 * LengthOp + 8;
+		Op = CPPAD_TRACK_EXTEND(LengthOp, NumberOp, Op);
+	}
+	CPPAD_ASSERT_UNKNOWN( NumberOp < LengthOp );
+	Op[NumberOp++]  = op;
+
+	if( TotalNumberVar + 3 >= LengthVar )
+	{	LengthVar = 2 * LengthVar + 3;
+		Var = CPPAD_TRACK_EXTEND(LengthVar, TotalNumberVar, Var);
+	}
+	Var[TotalNumberVar++] = v1;
+	Var[TotalNumberVar++] = v2;
+	Var[TotalNumberVar++] = v3;
 
 	return varIndex;
 }
