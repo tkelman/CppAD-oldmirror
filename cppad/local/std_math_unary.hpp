@@ -275,14 +275,22 @@ $end
 -------------------------------------------------------------------------------
 */
 
-# define CPPAD_STANDARD_MATH_UNARY_BASE(Name)                             \
+# define CPPAD_STANDARD_MATH_UNARY_ALL(Name)                              \
                                                                           \
 	inline float Name(const float &x)                                 \
 	{	return std::Name(x); }                                    \
                                                                           \
 	inline double Name(const double &x)                               \
 	{	return std::Name(x); }                                    \
-                                                                          \
+	                                                                  \
+	template <class Base>                                             \
+	inline AD<Base> Name(const AD<Base> &x)                           \
+	{	return x.Name(); }                                        \
+	                                                                  \
+	template <class Base>                                             \
+	inline AD<Base> Name(const VecAD_reference<Base> &x)              \
+	{	return Name( x.ADBase() ); }
+
 
 # define CPPAD_STANDARD_MATH_UNARY_BASE_TEMPLATE(Name, Op)                \
 	template <class Base>                                             \
@@ -294,27 +302,21 @@ $end
 		if( Variable(*this) )                                     \
 			tape_this()->RecordOp(Op, result, taddr_);        \
 		return result;                                            \
-	}                                                                 \
-	template <class Base>                                             \
-	inline AD<Base> Name(const AD<Base> &x)                           \
-	{	return x.Name(); }                                        \
-	template <class Base>                                             \
-	inline AD<Base> Name(const VecAD_reference<Base> &x)              \
-	{	return Name( x.ADBase() ); }
+	}
 
 // Second is a Base expression for the zero order value of the second variable.
 // See forward mode for each operator to find meaning of the second variable.
-# define CPPAD_STANDARD_MATH_UNARY_AD_TEMPLATE(Name, Op, Second)  \
+# define CPPAD_STANDARD_MATH_UNARY_AD_TWO_VAR(Name, Op, Second)   \
     template <class Base>                                         \
     inline AD<Base> AD<Base>::Name (void) const                   \
-    {   using CppAD::Name;                                        \
+    {                                                             \
         AD<Base> result;                                          \
-        result.value_ = Name(value_);                             \
+        result.value_ = CppAD::Name(value_);                      \
         CPPAD_ASSERT_UNKNOWN( Parameter(result) );                \
                                                                   \
         if( Variable(*this) )                                     \
-        {   CPPAD_ASSERT_UNKNOWN( NumVar(AcosOp) == 2 );          \
-            CPPAD_ASSERT_UNKNOWN( NumInd(AcosOp) == 1 );          \
+        {   CPPAD_ASSERT_UNKNOWN( NumVar(Op) == 2 );              \
+            CPPAD_ASSERT_UNKNOWN( NumInd(Op) == 1 );              \
             ADTape<Base> *tape = tape_this();                     \
             tape->Rec.PutInd(taddr_);                             \
             result.taddr_ = tape->Rec.PutOp(                      \
@@ -323,48 +325,45 @@ $end
             result.id_    = tape->id_;                            \
         }                                                         \
         return result;                                            \
-    }                                                             \
-    template <class Base>                                         \
-    inline AD<Base> Name(const AD<Base> &x)                       \
-    {   return x.Name(); }                                        \
-    template <class Base>                                         \
-    inline AD<Base> Name(const VecAD_reference<Base> &x)          \
-    {   return Name( x.ADBase() ); }
+    }
 
 //  BEGIN CppAD namespace
 namespace CppAD {
+        CPPAD_STANDARD_MATH_UNARY_ALL(acos)
+        CPPAD_STANDARD_MATH_UNARY_ALL(asin)
+        CPPAD_STANDARD_MATH_UNARY_ALL(atan)
+        CPPAD_STANDARD_MATH_UNARY_ALL(cos)
+        CPPAD_STANDARD_MATH_UNARY_ALL(cosh)
+        CPPAD_STANDARD_MATH_UNARY_ALL(exp)
+        CPPAD_STANDARD_MATH_UNARY_ALL(log)
+        CPPAD_STANDARD_MATH_UNARY_ALL(sin)
+        CPPAD_STANDARD_MATH_UNARY_ALL(sinh)
+        CPPAD_STANDARD_MATH_UNARY_ALL(sqrt)
 
-        // acos
-        CPPAD_STANDARD_MATH_UNARY_BASE(acos)
-        CPPAD_STANDARD_MATH_UNARY_AD_TEMPLATE(
+        CPPAD_STANDARD_MATH_UNARY_AD_TWO_VAR(
 		acos, AcosOp, Base(1) - value_ * value_
 	)
-
-        // asin
-        CPPAD_STANDARD_MATH_UNARY_BASE(asin)
-        CPPAD_STANDARD_MATH_UNARY_AD_TEMPLATE(
+        CPPAD_STANDARD_MATH_UNARY_AD_TWO_VAR(
 		asin, AsinOp, Base(1) - value_ * value_
 	)
-
-        // atan
-        CPPAD_STANDARD_MATH_UNARY_BASE(atan)
-        CPPAD_STANDARD_MATH_UNARY_BASE_TEMPLATE(atan, AtanOp)
-
-        // cos
-        CPPAD_STANDARD_MATH_UNARY_BASE(cos)
-        CPPAD_STANDARD_MATH_UNARY_BASE_TEMPLATE(cos, CosOp)
-
-        // cosh
-        CPPAD_STANDARD_MATH_UNARY_BASE(cosh)
-        CPPAD_STANDARD_MATH_UNARY_BASE_TEMPLATE(cosh, CoshOp)
-
-        // exp
-        CPPAD_STANDARD_MATH_UNARY_BASE(exp)
+        CPPAD_STANDARD_MATH_UNARY_AD_TWO_VAR(
+		atan, AtanOp, Base(1) + value_ * value_
+	)
+        CPPAD_STANDARD_MATH_UNARY_AD_TWO_VAR(
+		cos, CosOp, CppAD::sin(value_)
+	)
+        CPPAD_STANDARD_MATH_UNARY_AD_TWO_VAR(
+		cosh, CoshOp, CppAD::sinh(value_)
+	)
         CPPAD_STANDARD_MATH_UNARY_BASE_TEMPLATE(exp, ExpOp)
-
-        // log
-        CPPAD_STANDARD_MATH_UNARY_BASE(log)
         CPPAD_STANDARD_MATH_UNARY_BASE_TEMPLATE(log, LogOp)
+        CPPAD_STANDARD_MATH_UNARY_AD_TWO_VAR(
+		sin, SinOp, CppAD::cos(value_)
+	)
+        CPPAD_STANDARD_MATH_UNARY_AD_TWO_VAR(
+		sinh, SinhOp, CppAD::cosh(value_)
+	)
+        CPPAD_STANDARD_MATH_UNARY_BASE_TEMPLATE(sqrt, SqrtOp)
 
         // log10
 	template <class Base>
@@ -374,17 +373,6 @@ namespace CppAD {
 	inline AD<Base> log10(const VecAD_reference<Base> &x)
 	{	return CppAD::log(x.ADBase()) / CppAD::log( Base(10) ); }
 
-        // sin
-        CPPAD_STANDARD_MATH_UNARY_BASE(sin)
-        CPPAD_STANDARD_MATH_UNARY_BASE_TEMPLATE(sin, SinOp)
-
-        // sinh
-        CPPAD_STANDARD_MATH_UNARY_BASE(sinh)
-        CPPAD_STANDARD_MATH_UNARY_BASE_TEMPLATE(sinh, SinhOp)
-
-        // sqrt
-        CPPAD_STANDARD_MATH_UNARY_BASE(sqrt)
-        CPPAD_STANDARD_MATH_UNARY_BASE_TEMPLATE(sqrt, SqrtOp)
 	
         // tan
 	template <class Base>

@@ -66,6 +66,11 @@ Create the $code tape_values$$ branch in which we will test
 storing variable values during taping so that they need not be recalculated
 after taping is completed.
 
+$subhead 11-13$$
+The test scripts $code example/test_one.sh$$ and $code test_more/test_one.sh$$
+were improved so that they automatically determine the name of
+the test function.
+
 $head 11-06$$
 Added the $code -DRAD_EQ_ALIAS$$ compiler flag to the 
 $cref/Sacado speed tests/speed_sacado/$$.
