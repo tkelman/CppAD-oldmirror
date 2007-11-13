@@ -71,6 +71,23 @@ The test scripts $code example/test_one.sh$$ and $code test_more/test_one.sh$$
 were improved so that they automatically determine the name of
 the test function.
 
+$subhead 11-14$$
+A copy of the standard math functions is required in the $code CppAD$$
+namespace. The examples $cref/base_complex.hpp/$$ and $cref/base_adolc.hpp/$$
+have been modified so that they demonstrate this.
+$pre
+
+$$
+The link the 
+$cref/Adolc link to the abs function/base_adolc.hpp/abs/$$ 
+has been fixed.
+$pre
+
+$$
+The base type requirements have been changed and now 
+require using $cref/declare.hpp/base_require/declare.hpp/$$.
+
+
 $head 11-06$$
 Added the $code -DRAD_EQ_ALIAS$$ compiler flag to the 
 $cref/Sacado speed tests/speed_sacado/$$.

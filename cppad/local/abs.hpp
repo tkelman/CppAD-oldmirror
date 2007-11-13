@@ -162,7 +162,7 @@ AD<Base> AD<Base>::Abs (void) const
 {	using CppAD::abs;
 
 	AD<Base> result;
-	result.value_ = abs(value_);
+	result.value_ = CppAD::abs(value_);
 	CPPAD_ASSERT_UNKNOWN( Parameter(result) );
 
 	if( Variable(*this) ) 

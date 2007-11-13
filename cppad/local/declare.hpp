@@ -26,7 +26,7 @@ namespace CppAD {
 	template <class Base> bool Parameter         (const VecAD<Base> &u);
 	template <class Base> bool Variable          (const VecAD<Base> &u);
 	
-	// functions with one AD<Base> argument
+	// functions with one AD<Base> argument (not standard math)
 	template <class Base> int  Integer           (const AD<Base> &u);
 	template <class Base> bool Parameter         (const AD<Base> &u);
 	template <class Base> bool Variable          (const AD<Base> &u);
@@ -38,6 +38,19 @@ namespace CppAD {
 	template <class Base> bool GreaterThanZero   (const AD<Base> &u);
 	template <class Base> bool GreaterThanOrZero (const AD<Base> &u);
 	template <class Base> AD<Base> Var2Par       (const AD<Base> &u);
+
+	// functions with one AD<Base> argument (standard math)
+	template <class Base> AD<Base> abs           (const AD<Base> &u);
+	template <class Base> AD<Base> acos          (const AD<Base> &u);
+	template <class Base> AD<Base> asin          (const AD<Base> &u);
+	template <class Base> AD<Base> atan          (const AD<Base> &u);
+	template <class Base> AD<Base> cos           (const AD<Base> &u);
+	template <class Base> AD<Base> cosh          (const AD<Base> &u);
+	template <class Base> AD<Base> exp           (const AD<Base> &u);
+	template <class Base> AD<Base> log           (const AD<Base> &u);
+	template <class Base> AD<Base> sin           (const AD<Base> &u);
+	template <class Base> AD<Base> sinh          (const AD<Base> &u);
+	template <class Base> AD<Base> sqrt          (const AD<Base> &u);
 
 	// NearEqual
 	template <class Base> bool NearEqual(
