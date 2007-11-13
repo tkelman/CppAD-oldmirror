@@ -34,11 +34,11 @@ AD<Base> AD<Base>::operator /(const AD<Base> &right) const
 	var_right = Variable(right);
 	CPPAD_ASSERT_KNOWN(
 		(! var_left) || id_ == tape->id_ ,
-		"+= left operand is a variable for a different thread"
+		"/ left operand is a variable for a different thread"
 	);
 	CPPAD_ASSERT_KNOWN(
 		(! var_right) || right.id_ == tape->id_ ,
-		"+= right operand is a variable for a different thread"
+		"/ right operand is a variable for a different thread"
 	);
 # endif
 

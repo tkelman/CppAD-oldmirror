@@ -42,7 +42,7 @@ AD<Base>& AD<Base>::operator += (const AD<Base> &right)
 	);
 # endif
 	Base left;
-	left   = value_;
+	left    = value_;
 	value_ += right.value_;
 
 	if( var_left )
@@ -74,7 +74,7 @@ AD<Base>& AD<Base>::operator += (const AD<Base> &right)
 	}
 	else if( var_right  )
 	{	if( IdenticalZero(left) )
-		{	// z = 0 + right
+		{	// this = 0 + right
 			make_variable(right.id_, right.taddr_);
 		}
 		else
