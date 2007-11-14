@@ -63,25 +63,6 @@ the $xref/TapeRec/$$ object $syntax%%Tape%.Rec%$$ contains
 the currently recorded information.
 This information is recorded using the following functions:
 
-$subhead Printing OpCode$$
-The procedure call
-$syntax%
-	void %Tape%.RecordPripOp(const char *%text%, const %Base% &%x%)
-%$$
-places, in the next tape location,
-a PripOp that prints the parameter
-value $italic x$$ to standard output.
-The procedure call
-$syntax%
-	void %Tape%.RecordPrivOp(const char *%text%, %x_taddr%)
-%$$
-places, in the next tape location,
-a PrivOp that prints the variable
-corresponding to $italic x_taddr$$ to standard output.
-These operators enables the user to determine the value of intermediate
-variables during forward and reverse mode.
-
-
 $subhead Parameter$$
 The procedure call
 $syntax%
@@ -378,14 +359,6 @@ private:
 		size_t    x_taddr,
 		size_t    y_taddr
 	);
-	void RecordPripOp(
-		const char  *text,
-		const Base     &x
-	);
-	void RecordPrivOp(
-		const char  *text,
-		size_t    x_taddr
-	);
 	size_t AddVec(
 		size_t        length,
 		const Base   *data
@@ -496,33 +469,6 @@ void ADTape<Base>::RecordDisOp(
 	// check that z is a dependent variable
 	CPPAD_ASSERT_UNKNOWN( Variable(z) );
 }
-
-template <class Base>
-void ADTape<Base>::RecordPripOp(const char *text, const Base &x)
-{
-
-	CPPAD_ASSERT_UNKNOWN( NumInd(PripOp) == 2 );
-
-	// put this operator in the tape
-	Rec.PutOp(PripOp);
-
-	// Ind values for this instruction 
-	Rec.PutInd(Rec.PutTxt(text), Rec.PutPar(x));
-}
-
-template <class Base>
-void ADTape<Base>::RecordPrivOp(const char *text, size_t x_taddr)
-{
-
-	CPPAD_ASSERT_UNKNOWN( NumInd(PripOp) == 2 );
-
-	// put this operator in the tape
-	Rec.PutOp(PrivOp);
-
-	// Ind values for this instruction 
-	Rec.PutInd(Rec.PutTxt(text), x_taddr);
-}
-
 
 template <class Base>
 size_t ADTape<Base>::AddVec(size_t length, const Base *data)

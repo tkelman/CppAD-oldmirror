@@ -755,7 +755,7 @@ size_t ForwardSweep(
 			// -------------------------------------------------
 
 			case PrivOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_var == 0);
 			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
 			if( print & (d == 0) )
 			{	CPPAD_ASSERT_UNKNOWN( ind[0] < Rec->NumTxt() );
