@@ -63,15 +63,6 @@ the $xref/TapeRec/$$ object $syntax%%Tape%.Rec%$$ contains
 the currently recorded information.
 This information is recorded using the following functions:
 
-$subhead Empty OpCode$$
-The procedure call
-$syntax%
-	void %Tape%.RecordNonOp()
-%$$
-places a NonOp in the next tape location.
-This is useful for operations that must reserve extra
-calculation space for forward and backward modes.
-
 $subhead Printing OpCode$$
 The procedure call
 $syntax%
@@ -342,9 +333,6 @@ private:
 	Private functions
 	*/
 
-	// add an empty operator at next tape location
-	void RecordNonOp(void);
-
 	// add a parameter to the tape
 	size_t RecordParOp(const Base &x);
 	
@@ -407,25 +395,14 @@ private:
 // ---------------------------------------------------------------------------
 // Private functions
 //
-template  <class Base>
-void ADTape<Base>::RecordNonOp(void)
-{
-	CPPAD_ASSERT_UNKNOWN( NumInd(NonOp) == 0 );
-
-	// Op value for this instruction
-	Rec.PutOp(NonOp);
-
-	// no Ind values for this instruction
-	CPPAD_ASSERT_UNKNOWN( NumInd(NonOp) == 0 );
-}
 
 template <class Base>
 size_t ADTape<Base>::RecordParOp(const Base &z)
 {	size_t z_taddr;
 	size_t ind;
-
+	CPPAD_ASSERT_UNKNOWN( NumVar(ParOp) == 1 );
 	CPPAD_ASSERT_UNKNOWN( NumInd(ParOp) == 1 );
-	z_taddr = Rec.PutOp(ParOp);
+	z_taddr = Rec.PutOp(ParOp, z);
 	ind     = Rec.PutPar(z);
 	Rec.PutInd(ind);
 
@@ -437,13 +414,12 @@ void ADTape<Base>::RecordInvOp(AD<Base> &z)
 {
 	// in the independent variable case, should not already be in tape
 	CPPAD_ASSERT_UNKNOWN( Parameter(z) );
+	CPPAD_ASSERT_UNKNOWN( NumVar(InvOp) == 1 );
+	CPPAD_ASSERT_UNKNOWN( NumInd(InvOp) == 0 );
 
 	// Make z correspond to a next variable in tape
 	z.id_    = id_;
-	z.taddr_ = Rec.PutOp(InvOp);
-
-	// no Ind values for this instruction
-	CPPAD_ASSERT_UNKNOWN( NumInd(InvOp) == 0 );
+	z.taddr_ = Rec.PutOp(InvOp, z.value_);
 
 	// check that z is an independent variable
 	CPPAD_ASSERT_UNKNOWN( Variable(z) );
