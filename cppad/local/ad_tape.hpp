@@ -84,122 +84,6 @@ Upon return from $code RecordInvOp$$,
 $syntax%%z%.taddr_%$$ 
 is the taddr of the new tape record. 
 
-$subhead Loading Vector Element$$
-The procedure call
-$syntax%
-	void %Tape%.RecordLoadOp(
-		OpCode      %op%,
-		AD<%Base%> &%z%,
-		size_t    %offset%,
-		size_t    %x_taddr%
-	)
-%$$
-creates a tape record corresponding to the value of a $code VecAD$$ element.
-$syntax%
-
-%op%
-%$$
-Must be one of the following values:
-$code LdvOp$$, $code LdpOp$$.
-$syntax%
-
-%offset%
-%$$
-is the offset where this $code VecAD$$ array
-starts in the cumulative array containing all the $code VecAD$$ arrays.
-It indexes the length of this $code VecAD$$ array 
-and the rest of the array follows.
-$syntax%
-
-%x_taddr%
-%$$
-provides the information necessary to retriever the taddr in for this 
-element within the $code VecAD$$ array.
-This has the following meaning depending on the value of $italic op$$:
-$table
-$bold op$$    
-	$cnext $bold x_taddr$$ $rnext
-$code LdpOp$$ 
-	$cnext location of the index in $syntax%%Rec%.GetPar%$$ $rnext
-$code LdvOp$$ 
-	$cnext location of the taddr as a variable in the tape
-$tend
-$syntax%
-
-%z%.taddr_
-%$$
-is modified so that it corresponds to the new tape record when 
-$code RecordLoadOp$$ returns.
-Upon return from $code RecordLoadOp$$, 
-$italic z$$ is in the list of variables and
-$syntax%%z%.taddr_%$$ 
-is the taddr in the tape for this $italic op$$ operator. 
-
-
-$subhead Storing Vector Element$$
-The procedure call
-$syntax%
-	void %Tape%.RecordStoreOp(
-		OpCode      %op%,
-		size_t    %offset%,
-		size_t    %x_taddr%,
-		size_t    %y_taddr%
-	)
-%$$
-creates a tape record corresponding to storing a new value for
-a $code VecAD$$ element.
-$syntax%
-
-%op%
-%$$
-Must be one of the following values:
-$code StvvOp$$, $code StpvOp$$.
-$syntax%
-
-%offset%
-%$$
-is the offset where this $code VecAD$$ array
-starts in the cumulative array containing all the $code VecAD$$ arrays.
-It indexes the length of this $code VecAD$$ array 
-and the rest of the array follows.
-$syntax%
-
-%x_taddr%
-%$$
-provides the information necessary to retrieve the taddr for this 
-$code VecAD$$ element within this $code VecAD$$ array.
-This has the following meaning depending on the value of $italic op$$:
-$table
-$bold op$$    
-	$cnext $bold x_taddr$$ $rnext
-$code StppOp$$
-	$cnext location of the index in $syntax%%Rec%.GetPar%$$ $rnext
-$code StpvOp$$
-	$cnext location of the index in $syntax%%Rec%.GetPar%$$ $rnext
-$code StvpOp$$ 
-	$cnext location of the taddr as a variable in the tape  $rnext
-$code StvvOp$$ 
-	$cnext location of the taddr as a variable in the tape 
-$tend
-$syntax%
-
-%y_taddr%
-%$$
-provides the information necessary to retrieve the value for this 
-$code VecAD$$ element within this $code VecAD$$ array.
-This has the following meaning depending on the value of $italic op$$:
-$table
-$bold op$$    
-	$cnext $bold y_taddr$$ $rnext
-$code StppOp$$
-	$cnext location of the value in $syntax%%Rec%.GetPar%$$ $rnext
-$code StvpOp$$
-	$cnext location of the value in $syntax%%Rec%.GetPar%$$ $rnext
-$code StpvOp$$ 
-	$cnext location of the taddr as a variable in the tape  $rnext
-$code StvvOp$$ 
-	$cnext location of the taddr as a variable in the tape  
-$tend
 
 $subhead User Defined Functions$$
 The procedure call 
@@ -229,7 +113,7 @@ is to the taddr of the new tape record.
 $subhead Variable Indexed Arrays$$
 The procedure call
 $syntax%
-	size_t %Tape%.AddVec(size_t  %length%, const %Base% *%data%)
+	size_t %Tape%.AddVec(size_t  %length%, const AD<%Base%> *%data%)
 %$$
 adds a variable indexed array with the specified length and values to the tape.
 We use $italic i$$ to denote the value returned by $code AddVec$$.
@@ -238,7 +122,8 @@ $syntax%
 	%length% == %Rec%.GetVecInd(%i%)
 %$$
 Upon return, 
-the elements of $italic data$$ are stored in $italic Rec$$
+the $italic Base$$ value of the elements of $italic data$$ 
+are stored in $italic Rec$$
 in the following way:
 for $latex j = 0 , \ldots , length-1$$,
 $syntax%
@@ -338,30 +223,14 @@ private:
 		const AD<Base> &right
 	);
 
-	// load ADVec element 
-	void RecordLoadOp( 
-		OpCode         op,
-		AD<Base>       &z, 
-		size_t     offset,
-		size_t    x_taddr
-	);
-
-	// store ADVec element 
-	void RecordStoreOp( 
-		OpCode         op,
-		size_t     offset,
-		size_t    x_taddr,
-		size_t    y_taddr
-	);
-
 	void RecordDisOp( 
 		AD<Base>       &z, 
 		size_t    x_taddr,
 		size_t    y_taddr
 	);
 	size_t AddVec(
-		size_t        length,
-		const Base   *data
+		size_t           length,
+		const AD<Base>   *data
 	);
 
 };
@@ -398,57 +267,6 @@ void ADTape<Base>::RecordInvOp(AD<Base> &z)
 	CPPAD_ASSERT_UNKNOWN( Variable(z) );
 }
 
-
-template  <class Base>
-void ADTape<Base>::RecordLoadOp(
-	OpCode         op,
-	AD<Base>       &z,
-	size_t     offset,
-	size_t     x_taddr
-)
-{
-	CPPAD_ASSERT_UNKNOWN( (op == LdvOp) | (op == LdpOp) );
-	CPPAD_ASSERT_UNKNOWN( NumInd(op) == 3 );
-
-	// Make z correspond to a next variable in tape
-	z.id_    = id_;
-	z.taddr_ = Rec.PutOp(op);
-
-	// Ind values for this instruction
-	// (space reserved by third taddr is set by f.Forward(0, *) )
-	Rec.PutInd(offset, x_taddr, 0);
-
-	// check that z is a dependent variable
-	CPPAD_ASSERT_UNKNOWN( Variable(z) );
-}
-
-template  <class Base>
-void ADTape<Base>::RecordStoreOp(
-	OpCode         op,
-	size_t     offset,
-	size_t    x_taddr,
-	size_t    y_taddr
-)
-{
-	CPPAD_ASSERT_UNKNOWN( 
-		(op == StppOp) | 
-		(op == StvpOp) | 
-		(op == StpvOp) | 
-		(op == StvvOp) 
-	);
-	CPPAD_ASSERT_UNKNOWN( NumInd(op) == 3 );
-	CPPAD_ASSERT_UNKNOWN( NumVar(op) == 0 );
-	CPPAD_ASSERT_UNKNOWN( (op==StppOp) | (op==StpvOp) | (x_taddr!=0) );
-	CPPAD_ASSERT_UNKNOWN( (op==StppOp) | (op==StvpOp) | (y_taddr!=0) );
-
-	// Put operator in the tape
-	Rec.PutOp(op);
-
-	// Ind values for this instruction
-	Rec.PutInd(offset, x_taddr, y_taddr);
-}
-
-
 template  <class Base>
 void ADTape<Base>::RecordDisOp(
 	AD<Base>         &z,
@@ -471,10 +289,10 @@ void ADTape<Base>::RecordDisOp(
 }
 
 template <class Base>
-size_t ADTape<Base>::AddVec(size_t length, const Base *data)
+size_t ADTape<Base>::AddVec(size_t length, const AD<Base> *data)
 {	CPPAD_ASSERT_UNKNOWN( length > 0 );
 	size_t i;
-	size_t vecInd;
+	size_t value_index;
 
 	// store the length in VecInd
 	size_t start = Rec.PutVecInd(length);
@@ -482,8 +300,8 @@ size_t ADTape<Base>::AddVec(size_t length, const Base *data)
 	// store indices of the values in VecInd 
 	for(i = 0; i < length; i++)
 	{
-		vecInd = Rec.PutPar( data[i] );
-		Rec.PutVecInd( vecInd );
+		value_index = Rec.PutPar( data[i].value_ );
+		Rec.PutVecInd( value_index );
 	}
  
 	// return the taddr of the length (where the vector starts)
