@@ -514,6 +514,7 @@ private:
 template <class Base>
 inline size_t TapeRec<Base>::PutOp(OpCode op)
 {	size_t varIndex = TotalNumberVar;
+	CPPAD_ASSERT_UNKNOWN( NumVar(op) == 0 );
 	
 	CPPAD_ASSERT_UNKNOWN( NumberOp <= LengthOp );
 	if( NumberOp == LengthOp )
@@ -522,15 +523,6 @@ inline size_t TapeRec<Base>::PutOp(OpCode op)
 	}
 	CPPAD_ASSERT_UNKNOWN( NumberOp < LengthOp );
 	Op[NumberOp++]  = op;
-
-	// stuff below here will not be needed once all cases with
-	// NumVar(op) > 0 use the calls with values specified.
-	size_t n_var    = NumVar(op);
-	if( TotalNumberVar + n_var >= LengthVar )
-	{	LengthVar = 2 * LengthVar + 3;
-		Var = CPPAD_TRACK_EXTEND(LengthVar, TotalNumberVar, Var);
-	}
-	TotalNumberVar += n_var;
 
 	return varIndex;
 }

@@ -72,44 +72,6 @@ creates a $code ParOp$$ record with the value
 specified by $italic z$$.
 The return value is the taddr of this operation in the tape.
 
-$subhead Independent$$
-The procedure call
-$syntax%
-	void %Tape%.RecordInvOp(AD<%Base%> &%z%)
-%$$
-creates a tape record corresponding to a new independent variable.
-The field $syntax%%z%.value_%$$ is an input and all the other
-fields of $italic z$$ are outputs.
-Upon return from $code RecordInvOp$$, 
-$syntax%%z%.taddr_%$$ 
-is the taddr of the new tape record. 
-
-
-$subhead User Defined Functions$$
-The procedure call 
-$syntax%
-void %Tape%.RecordDisOp(
-	AD<%Base%>       &%z%,
-	size_t      %x_taddr%,
-	size_t      %y_taddr%
-)%$$
-places a new dependent variable $italic z$$ in the tape
-and sets $syntax%%z%.taddr_%$$ to the corresponding taddr.
-The tape record specifies the operation
-$syntax%
-	%z% = %f%(%x%)%
-%$$ 
-where $italic x_taddr$$ is the taddr of $italic x$$ in the tape
-and $italic y_taddr$$ is the taddr corresponding to the 
-Discrete function $italic f$$
-(the value $italic x_taddr$$ cannot be zero).
-The field $syntax%%z%.value_%$$ is an input and all the other
-fields of $italic z$$ are outputs.
-Upon return from $code RecordDisOp$$, 
-$italic z$$ is in the list of variables and
-$syntax%%z%.taddr_%$$ 
-is to the taddr of the new tape record. 
-
 $subhead Variable Indexed Arrays$$
 The procedure call
 $syntax%
@@ -202,9 +164,6 @@ private:
 	// add a parameter to the tape
 	size_t RecordParOp(const Base &x);
 	
-	// add tape entry corresponding to a parameter value
-	void RecordInvOp(AD<Base> &z);
-
 	// see CondExp.h
 	void RecordCondExp(
 		enum CompareOp  cop           ,
@@ -223,11 +182,6 @@ private:
 		const AD<Base> &right
 	);
 
-	void RecordDisOp( 
-		AD<Base>       &z, 
-		size_t    x_taddr,
-		size_t    y_taddr
-	);
 	size_t AddVec(
 		size_t           length,
 		const AD<Base>   *data
@@ -249,43 +203,6 @@ size_t ADTape<Base>::RecordParOp(const Base &z)
 	Rec.PutInd(ind);
 
 	return z_taddr;
-}
-
-template  <class Base>
-void ADTape<Base>::RecordInvOp(AD<Base> &z)
-{
-	// in the independent variable case, should not already be in tape
-	CPPAD_ASSERT_UNKNOWN( Parameter(z) );
-	CPPAD_ASSERT_UNKNOWN( NumVar(InvOp) == 1 );
-	CPPAD_ASSERT_UNKNOWN( NumInd(InvOp) == 0 );
-
-	// Make z correspond to a next variable in tape
-	z.id_    = id_;
-	z.taddr_ = Rec.PutOp(InvOp, z.value_);
-
-	// check that z is an independent variable
-	CPPAD_ASSERT_UNKNOWN( Variable(z) );
-}
-
-template  <class Base>
-void ADTape<Base>::RecordDisOp(
-	AD<Base>         &z,
-	size_t      x_taddr,
-	size_t      y_taddr
-)
-{
-	CPPAD_ASSERT_UNKNOWN( x_taddr != 0 );
-	CPPAD_ASSERT_UNKNOWN( NumInd(DisOp) == 2 );
-
-	// Make z correspond to a next variable in tape
-	z.id_    = id_;
-	z.taddr_ = Rec.PutOp(DisOp);
-
-	// Ind values for this instruction
-	Rec.PutInd(x_taddr, y_taddr);
-
-	// check that z is a dependent variable
-	CPPAD_ASSERT_UNKNOWN( Variable(z) );
 }
 
 template <class Base>
