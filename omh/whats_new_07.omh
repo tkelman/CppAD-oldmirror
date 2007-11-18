@@ -87,6 +87,33 @@ $$
 The base type requirements have been changed and now 
 require using $cref/declare.hpp/base_require/declare.hpp/$$.
 
+$subhead 11-18$$
+Here are the 
+$code det_lu$$ speed tests results for the $code tape_values$$ branch:
+$table
+$bold size$$  
+	$pre  $$ $cnext 1 
+	$pre  $$ $cnext 4 
+	$pre  $$ $cnext 7 
+	$pre  $$ $cnext 10 
+	$pre  $$ $cnext 13 
+$rnext
+$bold rate: trunk$$  
+	$pre  $$ $cnext 26903 
+	$pre  $$ $cnext 14564 
+	$pre  $$ $cnext 8738 
+	$pre  $$ $cnext 5091 
+	$pre  $$ $cnext 3082 
+$rnext
+$bold rate: tape_values$$   
+	$pre  $$ $cnext 21403 
+	$pre  $$ $cnext 11276 
+	$pre  $$ $cnext 6990 
+	$pre  $$ $cnext 4096 
+	$pre  $$ $cnext 2427 
+$tend
+
+
 
 $head 11-06$$
 Added the $code -DRAD_EQ_ALIAS$$ compiler flag to the 
