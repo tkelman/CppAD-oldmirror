@@ -177,6 +177,17 @@ void ADFun<Base>::Dependent(const ADvector &x, const ADvector &y)
 
 	// code above just determines the tape and checks for errors
 	Dependent(tape, y);
+
+# if 0
+	// move zero order Taylor coefficients to function object
+	taylor_per_var= 1;
+	TaylorColDim  = 1;
+	Taylor        = Rec.MoveVar();
+# else
+	// Ignore zero order Taylor coefficients. This is not efficient,
+	// but necessary to pass example/fun_check.cpp test.
+	CPPAD_TRACK_DEL_VEC( Rec.MoveVar() );
+# endif
 }
 		
 

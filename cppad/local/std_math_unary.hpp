@@ -352,10 +352,10 @@ namespace CppAD {
         CPPAD_STANDARD_MATH_UNARY_ALL(sqrt)
 
         CPPAD_STANDARD_MATH_UNARY_AD_TWO_VAR(
-		acos, AcosOp, Base(1) - value_ * value_
+		acos, AcosOp, CppAD::sqrt( Base(1) - value_ * value_ )
 	)
         CPPAD_STANDARD_MATH_UNARY_AD_TWO_VAR(
-		asin, AsinOp, Base(1) - value_ * value_
+		asin, AsinOp, CppAD::sqrt( Base(1) - value_ * value_ )
 	)
         CPPAD_STANDARD_MATH_UNARY_AD_TWO_VAR(
 		atan, AtanOp, Base(1) + value_ * value_
@@ -366,31 +366,9 @@ namespace CppAD {
         CPPAD_STANDARD_MATH_UNARY_AD_TWO_VAR(
 		cosh, CoshOp, CppAD::sinh(value_)
 	)
-# if 0
         CPPAD_STANDARD_MATH_UNARY_AD_ONE_VAR(
 		exp, ExpOp
 	)
-# else
-    template <class Base>
-    inline AD<Base> AD<Base>::exp (void) const
-    {
-        AD<Base> result;
-        result.value_ = CppAD::exp(value_);
-        CPPAD_ASSERT_UNKNOWN( Parameter(result) );
-
-        if( Variable(*this) )
-        {   CPPAD_ASSERT_UNKNOWN( NumVar(ExpOp) == 1 );
-            CPPAD_ASSERT_UNKNOWN( NumInd(ExpOp) == 1 );
-            ADTape<Base> *tape = tape_this();
-            tape->Rec.PutInd(taddr_);
-            result.taddr_ = tape->Rec.PutOp(
-                ExpOp, result.value_
-            );
-            result.id_    = tape->id_;
-        }
-        return result;
-    }
-# endif
         CPPAD_STANDARD_MATH_UNARY_AD_ONE_VAR(
 		log, LogOp
 	)

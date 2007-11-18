@@ -410,13 +410,14 @@ public:
 		LengthTxt       = 0;
 	}
 
-	// add information to recording
+	// Cannot call PutOp after calling MoveVar
 	inline size_t PutOp(OpCode op);
 	inline size_t PutOp(OpCode op, const Base &v1);
 	inline size_t PutOp(OpCode op, const Base &v1, const Base &v2);
 	inline size_t PutOp(
 		OpCode op, const Base &v1, const Base &v2, const Base &v3
 	);
+
 	inline size_t PutVecInd(size_t vecInd);
 	inline size_t PutPar(const Base &par);
 	inline void PutInd(size_t ind0); 
@@ -430,9 +431,21 @@ public:
 
 	inline size_t PutTxt(const char *text);
 
+	// move values from recording to elsewhere
+	Base *MoveVar(void)
+	{	Base *ptr = Var;
+		Var       = CPPAD_NULL;
+		LengthVar = 0;
+		return ptr;
+	}
+
 	/*
 	retrieve information from recording
 	*/
+	Base GetVar (size_t i) const
+	{	CPPAD_ASSERT_UNKNOWN(i < NumberVar);
+		return Var[i];
+	}
 	OpCode GetOp (size_t i) const
 	{	CPPAD_ASSERT_UNKNOWN(i < NumberOp);
 		return Op[i];

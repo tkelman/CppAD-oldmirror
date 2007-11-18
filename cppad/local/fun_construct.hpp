@@ -161,7 +161,7 @@ template <typename Base>
 template <typename VectorAD>
 ADFun<Base>::ADFun(const VectorAD &x, const VectorAD &y)
 : totalNumVar(0), Taylor(CPPAD_NULL), ForJac(CPPAD_NULL)
-{	size_t i, j, m, n;
+{	size_t i, j, n;
 
 	CPPAD_ASSERT_KNOWN(
 		x.size() > 0,
@@ -202,6 +202,7 @@ ADFun<Base>::ADFun(const VectorAD &x, const VectorAD &y)
 	// allocate memory for one zero order Taylor coefficient
 	taylor_per_var= 1;
 	TaylorColDim  = 1;
+# ifndef NDEUBG
 	Taylor        = CPPAD_TRACK_NEW_VEC(totalNumVar, Taylor);
 
 	// set zero order coefficients corresponding to indpendent variables
@@ -219,13 +220,14 @@ ADFun<Base>::ADFun(const VectorAD &x, const VectorAD &y)
 	);
 	CPPAD_ASSERT_UNKNOWN( compareChange == 0 );
 
-	// check the dependent variable values
-	m = dep_taddr.size();
-	for(i = 0; i < m; i++) CPPAD_ASSERT_KNOWN(
-		Taylor[dep_taddr[i]] == y[i].value_,
-		"An independent variable is not equal its tape evaluation"
-		", it may be nan."
+	// variables start at index one (check all of them)
+	for(i = 1; i < totalNumVar; i++) CPPAD_ASSERT_UNKNOWN(
+		(Taylor[i] == Rec.GetVar(i)) | (Taylor[i] != Taylor[i])
 	);
+	CPPAD_TRACK_DEL_VEC(Taylor);
+# endif
+	// move zero order variable values from Rec.Var to Taylor
+	Taylor        = Rec.MoveVar();
 }
 
 } // END CppAD namespace
