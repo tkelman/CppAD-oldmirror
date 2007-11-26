@@ -49,8 +49,8 @@ then
 	#
 	# Today's date in yy-mm-dd decimal digit format where 
 	# yy is year in century, mm is month in year, dd is day in month.
-	yyyymmdd=`date +%G%m%d`
-	yyyy_mm_dd=`date +%G-%m-%d`
+	yyyymmdd="20071124"
+	yyyy_mm_dd="2007-11-24"
 	#
 	# automatically change version for certain files
 	sed < AUTHORS > AUTHORS.$$ \

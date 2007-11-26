@@ -45,7 +45,7 @@ Each version of CppAD is identified by $code cppad-$$ followed
 by the year (4 decimal digits), 
 month (2 decimal digits), and 
 day (2 decimal digits) corresponding to the version.
-The current version of CppAD is $code cppad-20071102$$.
+The current version of CppAD is $code cppad-20071124$$.
 
 $head Windows Zip Files$$
 $index CppAD, zip file$$
@@ -57,20 +57,20 @@ Windows format; i.e., each line ends with both a carriage return
 and then a line feed. 
 
 $table
-CPL License $pre  $$ $cnext $href%cppad-20071102.cpl.zip%$$ 
+CPL License $pre  $$ $cnext $href%cppad-20071124.cpl.zip%$$ 
 $rnext
-GPL License $pre  $$ $cnext $href%cppad-20071102.gpl.zip%$$
+GPL License $pre  $$ $cnext $href%cppad-20071124.gpl.zip%$$
 $tend
 
 $subhead Zip File Extraction$$
 There are many ways to unzip these archives; e.g., $code WinZip$$.
 Doing this should create the distribution directory
 $syntax%
-	cppad-20071102
+	cppad-20071124
 %$$
 To see if this has been done correctly, check for the following file:
 $syntax%
-	cppad-20071102/cppad/cppad.hpp
+	cppad-20071124/cppad/cppad.hpp
 %$$
 You can now proceed with the
 $cref/installation instructions/install/$$.
@@ -85,25 +85,25 @@ The ascii files for these downloads are in
 Unix format; i.e., each line ends with just a line feed.
 
 $table
-CPL License $pre  $$ $cnext $href%cppad-20071102.cpl.tgz%$$ 
+CPL License $pre  $$ $cnext $href%cppad-20071124.cpl.tgz%$$ 
 $rnext
-GPL License $pre  $$ $cnext $href%cppad-20071102.gpl.tgz%$$
+GPL License $pre  $$ $cnext $href%cppad-20071124.gpl.tgz%$$
 $tend
 
 $subhead Tar File Extraction$$
 Use the unix command
 $syntax%
-	tar -xvzf cppad-20071102.%license%.tgz
+	tar -xvzf cppad-20071124.%license%.tgz
 %$$
 (where $italic license$$ is $code cpl$$ or $code gpl$$)
 to decompress and extract the unix format version
 into the distribution directory
 $syntax%
-	cppad-20071102
+	cppad-20071124
 %$$
 To see if this has been done correctly, check for the following file:
 $syntax%
-	cppad-20071102/cppad/cppad.hpp
+	cppad-20071124/cppad/cppad.hpp
 %$$
 You can now proceed with the
 $cref/installation instructions/install/$$.

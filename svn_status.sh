@@ -46,8 +46,8 @@ sed                                                           \
 	-e '/cygwin_package$/d'                               \
 	-e '/^[?] *cppad-[0-9]\{8\}$/d'
 #
-yyyymmdd=`date +%G%m%d`
-yyyy_mm_dd=`date +%G-%m-%d`
+yyyymmdd="20071124"
+yyyy_mm_dd="2007-11-24"
 #
 svn cat configure | sed > configure.$$ \
 	-e "s/CppAD [0-9]\{8\}/CppAD $yyyymmdd/g" \
@@ -69,7 +69,6 @@ list="
 	AUTHORS
 	configure.ac
 	omh/download.omh
-	cppad/config.h
 "
 for name in $list
 do
