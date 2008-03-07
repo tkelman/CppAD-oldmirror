@@ -50,8 +50,8 @@ then
 	#
 	# Today's date in yy-mm-dd decimal digit format where 
 	# yy is year in century, mm is month in year, dd is day in month.
-	yyyymmdd=`date +%G%m%d`
-	yyyy_mm_dd=`date +%G-%m-%d`
+	yyyymmdd="2.3"
+	yyyy_mm_dd="2008-03-06"
 	#
 	# automatically change version for certain files
 	sed < AUTHORS > AUTHORS.$$ \
