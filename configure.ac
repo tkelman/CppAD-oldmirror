@@ -11,7 +11,9 @@ dnl ---------------------------------------------------------------------------
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl   package   version              bug-report
-AC_INIT(CppAD, 20080304, cppad@list.coin-or.org)
+AC_INIT(CppAD, 2.3, cppad@list.coin-or.org)
+dnl trunk version 20080306
+dnl trunk revision 1139
 
 dnl By defalut disable maintainer mode when running configure;
 dnl --enable-maintainer-mode will enable it.
