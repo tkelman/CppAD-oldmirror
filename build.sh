@@ -33,7 +33,7 @@ then
 fi
 #
 # Check if we are running all the test cases. 
-if [ "$1" = "test" ] || ( [ "$1" = "all" ] & [ "$2" = "test" ] )
+if [ "$1" = "test" ] || ( [ "$1" = "all" ] && [ "$2" = "test" ] )
 then
 	date > build_test.log
 	if [ -e cppad-$version ]
@@ -516,7 +516,7 @@ then
 		exit 0
 	fi
 fi
-if [ "$1" = "dos" ] || [ "$1" = "all" ]
+if [ "$1" = "dos" ] || ( [ "$1" = "all" ] && [ "$2" == "dos" ] )
 then
 	echo "./dos_format.sh"
 	if ! ./dos_format.sh
@@ -546,8 +546,6 @@ then
 	list="
 		cppad-$version.cpl.tgz
 		cppad-$version.gpl.tgz
-		cppad-$version.cpl.zip
-		cppad-$version.gpl.zip
 	"
 	for file in $list
 	do
