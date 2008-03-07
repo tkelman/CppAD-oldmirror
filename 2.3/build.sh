@@ -20,9 +20,10 @@ FADBAD_DIR=$HOME/include
 SACADO_DIR=$HOME/sacado_base
 # -----------------------------------------------------------------------------
 #
-# date currently in configure.ac
+# get version currently in configure.ac file
+# (in a way that works when version is not a date)
 version=`grep "^ *AC_INIT(" configure.ac | \
-	sed -e "s/.*, *\([0-9]\{8\}\) *,.*/\1/"`
+	sed -e 's/[^,]*, *\([^ ,]*\).*/\1/'`
 #
 if [ "$1" = "all" ] && [ "$2" != "" ] && [ "$2" != "test" ]
 then
