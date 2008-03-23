@@ -605,6 +605,6 @@ echo "exception that \"configure test\" and \"test\" are excluded."
 echo
 echo "build.sh all test"
 echo "This command will execute all the options above in order with the"
-echo "exception that \"configure test\",  \"dos\", and \"move\" are excluded."
+echo "exception that \"configure\",  \"dos\", and \"move\" are excluded."
 #
 exit 1
