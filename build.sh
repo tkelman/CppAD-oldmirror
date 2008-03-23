@@ -593,7 +593,7 @@ echo "dist           create the distribution file cppad-version.cpl.tgz"
 echo "test           unpack *.cpl.tgz, compile, tests, result in build_test.log"
 echo "gpl            create *.gpl.tgz"
 echo "dos            create *.gpl.zip, and *.cpl.zip"
-echo "move           move *.tgz and *.zip to doc directory"
+echo "move           move *.tgz to doc directory"
 echo
 echo "build.sh all"
 echo "This command will execute all the options above in order with the"
