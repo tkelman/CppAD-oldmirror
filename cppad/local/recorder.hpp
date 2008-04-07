@@ -15,6 +15,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 $begin recorder$$ $comment CppAD Developer Documentation$$
 
 $spell
+	Var
 	inline
 	VecInd
 	sizeof
@@ -33,9 +34,6 @@ $index recorder$$
 
 $head Syntax$$
 $syntax%recorder<%Base%> %Rec%$$
-$pre
-$$
-$syntax%recorder<%Base%> %Rec%(const recorder<%Base%> &%Other%)%$$
 
 
 $head Default Constructors$$
@@ -45,15 +43,6 @@ $syntax%
 %$$
 creates a program recording called $italic Rec$$ with no contents and some
 default setting for the size of its buffers.
-
-$head Copy Constructor$$
-The copy constructor
-$syntax%
-	recorder<%Base%> %Rec%(const recorder<%Base%> &%Other%)
-%$$
-creates $italic Rec$$ as a program recording with all the same
-information as $italic Other$$ and with the smallest possible buffer sizes
-that will hold that information.
 
 $head Erase$$
 $index recorder, Erase$$
@@ -126,48 +115,15 @@ and returns its index with in the recording.
 This index starts at zero after each $code Erase$$ or default constructor
 and increments by one for each call to this function.
 
-$head Num$$
-$index recorder, Num$$
-$index Num, recorder$$
-
-$subhead Op$$
-$index NumOp$$
-The syntax
+$head TotNumVar$$
+$index recorder, TotNumVar$$
+$index TotNumVar, recorder$$
+The function call
 $syntax%
-	size_t %Rec%.NumOp(void) const
+	inline size_t %Rec%.TotNumVar()
 %$$
-returns the number of Op values
-that are currently stored in $italic Rec$$.
-This increments by one each time $code PutOp$$ is called; i.e.,
-it is the number of calls to $code PutOp$$.
+returns the number of variables that are in the recording.
 
-$subhead Ind$$
-$index NumInd$$
-The syntax
-$syntax%
-	size_t %Rec%.NumInd(void) const
-%$$
-returns the number of Ind values
-that are currently stored in $italic Rec$$.
-This increments by one for each value that is stored by $code PutInd$$.
-
-The syntax
-$syntax%
-	size_t %Rec%.NumVecInd(void) const
-%$$
-returns the number of VecInd values
-that are currently stored in $italic Rec$$.
-This increments by one each time $code PutVecInd$$ is called.
-
-$subhead Par$$
-$index NumPar$$
-The syntax
-$syntax%
-	size_t %Rec%.NumPar(void) const
-%$$
-returns the number of Par values
-that are currently stored in $italic Rec$$.
-This increment by one or zero each time $code PutPar$$ is called.
 
 $head Memory$$
 $index recorder, Memory$$
@@ -235,79 +191,6 @@ public:
 			CPPAD_TRACK_DEL_VEC(Txt_);
 	}
 
-	// assignment from another recording
-	void operator=(const recorder &Other)
-	{	size_t i;
-
-		if( LengthOp_ > 0 )
-			CPPAD_TRACK_DEL_VEC(Op_);
-		if( LengthVecInd_ > 0 )
-			CPPAD_TRACK_DEL_VEC(VecInd_);
-		if( LengthInd_ > 0 )
-			CPPAD_TRACK_DEL_VEC(Ind_);
-		if( LengthPar_ > 0 )
-			CPPAD_TRACK_DEL_VEC(Par_);
-		if( LengthTxt_ > 0 )
-			CPPAD_TRACK_DEL_VEC(Txt_);
-
-		// Var
-		TotalNumberVar_  = Other.TotalNumberVar_;
-
-		// Op
-		NumberOp_        = Other.NumberOp_;
-		LengthOp_        = Other.NumberOp_;
-
-		// VecInd
-		NumberVecInd_    = Other.NumberVecInd_;
-		LengthVecInd_    = Other.NumberVecInd_;
-
-		// Ind
-		NumberInd_       = Other.NumberInd_;
-		LengthInd_       = Other.NumberInd_;
-
-		// Par
-		NumberPar_       = Other.NumberPar_;
-		LengthPar_       = Other.NumberPar_;
-
-		// Txt
-		NumberTxt_       = Other.NumberTxt_;
-		LengthTxt_       = Other.NumberTxt_;
-
-		// Allocate the memory
-		if( LengthOp_ == 0 )
-			Op_ = CPPAD_NULL;
-		else	Op_ = CPPAD_TRACK_NEW_VEC(LengthOp_,      Op_);
-		if( LengthVecInd_ == 0 )
-			VecInd_ = CPPAD_NULL;
-		else	VecInd_ = CPPAD_TRACK_NEW_VEC(LengthVecInd_, VecInd_);
-		if( LengthInd_ == 0 )
-			Ind_ = CPPAD_NULL;
-		else	Ind_ = CPPAD_TRACK_NEW_VEC(LengthInd_,       Ind_);
-		if( LengthPar_ == 0 )
-			Par_ = CPPAD_NULL;
-		else	Par_ = CPPAD_TRACK_NEW_VEC(LengthPar_,       Par_);
-		if( LengthTxt_ == 0 )
-			Txt_ = CPPAD_NULL;
-		else	Txt_ = CPPAD_TRACK_NEW_VEC(LengthTxt_,       Txt_);
-
-		// Copy the data
-		i = NumberOp_;
-		while(i--)
-			Op_[i] = Other.Op_[i];
-		i = NumberVecInd_;
-		while(i--)
-			VecInd_[i] = Other.VecInd_[i];
-		i = NumberInd_;
-		while(i--)
-			Ind_[i] = Other.Ind_[i];
-		i = NumberPar_;
-		while(i--)
-			Par_[i] = Other.Par_[i];
-		i = NumberTxt_;
-		while(i--)
-			Txt_[i] = Other.Txt_[i];
-	}
-
 	// erase all information in recording
 	void Erase(void)
 	{	
@@ -354,16 +237,6 @@ public:
 	// number of values
 	size_t TotNumVar(void) const
 	{	return TotalNumberVar_; }
-	size_t NumOp(void) const
-	{	return NumberOp_; }
-	size_t NumVecInd(void) const
-	{	return NumberVecInd_; }
-	size_t NumInd(void) const
-	{	return NumberInd_; }
-	size_t NumPar(void) const
-	{	return NumberPar_; }
-	size_t NumTxt(void) const
-	{	return NumberTxt_; }
 
 	// amount of memory used 
 	size_t Memory(void) const

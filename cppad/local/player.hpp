@@ -15,6 +15,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 $begin player$$ $comment CppAD Developer Documentation$$
 
 $spell
+	Var
 	inline
 	VecInd
 	sizeof
@@ -167,6 +168,15 @@ $syntax%
 Replaces the single value with index $italic index$$ in the sequence of
 Ind values stored by calls to $syntax%%Rec%.PutInd%$$.
 The argument $italic index$$ must be less than $syntax%%Rec%.NumInd()%$$.
+
+$head TotNumVar$$
+$index recorder, TotNumVar$$
+$index TotNumVar, recorder$$
+The function call
+$syntax%
+	inline size_t %Rec%.TotNumVar()
+%$$
+returns the number of variables that are in the recording.
 
 
 $head Memory$$
