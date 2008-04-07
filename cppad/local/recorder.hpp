@@ -126,51 +126,6 @@ and returns its index with in the recording.
 This index starts at zero after each $code Erase$$ or default constructor
 and increments by one for each call to this function.
 
-$head Get$$
-$index recorder, Get$$
-$index Get, recorder$$
-
-$subhead Op$$
-$index GetOp$$
-The syntax
-$syntax%
-	OpCode %Rec%.GetOp(size_t %i%) const
-%$$
-returns the value of $italic op$$ in the $th i+1$$ call to 
-$syntax%%Rec%.PutOp(%op%)%$$.
-
-$subhead VecInd$$
-$index GetVecInd$$
-The syntax
-$syntax%
-	OpCode %Rec%.GetVecInd(size_t %i%) const
-%$$
-returns the value of $italic vecInd$$ in the corresponding call 
-$syntax%%Rec%.PutVecInd(%vecInd%)%$$
-where $italic i$$ is the return value of $code PutVecInd$$. 
-
-$subhead Ind$$
-$index GetInd$$
-The syntax
-$syntax%
-	const size_t *%Rec%.GetInd(size_t %n%, size_t %i%) const
-%$$
-returns a pointer to a copy of $italic n$$ values in the Ind recording
-starting at the index $italic i$$.
-
-$subhead Par$$
-$index GetPar$$
-The syntax
-$syntax%
-	const %Base% *%Rec%.GetPar(size_t %i%) const
-%$$
-returns a pointer to a value equal to
-$italic par$$ in the corresponding call 
-$syntax%%Rec%.PutPar(%par%)%$$ 
-where $italic i$$ is the return value of $code PutPar$$.
-(If $code NDEBUG$$ is not defined, $code GetPar$$ checks that
-the argument $italic i$$ is valid.)
-
 $head Num$$
 $index recorder, Num$$
 $index Num, recorder$$
@@ -213,21 +168,6 @@ $syntax%
 returns the number of Par values
 that are currently stored in $italic Rec$$.
 This increment by one or zero each time $code PutPar$$ is called.
-
-$head Replace$$
-$index recorder, Replace$$
-$index Replace, recorder$$
-
-$subhead Ind$$
-$index ReplaceInd$$
-The syntax
-$syntax%
-	size_t %Rec%.ReplaceInd(size_t %index%, size_t %value%)
-%$$
-Replaces the single value with index $italic index$$ in the sequence of
-Ind values stored by calls to $syntax%%Rec%.PutInd%$$.
-The argument $italic index$$ must be less than $syntax%%Rec%.NumInd()%$$.
-
 
 $head Memory$$
 $index recorder, Memory$$
@@ -410,38 +350,6 @@ public:
 		size_t ind4, size_t ind5);
 
 	inline size_t PutTxt(const char *text);
-
-	/*
-	retrieve information from recording
-	*/
-	OpCode GetOp (size_t i) const
-	{	CPPAD_ASSERT_UNKNOWN(i < NumberOp_);
-		return Op_[i];
-	}
-	size_t GetVecInd (size_t i) const
-	{	CPPAD_ASSERT_UNKNOWN(i < NumberVecInd_);
-		return VecInd_[i];
-	}
-	const Base *GetPar(size_t i) const
-	{	CPPAD_ASSERT_UNKNOWN(i < NumberPar_);
-		return Par_ + i;
-	}
-	const size_t *GetInd(size_t n, size_t i) const
-	{	CPPAD_ASSERT_UNKNOWN(i + n <= NumberInd_)
-		return Ind_ + i;
-	}
-	const char *GetTxt(size_t i) const
-	{	CPPAD_ASSERT_UNKNOWN(i < NumberTxt_);
-		return Txt_ + i;
-	}
-	
-	/*
-	replace information 
-	*/
-	void ReplaceInd(size_t i, size_t value)
-	{	CPPAD_ASSERT_UNKNOWN( i < NumberInd_);
-		Ind_[i] = value;
-	}
 
 	// number of values
 	size_t TotNumVar(void) const
