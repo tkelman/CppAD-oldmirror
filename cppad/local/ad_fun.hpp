@@ -239,7 +239,7 @@ private:
 	CppAD::vector<bool>   dep_parameter_;
 
 	// the operations corresponding to this function
-	TapeRec<Base> rec_;
+	player<Base> rec_;
 
 	// results of the forward mode calculations
 	Base *taylor_;

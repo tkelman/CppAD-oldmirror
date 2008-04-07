@@ -1,8 +1,8 @@
-# ifndef CPPAD_TAPE_REC_INCLUDED
-# define CPPAD_TAPE_REC_INCLUDED
+# ifndef CPPAD_PLAYER_INCLUDED
+# define CPPAD_PLAYER_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-08 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -12,7 +12,7 @@ A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 /*
-$begin TapeRec$$ $comment CppAD Developer Documentation$$
+$begin player$$ $comment CppAD Developer Documentation$$
 
 $spell
 	inline
@@ -29,19 +29,19 @@ $$
 $section A CppAD Program as Recorded on Tape$$
 $index tape, record$$
 $index record, tape$$
-$index TapeRec$$
+$index player$$
 
 $head Syntax$$
-$syntax%TapeRec<%Base%> %Rec%$$
+$syntax%player<%Base%> %Rec%$$
 $pre
 $$
-$syntax%TapeRec<%Base%> %Rec%(const TapeRec<%Base%> &%Other%)%$$
+$syntax%player<%Base%> %Rec%(const player<%Base%> &%Other%)%$$
 
 
 $head Default Constructors$$
 The default constructor 
 $syntax%
-	TapeRec<%Base%> %Rec%
+	player<%Base%> %Rec%
 %$$
 creates a program recording called $italic Rec$$ with no contents and some
 default setting for the size of its buffers.
@@ -49,15 +49,15 @@ default setting for the size of its buffers.
 $head Copy Constructor$$
 The copy constructor
 $syntax%
-	TapeRec<%Base%> %Rec%(const TapeRec<%Base%> &%Other%)
+	player<%Base%> %Rec%(const player<%Base%> &%Other%)
 %$$
 creates $italic Rec$$ as a program recording with all the same
 information as $italic Other$$ and with the smallest possible buffer sizes
 that will hold that information.
 
 $head Erase$$
-$index TapeRec, Erase$$
-$index Erase, TapeRec$$
+$index player, Erase$$
+$index Erase, player$$
 The syntax 
 $syntax%
 	void %Rec%.Erase()
@@ -67,8 +67,8 @@ The buffers used to store the tape information are returned
 to the system (so as to conserve on memory).
 
 $head Put$$
-$index TapeRec, Put$$
-$index Put, TapeRec$$
+$index player, Put$$
+$index Put, player$$
 
 $subhead Op$$
 $index PutOp$$
@@ -127,8 +127,8 @@ This index starts at zero after each $code Erase$$ or default constructor
 and increments by one for each call to this function.
 
 $head Get$$
-$index TapeRec, Get$$
-$index Get, TapeRec$$
+$index player, Get$$
+$index Get, player$$
 
 $subhead Op$$
 $index GetOp$$
@@ -172,8 +172,8 @@ where $italic i$$ is the return value of $code PutPar$$.
 the argument $italic i$$ is valid.)
 
 $head Num$$
-$index TapeRec, Num$$
-$index Num, TapeRec$$
+$index player, Num$$
+$index Num, player$$
 
 $subhead Op$$
 $index NumOp$$
@@ -215,8 +215,8 @@ that are currently stored in $italic Rec$$.
 This increment by one or zero each time $code PutPar$$ is called.
 
 $head Replace$$
-$index TapeRec, Replace$$
-$index Replace, TapeRec$$
+$index player, Replace$$
+$index Replace, player$$
 
 $subhead Ind$$
 $index ReplaceInd$$
@@ -230,8 +230,8 @@ The argument $italic index$$ must be less than $syntax%%Rec%.NumInd()%$$.
 
 
 $head Memory$$
-$index TapeRec, Memory$$
-$index Memory, TapeRec$$
+$index player, Memory$$
+$index Memory, player$$
 The syntax
 $syntax%
 	size_t %Rec%.Memory(void) const
@@ -249,11 +249,11 @@ $end
 namespace CppAD {
 
 template <class Base>
-class TapeRec {
+class player {
 
 public:
 	// default
-	TapeRec(void) 
+	player(void) 
 	{	
 		TotalNumberVar_ = 0;
 
@@ -280,7 +280,7 @@ public:
 	}
 
 	// destructor
-	~TapeRec(void)
+	~player(void)
 	{	if( LengthOp_ > 0 )
 			CPPAD_TRACK_DEL_VEC(Op_);
 		if( LengthVecInd_ > 0 )
@@ -294,7 +294,7 @@ public:
 	}
 
 	// assignment from another recording
-	void operator=(const TapeRec &Other)
+	void operator=(const recorder<Base> &Other)
 	{	size_t i;
 
 		if( LengthOp_ > 0 )
@@ -489,7 +489,7 @@ private:
 };
 
 template <class Base>
-inline size_t TapeRec<Base>::PutOp(OpCode op)
+inline size_t player<Base>::PutOp(OpCode op)
 {	size_t varIndex = TotalNumberVar_;
 	
 	CPPAD_ASSERT_UNKNOWN( NumberOp_ <= LengthOp_ );
@@ -505,7 +505,7 @@ inline size_t TapeRec<Base>::PutOp(OpCode op)
 }
 
 template <class Base>
-inline size_t TapeRec<Base>::PutVecInd(size_t vecInd)
+inline size_t player<Base>::PutVecInd(size_t vecInd)
 {	
 	CPPAD_ASSERT_UNKNOWN( NumberVecInd_ <= LengthVecInd_ );
 	if( NumberVecInd_ == LengthVecInd_ )
@@ -519,7 +519,7 @@ inline size_t TapeRec<Base>::PutVecInd(size_t vecInd)
 }
 
 template <class Base>
-inline size_t TapeRec<Base>::PutPar(const Base &par)
+inline size_t player<Base>::PutPar(const Base &par)
 {	size_t i;
 	
 	CPPAD_ASSERT_UNKNOWN( NumberPar_ <= LengthPar_ );
@@ -546,7 +546,7 @@ inline size_t TapeRec<Base>::PutPar(const Base &par)
 }
  // -------------------------- PutInd --------------------------------------
 template <class Base>
-inline void TapeRec<Base>::PutInd(size_t ind0)
+inline void player<Base>::PutInd(size_t ind0)
 { 
 	CPPAD_ASSERT_UNKNOWN( NumberInd_ <= LengthInd_ );
 	if( NumberInd_ == LengthInd_ )
@@ -557,7 +557,7 @@ inline void TapeRec<Base>::PutInd(size_t ind0)
 	Ind_[NumberInd_++] = ind0;
 }
 template <class Base>
-inline void TapeRec<Base>::PutInd(size_t ind0, size_t ind1)
+inline void player<Base>::PutInd(size_t ind0, size_t ind1)
 { 
 	CPPAD_ASSERT_UNKNOWN( NumberInd_ <= LengthInd_ );
 	if( NumberInd_ + 1 >= LengthInd_ )
@@ -569,7 +569,7 @@ inline void TapeRec<Base>::PutInd(size_t ind0, size_t ind1)
 	Ind_[NumberInd_++] = ind1;
 }
 template <class Base>
-inline void TapeRec<Base>::PutInd(size_t ind0, size_t ind1, size_t ind2)
+inline void player<Base>::PutInd(size_t ind0, size_t ind1, size_t ind2)
 { 
 	CPPAD_ASSERT_UNKNOWN( NumberInd_ <= LengthInd_ );
 	if( NumberInd_ + 2 >= LengthInd_ )
@@ -582,7 +582,7 @@ inline void TapeRec<Base>::PutInd(size_t ind0, size_t ind1, size_t ind2)
 	Ind_[NumberInd_++] = ind2;
 }
 template <class Base>
-inline void TapeRec<Base>::PutInd(size_t ind0, size_t ind1, size_t ind2,
+inline void player<Base>::PutInd(size_t ind0, size_t ind1, size_t ind2,
 	size_t ind3)
 { 
 	CPPAD_ASSERT_UNKNOWN( NumberInd_ <= LengthInd_ );
@@ -598,7 +598,7 @@ inline void TapeRec<Base>::PutInd(size_t ind0, size_t ind1, size_t ind2,
 
 }
 template <class Base>
-inline void TapeRec<Base>::PutInd(size_t ind0, size_t ind1, size_t ind2,
+inline void player<Base>::PutInd(size_t ind0, size_t ind1, size_t ind2,
 	size_t ind3, size_t ind4)
 { 
 	CPPAD_ASSERT_UNKNOWN( NumberInd_ <= LengthInd_ );
@@ -615,7 +615,7 @@ inline void TapeRec<Base>::PutInd(size_t ind0, size_t ind1, size_t ind2,
 
 }
 template <class Base>
-inline void TapeRec<Base>::PutInd(size_t ind0, size_t ind1, size_t ind2, 
+inline void player<Base>::PutInd(size_t ind0, size_t ind1, size_t ind2, 
 	size_t ind3, size_t ind4, size_t ind5)
 { 
 	CPPAD_ASSERT_UNKNOWN( NumberInd_ <= LengthInd_ );
@@ -633,7 +633,7 @@ inline void TapeRec<Base>::PutInd(size_t ind0, size_t ind1, size_t ind2,
 }
 
 template <class Base>
-inline size_t TapeRec<Base>::PutTxt(const char *text)
+inline size_t player<Base>::PutTxt(const char *text)
 {	size_t i;
 
 	// determine length of the text including terminating '\0'
