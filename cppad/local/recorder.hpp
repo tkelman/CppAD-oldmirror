@@ -22,119 +22,157 @@ $spell
 	Num
 	Ind
 	Cpp
-	Rec
 	const
 	Op
 $$
 
-$section A CppAD Program as Recorded on Tape$$
+$section Record a CppAD Operation Sequence$$
 $index tape, record$$
 $index record, tape$$
 $index recorder$$
 
 $head Syntax$$
-$syntax%recorder<%Base%> %Rec%$$
+$codei%recorder<%Base%> %rec%$$
 
 
 $head Default Constructors$$
 The default constructor 
-$syntax%
-	recorder<%Base%> %Rec%
+$codei%
+	recorder<%Base%> %rec%
 %$$
-creates a program recording called $italic Rec$$ with no contents and some
-default setting for the size of its buffers.
+creates an empty operation sequence.
 
 $head Erase$$
 $index recorder, Erase$$
 $index Erase, recorder$$
 The syntax 
-$syntax%
-	void %Rec%.Erase()
+$codei%
+	void %rec%.Erase()
 %$$
-erases the contents of $italic Rec$$.
+erases the operation sequence store in $icode rec$$
+(the operation sequence is empty after this operation).
 The buffers used to store the tape information are returned
 to the system (so as to conserve on memory).
 
-$head Put$$
-$index recorder, Put$$
-$index Put, recorder$$
-
-$subhead Op$$
+$head PutOp$$
 $index PutOp$$
-The function call
-$syntax%
-	inline size_t %Rec%.PutOp(OpCode %op%)
+If $icode op$$ and $icode i$$ have prototypes
+$codei%
+        OpCode %op%
+        size_t %i%
 %$$
-places the value $italic op$$ at the end of the current Op recording
-and returns the offset for the corresponding variable 
-(if the operator has a resulting variable).
-With each call, this index increments by the number of variables required
-for the previous call to $code PutOp$$.
+The syntax
+$codei%
+	%i% = %rec%.PutOp(%op%)
+%$$
+sets the code for the next operation in the sequence.
+The return value $icode i$$ is the index of the first variable 
+corresponding to the result of this operation. 
+The number of variables $icode n$$ 
+corresponding to the operation is given by
+$codei%
+	%n% = NumVar(%op%)
+%$$
+where $icode n$$ is a $code size_t$$ object.
+With each call to $code PutOp$$, 
+the return index increases by the number of variables corresponding
+to the previous call to $code PutOp$$.
+This index starts at zero after each $code Erase$$ or default constructor.
 
-$subhead Ind$$
+$head PutInd$$
 $index PutInd$$
-The function call
-$syntax%
-	inline void %Rec%.PutInd(size_t %ind0%)
-	inline void %Rec%.PutInd(size_t %ind0%, size_t %ind1%)
-	%.%
-	%.%
-	%.%
-	inline void %Rec%.PutInd(
-		size_t %ind0%, 
-		size_t %ind1%, 
-		size_t %ind2%, 
-		size_t %ind3%,
-		size_t %ind4%
-		size_t %ind5%)
+If $icode ind_j$$ has prototype
+$codei%
+	size_t %ind_j%
 %$$
-places the values passed to $code PutInd$$ at the end of the
-Ind recording and in the order passed; i.e., $italic ind0$$
-comes before $italic ind1$$ e.t.c.
+for $icode j$$ equal to $icode 0$$, ... , $icode 5$$,
+The following syntax
+$codei%
+	%rec%.PutInd(%ind_0%)
+	%rec%.PutInd(%ind_0%, %ind_1%)
+	%.%
+	%.%
+	%.%
+	%rec%.PutInd(%ind_0%, %ind_1%, %...%, %ind_5%)
+%$$
+places the values passed to $codei PutInd$$ at the current end of the
+operation sequence index vector in the specified order, i.e., 
+$icode ind_0$$ comes before $icode ind_1$$ e.t.c.
+The proper number of indices $icode n$$ 
+corresponding to the operation $icode op$$ is given by
+$codei%
+	%n% = NumVar(%op%)
+%$$
+where $icode n$$ is a $code size_t$$ object and $icode op$$
+is an $code OpCode$$ object.
+The end of the operation sequence index vector starts at zero
+and increases by the number of indices placed in the vector
+by each call to $code PutInd$$.
+The end of the vector starts at zero after each $code Erase$$ 
+or default constructor. 
 
-
-$subhead Par$$
+$head PutPar$$
 $index PutPar$$
-The function call
-$syntax%
-	inline size_t %Rec%.PutPar(const %Base% &%par%)
+If $icode p$$ and $icode i$$ have prototypes
+$codei%
+	const %Base% &%p%
+	size_t %i%
 %$$
-places the value $italic par$$ in the Par recording
-and returns its index with in the recording.
-This value is not necessarily placed at the end of the recording
-so there is no specified pattern to the return values.
+The syntax
+$codei%
+	%i% = %rec%.PutPar(%p%)
+%$$
+places the value $icode p$$ in the 
+operation sequence parameter vector
+and returns its index in the vector $icode i$$.
+This value is not necessarily placed at the end of the vector
+(because values that are identically equal can be reused).
 
-$subhead VecInd$$
+$head PutVecInd$$
 $index PutVecInd$$
-The function call
-$syntax%
-	inline size_t %Rec%.PutVecInd(size_t %vecInd%)
+If $icode i$$ and $icode iv$$ have prototypes
+$codei%
+	size_t %i%
+	size_t %iv%
 %$$
-places the value $italic vecInd$$ at the end of the current VecInd recording
-and returns its index with in the recording.
+the syntax
+$codei%
+	%i% = %rec%.PutVecInd(%iv%)
+%$$
+places the value $icode iv$$ at the current end of the
+operation sequence vec_ind vector
+and returns its index in this vector.
 This index starts at zero after each $code Erase$$ or default constructor
 and increments by one for each call to this function.
 
 $head TotNumVar$$
 $index recorder, TotNumVar$$
 $index TotNumVar, recorder$$
-The function call
-$syntax%
-	inline size_t %Rec%.TotNumVar()
+If $icode n$$ has prototype
+$codei%
+	size_t %n%
 %$$
-returns the number of variables that are in the recording.
+the syntax
+$codei%
+	%n% = %rec%.TotNumVar()
+%$$
+sets $icode n$$ to the number of variables that are in the 
+operation sequence.
 
 
 $head Memory$$
 $index recorder, Memory$$
 $index Memory, recorder$$
-The syntax
-$syntax%
-	size_t %Rec%.Memory(void) const
+If $icode n$$ has prototype
+$codei%
+	size_t %n%
 %$$
-returns the number of memory units ($code sizeof$$) required to store
-the information in $italic Rec$$.
-
+the syntax
+$codei%
+	 %n% = %rec%.Memory()
+%$$
+sets $icode n$$ to the number of memory units ($code sizeof$$) 
+required to store the current operation sequence in $icode rec$$.
 
 
 $end

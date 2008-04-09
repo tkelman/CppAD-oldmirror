@@ -22,172 +22,203 @@ $spell
 	Num
 	Ind
 	Cpp
-	Rec
 	const
 	Op
 $$
 
-$section A CppAD Program as Recorded on Tape$$
-$index tape, record$$
-$index record, tape$$
+$section Playback a CppAD Operation Sequence$$
+$index tape, playback$$
+$index playback, tape$$
 $index player$$
 
 $head Syntax$$
-$syntax%player<%Base%> %Rec%$$
-$pre
-$$
-$syntax%player<%Base%> %Rec%(const player<%Base%> &%Other%)%$$
+$codei%player<%Base%> %play%$$
 
 
 $head Default Constructors$$
 The default constructor 
-$syntax%
-	player<%Base%> %Rec%
+$codei%
+	player<%Base%> %play%
 %$$
-creates a program recording called $italic Rec$$ with no contents and some
-default setting for the size of its buffers.
+creates an empty operation sequence.
 
-$head Copy Constructor$$
-The copy constructor
-$syntax%
-	player<%Base%> %Rec%(const player<%Base%> &%Other%)
+$head Assignment Operator$$
+If $icode rec$$ is 
+$codei%
+	const recorder &%rec%
 %$$
-creates $italic Rec$$ as a program recording with all the same
-information as $italic Other$$ and with the smallest possible buffer sizes
-that will hold that information.
+object, the assignment operation 
+$codei%
+	%play% = %rec%
+%$$
+copies the operation sequence from the 
+$cref/recorder/$$ $icode rec$$ to the $code player$$ $icode play$$.
 
 $head Erase$$
 $index player, Erase$$
 $index Erase, player$$
-The syntax 
-$syntax%
-	void %Rec%.Erase()
+The function call
+$codei%
+	void %play%.Erase()
 %$$
-erases the contents of $italic Rec$$.
+erases the operation sequence stored in $icode play%$$
+(the operation sequence is empty after this operation).
 The buffers used to store the tape information are returned
 to the system (so as to conserve on memory).
 
-$head Get$$
-$index player, Get$$
-$index Get, player$$
-
-$subhead Op$$
+$head GetOp$$
 $index GetOp$$
-The syntax
-$syntax%
-	OpCode %Rec%.GetOp(size_t %i%) const
+If $icode op$$ and $icode i$$ have prototypes
+$codei%
+	OpCode %op%
+	size_t %i%
 %$$
-returns the value of $italic op$$ in the $th i+1$$ call to 
-$syntax%%Rec%.PutOp(%op%)%$$.
-
-$subhead VecInd$$
-$index GetVecInd$$
 The syntax
-$syntax%
-	OpCode %Rec%.GetVecInd(size_t %i%) const
+$codei%
+	%op% = %play%.GetOp(%i%)
 %$$
-returns the value of $italic vecInd$$ in the corresponding call 
-$syntax%%Rec%.PutVecInd(%vecInd%)%$$
-where $italic i$$ is the return value of $code PutVecInd$$. 
+sets $icode op$$ to the operation code for the $th i$$ operation in the 
+operation sequence.
 
-$subhead Ind$$
+$head GetInd$$
 $index GetInd$$
-The syntax
-$syntax%
-	const size_t *%Rec%.GetInd(size_t %n%, size_t %i%) const
+If $icode p$$, $icode n$$ and $icode offset$$ have prototypes
+$codei%
+	const size_t *%p%
+	size_t %n%
+	size_t %offset%
 %$$
-returns a pointer to a copy of $italic n$$ values in the Ind recording
-starting at the index $italic i$$.
+The syntax
+$codei%
+	%p% = %play%.GetInd(%n%, %offset%)
+%$$
+returns a pointer to the $icode n$$ the values that start at the 
+specified offset in the operation sequence index vector.
 
-$subhead Par$$
+$head GetPar$$
 $index GetPar$$
-The syntax
-$syntax%
-	const %Base% *%Rec%.GetPar(size_t %i%) const
+If $icode p$$ and $icode i$$ have prototypes
+$codei%
+	const %Base% *%p%
+	size_t %i%
 %$$
-returns a pointer to a value equal to
-$italic par$$ in the corresponding call 
-$syntax%%Rec%.PutPar(%par%)%$$ 
-where $italic i$$ is the return value of $code PutPar$$.
-(If $code NDEBUG$$ is not defined, $code GetPar$$ checks that
-the argument $italic i$$ is valid.)
+The syntax
+$codei%
+	%p% = %play%.GetPar(%i%)
+%$$
+returns a pointer to the value with index $icode i$$
+in the operation sequence parameter vector.
 
-$head Num$$
-$index player, Num$$
-$index Num, player$$
+$head GetVecInd$$
+$index GetVecInd$$
+If $icode iv$$ and $icode i$$ have prototypes
+$codei%
+	size_t %iv%
+	size_t %i%
+%$$
+the syntax
+$codei%
+	%iv% = %play%.GetVecInd(%i%)
+%$$
+returns the value with index $icode i$$ in the
+operation sequence vec_ind vector.
 
-$subhead Op$$
+$head NumOp$$
 $index NumOp$$
-The syntax
-$syntax%
-	size_t %Rec%.NumOp(void) const
+If $icode n$$ has prototype
+$codei%
+	size_t %n%
 %$$
-returns the number of Op values
-that are currently stored in $italic Rec$$.
-This increments by one each time $code PutOp$$ is called; i.e.,
-it is the number of calls to $code PutOp$$.
+the syntax
+$codei%
+	%n% = %play%.NumOp()
+%$$
+sets $icode n$$ to the number of 
+operations in the operation sequence.
 
-$subhead Ind$$
+$head NumInd$$
 $index NumInd$$
-The syntax
-$syntax%
-	size_t %Rec%.NumInd(void) const
+If $icode n$$ has prototype
+$codei%
+	size_t %n%
 %$$
-returns the number of Ind values
-that are currently stored in $italic Rec$$.
-This increments by one for each value that is stored by $code PutInd$$.
-
-The syntax
-$syntax%
-	size_t %Rec%.NumVecInd(void) const
+the syntax
+$codei%
+	%n% = %play%.NumInd()
 %$$
-returns the number of VecInd values
-that are currently stored in $italic Rec$$.
-This increments by one each time $code PutVecInd$$ is called.
+sets $icode n$$ to the number of elements in the 
+operation sequence index vector.
 
-$subhead Par$$
+$head NumPar$$
 $index NumPar$$
-The syntax
-$syntax%
-	size_t %Rec%.NumPar(void) const
+If $icode n$$ has prototype
+$codei%
+	size_t %n%
 %$$
-returns the number of Par values
-that are currently stored in $italic Rec$$.
-This increment by one or zero each time $code PutPar$$ is called.
+the syntax
+$codei%
+	%n% = %play%.NumPar()
+%$$
+sets $icode n$$ to the number of parameters
+in the operation sequence parameter vector.
 
-$head Replace$$
-$index player, Replace$$
-$index Replace, player$$
+$head NumVecInd$$
+$index NumVecInd$$
+If $icode n$$ has prototype
+$codei%
+	size_t %n%
+%$$
+the syntax
+$codei%
+	%n% = %play%.NumVecInd()
+%$$
+sets $icode n$$ to the number of element in the 
+operation sequence vec_ind vector.
 
-$subhead Ind$$
+
+$head ReplaceInd$$
 $index ReplaceInd$$
-The syntax
-$syntax%
-	size_t %Rec%.ReplaceInd(size_t %index%, size_t %value%)
+If $icode i$$ and $icode v$$ have prototypes
+$codei%
+	size_t %i%
+	size_t %v%
 %$$
-Replaces the single value with index $italic index$$ in the sequence of
-Ind values stored by calls to $syntax%%Rec%.PutInd%$$.
-The argument $italic index$$ must be less than $syntax%%Rec%.NumInd()%$$.
+the syntax
+$codei%
+	%play%.ReplaceInd(%i%, %v%)
+%$$
+replaces the element with index $icode i$$,
+in the operation sequence index vector,
+with the value $icode v$$.
 
 $head TotNumVar$$
 $index recorder, TotNumVar$$
 $index TotNumVar, recorder$$
-The function call
-$syntax%
-	inline size_t %Rec%.TotNumVar()
+If $icode n$$ has prototype
+$codei%
+	size_t %n%
 %$$
-returns the number of variables that are in the recording.
+the syntax
+$codei%
+	%n% = %rec%.TotNumVar()
+%$$
+sets $icode n$$ to the number of variables that are in the 
+operation sequence.
 
 
 $head Memory$$
-$index player, Memory$$
-$index Memory, player$$
-The syntax
-$syntax%
-	size_t %Rec%.Memory(void) const
+$index recorder, Memory$$
+$index Memory, recorder$$
+If $icode n$$ has prototype
+$codei%
+	size_t %n%
 %$$
-returns the number of memory units ($code sizeof$$) required to store
-the information in $italic Rec$$.
+the syntax
+$codei%
+	 %n% = %rec%.Memory()
+%$$
+sets $icode n$$ to the number of memory units ($code sizeof$$) 
+required to store the current operation sequence in $icode rec$$.
 
 
 
@@ -244,7 +275,7 @@ public:
 	}
 
 	// assignment from another recording
-	void operator=(const recorder<Base> &Other)
+	void operator=(const recorder<Base> &rec)
 	{	size_t i;
 
 		if( LengthOp_ > 0 )
@@ -259,27 +290,27 @@ public:
 			CPPAD_TRACK_DEL_VEC(Txt_);
 
 		// Var
-		TotalNumberVar_  = Other.TotalNumberVar_;
+		TotalNumberVar_  = rec.TotalNumberVar_;
 
 		// Op
-		NumberOp_        = Other.NumberOp_;
-		LengthOp_        = Other.NumberOp_;
+		NumberOp_        = rec.NumberOp_;
+		LengthOp_        = rec.NumberOp_;
 
 		// VecInd
-		NumberVecInd_    = Other.NumberVecInd_;
-		LengthVecInd_    = Other.NumberVecInd_;
+		NumberVecInd_    = rec.NumberVecInd_;
+		LengthVecInd_    = rec.NumberVecInd_;
 
 		// Ind
-		NumberInd_       = Other.NumberInd_;
-		LengthInd_       = Other.NumberInd_;
+		NumberInd_       = rec.NumberInd_;
+		LengthInd_       = rec.NumberInd_;
 
 		// Par
-		NumberPar_       = Other.NumberPar_;
-		LengthPar_       = Other.NumberPar_;
+		NumberPar_       = rec.NumberPar_;
+		LengthPar_       = rec.NumberPar_;
 
 		// Txt
-		NumberTxt_       = Other.NumberTxt_;
-		LengthTxt_       = Other.NumberTxt_;
+		NumberTxt_       = rec.NumberTxt_;
+		LengthTxt_       = rec.NumberTxt_;
 
 		// Allocate the memory
 		if( LengthOp_ == 0 )
@@ -301,19 +332,19 @@ public:
 		// Copy the data
 		i = NumberOp_;
 		while(i--)
-			Op_[i] = Other.Op_[i];
+			Op_[i] = rec.Op_[i];
 		i = NumberVecInd_;
 		while(i--)
-			VecInd_[i] = Other.VecInd_[i];
+			VecInd_[i] = rec.VecInd_[i];
 		i = NumberInd_;
 		while(i--)
-			Ind_[i] = Other.Ind_[i];
+			Ind_[i] = rec.Ind_[i];
 		i = NumberPar_;
 		while(i--)
-			Par_[i] = Other.Par_[i];
+			Par_[i] = rec.Par_[i];
 		i = NumberTxt_;
 		while(i--)
-			Txt_[i] = Other.Txt_[i];
+			Txt_[i] = rec.Txt_[i];
 	}
 
 	// erase all information in recording
