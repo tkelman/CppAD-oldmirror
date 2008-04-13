@@ -87,14 +87,14 @@ do
 -e 's/Common Public License Version 1.0/GNU General Public License Version 2/' 
 	#
 	err="no"
+	ext=`echo $file | sed -e 's|.*\.|.|'`
 	if ! grep "GNU General Public License Version 2" \
 		$dir/$file > /dev/null
 	then
 		err="yes"
 		# Check for special case where automatically generated files
 		# do not have any license statement.
-		ext=`echo $file | sed -e 's|.*\.||'`
-		if [ "$ext" = "in" ] 
+		if [ "$ext" = ".in" ] 
 		then
 			if ! grep "Common Public License" \
 				$dir/$file > /dev/null
