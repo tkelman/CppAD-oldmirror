@@ -1,6 +1,6 @@
 # ! /bin/bash
 # -----------------------------------------------------------------------------
-# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
+# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-08 Bradley M. Bell
 #
 # CppAD is distributed under multiple licenses. This distribution is under
 # the terms of the 
@@ -20,11 +20,12 @@ FADBAD_DIR=$HOME/include
 SACADO_DIR=$HOME/sacado_base
 # -----------------------------------------------------------------------------
 #
-# date currently in configure.ac
+# get version currently in configure.ac file
+# (in a way that works when version is not a date)
 version=`grep "^ *AC_INIT(" configure.ac | \
-	sed -e "s/.*, *\([0-9]\{8\}\) *,.*/\1/"`
+	sed -e 's/[^,]*, *\([^ ,]*\).*/\1/'`
 #
-if [ "$1" = "all" ] && [ "$2" != "" ] && [ "$2" != "test" ]
+if [ "$1" = "all" ] && [ "$2" != "" ] && [ "$2" != "test" ] && [ "$2" != "dos" ]
 then
 	echo "./build.sh $1 $2"
 	echo "is not valid, build.sh with no arguments lists valid choices."
@@ -32,7 +33,7 @@ then
 fi
 #
 # Check if we are running all the test cases. 
-if [ "$1" = "test" ] || ( [ "$1" = "all" ] & [ "$2" = "test" ] )
+if [ "$1" = "test" ] || ( [ "$1" = "all" ] && [ "$2" = "test" ] )
 then
 	date > build_test.log
 	if [ -e cppad-$version ]
@@ -53,20 +54,10 @@ then
 	yyyy_mm_dd=`date +%G-%m-%d`
 	#
 	# automatically change version for certain files
-	sed < cppad.spec > cppad.spec.$$ \
-        	-e "s/cppad-[0-9]\{8\}/cppad-$yyyymmdd/g" \
-        	-e "s/cppad-devel-[0-9]\{8\}/cppad-devel-$yyyymmdd/g" \
-        	-e "s/cppad-doc-[0-9]\{8\}/cppad-doc-$yyyymmdd/g" \
-        	-e "s/^Version: *[0-9]\{8\}/Version: $yyyymmdd/"
-	#
 	sed < AUTHORS > AUTHORS.$$ \
 		-e "s/, [0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\} *,/, $yyyy_mm_dd,/"
 	sed < configure.ac > configure.ac.$$\
 		-e "s/(CppAD, [0-9]\{8\} *,/(CppAD, $yyyymmdd,/" 
-	sed < omh/install_unix.omh > omh/install_unix.omh.$$ \
-		-e "s/cppad-[0-9]\{8\}/cppad-$yyyymmdd/g"
-	sed < omh/install_windows.omh > omh/install_windows.omh.$$ \
-		-e "s/cppad-[0-9]\{8\}/cppad-$yyyymmdd/g"
 	sed < configure > configure.$$ \
 		-e "s/CppAD [0-9]\{8\}/CppAD $yyyymmdd/g" \
 		-e "s/VERSION='[0-9]\{8\}'/VERSION='$yyyymmdd'/g" \
@@ -78,11 +69,8 @@ then
 		-e "s/CppAD [0-9]\{8\}/CppAD $yyyymmdd/g" \
 		-e "s/VERSION \"[0-9]\{8\}\"/VERSION \"$yyyymmdd\"/g"
 	list="
-		cppad.spec
 		AUTHORS
 		configure.ac
-		omh/install_unix.omh
-		omh/install_windows.omh
 		configure
 		cppad/config.h
 	"
@@ -98,37 +86,6 @@ then
 	version=$yyyymmdd
 	#
 	if [ "$1" = "version" ]
-	then
-		exit 0
-	fi
-fi
-#
-# omhelp
-#
-if [ "$1" = "omhelp" ] || [ "$1" = "all" ]
-then
-	echo "build.sh omhelp"
-	#
-	for user in doc dev
-	do
-		echo "run_omhelp.sh $user"
-		if ! ./run_omhelp.sh $user
-		then
-			exit 1
-		fi
-		if [ ! -e omhelp_$user.log ]
-		then
-			echo "omhelp_$user.log file is missing"
-			exit 1
-		fi
-		if grep 'OMhelp Warning:' omhelp_$user.log
-		then
-			echo "omhelp_$user.log has warnings in it"
-			exit 1
-		fi
-	done
-	#
-	if [ "$1" = "omhelp" ]
 	then
 		exit 0
 	fi
@@ -239,6 +196,8 @@ then
 			TEST="$TEST
 				--with-Documentation"
 		fi
+		TEST="$TEST
+			POSTFIX_DIR=coin"
 		if [ -e $BOOST_DIR/boost ]
 		then
 			TEST="$TEST 
@@ -277,6 +236,43 @@ then
 	./fix_makefile.sh
 	#
 	if [ "$1" = "configure" ]
+	then
+		exit 0
+	fi
+fi
+#
+# omhelp
+#
+if [ "$1" = "omhelp" ] || [ "$1" = "all" ]
+then
+	if [ ! -e omh/install_unix.omh ] || [ ! -e omh/install_windows.omh ]
+	then
+		echo "First run ./configure to create the files"
+		echo "omh/install_unix.omh and omh/install_windows.omh"
+		exit 1
+	fi
+	echo "build.sh omhelp"
+	#
+	for user in doc dev
+	do
+		echo "run_omhelp.sh $user"
+		if ! ./run_omhelp.sh $user
+		then
+			exit 1
+		fi
+		if [ ! -e omhelp_$user.log ]
+		then
+			echo "omhelp_$user.log file is missing"
+			exit 1
+		fi
+		if grep 'OMhelp Warning:' omhelp_$user.log
+		then
+			echo "omhelp_$user.log has warnings in it"
+			exit 1
+		fi
+	done
+	#
+	if [ "$1" = "omhelp" ]
 	then
 		exit 0
 	fi
@@ -352,6 +348,7 @@ then
 fi
 if [ "$1" = "test" ] || ( [ "$1" = "all" ] && [ "$2" = "test" ] )
 then
+	speed_test_example_failed="false"
 	#
 	if [ -e cppad-$version ]
 	then
@@ -376,23 +373,6 @@ then
 		fi
 	fi
 	#
-	# check include files
-	if ! ./check_include_def.sh  >> build_test.log
-	then
-		echo "./check_include_def.sh failed"
-		exit 1
-	fi
-	if ! ./check_include_file.sh >> build_test.log
-	then
-		echo "./check_include_file.sh failed"
-		exit 1
-	fi
-	if ! ./check_include_omh.sh  >> build_test.log
-	then
-		echo "./check_include_omh.sh failed"
-		exit 1
-	fi
-	#
 	# add a new line after last include file check
 	echo ""                 >> build_test.log
 	#
@@ -403,6 +383,23 @@ then
 	fi
 	#
 	cd cppad-$version
+	#
+	# check include files
+	if ! ./check_include_def.sh  >> ../build_test.log
+	then
+		echo "./check_include_def.sh failed"
+		exit 1
+	fi
+	if ! ./check_include_file.sh >> ../build_test.log
+	then
+		echo "./check_include_file.sh failed"
+		exit 1
+	fi
+	if ! ./check_include_omh.sh  >> ../build_test.log
+	then
+		echo "./check_include_omh.sh failed"
+		exit 1
+	fi
 	if ! ./build.sh configure test
 	then
 		echo "Error: build.sh configure test"  >> ../build_test.log
@@ -440,14 +437,23 @@ then
 		echo ""  >> ../build_test.log
 	done
 	list="
-		adolc
 		cppad
 		double
 		example
-		fadbad
 		profile
-		sacado
 	"
+	if [ -e $ADOLC_DIR/include/adolc ]
+	then
+        	list="$list adolc"
+	fi
+	if [ -e $FADBAD_DIR/FADBAD++ ]
+	then
+        	list="$list fadbad"
+	fi
+	if [ -e $SACADO_DIR/include/Sacado.hpp ]
+	then
+		list="$list sacado"
+	fi
 	seed="123"
 	for name in $list
 	do
@@ -460,7 +466,11 @@ then
 			failed="speed/$name/$name"
 			echo "Error: $failed failed."
 			echo "Error: $failed failed." >> ../build_test.log
-			exit 1
+			if [ "$name" != "example" ]
+			then
+				exit 1
+			fi
+			speed_test_example_failed="true"
 		fi
 		# add a new line between program outputs
 		echo ""  >> ../build_test.log
@@ -485,6 +495,15 @@ then
 	fi
 	cat omhelp_doc.log        >> ../build_test.log
 	#
+	if [ "$speed_test_example_failed" = "true" ]
+	then
+		msg="cppad-$version/speed/example/example failed,"
+		echo "$msg"
+		echo "$msg" >> build_test.log
+		msg="rerun with out other processes running at same time."
+		echo "$msg"
+		echo "$msg" >> build_test.log
+	fi
 	cd ..
 	if [ "$1" = "test" ]
 	then
@@ -496,7 +515,7 @@ then
 		exit 0
 	fi
 fi
-if [ "$1" = "gpl+dos" ] || [ "$1" = "all" ]
+if [ "$1" = "gpl" ] || [ "$1" = "all" ]
 then
 	# create GPL licensed version
 	echo "gpl_license.sh"
@@ -515,6 +534,13 @@ then
 			echo "Ok: gpl_license.sh." >> build_test.log
 		fi
 	fi
+	if [ "$1" = "gpl" ]
+	then
+		exit 0
+	fi
+fi
+if [ "$1" = "dos" ] || ( [ "$1" = "all" ] && [ "$2" == "dos" ] )
+then
 	echo "./dos_format.sh"
 	if ! ./dos_format.sh
 	then
@@ -532,7 +558,7 @@ then
 		fi
 	fi
 	#
-	if [ "$1" = "gpl+dos" ]
+	if [ "$1" = "dos" ]
 	then
 		exit 0
 	fi
@@ -543,9 +569,14 @@ then
 	list="
 		cppad-$version.cpl.tgz
 		cppad-$version.gpl.tgz
-		cppad-$version.cpl.zip
-		cppad-$version.gpl.zip
 	"
+	if [ "$1" = "all" ] && [ "$2" == "dos" ] 
+	then
+		list="$list
+			cppad-$version.cpl.zip
+			cppad-$version.gpl.zip
+		"
+	fi
 	for file in $list
 	do
 		echo "mv $file doc/$file"
@@ -583,22 +614,27 @@ fi
 echo "option"
 echo "------"
 echo "version        update configure.ac and doc.omh version number"
-echo "omhelp         build all the documentation in doc & dev directories"
 echo "automake       run aclocal,autoheader,autoconf,automake -> configure"
 echo "configure      excludes --with-*"
 echo "configure test includes all the possible options except PREFIX_DIR"
+echo "omhelp         build all the documentation in doc & dev directories"
 echo "make           use make to build all of the requested targets"
 echo "dist           create the distribution file cppad-version.cpl.tgz"
 echo "test           unpack *.cpl.tgz, compile, tests, result in build_test.log"
-echo "gpl+dos        create ./*.gpl.tgz, ./*.gpl.zip, and ./*.cpl.zip"
-echo "move           move ./*.tgz and ./*.zip to doc directory"
+echo "gpl            create *.gpl.tgz"
+echo "dos            create *.gpl.zip, and *.cpl.zip"
+echo "move           move *.tgz to doc directory"
 echo
 echo "build.sh all"
-echo "This command will execute all the options in the order above with the"
-echo "exception that \"configue test\" and \"test\" will be excluded."
+echo "This command will execute all the options above in order with the"
+echo "exception that \"configue test\", \"test\", and \"dos\" are excluded."
+echo
+echo "build.sh all dos"
+echo "This command will execute all the options above in order with the"
+echo "exception that \"configure test\" and \"test\" are excluded."
 echo
 echo "build.sh all test"
-echo "This command will execute all the options above in the order"
-echo "with the exception of \"configure test\"  and \"move\"."
+echo "This command will execute all the options above in order with the"
+echo "exception that \"configure\",  \"dos\", and \"move\" are excluded."
 #
 exit 1

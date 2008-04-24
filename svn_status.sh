@@ -1,6 +1,6 @@
 # ! /bin/bash
 # -----------------------------------------------------------------------------
-# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
+# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-08 Bradley M. Bell
 #
 # CppAD is distributed under multiple licenses. This distribution is under
 # the terms of the 
@@ -44,16 +44,13 @@ sed                                                           \
 	-e '/^[?] *dev$/d'                                    \
 	-e '/^[?] *aclocal.m4$/d'                             \
 	-e '/^[?] *cppad-[0-9]\{8\}.*$/d'                     \
+	-e '/^[?] *omh\/install_unix.omh$/d'                  \
+	-e '/^[?] *omh\/install_windows.omh$/d'               \
 	-e '/cygwin_package$/d'
 #
 yyyymmdd=`date +%G%m%d`
 yyyy_mm_dd=`date +%G-%m-%d`
 #
-svn cat cppad.spec | sed > cppad.spec.$$ \
-       	-e "s/cppad-[0-9]\{8\}/cppad-$yyyymmdd/g" \
-       	-e "s/cppad-devel-[0-9]\{8\}/cppad-devel-$yyyymmdd/g" \
-       	-e "s/cppad-doc-[0-9]\{8\}/cppad-doc-$yyyymmdd/g" \
-       	-e "s/^Version: *[0-9]\{8\}/Version: $yyyymmdd/"
 svn cat configure | sed > configure.$$ \
 	-e "s/CppAD [0-9]\{8\}/CppAD $yyyymmdd/g" \
 	-e "s/VERSION='[0-9]\{8\}'/VERSION='$yyyymmdd'/g" \
@@ -64,20 +61,13 @@ svn cat AUTHORS | sed > AUTHORS.$$ \
 	-e "s/, [0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\} *,/, $yyyy_mm_dd,/"
 svn cat configure.ac | sed > configure.ac.$$\
 	-e "s/(CppAD, [0-9]\{8\} *,/(CppAD, $yyyymmdd,/" 
-svn cat omh/install_unix.omh | sed > omh/install_unix.omh.$$ \
-	-e "s/cppad-[0-9]\{8\}/cppad-$yyyymmdd/g"
-svn cat omh/install_windows.omh | sed > omh/install_windows.omh.$$ \
-	-e "s/cppad-[0-9]\{8\}/cppad-$yyyymmdd/g"
 svn cat cppad/config.h | sed > cppad/config.h.$$ \
 	-e "s/CppAD [0-9]\{8\}/CppAD $yyyymmdd/g" \
 	-e "s/VERSION \"[0-9]\{8\}\"/VERSION \"$yyyymmdd\"/g"
 list="
-	cppad.spec
 	configure
 	AUTHORS
 	configure.ac
-	omh/install_unix.omh
-	omh/install_windows.omh
 	cppad/config.h
 "
 for name in $list

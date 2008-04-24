@@ -1,5 +1,5 @@
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-08 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -9,15 +9,16 @@ A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
+# include <cstring>
 # include <cstdlib>
 # include <cassert>
 # include <cstddef>
 # include <iostream>
 # include <cppad/vector.hpp>
-# include <cppad/speed_test.hpp>
-# include <cppad/speed/uniform_01.hpp>
 # include <cppad/speed/det_grad_33.hpp>
 # include <cppad/speed/det_33.hpp>
+# include <cppad/speed_test.hpp>
+# include <cppad/speed/uniform_01.hpp>
 # include <cppad/poly.hpp>
 
 # ifdef ADOLC
@@ -42,6 +43,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin speed_main$$
 $spell
+	bool
 	ddp
 	cppad
 	adolc
@@ -96,9 +98,11 @@ It the argument $italic option$$ specifies which test to run
 and has the following possible values:
 $cref/correct/speed_main/option/correct/$$,
 $cref/speed/speed_main/option/speed/$$,
-$cref/det_minor/speed_main/det_minor/$$,
-$cref/det_lu/speed_main/det_lu/$$,
-$cref/poly/speed_main/poly/$$.
+$cref/det_minor/link_det_minor/$$,
+$cref/det_lu/link_det_lu/$$,
+$cref/ode/link_ode/$$,
+$cref/poly/link_poly/$$,
+$cref/sparse_hessian/link_sparse_hessian/$$.
 
 $subhead correct$$
 If $italic option$$ is equal to $code correct$$,
@@ -108,142 +112,16 @@ $subhead speed$$
 If $italic option$$ is equal to $code speed$$,
 all of the speed tests are run.
 
-$head det_lu$$
-$index det_lu, correct$$
-$index det_lu, speed$$
-$index speed, det_lu$$
-$index correct, det_lu$$
-If $italic option$$ is equal to $code det_lu$$,
-the correctness and speed test for the
-gradient of the determinant using LU factorization tests are run.
-Each package defines a version of this test with the following prototype:
-$codep */
-	extern void compute_det_lu(
-		size_t                     size      , 
-		size_t                     repeat    , 
-		CppAD::vector<double>      &matrix   ,
-		CppAD::vector<double>      &gradient 
-	);
-/* $$
-$subhead size$$
-The argument $italic size$$
-is the number of rows and columns in the matrix.
-
-$subhead repeat$$
-The argument $italic repeat$$ is the number of different matrices
-that the gradient is computed for.
-
-$subhead matrix$$
-The argument $italic matrix$$ is a vector with 
-$syntax%%size%*%size%$$ elements.
-The input value of its elements does not matter. 
-The output value of its elements is the last matrix that the
-gradient is computed for.
-
-$subhead gradient$$
-The argument $italic gradient$$ is a vector with 
-$syntax%%size%*%size%$$ elements.
-The input value of its elements does not matter. 
-The output value of its elements is the gradient of the
-determinant of $italic matrix$$ with respect to its elements.
-gradient is computed for.
-(If $italic package$$ is $code double$$, only the first element
-of $italic gradient$$ is used and it is actually the determinant value instead
-of the gradient value.)
-
-
-$head det_minor$$
-$index det_minor, correct$$
-$index det_minor, speed$$
-$index speed, det_minor$$
-$index correct, det_minor$$
-If $italic option$$ is equal to $code det_minor$$,
-the correctness and speed test for the
-gradient of the determinant using expansion by minors are run.
-Each package defines a version of this test with the following prototype:
-$codep */
-	extern void compute_det_minor(
-		size_t                     size      , 
-		size_t                     repeat    , 
-		CppAD::vector<double>      &matrix   ,
-		CppAD::vector<double>      &gradient 
-	);
-/* $$
-$subhead size$$
-The argument $italic size$$
-is the number of rows and columns in the matrix.
-
-$subhead repeat$$
-The argument $italic repeat$$ is the number of different matrices
-that the gradient is computed for.
-
-$subhead matrix$$
-The argument $italic matrix$$ is a vector with 
-$syntax%%size%*%size%$$ elements.
-The input value of its elements does not matter. 
-The output value of its elements is the last matrix that the
-gradient is computed for.
-
-$subhead gradient$$
-The argument $italic gradient$$ is a vector with 
-$syntax%%size%*%size%$$ elements.
-The input value of its elements does not matter. 
-The output value of its elements is the gradient of the
-determinant of $italic matrix$$ with respect to its elements.
-gradient is computed for.
-(If $italic package$$ is $code double$$, only the first element
-of $italic gradient$$ is used and it is actually the determinant value
-instead of the gradient value.)
-
-
-$head poly$$
-$index poly, correct$$
-$index poly, speed$$
-$index speed, poly$$
-$index correct, poly$$
-If $italic option$$ is equal to $code poly$$,
-the correctness and speed test for the derivative of a polynomial are run.
-Each package defines a version of this test with the following prototype:
-$codep */
-	extern void compute_poly(
-		size_t                     size     , 
-		size_t                     repeat   , 
-		CppAD::vector<double>      &a       ,
-		CppAD::vector<double>      &z       ,
-		CppAD::vector<double>      &ddp      
-	);
-/* $$
-
-$subhead size$$
-The argument $italic size$$ is the order of the polynomial
-(the number of coefficients in the polynomial).
-
-$subhead repeat$$
-The argument $italic repeat$$ is the number of different argument
-values that the polynomial will be differentiated at.
-
-$subhead a$$
-The argument $italic a$$ is a vector with 
-$syntax%%size%*%size%$$ elements.
-The input value of its elements does not matter. 
-The output value of its is the coefficients of the 
-last polynomial that is differentiated
-($th i$$ element is coefficient of order $latex i$$).
-
-$subhead z$$
-The argument $italic z$$ is a vector with one element.
-The input value of the element does not matter.
-The output its value is the polynomial argument value
-were the derivative was computed.
-
-$subhead ddp$$
-The argument $italic ddp$$ is a vector with one element.
-The input value of the element does not matter.
-The output its value is the second derivative of the polynomial value
-with respect to it's argument value.
-(If $italic package$$ is $code double$$, only the first element
-of $italic ddp$$ is used and it is actually the polynomial value instead
-of the gradient value.)
+$head Return Values$$
+Each of the $italic option$$ values specified below
+corresponds to a particular test.
+The function call corresponding to each test
+has a $code bool$$ return value.
+If a particular $italic package$$ supports a test,
+it should return $code true$$ when the corresponding function is called.
+Otherwise (if the return value is $code false$$),
+the test is skipped whenever the corresponding
+$italic package$$ and $italic option$$ are specified.
 
 $head seed$$
 $index uniform_01$$
@@ -266,8 +144,29 @@ and the rates corresponding to the different problem sizes are
 printed on the third line.
 The rate is the number of times per second that the calculation was repeated.
 
+
+$childtable%
+	speed/link_det_lu.cpp%
+	speed/link_det_minor.cpp%
+	speed/link_poly.cpp%
+	speed/link_sparse_hessian.cpp%
+	speed/link_ode.cpp
+%$$
+
 $end 
+-----------------------------------------------------------------------------
 */
+
+# define CPPAD_DECLARE_SPEED(name)                          \
+	extern bool available_##name(void);                 \
+	extern bool correct_##name(bool is_package_double); \
+	extern void speed_##name(size_t size, size_t repeat)
+
+CPPAD_DECLARE_SPEED(det_lu);
+CPPAD_DECLARE_SPEED(det_minor);
+CPPAD_DECLARE_SPEED(poly);
+CPPAD_DECLARE_SPEED(sparse_hessian);
+CPPAD_DECLARE_SPEED(ode);
 
 namespace {
 	using std::cout;
@@ -291,10 +190,14 @@ namespace {
 	// function that runs one correctness case
 	static size_t Run_ok_count    = 0;
 	static size_t Run_error_count = 0;
-	bool Run_correct(bool correct_case(void), const char *case_name)
+	bool run_correct(bool correct_case(bool), const char *case_name)
 	{	bool ok;
 		cout << AD_PACKAGE << "_" << case_name << "_ok = ";
-		ok = correct_case();
+# ifdef DOUBLE
+		ok = correct_case(true);
+# else
+		ok = correct_case(false);
+# endif
 		if( ok )
 		{	cout << " true" << endl;
 			Run_ok_count++;
@@ -303,51 +206,6 @@ namespace {
 		{	cout << " false" << endl;
 			Run_error_count++;
 		}
-		return ok;
-	}
-	bool correct_det_lu(void)
-	{	size_t size   = 3;
-		size_t repeat = 1;
-		CppAD::vector<double> matrix(size * size);
-		CppAD::vector<double> gradient(size * size);
-
-		compute_det_lu(size, repeat, matrix, gradient);
-		bool ok = CppAD::det_grad_33(matrix, gradient);
-# if DOUBLE
-		ok = CppAD::det_33(matrix, gradient);
-# endif
-		return ok;
-	}
-	bool correct_det_minor(void)
-	{	size_t size   = 3;
-		size_t repeat = 1;
-		CppAD::vector<double> matrix(size * size);
-		CppAD::vector<double> gradient(size * size);
-
-		compute_det_minor(size, repeat, matrix, gradient);
-		bool ok = CppAD::det_grad_33(matrix, gradient);
-# if DOUBLE
-		ok = CppAD::det_33(matrix, gradient);
-# endif
-		return ok;
-	}
-	bool correct_poly(void)
-	{	size_t size   = 10;
-		size_t repeat = 1;
-		CppAD::vector<double>  a(size), z(1), ddp(1);
-
-		compute_poly(size, repeat, a, z, ddp);
-		double check = CppAD::Poly(2, a, z[0]);
-		// use direct evaluation by Poly to check AD evaluation
-# if DOUBLE
-		check = 0.;
-		size_t i = size;
-		while(i--)
-		{	check *= z[0];
-			check += a[i];
-		}
-# endif
-		bool ok = CppAD::NearEqual(check, ddp[0], 1e-10, 1e-10);
 		return ok;
 	}
 	// ----------------------------------------------------------------
@@ -368,46 +226,30 @@ namespace {
 		cout << endl;
 		return;
 	}
-	void speed_det_lu(size_t size, size_t repeat)
-	{	CppAD::vector<double> matrix(size * size);
-		CppAD::vector<double> gradient(size * size);
-
-		compute_det_lu(size, repeat, matrix, gradient);
-		return;
-	}
-	void speed_det_minor(size_t size, size_t repeat)
-	{	CppAD::vector<double> matrix(size * size);
-		CppAD::vector<double> gradient(size * size);
-
-		compute_det_minor(size, repeat, matrix, gradient);
-		return;
-	}
-	void speed_poly(size_t size, size_t repeat)
-	{	CppAD::vector<double>  a(size), z(1), ddp(1);
-
-		compute_poly(size, repeat, a, z, ddp);
-		return;
-	}
 }
 
 // main program that runs all the tests
 int main(int argc, char *argv[])
 {	bool ok = true;
 
-	char *option[]= {
+	const char *option[]= {
 		"correct",
-		"speed",
 		"det_lu",
 		"det_minor",
-		"poly"
+		"ode",
+		"poly",
+		"sparse_hessian",
+		"speed"
 	};
 	const size_t n_option  = sizeof(option) / sizeof(option[0]);
-	const size_t option_correct   = 0;
-	const size_t option_speed     = 1;
-	const size_t option_det_lu    = 2;
-	const size_t option_det_minor = 3;
-	const size_t option_poly      = 4;
-	assert( n_option == option_poly+1 );
+	const size_t option_correct        = 0;
+	const size_t option_det_lu         = 1;
+	const size_t option_det_minor      = 2;
+	const size_t option_ode            = 3;
+	const size_t option_poly           = 4;
+	const size_t option_sparse_hessian = 5;
+	const size_t option_speed          = 6;
+	assert( n_option == option_speed+1 );
 
 	size_t i;
 	size_t match = n_option;
@@ -420,13 +262,15 @@ int main(int argc, char *argv[])
 	}
 	if( match == n_option  || iseed <= 0 )
 	{	cout << "usage: ./" << AD_PACKAGE << " option seed" << endl;
-		cout << "where option is one of the following:" << endl;
-		for(i = 0; i < n_option; i++)
-			cout << option[i] << ", ";
-		cout << endl << "and seed is a positive integer." << endl;
+		cout << "option choices: " << option[0];
+		for(i = 1; i < n_option; i++)
+			cout << ", " << option[i];
+		cout << "." << endl << "seed value: ";
+		cout << "a positive integer used as a random seed." << endl;
 		cout << endl;
 		return 1;
 	}
+
 
 	// initialize the random number simulator
 	CppAD::uniform_01(size_t(iseed));
@@ -435,21 +279,39 @@ int main(int argc, char *argv[])
 	size_t n_size   = 5;
 	CppAD::vector<size_t> size_det_lu(n_size);
 	CppAD::vector<size_t> size_det_minor(n_size);
+	CppAD::vector<size_t> size_ode(n_size);
 	CppAD::vector<size_t> size_poly(n_size);
+	CppAD::vector<size_t> size_sparse_hessian(n_size);
 	for(i = 0; i < n_size; i++) 
-	{	size_det_lu[i]    = 3 * i + 1;
-		size_det_minor[i] = i + 1;
-		size_poly[i]      = 8 * i + 1;
+	{	size_det_lu[i]      = 3 * i + 1;
+		size_det_minor[i]   = i + 1;
+		size_ode[i]         = 2 * i + 1;
+		size_poly[i]        = 8 * i + 1;
+		size_sparse_hessian[i] = 10 * (i + 1);
 	}
+# ifndef NDEBUG
+	size_t base_count = CPPAD_TRACK_COUNT();
+# endif
 
 	switch(match)
 	{
 		// run all the correctness tests
 		case option_correct:
-		ok &= Run_correct(correct_det_lu,           "det_lu"       );
-		ok &= Run_correct(correct_det_minor,        "det_minor"    );
-		ok &= Run_correct(correct_poly,             "poly"         );
-
+		if( available_det_lu() ) ok &= run_correct(
+			correct_det_lu,    "det_lu"       
+		);
+		if( available_det_minor() ) ok &= run_correct(
+			correct_det_minor, "det_minor"    
+		);
+		if( available_ode() ) ok &= run_correct(
+			correct_ode,      "ode"         
+		);
+		if( available_poly() ) ok &= run_correct(
+			correct_poly,      "poly"         
+		);
+		if( available_sparse_hessian() ) ok &= run_correct(
+			correct_sparse_hessian, "sparse_hessian"         
+		);
 		// summarize results
 		assert( ok || (Run_error_count > 0) );
 		if( ok )
@@ -464,33 +326,94 @@ int main(int argc, char *argv[])
 		// ---------------------------------------------------------
 		// run all the speed tests 
 		case option_speed:
-		Run_speed(speed_det_lu,    size_det_lu,    "det_lu");
-		Run_speed(speed_det_minor, size_det_minor, "det_minor");
-		Run_speed(speed_poly,      size_poly,      "poly");
+		if( available_det_lu() ) Run_speed(
+		speed_det_lu,    size_det_lu,    "det_lu"
+		);
+		if( available_det_minor() ) Run_speed(
+		speed_det_minor, size_det_minor, "det_minor"
+		);
+		if( available_ode() ) Run_speed(
+		speed_ode,       size_ode,       "ode"
+		);
+		if( available_poly() ) Run_speed(
+		speed_poly,      size_poly,      "poly"
+		);
+		if( available_sparse_hessian() ) Run_speed(
+		speed_sparse_hessian,  size_sparse_hessian,   "sparse_hessian"
+		);
 		ok = true;
 		break;
 		// ---------------------------------------------------------
 
 		case option_det_lu:
-		ok &= Run_correct(correct_det_lu,          "det_lu");
-		Run_speed(speed_det_lu,    size_det_lu,    "det_lu");
+		if( ! available_det_lu() )
+		{	cout << AD_PACKAGE << ": option " << argv[1] 
+			     << " not available" << endl; 
+			exit(1);
+		}
+		ok &= run_correct(correct_det_lu,           "det_lu");
+		Run_speed(speed_det_lu,    size_det_lu,     "det_lu");
 		break;
 		// ---------------------------------------------------------
 
 		case option_det_minor:
-		ok &= Run_correct(correct_det_minor,       "det_minor");
+		if( ! available_det_minor() )
+		{	cout << AD_PACKAGE << ": option " << argv[1] 
+			     << " not available" << endl; 
+			exit(1);
+		}
+		ok &= run_correct(correct_det_minor,       "det_minor");
 		Run_speed(speed_det_minor, size_det_minor, "det_minor");
 		break;
 		// ---------------------------------------------------------
 
+		case option_ode:
+		if( ! available_ode() )
+		{	cout << AD_PACKAGE << ": option " << argv[1] 
+			     << " not available" << endl; 
+			exit(1);
+		}
+		ok &= run_correct(correct_ode,           "ode");
+		Run_speed(speed_ode,      size_ode,      "ode");
+		break;
+		// ---------------------------------------------------------
+
 		case option_poly:
-		ok &= Run_correct(correct_poly,            "poly");
+		if( ! available_poly() )
+		{	cout << AD_PACKAGE << ": option " << argv[1] 
+			     << " not available" << endl; 
+			exit(1);
+		}
+		ok &= run_correct(correct_poly,            "poly");
 		Run_speed(speed_poly,      size_poly,      "poly");
+		break;
+		// ---------------------------------------------------------
+
+		case option_sparse_hessian:
+		if( ! available_sparse_hessian() )
+		{	cout << AD_PACKAGE << ": option " << argv[1] 
+			     << " not available" << endl; 
+			exit(1);
+		}
+		ok &= run_correct(correct_sparse_hessian, "sparse_hessian");
+		Run_speed(
+		speed_sparse_hessian, size_sparse_hessian,  "sparse_hessian");
 		break;
 		// ---------------------------------------------------------
 		
 		default:
 		assert(0);
 	}
+# ifndef NDEBUG
+	if( CPPAD_TRACK_COUNT() == base_count )
+	{	Run_ok_count++;
+		cout << "No memory leak detected" << endl;
+	}
+	else
+	{	ok = false;
+		Run_error_count++;
+		cout << "Memory leak detected" << endl;
+        }
+# endif
 	return static_cast<int>( ! ok );
 }

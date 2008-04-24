@@ -1,5 +1,5 @@
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-08 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -42,8 +42,8 @@ $cref/operation sequence/glossary/Operation/Sequence/$$
 does not depend on the argument to the polynomial.
 Hence we use the same $cref/ADFun/$$ object for all the argument values.
 
-$head compute_poly$$
-$index compute_poly$$
+$head link_poly$$
+$index link_poly$$
 Routine that computes the second derivative of a polynomial using Adolc:
 $codep */
 # include <vector>
@@ -55,7 +55,7 @@ $codep */
 # include <adolc/adouble.h>
 # include <adolc/interfaces.h>
 
-void compute_poly(
+bool link_poly(
 	size_t                     size     , 
 	size_t                     repeat   , 
 	CppAD::vector<double>     &a        ,  // coefficients of polynomial
@@ -98,14 +98,14 @@ void compute_poly(
 	trace_off();
 
 	// allocate arguments to hos_forward
-	double *x0 = new double  [n];
-	double *y0 = new double  [m];
-	double **x = new double* [n];
-	double **y = new double* [m];
+	double *x0 = CPPAD_TRACK_NEW_VEC(n, x0);
+	double *y0 = CPPAD_TRACK_NEW_VEC(m, y0);
+	double **x = CPPAD_TRACK_NEW_VEC(n, x);
+	double **y = CPPAD_TRACK_NEW_VEC(m, y);
 	for(i = 0; i < n; i++)
-		x[i] = new double [d];
+		x[i] = CPPAD_TRACK_NEW_VEC(d, x[i]);
 	for(i = 0; i < m; i++)
-		y[i] = new double [d];
+		y[i] = CPPAD_TRACK_NEW_VEC(d, y[i]);
 
 	// Taylor coefficient for argument
 	x[0][0] = 1.;  // first order
@@ -125,16 +125,16 @@ void compute_poly(
 	}
 	// ------------------------------------------------------
 	// tear down
-	delete [] x0;
-	delete [] y0;
+	CPPAD_TRACK_DEL_VEC(x0);
+	CPPAD_TRACK_DEL_VEC(y0);
 	for(i = 0; i < n; i++)
-		delete [] x[i];
+		CPPAD_TRACK_DEL_VEC(x[i]);
 	for(i = 0; i < m; i++)
-		delete y[i];
-	delete [] x;
-	delete [] y;
+		CPPAD_TRACK_DEL_VEC(y[i]);
+	CPPAD_TRACK_DEL_VEC(x);
+	CPPAD_TRACK_DEL_VEC(y);
 
-	return;
+	return true;
 }
 /* $$
 $end

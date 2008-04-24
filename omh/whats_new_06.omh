@@ -1,5 +1,5 @@
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-08 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -11,6 +11,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 $begin whats_new_06$$
 $spell
+	speedtest
 	apx
 	exp_eps
 	Alloc
@@ -162,8 +163,8 @@ $pre
 $$
 Add to the specifications that each repeated test corresponds to a 
 different matrix in
-$cref/det_lu/speed_main/det_lu/$$ and
-$cref/det_minor/speed_main/det_minor/$$.
+$cref/det_lu/link_det_lu/$$ and
+$cref/det_minor/link_det_minor/$$.
 In addition, modify all the speed tests so that they abide by this rule.
 $pre
 
@@ -179,7 +180,7 @@ matrix in the test.
 $pre
 
 $$
-Add the $cref/poly/speed_main/poly/$$ speed test for all three packages.
+Add the $cref/poly/link_poly/$$ speed test for all three packages.
 In addition, correct a missing include in $cref/poly/$$ routine.
 
 
@@ -400,7 +401,7 @@ $cref/PrintFor.cpp/PrintFor.cpp/Output/$$ examples.
 (Now documentation can be built from a subversion checkout with out
 needing to execute automake.)
 The $code PrintFor.cpp$$ and 
-$cref/speedtest.cpp/$$ examples were missing in $cref/ListAllExamples/$$
+$code speedtest.cpp$$ examples were missing in $cref/ListAllExamples/$$
 (which has been fixed). 
 $pre
 

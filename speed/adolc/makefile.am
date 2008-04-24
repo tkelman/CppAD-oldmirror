@@ -1,5 +1,5 @@
 # -----------------------------------------------------------------------------
-# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
+# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-08 Bradley M. Bell
 #
 # CppAD is distributed under multiple licenses. This distribution is under
 # the terms of the 
@@ -37,6 +37,13 @@ AM_LDFLAGS       = -L$(ADOLC_DIR)/lib
 #
 adolc_SOURCES = \
 	../main.cpp \
+	../link_ode.cpp \
+	ode.cpp \
+	../link_det_lu.cpp \
+	../link_det_minor.cpp \
+	../link_poly.cpp \
+	../link_sparse_hessian.cpp \
 	det_lu.cpp \
 	det_minor.cpp \
-	poly.cpp
+	poly.cpp \
+	sparse_hessian.cpp

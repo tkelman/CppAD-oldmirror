@@ -41,8 +41,11 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/cppad/config.h
 CONFIG_CLEAN_FILES =
 PROGRAMS = $(noinst_PROGRAMS)
-am_sacado_OBJECTS = main.$(OBJEXT) det_lu.$(OBJEXT) \
-	det_minor.$(OBJEXT) poly.$(OBJEXT)
+am_sacado_OBJECTS = main.$(OBJEXT) link_ode.$(OBJEXT) ode.$(OBJEXT) \
+	link_det_lu.$(OBJEXT) link_det_minor.$(OBJEXT) \
+	link_poly.$(OBJEXT) link_sparse_hessian.$(OBJEXT) \
+	det_lu.$(OBJEXT) det_minor.$(OBJEXT) poly.$(OBJEXT) \
+	sparse_hessian.$(OBJEXT)
 sacado_OBJECTS = $(am_sacado_OBJECTS)
 sacado_LDADD = $(LDADD)
 sacado_DEPENDENCIES =
@@ -79,7 +82,7 @@ CXX_FLAGS = @CXX_FLAGS@
 CYGPATH_W = @CYGPATH_W@
 
 # -----------------------------------------------------------------------------
-# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
+# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-08 Bradley M. Bell
 #
 # CppAD is distributed under multiple licenses. This distribution is under
 # the terms of the 
@@ -119,6 +122,7 @@ PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+POSTFIX_DIR = @POSTFIX_DIR@
 RANLIB = @RANLIB@
 SACADO_DIR = @SACADO_DIR@
 SET_MAKE = @SET_MAKE@
@@ -186,9 +190,16 @@ AM_LDFLAGS = -L$(SACADO_DIR)/lib
 #
 sacado_SOURCES = \
 	../main.cpp \
+	../link_ode.cpp \
+	ode.cpp \
+	../link_det_lu.cpp \
+	../link_det_minor.cpp \
+	../link_poly.cpp \
+	../link_sparse_hessian.cpp \
 	det_lu.cpp  \
 	det_minor.cpp \
-	poly.cpp
+	poly.cpp \
+	sparse_hessian.cpp
 
 all: all-am
 
@@ -238,8 +249,15 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/det_lu.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/det_minor.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/link_det_lu.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/link_det_minor.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/link_ode.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/link_poly.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/link_sparse_hessian.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ode.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/poly.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sparse_hessian.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -268,6 +286,76 @@ main.obj: ../main.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../main.cpp' object='main.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o main.obj `if test -f '../main.cpp'; then $(CYGPATH_W) '../main.cpp'; else $(CYGPATH_W) '$(srcdir)/../main.cpp'; fi`
+
+link_ode.o: ../link_ode.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT link_ode.o -MD -MP -MF $(DEPDIR)/link_ode.Tpo -c -o link_ode.o `test -f '../link_ode.cpp' || echo '$(srcdir)/'`../link_ode.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/link_ode.Tpo $(DEPDIR)/link_ode.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../link_ode.cpp' object='link_ode.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o link_ode.o `test -f '../link_ode.cpp' || echo '$(srcdir)/'`../link_ode.cpp
+
+link_ode.obj: ../link_ode.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT link_ode.obj -MD -MP -MF $(DEPDIR)/link_ode.Tpo -c -o link_ode.obj `if test -f '../link_ode.cpp'; then $(CYGPATH_W) '../link_ode.cpp'; else $(CYGPATH_W) '$(srcdir)/../link_ode.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/link_ode.Tpo $(DEPDIR)/link_ode.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../link_ode.cpp' object='link_ode.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o link_ode.obj `if test -f '../link_ode.cpp'; then $(CYGPATH_W) '../link_ode.cpp'; else $(CYGPATH_W) '$(srcdir)/../link_ode.cpp'; fi`
+
+link_det_lu.o: ../link_det_lu.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT link_det_lu.o -MD -MP -MF $(DEPDIR)/link_det_lu.Tpo -c -o link_det_lu.o `test -f '../link_det_lu.cpp' || echo '$(srcdir)/'`../link_det_lu.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/link_det_lu.Tpo $(DEPDIR)/link_det_lu.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../link_det_lu.cpp' object='link_det_lu.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o link_det_lu.o `test -f '../link_det_lu.cpp' || echo '$(srcdir)/'`../link_det_lu.cpp
+
+link_det_lu.obj: ../link_det_lu.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT link_det_lu.obj -MD -MP -MF $(DEPDIR)/link_det_lu.Tpo -c -o link_det_lu.obj `if test -f '../link_det_lu.cpp'; then $(CYGPATH_W) '../link_det_lu.cpp'; else $(CYGPATH_W) '$(srcdir)/../link_det_lu.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/link_det_lu.Tpo $(DEPDIR)/link_det_lu.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../link_det_lu.cpp' object='link_det_lu.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o link_det_lu.obj `if test -f '../link_det_lu.cpp'; then $(CYGPATH_W) '../link_det_lu.cpp'; else $(CYGPATH_W) '$(srcdir)/../link_det_lu.cpp'; fi`
+
+link_det_minor.o: ../link_det_minor.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT link_det_minor.o -MD -MP -MF $(DEPDIR)/link_det_minor.Tpo -c -o link_det_minor.o `test -f '../link_det_minor.cpp' || echo '$(srcdir)/'`../link_det_minor.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/link_det_minor.Tpo $(DEPDIR)/link_det_minor.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../link_det_minor.cpp' object='link_det_minor.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o link_det_minor.o `test -f '../link_det_minor.cpp' || echo '$(srcdir)/'`../link_det_minor.cpp
+
+link_det_minor.obj: ../link_det_minor.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT link_det_minor.obj -MD -MP -MF $(DEPDIR)/link_det_minor.Tpo -c -o link_det_minor.obj `if test -f '../link_det_minor.cpp'; then $(CYGPATH_W) '../link_det_minor.cpp'; else $(CYGPATH_W) '$(srcdir)/../link_det_minor.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/link_det_minor.Tpo $(DEPDIR)/link_det_minor.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../link_det_minor.cpp' object='link_det_minor.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o link_det_minor.obj `if test -f '../link_det_minor.cpp'; then $(CYGPATH_W) '../link_det_minor.cpp'; else $(CYGPATH_W) '$(srcdir)/../link_det_minor.cpp'; fi`
+
+link_poly.o: ../link_poly.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT link_poly.o -MD -MP -MF $(DEPDIR)/link_poly.Tpo -c -o link_poly.o `test -f '../link_poly.cpp' || echo '$(srcdir)/'`../link_poly.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/link_poly.Tpo $(DEPDIR)/link_poly.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../link_poly.cpp' object='link_poly.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o link_poly.o `test -f '../link_poly.cpp' || echo '$(srcdir)/'`../link_poly.cpp
+
+link_poly.obj: ../link_poly.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT link_poly.obj -MD -MP -MF $(DEPDIR)/link_poly.Tpo -c -o link_poly.obj `if test -f '../link_poly.cpp'; then $(CYGPATH_W) '../link_poly.cpp'; else $(CYGPATH_W) '$(srcdir)/../link_poly.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/link_poly.Tpo $(DEPDIR)/link_poly.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../link_poly.cpp' object='link_poly.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o link_poly.obj `if test -f '../link_poly.cpp'; then $(CYGPATH_W) '../link_poly.cpp'; else $(CYGPATH_W) '$(srcdir)/../link_poly.cpp'; fi`
+
+link_sparse_hessian.o: ../link_sparse_hessian.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT link_sparse_hessian.o -MD -MP -MF $(DEPDIR)/link_sparse_hessian.Tpo -c -o link_sparse_hessian.o `test -f '../link_sparse_hessian.cpp' || echo '$(srcdir)/'`../link_sparse_hessian.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/link_sparse_hessian.Tpo $(DEPDIR)/link_sparse_hessian.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../link_sparse_hessian.cpp' object='link_sparse_hessian.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o link_sparse_hessian.o `test -f '../link_sparse_hessian.cpp' || echo '$(srcdir)/'`../link_sparse_hessian.cpp
+
+link_sparse_hessian.obj: ../link_sparse_hessian.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT link_sparse_hessian.obj -MD -MP -MF $(DEPDIR)/link_sparse_hessian.Tpo -c -o link_sparse_hessian.obj `if test -f '../link_sparse_hessian.cpp'; then $(CYGPATH_W) '../link_sparse_hessian.cpp'; else $(CYGPATH_W) '$(srcdir)/../link_sparse_hessian.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/link_sparse_hessian.Tpo $(DEPDIR)/link_sparse_hessian.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../link_sparse_hessian.cpp' object='link_sparse_hessian.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o link_sparse_hessian.obj `if test -f '../link_sparse_hessian.cpp'; then $(CYGPATH_W) '../link_sparse_hessian.cpp'; else $(CYGPATH_W) '$(srcdir)/../link_sparse_hessian.cpp'; fi`
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \

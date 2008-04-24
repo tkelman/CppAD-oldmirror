@@ -2,7 +2,7 @@
 # define CPPAD_AD_TAPE_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-08 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -59,7 +59,7 @@ This object is used to record
 $syntax%AD<%Base%>%$$ operations and compute derivatives.
 
 $head Rec$$
-the $xref/TapeRec/$$ object $syntax%%Tape%.Rec%$$ contains
+the $xref/recorder/$$ object $syntax%%Tape%.Rec%$$ contains
 the currently recorded information.
 This information is recorded using the following functions:
 
@@ -127,6 +127,31 @@ class ADTape {
 		const AD<Base> &falseCase 
 	);
 
+	// arithematic binary operators
+	friend AD<Base> operator + <Base>
+		(const AD<Base> &left, const AD<Base> &right);
+	friend AD<Base> operator - <Base>
+		(const AD<Base> &left, const AD<Base> &right);
+	friend AD<Base> operator * <Base>
+		(const AD<Base> &left, const AD<Base> &right);
+	friend AD<Base> operator / <Base>
+		(const AD<Base> &left, const AD<Base> &right);
+
+	// comparison operators
+	friend bool operator < <Base>
+		(const AD<Base> &left, const AD<Base> &right);
+	friend bool operator <= <Base>
+		(const AD<Base> &left, const AD<Base> &right);
+	friend bool operator > <Base>
+		(const AD<Base> &left, const AD<Base> &right);
+	friend bool operator >= <Base>
+		(const AD<Base> &left, const AD<Base> &right);
+	friend bool operator == <Base>
+		(const AD<Base> &left, const AD<Base> &right);
+	friend bool operator != <Base>
+		(const AD<Base> &left, const AD<Base> &right);
+
+
 	// pow
 	friend AD<Base> pow <Base>
 		(const AD<Base> &x, const AD<Base> &y);
@@ -155,7 +180,7 @@ private:
 	// private data
 	size_t                       id_;
 	size_t         size_independent_;
-	TapeRec<Base>               Rec_;
+	recorder<Base>              Rec_;
 
 	/*
 	Private functions

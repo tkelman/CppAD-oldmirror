@@ -1,5 +1,5 @@
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-08 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -38,8 +38,8 @@ does not depends on the matrix being factored.
 Yet there does not seem to be a way to reuse the DAG to
 compute derivatives for multiple matrices.
 
-$head compute_det_minor$$
-$index compute_det_minor$$
+$head link_det_minor$$
+$index link_det_minor$$
 Routine that computes the gradient of determinant using Fadbad:
 $codep */
 # include <FADBAD++/badiff.h>
@@ -47,7 +47,7 @@ $codep */
 # include <cppad/speed/uniform_01.hpp>
 # include <cppad/vector.hpp>
 
-void compute_det_minor(
+bool link_det_minor(
 	size_t                     size     , 
 	size_t                     repeat   , 
 	CppAD::vector<double>     &matrix   ,
@@ -87,7 +87,7 @@ void compute_det_minor(
 			gradient[i] = A[i].d(0); // partial detA w.r.t A[i]
 	}
 	// ---------------------------------------------------------
-	return;
+	return true;
 }
 /* $$
 $end

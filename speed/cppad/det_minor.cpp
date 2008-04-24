@@ -1,5 +1,5 @@
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-08 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -36,15 +36,15 @@ $cref/operation sequence/glossary/Operation/Sequence/$$
 does not depend on the matrix being factored.
 Hence we use the same $cref/ADFun/$$ object for all the matrices.
 
-$head compute_det_minor$$
-$index compute_det_minor$$
+$head link_det_minor$$
+$index link_det_minor$$
 Routine that computes the gradient of determinant using CppAD:
 $codep */
 # include <cppad/vector.hpp>
 # include <cppad/speed/det_by_minor.hpp>
 # include <cppad/speed/uniform_01.hpp>
 
-void compute_det_minor(
+bool link_det_minor(
 	size_t                     size     , 
 	size_t                     repeat   , 
 	CppAD::vector<double>     &matrix   ,
@@ -93,7 +93,7 @@ void compute_det_minor(
 		// evaluate and return gradient using reverse mode
 		gradient = f.Reverse(1, w);
 	}
-	return;
+	return true;
 }
 /* $$
 $end

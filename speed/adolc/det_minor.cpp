@@ -1,5 +1,5 @@
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-08 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -39,8 +39,8 @@ $cref/operation sequence/glossary/Operation/Sequence/$$
 does not depend on the matrix being factored.
 Hence we use the same tape recording for all the matrices.
 
-$head compute_det_minor$$
-$index compute_det_minor$$
+$head link_det_minor$$
+$index link_det_minor$$
 Routine that computes the gradient of determinant using Adolc:
 $codep */
 # include <cppad/vector.hpp>
@@ -50,7 +50,7 @@ $codep */
 # include <adolc/adouble.h>
 # include <adolc/interfaces.h>
 
-void compute_det_minor(
+bool link_det_minor(
 	size_t                     size     , 
 	size_t                     repeat   , 
 	CppAD::vector<double>     &matrix   ,
@@ -74,17 +74,17 @@ void compute_det_minor(
 	ADScalar   detA;
 
 	// AD version of matrix
-	ADVector   A = new ADScalar[n];
+	ADVector   A = CPPAD_TRACK_NEW_VEC(n, A);
 	
 	// vectors of reverse mode weights 
-	double *u = new double[m];
+	double *u = CPPAD_TRACK_NEW_VEC(m, u);
 	u[0] = 1.;
 
 	// vector with matrix value
-	double *mat = new double[n];
+	double *mat = CPPAD_TRACK_NEW_VEC(n, mat);
 
 	// vector to receive gradient result
-	double *grad = new double[n];
+	double *grad = CPPAD_TRACK_NEW_VEC(n, grad);
 
 	// choose a matrix
 	CppAD::uniform_01(n, mat);
@@ -121,11 +121,11 @@ void compute_det_minor(
 	}
 
 	// tear down
-	delete [] grad;
-	delete [] mat;
-	delete [] u;
-	delete [] A;
-	return;
+	CPPAD_TRACK_DEL_VEC(grad);
+	CPPAD_TRACK_DEL_VEC(mat);
+	CPPAD_TRACK_DEL_VEC(u);
+	CPPAD_TRACK_DEL_VEC(A);
+	return true;
 }
 /* $$
 $end

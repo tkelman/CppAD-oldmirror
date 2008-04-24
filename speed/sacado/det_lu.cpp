@@ -1,5 +1,5 @@
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-08 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -39,8 +39,8 @@ Note that the Lu factorization
 $cref/operation sequence/glossary/Operation/Sequence/$$
 depends on the matrix being factored.
 
-$head compute_det_lu$$
-$index compute_det_lu$$
+$head link_det_lu$$
+$index link_det_lu$$
 Routine that computes the gradient of determinant using Sacado:
 $codep */
 # include <Sacado.hpp>
@@ -48,7 +48,7 @@ $codep */
 # include <cppad/speed/uniform_01.hpp>
 # include <cppad/vector.hpp>
 
-void compute_det_lu(
+bool link_det_lu(
 	size_t                     size     , 
 	size_t                     repeat   , 
 	CppAD::vector<double>     &matrix   ,
@@ -87,7 +87,7 @@ void compute_det_lu(
 			gradient[i] = A[i].adj(); // partial detA w.r.t A[i]
 	}
 	// ---------------------------------------------------------
-	return;
+	return true;
 }
 /* $$
 $end

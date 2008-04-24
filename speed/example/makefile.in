@@ -43,6 +43,7 @@ CONFIG_CLEAN_FILES =
 PROGRAMS = $(noinst_PROGRAMS)
 am_example_OBJECTS = example.$(OBJEXT) det_by_lu.$(OBJEXT) \
 	det_by_minor.$(OBJEXT) det_of_minor.$(OBJEXT) \
+	ode_evaluate.$(OBJEXT) sparse_evaluate.$(OBJEXT) \
 	speed_test.$(OBJEXT)
 example_OBJECTS = $(am_example_OBJECTS)
 example_LDADD = $(LDADD)
@@ -79,7 +80,7 @@ CXX_FLAGS = @CXX_FLAGS@
 CYGPATH_W = @CYGPATH_W@
 
 # -----------------------------------------------------------------------------
-# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
+# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-08 Bradley M. Bell
 #
 # CppAD is distributed under multiple licenses. This distribution is under
 # the terms of the 
@@ -118,6 +119,7 @@ PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+POSTFIX_DIR = @POSTFIX_DIR@
 RANLIB = @RANLIB@
 SACADO_DIR = @SACADO_DIR@
 SET_MAKE = @SET_MAKE@
@@ -170,7 +172,7 @@ top_srcdir = @top_srcdir@
 #
 @CppAD_BOOSTVECTOR_TRUE@BOOST_INCLUDE = -I$(BOOST_DIR)
 #
-EXTRA_DIST = speedtest.cpp
+EXTRA_DIST = example.sln example.vcproj speed_program.cpp
 #
 AM_CPPFLAGS = -I. -I$(top_srcdir) $(BOOST_INCLUDE)
 #
@@ -181,6 +183,8 @@ example_SOURCES = \
 	det_by_lu.cpp \
 	det_by_minor.cpp \
 	det_of_minor.cpp \
+	ode_evaluate.cpp \
+	sparse_evaluate.cpp \
 	speed_test.cpp
 
 all: all-am
@@ -233,6 +237,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/det_by_minor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/det_of_minor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/example.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ode_evaluate.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sparse_evaluate.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/speed_test.Po@am__quote@
 
 .cpp.o:
