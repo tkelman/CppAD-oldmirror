@@ -257,6 +257,7 @@ private:
 
 // non-user interfaces
 # include <cppad/local/forward_sweep.hpp>
+# include <cppad/local/forward0sweep.hpp>
 # include <cppad/local/reverse_sweep.hpp>
 # include <cppad/local/for_jac_sweep.hpp>
 # include <cppad/local/rev_jac_sweep.hpp>
