@@ -2,7 +2,7 @@
 # define CPPAD_MUL_OP_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-07 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-08 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -13,7 +13,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
 /*
-$begin ForMulvvOp$$ $comment CppAD Developer Documentation$$
+$begin ForMulOp$$ $comment CppAD Developer Documentation$$
 $spell
 	Mul
 	Mulpv
@@ -76,6 +76,14 @@ On output it contains the
 $th d$$ order Taylor coefficient row vector for $icode Z$$; i.e.,
 $icode%z%[%d%]%$$ is set equal to the $th d$$ Taylor coefficient for
 the function $icode Z$$.
+
+$head Zero Order$$
+For the case $icode%d% = 0%$$, the syntax
+$codei%
+	inline void ForMulvvOp0(
+		%Base% *%z%, const %Base% *%x%, const %Base% *%y%)
+%$$
+is an optimized version of $code ForMulvvOp$$.
 
 $end
 ------------------------------------------------------------------------------
@@ -206,6 +214,11 @@ inline void ForMulvvOp(size_t j,
 	for(k = 0; k <= j; k++)
 		z[j] += x[j-k] * y[k];
 }
+
+template <class Base>
+inline void ForMulvvOp0(
+	Base *z, const Base *x, const Base *y)
+{	*z = (*x) * (*y); }
 
 template <class Base>
 inline void RevMulvvOp(size_t d, 

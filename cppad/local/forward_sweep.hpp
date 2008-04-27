@@ -40,7 +40,7 @@ $index Taylor coefficient, forward$$
 
 
 $head Syntax$$
-$syntax%size_t forward_sweep(
+$syntax%void forward_sweep(
 	bool %print%,
 	size_t %d%,
 	size_t %numvar%,
@@ -48,12 +48,6 @@ $syntax%size_t forward_sweep(
 	size_t %J%,
 	Base *%Taylor%,
 )%$$
-
-
-$head Return Value$$
-The return value is equal to the number of
-$syntax%AD<%Base%>%$$ comparison operations have a different result
-from when the information in $italic Rec$$ was recorded.
 
 
 $head Rec$$
@@ -74,6 +68,12 @@ Given the $th d-1$$ order Taylor coefficients matrix for all the variables,
 and the $th d$$ order Taylor coefficients for all the independent variables,
 $code forward_sweep$$ computes the $th d$$ order Taylor coefficients 
 for all the other variables.
+$pre
+
+$$
+This routine assumes $icode d$$ is greater than zero.
+The special case where it is zero is handled by
+$cref/forward0sweep/$$.
 
 
 $head numvar$$
@@ -141,17 +141,22 @@ For $latex i = n+1, \ldots , numvar-1$$,
 $syntax%%Taylor%[%i% * %J% + %d%]%$$ is set equal to the
 $th d$$ order Taylor coefficient for the variable with index $italic i$$.
 
+$contents%
+	cppad/local/forward0sweep.hpp
+%$$
 
 $end
 ------------------------------------------------------------------------------
 */
 # define CPPAD_FORWARD_SWEEP_TRACE 0
 
+# include <cppad/local/forward0sweep.hpp>
+
 // BEGIN CppAD namespace
 namespace CppAD {
 
 template <class Base>
-size_t forward_sweep(
+void forward_sweep(
 	bool                  print,
 	size_t                d,
 	size_t                numvar,
@@ -177,9 +182,6 @@ size_t forward_sweep(
 	const Base  *left = 0, *right = 0, *trueCase = 0, *falseCase = 0;
 	const Base  zero = Base(0);
 
-	// used by Com operator
-	bool result;
-
 	Base             *Z = 0;
 	Base             *W = 0;
 	Base             *U = 0;
@@ -187,9 +189,6 @@ size_t forward_sweep(
 	size_t            i;
 	size_t          len;
 
-
-	// initialize the comparision operator (ComOp) counter
-	size_t compareCount = 0;
 
 	// if this is an order zero calculation, initialize vector indices
 	size_t *VectorInd = CPPAD_NULL;  // address for each element
@@ -370,51 +369,7 @@ size_t forward_sweep(
 			CPPAD_ASSERT_UNKNOWN( n_var == 0);
 			CPPAD_ASSERT_UNKNOWN( n_ind == 4);
 			CPPAD_ASSERT_UNKNOWN( ind[1] > 1 );
-			if( d == 0 )
-			{	if( ind[1] & 1 )
-					result = true;
-				else	result = false;
-				if( ind[1] & 2 )
-					left = Taylor + ind[2] * J;
-				else	left = Rec->GetPar(ind[2]);
-				if( ind[1] & 4 )
-					right = Taylor + ind[3] * J;
-				else	right = Rec->GetPar(ind[3]);
-				switch( CompareOp( ind[0] ) )
-				{	case CompareLt:
-					compareCount += ( result != 
-					LessThanZero(*left - *right) );
-					break;
 
-					case CompareLe:
-					compareCount += ( result !=
-					LessThanOrZero(*left - *right) );
-					break;
-
-					case CompareEq:
-					compareCount += ( result != 
-					(*left == *right) );
-					break;
-
-					case CompareGe:
-					compareCount += ( result !=
-					GreaterThanOrZero(*left - *right) );
-					break;
-
-					case CompareGt:
-					compareCount += ( result != 
-					GreaterThanZero(*left - *right) );
-					break;
-
-					case CompareNe:
-					compareCount += ( result != 
-					(*left != *right) );
-					break;
-
-					default:
-					CPPAD_ASSERT_UNKNOWN(0);
-				}
-			}
 			break;
 			// ---------------------------------------------------
 
@@ -962,7 +917,7 @@ size_t forward_sweep(
 	if( VectorVar != CPPAD_NULL )
 		CPPAD_TRACK_DEL_VEC(VectorVar);
 
-	return compareCount;
+	return;
 }
 
 } // END CppAD namespace
