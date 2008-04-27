@@ -35,20 +35,20 @@ $section Forward Mode Multiplication Operator$$
 
 $head Syntax$$
 
-$syntax%inline void ForMulvvOp(size_t %d%,
+$codei%inline void ForMulvvOp(size_t %d%,
 	%Base% *%z%, const %Base% *%x%, const %Base% *%y%)%$$
 $pre
 $$
-$syntax%inline void ForMulpvOp(size_t %d%,
+$codei%inline void ForMulpvOp(size_t %d%,
 	%Base% *%z%, const %Base% *%p%, const %Base% *%v%)%$$
 $pre
 $$
-$syntax%inline void ForMulvpOp(size_t %d%,
+$codei%inline void ForMulvpOp(size_t %d%,
 	%Base% *%z%, const %Base% *%x%, const %Base% *%p%)%$$
 
 
 $head Description$$
-Computes the $italic d$$ order Taylor coefficient for $latex Z$$ where
+Computes the $icode d$$ order Taylor coefficient for $latex Z$$ where
 $table
 Operation  $cnext Value  $rnext
 Mulvv       $cnext $latex Z = X * Y$$ $rnext
@@ -57,25 +57,25 @@ Mulvp       $cnext $latex Z = X * P$$
 $tend
 
 $head x$$
-The vector $italic x$$ has length $latex d+1$$ and contains the
-$th d$$ order Taylor coefficient row vector for $italic X$$.
+The vector $icode x$$ has length $latex d+1$$ and contains the
+$th d$$ order Taylor coefficient row vector for $icode X$$.
 
 $head y$$
-The vector $italic y$$ has length $latex d+1$$ and contains the
-$th d$$ order Taylor coefficient row vector for $italic Y$$.
-The vector $italic y$$ is not present in the MulL and MulR cases.
+The vector $icode y$$ has length $latex d+1$$ and contains the
+$th d$$ order Taylor coefficient row vector for $icode Y$$.
+The vector $icode y$$ is not present in the MulL and MulR cases.
 
 $head p$$
-The scalar $syntax%*%p%$$ contains the value of the parameter $italic P$$.
+The scalar $codei%*%p%$$ contains the value of the parameter $icode P$$.
 
 $head z$$
-The vector $italic z$$ has length $latex d+1$$.
+The vector $icode z$$ has length $latex d+1$$.
 On input it contains the
-$th d-1$$ order Taylor coefficient row vector for $italic Z$$.
+$th d-1$$ order Taylor coefficient row vector for $icode Z$$.
 On output it contains the
-$th d$$ order Taylor coefficient row vector for $italic Z$$; i.e.,
-$syntax%%z%[%d%]%$$ is set equal to the $th d$$ Taylor coefficient for
-the function $italic Z$$.
+$th d$$ order Taylor coefficient row vector for $icode Z$$; i.e.,
+$icode%z%[%d%]%$$ is set equal to the $th d$$ Taylor coefficient for
+the function $icode Z$$.
 
 $end
 ------------------------------------------------------------------------------
@@ -104,17 +104,17 @@ $section Reverse Mode Multiplication Operator$$
 
 $head Syntax$$
 
-$syntax%inline void RevMulvvOp(size_t %d%,
+$codei%inline void RevMulvvOp(size_t %d%,
 	const %Base% *%z%, const %Base% *%x%, const %Base% *%y%,
 	const %Base% *%pz%, %Base% *%px%, %Base% *%py%)%$$
 $pre
 $$
-$syntax%inline void RevMulpvOp(size_t %d%,
+$codei%inline void RevMulpvOp(size_t %d%,
 	const %Base% *%z%, const %Base% *%p%, const %Base% *%y%,
 	const %Base% *%pz%, %Base% *%py%)%$$
 $pre
 $$
-$syntax%inline void RevMulvpOp(size_t %d%,
+$codei%inline void RevMulvpOp(size_t %d%,
 	const %Base% *%z%, const %Base% *%x%, const %Base% *%p%,
 	const %Base% *%pz%, %Base% *%px%)%$$
 
@@ -126,9 +126,9 @@ $latex \[
 	H(x, y) = G [ Z(x, y) , x , y ]
 \]$$
 where $latex Z(x, y)$$ is defined as the 
-$th d$$ order Taylor coefficient row vector for $italic Z$$ as
+$th d$$ order Taylor coefficient row vector for $icode Z$$ as
 a function of the corresponding vectors for 
-$italic X$$ and $italic Y$$ where
+$icode X$$ and $italic Y$$ where
 
 $table
 Operation  $cnext Value  $rnext
@@ -137,55 +137,55 @@ Mulpv       $cnext $latex Z = P * Y$$ $rnext
 Mulvp       $cnext $latex Z = X * P$$ 
 $tend
 
-Note that $italic Z$$ has been used both the original multiplication 
+Note that $icode Z$$ has been used both the original multiplication 
 function and for the corresponding mapping of Taylor coefficients.
 
 $head z$$
-The vector $italic z$$ has length $latex d+1$$ and contains the
-$th d$$ order Taylor coefficient row vector for $italic Z$$.
+The vector $icode z$$ has length $latex d+1$$ and contains the
+$th d$$ order Taylor coefficient row vector for $icode Z$$.
 
 $head x$$
-The vector $italic x$$ has length $latex d+1$$ and contains the
-$th d$$ order Taylor coefficient row vector for $italic X$$.
+The vector $icode x$$ has length $latex d+1$$ and contains the
+$th d$$ order Taylor coefficient row vector for $icode X$$.
 
 $head y$$
-The vector $italic y$$ has length $latex d+1$$ and contains the
-$th d$$ order Taylor coefficient row vector for $italic Y$$.
+The vector $icode y$$ has length $latex d+1$$ and contains the
+$th d$$ order Taylor coefficient row vector for $icode Y$$.
 
 $head p$$
-The scalar $syntax%*%p%$$ contains the value of the parameter $italic P$$.
+The scalar $codei%*%p%$$ contains the value of the parameter $icode P$$.
 
 
 $head pz$$
-The vector $italic pz$$ has length $latex d+1$$ and 
-$syntax%%pz%[%j%]%$$ contains the partial for $italic G$$
-with respect to the $th j$$ order Taylor coefficient for $italic Z$$.
+The vector $icode pz$$ has length $latex d+1$$ and 
+$icode%pz%[%j%]%$$ contains the partial for $icode G$$
+with respect to the $th j$$ order Taylor coefficient for $icode Z$$.
 
 $head On Input$$
 
 $subhead px$$
-The vector $italic px$$ has length $latex d+1$$ and 
-$syntax%%px%[%j%]%$$ contains the partial for $italic G$$
-with respect to the $th j$$ order Taylor coefficient for $italic X$$.
+The vector $icode px$$ has length $latex d+1$$ and 
+$icode%px%[%j%]%$$ contains the partial for $icode G$$
+with respect to the $th j$$ order Taylor coefficient for $icode X$$.
 
 $subhead py$$
-The vector $italic py$$ has length $latex d+1$$ and 
-$syntax%%py%[%j%]%$$ contains the partial for $italic G$$
-with respect to the $th j$$ order Taylor coefficient for $italic Y$$.
+The vector $icode py$$ has length $latex d+1$$ and 
+$icode%py%[%j%]%$$ contains the partial for $icode G$$
+with respect to the $th j$$ order Taylor coefficient for $icode Y$$.
 
 $head On Output$$
 
 $subhead px$$
 If present,
-the vector $italic px$$ has length $latex d+1$$ and 
-$syntax%%px%[%j%]%$$ contains the partial for $italic H$$
-with respect to the $th j$$ order Taylor coefficient for $italic X$$.
+the vector $icode px$$ has length $latex d+1$$ and 
+$icode%px%[%j%]%$$ contains the partial for $icode H$$
+with respect to the $th j$$ order Taylor coefficient for $icode X$$.
 
 $subhead py$$
 If present,
-the vector $italic py$$ has length $latex d+1$$ and 
-$syntax%%py%[%j%]%$$ contains the partial for $italic H$$
-with respect to the $th j$$ order Taylor coefficient for $italic Y$$.
+the vector $icode py$$ has length $latex d+1$$ and 
+$icode%py%[%j%]%$$ contains the partial for $icode H$$
+with respect to the $th j$$ order Taylor coefficient for $icode Y$$.
 
 $end
 ------------------------------------------------------------------------------
