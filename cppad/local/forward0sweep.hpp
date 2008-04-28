@@ -159,6 +159,7 @@ size_t forward0sweep(
 	size_t        n_ind;
 
 	const size_t   *ind = 0;
+	const size_t *ind_0 = 0;
 	const Base       *P = 0;
 	const Base       *X = 0;
 	const Base       *Y = 0;
@@ -207,22 +208,18 @@ size_t forward0sweep(
 	op    = Rec->GetOp(i_op);
 	n_var = 1;
 	n_ind = 0;
-	ind   = Rec->GetInd(n_ind, i_ind);
+	ind_0 = Rec->GetInd(n_ind, i_ind);
+	ind   = ind_0;
 	CPPAD_ASSERT_UNKNOWN( op == NonOp );
 
 	while(++i_op < numop)
 	{
-# ifndef NDEBUG
-		// check number of indices left
-		Rec->GetInd(n_ind, i_ind);
-# endif
 		// check previous n_var and n_ind
 		CPPAD_ASSERT_UNKNOWN( n_var == NumVar(op) );
 		CPPAD_ASSERT_UNKNOWN( n_ind == NumInd(op) );
 
 		// increment for previous op
 		i_var += n_var;
-		i_ind += n_ind;
 		ind   += n_ind;
 
 		// this op
@@ -508,7 +505,8 @@ size_t forward0sweep(
 				);
 
 				if( VectorVar[ i + ind[0] ] )
-				{	i   = VectorInd[ i + ind[0] ];
+				{	i     = VectorInd[ i + ind[0] ];
+					i_ind = ind - ind_0;
 					Rec->ReplaceInd(i_ind + 2, i);
 					CPPAD_ASSERT_UNKNOWN(i > 0 );
 					CPPAD_ASSERT_UNKNOWN( i < i_var );
@@ -516,7 +514,8 @@ size_t forward0sweep(
 					Z[d]  = Y[d];
 				}
 				else
-				{	i   = VectorInd[ i + ind[0] ];
+				{	i     = VectorInd[ i + ind[0] ];
+					i_ind = ind - ind_0;
 					Rec->ReplaceInd(i_ind + 2, 0);
 					Z[d] = *(Rec->GetPar(i));
 					i    = 0;
@@ -548,7 +547,8 @@ size_t forward0sweep(
 				);
 
 				if( VectorVar[ i + ind[0] ] )
-				{	i   = VectorInd[ i + ind[0] ];
+				{	i     = VectorInd[ i + ind[0] ];
+					i_ind = ind - ind_0;
 					Rec->ReplaceInd(i_ind + 2, i);
 					CPPAD_ASSERT_UNKNOWN(i > 0 );
 					CPPAD_ASSERT_UNKNOWN( i < i_var );
@@ -556,7 +556,8 @@ size_t forward0sweep(
 					Z[d]  = Y[d];
 				}
 				else
-				{	i   = VectorInd[ i + ind[0] ];
+				{	i     = VectorInd[ i + ind[0] ];
+					i_ind = ind - ind_0;
 					Rec->ReplaceInd(i_ind + 2, 0);
 					Z[d] = *(Rec->GetPar(i));
 					i    = 0;
@@ -897,6 +898,9 @@ size_t forward0sweep(
 			default:
 			CPPAD_ASSERT_UNKNOWN(0);
 		}
+		// check not past last index value
+		CPPAD_ASSERT_UNKNOWN( ind + n_ind <= ind_0 + Rec->NumInd() );
+
 # if CPPAD_FORWARD0SWEEP_TRACE
 		printOp(
 			std::cout, 
@@ -913,10 +917,6 @@ size_t forward0sweep(
 	std::cout << std::endl;
 # else
 	}
-# endif
-# ifndef NDEBUG
-	// check number of indices left
-	Rec->GetInd(n_ind, i_ind);
 # endif
 	// check last n_var and n_ind
 	CPPAD_ASSERT_UNKNOWN( n_var == NumVar(op) );
