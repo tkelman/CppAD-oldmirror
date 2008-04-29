@@ -210,8 +210,9 @@ size_t forward0sweep(
 	n_ind = 0;
 	ind_0 = Rec->GetInd(n_ind, i_ind);
 	ind   = ind_0;
-	CPPAD_ASSERT_UNKNOWN( op == NonOp );
+	Z     = Taylor;
 
+	CPPAD_ASSERT_UNKNOWN( op == NonOp );
 	while(++i_op < numop)
 	{
 		// check previous n_var and n_ind
@@ -249,7 +250,7 @@ size_t forward0sweep(
 
 			X = Taylor + ind[0] * J;
 			Y = Taylor + ind[1] * J;
-			ForAddvvOp(d, Z, X, Y);
+			Z[0] = X[0] + Y[0];
 			break;
 			// -------------------------------------------------
 
@@ -260,7 +261,7 @@ size_t forward0sweep(
 
 			P = Rec->GetPar( ind[0] );
 			Y = Taylor + ind[1] * J;
-			ForAddpvOp(d, Z, P, Y);
+			Z[0] = P[0] + Y[0];
 			break;
 			// -------------------------------------------------
 
@@ -271,7 +272,7 @@ size_t forward0sweep(
 
 			X = Taylor + ind[0] * J;
 			P = Rec->GetPar( ind[1] );
-			ForAddvpOp(d, Z, X, P);
+			Z[0] = X[0] + P[0];
 			break;
 			// -------------------------------------------------
 
@@ -584,7 +585,7 @@ size_t forward0sweep(
 
 			X = Taylor + ind[0] * J;
 			Y = Taylor + ind[1] * J;
-			ForMulvvOp0(Z, X, Y);
+			Z[0] = X[0] * Y[0];
 			break;
 			// -------------------------------------------------
 
@@ -595,7 +596,7 @@ size_t forward0sweep(
 
 			Y = Taylor + ind[1] * J;
 			P = Rec->GetPar( ind[0] );
-			ForMulpvOp(d, Z, P, Y);
+			Z[0] = P[0] * Y[0];
 			break;
 			// -------------------------------------------------
 
@@ -606,7 +607,7 @@ size_t forward0sweep(
 
 			X = Taylor + ind[0] * J;
 			P = Rec->GetPar( ind[1] );
-			ForMulvpOp(d, Z, X, P);
+			Z[0] = X[0] * P[0];
 			break;
 			// -------------------------------------------------
 

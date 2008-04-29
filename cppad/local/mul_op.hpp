@@ -77,14 +77,6 @@ $th d$$ order Taylor coefficient row vector for $icode Z$$; i.e.,
 $icode%z%[%d%]%$$ is set equal to the $th d$$ Taylor coefficient for
 the function $icode Z$$.
 
-$head Zero Order$$
-For the case $icode%d% = 0%$$, the syntax
-$codei%
-	inline void ForMulvvOp0(
-		%Base% *%z%, const %Base% *%x%, const %Base% *%y%)
-%$$
-is an optimized version of $code ForMulvvOp$$.
-
 $end
 ------------------------------------------------------------------------------
 $begin RevMulvvOp$$ $comment CppAD Developer Documentation$$
@@ -214,11 +206,6 @@ inline void ForMulvvOp(size_t j,
 	for(k = 0; k <= j; k++)
 		z[j] += x[j-k] * y[k];
 }
-
-template <class Base>
-inline void ForMulvvOp0(
-	Base *z, const Base *x, const Base *y)
-{	*z = (*x) * (*y); }
 
 template <class Base>
 inline void RevMulvvOp(size_t d, 
