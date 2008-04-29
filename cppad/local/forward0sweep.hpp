@@ -150,6 +150,9 @@ size_t forward0sweep(
 	// temporarly use const d=0 for old argument
 	const size_t      d = 0;
 
+	// some constants
+	Base one(1);
+
 	size_t        numop;
 	OpCode           op;
 	size_t         i_op;
@@ -210,7 +213,6 @@ size_t forward0sweep(
 	n_ind = 0;
 	ind_0 = Rec->GetInd(n_ind, i_ind);
 	ind   = ind_0;
-	Z     = Taylor;
 
 	CPPAD_ASSERT_UNKNOWN( op == NonOp );
 	while(++i_op < numop)
@@ -238,7 +240,9 @@ size_t forward0sweep(
 			n_ind = 1;
 			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
 			X   = Taylor + ind[0] * J;
-			ForAbsOp(d, Z, X);
+			if( LessThanZero( X[0] ) )
+				Z[0] = - X[0];
+			else	Z[0] = X[0];
 			break;
 			// -------------------------------------------------
 
@@ -279,14 +283,15 @@ size_t forward0sweep(
 			case AcosOp:
 			// variables: acos(x),  sqrt(1 - x * x) 
 			n_ind = 1;
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
 			n_var = 2;
+			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
 
 			// use W for data stored in variable record
 			W = Taylor + (i_var+1) * J;
-			X   = Taylor + ind[0] * J;
-			ForAcosOp(d, Z, W, X);
+			X = Taylor + ind[0] * J;
+			W[0] = sqrt( one - X[0] * X[0] );
+			Z[0] = acos( X[0] );
 			break;
 			// -------------------------------------------------
 
@@ -299,8 +304,9 @@ size_t forward0sweep(
 
 			// use W for data stored in variable record
 			W = Taylor + (i_var+1) * J;
-			X   = Taylor + ind[0] * J;
-			ForAsinOp(d, Z, W, X);
+			X = Taylor + ind[0] * J;
+			W[0] = sqrt( one - X[0] * X[0] );
+			Z[0] = asin( X[0] );
 			break;
 			// -------------------------------------------------
 
@@ -313,8 +319,9 @@ size_t forward0sweep(
 
 			// use W for data stored in variable record
 			W = Taylor + (i_var+1) * J;
-			X   = Taylor + ind[0] * J;
-			ForAtanOp(d, Z, W, X);
+			X = Taylor + ind[0] * J;
+			W[0] = one + X[0] * X[0];
+			Z[0] = atan( X[0] );
 			break;
 			// -------------------------------------------------
 
@@ -445,7 +452,7 @@ size_t forward0sweep(
 
 			X = Taylor + ind[0] * J;
 			Y = Taylor + ind[1] * J;
-			ForDivvvOp(d, Z, X, Y);
+			Z[0] = X[0] / Y[0];
 			break;
 			// -------------------------------------------------
 
@@ -456,7 +463,7 @@ size_t forward0sweep(
 
 			Y = Taylor + ind[1] * J;
 			P = Rec->GetPar( ind[0] );
-			ForDivpvOp(d, Z, P, Y);
+			Z[0] = P[0] / Y[0];
 			break;
 			// -------------------------------------------------
 
@@ -467,7 +474,7 @@ size_t forward0sweep(
 
 			P = Rec->GetPar( ind[1] );
 			X = Taylor + ind[0] * J;
-			ForDivvpOp(d, Z, X, P);
+			Z[0] = X[0] / P[0];
 			break;
 			// -------------------------------------------------
 
@@ -870,7 +877,7 @@ size_t forward0sweep(
 
 			X = Taylor + ind[0] * J;
 			Y = Taylor + ind[1] * J;
-			ForSubvvOp(d, Z, X, Y);
+			Z[0] = X[0] - Y[0];
 			break;
 			// -------------------------------------------------
 
@@ -881,7 +888,7 @@ size_t forward0sweep(
 
 			P = Rec->GetPar( ind[0] );
 			Y = Taylor + ind[1] * J;
-			ForSubpvOp(d, Z, P, Y);
+			Z[0] = P[0] - Y[0];
 			break;
 			// -------------------------------------------------
 
@@ -892,7 +899,7 @@ size_t forward0sweep(
 
 			X = Taylor + ind[0] * J;
 			P = Rec->GetPar( ind[1] );
-			ForSubvpOp(d, Z, X, P);
+			Z[0] = X[0] - P[0];
 			break;
 			// -------------------------------------------------
 
