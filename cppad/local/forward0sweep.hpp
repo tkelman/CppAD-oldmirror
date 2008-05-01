@@ -343,7 +343,7 @@ size_t forward0sweep(
 					falseCase = Taylor + ind[5] * J;
 				else	falseCase = Rec->GetPar(ind[5]);
 			}
-			Z[d] = CondExpOp(
+			Z[0] = CondExpOp(
 				CompareOp( ind[0] ),
 				*left,
 				*right,
@@ -408,28 +408,30 @@ size_t forward0sweep(
 			case CosOp:
 			// variables: cos(x), sin(x)
 			n_ind = 1;
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
 			n_var = 2;
+			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
 
 			// use W for data stored in variable record
 			W = Taylor + (i_var+1) * J;
-			X   = Taylor + ind[0] * J;
-			ForTrigSinCos(d, W, Z, X);
+			X = Taylor + ind[0] * J;
+			W[0] = sin( X[0] );
+			Z[0] = cos( X[0] );
 			break;
 			// ---------------------------------------------------
 
 			case CoshOp:
 			// variables: cosh(x), sinh(x)
 			n_ind = 1;
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
 			n_var = 2;
+			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
 
 			// use W for data stored in variable record
 			W = Taylor + (i_var+1) * J;
-			X   = Taylor + ind[0] * J;
-			ForHypSinCos(d, W, Z, X);
+			X = Taylor + ind[0] * J;
+			W[0] = sinh( X[0] );
+			Z[0] = cosh( X[0] );
 			break;
 			// -------------------------------------------------
 
@@ -484,7 +486,7 @@ size_t forward0sweep(
 			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
 
 			X = Taylor + ind[0] * J;
-			ForExpOp(d, Z, X);
+			Z[0] = exp( X[0] );
 			break;
 			// -------------------------------------------------
 
@@ -580,7 +582,7 @@ size_t forward0sweep(
 			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
 
 			X = Taylor + ind[0] * J;
-			ForLogOp(d, Z, X);
+			Z[0] = log( X[0] );
 			break;
 			// -------------------------------------------------
 
