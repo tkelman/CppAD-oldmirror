@@ -134,6 +134,11 @@ $end
 ------------------------------------------------------------------------------
 */
 # define CPPAD_FORWARD0SWEEP_TRACE 0
+# ifdef NDEBUG
+# define CPPAD_GET_PAR(i) (P_0 + i)
+# else
+# define CPPAD_GET_PAR(i) Rec->GetPar(i)
+# endif
 
 // BEGIN CppAD namespace
 namespace CppAD {
@@ -163,6 +168,7 @@ size_t forward0sweep(
 
 	const size_t   *ind = 0;
 	const size_t *ind_0 = 0;
+	const Base     *P_0 = 0;
 	const Base       *P = 0;
 	const Base       *X = 0;
 	const Base       *Y = 0;
@@ -212,6 +218,8 @@ size_t forward0sweep(
 	n_var = 1;
 	n_ind = 0;
 	ind_0 = Rec->GetInd(n_ind, i_ind);
+	if( Rec->NumPar() > 0 )
+		P_0   = Rec->GetPar(0);
 	ind   = ind_0;
 
 	CPPAD_ASSERT_UNKNOWN( op == NonOp );
@@ -263,7 +271,7 @@ size_t forward0sweep(
 			n_ind = 2;
 			CPPAD_ASSERT_UNKNOWN( ind[1] < i_var );
 
-			P = Rec->GetPar( ind[0] );
+			P = CPPAD_GET_PAR(ind[0]);
 			Y = Taylor + ind[1] * J;
 			Z[0] = P[0] + Y[0];
 			break;
@@ -275,7 +283,7 @@ size_t forward0sweep(
 			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
 
 			X = Taylor + ind[0] * J;
-			P = Rec->GetPar( ind[1] );
+			P = CPPAD_GET_PAR(ind[1]);
 			Z[0] = X[0] + P[0];
 			break;
 			// -------------------------------------------------
@@ -331,17 +339,17 @@ size_t forward0sweep(
 			CPPAD_ASSERT_UNKNOWN( ind[1] != 0 );
 			if( ind[1] & 1 )
 				left = Taylor + ind[2] * J;
-			else	left = Rec->GetPar(ind[2]);
+			else	left = CPPAD_GET_PAR(ind[2]);
 			if( ind[1] & 2 )
 				right = Taylor + ind[3] * J;
-			else	right = Rec->GetPar(ind[3]);
+			else	right = CPPAD_GET_PAR(ind[3]);
 			// d == 0
 			{	if( ind[1] & 4 )
 					trueCase = Taylor + ind[4] * J;
-				else	trueCase = Rec->GetPar(ind[4]);
+				else	trueCase = CPPAD_GET_PAR(ind[4]);
 				if( ind[1] & 8 )
 					falseCase = Taylor + ind[5] * J;
-				else	falseCase = Rec->GetPar(ind[5]);
+				else	falseCase = CPPAD_GET_PAR(ind[5]);
 			}
 			Z[0] = CondExpOp(
 				CompareOp( ind[0] ),
@@ -363,10 +371,10 @@ size_t forward0sweep(
 				else	result = false;
 				if( ind[1] & 2 )
 					left = Taylor + ind[2] * J;
-				else	left = Rec->GetPar(ind[2]);
+				else	left = CPPAD_GET_PAR(ind[2]);
 				if( ind[1] & 4 )
 					right = Taylor + ind[3] * J;
-				else	right = Rec->GetPar(ind[3]);
+				else	right = CPPAD_GET_PAR(ind[3]);
 				switch( CompareOp( ind[0] ) )
 				{	case CompareLt:
 					compareCount += ( result != 
@@ -464,7 +472,7 @@ size_t forward0sweep(
 			CPPAD_ASSERT_UNKNOWN( ind[1] < i_var );
 
 			Y = Taylor + ind[1] * J;
-			P = Rec->GetPar( ind[0] );
+			P = CPPAD_GET_PAR(ind[0]);
 			Z[0] = P[0] / Y[0];
 			break;
 			// -------------------------------------------------
@@ -474,7 +482,7 @@ size_t forward0sweep(
 			n_ind = 2;
 			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
 
-			P = Rec->GetPar( ind[1] );
+			P = CPPAD_GET_PAR(ind[1]);
 			X = Taylor + ind[0] * J;
 			Z[0] = X[0] / P[0];
 			break;
@@ -527,7 +535,7 @@ size_t forward0sweep(
 				{	i     = VectorInd[ i + ind[0] ];
 					i_ind = ind - ind_0;
 					Rec->ReplaceInd(i_ind + 2, 0);
-					Z[d] = *(Rec->GetPar(i));
+					Z[d] = *(CPPAD_GET_PAR(i));
 					i    = 0;
 				}
 			}
@@ -569,7 +577,7 @@ size_t forward0sweep(
 				{	i     = VectorInd[ i + ind[0] ];
 					i_ind = ind - ind_0;
 					Rec->ReplaceInd(i_ind + 2, 0);
-					Z[d] = *(Rec->GetPar(i));
+					Z[d] = *(CPPAD_GET_PAR(i));
 					i    = 0;
 				}
 			}
@@ -604,7 +612,7 @@ size_t forward0sweep(
 			CPPAD_ASSERT_UNKNOWN( ind[1] < i_var );
 
 			Y = Taylor + ind[1] * J;
-			P = Rec->GetPar( ind[0] );
+			P = CPPAD_GET_PAR(ind[0]);
 			Z[0] = P[0] * Y[0];
 			break;
 			// -------------------------------------------------
@@ -615,7 +623,7 @@ size_t forward0sweep(
 			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
 
 			X = Taylor + ind[0] * J;
-			P = Rec->GetPar( ind[1] );
+			P = CPPAD_GET_PAR(ind[1]);
 			Z[0] = X[0] * P[0];
 			break;
 			// -------------------------------------------------
@@ -630,7 +638,7 @@ size_t forward0sweep(
 			n_var = 1;
 			n_ind = 1;
 
-			P = Rec->GetPar( ind[0] );
+			P = CPPAD_GET_PAR(ind[0]);
 			// d == 0
 				Z[d] = *P;
 			break;
@@ -649,7 +657,7 @@ size_t forward0sweep(
 			ForLogOp(d, U, X);
 
 			// w = u * y
-			Y = Rec->GetPar( ind[1] );
+			Y = CPPAD_GET_PAR(ind[1]);
 			ForMulvpOp(d, W, U, Y);
 
 			// z = exp(w)
@@ -669,7 +677,7 @@ size_t forward0sweep(
 			W = U + J;
 
 			// u = log(x)
-			X = Rec->GetPar(ind[0]);
+			X = CPPAD_GET_PAR(ind[0]);
 			// d == 0
 				U[d] = log(X[d]);
 
@@ -716,7 +724,7 @@ size_t forward0sweep(
 			if( print )
 			{	CPPAD_ASSERT_UNKNOWN( ind[0] < Rec->NumTxt() );
 				std::cout << Rec->GetTxt(ind[0]);
-				std::cout << *(Rec->GetPar(ind[1]));
+				std::cout << *(CPPAD_GET_PAR(ind[1]));
 			}
 			break;
 			// -------------------------------------------------
@@ -790,7 +798,7 @@ size_t forward0sweep(
 				VectorInd[ i + ind[0] ] = ind[2];
 				VectorVar[ i + ind[0] ] = false;
 
-				Z[d] = *( Rec->GetPar( ind[2] ) );
+				Z[d] = *( CPPAD_GET_PAR(ind[2]) );
 			}
 			break;
 			// -------------------------------------------------
@@ -839,7 +847,7 @@ size_t forward0sweep(
 				VectorInd[ i + ind[0] ] = ind[2];
 				VectorVar[ i + ind[0] ] = false;
 
-				Z[d] = *( Rec->GetPar( ind[2] ) );
+				Z[d] = *( CPPAD_GET_PAR(ind[2]) );
 			}
 			break;
 			// -------------------------------------------------
@@ -888,7 +896,7 @@ size_t forward0sweep(
 			n_ind = 2;
 			CPPAD_ASSERT_UNKNOWN( ind[1] < i_var );
 
-			P = Rec->GetPar( ind[0] );
+			P = CPPAD_GET_PAR(ind[0]);
 			Y = Taylor + ind[1] * J;
 			Z[0] = P[0] - Y[0];
 			break;
@@ -900,7 +908,7 @@ size_t forward0sweep(
 			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
 
 			X = Taylor + ind[0] * J;
-			P = Rec->GetPar( ind[1] );
+			P = CPPAD_GET_PAR(ind[1]);
 			Z[0] = X[0] - P[0];
 			break;
 			// -------------------------------------------------
