@@ -152,9 +152,6 @@ size_t forward0sweep(
 	Base                 *Taylor
 )
 {
-	// temporarly use const d=0 for old argument
-	const size_t      d = 0;
-
 	// some constants
 	Base one(1);
 
@@ -529,13 +526,13 @@ size_t forward0sweep(
 					CPPAD_ASSERT_UNKNOWN(i > 0 );
 					CPPAD_ASSERT_UNKNOWN( i < i_var );
 					Y     = Taylor + i * J;
-					Z[d]  = Y[d];
+					Z[0]  = Y[0];
 				}
 				else
 				{	i     = VectorInd[ i + ind[0] ];
 					i_ind = ind - ind_0;
 					Rec->ReplaceInd(i_ind + 2, 0);
-					Z[d] = *(CPPAD_GET_PAR(i));
+					Z[0] = *(CPPAD_GET_PAR(i));
 					i    = 0;
 				}
 			}
@@ -571,13 +568,13 @@ size_t forward0sweep(
 					CPPAD_ASSERT_UNKNOWN(i > 0 );
 					CPPAD_ASSERT_UNKNOWN( i < i_var );
 					Y     = Taylor + i * J;
-					Z[d]  = Y[d];
+					Z[0]  = Y[0];
 				}
 				else
 				{	i     = VectorInd[ i + ind[0] ];
 					i_ind = ind - ind_0;
 					Rec->ReplaceInd(i_ind + 2, 0);
-					Z[d] = *(CPPAD_GET_PAR(i));
+					Z[0] = *(CPPAD_GET_PAR(i));
 					i    = 0;
 				}
 			}
@@ -640,7 +637,7 @@ size_t forward0sweep(
 
 			P = CPPAD_GET_PAR(ind[0]);
 			// d == 0
-				Z[d] = *P;
+				Z[0] = *P;
 			break;
 			// -------------------------------------------------
 
@@ -654,11 +651,11 @@ size_t forward0sweep(
 
 			// u = log(x)
 			X = Taylor + ind[0] * J;
-			ForLogOp(d, U, X);
+			U[0] = log( X[0] );
 
 			// w = u * y
 			Y = CPPAD_GET_PAR(ind[1]);
-			ForMulvpOp(d, W, U, Y);
+			W[0] = U[0] * Y[0];
 
 			// z = exp(w)
 			// zero order case exactly same as Base type operation
@@ -679,11 +676,11 @@ size_t forward0sweep(
 			// u = log(x)
 			X = CPPAD_GET_PAR(ind[0]);
 			// d == 0
-				U[d] = log(X[d]);
+				U[0] = log(X[0]);
 
 			// w = u * y
-			Y   = Taylor + ind[1] * J;
-			ForMulpvOp(d, W, U, Y);
+			Y = Taylor + ind[1] * J;
+			W[0] = U[0] * Y[0];
 
 			// z = exp(w)
 			// zero order case exactly same as Base type operation
@@ -704,11 +701,11 @@ size_t forward0sweep(
 
 			// u = log(x)
 			X = Taylor + ind[0] * J;
-			ForLogOp(d, U, X);
+			U[0] = log( X[0] );
 
 			// w = u * y
-			Y   = Taylor + ind[1] * J;
-			ForMulvvOp(d, W, U, Y);
+			Y = Taylor + ind[1] * J;
+			W[0] = U[0] * Y[0];
 
 			// z = exp(w)
 			// zero order case exactly same as Base type operation
@@ -752,8 +749,9 @@ size_t forward0sweep(
 
 			// use W for data stored in second variable
 			W = Taylor + (i_var+1) * J;
-			X   = Taylor + ind[0] * J;
-			ForTrigSinCos(d, Z, W, X);
+			X = Taylor + ind[0] * J;
+			W[0] = cos( X[0] );
+			Z[0] = sin( X[0] );
 			break;
 			// -------------------------------------------------
 
@@ -766,8 +764,9 @@ size_t forward0sweep(
 
 			// use W for data stored in second variable
 			W = Taylor + (i_var+1) * J;
-			X   = Taylor + ind[0] * J;
-			ForHypSinCos(d, Z, W, X);
+			X = Taylor + ind[0] * J;
+			W[0] = cosh( X[0] );
+			Z[0] = sinh( X[0] );
 			break;
 			// -------------------------------------------------
 
@@ -777,7 +776,7 @@ size_t forward0sweep(
 			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
 
 			X = Taylor + ind[0] * J;
-			ForSqrtOp(d, Z, X);
+			Z[0] = sqrt( X[0] );
 			break;
 			// -------------------------------------------------
 
@@ -798,7 +797,7 @@ size_t forward0sweep(
 				VectorInd[ i + ind[0] ] = ind[2];
 				VectorVar[ i + ind[0] ] = false;
 
-				Z[d] = *( CPPAD_GET_PAR(ind[2]) );
+				Z[0] = *( CPPAD_GET_PAR(ind[2]) );
 			}
 			break;
 			// -------------------------------------------------
@@ -847,7 +846,7 @@ size_t forward0sweep(
 				VectorInd[ i + ind[0] ] = ind[2];
 				VectorVar[ i + ind[0] ] = false;
 
-				Z[d] = *( CPPAD_GET_PAR(ind[2]) );
+				Z[0] = *( CPPAD_GET_PAR(ind[2]) );
 			}
 			break;
 			// -------------------------------------------------
