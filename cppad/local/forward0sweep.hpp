@@ -306,8 +306,8 @@ size_t forward0sweep(
 			case AsinOp:
 			// variables: asin(x),  sqrt(1 - x * x) 
 			n_ind = 1;
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
 			n_var = 2;
+			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
 
 			// use W for data stored in variable record
@@ -321,8 +321,8 @@ size_t forward0sweep(
 			case AtanOp:
 			// variables: atan(x),  1 + x * x 
 			n_ind = 1;
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
 			n_var = 2;
+			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
 
 			// use W for data stored in variable record
@@ -746,8 +746,8 @@ size_t forward0sweep(
 			case SinOp:
 			// variables: sin(x), cos(x)
 			n_ind = 1;
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
 			n_var = 2;
+			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
 
 			// use W for data stored in second variable
@@ -760,8 +760,8 @@ size_t forward0sweep(
 			case SinhOp:
 			// variables: sinh(x), cosh(x)
 			n_ind = 1;
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
 			n_var = 2;
+			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
 
 			// use W for data stored in second variable
