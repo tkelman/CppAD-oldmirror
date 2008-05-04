@@ -636,8 +636,7 @@ size_t forward0sweep(
 			n_ind = 1;
 
 			P = CPPAD_GET_PAR(ind[0]);
-			// d == 0
-				Z[0] = *P;
+			Z[0] = *P;
 			break;
 			// -------------------------------------------------
 
@@ -660,7 +659,7 @@ size_t forward0sweep(
 			// z = exp(w)
 			// zero order case exactly same as Base type operation
 			// d == 0
-				Z[0] = pow(X[0], Y[0]);
+			Z[0] = pow(X[0], Y[0]);
 
 			break;
 			// -------------------------------------------------
@@ -675,8 +674,7 @@ size_t forward0sweep(
 
 			// u = log(x)
 			X = CPPAD_GET_PAR(ind[0]);
-			// d == 0
-				U[0] = log(X[0]);
+			U[0] = log(X[0]);
 
 			// w = u * y
 			Y = Taylor + ind[1] * J;
@@ -684,8 +682,7 @@ size_t forward0sweep(
 
 			// z = exp(w)
 			// zero order case exactly same as Base type operation
-			// d == 0
-				Z[0] = pow(X[0], Y[0]);
+			Z[0] = pow(X[0], Y[0]);
 
 			break;
 			// -------------------------------------------------
@@ -709,8 +706,7 @@ size_t forward0sweep(
 
 			// z = exp(w)
 			// zero order case exactly same as Base type operation
-			// d == 0
-				Z[0] = pow(X[0], Y[0]);
+			Z[0] = pow(X[0], Y[0]);
 
 			break;
 			// -------------------------------------------------
