@@ -11,7 +11,7 @@ dnl ---------------------------------------------------------------------------
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl   package   version              bug-report
-AC_INIT(CppAD, 2.3, cppad@list.coin-or.org)
+AC_INIT(CppAD, 2.3.1, cppad@list.coin-or.org)
 dnl trunk version 20080306
 dnl trunk revision 1139
 
