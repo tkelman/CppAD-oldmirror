@@ -20,8 +20,11 @@ BOOST_DIR=/usr/include/boost-1_33_1
 #
 #
 # date currently in configure.ac
-version=`grep "^ *AC_INIT(" configure.ac | \
-	sed -e "s/.*, *\([0-9]\{8\}\) *,.*/\1/"`
+## version=`grep "^ *AC_INIT(" configure.ac | \
+## 	sed -e "s/.*, *\([0-9]\{8\}\) *,.*/\1/"`
+yyyymmdd="20071016"
+release="0"
+version="$yyyymmdd.$release"
 #
 if [ "$1" = "all" ] && [ "$2" != "" ] && [ "$2" != "test" ]
 then
@@ -46,39 +49,45 @@ if [ "$1" = "version" ] || [ "$1" = "all" ]
 then
 	echo "build.sh version"
 	#
-	# Today's date in yy-mm-dd decimal digit format where 
-	# yy is year in century, mm is month in year, dd is day in month.
-	yyyymmdd="20071016"
-	yyyy_mm_dd="2007-10-16"
-	#
-	# change Autoconf version to today
-	version=$yyyymmdd
-	#
+##	# Today's date in yy-mm-dd decimal digit format where 
+##	# yy is year in century, mm is month in year, dd is day in month.
+##	yyyymmdd="20071016"
+##	yyyy_mm_dd="2007-10-16"
+##	#
+##	# change Autoconf version to today
+##	version=$yyyymmdd
+##	#
 	# configure.ac
 	sed configure.ac > configure.ac.tmp \
-	-e "s/(CppAD, [0-9]\{8\} *,/(CppAD, $yyyymmdd,/"
+	-e "s/(CppAD, $yyyymmdd,/(CppAD, $version,/"
+##	-e "s/(CppAD, [0-9]\{8\} *,/(CppAD, $yyyymmdd,/"
 	diff configure.ac  configure.ac.tmp
 	mv   configure.ac.tmp configure.ac
-	#
-	# AUTHORS
-	sed AUTHORS > AUTHORS.tmp \
-	-e "s/, [0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\} *,/, $yyyy_mm_dd,/"
-	diff AUTHORS    AUTHORS.tmp
-	mv   AUTHORS.tmp AUTHORS 
+##	#
+##	# AUTHORS
+##	sed AUTHORS > AUTHORS.tmp \
+##	-e "s/, [0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\} *,/, $yyyy_mm_dd,/"
+##	diff AUTHORS    AUTHORS.tmp
+##	mv   AUTHORS.tmp AUTHORS 
 	#
 	# For installs without configure, update cppad/config.h
 	# (gets overwritten when configure runs).
 	sed cppad/config.h > cppad/config.tmp \
-	-e "s/\"[0-9]\{8\}\"/\"$yyyymmdd\"/" \
-	-e "s/ [0-9]\{8\}\"/ $yyyymmdd\"/"
+	-e "s/\"$yyyymmdd\"/\"$version\"/" \
+	-e "s/ $yyyymmdd\"/ $version\"/"
+##	-e "s/\"[0-9]\{8\}\"/\"$yyyymmdd\"/" \
+##	-e "s/ [0-9]\{8\}\"/ $yyyymmdd\"/"
 	diff cppad/config.h   cppad/config.tmp
 	mv   cppad/config.tmp cppad/config.h
 	#
 	for name in doc.omh omh/install_unix.omh omh/install_windows.omh
 	do
 		sed $name > $name.tmp \
-			-e "s/cppad-[0-9]\{8\}/cppad-$yyyymmdd/g" \
-			-e "s/ [0-9]\{8\}\\\$\\\$/ $yyyymmdd\$\$/"
+			-e "s/cppad-$yyyymmdd/cppad-$version/g" \
+			-e "s/ $yyyymmdd\\\$\\\$/ $version\$\$/" \
+			-e "s/$version.$release/$version/"
+##			-e "s/cppad-[0-9]\{8\}/cppad-$yyyymmdd/g" \
+##			-e "s/ [0-9]\{8\}\\\$\\\$/ $yyyymmdd\$\$/"
 		diff $name $name.tmp
 		mv   $name.tmp $name
 	done
