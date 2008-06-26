@@ -265,7 +265,7 @@ then
 			exit 1
 		fi
 	fi
-	for file in cppad-*.tgz cppad-*.zip
+	for file in cppad-*.tgz 
 	do
 		if [ -e $file ]
 		then
@@ -440,8 +440,8 @@ fi
 if [ "$1" = "gpl+dos" ] || [ "$1" = "all" ]
 then
 	# create GPL licensed version
-	echo "gpl_license.sh"
-	if ! ./gpl_license.sh
+	echo "gpl_license.sh $version"
+	if ! ./gpl_license.sh $version
 	then
 		echo "Error: gpl_license.sh failed."
 		if [ "$2" = "test" ]
@@ -456,6 +456,8 @@ then
 			echo "Ok: gpl_license.sh." >> build_test.log
 		fi
 	fi
+if [ "true" == "false" ]
+then
 	echo "./dos_format.sh"
 	if ! ./dos_format.sh
 	then
@@ -472,6 +474,7 @@ then
 			echo "Ok: dos_format.sh." >> build_test.log
 		fi
 	fi
+fi
 	#
 	if [ "$1" = "gpl+dos" ]
 	then
@@ -484,8 +487,6 @@ then
 	list="
 		cppad-$version.cpl.tgz
 		cppad-$version.gpl.tgz
-		cppad-$version.cpl.zip
-		cppad-$version.gpl.zip
 	"
 	for file in $list
 	do
@@ -531,8 +532,8 @@ echo "configure test includes all the possible options except PREFIX_DIR"
 echo "make           use make to build all of the requested targets"
 echo "dist           create the distribution file cppad-version.cpl.tgz"
 echo "test           unpack *.cpl.tgz, compile, tests, result in build_test.log"
-echo "gpl+dos        create ./*.gpl.tgz, ./*.gpl.zip, and ./*.cpl.zip"
-echo "move           move ./*.tgz and ./*.zip to doc directory"
+echo "gpl+dos        create ./*.gpl.tgz
+echo "move           move ./*.tgz to doc directory"
 echo
 echo "build.sh all"
 echo "This command will execute all the options in the order above with the"

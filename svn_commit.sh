@@ -42,42 +42,19 @@
 # the changes will not be copied (and commited) into another branch.
 #
 # ----------------------------------------------------------------------
-log_entry="Change the following preprocessor macros to upper case; i.e.,
-	CppADUnknownError -> CPPAD_ASSERT_UNKNOWN
-	CppADUsageError   -> CPPAD_ASSERT_KNOWN
-
-cppad_assert.hpp: replace old cppad_error.hpp file (include in user doc).
-cppad_error.hpp: change name to cppad_assert.hpp.
-grep_soruce.sh: include cppad/speed directory in search.
-svn_commit.sh: file that made this commit.
-makefile.am: change cppad_error.hpp to cppad_assert.hpp
-wish_list.omh: change preprocessor entry.
-whats_new_07.omh: user's view of the changes.
-dev.omh: move cppad_assert documentation to user (from developer).
-cppad/?.hpp: batch edit these files for preprocessor name change above.
-cppad/local/?.hpp: batch edit these files preprocessor name for change above.
-cppad/speed/det_by_lu.hpp: batch edit preprocessor name for change above.
-config.h: update (because error handling macro for unknown case fixed).
-lu_vec_ad.cpp: batch edit preprocessor name for change above.
+log_entry="change gpl_license.sh to use version argument, remove dos formatting.
 " 
 add_list="
-	cppad/local/cppad_assert.hpp
 "
 delete_list="
-	cppad/local/cppad_error.hpp
 "
 move_list="
 "
 #
 change_list="
-	example/lu_vec_ad.cpp
-	grep_source.sh
 	svn_commit.sh
-	makefile.am
-	omh/wish_list.omh
-	omh/whats_new_07.omh
-	dev.omh
-	cppad/config.h
+	gpl_license.sh
+	build.sh
 "
 #
 copy_branch="" 
