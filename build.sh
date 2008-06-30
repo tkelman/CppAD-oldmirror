@@ -21,8 +21,11 @@ SACADO_DIR=$HOME/sacado_base
 # -----------------------------------------------------------------------------
 #
 # date currently in configure.ac
-version=`grep "^ *AC_INIT(" configure.ac | \
-	sed -e "s/.*, *\([0-9]\{8\}\) *,.*/\1/"`
+## version=`grep "^ *AC_INIT(" configure.ac | \
+## 	sed -e "s/.*, *\([0-9]\{8\}\) *,.*/\1/"`
+yyyymmdd="20071210"
+release="0"
+version="$yyyymmdd.$release"
 #
 if [ "$1" = "all" ] && [ "$2" != "" ] && [ "$2" != "test" ]
 then
@@ -49,48 +52,55 @@ then
 	#
 	# Today's date in yy-mm-dd decimal digit format where 
 	# yy is year in century, mm is month in year, dd is day in month.
-	yyyymmdd="20071210"
-	yyyy_mm_dd="2007-12-10"
+##	yyyymmdd="20071210"
+##	yyyy_mm_dd="2007-12-10"
 	#
 	# automatically change version for certain files
-	sed < cppad.spec > cppad.spec.$$ \
-        	-e "s/cppad-[0-9]\{8\}/cppad-$yyyymmdd/g" \
-        	-e "s/^Version: *[0-9]\{8\}/Version: $yyyymmdd/"
-	#
-	sed < AUTHORS > AUTHORS.$$ \
-		-e "s/, [0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\} *,/, $yyyy_mm_dd,/"
-	sed < configure.ac > configure.ac.$$\
-		-e "s/(CppAD, [0-9]\{8\} *,/(CppAD, $yyyymmdd,/" 
-	sed < omh/download.omh > omh/download.omh.$$ \
-		-e "s/cppad-[0-9]\{8\}/cppad-$yyyymmdd/g"
-	sed < configure > configure.$$ \
-		-e "s/CppAD [0-9]\{8\}/CppAD $yyyymmdd/g" \
-		-e "s/VERSION='[0-9]\{8\}'/VERSION='$yyyymmdd'/g" \
-		-e "s/configure [0-9]\{8\}/configure $yyyymmdd/g" \
-		-e "s/config.status [0-9]\{8\}/config.status $yyyymmdd/g" \
-		-e "s/\$as_me [0-9]\{8\}/\$as_me $yyyymmdd/g" 
-	chmod +x configure.$$
-	sed < cppad/config.h > cppad/config.h.$$ \
-		-e "s/CppAD [0-9]\{8\}/CppAD $yyyymmdd/g" \
-		-e "s/VERSION \"[0-9]\{8\}\"/VERSION \"$yyyymmdd\"/g"
+##	sed < cppad.spec > cppad.spec.$$ \
+##        	-e "s/cppad-[0-9]\{8\}/cppad-$yyyymmdd/g" \
+##        	-e "s/^Version: *[0-9]\{8\}/Version: $yyyymmdd/"
+##	#
+##	sed < AUTHORS > AUTHORS.$$ \
+##		-e "s/, [0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\} *,/, $yyyy_mm_dd,/"
+##	sed < configure.ac > configure.ac.$$\
+##		-e "s/(CppAD, [0-9]\{8\} *,/(CppAD, $yyyymmdd,/" 
+##	sed < omh/download.omh > omh/download.omh.$$ \
+##		-e "s/cppad-[0-9]\{8\}/cppad-$yyyymmdd/g"
+##	sed < configure > configure.$$ \
+##		-e "s/CppAD [0-9]\{8\}/CppAD $yyyymmdd/g" \
+##		-e "s/VERSION='[0-9]\{8\}'/VERSION='$yyyymmdd'/g" \
+##		-e "s/configure [0-9]\{8\}/configure $yyyymmdd/g" \
+##		-e "s/config.status [0-9]\{8\}/config.status $yyyymmdd/g" \
+##		-e "s/\$as_me [0-9]\{8\}/\$as_me $yyyymmdd/g" 
+##	chmod +x configure.$$
+##	sed < cppad/config.h > cppad/config.h.$$ \
+##		-e "s/CppAD [0-9]\{8\}/CppAD $yyyymmdd/g" \
+##		-e "s/VERSION \"[0-9]\{8\}\"/VERSION \"$yyyymmdd\"/g"
 	list="
 		cppad.spec
-		AUTHORS
 		configure.ac
 		omh/download.omh
 		configure
 		cppad/config.h
+		doc.omh
+		omh/install_unix.omh
+		omh/install_windows.omh
 	"
 	for name in $list
 	do
+		sed < $name > $name.$$ \
+		-e "s/$yyyymmdd/$yyyymmdd.$release/g" \
+		-e "s/$yyyymmdd\.$release\.$release/$yyyymmdd.$release/g" 
+		#
 		echo "diff $name $name.$$"
 		diff $name $name.$$
 		echo "mv   $name.$$ $name"
 		mv   $name.$$ $name
 	done
+	chmod +x configure
 	#
-	# change Autoconf version to today
-	version=$yyyymmdd
+##	# change Autoconf version to today
+##	version=$yyyymmdd
 	#
 	if [ "$1" = "version" ]
 	then
@@ -535,8 +545,8 @@ then
 	list="
 		cppad-$version.cpl.tgz
 		cppad-$version.gpl.tgz
-		cppad-$version.cpl.zip
-		cppad-$version.gpl.zip
+##		cppad-$version.cpl.zip
+##		cppad-$version.gpl.zip
 	"
 	for file in $list
 	do
