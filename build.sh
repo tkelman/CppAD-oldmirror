@@ -501,8 +501,8 @@ fi
 if [ "$1" = "gpl+dos" ] || [ "$1" = "all" ]
 then
 	# create GPL licensed version
-	echo "gpl_license.sh"
-	if ! ./gpl_license.sh
+	echo "gpl_license.sh $version"
+	if ! ./gpl_license.sh $version
 	then
 		echo "Error: gpl_license.sh failed."
 		if [ "$2" = "test" ]
@@ -517,6 +517,8 @@ then
 			echo "Ok: gpl_license.sh." >> build_test.log
 		fi
 	fi
+if [ "true" == "false" ]
+then
 	echo "./dos_format.sh"
 	if ! ./dos_format.sh
 	then
@@ -533,6 +535,7 @@ then
 			echo "Ok: dos_format.sh." >> build_test.log
 		fi
 	fi
+fi
 	#
 	if [ "$1" = "gpl+dos" ]
 	then
@@ -545,9 +548,9 @@ then
 	list="
 		cppad-$version.cpl.tgz
 		cppad-$version.gpl.tgz
+"
 ##		cppad-$version.cpl.zip
 ##		cppad-$version.gpl.zip
-	"
 	for file in $list
 	do
 		echo "mv $file doc/$file"
