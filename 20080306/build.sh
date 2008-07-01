@@ -18,12 +18,14 @@ BOOST_DIR=/usr/include/boost-1_33_1
 ADOLC_DIR=$HOME/prefix/adolc
 FADBAD_DIR=$HOME/prefix/fadbad
 SACADO_DIR=$HOME/prefix/sacado
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$ADOLC_DIR/lib:$IPOPT_DIR/lib"
 # -----------------------------------------------------------------------------
 #
 # get version currently in configure.ac file
 # (in a way that works when version is not a date)
-version=`grep "^ *AC_INIT(" configure.ac | \
-	sed -e 's/[^,]*, *\([^ ,]*\).*/\1/'`
+## version=`grep "^ *AC_INIT(" configure.ac | \
+## 	sed -e 's/[^,]*, *\([^ ,]*\).*/\1/'`
+version="20080306"
 #
 if [ "$1" = "all" ] && [ "$2" != "" ] && [ "$2" != "test" ]
 then
@@ -50,14 +52,16 @@ then
 	#
 	# Today's date in yy-mm-dd decimal digit format where 
 	# yy is year in century, mm is month in year, dd is day in month.
-	yyyymmdd="2.3"
+##	yyyymmdd="2.3"
+	yyyymmdd="$version"
 	yyyy_mm_dd="2008-03-06"
 	#
 	# automatically change version for certain files
 	sed < AUTHORS > AUTHORS.$$ \
 		-e "s/, [0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\} *,/, $yyyy_mm_dd,/"
 	sed < configure.ac > configure.ac.$$\
-		-e "s/(CppAD, [0-9]\{8\} *,/(CppAD, $yyyymmdd,/" 
+		-e "s/(CppAD, 2.3 *,/(CppAD, $yyyymmdd,/" 
+#		-e "s/(CppAD, [0-9]\{8\} *,/(CppAD, $yyyymmdd,/" 
 	sed < configure > configure.$$ \
 		-e "s/CppAD [0-9]\{8\}/CppAD $yyyymmdd/g" \
 		-e "s/VERSION='[0-9]\{8\}'/VERSION='$yyyymmdd'/g" \
