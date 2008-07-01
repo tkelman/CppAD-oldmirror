@@ -25,7 +25,9 @@ export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$ADOLC_DIR/lib:$IPOPT_DIR/lib"
 # (in a way that works when version is not a date)
 ## version=`grep "^ *AC_INIT(" configure.ac | \
 ## 	sed -e 's/[^,]*, *\([^ ,]*\).*/\1/'`
-version="20080306"
+yyyymmdd="20080306"
+release="0"
+version="$yyyymmdd.$release"
 #
 if [ "$1" = "all" ] && [ "$2" != "" ] && [ "$2" != "test" ]
 then
@@ -53,32 +55,33 @@ then
 	# Today's date in yy-mm-dd decimal digit format where 
 	# yy is year in century, mm is month in year, dd is day in month.
 ##	yyyymmdd="2.3"
-	yyyymmdd="$version"
-	yyyy_mm_dd="2008-03-06"
-	#
-	# automatically change version for certain files
-	sed < AUTHORS > AUTHORS.$$ \
-		-e "s/, [0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\} *,/, $yyyy_mm_dd,/"
+##	yyyymmdd="$version"
+##	yyyy_mm_dd="2008-03-06"
+##	#
+##	# automatically change version for certain files
+##	sed < AUTHORS > AUTHORS.$$ \
+##		-e "s/, [0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\} *,/, $yyyy_mm_dd,/"
 	sed < configure.ac > configure.ac.$$\
-		-e "s/(CppAD, 2.3 *,/(CppAD, $yyyymmdd,/" 
-#		-e "s/(CppAD, [0-9]\{8\} *,/(CppAD, $yyyymmdd,/" 
-	sed < configure > configure.$$ \
-		-e "s/CppAD [0-9]\{8\}/CppAD $yyyymmdd/g" \
-		-e "s/VERSION='[0-9]\{8\}'/VERSION='$yyyymmdd'/g" \
-		-e "s/configure [0-9]\{8\}/configure $yyyymmdd/g" \
-		-e "s/config.status [0-9]\{8\}/config.status $yyyymmdd/g" \
-		-e "s/\$as_me [0-9]\{8\}/\$as_me $yyyymmdd/g" 
-	chmod +x configure.$$
-	sed < cppad/config.h > cppad/config.h.$$ \
-		-e "s/CppAD [0-9]\{8\}/CppAD $yyyymmdd/g" \
-		-e "s/VERSION \"[0-9]\{8\}\"/VERSION \"$yyyymmdd\"/g"
-	list="
-		AUTHORS
-		configure.ac
-		configure
-		cppad/config.h
-	"
-	for name in $list
+		-e "s/(CppAD, $yyyymmdd *,/(CppAD, $yyyymmdd.$release,/" 
+###		-e "s/(CppAD, [0-9]\{8\} *,/(CppAD, $yyyymmdd,/" 
+##	sed < configure > configure.$$ \
+##		-e "s/CppAD [0-9]\{8\}/CppAD $yyyymmdd/g" \
+##		-e "s/VERSION='[0-9]\{8\}'/VERSION='$yyyymmdd'/g" \
+##		-e "s/configure [0-9]\{8\}/configure $yyyymmdd/g" \
+##		-e "s/config.status [0-9]\{8\}/config.status $yyyymmdd/g" \
+##		-e "s/\$as_me [0-9]\{8\}/\$as_me $yyyymmdd/g" 
+##	chmod +x configure.$$
+##	sed < cppad/config.h > cppad/config.h.$$ \
+##		-e "s/CppAD [0-9]\{8\}/CppAD $yyyymmdd/g" \
+##		-e "s/VERSION \"[0-9]\{8\}\"/VERSION \"$yyyymmdd\"/g"
+##	list="
+##		AUTHORS
+##		configure.ac
+##		configure
+##		cppad/config.h
+##	"
+##	for name in $list
+	for name in "configure.ac"
 	do
 		echo "diff $name $name.$$"
 		diff $name $name.$$
@@ -86,9 +89,9 @@ then
 		mv   $name.$$ $name
 	done
 	#
-	# change Autoconf version to today
-	version=$yyyymmdd
-	#
+##	# change Autoconf version to today
+##	version=$yyyymmdd
+##	#
 	if [ "$1" = "version" ]
 	then
 		exit 0
