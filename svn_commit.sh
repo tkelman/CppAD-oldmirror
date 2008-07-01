@@ -12,7 +12,7 @@
 # Define your subversion commit by editing the definition of 
 # log_entry, add_list, delete_list, and change_list below:
 # 
-log_entry="
+log_entry="change gpl_license.sh to use version argument, remove dos formatting
 " 
 add_list="
 "
@@ -22,6 +22,8 @@ old_list="
 "
 #
 change_list="
+	gpl_license.sh
+	build.sh
 "
 #
 # log_entry
