@@ -57,7 +57,7 @@ bool compute_det_minor(
 	// setup
 
 	// object for computing determinant
-	typedef B<double>               ADScalar; 
+	typedef fadbad::B<double>               ADScalar; 
 	typedef CppAD::vector<ADScalar> ADVector; 
 	CppAD::det_by_minor<ADScalar>   Det(size);
 
