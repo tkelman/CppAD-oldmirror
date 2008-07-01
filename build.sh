@@ -15,9 +15,9 @@
 # Default values used for arguments to configure during this script.
 # These defaults are development system dependent and can be changed.
 BOOST_DIR=/usr/include/boost-1_33_1
-ADOLC_DIR=$HOME/adolc_base
-FADBAD_DIR=$HOME/include
-SACADO_DIR=$HOME/sacado_base
+ADOLC_DIR=$HOME/prefix/adolc
+FADBAD_DIR=$HOME/prefix/fadbad
+SACADO_DIR=$HOME/prefix/sacado
 # -----------------------------------------------------------------------------
 #
 # get version currently in configure.ac file
