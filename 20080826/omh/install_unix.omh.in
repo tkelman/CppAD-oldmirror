@@ -119,9 +119,13 @@ The ascii files for these downloads are in
 Unix format; i.e., each line ends with just a line feed.
 
 $table
-CPL License $pre  $$ $cnext $href%cppad-@VERSION@.cpl.tgz%$$ 
+CPL License $pre  $$ $cnext $href%%
+http://www.coin-or.org/download/source/CppAD/cppad-@VERSION@.cpl.tgz%
+cppad-@VERSION@.cpl.tgz%$$ 
 $rnext
-GPL License $pre  $$ $cnext $href%cppad-@VERSION@.gpl.tgz%$$
+GPL License $pre  $$ $cnext $href%%
+http://www.coin-or.org/download/source/CppAD/cppad-@VERSION@.gpl.tgz%
+cppad-@VERSION@.gpl.tgz%$$
 $tend
 
 $subhead Tar File Extraction$$
