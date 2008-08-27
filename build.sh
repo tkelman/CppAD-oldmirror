@@ -52,7 +52,7 @@ then
 	#
 	# Today's date in yy-mm-dd decimal digit format where 
 	# yy is year in century, mm is month in year, dd is day in month.
-	yyyymmdd="20080826"
+	yyyymmdd="20080826.0"
 	yyyy_mm_dd="2008-08-26"
 	#
 	# automatically change version for certain files
