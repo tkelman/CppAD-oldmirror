@@ -10,7 +10,7 @@
 # Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 # -----------------------------------------------------------------------------
 repository="https://projects.coin-or.org/svn/CppAD"
-stable_version="20080826"
+stable_version="20090919"
 release="0"
 release_version="$stable_version.$release"
 # -----------------------------------------------------------------------------
