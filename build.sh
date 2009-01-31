@@ -52,8 +52,8 @@ then
 	#
 	# Today's date in yy-mm-dd decimal digit format where 
 	# yy is year in century, mm is month in year, dd is day in month.
-	yyyymmdd="20090131.0"
-	yyyy_mm_dd="2009-01-31"
+	yyyymmdd=`date +%G%m%d`
+	yyyy_mm_dd=`date +%G-%m-%d`
 	#
 	# automatically change version for certain files
 	# (the [.0-9]* is for using build.sh in CppAD/stable/* directories)
