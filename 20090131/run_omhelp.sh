@@ -29,7 +29,7 @@ then
 		echo "See the complete error message in omhelp_dev.log"
 		exit 1
 	fi
-	if grep "^OMhelp Warning:" omhelp_dev.log
+	if grep "^OMhelp Warning:" ../omhelp_dev.log
 	then
 		echo "See the complete warning messages in omhelp_dev.log."
 		exit 1
@@ -56,7 +56,7 @@ then
 		echo "See the complete error message in omhelp_doc.log."
 		exit 1
 	fi
-	if grep "^OMhelp Warning:" omhelp_doc.log
+	if grep "^OMhelp Warning:" ../omhelp_doc.log
 	then
 		echo "See the complete warning messages in omhelp_doc.log."
 		exit 1
