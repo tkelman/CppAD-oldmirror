@@ -300,12 +300,6 @@ then
 	done
 	#
 	# only build the *.xml version of the documentation for distribution
-	if ! grep < doc.omh > /dev/null \
-		'This comment is used to remove the table below' 
-	then
-		echo "Error: Missing comment expected in doc.omh"
-		exit 1
-	fi
 	mv doc.omh doc.tmp
 	sed < doc.tmp > doc.omh \
 		-e '/This comment is used to remove the table below/,/$tend/d'
