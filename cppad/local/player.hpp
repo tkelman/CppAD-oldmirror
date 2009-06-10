@@ -343,7 +343,7 @@ private:
 // ----------- Functions used in new method for palying back a recording ---
 public:
 	/*!
-	Start a play back of the recording in the forward direction.
+	Start a play back of the recording during a forward sweep.
 
 	Use repeated calls to next_forward to play back one operator at a time.
 
@@ -387,8 +387,7 @@ public:
 	Play back the next operator during a forward sweep.
 
 	Use start_forward to initialize to the first operator; i.e.,
-	the NonOp at the beginning of the recording. The following call to
-	next_forward will give the operator following that NonOp.
+	the NonOp at the beginning of the recording. 
 
 	\param op
 	The input value of op does not matter. Its output value is the
@@ -400,7 +399,9 @@ public:
 
 	\param op_index
 	The input value of op_index does not matter. Its output value
-	is the index of the next operator in the recording.
+	is the index of the next operator in the recording. Thus the ouput
+	value following the previous call to start_forward is one. In addition,
+	the output value increases by one with each call to next_forward. 
 
 	\param var_index
 	The input value of var_index does not matter. Its output value is the
@@ -423,6 +424,72 @@ public:
 		CPPAD_ASSERT_UNKNOWN( op_index_  < num_rec_op_ );
 		CPPAD_ASSERT_UNKNOWN( op_arg_ + NumInd(op) <= num_rec_op_arg_ );
 		CPPAD_ASSERT_UNKNOWN( var_index_ + NumVar(op) <= num_rec_var_ );
+	}
+	/*!
+	Start a play back of the recording during a reverse sweep.
+
+	Use repeated calls to next_reverse to play back one operator at a time.
+	*/
+	void start_reverse(void)
+	{
+		op_arg_     = num_rec_op_arg_;
+		op_index_   = num_rec_op_;
+		var_index_  = num_rec_var_;
+		return;
+	}
+
+	/*!
+	Play back the next operator during a reverse sweep.
+
+	Use start_reverse to initialize to reverse play back.
+	The first call to next_reverse (after start_reverse) will give the 
+        last operator in the recording.
+
+	\param op
+	The input value of op does not matter. Its output value is the
+	next operator in the recording (in reverse order).
+	The last operator sets op equal to NonOp.
+
+	\param op_arg
+	The input value of *op_arg does not matter. Its output value is the
+	beginning of the vector of argument indices for this operation.
+	The last operator sets op_arg equal to the beginning of the 
+	argument indices for the entire recording.
+
+	\param op_index
+	The input value of op_index does not matter. Its output value
+	is the index of this operator in the recording. Thus the output
+	value following the previous call to start_reverse is equal to 
+	the number of variables in the recording minus one.
+	In addition, the output value decreases by one with each call to
+	next_reverse.
+	The last operator sets op_index equal to 0.
+
+	\param var_index
+	The input value of var_index does not matter. Its output value is the
+	index of the first result variable corresponding to the operator op.
+	The last operator sets var_index equal to 0.
+	*/
+
+	void next_reverse(
+	OpCode& op, const size_t*& op_arg, size_t& op_index, size_t& var_index)
+	{	using CppAD::NumVar;
+		using CppAD::NumInd;
+
+		CPPAD_ASSERT_UNKNOWN( op_index_  > 0 );
+		op_index    = --op_index_;
+		op_         = rec_op_[ op_index_ ];
+
+		CPPAD_ASSERT_UNKNOWN( op_arg_ >= NumInd(op_)  );
+		op_arg_    -= NumInd(op_);
+
+		CPPAD_ASSERT_UNKNOWN( var_index_ >= NumVar(op_) );
+		var_index_ -= NumVar(op_);
+
+		op          = op_;
+		op_arg      = op_arg_ + rec_op_arg_;
+		var_index   = var_index_;
+
 	}
 
 };
