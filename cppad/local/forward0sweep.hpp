@@ -3,7 +3,7 @@
 # define CPPAD_FORWARD0SWEEP_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-08 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-09 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -156,7 +156,7 @@ size_t forward0sweep(
 	// some constants
 	Base one(1);
 
-	size_t        numop;
+	size_t     numop_m1;
 	OpCode           op;
 	size_t         i_op;
 	size_t        i_var;
@@ -206,33 +206,24 @@ size_t forward0sweep(
 	CPPAD_ASSERT_UNKNOWN( Rec->TotNumVar() == numvar );
 
 	// set the number of operators
-	numop = Rec->NumOp();
+	numop_m1 = Rec->NumOp() - 1;
 
 	// skip the NonOp at the beginning of the recording
-	i_op  = 0;
-	i_var = 0;
-	i_ind = 0;
-	op    = Rec->GetOp(i_op);
-	n_var = 1;
-	n_ind = 0;
-	ind_0 = Rec->GetInd(n_ind, i_ind);
 	if( Rec->NumPar() > 0 )
 		P_0   = Rec->GetPar(0);
-	ind   = ind_0;
 
-	CPPAD_ASSERT_UNKNOWN( op == NonOp );
-	while(++i_op < numop)
+	Rec->start_forward(op, ind, i_op, i_var);
+	ind_0 = ind;
+	n_var = 1;
+	n_ind = 0;
+	while(i_op < numop_m1)
 	{
 		// check previous n_var and n_ind
 		CPPAD_ASSERT_UNKNOWN( n_var == NumVar(op) );
 		CPPAD_ASSERT_UNKNOWN( n_ind == NumInd(op) );
 
-		// increment for previous op
-		i_var += n_var;
-		ind   += n_ind;
-
-		// this op
-		op     = Rec->GetOp(i_op);
+		// next instruction
+		Rec->next_forward(op, ind, i_op, i_var);
 
 		// value of z for this op
 		Z      = Taylor + i_var * J;

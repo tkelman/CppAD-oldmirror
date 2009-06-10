@@ -21,6 +21,8 @@ namespace CppAD {
 */
 template <class Base>
 class player {
+
+// -------------- Variables that define the recording -----------------------
 private:
 	/// Number of variables in the recording.
 	size_t    num_rec_var_;
@@ -37,11 +39,11 @@ private:
 	/// The VecAD indices in the recording.
 	size_t   *rec_vecad_ind_;
 
-	/// Number of operation indices in the recording. 
-	size_t    num_rec_op_ind_;
+	/// Number of arguments indices in the recording. 
+	size_t    num_rec_op_arg_;
 
-	/// The operation indices in the recording
-	size_t   *rec_op_ind_;
+	/// The argument indices in the recording
+	size_t   *rec_op_arg_;
 
 	/// Number of parameters in the recording.
 	size_t    num_rec_par_;
@@ -56,6 +58,8 @@ private:
 	/// Character in the recording.
 	char     *rec_text_;
 
+
+// --------------- Functions used to create and maniplate a recording -------
 public:
 	/// Default constructor
 	player(void) 
@@ -68,8 +72,8 @@ public:
 		num_rec_vecad_ind_ = 0;
 		rec_vecad_ind_     = CPPAD_NULL;
 
-		num_rec_op_ind_    = 0;
-		rec_op_ind_        = CPPAD_NULL;
+		num_rec_op_arg_    = 0;
+		rec_op_arg_        = CPPAD_NULL;
 
 		num_rec_par_       = 0;
 		rec_par_           = CPPAD_NULL;
@@ -85,8 +89,8 @@ public:
 			CPPAD_TRACK_DEL_VEC(rec_op_);
 		if( num_rec_vecad_ind_ > 0 )
 			CPPAD_TRACK_DEL_VEC(rec_vecad_ind_);
-		if( num_rec_op_ind_ > 0 )
-			CPPAD_TRACK_DEL_VEC(rec_op_ind_);
+		if( num_rec_op_arg_ > 0 )
+			CPPAD_TRACK_DEL_VEC(rec_op_arg_);
 		if( num_rec_par_ > 0 )
 			CPPAD_TRACK_DEL_VEC(rec_par_);
 		if( num_rec_text_ > 0 )
@@ -101,8 +105,8 @@ public:
 			CPPAD_TRACK_DEL_VEC(rec_op_);
 		if( num_rec_vecad_ind_ > 0 )
 			CPPAD_TRACK_DEL_VEC(rec_vecad_ind_);
-		if( num_rec_op_ind_ > 0 )
-			CPPAD_TRACK_DEL_VEC(rec_op_ind_);
+		if( num_rec_op_arg_ > 0 )
+			CPPAD_TRACK_DEL_VEC(rec_op_arg_);
 		if( num_rec_par_ > 0 )
 			CPPAD_TRACK_DEL_VEC(rec_par_);
 		if( num_rec_text_ > 0 )
@@ -118,7 +122,7 @@ public:
 		num_rec_vecad_ind_  = rec.NumberVecInd_;
 
 		// Ind
-		num_rec_op_ind_     = rec.NumberInd_;
+		num_rec_op_arg_     = rec.NumberInd_;
 
 		// Par
 		num_rec_par_        = rec.NumberPar_;
@@ -135,10 +139,10 @@ public:
 			rec_vecad_ind_ = CPPAD_NULL;
 		else	rec_vecad_ind_ = 
 			CPPAD_TRACK_NEW_VEC(num_rec_vecad_ind_, rec_vecad_ind_);
-		if( num_rec_op_ind_ == 0 )
-			rec_op_ind_ = CPPAD_NULL;
-		else	rec_op_ind_ = 
-			CPPAD_TRACK_NEW_VEC(num_rec_op_ind_,    rec_op_ind_);
+		if( num_rec_op_arg_ == 0 )
+			rec_op_arg_ = CPPAD_NULL;
+		else	rec_op_arg_ = 
+			CPPAD_TRACK_NEW_VEC(num_rec_op_arg_,    rec_op_arg_);
 		if( num_rec_par_ == 0 )
 			rec_par_ = CPPAD_NULL;
 		else	rec_par_ = 
@@ -155,9 +159,9 @@ public:
 		i = num_rec_vecad_ind_;
 		while(i--)
 			rec_vecad_ind_[i] = rec.VecInd_[i];
-		i = num_rec_op_ind_;
+		i = num_rec_op_arg_;
 		while(i--)
-			rec_op_ind_[i] = rec.Ind_[i];
+			rec_op_arg_[i] = rec.Ind_[i];
 		i = num_rec_par_;
 		while(i--)
 			rec_par_[i] = rec.Par_[i];
@@ -169,31 +173,33 @@ public:
 	/// Erase all information in an operation sequence player.
 	void Erase(void)
 	{	
-		num_rec_var_  = 0;
+		num_rec_var_       = 0;
 		num_rec_op_        = 0;
-		num_rec_vecad_ind_    = 0;
-		num_rec_op_ind_       = 0;
+		num_rec_vecad_ind_ = 0;
+		num_rec_op_arg_    = 0;
 		num_rec_par_       = 0;
-		num_rec_text_       = 0;
+		num_rec_text_      = 0;
 
 		if( num_rec_op_ > 0 )
 			CPPAD_TRACK_DEL_VEC(rec_op_);
 		if( num_rec_vecad_ind_ > 0 )
 			CPPAD_TRACK_DEL_VEC(rec_vecad_ind_);
-		if( num_rec_op_ind_ > 0 )
-			CPPAD_TRACK_DEL_VEC(rec_op_ind_);
+		if( num_rec_op_arg_ > 0 )
+			CPPAD_TRACK_DEL_VEC(rec_op_arg_);
 		if( num_rec_par_ > 0 )
 			CPPAD_TRACK_DEL_VEC(rec_par_);
 		if( num_rec_text_ > 0 )
 			CPPAD_TRACK_DEL_VEC(rec_text_);
 
 		num_rec_op_        = 0;
-		num_rec_vecad_ind_    = 0;
-		num_rec_op_ind_       = 0;
+		num_rec_vecad_ind_ = 0;
+		num_rec_op_arg_    = 0;
 		num_rec_par_       = 0;
-		num_rec_text_       = 0;
+		num_rec_text_      = 0;
 	}
 
+// ------------------ Old method of palying back a recording -----------------
+public:
 	/*! 
 	\brief 
 	Fetch an operator from the recording.
@@ -241,20 +247,20 @@ public:
 
 	/*! 
 	\brief 
-	Fetch a subsequence of the normal indices from the recording.
+	Fetch a subsequence of the argument indices from the recording.
 
 	\return 
-	the beginning of the subsequence of normal indices.
+	the beginning of the subsequence of argument indices.
 
 	\param n
-	the number of normal indices in the subsequence.
+	the number of argument indices in the subsequence.
 
 	\param i
 	the index where the subsequence begins. 
 	*/
 	const size_t *GetInd(size_t n, size_t i) const
-	{	CPPAD_ASSERT_UNKNOWN(i + n <= num_rec_op_ind_)
-		return rec_op_ind_ + i;
+	{	CPPAD_ASSERT_UNKNOWN(i + n <= num_rec_op_arg_)
+		return rec_op_arg_ + i;
 	}
 
 	/*! 
@@ -274,17 +280,17 @@ public:
 	
 	/*!
 	\brief
-	Replace a normal index in the recording.
+	Replace an argument index in the recording.
 
 	\param i
-	is the index, in normal indices, that is to be replaced.
+	is the index, in argument indices, that is to be replaced.
 
 	\param value
 	is the new normal index value.
 	*/
 	void ReplaceInd(size_t i, size_t value)
-	{	CPPAD_ASSERT_UNKNOWN( i < num_rec_op_ind_);
-		rec_op_ind_[i] = value;
+	{	CPPAD_ASSERT_UNKNOWN( i < num_rec_op_arg_);
+		rec_op_arg_[i] = value;
 	}
 
 	/// Fetch number of variables in the recording.
@@ -299,9 +305,9 @@ public:
 	size_t NumVecInd(void) const
 	{	return num_rec_vecad_ind_; }
 
-	/// Fetch number of normal indices in the recording.
+	/// Fetch number of argument indices in the recording.
 	size_t NumInd(void) const
-	{	return num_rec_op_ind_; }
+	{	return num_rec_op_arg_; }
 
 	/// Fetch number of parameters in the recording.
 	size_t NumPar(void) const
@@ -315,9 +321,108 @@ public:
 	size_t Memory(void) const
 	{	return num_rec_op_ * sizeof(OpCode) 
 		     + num_rec_vecad_ind_ * sizeof(size_t)
-		     + num_rec_op_ind_ * sizeof(size_t)
+		     + num_rec_op_arg_ * sizeof(size_t)
 		     + num_rec_par_ * sizeof(Base)
 		     + num_rec_text_ * sizeof(char);
+	}
+
+// ------------- Variables used for new methog of playing back a recording ---
+private:
+	/// Current operator
+	OpCode    op_;
+
+	/// Index in recording corresponding to current operator
+	size_t    op_index_;
+
+	/// Current offser of the argument indices in rec_op_arg_ 
+	size_t    op_arg_;
+
+	/// Index for first variable corresponding to current operator
+	size_t    var_index_;
+
+// ----------- Functions used in new method for palying back a recording ---
+public:
+	/*!
+	Start a play back of the recording in the forward direction.
+
+	Use repeated calls to next_forward to play back one operator at a time.
+
+	\param op
+	The input value of op does not matter. Its output value is the
+	first operator in the recording; i.e., NonOp.
+
+	\param op_arg
+	The input value of *op_arg does not matter. Its output value is the
+	beginning of the vector of argument indices for the first operation;
+	i.e., 0
+
+	\param op_index
+	The input value of op_index does not matter. Its output value
+	is the index of the next first operator in the recording; i.e., 0.
+
+	\param var_index
+	The input value of var_index does not matter. Its output value is the
+	index of the first result variable corresponding to the the first
+	operator; i.e., 0.
+	*/
+	void start_forward(
+	OpCode& op, const size_t*& op_arg, size_t& op_index, size_t& var_index)
+	{	using CppAD::NumVar;
+		using CppAD::NumInd;
+
+		op        = op_          = rec_op_[0]; 
+		op_arg_   = 0;
+		op_arg    = rec_op_arg_;
+		op_index  = op_index_    = 0;
+		var_index = var_index_   = 0;
+# ifndef NDEBUG
+		CPPAD_ASSERT_UNKNOWN( op_         == NonOp );
+		CPPAD_ASSERT_UNKNOWN( NumVar(op_) == 1     );
+		CPPAD_ASSERT_UNKNOWN( NumInd(op_) == 0     );
+# endif
+		return;
+	}
+
+	/*!
+	Play back the next operator during a forward sweep.
+
+	Use start_forward to initialize to the first operator; i.e.,
+	the NonOp at the beginning of the recording. The following call to
+	next_forward will give the operator following that NonOp.
+
+	\param op
+	The input value of op does not matter. Its output value is the
+	next operator in the recording.
+
+	\param op_arg
+	The input value of *op_arg does not matter. Its output value is the
+	beginning of the vector of argument indices for this operation.
+
+	\param op_index
+	The input value of op_index does not matter. Its output value
+	is the index of the next operator in the recording.
+
+	\param var_index
+	The input value of var_index does not matter. Its output value is the
+	index of the first result variable corresponding to the operator op.
+	*/
+
+	void next_forward(
+	OpCode& op, const size_t*& op_arg, size_t& op_index, size_t& var_index)
+	{	using CppAD::NumVar;
+		using CppAD::NumInd;
+
+		op_index    = ++op_index_;
+		op_arg_    += NumInd(op_);
+		var_index_ += NumVar(op_);
+
+		op          = op_         = rec_op_[ op_index_ ];
+		op_arg      = op_arg_ + rec_op_arg_;
+		var_index   = var_index_;
+
+		CPPAD_ASSERT_UNKNOWN( op_index_  < num_rec_op_ );
+		CPPAD_ASSERT_UNKNOWN( op_arg_ + NumInd(op) <= num_rec_op_arg_ );
+		CPPAD_ASSERT_UNKNOWN( var_index_ + NumVar(op) <= num_rec_var_ );
 	}
 
 };

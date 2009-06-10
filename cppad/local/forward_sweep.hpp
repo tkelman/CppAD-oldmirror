@@ -3,7 +3,7 @@
 # define CPPAD_FORWARD_SWEEP_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-08 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-09 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -166,15 +166,14 @@ size_t forward_sweep(
 	Base                 *Taylor
 )
 {
-	size_t        numop;
+	size_t     numop_m1;
 	OpCode           op;
 	size_t         i_op;
 	size_t        i_var;
 	size_t        i_ind;
-	size_t        n_var;
-	size_t        n_ind;
 
 	const size_t   *ind = 0;
+	const size_t *ind_0 = 0;
 	const Base       *P = 0;
 	const Base       *X = 0;
 	const Base       *Y = 0;
@@ -192,6 +191,8 @@ size_t forward_sweep(
 
 	size_t            i;
 	size_t          len;
+	size_t        n_var = 0;
+	size_t        n_ind = 0;
 
 
 	// initialize the comparision operator (ComOp) counter
@@ -215,34 +216,22 @@ size_t forward_sweep(
 	CPPAD_ASSERT_UNKNOWN( Rec->TotNumVar() == numvar );
 
 	// set the number of operators
-	numop = Rec->NumOp();
+	numop_m1 = Rec->NumOp() - 1;
 
 	// skip the NonOp at the beginning of the recording
-	i_op  = 0;
-	i_var = 0;
-	i_ind = 0;
-	op    = Rec->GetOp(i_op);
-	n_var = NumVar(op);
-	n_ind = NumInd(op);
-	CPPAD_ASSERT_UNKNOWN( op == NonOp );
-	CPPAD_ASSERT_UNKNOWN( n_var == 1 );
-	CPPAD_ASSERT_UNKNOWN( n_ind == 0 );
-
-	while(++i_op < numop)
+	Rec->start_forward(op, ind, i_op, i_var);
+	ind_0 = ind;
+	while(i_op < numop_m1)
 	{
-		// increment for previous op
-		i_var += n_var;
-		i_ind += n_ind;
 
 		// this op
-		op     = Rec->GetOp(i_op);
+		Rec->next_forward(op, ind, i_op, i_var);
 
 		// number of variables
 		n_var  = NumVar(op);
 
 		// index field values for this op
 		n_ind  = NumInd(op);
-		ind    = Rec->GetInd(n_ind, i_ind);
 
 		// value of z for this op
 		Z      = Taylor + i_var * J;
@@ -533,7 +522,8 @@ size_t forward_sweep(
 				);
 
 				if( VectorVar[ i + ind[0] ] )
-				{	i   = VectorInd[ i + ind[0] ];
+				{	i     = VectorInd[ i + ind[0] ];
+					i_ind = ind - ind_0;
 					Rec->ReplaceInd(i_ind + 2, i);
 					CPPAD_ASSERT_UNKNOWN(i > 0 );
 					CPPAD_ASSERT_UNKNOWN( i < i_var );
@@ -541,7 +531,8 @@ size_t forward_sweep(
 					Z[d]  = Y[d];
 				}
 				else
-				{	i   = VectorInd[ i + ind[0] ];
+				{	i     = VectorInd[ i + ind[0] ];
+					i_ind = ind - ind_0;
 					Rec->ReplaceInd(i_ind + 2, 0);
 					Z[d] = *(Rec->GetPar(i));
 					i    = 0;
@@ -582,7 +573,8 @@ size_t forward_sweep(
 				);
 
 				if( VectorVar[ i + ind[0] ] )
-				{	i   = VectorInd[ i + ind[0] ];
+				{	i     = VectorInd[ i + ind[0] ];
+					i_ind = ind - ind_0;
 					Rec->ReplaceInd(i_ind + 2, i);
 					CPPAD_ASSERT_UNKNOWN(i > 0 );
 					CPPAD_ASSERT_UNKNOWN( i < i_var );
@@ -590,7 +582,8 @@ size_t forward_sweep(
 					Z[d]  = Y[d];
 				}
 				else
-				{	i   = VectorInd[ i + ind[0] ];
+				{	i     = VectorInd[ i + ind[0] ];
+					i_ind = ind - ind_0;
 					Rec->ReplaceInd(i_ind + 2, 0);
 					Z[d] = *(Rec->GetPar(i));
 					i    = 0;
