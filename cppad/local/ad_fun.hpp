@@ -113,7 +113,7 @@ public:
 
 	// does this AD operation sequence use VecAD<Base>::reference operands
 	bool use_VecAD(void) const
-	{	return play_.NumVecInd() > 0; }
+	{	return play_.num_rec_vecad_ind() > 0; }
 
 	// number of variables in opertion sequence
 	size_t size_var(void) const

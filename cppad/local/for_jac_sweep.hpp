@@ -61,7 +61,7 @@ for all the other variables.
 
 $head numvar$$
 is the number of rows in the entire sparsity pattern $italic ForJac$$.
-It must also be equal to $syntax%%Rec%->TotNumVar()%$$.
+It must also be equal to $syntax%%Rec%->num_rec_var()%$$.
 
 $head npv$$
 Is the number of elements of type $italic Pack$$
@@ -102,7 +102,7 @@ $subhead Other Variables and Operators$$
 The other variables follow the independent variables.
 For $latex i = n+1, \ldots , numvar-1$$,
 $latex j = 0 , \ldots , npv-1$$,
-and $latex k = n+1, \ldots ,$$ $syntax%%Rec%->NumOp() - 1%$$,
+and $latex k = n+1, \ldots ,$$ $syntax%%Rec%->num_rec_op() - 1%$$,
 $table
 	$bold field$$ $cnext 
 	$bold Value$$          
@@ -164,7 +164,7 @@ void ForJacSweep(
 	size_t            j;
 
 	// used by CExp operator 
-	bool use_VecAD = Rec->NumVecInd() > 0;
+	bool use_VecAD = Rec->num_rec_vecad_ind() > 0;
 	const Base  *left = 0, *right = 0;
 	const Pack  *trueCase = 0, *falseCase = 0;
 	Pack  *zero = CPPAD_NULL;
@@ -173,10 +173,10 @@ void ForJacSweep(
 		zero[j] = 0;
 	
 	// check numvar argument
-	CPPAD_ASSERT_UNKNOWN( Rec->TotNumVar() == numvar );
+	CPPAD_ASSERT_UNKNOWN( Rec->num_rec_var() == numvar );
 
 	// set the number of operators
-	numop_m1 = Rec->NumOp() - 1;
+	numop_m1 = Rec->num_rec_op() - 1;
 
 	// skip the NonOp at the beginning of the recording
         Rec->start_forward(op, ind, i_op, i_var);
@@ -435,7 +435,7 @@ void ForJacSweep(
 			CPPAD_ASSERT_UNKNOWN( n_ind == 3 );
 			
 			CPPAD_ASSERT_UNKNOWN( ind[0] > 0 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < Rec->NumVecInd() );
+			CPPAD_ASSERT_UNKNOWN( ind[0] < Rec->num_rec_vecad_ind() );
 
 			// ind[2] is variable corresponding to this load
 			if( ind[2] > 0 )
@@ -455,7 +455,7 @@ void ForJacSweep(
 			CPPAD_ASSERT_UNKNOWN( n_ind == 3 );
 			
 			CPPAD_ASSERT_UNKNOWN( ind[0] > 0 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < Rec->NumVecInd() );
+			CPPAD_ASSERT_UNKNOWN( ind[0] < Rec->num_rec_vecad_ind() );
 
 
 			// ind[2] is variable corresponding to this load
@@ -701,7 +701,7 @@ void ForJacSweep(
 # else
 	}
 # endif
-	CPPAD_ASSERT_UNKNOWN( (i_var + n_var) == Rec->TotNumVar() );
+	CPPAD_ASSERT_UNKNOWN( (i_var + n_var) == Rec->num_rec_var() );
 
 	// free vector of zeros
 	CPPAD_TRACK_DEL_VEC(zero);

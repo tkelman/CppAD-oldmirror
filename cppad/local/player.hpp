@@ -294,27 +294,27 @@ public:
 	}
 
 	/// Fetch number of variables in the recording.
-	size_t TotNumVar(void) const
+	size_t num_rec_var(void) const
 	{	return num_rec_var_; }
 
 	/// Fetch number of operators in the recording.
-	size_t NumOp(void) const
+	size_t num_rec_op(void) const
 	{	return num_rec_op_; }
 
 	/// Fetch number of VecAD indices in the recording.
-	size_t NumVecInd(void) const
+	size_t num_rec_vecad_ind(void) const
 	{	return num_rec_vecad_ind_; }
 
 	/// Fetch number of argument indices in the recording.
-	size_t NumInd(void) const
+	size_t num_rec_op_arg(void) const
 	{	return num_rec_op_arg_; }
 
 	/// Fetch number of parameters in the recording.
-	size_t NumPar(void) const
+	size_t num_rec_par(void) const
 	{	return num_rec_par_; }
 
 	/// Fetch number of characters (representing strings) in the recording.
-	size_t NumTxt(void) const
+	size_t num_rec_text(void) const
 	{	return num_rec_text_; }
 
 	/// Fetch a rough measure of amount of memory used by the recording. 

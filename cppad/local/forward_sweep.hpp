@@ -79,7 +79,7 @@ for all the other variables.
 
 $head numvar$$
 is the number of rows in the matrix $italic Taylor$$.
-It must also be equal to $syntax%%Rec%->TotNumVar()%$$.
+It must also be equal to $syntax%%Rec%->num_rec_var()%$$.
 
 
 $head J$$
@@ -113,7 +113,7 @@ $subhead Other Variables and Operators$$
 The other variables follow the independent variables.
 For $latex i = n+1, \ldots , numvar-1$$,
 $latex j = 0 , \ldots , d-1$$,
-and $latex k = n+1, \ldots ,$$ $syntax%%Rec%->NumOp() - 1%$$,
+and $latex k = n+1, \ldots ,$$ $syntax%%Rec%->num_rec_op() - 1%$$,
 $table
 	$bold field$$ $cnext 
 	$bold Value$$          
@@ -201,7 +201,7 @@ size_t forward_sweep(
 	// if this is an order zero calculation, initialize vector indices
 	size_t *VectorInd = CPPAD_NULL;  // address for each element
 	bool   *VectorVar = CPPAD_NULL;  // is element a variable
-	i = Rec->NumVecInd();
+	i = Rec->num_rec_vecad_ind();
 	if( i > 0 )
 	{	VectorInd = CPPAD_TRACK_NEW_VEC(i, VectorInd);
 		VectorVar = CPPAD_TRACK_NEW_VEC(i, VectorVar);
@@ -213,10 +213,10 @@ size_t forward_sweep(
 
 
 	// check numvar argument
-	CPPAD_ASSERT_UNKNOWN( Rec->TotNumVar() == numvar );
+	CPPAD_ASSERT_UNKNOWN( Rec->num_rec_var() == numvar );
 
 	// set the number of operators
-	numop_m1 = Rec->NumOp() - 1;
+	numop_m1 = Rec->num_rec_op() - 1;
 
 	// skip the NonOp at the beginning of the recording
 	Rec->start_forward(op, ind, i_op, i_var);
@@ -508,7 +508,7 @@ size_t forward_sweep(
 			CPPAD_ASSERT_UNKNOWN( n_ind == 3 );
 			
 			CPPAD_ASSERT_UNKNOWN( ind[0] > 0 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < Rec->NumVecInd() );
+			CPPAD_ASSERT_UNKNOWN( ind[0] < Rec->num_rec_vecad_ind() );
 			CPPAD_ASSERT_UNKNOWN( VectorInd != CPPAD_NULL );
 			CPPAD_ASSERT_UNKNOWN( VectorVar != CPPAD_NULL );
 
@@ -518,7 +518,7 @@ size_t forward_sweep(
 					i < VectorInd[ind[0] - 1] 
 				);
 				CPPAD_ASSERT_UNKNOWN( 
-					i + ind[0] < Rec->NumVecInd() 
+					i + ind[0] < Rec->num_rec_vecad_ind() 
 				);
 
 				if( VectorVar[ i + ind[0] ] )
@@ -555,7 +555,7 @@ size_t forward_sweep(
 			CPPAD_ASSERT_UNKNOWN( n_ind == 3 );
 			
 			CPPAD_ASSERT_UNKNOWN( ind[0] > 0 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < Rec->NumVecInd() );
+			CPPAD_ASSERT_UNKNOWN( ind[0] < Rec->num_rec_vecad_ind() );
 			CPPAD_ASSERT_UNKNOWN( VectorInd != CPPAD_NULL );
 			CPPAD_ASSERT_UNKNOWN( VectorVar != CPPAD_NULL );
 
@@ -569,7 +569,7 @@ size_t forward_sweep(
 					"VecAD index value >= vector length"
 				);
 				CPPAD_ASSERT_UNKNOWN( 
-					i + ind[0] < Rec->NumVecInd() 
+					i + ind[0] < Rec->num_rec_vecad_ind() 
 				);
 
 				if( VectorVar[ i + ind[0] ] )
@@ -744,7 +744,7 @@ size_t forward_sweep(
 			CPPAD_ASSERT_UNKNOWN( n_var == 0 );
 			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
 			if( print & (d == 0) )
-			{	CPPAD_ASSERT_UNKNOWN( ind[0] < Rec->NumTxt() );
+			{	CPPAD_ASSERT_UNKNOWN( ind[0] < Rec->num_rec_text() );
 				std::cout << Rec->GetTxt(ind[0]);
 				std::cout << *(Rec->GetPar(ind[1]));
 			}
@@ -755,7 +755,7 @@ size_t forward_sweep(
 			CPPAD_ASSERT_UNKNOWN( n_var == 0);
 			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
 			if( print & (d == 0) )
-			{	CPPAD_ASSERT_UNKNOWN( ind[0] < Rec->NumTxt() );
+			{	CPPAD_ASSERT_UNKNOWN( ind[0] < Rec->num_rec_text() );
 				CPPAD_ASSERT_UNKNOWN( ind[1] < i_var );
 
 				X      = Taylor + ind[1] * J;
@@ -810,12 +810,12 @@ size_t forward_sweep(
 			if( d == 0 )
 			{	CPPAD_ASSERT_UNKNOWN( VectorInd != CPPAD_NULL );
 				CPPAD_ASSERT_UNKNOWN( VectorVar != CPPAD_NULL );
-				CPPAD_ASSERT_UNKNOWN( ind[0] < Rec->NumVecInd() );
+				CPPAD_ASSERT_UNKNOWN( ind[0] < Rec->num_rec_vecad_ind() );
 
 				i   = ind[1];
 				CPPAD_ASSERT_UNKNOWN(i < VectorInd[ind[0] - 1]);
 				CPPAD_ASSERT_UNKNOWN( 
-					i + ind[0] < Rec->NumVecInd() 
+					i + ind[0] < Rec->num_rec_vecad_ind() 
 				);
 				VectorInd[ i + ind[0] ] = ind[2];
 				VectorVar[ i + ind[0] ] = false;
@@ -832,13 +832,13 @@ size_t forward_sweep(
 			if( d == 0 )
 			{	CPPAD_ASSERT_UNKNOWN( VectorInd != CPPAD_NULL );
 				CPPAD_ASSERT_UNKNOWN( VectorVar != CPPAD_NULL );
-				CPPAD_ASSERT_UNKNOWN( ind[0] < Rec->NumVecInd() );
+				CPPAD_ASSERT_UNKNOWN( ind[0] < Rec->num_rec_vecad_ind() );
 				CPPAD_ASSERT_UNKNOWN( ind[2] < i_var );
 
 				i   = ind[1];
 				CPPAD_ASSERT_UNKNOWN(i < VectorInd[ind[0] - 1]);
 				CPPAD_ASSERT_UNKNOWN( 
-					i + ind[0] < Rec->NumVecInd() 
+					i + ind[0] < Rec->num_rec_vecad_ind() 
 				);
 				VectorInd[ i + ind[0] ] = ind[2];
 				VectorVar[ i + ind[0] ] = true;
@@ -853,7 +853,7 @@ size_t forward_sweep(
 			if( d == 0 )
 			{	CPPAD_ASSERT_UNKNOWN( VectorInd != CPPAD_NULL );
 				CPPAD_ASSERT_UNKNOWN( VectorVar != CPPAD_NULL );
-				CPPAD_ASSERT_UNKNOWN( ind[0] < Rec->NumVecInd() );
+				CPPAD_ASSERT_UNKNOWN( ind[0] < Rec->num_rec_vecad_ind() );
 				CPPAD_ASSERT_UNKNOWN( ind[1] < i_var );
 
 				X   = Taylor + ind[1] * J;
@@ -864,7 +864,7 @@ size_t forward_sweep(
 					"VecAD index value >= vector length"
 				);
 				CPPAD_ASSERT_UNKNOWN( 
-					i + ind[0] < Rec->NumVecInd() 
+					i + ind[0] < Rec->num_rec_vecad_ind() 
 				);
 				VectorInd[ i + ind[0] ] = ind[2];
 				VectorVar[ i + ind[0] ] = false;
@@ -881,7 +881,7 @@ size_t forward_sweep(
 			if( d == 0 )
 			{	CPPAD_ASSERT_UNKNOWN( VectorInd != CPPAD_NULL );
 				CPPAD_ASSERT_UNKNOWN( VectorVar != CPPAD_NULL );
-				CPPAD_ASSERT_UNKNOWN( ind[0] < Rec->NumVecInd() );
+				CPPAD_ASSERT_UNKNOWN( ind[0] < Rec->num_rec_vecad_ind() );
 				CPPAD_ASSERT_UNKNOWN( ind[1] < i_var );
 				CPPAD_ASSERT_UNKNOWN( ind[2] < i_var );
 
@@ -893,7 +893,7 @@ size_t forward_sweep(
 					"VecAD index value >= vector length"
 				);
 				CPPAD_ASSERT_UNKNOWN( 
-					i + ind[0] < Rec->NumVecInd() 
+					i + ind[0] < Rec->num_rec_vecad_ind() 
 				);
 				VectorInd[ i + ind[0] ] = ind[2];
 				VectorVar[ i + ind[0] ] = true;
@@ -955,7 +955,7 @@ size_t forward_sweep(
 # else
 	}
 # endif
-	CPPAD_ASSERT_UNKNOWN( (i_var + n_var) == Rec->TotNumVar() );
+	CPPAD_ASSERT_UNKNOWN( (i_var + n_var) == Rec->num_rec_var() );
 	if( VectorInd != CPPAD_NULL )
 		CPPAD_TRACK_DEL_VEC(VectorInd);
 	if( VectorVar != CPPAD_NULL )

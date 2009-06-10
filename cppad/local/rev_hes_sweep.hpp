@@ -62,7 +62,7 @@ for the dependent variables with respect to the independent variables.
 $head numvar$$
 is the number of rows in the entire sparsity patterns
 $italic ForJac$$ and $italic RevHes$$.
-It must also be equal to $syntax%%Rec%->TotNumVar()%$$.
+It must also be equal to $syntax%%Rec%->num_rec_var()%$$.
 
 $head npv$$
 Is the number of elements of type $italic Pack$$
@@ -155,7 +155,7 @@ void RevHesSweep(
 	size_t             j;
 
 	// check numvar argument
-	CPPAD_ASSERT_UNKNOWN( Rec->TotNumVar() == numvar );
+	CPPAD_ASSERT_UNKNOWN( Rec->num_rec_var() == numvar );
 	CPPAD_ASSERT_UNKNOWN( numvar > 0 );
 
 	// Initialize
@@ -444,7 +444,7 @@ void RevHesSweep(
 			CPPAD_ASSERT_UNKNOWN( n_ind == 3 );
 			
 			CPPAD_ASSERT_UNKNOWN( ind[0] > 0 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < Rec->NumVecInd() );
+			CPPAD_ASSERT_UNKNOWN( ind[0] < Rec->num_rec_vecad_ind() );
 
 			// ind[2] is variable corresponding to this load
 			if( ind[2] > 0 )
@@ -460,7 +460,7 @@ void RevHesSweep(
 			CPPAD_ASSERT_UNKNOWN( n_ind == 3 );
 			
 			CPPAD_ASSERT_UNKNOWN( ind[0] > 0 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < Rec->NumVecInd() );
+			CPPAD_ASSERT_UNKNOWN( ind[0] < Rec->num_rec_vecad_ind() );
 
 			// ind[2] is variable corresponding to this load
 			if( ind[2] > 0 )

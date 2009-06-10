@@ -71,7 +71,7 @@ $latex u^{(j)}$$ for $latex j = 0 , \ldots , d$$.
 
 $head numvar$$
 is the number of rows in the matrices $italic Taylor$$ and $italic Partial$$.
-It must also be equal to $syntax%%Rec%->TotNumVar()%$$.
+It must also be equal to $syntax%%Rec%->num_rec_var()%$$.
 
 $head J$$
 Is the number of columns in the coefficient matrix $italic Taylor$$.
@@ -170,7 +170,7 @@ void ReverseSweep(
 	const Base   zero = Base(0);
 
 	// check numvar argument
-	CPPAD_ASSERT_UNKNOWN( Rec->TotNumVar() == numvar );
+	CPPAD_ASSERT_UNKNOWN( Rec->num_rec_var() == numvar );
 	CPPAD_ASSERT_UNKNOWN( numvar > 0 );
 
 	// Initialize
