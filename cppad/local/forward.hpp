@@ -3,7 +3,7 @@
 # define CPPAD_FORWARD_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-08 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-09 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -77,12 +77,17 @@ Vector ADFun<Base>::Forward(size_t p, const Vector &up)
 	}
 
 	// evaluate the derivatives
+# if 0
 	if( p == 0 ) compare_change_ = forward0sweep(
 		true, total_num_var_, &play_, taylor_col_dim_, taylor_
 	);
-	else forward_sweep(
+	else 
+# endif
+	size_t compare_change = forward_sweep(
 		true, p, total_num_var_, &play_, taylor_col_dim_, taylor_
 	);
+	if( p == 0 )
+		compare_change_ = compare_change;
 
 	// return the p-th order taylor_ coefficients for dependent variables
 	Vector vp(m);
