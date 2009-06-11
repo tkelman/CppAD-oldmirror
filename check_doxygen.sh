@@ -3,6 +3,7 @@
 list="
 	op_code.hpp
 	player.hpp
+	abs_op.hpp
 "
 for name in $list
 do

@@ -241,11 +241,7 @@ size_t forward_sweep(
 		switch( op )
 		{
 			case AbsOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
-			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-			X   = Taylor + ind[0] * J;
-			ForAbsOp(d, Z, X);
+			forward_abs_op(i_var, ind, d, J, Taylor);
 			break;
 			// -------------------------------------------------
 

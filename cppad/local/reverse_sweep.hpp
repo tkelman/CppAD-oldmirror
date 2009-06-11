@@ -208,13 +208,7 @@ void ReverseSweep(
 		{
 
 			case AbsOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
-			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
-			X  = Taylor  + ind[0] * J;
-			pX = Partial + ind[0] * K;
-			RevAbsOp(d, Z, X, pZ, pX);
+			reverse_abs_op(i_var, ind, d, J, Taylor, K, Partial);
 			break;
 			// --------------------------------------------------
 
