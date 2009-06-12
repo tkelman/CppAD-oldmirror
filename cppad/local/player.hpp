@@ -1,6 +1,8 @@
 /* $Id$ */
 # ifndef CPPAD_PLAYER_INCLUDED
 # define CPPAD_PLAYER_INCLUDED
+CPPAD_BEGIN_NAMESPACE
+
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-09 Bradley M. Bell
 
@@ -12,11 +14,13 @@ A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
-CPPAD_BEGIN_NAMESPACE
 
 /*!
-\brief class used to store and play back an operation sequence recording.
+Class used to store and play back an operation sequence recording.
 
+\tparam Base
+These were AD<Base> operations when recorded. Operations during playback
+are done using the type Base.
 */
 template <class Base>
 class player {
@@ -383,7 +387,7 @@ public:
 	}
 
 	/*!
-	Play back the next operator during a forward sweep.
+	Fetch the next operator during a forward sweep.
 
 	Use start_forward to initialize to the first operator; i.e.,
 	the NonOp at the beginning of the recording. 
@@ -438,7 +442,7 @@ public:
 	}
 
 	/*!
-	Play back the next operator during a reverse sweep.
+	Fetch the next operator during a reverse sweep.
 
 	Use start_reverse to initialize to reverse play back.
 	The first call to next_reverse (after start_reverse) will give the 
@@ -494,5 +498,4 @@ public:
 };
 
 CPPAD_END_NAMESPACE
-
 # endif

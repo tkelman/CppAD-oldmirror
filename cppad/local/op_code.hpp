@@ -1,6 +1,7 @@
 /* $Id$ */
 # ifndef CPPAD_OP_CODE_INCLUDED
 # define CPPAD_OP_CODE_INCLUDED
+CPPAD_BEGIN_NAMESPACE
 
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-09 Bradley M. Bell
@@ -25,7 +26,6 @@ Defines the OpCode enum type and functions related to it.
 
 # include <cppad/local/define.hpp>
 
-CPPAD_BEGIN_NAMESPACE
 
 /*!
 Type used to distinguish different AD<Base> atomic operations.
@@ -86,9 +86,9 @@ enum OpCode {
 };
 
 /*!
-Table containing number of indices for the corresponding operator.
+Table containing number of arguments for the corresponding operator.
 
-The i-th element in this table specifes the number of indices stored for each
+The i-th element in this table specifes the number of arguments stored for each
 occurance of the operator that is the i-th value in the OpCode enum type.
 For example, for the first three OpCode enum values we have
 \verbatim
@@ -97,7 +97,7 @@ AbsOp    0                1  index of variable we are taking absolute value of
 AcosOp   1                1  index of variable we are taking cosine of
 AddpvOp  1                2  indices of parameter and variable we are adding
 \endverbatim
-Note that the meaning of the indices depends on the operator.
+Note that the meaning of the arguments depends on the operator.
 */
 const size_t NumIndTable[] = {
 	1, // AbsOp
@@ -143,13 +143,13 @@ const size_t NumIndTable[] = {
 };
 
 /*!
-Fetch the number of indices for a specified operator.
+Fetch the number of arguments for a specified operator.
 
 \return
-Number of indices used by the specified operator.
+Number of arguments corresponding to the specified operator.
 
 \param op 
-Operator for which we are fetching the number of indices.
+Operator for which we are fetching the number of arugments.
 */
 inline size_t NumInd( OpCode op)
 {
@@ -329,7 +329,7 @@ is the index for the variable corresponding to the result of this operation
 The operator code (OpCode) for this operation.
 
 \param ind
-is the vector of indices for this operation
+is the vector of argument indices for this operation
 (must have NumInd(op) elements).
 
 \param nfz
@@ -587,5 +587,4 @@ void printOp(
 }
 
 CPPAD_END_NAMESPACE
-
 # endif
