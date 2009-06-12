@@ -12,8 +12,7 @@ A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
-//  BEGIN CppAD namespace
-namespace CppAD {
+CPPAD_BEGIN_NAMESPACE
 
 /*!
 \brief class used to store and play back an operation sequence recording.
@@ -494,6 +493,6 @@ public:
 
 };
 
-} // END CppAD namespace
+CPPAD_END_NAMESPACE
 
 # endif

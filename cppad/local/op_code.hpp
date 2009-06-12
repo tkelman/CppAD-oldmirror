@@ -19,7 +19,13 @@ Defines the OpCode enum type and functions related to it.
 
 */
 
-namespace CppAD {
+# include <string>
+# include <sstream>
+# include <iomanip>
+
+# include <cppad/local/define.hpp>
+
+CPPAD_BEGIN_NAMESPACE
 
 /*!
 Type used to distinguish different AD<Base> atomic operations.
@@ -36,55 +42,48 @@ operands have type AD<Base> use the following convention for thier endings:
 For example, AddpvOp represents the addition operator where the left
 operand is a parameter and the right operand is a variable.
 */
-	enum OpCode {
-		AbsOp,    //  abs(variable)
-		AcosOp,   // asin(variable)
-		AddpvOp,  //      parameter  + variable
-		AddvpOp,  //      variable   + parameter
-		AddvvOp,  //      variable   + variable
-		AsinOp,   // asin(variable)
-		AtanOp,   // atan(variable)
-		CExpOp,   // CondExp(cop, left, right, trueCase, falseCase)
-		ComOp,    // Compare(cop, result, left, right)
-		CosOp,    //  cos(variable)
-		CoshOp,   // cosh(variable)
-		DisOp,    //  dis(variable,    index)
-		DivpvOp,  //      parameter  / variable
-		DivvpOp,  //      variable   / parameter
-		DivvvOp,  //      variable   / variable
-		ExpOp,    //  exp(variable)
-		LdpOp,    //    z[parameter]
-		LdvOp,    //    z[variable]
-		InvOp,    //                             independent variable
-		LogOp,    //  log(variable)
-		MulpvOp,  //      parameter  * variable
-		MulvpOp,  //      variable   * parameter
-		MulvvOp,  //      variable   * variable
-		NonOp,    //                             space holder
-		ParOp,    //      parameter
-		PowvpOp,  //  pow(variable,    parameter)
-		PowpvOp,  //  pow(parameter,   variable)
-		PowvvOp,  //  pow(variable,    variable)
-		PripOp,   //      text         parameter
-		PrivOp,   //      text         parameter
-		SinOp,    //  sin(variable)
-		SinhOp,   // sinh(variable)
-		SqrtOp,   // sqrt(variable)
-		StppOp,   //    z[parameter] = parameter
-		StvpOp,   //    z[variable]  = parameter
-		StpvOp,   //    z[parameter] = variable
-		StvvOp,   //    z[variable]  = variable
-		SubpvOp,  //      parameter  - variable
-		SubvpOp,  //      variable   - parameter
-		SubvvOp   //      variable   - variable
-	};
-}
-
-# include <string>
-# include <sstream>
-# include <iomanip>
-
-namespace CppAD {
+enum OpCode {
+	AbsOp,    //  abs(variable)
+	AcosOp,   // asin(variable)
+	AddpvOp,  //      parameter  + variable
+	AddvpOp,  //      variable   + parameter
+	AddvvOp,  //      variable   + variable
+	AsinOp,   // asin(variable)
+	AtanOp,   // atan(variable)
+	CExpOp,   // CondExp(cop, left, right, trueCase, falseCase)
+	ComOp,    // Compare(cop, result, left, right)
+	CosOp,    //  cos(variable)
+	CoshOp,   // cosh(variable)
+	DisOp,    //  dis(variable,    index)
+	DivpvOp,  //      parameter  / variable
+	DivvpOp,  //      variable   / parameter
+	DivvvOp,  //      variable   / variable
+	ExpOp,    //  exp(variable)
+	LdpOp,    //    z[parameter]
+	LdvOp,    //    z[variable]
+	InvOp,    //                             independent variable
+	LogOp,    //  log(variable)
+	MulpvOp,  //      parameter  * variable
+	MulvpOp,  //      variable   * parameter
+	MulvvOp,  //      variable   * variable
+	NonOp,    //                             space holder
+	ParOp,    //      parameter
+	PowvpOp,  //  pow(variable,    parameter)
+	PowpvOp,  //  pow(parameter,   variable)
+	PowvvOp,  //  pow(variable,    variable)
+	PripOp,   //      text         parameter
+	PrivOp,   //      text         parameter
+	SinOp,    //  sin(variable)
+	SinhOp,   // sinh(variable)
+	SqrtOp,   // sqrt(variable)
+	StppOp,   //    z[parameter] = parameter
+	StvpOp,   //    z[variable]  = parameter
+	StpvOp,   //    z[parameter] = variable
+	StvvOp,   //    z[variable]  = variable
+	SubpvOp,  //      parameter  - variable
+	SubvpOp,  //      variable   - parameter
+	SubvvOp   //      variable   - variable
+};
 
 /*!
 Table containing number of indices for the corresponding operator.
@@ -587,6 +586,6 @@ void printOp(
 	std::cout << std::endl;
 }
 
-} // END CppAD namespace
+CPPAD_END_NAMESPACE
 
 # endif

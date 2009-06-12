@@ -13,8 +13,7 @@ A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
-// BEGIN CppAD namespace
-namespace CppAD {
+CPPAD_BEGIN_NAMESPACE
 
 /*!
 Forward mode Taylor coefficient of the specfied order result of AbsOp operation.
@@ -69,86 +68,6 @@ inline void forward_abs_op(
 	else	z[p] = zero;
 }
 
-/*
-------------------------------------------------------------------------------
-$begin RevAbsOp$$ $comment CppAD Developer Documentation$$
-$spell
-	Abs
-	Taylor
-	const
-	inline
-	Op
-	px
-	py
-	pz
-$$
-
-$index abs, reverse$$
-$index reverse, abs$$
-$index RevAbsOp$$
-
-$section Reverse Mode Absolute Value Function$$
-
-$head Syntax$$
-
-$syntax%inline void RevAbsOp(size_t %d%,
-	const %Base% *%z%, const %Base% *%x%,
-	 %Base% *%pz%, %Base% *%px%)%$$
-
-$head Description$$
-We are given the partial derivatives for a function
-$latex G(z, x)$$ and we wish to compute the partial derivatives for
-the function
-$latex \[
-	H(x) = G [ Z(x) , x ]
-\]$$
-where $latex Z(x)$$ is defined as the 
-$th d$$ order Taylor coefficient row vector for $italic Z$$ as
-a function of the corresponding row vector for $italic X$$ 
-and
-$latex \[
-	Z = Abs(X)
-\]$$
-Note that $italic Z$$ has been used both the original absolute value 
-function and for the corresponding mapping of Taylor coefficients.
-
-$head x$$
-The vector $italic x$$ has length $latex d+1$$ and contains the
-$th d$$ order Taylor coefficient row vector for $italic X$$.
-
-
-$head z$$
-The vector $italic z$$ has length $latex d+1$$ and contains
-$th d$$ order Taylor coefficient row vector for $italic Z$$.
-
-
-$head On Input$$
-
-$subhead px$$
-The vector $italic px$$ has length $latex d+1$$ and 
-$syntax%%px%[%j%]%$$ contains the partial for $italic G$$
-with respect to the $th j$$ order Taylor coefficient for $italic X$$.
-
-$subhead pz$$
-The vector $italic pz$$ has length $latex d+1$$ and 
-$syntax%%pz%[%j%]%$$ contains the partial for $italic G$$
-with respect to the $th j$$ order Taylor coefficient for $italic Y$$.
-
-$head On Output$$
-
-$subhead px$$
-The vector $italic px$$ has length $latex d+1$$ and 
-$syntax%%px%[%j%]%$$ contains the partial for $italic H$$
-with respect to the $th j$$ order Taylor coefficient for $italic X$$.
-
-$subhead pz$$
-The vector $italic pz$$ has length $latex d+1$$ and 
-its contents are no longer specified; i.e., it has
-been used for work space.
-
-$end
-------------------------------------------------------------------------------
-*/
 /*!
 Reverse mode Partial derivatives of the specfied order for AbsOp.
 
@@ -218,6 +137,6 @@ inline void reverse_abs_op(
 
 }
 
-} // END CppAD namespace
+CPPAD_END_NAMESPACE
 
 # endif
