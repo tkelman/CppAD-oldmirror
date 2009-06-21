@@ -43,6 +43,7 @@ nobase_myinclude_HEADERS =  \
 	cppad/CheckSimpleVector.h \
 	cppad/CheckNumericType.h \
 	cppad/config.h \
+	cppad/configure.hpp \
 	cppad/check_numeric_type.hpp \
 	cppad/check_simple_vector.hpp \
 	cppad/cppad.hpp \
@@ -134,7 +135,6 @@ nobase_myinclude_HEADERS =  \
 	cppad/local/output.hpp \
 	cppad/local/par_var.hpp \
 	cppad/local/pow.hpp \
-	cppad/local/preprocessor.hpp \
 	cppad/local/print_for.hpp \
 	cppad/local/near_equal_ext.hpp \
 	cppad/local/reverse.hpp \

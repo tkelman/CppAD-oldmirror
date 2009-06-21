@@ -1,10 +1,11 @@
 #! /bin/bash
 #
 list="
+	abs_op.hpp
+	configure.hpp
+	define.hpp
 	op_code.hpp
 	player.hpp
-	abs_op.hpp
-	define.hpp
 "
 for name in $list
 do
