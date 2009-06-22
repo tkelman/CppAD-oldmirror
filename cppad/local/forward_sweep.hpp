@@ -223,7 +223,6 @@ size_t forward_sweep(
 	ind_0 = ind;
 	while(i_op < numop_m1)
 	{
-
 		// this op
 		Rec->next_forward(op, ind, i_op, i_var);
 
@@ -241,7 +240,7 @@ size_t forward_sweep(
 		switch( op )
 		{
 			case AbsOp:
-			forward_abs_op(i_var, ind, d, J, Taylor);
+			forward_abs_op(d, i_var, ind, J, Taylor);
 			break;
 			// -------------------------------------------------
 

@@ -19,6 +19,20 @@ Define processor symbols and macros that are used by CppAD.
 
 */
 
+/*!
+\def CPPAD_USE_FORWARD0SWEEP
+If ture, use compute zero order sweeps using a specialized routine.
+
+The value of this define should be zero or one. 
+If it is one, a specialized routine is used for zero order forward sweeps.
+Otherwise, use the general forward routine is used for zero order.
+Using the specialized routine is an optimization that makes the source
+more complicated and a significant speed improvement has not been 
+verified (as yet).
+This preprocessor symbol makes it easier to compare these two options.
+*/
+# define CPPAD_USE_FORWARD0SWEEP 1
+
 /*! 
 \def CPPAD_BEGIN_NAMESPACE
 Declares beginning of the CppAD namespace is a way not reconized by doxygen.

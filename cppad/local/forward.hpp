@@ -77,17 +77,21 @@ Vector ADFun<Base>::Forward(size_t p, const Vector &up)
 	}
 
 	// evaluate the derivatives
-# if 0
+# if CPPAD_USE_FORWARD0SWEEP
 	if( p == 0 ) compare_change_ = forward0sweep(
 		true, total_num_var_, &play_, taylor_col_dim_, taylor_
 	);
 	else 
-# endif
+	forward_sweep(
+		true, p, total_num_var_, &play_, taylor_col_dim_, taylor_
+	);
+# else
 	size_t compare_change = forward_sweep(
 		true, p, total_num_var_, &play_, taylor_col_dim_, taylor_
 	);
 	if( p == 0 )
 		compare_change_ = compare_change;
+# endif
 
 	// return the p-th order taylor_ coefficients for dependent variables
 	Vector vp(m);

@@ -28,6 +28,9 @@ The C++ source code corresponding to this operation is
 	z = abs(x)
 \endverbatim
 
+\param p
+order of the Taylor coefficient that we are computing.
+
 \param i_z
 variable index corresponding to the result for this operation; 
 i.e. the row index in taylor to z. 
@@ -35,9 +38,6 @@ i.e. the row index in taylor to z.
 \param arg
 arg[0] is the variable index corresponding to the argument for this operation;
 i.e. the row index in taylor corresponding to x.
-
-\param p
-order of the Taylor coefficient that we are computing.
 
 \param nc_taylor
 number of colums in the matrix containing all the Taylor coefficients.
@@ -60,9 +60,9 @@ corresponding to z.
 */
 template <class Base>
 inline void forward_abs_op(
+	size_t p           ,
 	size_t i_z         ,
 	const size_t *arg  ,
-	size_t p           ,
 	size_t nc_taylor   , 
 	Base   *taylor     )
 {
@@ -94,6 +94,50 @@ inline void forward_abs_op(
 }
 
 /*!
+Zero order Forward mode Taylor coefficient for AbsOp operation.
+
+This has the same specifications as the forward_abs_op, in the special case
+where the argument p is zero.
+
+\param i_z
+see forward_abs_op.
+
+\param arg
+see forward_abs_op.
+
+\param nc_taylor
+see forward_abs_op.
+
+\param taylor
+see forward_abs_op.
+
+*/
+template <class Base>
+inline void forward_abs_op_0(
+	size_t i_z         ,
+	const size_t *arg  ,
+	size_t nc_taylor   , 
+	Base   *taylor     )
+{
+
+	// check assumptions
+	CPPAD_ASSERT_UNKNOWN( NumInd(AbsOp) == 1 );
+	CPPAD_ASSERT_UNKNOWN( NumVar(AbsOp) == 1 );
+	CPPAD_ASSERT_UNKNOWN( arg[0] < i_z );
+	CPPAD_ASSERT_UNKNOWN( 0 < nc_taylor );
+
+	// Taylor coefficients corresponding to argument
+	Base x0 = *(taylor + arg[0] * nc_taylor);
+
+	// Taylor coefficients corresponding to result
+	Base *z = taylor + i_z * nc_taylor;
+
+	if( LessThanZero(x0) )
+		z[0]  = - x0;
+	else	z[0] = x0; 
+}
+
+/*!
 Reverse mode Partial derivatives of the specfied order for AbsOp.
 
 The C++ source code corresponding to this operation is
@@ -106,6 +150,9 @@ and it uses them to compute the partial derivatives of
 	H(x, ... ) = G[ z(x) , x , ... ]
 \endverbatim
 
+\param p
+order of the partial derivative that we are computing 
+
 \param i_z
 variable index corresponding to the result for this operation; 
 i.e. the row index in taylor to z. 
@@ -113,9 +160,6 @@ i.e. the row index in taylor to z.
 \param arg
 arg[0] is the variable index corresponding to the argument for this operation;
 i.e. the row index in taylor corresponding to x.
-
-\param p
-order of the partial derivative that we are computing 
 
 \param nc_taylor
 number of colums in the matrix containing all the Taylor coefficients.
@@ -154,9 +198,9 @@ for j = 0 , ... , p.
 */
 template <class Base>
 inline void reverse_abs_op(
+	size_t p            ,
 	size_t i_z          ,
 	const size_t *arg   ,
-	size_t p            ,
 	size_t nc_taylor    , 
 	const Base  *taylor ,
 	size_t nc_partial   ,

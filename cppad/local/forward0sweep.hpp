@@ -161,12 +161,9 @@ size_t forward0sweep(
 	size_t         i_op;
 	size_t        i_var;
 	size_t        i_ind;
-	size_t        n_var;
-	size_t        n_ind;
 
 	const size_t   *ind = 0;
 	const size_t *ind_0 = 0;
-	const Base     *P_0 = 0;
 	const Base       *P = 0;
 	const Base       *X = 0;
 	const Base       *Y = 0;
@@ -181,14 +178,16 @@ size_t forward0sweep(
 	Base             *W = 0;
 	Base             *U = 0;
 
-	size_t            i;
+	size_t          i;
 	size_t          len;
+	size_t          n_var = 0;
+	size_t          n_ind = 0;
 
 
 	// initialize the comparision operator (ComOp) counter
 	size_t compareCount = 0;
 
-	// if this is an order zero calculation, initialize vector indices
+	// This is an order zero calculation, initialize vector indices
 	size_t *VectorInd = CPPAD_NULL;  // address for each element
 	bool   *VectorVar = CPPAD_NULL;  // is element a variable
 	i = Rec->num_rec_vecad_ind();
@@ -201,6 +200,11 @@ size_t forward0sweep(
 		}
 	}
 
+	const Base     *P_0 = 0;
+	if( Rec->num_rec_par() > 0 )
+		P_0   = Rec->GetPar(0);
+
+
 
 	// check numvar argument
 	CPPAD_ASSERT_UNKNOWN( Rec->num_rec_var() == numvar );
@@ -209,21 +213,18 @@ size_t forward0sweep(
 	numop_m1 = Rec->num_rec_op() - 1;
 
 	// skip the NonOp at the beginning of the recording
-	if( Rec->num_rec_par() > 0 )
-		P_0   = Rec->GetPar(0);
-
 	Rec->start_forward(op, ind, i_op, i_var);
 	ind_0 = ind;
-	n_var = 1;
-	n_ind = 0;
 	while(i_op < numop_m1)
 	{
-		// check previous n_var and n_ind
-		CPPAD_ASSERT_UNKNOWN( n_var == NumVar(op) );
-		CPPAD_ASSERT_UNKNOWN( n_ind == NumInd(op) );
-
-		// next instruction
+		// this op
 		Rec->next_forward(op, ind, i_op, i_var);
+
+		// number of variables
+		n_var  = NumVar(op);
+
+		// index field values for this op
+		n_ind  = NumInd(op);
 
 		// value of z for this op
 		Z      = Taylor + i_var * J;
@@ -233,13 +234,7 @@ size_t forward0sweep(
 		switch( op )
 		{
 			case AbsOp:
-			n_var = 1;
-			n_ind = 1;
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-			X   = Taylor + ind[0] * J;
-			if( LessThanZero( X[0] ) )
-				Z[0] = - X[0];
-			else	Z[0] = X[0];
+			forward_abs_op_0(i_var, ind, J, Taylor);
 			break;
 			// -------------------------------------------------
 
