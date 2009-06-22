@@ -572,9 +572,8 @@ then
 		echo "$program"   >> $dir/build_test.log
 		if ! ./$program   >> $dir/build_test.log
 		then
-			failed="$program"
-			echo "Error: $failed failed."
-			echo "Error: $failed failed." >> $dir/build_test.log
+			echo "Error: $program failed."
+			echo "Error: $program failed." >> $dir/build_test.log
 			exit 1
 		fi
 		# add a new line between program outputs
@@ -600,7 +599,6 @@ then
 	fi
 	seed="123"
 	retape="false"
-	speed_test_example_failed="false"
 	for name in $list
 	do
 		# Note that example does not use command line arguments,
@@ -611,14 +609,10 @@ then
 		if ! ./speed/$name/$name correct  $seed $retape \
 			>> $dir/build_test.log
 		then
-			failed="speed/$name/$name"
-			echo "Error: $failed failed."
-			echo "Error: $failed failed." >> $dir/build_test.log
-			if [ "$name" != "example" ]
-			then
-				exit 1
-			fi
-			speed_test_example_failed="true"
+			program="speed/$name/$name"
+			echo "Error: $program failed."
+			echo "Error: $program failed." >> $dir/build_test.log
+			exit 1
 		fi
 		# add a new line between program outputs
 		echo ""  >> $dir/build_test.log
@@ -634,15 +628,6 @@ then
 	fi
 	echo "" >> $dir/build_test.log
 	#
-	if [ "$speed_test_example_failed" = "true" ]
-	then
-		msg="cppad-$version/speed/example/example failed,"
-		echo "$msg"
-		echo "$msg" >> build_test.log
-		msg="rerun with out other processes running at same time."
-		echo "$msg"
-		echo "$msg" >> build_test.log
-	fi
 	cd ..
 	if [ "$1" = "test" ]
 	then

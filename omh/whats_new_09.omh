@@ -40,6 +40,13 @@ assist you in learning about changes between various versions of CppAD.
 
 $head 09-22$$
 Fix compiler warnings during the $cref openmp_run.sh$$ test.
+$pre
+
+$$
+Changed $cref speed_example.cpp$$ to omit the $code speed_test$$ from
+the correctness result.
+In stead, a message is printed explaining that timing tests need
+to be run without a lot of other demands on the system.
 
 $head 09-21$$
 The configure instructions for $cref/IpoptDir/InstallUnix/IpoptDir/$$
