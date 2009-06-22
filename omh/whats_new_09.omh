@@ -38,6 +38,9 @@ This section contains a list of the changes to CppAD during 2009
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
 
+$head 09-22$$
+Fix compiler warnings during the $cref openmp_run.sh$$ test.
+
 $head 09-21$$
 The configure instructions for $cref/IpoptDir/InstallUnix/IpoptDir/$$
 had the wrong path for $code IpIpoptApplication.hpp$$.
