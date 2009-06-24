@@ -30,11 +30,14 @@ change_list="
 #
 # add_list
 # List of files that will be added to the repository during this commit.
+# The corresponding files will have svn:keywords "Id" property set on.
 # Do not use add_list to add directories; use the following instead:
 # 	svn add --non-recursive dir
 # 	svn commit directory -m "adding directory dir" dir
 # where dir is replaced by the name of the directory. 
 # Then use add_list to add the files within that directory.
+# If you do not want the Id property set, use svn add before running this
+# script and then include the file in the svn_change list.
 #
 # delete_list
 # List of files that will be deleted from the repository during this commit.
@@ -103,7 +106,7 @@ do
 done
 for file in $add_list
 do
-	echo "svn add $file ?"
+	echo "svn add $file ; svn propset svn:keywords "Id" $file ?"
 done
 for file in $delete_list $old_list
 do
@@ -150,6 +153,7 @@ echo "continuing commit"
 for file in $add_list
 do
 	svn add $file
+	svn propset svn:keywords "Id" $file
 done
 for file in $delete_list
 do
