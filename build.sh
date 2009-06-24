@@ -363,7 +363,7 @@ then
 				echo "$msg" 
 				exit 1
 			fi
-			msg="Ok: run_omhelp.sh doc $ext $flag"
+			msg="OK: run_omhelp.sh doc $ext $flag"
 			echo "$msg" 
 		done
 	done
@@ -385,7 +385,10 @@ then
 	if ! ./check_doxygen.sh
 	then
 		echo "Warnings of doxygen output."
-		exit 1
+		if [ "$2" == "test" ]
+		then
+			exit 1
+		fi
 	fi
 	#
 	echo "pushd doxydoc/latex ; make >& ../../doxygen_tex.log"
@@ -501,7 +504,7 @@ then
 		exit 1
 	fi
 	# -------------------------------------------------------------
-	# Test the help
+	# Test user documentation 
 	if [ ! -e "doc/index.xml" ]
 	then
 		echo "Error: doc/index.xml missing" >> $dir/build_test.log
@@ -520,10 +523,23 @@ then
 				echo "$msg" 
 				exit 1
 			fi
-			msg="Ok: run_omhelp.sh $user $ext"
+			msg="OK: run_omhelp.sh $user $ext"
 			echo "$msg" >> $dir/build_test.log
 		done
 	done
+	# Test developer documentation ---------------------------------------
+	echo "doxygen doxyfile >& doxygen.log"
+	if ! doxygen doxyfile >& doxygen.log
+	then
+		echo "Error: doxygen doxyfile"
+		exit 1
+	fi
+	if ! ./check_doxygen.sh
+	then
+		echo "Warnings of doxygen output; see doxygen.log."
+		exit 1
+	fi
+	echo "OK: doxygen doxyfile" >> $dir/build_test.log
 	# -------------------------------------------------------------
 	# Compile
 	#
@@ -548,8 +564,8 @@ then
 		echo "$dir/make.log"
 		exit 1
 	fi
-	echo "Ok: make" 
-	echo "Ok: make" >> $dir/build_test.log
+	echo "OK: make" 
+	echo "OK: make" >> $dir/build_test.log
 	# ---------------------------------------------------------------
 	# Run execuables
 	#
@@ -652,10 +668,10 @@ then
 		fi
 		exit 1
 	else
-		echo "Ok: gpl_license.sh."
+		echo "OK: gpl_license.sh."
 		if [ "$2" = "test" ]
 		then
-			echo "Ok: gpl_license.sh." >> build_test.log
+			echo "OK: gpl_license.sh." >> build_test.log
 		fi
 	fi
 	if [ "$1" = "gpl" ]
@@ -675,10 +691,10 @@ then
 		fi
 		exit 1
 	else
-		echo "Ok: dos_format.sh."
+		echo "OK: dos_format.sh."
 		if [ "$2" = "test" ]
 		then
-			echo "Ok: dos_format.sh." >> build_test.log
+			echo "OK: dos_format.sh." >> build_test.log
 		fi
 	fi
 	#
