@@ -21,42 +21,14 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 
 /*!
-Forward mode Taylor coefficient of the specfied order result of AbsOp operation.
+Forward mode Taylor coefficient for result of op = AbsOp.
 
 The C++ source code corresponding to this operation is
 \verbatim
-	z = abs(x)
+	z = abs(y)
 \endverbatim
 
-\param p
-order of the Taylor coefficient that we are computing.
-
-\param i_z
-variable index corresponding to the result for this operation; 
-i.e. the row index in taylor to z. 
-
-\param arg
-arg[0] is the variable index corresponding to the argument for this operation;
-i.e. the row index in taylor corresponding to x.
-
-\param nc_taylor
-number of colums in the matrix containing all the Taylor coefficients.
-
-\param taylor
-\b Input: taylor[ arg[0] * nc_taylor + j ] 
-is the j-th order Taylor coefficient corresponding to x for j = 0 , ... , p. 
-\n
-\b Input: taylor[ i_z * nc_taylor + j ] is the j-th order Taylor coefficient 
-corresponding to z for j = 0 , ... , p-1. 
-\n
-\b Output: taylor[ i_z * nc_taylor + p ] is the p-th order Taylor coefficient 
-corresponding to z. 
-
-\par Checked Assertions:
-\li NumInd(AbsOp) == 1
-\li NumVar(AbsOp) == 1
-\li arg[0] < i_z 
-\li p < nc_taylor
+\copydetails forward_unary_op
 */
 template <class Base>
 inline void forward_abs_op(
@@ -75,7 +47,7 @@ inline void forward_abs_op(
 	CPPAD_ASSERT_UNKNOWN( p < nc_taylor );
 
 	// Taylor coefficients corresponding to argument
-	Base *x = taylor + arg[0] * nc_taylor;
+	Base *y = taylor + arg[0] * nc_taylor;
 
 	// Taylor coefficients corresponding to result
 	Base *z = taylor + i_z * nc_taylor;
@@ -83,34 +55,25 @@ inline void forward_abs_op(
 	// order that decides positive, negative or zero
 	size_t k;
 	k = 0;
-	while( (k < p) & (x[k] == zero) )
+	while( (k < p) & (y[k] == zero) )
 		k++; 
 
-	if( GreaterThanZero(x[k]) )
-		z[p]  = x[p];
-	else if( LessThanZero(x[k]) )
-		z[p] = -x[p]; 
+	if( GreaterThanZero(y[k]) )
+		z[p]  = y[p];
+	else if( LessThanZero(y[k]) )
+		z[p] = -y[p]; 
 	else	z[p] = zero;
 }
 
 /*!
-Zero order Forward mode Taylor coefficient for AbsOp operation.
+Zero order forward mode Taylor coefficient for result of op = AbsOp.
 
-This has the same specifications as the forward_abs_op, in the special case
-where the argument p is zero.
+The C++ source code corresponding to this operation is
+\verbatim
+	z = abs(y)
+\endverbatim
 
-\param i_z
-see forward_abs_op.
-
-\param arg
-see forward_abs_op.
-
-\param nc_taylor
-see forward_abs_op.
-
-\param taylor
-see forward_abs_op.
-
+\copydetails forward_unary_op_0
 */
 template <class Base>
 inline void forward_abs_op_0(
@@ -127,75 +90,26 @@ inline void forward_abs_op_0(
 	CPPAD_ASSERT_UNKNOWN( 0 < nc_taylor );
 
 	// Taylor coefficients corresponding to argument
-	Base x0 = *(taylor + arg[0] * nc_taylor);
+	Base y0 = *(taylor + arg[0] * nc_taylor);
 
 	// Taylor coefficients corresponding to result
 	Base *z = taylor + i_z * nc_taylor;
 
-	if( LessThanZero(x0) )
-		z[0]  = - x0;
-	else	z[0] = x0; 
+	if( LessThanZero(y0) )
+		z[0]  = - y0;
+	else	z[0] = y0; 
 }
-
 /*!
-Reverse mode Partial derivatives of the specfied order for AbsOp.
+Reverse mode partial derivatives for result of op = AbsOp.
 
 The C++ source code corresponding to this operation is
 \verbatim
-	z = abs(x)
-\endverbatim
-This routine is given the partial derivatives of a function G(z, x, ... )
-and it uses them to compute the partial derivatives of 
-\verbatim
-	H(x, ... ) = G[ z(x) , x , ... ]
+	z = abs(y)
 \endverbatim
 
-\param p
-order of the partial derivative that we are computing 
-
-\param i_z
-variable index corresponding to the result for this operation; 
-i.e. the row index in taylor to z. 
-
-\param arg
-arg[0] is the variable index corresponding to the argument for this operation;
-i.e. the row index in taylor corresponding to x.
-
-\param nc_taylor
-number of colums in the matrix containing all the Taylor coefficients.
-
-\param taylor
-taylor[ arg[0] * nc_taylor + j ] 
-is the j-th order Taylor coefficient corresponding to x for j = 0 , ... , p-1. 
-\n
-taylor[ i_z * nc_taylor + j ] is the j-th order Taylor coefficient 
-corresponding to z for j = 0 , ... , p-1. 
-
-
-\param nc_partial
-number of colums in the matrix containing all the partial derivatives.
-
-\param partial
-\b Input: partial[ arg[0] * nc_taylor + j ] 
-is the j-th order partial derivative of G(z , x , ... ) with respect to z
-for j = 0 , ... , p. 
-\n
-\b Input: partial[ i_z * nc_taylor + j ] 
-is the j-th order partial derivative of G(z , x , ... ) with respect to x.
-for j = 0 , ... , p. 
-\n
-\b Output: partial[ arg[0] * nc_taylor + j ]
-is the j-th order partial derivative of H(x , ... ) with respect to x
-for j = 0 , ... , p.
-
-
-\par Checked Assumptions:
-\li NumInd(AbsOp) == 1
-\li NumVar(AbsOp) == 1
-\li arg[0] < i_z 
-\li p < nc_taylor
-\li p < nc_partial
+\copydetails reverse_unary_op
 */
+
 template <class Base>
 inline void reverse_abs_op(
 	size_t p            ,
@@ -217,28 +131,27 @@ inline void reverse_abs_op(
 	CPPAD_ASSERT_UNKNOWN( p < nc_partial );
 
 	// Taylor coefficients and partials corresponding to argument
-	const Base *x  = taylor  + arg[0] * nc_taylor;
-	Base *px       = partial + arg[0] * nc_partial;
+	const Base *y  = taylor  + arg[0] * nc_taylor;
+	Base *py       = partial + arg[0] * nc_partial;
 
 	// Taylor coefficients and partials corresponding to result
 	Base *pz       = partial +    i_z * nc_partial;
 
 	// order that decides positive, negative or zero
 	k = 0;
-	while( (k < p) & (x[k] == zero) )
+	while( (k < p) & (y[k] == zero) )
 		k++; 
 
-	if( GreaterThanZero(x[k]) )
-	{	// partial of z w.r.t x is +1
+	if( GreaterThanZero(y[k]) )
+	{	// partial of z w.r.t y is +1
 		for(j = k; j <= p; j++)
-			px[j] += pz[j];
+			py[j] += pz[j];
 	}
-	else if( LessThanZero(x[k]) )
-	{	// partial of z w.r.t x is -1
+	else if( LessThanZero(y[k]) )
+	{	// partial of z w.r.t y is -1
 		for(j = k; j <= p; j++)
-			px[j] -= pz[j];
+			py[j] -= pz[j];
 	}
-
 }
 
 CPPAD_END_NAMESPACE
