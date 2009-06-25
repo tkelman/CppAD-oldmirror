@@ -390,12 +390,12 @@ nobase_myinclude_HEADERS = \
 	cppad/local/tape_link.hpp \
 	cppad/local/recorder.hpp \
 	cppad/local/player.hpp \
+	cppad/local/prototype_op.hpp \
 	cppad/local/test_vector.hpp \
 	cppad/local/user_ad.hpp \
 	cppad/local/unary_minus.hpp \
 	cppad/local/unary_plus.hpp \
 	cppad/local/vec_ad.hpp \
-	cppad/local/prototype_op.hpp \
 	cppad/local/undef.hpp \
 	cppad/local/value.hpp \
 	cppad/local/var2par.hpp \
@@ -406,6 +406,7 @@ nobase_myinclude_HEADERS = \
 	cppad/speed/det_of_minor.hpp \
 	cppad/speed/ode_evaluate.hpp \
 	cppad/speed/sparse_evaluate.hpp \
+	cppad/local/sparse_op.hpp \
 	cppad/speed/uniform_01.hpp
 
 @CppAD_INTRODUCTION_FALSE@INTRODUCTION = 

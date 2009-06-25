@@ -48,6 +48,7 @@ $end
 # include <cppad/local/sin_cos.hpp>
 # include <cppad/local/sqrt_op.hpp>
 # include <cppad/local/sub_op.hpp>
+# include <cppad/local/sparse_op.hpp>
 
 
 # endif

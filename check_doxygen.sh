@@ -18,6 +18,7 @@ list="
 	op_code.hpp
 	player.hpp
 	prototype_op.hpp
+	sparse_op.hpp
 "
 for name in $list
 do

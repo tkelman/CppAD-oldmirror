@@ -28,7 +28,7 @@ The C++ source code corresponding to this operation is
 	z = abs(y)
 \endverbatim
 
-\copydetails forward_unary_op
+\copydetails forward_unary1_op
 */
 template <class Base>
 inline void forward_abs_op(
@@ -73,7 +73,7 @@ The C++ source code corresponding to this operation is
 	z = abs(y)
 \endverbatim
 
-\copydetails forward_unary_op_0
+\copydetails forward_unary1_op_0
 */
 template <class Base>
 inline void forward_abs_op_0(
@@ -107,7 +107,7 @@ The C++ source code corresponding to this operation is
 	z = abs(y)
 \endverbatim
 
-\copydetails reverse_unary_op
+\copydetails reverse_unary1_op
 */
 
 template <class Base>

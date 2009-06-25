@@ -521,6 +521,7 @@ then
 				msg="Error: run_omhelp.sh $user $ext"
 				echo "$msg" >> $dir/build_test.log 
 				echo "$msg" 
+				mv omhelp.$user.$ext.log $dir
 				exit 1
 			fi
 			msg="OK: run_omhelp.sh $user $ext"

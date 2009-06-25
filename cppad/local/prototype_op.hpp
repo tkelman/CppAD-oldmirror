@@ -17,11 +17,12 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 /*!
 \file prototype_op.hpp
+Documentation for generic cases (this generic cases are never used).
 */
 
 
 /*!
-Prototype for forward mode unary operator, never called.
+Prototype for forward mode unary operator with one result, never used.
 
 \tparam Base
 base type for the operator; i.e., this operation was recorded
@@ -53,27 +54,27 @@ corresponding to z for j = 0 , ... , p-1.
 is the p-th order Taylor coefficient 
 corresponding to z. 
 
-\par Checked Assertions where op is the unary operator:
+\par Checked Assertions where op is a unary operator with one result:
 \li NumInd(op) == 1
 \li NumVar(op) == 1
 \li i_y < i_z 
 \li p < nc_taylor
 */
 template <class Base>
-inline void forward_unary_op(
+inline void forward_unary1_op(
 	size_t p           ,
 	size_t i_z         ,
 	size_t i_y         ,
 	size_t nc_taylor   , 
 	Base*  taylor      )
 {
-	// this routine is never called, it is only used for documentaiton
+	// this routine is never used, it is only used for documentaiton
 	// of unary operators.
 	CPPAD_ASSERT_UNKNOWN( false );
 }
 
 /*!
-Prototype for zero order forward mode unary operator, never called. 
+Prototype for zero order forward mode unary operator with one result, never used. 
 
 \tparam Base
 base type for the operator; i.e., this operation was recorded
@@ -97,14 +98,14 @@ is the zero order Taylor coefficient corresponding to y.
 \b Output: taylor[ i_z * nc_taylor + 0 ] 
 is the zero order Taylor coefficient corresponding to z. 
 
-\par Checked Assertions where op is the unary operator:
+\par Checked Assertions where op is the unary operator with one result:
 \li NumInd(op) == 1
 \li NumVar(op) == 1
 \li i_y < i_z 
 \li p < nc_taylor
 */
 template <class Base>
-inline void forward_unary_op_0(
+inline void forward_unary1_op_0(
 	size_t i_z         ,
 	size_t i_y         ,
 	size_t nc_taylor   , 
@@ -114,7 +115,7 @@ inline void forward_unary_op_0(
 }
 
 /*!
-Prototype for reverse mode unary operator, never called.
+Prototype for reverse mode unary operator with one result, never used.
 
 This routine is given the partial derivatives of a function G(z, y, ... )
 and it uses them to compute the partial derivatives of 
@@ -161,7 +162,7 @@ is the j-th order partial derivative of H(y , x , ... ) with respect to y
 for j = 0 , ... , p.
 
 
-\par Checked Assumptions:
+\par Checked Assumptions where op is a unary operator with one result:
 \li NumInd(op) == 1
 \li NumVar(op) == 1
 \li i_y < i_z 
@@ -169,7 +170,7 @@ for j = 0 , ... , p.
 \li p < nc_partial
 */
 template <class Base>
-inline void reverse_unary_op(
+inline void reverse_unary1_op(
 	size_t      p            ,
 	size_t      i_z          ,
 	size_t      i_y          ,
@@ -180,3 +181,7 @@ inline void reverse_unary_op(
 {
 	CPPAD_ASSERT_UNKNOWN( false );
 }
+
+
+CPPAD_END_NAMESPACE
+# endif
