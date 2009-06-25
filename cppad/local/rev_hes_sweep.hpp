@@ -540,6 +540,8 @@ void RevHesSweep(
 			// -------------------------------------------------
 
 			case PowpvOp:
+			Zr += 2;
+			Zh += 2 * npv;
 			CPPAD_ASSERT_UNKNOWN( n_var == 3 );
 			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
 			CPPAD_ASSERT_UNKNOWN( ind[1] < i_var );
@@ -554,6 +556,8 @@ void RevHesSweep(
 			// -------------------------------------------------
 
 			case PowvpOp:
+			Zr += 2;
+			Zh += 2 * npv;
 			CPPAD_ASSERT_UNKNOWN( n_var == 3 );
 			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
 			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
@@ -568,6 +572,8 @@ void RevHesSweep(
 			// -------------------------------------------------
 
 			case PowvvOp:
+			Zr += 2;
+			Zh += 2 * npv;
 			CPPAD_ASSERT_UNKNOWN( n_var == 3 );
 			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
 			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );

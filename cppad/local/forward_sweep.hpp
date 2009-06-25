@@ -483,12 +483,7 @@ size_t forward_sweep(
 			// -------------------------------------------------
 
 			case ExpOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
-			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
-			X = Taylor + ind[0] * J;
-			ForExpOp(d, Z, X);
+			forward_exp_op(d, i_var, ind[0], J, Taylor);
 			break;
 			// -------------------------------------------------
 
@@ -658,12 +653,13 @@ size_t forward_sweep(
 			// -------------------------------------------------
 
 			case PowvpOp:
-			// variables: pow(x, y), log(x), y * log(x)
+			// variables: log(x), y * log(x), pow(x, y)
 			CPPAD_ASSERT_UNKNOWN( n_var == 3);
 			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
 			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var);
-			U = Z + J;
+			U = Z;
 			W = U + J;
+			Z = W + J;
 
 			// u = log(x)
 			X = Taylor + ind[0] * J;
@@ -677,18 +673,19 @@ size_t forward_sweep(
 			// zero order case exactly same as Base type operation
 			if( d == 0 )
 				Z[0] = pow(X[0], Y[0]);
-			else	ForExpOp(d, Z, W);
+			else	forward_exp_op(d, i_var+2, i_var+1, J, Taylor);
 
 			break;
 			// -------------------------------------------------
 
 			case PowpvOp:
-			// variables: pow(x, y), log(x), y * log(x)
+			// variables: log(x), y * log(x), pow(x, y)
 			CPPAD_ASSERT_UNKNOWN( n_var == 3);
 			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
 			CPPAD_ASSERT_UNKNOWN( ind[1] < i_var);
-			U = Z + J;
+			U = Z;
 			W = U + J;
+			Z = W + J;
 
 			// u = log(x)
 			X = Rec->GetPar(ind[0]);
@@ -704,19 +701,20 @@ size_t forward_sweep(
 			// zero order case exactly same as Base type operation
 			if( d == 0 )
 				Z[0] = pow(X[0], Y[0]);
-			else	ForExpOp(d, Z, W);
+			else	forward_exp_op(d, i_var+2, i_var+1, J, Taylor);
 
 			break;
 			// -------------------------------------------------
 
 			case PowvvOp:
-			// variables: pow(x, y), log(x), y * log(x)
+			// variables: log(x), y * log(x), pow(x, y)
 			CPPAD_ASSERT_UNKNOWN( n_var == 3);
 			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
 			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var);
 			CPPAD_ASSERT_UNKNOWN( ind[1] < i_var);
-			U = Z + J;
+			U = Z;
 			W = U + J;
+			Z = W + J;
 
 			// u = log(x)
 			X = Taylor + ind[0] * J;
@@ -730,7 +728,7 @@ size_t forward_sweep(
 			// zero order case exactly same as Base type operation
 			if( d == 0 )
 				Z[0] = pow(X[0], Y[0]);
-			else	ForExpOp(d, Z, W);
+			else	forward_exp_op(d, i_var+2, i_var+1, J, Taylor);
 
 			break;
 			// -------------------------------------------------

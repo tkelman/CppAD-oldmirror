@@ -498,6 +498,7 @@ void RevJacSweep(
 			// -------------------------------------------------
 
 			case PowvpOp:
+			Z += 2 * npv;
 			CPPAD_ASSERT_UNKNOWN( n_var == 3 );
 			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
 			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
@@ -509,6 +510,7 @@ void RevJacSweep(
 			// -------------------------------------------------
 
 			case PowpvOp:
+			Z += 2 * npv;
 			CPPAD_ASSERT_UNKNOWN( n_var == 3 );
 			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
 			CPPAD_ASSERT_UNKNOWN( ind[1] < i_var );
@@ -520,6 +522,7 @@ void RevJacSweep(
 			// -------------------------------------------------
 
 			case PowvvOp:
+			Z += 2 * npv;
 			CPPAD_ASSERT_UNKNOWN( n_var == 3 );
 			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
 			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );

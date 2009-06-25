@@ -416,13 +416,9 @@ void ReverseSweep(
 			// --------------------------------------------------
 
 			case ExpOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
-			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
-			X  = Taylor  + ind[0] * J;
-			pX = Partial + ind[0] * K;
-			RevExpOp(d, Z, X, pZ, pX);
+			reverse_exp_op(
+				d, i_var, ind[0], J, Taylor, K, Partial
+			);
 			break;
 			// --------------------------------------------------
 			case LdpOp:
@@ -517,13 +513,17 @@ void ReverseSweep(
 			case PowvpOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 3);
 			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
-			U  = Z  + J;
-			pU = pZ + K;
+			U  = Z;
+			pU = pZ;
 			W  = U  + J;
 			pW = pU + K;
+			Z  = W  + J;
+			pZ = pW + K;
 
 			// Z = exp(w)
-			RevExpOp(d, Z, W, pZ, pW);
+			reverse_exp_op(
+				d, i_var+2, i_var+1, J, Taylor, K, Partial
+			);
 
 			// w = u * y
 			Y  = Rec->GetPar( ind[1] );
@@ -540,13 +540,17 @@ void ReverseSweep(
 			case PowpvOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 3);
 			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
-			U  = Z  + J;
-			pU = pZ + K;
+			U  = Z;
+			pU = pZ;
 			W  = U  + J;
 			pW = pU + K;
+			Z  = W  + J;
+			pZ = pW + K;
 
 			// Z = exp(w)
-			RevExpOp(d, Z, W, pZ, pW);
+			reverse_exp_op(
+				d, i_var+2, i_var+1, J, Taylor, K, Partial
+			);
 
 			// w = u * y
 			Y  = Taylor  + ind[1] * J;
@@ -562,13 +566,17 @@ void ReverseSweep(
 			case PowvvOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 3);
 			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
-			U  = Z  + J;
-			pU = pZ + K;
+			U  = Z;
+			pU = pZ;
 			W  = U  + J;
 			pW = pU + K;
+			Z  = W  + J;
+			pZ = pW + K;
 
 			// Z = exp(w)
-			RevExpOp(d, Z, W, pZ, pW);
+			reverse_exp_op(
+				d, i_var+2, i_var+1, J, Taylor, K, Partial
+			);
 
 			// w = u * y
 			Y  = Taylor  + ind[1] * J;

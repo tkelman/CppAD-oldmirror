@@ -20,6 +20,21 @@ Define processor symbols and macros that are used by CppAD.
 */
 
 /*!
+\def CPPAD_MULTIPLE_RESULT_KLUDGE
+Adjust the address corresponding to a multiple result operator.
+
+For multiple variable results the final result should be the last variable
+because it depends on the other ones.
+This is kludge that will be used until all the multiple variable operators
+have been converted to this form.
+At that point, PutOp will be changed to return the address of the last
+(instead of first) variable in a multiple variable result and 
+this macro will no longer be needed;
+*/
+# define CPPAD_MULTIPLE_RESULT_KLUDGE(address, op)  address += (NumVar(op) - 1) 
+
+
+/*!
 \def CPPAD_USE_FORWARD0SWEEP
 If ture, use compute zero order sweeps using a specialized routine.
 

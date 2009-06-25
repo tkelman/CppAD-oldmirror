@@ -473,12 +473,7 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case ExpOp:
-			n_var = 1;
-			n_ind = 1;
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
-			X = Taylor + ind[0] * J;
-			Z[0] = exp( X[0] );
+			forward_exp_op_0(i_var, ind[0], J, Taylor);
 			break;
 			// -------------------------------------------------
 
@@ -628,12 +623,13 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case PowvpOp:
-			// variables: pow(x, y), log(x), y * log(x)
+			// variables: log(x), y * log(x), pow(x, y)
 			n_var = 3;
 			n_ind = 2;
 			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var);
-			U = Z + J;
+			U = Z;
 			W = U + J;
+			Z = W + J;
 
 			// u = log(x)
 			X = Taylor + ind[0] * J;
@@ -652,12 +648,13 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case PowpvOp:
-			// variables: pow(x, y), log(x), y * log(x)
+			// variables: log(x), y * log(x), pow(x, y)
 			n_var = 3;
 			n_ind = 2;
 			CPPAD_ASSERT_UNKNOWN( ind[1] < i_var);
-			U = Z + J;
+			U = Z;
 			W = U + J;
+			Z = W + J;
 
 			// u = log(x)
 			X = CPPAD_GET_PAR(ind[0]);
@@ -675,13 +672,14 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case PowvvOp:
-			// variables: pow(x, y), log(x), y * log(x)
+			// variables: log(x), y * log(x), pow(x, y)
 			n_var = 3;
 			n_ind = 2;
 			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var);
 			CPPAD_ASSERT_UNKNOWN( ind[1] < i_var);
-			U = Z + J;
+			U = Z;
 			W = U + J;
+			Z = W + J;
 
 			// u = log(x)
 			X = Taylor + ind[0] * J;

@@ -24,7 +24,6 @@ $childtable%
 	cppad/local/asin_op.hpp%
 	cppad/local/atan_op.hpp%
 	cppad/local/div_op.hpp%
-	cppad/local/exp_op.hpp%
 	cppad/local/log_op.hpp%
 	cppad/local/mul_op.hpp%
 	cppad/local/sin_cos.hpp%
