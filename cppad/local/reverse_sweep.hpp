@@ -208,7 +208,9 @@ void ReverseSweep(
 		{
 
 			case AbsOp:
-			reverse_abs_op(d, i_var, ind, J, Taylor, K, Partial);
+			reverse_abs_op(
+				d, i_var, ind[0], J, Taylor, K, Partial
+			);
 			break;
 			// --------------------------------------------------
 

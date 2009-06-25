@@ -34,20 +34,20 @@ template <class Base>
 inline void forward_abs_op(
 	size_t p           ,
 	size_t i_z         ,
-	const size_t *arg  ,
+	size_t i_y         ,
 	size_t nc_taylor   , 
-	Base   *taylor     )
+	Base*  taylor      )
 {
 	static Base zero(0);
 
 	// check assumptions
 	CPPAD_ASSERT_UNKNOWN( NumInd(AbsOp) == 1 );
 	CPPAD_ASSERT_UNKNOWN( NumVar(AbsOp) == 1 );
-	CPPAD_ASSERT_UNKNOWN( arg[0] < i_z );
+	CPPAD_ASSERT_UNKNOWN( i_y < i_z );
 	CPPAD_ASSERT_UNKNOWN( p < nc_taylor );
 
 	// Taylor coefficients corresponding to argument
-	Base *y = taylor + arg[0] * nc_taylor;
+	Base *y = taylor + i_y * nc_taylor;
 
 	// Taylor coefficients corresponding to result
 	Base *z = taylor + i_z * nc_taylor;
@@ -78,19 +78,19 @@ The C++ source code corresponding to this operation is
 template <class Base>
 inline void forward_abs_op_0(
 	size_t i_z         ,
-	const size_t *arg  ,
+	size_t i_y         ,
 	size_t nc_taylor   , 
-	Base   *taylor     )
+	Base*  taylor      )
 {
 
 	// check assumptions
 	CPPAD_ASSERT_UNKNOWN( NumInd(AbsOp) == 1 );
 	CPPAD_ASSERT_UNKNOWN( NumVar(AbsOp) == 1 );
-	CPPAD_ASSERT_UNKNOWN( arg[0] < i_z );
+	CPPAD_ASSERT_UNKNOWN( i_y < i_z );
 	CPPAD_ASSERT_UNKNOWN( 0 < nc_taylor );
 
 	// Taylor coefficients corresponding to argument
-	Base y0 = *(taylor + arg[0] * nc_taylor);
+	Base y0 = *(taylor + i_y * nc_taylor);
 
 	// Taylor coefficients corresponding to result
 	Base *z = taylor + i_z * nc_taylor;
@@ -112,13 +112,13 @@ The C++ source code corresponding to this operation is
 
 template <class Base>
 inline void reverse_abs_op(
-	size_t p            ,
-	size_t i_z          ,
-	const size_t *arg   ,
-	size_t nc_taylor    , 
-	const Base  *taylor ,
-	size_t nc_partial   ,
-	Base   *partial     )
+	size_t      p            ,
+	size_t      i_z          ,
+	size_t      i_y          ,
+	size_t      nc_taylor    , 
+	const Base* taylor       ,
+	size_t      nc_partial   ,
+	Base*       partial      )
 {	size_t j, k;	
 	static Base zero(0);
 
@@ -126,13 +126,13 @@ inline void reverse_abs_op(
 	// check assumptions
 	CPPAD_ASSERT_UNKNOWN( NumInd(AbsOp) == 1 );
 	CPPAD_ASSERT_UNKNOWN( NumVar(AbsOp) == 1 );
-	CPPAD_ASSERT_UNKNOWN( arg[0] < i_z );
+	CPPAD_ASSERT_UNKNOWN( i_y < i_z );
 	CPPAD_ASSERT_UNKNOWN( p < nc_taylor );
 	CPPAD_ASSERT_UNKNOWN( p < nc_partial );
 
 	// Taylor coefficients and partials corresponding to argument
-	const Base *y  = taylor  + arg[0] * nc_taylor;
-	Base *py       = partial + arg[0] * nc_partial;
+	const Base *y  = taylor  + i_y * nc_taylor;
+	Base *py       = partial + i_y * nc_partial;
 
 	// Taylor coefficients and partials corresponding to result
 	Base *pz       = partial +    i_z * nc_partial;

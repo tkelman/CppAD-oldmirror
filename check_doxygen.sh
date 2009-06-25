@@ -17,7 +17,7 @@ list="
 	define.hpp
 	op_code.hpp
 	player.hpp
-	unary_op.hpp
+	prototype_op.hpp
 "
 for name in $list
 do

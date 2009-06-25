@@ -234,7 +234,7 @@ size_t forward0sweep(
 		switch( op )
 		{
 			case AbsOp:
-			forward_abs_op_0(i_var, ind, J, Taylor);
+			forward_abs_op_0(i_var, ind[0], J, Taylor);
 			break;
 			// -------------------------------------------------
 

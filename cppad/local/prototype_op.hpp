@@ -1,6 +1,6 @@
 /* $Id$ */
-# ifndef CPPAD_UNARY_OP_INCLUDED
-# define CPPAD_UNARY_OP_INCLUDED
+# ifndef CPPAD_PROTOTYPE_OP_INCLUDED
+# define CPPAD_PROTOTYPE_OP_INCLUDED
 CPPAD_BEGIN_NAMESPACE
 
 /* --------------------------------------------------------------------------
@@ -16,7 +16,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 
 /*!
-\file unary_op.hpp
+\file prototype_op.hpp
 */
 
 
@@ -24,7 +24,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 Prototype for forward mode unary operator, never called.
 
 \tparam Base
-is the base type for the operator; i.e., this operation was recorded
+base type for the operator; i.e., this operation was recorded
 using AD<Base> and computations by this routine are done using type Base.
 
 \param p
@@ -34,36 +34,38 @@ order of the Taylor coefficient that we are computing.
 variable index corresponding to the result for this operation; 
 i.e. the row index in taylor corresponding to z. 
 
-\param arg
-arg[0] is the variable index corresponding to the argument for this operator;
+\param i_y
+variable index corresponding to the argument for this operator;
 i.e. the row index in taylor corresponding to y.
 
 \param nc_taylor
 number of colums in the matrix containing all the Taylor coefficients.
 
 \param taylor
-\b Input: taylor[ arg[0] * nc_taylor + j ] 
+\b Input: taylor[ i_y * nc_taylor + j ] 
 is the j-th order Taylor coefficient corresponding to y for j = 0 , ... , p. 
 \n
-\b Input: taylor[ i_z * nc_taylor + j ] is the j-th order Taylor coefficient 
+\b Input: taylor[ i_z * nc_taylor + j ] 
+is the j-th order Taylor coefficient 
 corresponding to z for j = 0 , ... , p-1. 
 \n
-\b Output: taylor[ i_z * nc_taylor + p ] is the p-th order Taylor coefficient 
+\b Output: taylor[ i_z * nc_taylor + p ] 
+is the p-th order Taylor coefficient 
 corresponding to z. 
 
 \par Checked Assertions where op is the unary operator:
 \li NumInd(op) == 1
 \li NumVar(op) == 1
-\li arg[0] < i_z 
+\li i_y < i_z 
 \li p < nc_taylor
 */
 template <class Base>
 inline void forward_unary_op(
 	size_t p           ,
 	size_t i_z         ,
-	const size_t *arg  ,
+	size_t i_y         ,
 	size_t nc_taylor   , 
-	Base   *taylor     )
+	Base*  taylor      )
 {
 	// this routine is never called, it is only used for documentaiton
 	// of unary operators.
@@ -74,39 +76,39 @@ inline void forward_unary_op(
 Prototype for zero order forward mode unary operator, never called. 
 
 \tparam Base
-is the base type for the operator; i.e., this operation was recorded
+base type for the operator; i.e., this operation was recorded
 using AD<Base> and computations by this routine are done using type Base.
 
 \param i_z
 variable index corresponding to the result for this operation; 
 i.e. the row index in taylor corresponding to z. 
 
-\param arg
-arg[0] is the variable index corresponding to the argument for this operator;
+\param i_y
+variable index corresponding to the argument for this operator;
 i.e. the row index in taylor corresponding to y.
 
 \param nc_taylor
 number of colums in the matrix containing all the Taylor coefficients.
 
 \param taylor
-\b Input: taylor[ arg[0] * nc_taylor + 0 ] 
+\b Input: taylor[ i_y * nc_taylor + 0 ] 
 is the zero order Taylor coefficient corresponding to y. 
 \n
-\b Output: taylor[ i_z * nc_taylor + 0 ] is the zero order Taylor coefficient 
-corresponding to z. 
+\b Output: taylor[ i_z * nc_taylor + 0 ] 
+is the zero order Taylor coefficient corresponding to z. 
 
 \par Checked Assertions where op is the unary operator:
 \li NumInd(op) == 1
 \li NumVar(op) == 1
-\li arg[0] < i_z 
+\li i_y < i_z 
 \li p < nc_taylor
 */
 template <class Base>
 inline void forward_unary_op_0(
 	size_t i_z         ,
-	const size_t *arg  ,
+	size_t i_y         ,
 	size_t nc_taylor   , 
-	Base   *taylor     )
+	Base*  taylor      )
 {
 	CPPAD_ASSERT_UNKNOWN( false );
 }
@@ -127,26 +129,26 @@ order of the partial derivative that we are computing
 variable index corresponding to the result for this operation; 
 i.e. the row index in taylor to z. 
 
-\param arg
-arg[0] is the variable index corresponding to the argument for this operation;
+\param i_y
+variable index corresponding to the argument for this operation;
 i.e. the row index in taylor corresponding to y.
 
 \param nc_taylor
 number of colums in the matrix containing all the Taylor coefficients.
 
 \param taylor
-taylor[ arg[0] * nc_taylor + j ] 
+taylor[ i_y * nc_taylor + j ] 
 is the j-th order Taylor coefficient corresponding to y for j = 0 , ... , p-1. 
 \n
-taylor[ i_z * nc_taylor + j ] is the j-th order Taylor coefficient 
-corresponding to z for j = 0 , ... , p-1. 
+taylor[ i_z * nc_taylor + j ] 
+is the j-th order Taylor coefficient corresponding to z for j = 0 , ... , p-1. 
 
 
 \param nc_partial
 number of colums in the matrix containing all the partial derivatives.
 
 \param partial
-\b Input: partial[ arg[0] * nc_taylor + j ] 
+\b Input: partial[ i_y * nc_taylor + j ] 
 is the j-th order partial derivative of G(z , y , x , ... ) with respect to y
 for j = 0 , ... , p. 
 \n
@@ -154,7 +156,7 @@ for j = 0 , ... , p.
 is the j-th order partial derivative of G(z , y , x , ... ) with respect to z.
 for j = 0 , ... , p. 
 \n
-\b Output: partial[ arg[0] * nc_taylor + j ]
+\b Output: partial[ i_y * nc_taylor + j ]
 is the j-th order partial derivative of H(y , x , ... ) with respect to y
 for j = 0 , ... , p.
 
@@ -162,19 +164,19 @@ for j = 0 , ... , p.
 \par Checked Assumptions:
 \li NumInd(op) == 1
 \li NumVar(op) == 1
-\li arg[0] < i_z 
+\li i_y < i_z 
 \li p < nc_taylor
 \li p < nc_partial
 */
 template <class Base>
 inline void reverse_unary_op(
-	size_t p            ,
-	size_t i_z          ,
-	const size_t *arg   ,
-	size_t nc_taylor    , 
-	const Base  *taylor ,
-	size_t nc_partial   ,
-	Base   *partial     )
+	size_t      p            ,
+	size_t      i_z          ,
+	size_t      i_y          ,
+	size_t      nc_taylor    , 
+	const Base* taylor       ,
+	size_t      nc_partial   ,
+	Base*       partial      )
 {
 	CPPAD_ASSERT_UNKNOWN( false );
 }

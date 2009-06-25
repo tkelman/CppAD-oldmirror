@@ -162,7 +162,7 @@ nobase_myinclude_HEADERS =  \
 	cppad/local/unary_minus.hpp \
 	cppad/local/unary_plus.hpp \
 	cppad/local/vec_ad.hpp \
-	cppad/local/unary_op.hpp \
+	cppad/local/prototype_op.hpp \
 	cppad/local/undef.hpp \
 	cppad/local/value.hpp \
 	cppad/local/var2par.hpp \
