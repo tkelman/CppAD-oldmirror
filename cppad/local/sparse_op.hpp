@@ -30,10 +30,9 @@ The C++ source code corresponding to a unary operation has the form
 \endverbatim
 where fun is a C++ unary function, or it has the form
 \verbatim
-	z = op y
+	z = y op p
 \endverbatim
-where op is a C++ unary operator.
-
+where op is a C++ binary unary operator and p is a parameter.
 
 \tparam Pack
 is the type used to pack the sparsity pattern bit values; i.e.,
@@ -93,9 +92,9 @@ The C++ source code corresponding to a unary operation has the form
 \endverbatim
 where fun is a C++ unary function, or it has the form
 \verbatim
-	z = op y
+	z = y op p
 \endverbatim
-where op is a C++ unary operator.
+where op is a C++ bianry operator and p is a parameter.
 
 This routine is given the sparsity patterns
 for a function G(z, y, ... )
@@ -164,9 +163,9 @@ The C++ source code corresponding to this operation is
 \endverbatim
 where fun is a linear functions; e.g. abs, or
 \verbatim
-	z = op y
+	z = y op p
 \endverbatim
-where op is a linear operator; e.g., + or -.
+where op is a C++ binary operator and p is a parameter.
 
 \copydetails reverse_sparse_hessian_unary_op
 */
@@ -197,7 +196,12 @@ The C++ source code corresponding to this operation is
 \verbatim
         z = fun(y)
 \endverbatim
-where fun is a non-linear functions; e.g. sin.
+where fun is a non-linear functions; e.g. sin. or
+\verbatim
+	z = p / y
+\endverbatim
+where p is a parameter.
+
 
 \copydetails reverse_sparse_hessian_unary_op
 */

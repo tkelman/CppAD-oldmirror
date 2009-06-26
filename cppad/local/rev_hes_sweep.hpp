@@ -219,24 +219,18 @@ void RevHesSweep(
 			case AddpvOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
 			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
-			CPPAD_ASSERT_UNKNOWN( ind[1] < i_var );
-
-			Yh  = RevHes + ind[1] * npv;
-			for(j = 0; j < npv; j++)
-			{	Yh[j] |= Zh[j];
-			}
+			reverse_sparse_hessian_linear_unary_op(
+				i_var, ind[1], *Zr, npv, ForJac, RevHes
+			);
 			break;
 			// -------------------------------------------------
 
 			case AddvpOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
 			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
-			Xh  = RevHes + ind[0] * npv;
-			for(j = 0; j < npv; j++)
-			{	Xh[j] |= Zh[j];
-			}
+			reverse_sparse_hessian_linear_unary_op(
+				i_var, ind[0], *Zr, npv, ForJac, RevHes
+			);
 			break;
 			// -------------------------------------------------
 
@@ -393,25 +387,18 @@ void RevHesSweep(
 			case DivpvOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
 			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
-			CPPAD_ASSERT_UNKNOWN( ind[1] < i_var );
-
-			Yf = ForJac + ind[1] * npv;
-			Yh = RevHes + ind[1] * npv;
-			for(j = 0; j < npv; j++)
-			{	Yh[j] |= Zh[j] | (*Zr & Yf[j]);
-			}
+			reverse_sparse_hessian_nonlinear_unary_op(
+				i_var, ind[1], *Zr, npv, ForJac, RevHes
+			);
 			break;
 			// -------------------------------------------------
 
 			case DivvpOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
 			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
-			Xh = RevHes + ind[0] * npv;
-			for(j = 0; j < npv; j++)
-			{	Xh[j] |= Zh[j];
-			}
+			reverse_sparse_hessian_linear_unary_op(
+				i_var, ind[0], *Zr, npv, ForJac, RevHes
+			);
 			break;
 			// -------------------------------------------------
 
@@ -466,13 +453,9 @@ void RevHesSweep(
 			case LogOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
 			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
-			Xf  = ForJac + ind[0] * npv;
-			Xh  = RevHes + ind[0] * npv;
-			for(j = 0; j < npv; j++)
-			{	Xh[j] |= Zh[j] | (*Zr & Xf[j]);
-			}
+			reverse_sparse_hessian_nonlinear_unary_op(
+				i_var, ind[0], *Zr, npv, ForJac, RevHes
+			);
 			break;
 			// -------------------------------------------------
 
@@ -496,24 +479,18 @@ void RevHesSweep(
 			case MulpvOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
 			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
-			CPPAD_ASSERT_UNKNOWN( ind[1] < i_var );
-
-			Yh = RevHes + ind[1] * npv;
-			for(j = 0; j < npv; j++)
-			{	Yh[j] |= Zh[j];
-			}
+			reverse_sparse_hessian_linear_unary_op(
+				i_var, ind[1], *Zr, npv, ForJac, RevHes
+			);
 			break;
 			// -------------------------------------------------
 
 			case MulvpOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
 			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
-			Xh = RevHes + ind[0] * npv;
-			for(j = 0; j < npv; j++)
-			{	Xh[j] |= Zh[j];
-			}
+			reverse_sparse_hessian_linear_unary_op(
+				i_var, ind[0], *Zr, npv, ForJac, RevHes
+			);
 			break;
 			// -------------------------------------------------
 
@@ -629,13 +606,9 @@ void RevHesSweep(
 			case SqrtOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
 			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
-			Xf  = ForJac + ind[0] * npv;
-			Xh  = RevHes + ind[0] * npv;
-			for(j = 0; j < npv; j++)
-			{	Xh[j] |= Zh[j] | (*Zr & Xf[j]);
-			}
+			reverse_sparse_hessian_nonlinear_unary_op(
+				i_var, ind[0], *Zr, npv, ForJac, RevHes
+			);
 			break;
 			// -------------------------------------------------
 
@@ -681,24 +654,18 @@ void RevHesSweep(
 			case SubpvOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
 			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
-			CPPAD_ASSERT_UNKNOWN( ind[1] < i_var );
-
-			Yh  = RevHes + ind[1] * npv;
-			for(j = 0; j < npv; j++)
-			{	Yh[j] |= Zh[j];
-			}
+			reverse_sparse_hessian_linear_unary_op(
+				i_var, ind[1], *Zr, npv, ForJac, RevHes
+			);
 			break;
 			// -------------------------------------------------
 
 			case SubvpOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
 			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
-			Xh  = RevHes + ind[0] * npv;
-			for(j = 0; j < npv; j++)
-			{	Xh[j] |= Zh[j];
-			}
+			reverse_sparse_hessian_linear_unary_op(
+				i_var, ind[0], *Zr, npv, ForJac, RevHes
+			);
 			break;
 			// -------------------------------------------------
 
