@@ -159,7 +159,6 @@ void ForJacSweep(
 	const Pack       *Y = 0;
 
 	Pack             *Z = 0;
-	Pack           *Tmp = 0;
 
 	size_t            j;
 
@@ -239,50 +238,35 @@ void ForJacSweep(
 			// -------------------------------------------------
 
 			case AcosOp:
-			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
 			// acos(x) and sqrt(1 - x * x) are computed in pairs
+			// but ivar + 1 should only be used here
+			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
 			CPPAD_ASSERT_UNKNOWN( n_var == 2);
-			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
-
-			// use Tmp for data stored in variable record
-			Tmp = ForJac + (i_var+1) * npv;
-			X   = ForJac + ind[0] * npv;
-			for(j = 0; j < npv; j++)
-				Tmp[j] = Z[j] = X[j];
+			forward_sparse_jacobian_unary_op(
+				i_var, ind[0], npv, ForJac
+			);
 			break;
 			// -------------------------------------------------
 
 			case AsinOp:
-			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
 			// asin(x) and sqrt(1 - x * x) are computed in pairs
+			// but ivar + 1 should only be used here
+			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
 			CPPAD_ASSERT_UNKNOWN( n_var == 2);
-			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
-
-			// use Tmp for data stored in variable record
-			Tmp = ForJac + (i_var+1) * npv;
-			X   = ForJac + ind[0] * npv;
-			for(j = 0; j < npv; j++)
-				Tmp[j] = Z[j] = X[j];
+			forward_sparse_jacobian_unary_op(
+				i_var, ind[0], npv, ForJac
+			);
 			break;
 			// -------------------------------------------------
 
 			case AtanOp:
-			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
 			// atan(x) and 1 + x * x must be computed in pairs
+			// but ivar + 1 should only be used here
+			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
 			CPPAD_ASSERT_UNKNOWN( n_var == 2);
-			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
-
-			// use Tmp for data stored in variable record
-			Tmp = ForJac + (i_var+1) * npv;
-			X   = ForJac + ind[0] * npv;
-			for(j = 0; j < npv; j++)
-				Tmp[j] = Z[j] = X[j];
+			forward_sparse_jacobian_unary_op(
+				i_var, ind[0], npv, ForJac
+			);
 			break;
 			// -------------------------------------------------
 
@@ -332,34 +316,24 @@ void ForJacSweep(
 			// --------------------------------------------------
 
 			case CosOp:
-			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
 			// cosine and sine must come in pairs
+			// but ivar + 1 should only be used here
+			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
 			CPPAD_ASSERT_UNKNOWN( n_var == 2);
-			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
-
-			// use Tmp for data stored in variable record
-			Tmp = ForJac + (i_var+1) * npv;
-			X   = ForJac + ind[0] * npv;
-			for(j = 0; j < npv; j++)
-				Tmp[j] = Z[j] = X[j];
+			forward_sparse_jacobian_unary_op(
+				i_var, ind[0], npv, ForJac
+			);
 			break;
 			// ---------------------------------------------------
 
 			case CoshOp:
-			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
 			// hyperbolic cosine and sine must come in pairs
+			// but ivar + 1 should only be used here
+			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
 			CPPAD_ASSERT_UNKNOWN( n_var == 2);
-			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
-
-			// use Tmp for data stored in variable record
-			Tmp = ForJac + (i_var+1) * npv;
-			X   = ForJac + ind[0] * npv;
-			for(j = 0; j < npv; j++)
-				Tmp[j] = Z[j] = X[j];
+			forward_sparse_jacobian_unary_op(
+				i_var, ind[0], npv, ForJac
+			);
 			break;
 			// -------------------------------------------------
 
@@ -516,30 +490,30 @@ void ForJacSweep(
 			// -------------------------------------------------
 
 			case PowvpOp:
-			Z   += 2 * npv;
+			// Pow operator is a special case where final result
+			// comes at the end of the three variables
 			CPPAD_ASSERT_UNKNOWN( n_var == 3 );
 			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
-			X = ForJac + ind[0] * npv;
-			for(j = 0; j < npv; j++)
-				Z[j] = X[j];
+			forward_sparse_jacobian_unary_op(
+				i_var + 2, ind[0], npv, ForJac
+			);
 			break;
 			// -------------------------------------------------
 
 			case PowpvOp:
-			Z   += 2 * npv;
+			// Pow operator is a special case where final result
+			// comes at the end of the three variables
 			CPPAD_ASSERT_UNKNOWN( n_var == 3 );
 			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
-			CPPAD_ASSERT_UNKNOWN( ind[1] < i_var );
-
-			Y = ForJac + ind[1] * npv;
-			for(j = 0; j < npv; j++)
-				Z[j] = Y[j];
+			forward_sparse_jacobian_unary_op(
+				i_var + 2, ind[1], npv, ForJac
+			);
 			break;
 			// -------------------------------------------------
 
 			case PowvvOp:
+			// Pow operator is a special case where final result
+			// comes at the end of the three variables
 			Z   += 2 * npv;
 			CPPAD_ASSERT_UNKNOWN( n_var == 3 );
 			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
@@ -566,34 +540,24 @@ void ForJacSweep(
 			// -------------------------------------------------
 
 			case SinOp:
-			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
 			// sine and cosine must come in pairs
+			// but ivar + 1 should only be used here
+			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
 			CPPAD_ASSERT_UNKNOWN( n_var == 2);
-			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
-
-			// use Tmp for data stored in second variable
-			Tmp = ForJac + (i_var+1) * npv;
-			X   = ForJac + ind[0] * npv;
-			for(j = 0; j < npv; j++)
-				Z[j] = Tmp[j] = X[j];
+			forward_sparse_jacobian_unary_op(
+				i_var, ind[0], npv, ForJac
+			);
 			break;
 			// -------------------------------------------------
 
 			case SinhOp:
+			// hyperbolic sine and cosine must come in pairs
+			// but ivar + 1 should only be used here
 			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
-			// sine and cosine must come in pairs
 			CPPAD_ASSERT_UNKNOWN( n_var == 2);
-			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
-
-			// use Tmp for data stored in second variable
-			Tmp = ForJac + (i_var+1) * npv;
-			X   = ForJac + ind[0] * npv;
-			for(j = 0; j < npv; j++)
-				Z[j] = Tmp[j] = X[j];
+			forward_sparse_jacobian_unary_op(
+				i_var, ind[0], npv, ForJac
+			);
 			break;
 			// -------------------------------------------------
 

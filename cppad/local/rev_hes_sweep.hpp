@@ -235,51 +235,35 @@ void RevHesSweep(
 			// -------------------------------------------------
 
 			case AcosOp:
-			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
 			// acos(x) and sqrt(1 - x * x) are computed in pairs
+			// but i_var + 1 should only be used here
+			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
 			CPPAD_ASSERT_UNKNOWN( n_var == 2);
-			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
-
-			Xf  = ForJac + ind[0] * npv;
-			Xh  = RevHes + ind[0] * npv;
-			for(j = 0; j < npv; j++)
-			{	Xh[j] |= Zh[j] | (*Zr & Xf[j]);
-			}
+			reverse_sparse_hessian_nonlinear_unary_op(
+				i_var, ind[0], *Zr, npv, ForJac, RevHes
+			);
 			break;
 			// -------------------------------------------------
 
 			case AsinOp:
-			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
 			// asin(x) and sqrt(1 - x * x) are computed in pairs
+			// but i_var + 1 should only be used here
+			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
 			CPPAD_ASSERT_UNKNOWN( n_var == 2);
-			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
-
-
-			Xf  = ForJac + ind[0] * npv;
-			Xh  = RevHes + ind[0] * npv;
-			for(j = 0; j < npv; j++)
-			{	Xh[j] |= Zh[j] | (*Zr & Xf[j]);
-			}
+			reverse_sparse_hessian_nonlinear_unary_op(
+				i_var, ind[0], *Zr, npv, ForJac, RevHes
+			);
 			break;
 			// -------------------------------------------------
 
 			case AtanOp:
-			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
 			// atan(x) and 1 + x * x must be computed in pairs
+			// but i_var + 1 should only be used here
+			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
 			CPPAD_ASSERT_UNKNOWN( n_var == 2);
-			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
-
-			Xf  = ForJac + ind[0] * npv;
-			Xh  = RevHes + ind[0] * npv;
-			for(j = 0; j < npv; j++)
-			{	Xh[j] |= Zh[j] | (*Zr & Xf[j]);
-			}
+			reverse_sparse_hessian_nonlinear_unary_op(
+				i_var, ind[0], *Zr, npv, ForJac, RevHes
+			);
 			break;
 			// -------------------------------------------------
 			case CExpOp:
@@ -328,35 +312,24 @@ void RevHesSweep(
 			// --------------------------------------------------
 
 			case CosOp:
-			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
 			// cosine and sine must come in pairs
+			// but i_var + 1 should only be used here
+			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
 			CPPAD_ASSERT_UNKNOWN( n_var == 2);
-			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
-
-			Xf  = ForJac + ind[0] * npv;
-			Xh  = RevHes + ind[0] * npv;
-			for(j = 0; j < npv; j++)
-			{	Xh[j] |= Zh[j] | (*Zr & Xf[j]);
-			}
+			reverse_sparse_hessian_nonlinear_unary_op(
+				i_var, ind[0], *Zr, npv, ForJac, RevHes
+			);
 			break;
 			// ---------------------------------------------------
 
 			case CoshOp:
-			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
 			// hyperbolic cosine and sine must come in pairs
+			// but i_var + 1 should only be used here
+			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
 			CPPAD_ASSERT_UNKNOWN( n_var == 2);
-			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
-
-
-			Xf  = ForJac + ind[0] * npv;
-			Xh  = RevHes + ind[0] * npv;
-			for(j = 0; j < npv; j++)
-			{	Xh[j] |= Zh[j] | (*Zr & Xf[j]);
-			}
+			reverse_sparse_hessian_nonlinear_unary_op(
+				i_var, ind[0], *Zr, npv, ForJac, RevHes
+			);
 			break;
 			// -------------------------------------------------
 
@@ -509,38 +482,30 @@ void RevHesSweep(
 			// -------------------------------------------------
 
 			case PowpvOp:
-			Zr += 2;
-			Zh += 2 * npv;
+                        // Pow operator is a special case where final result
+                        // comes at the end of the three variables
 			CPPAD_ASSERT_UNKNOWN( n_var == 3 );
 			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
-			CPPAD_ASSERT_UNKNOWN( ind[1] < i_var );
-
-			Yf = ForJac + ind[1] * npv;
-			Yh = RevHes + ind[1] * npv;
-			for(j = 0; j < npv; j++)
-			{	Xh[j] |= Zh[j] | (*Zr & Yf[j]); 
-				Yh[j] |= Zh[j] | (*Zr & Xf[j]); 
-			}
+			reverse_sparse_hessian_nonlinear_unary_op(
+				i_var+2, ind[1], *(Zr+2), npv, ForJac, RevHes
+			);
 			break;
 			// -------------------------------------------------
 
 			case PowvpOp:
-			Zr += 2;
-			Zh += 2 * npv;
+                        // Pow operator is a special case where final result
+                        // comes at the end of the three variables
 			CPPAD_ASSERT_UNKNOWN( n_var == 3 );
 			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
-			Xf = ForJac + ind[0] * npv;
-			Xh = RevHes + ind[0] * npv;
-			for(j = 0; j < npv; j++)
-			{	Xh[j] |= Zh[j] | (*Zr & Xf[j]); 
-				Yh[j] |= Zh[j] | (*Zr & Xf[j]); 
-			}
+			reverse_sparse_hessian_nonlinear_unary_op(
+				i_var+2, ind[0], *(Zr+2), npv, ForJac, RevHes
+			);
 			break;
 			// -------------------------------------------------
 
 			case PowvvOp:
+                        // Pow operator is a special case where final result
+                        // comes at the end of the three variables
 			Zr += 2;
 			Zh += 2 * npv;
 			CPPAD_ASSERT_UNKNOWN( n_var == 3 );
@@ -572,34 +537,24 @@ void RevHesSweep(
 			// -------------------------------------------------
 
 			case SinOp:
-			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
 			// sine and cosine must come in pairs
+			// but i_var + 1 should only be used here
+			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
 			CPPAD_ASSERT_UNKNOWN( n_var == 2);
-			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
-
-			Xf  = ForJac + ind[0] * npv;
-			Xh  = RevHes + ind[0] * npv;
-			for(j = 0; j < npv; j++)
-			{	Xh[j] |= Zh[j] | (*Zr & Xf[j]);
-			}
+			reverse_sparse_hessian_nonlinear_unary_op(
+				i_var, ind[0], *Zr, npv, ForJac, RevHes
+			);
 			break;
 			// -------------------------------------------------
 
 			case SinhOp:
-			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
 			// sine and cosine must come in pairs
+			// but i_var + 1 should only be used here
+			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
 			CPPAD_ASSERT_UNKNOWN( n_var == 2);
-			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
-
-			Xf  = ForJac + ind[0] * npv;
-			Xh  = RevHes + ind[0] * npv;
-			for(j = 0; j < npv; j++)
-			{	Xh[j] |= Zh[j] | (*Zr & Xf[j]);
-			}
+			reverse_sparse_hessian_nonlinear_unary_op(
+				i_var, ind[0], *Zr, npv, ForJac, RevHes
+			);
 			break;
 			// -------------------------------------------------
 

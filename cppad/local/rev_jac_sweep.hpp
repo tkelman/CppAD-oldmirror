@@ -222,44 +222,35 @@ void RevJacSweep(
 			// -------------------------------------------------
 
 			case AcosOp:
-			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
 			// acos(x) and sqrt(1 - x * x) are computed in pairs
+			// but i_var + 1 should only be used here
+			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
 			CPPAD_ASSERT_UNKNOWN( n_var == 2);
-			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
-
-			X   = RevJac + ind[0] * npv;
-			for(j = 0; j < npv; j++)
-				X[j] |= Z[j];
+			reverse_sparse_jacobian_unary_op(
+				i_var, ind[0], npv, RevJac
+			);
 			break;
 			// -------------------------------------------------
 
 			case AsinOp:
-			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
 			// asin(x) and sqrt(1 - x * x) are computed in pairs
+			// but i_var + 1 should only be used here
+			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
 			CPPAD_ASSERT_UNKNOWN( n_var == 2);
-			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
-
-			X   = RevJac + ind[0] * npv;
-			for(j = 0; j < npv; j++)
-				X[j] |= Z[j];
+			reverse_sparse_jacobian_unary_op(
+				i_var, ind[0], npv, RevJac
+			);
 			break;
 			// -------------------------------------------------
 
 			case AtanOp:
-			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
 			// atan(x) and 1 + x * x must be computed in pairs
+			// but i_var + 1 should only be used here
+			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
 			CPPAD_ASSERT_UNKNOWN( n_var == 2);
-			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
-
-			X   = RevJac + ind[0] * npv;
-			for(j = 0; j < npv; j++)
-				X[j] |= Z[j];
+			reverse_sparse_jacobian_unary_op(
+				i_var, ind[0], npv, RevJac
+			);
 			break;
 			// -------------------------------------------------
 
@@ -309,30 +300,24 @@ void RevJacSweep(
 			// --------------------------------------------------
 
 			case CosOp:
-			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
 			// cosine and sine must come in pairs
+			// but i_var + 1 should only be used here
+			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
 			CPPAD_ASSERT_UNKNOWN( n_var == 2);
-			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
-
-			X   = RevJac + ind[0] * npv;
-			for(j = 0; j < npv; j++)
-				X[j] |= Z[j];
+			reverse_sparse_jacobian_unary_op(
+				i_var, ind[0], npv, RevJac
+			);
 			break;
 			// ---------------------------------------------------
 
 			case CoshOp:
-			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
 			// hyperbolic cosine and sine must come in pairs
+			// but i_var + 1 should only be used here
+			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
 			CPPAD_ASSERT_UNKNOWN( n_var == 2);
-			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
-
-			X   = RevJac + ind[0] * npv;
-			for(j = 0; j < npv; j++)
-				X[j] |= Z[j];
+			reverse_sparse_jacobian_unary_op(
+				i_var, ind[0], npv, RevJac
+			);
 			break;
 			// -------------------------------------------------
 
@@ -481,30 +466,30 @@ void RevJacSweep(
 			// -------------------------------------------------
 
 			case PowvpOp:
-			Z += 2 * npv;
+			// Pow operator is a special case where final result
+			// comes at the end of the three variables
 			CPPAD_ASSERT_UNKNOWN( n_var == 3 );
 			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
-			X = RevJac + ind[0] * npv;
-			for(j = 0; j < npv; j++)
-				X[j] |= Z[j];
+			reverse_sparse_jacobian_unary_op(
+				i_var + 2, ind[0], npv, RevJac
+			);
 			break;
 			// -------------------------------------------------
 
 			case PowpvOp:
-			Z += 2 * npv;
+			// Pow operator is a special case where final result
+			// comes at the end of the three variables
 			CPPAD_ASSERT_UNKNOWN( n_var == 3 );
 			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
-			CPPAD_ASSERT_UNKNOWN( ind[1] < i_var );
-
-			Y = RevJac + ind[1] * npv;
-			for(j = 0; j < npv; j++)
-				Y[j] |= Z[j];
+			reverse_sparse_jacobian_unary_op(
+				i_var + 2, ind[1], npv, RevJac
+			);
 			break;
 			// -------------------------------------------------
 
 			case PowvvOp:
+			// Pow operator is a special case where final result
+			// comes at the end of the three variables
 			Z += 2 * npv;
 			CPPAD_ASSERT_UNKNOWN( n_var == 3 );
 			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
@@ -533,30 +518,24 @@ void RevJacSweep(
 			// -------------------------------------------------
 
 			case SinOp:
-			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
 			// sine and cosine must come in pairs
+			// but i_var + 1 should only be used here
+			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
 			CPPAD_ASSERT_UNKNOWN( n_var == 2);
-			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
-
-			X   = RevJac + ind[0] * npv;
-			for(j = 0; j < npv; j++)
-				X[j] |= Z[j];
+			reverse_sparse_jacobian_unary_op(
+				i_var, ind[0], npv, RevJac
+			);
 			break;
 			// -------------------------------------------------
 
 			case SinhOp:
+			// hyperbolic sine and cosine must come in pairs
+			// but i_var + 1 should only be used here
 			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
-			// sine and cosine must come in pairs
 			CPPAD_ASSERT_UNKNOWN( n_var == 2);
-			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
-
-			X   = RevJac + ind[0] * npv;
-			for(j = 0; j < npv; j++)
-				X[j] |= Z[j];
+			reverse_sparse_jacobian_unary_op(
+				i_var, ind[0], npv, RevJac
+			);
 			break;
 			// -------------------------------------------------
 
