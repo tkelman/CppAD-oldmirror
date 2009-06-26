@@ -195,12 +195,9 @@ void RevHesSweep(
 			case AbsOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
 			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
-			Xh  = RevHes + ind[0] * npv;
-			for(j = 0; j < npv; j++)
-			{	Xh[j] |= Zh[j];
-			}
+			reverse_sparse_hessian_linear_unary_op(
+				i_var, ind[0], *Zr, npv, ForJac, RevHes
+			);
 			break;
 			// -------------------------------------------------
 
@@ -421,14 +418,9 @@ void RevHesSweep(
 			case ExpOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
 			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-
-
-			Xf  = ForJac + ind[0] * npv;
-			Xh  = RevHes + ind[0] * npv;
-			for(j = 0; j < npv; j++)
-			{	Xh[j] |= Zh[j] | (*Zr & Xf[j]);
-			}
+			reverse_sparse_hessian_nonlinear_unary_op(
+				i_var, ind[0], *Zr, npv, ForJac, RevHes
+			);
 			break;
 			// -------------------------------------------------
 

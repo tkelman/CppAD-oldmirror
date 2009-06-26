@@ -13,7 +13,14 @@
 # Define your subversion commit by editing the definition of 
 # log_entry, add_list, delete_list, and change_list below:
 # 
-log_entry="
+log_entry="Add and document reverse mode Hessian sparsity pattern for unary op.
+
+makefile.in: update makefile.am revision.
+sparse_op.hpp: implement reverse mode Hessian sparsity for unary operators.
+prototype_op.hpp: add documentation for new routines.
+for_jac_sweep.hpp: change name to avoid conflict between Jacobian and Hessian.
+rev_jac_sweep.hpp: change name to avoid conflict between Jacobian and Hessian.
+rev_hes_sweep.hpp: use new routines.
 " 
 add_list="
 "
@@ -23,6 +30,13 @@ old_list="
 "
 #
 change_list="
+	svn_commit.sh
+	makefile.in
+	cppad/local/sparse_op.hpp
+	cppad/local/prototype_op.hpp
+	cppad/local/for_jac_sweep.hpp
+	cppad/local/rev_jac_sweep.hpp
+	cppad/local/rev_hes_sweep.hpp
 "
 #
 # log_entry

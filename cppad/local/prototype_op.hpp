@@ -17,12 +17,12 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 /*!
 \file prototype_op.hpp
-Documentation for generic cases (this generic cases are never used).
+Documentation for generic cases (these generic cases are never used).
 */
 
 
 /*!
-Prototype for forward mode unary operator with one result, never used.
+Prototype for forward mode unary operator with one result (not used).
 
 \tparam Base
 base type for the operator; i.e., this operation was recorded
@@ -68,14 +68,12 @@ inline void forward_unary1_op(
 	size_t nc_taylor   , 
 	Base*  taylor      )
 {
-	// this routine is never used, it is only used for documentaiton
-	// of unary operators.
+	// this routine should never be included, much less called.
 	CPPAD_ASSERT_UNKNOWN( false );
 }
 
 /*!
-Prototype for zero order forward mode unary operator with one result, never used. 
-
+Prototype for zero order forward mode unary operator with one result (not used). 
 \tparam Base
 base type for the operator; i.e., this operation was recorded
 using AD<Base> and computations by this routine are done using type Base.
@@ -111,11 +109,12 @@ inline void forward_unary1_op_0(
 	size_t nc_taylor   , 
 	Base*  taylor      )
 {
+	// this routine should never be included, much less called.
 	CPPAD_ASSERT_UNKNOWN( false );
 }
 
 /*!
-Prototype for reverse mode unary operator with one result, never used.
+Prototype for reverse mode unary operator with one result (not used).
 
 This routine is given the partial derivatives of a function G(z, y, ... )
 and it uses them to compute the partial derivatives of 
@@ -179,6 +178,76 @@ inline void reverse_unary1_op(
 	size_t      nc_partial   ,
 	Base*       partial      )
 {
+	// this routine should never be included, much less called.
+	CPPAD_ASSERT_UNKNOWN( false );
+}
+
+/*!
+Prototype for reverse mode Hessian sparsity, unary operators with one result (not used). 
+
+This routine is given the forward mode Jacobian sparsity patterns for y.
+It is also given the reverse mode dependence of G on z.
+In addition, it is given the revese mode Hessian sparsity
+for the quanity of interest G(z, y, ... )
+and it uses them to compute the sparsity patterns for 
+\verbatim
+	H(y, x, ... ) = G[ z(y) , y , x ... ]
+\endverbatim
+
+\tparam Pack
+is the type used to pack the sparsity pattern bit values; i.e.,
+there is more that one bit per Pack value.
+
+\param i_z
+variable index corresponding to the result for this operation; 
+i.e. the row index in sparsity corresponding to z. 
+
+\param i_y
+variable index corresponding to the argument for this operator;
+i.e. the row index in sparsity corresponding to y.
+
+\param jac_z
+is all zero (ones) if the Jacobian of G with respect to z is 
+zero (non-zero).
+
+\param nc_sparsity
+number of packed values corresponding to each sparsity pattern; i.e.,
+the number of columns in the sparsity pattern matrices.
+
+\param jac_sparsity
+For j = 0 , ... , nc_sparsity - 1,
+jac_sparsity[ i_y * nc_sparsity + j ]
+is the forward mode Jacobian sparsity pattern for the variable y. 
+
+\param hes_sparsity
+\b Input: hes_sparsity[ i_z * nc_sparsity + j ]
+for j = 0 , ... , nc_sparsity -1 
+is the Hessian sparsity pattern for the fucntion G
+where one of the partials derivative is with respect to z.
+\n
+\b Input: hes_sparsity[ i_y * nc_sparsity + j ]
+for j = 0 , ... , nc_sparsity -1 
+is the Hessian sparsity pattern for the fucntion G
+where one of the partials derivative is with respect to y.
+\n
+\b Output: hes_sparsity[ i_y * nc_sparsity + j ]
+for j = 0 , ... , nc_sparsity -1 
+is the Hessian sparsity pattern for the fucntion H
+where one of the partials derivative is with respect to y.
+
+\par Checked Assertions:
+\li i_y < i_z 
+*/
+template <class Pack>
+inline void reverse_sparse_hessian_unary_op(
+	size_t      i_z           ,
+	size_t      i_y           ,
+	Pack        jac_z         ,
+	size_t      nc_sparsity   ,
+	const Pack* jac_sparsity  ,
+	Pack*       hes_sparsity  )
+{	
+	// this routine should never be included, much less called
 	CPPAD_ASSERT_UNKNOWN( false );
 }
 

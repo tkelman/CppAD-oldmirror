@@ -201,7 +201,9 @@ void ForJacSweep(
 			case AbsOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
 			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			forward_sparse_unary_op(i_var, ind[0], npv, ForJac);
+			forward_sparse_jacobian_unary_op(
+				i_var, ind[0], npv, ForJac
+			);
 			break;
 			// -------------------------------------------------
 
@@ -412,7 +414,9 @@ void ForJacSweep(
 			case ExpOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
 			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			forward_sparse_unary_op(i_var, ind[0], npv, ForJac);
+			forward_sparse_jacobian_unary_op(
+				i_var, ind[0], npv, ForJac
+			);
 			break;
 			// -------------------------------------------------
 

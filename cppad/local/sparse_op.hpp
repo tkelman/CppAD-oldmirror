@@ -17,12 +17,12 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 /*!
 \file sparse_op.hpp
-Forward and reverse mode for Spare operations.
+Forward and reverse mode Jacobian sparsity patterns.
 */
 
 
 /*!
-Forward mode sparsity pattern for all unary operators. 
+Forward mode Jacobian sparsity pattern for all unary operators. 
 
 The C++ source code corresponding to a unary operation has the form
 \verbatim
@@ -67,7 +67,7 @@ is the sparsity bit pattern for z.
 */
 
 template <class Pack>
-inline void forward_sparse_unary_op(
+inline void forward_sparse_jacobian_unary_op(
 	size_t     i_z           ,
 	size_t     i_y           ,
 	size_t     nc_sparsity   ,
@@ -81,10 +81,11 @@ inline void forward_sparse_unary_op(
 	size_t j = nc_sparsity;
 	while(j--)
 		z[j] = y[j];
+	return;
 }	
 
 /*!
-Reverse mode sparsity pattern for all unary operators. 
+Reverse mode Jacobian sparsity pattern for all unary operators. 
 
 The C++ source code corresponding to a unary operation has the form
 \verbatim
@@ -137,7 +138,7 @@ is the sparsity bit pattern for H with respect to the variable y.
 */
 
 template <class Pack>
-inline void reverse_sparse_unary_op(
+inline void reverse_sparse_jacobian_unary_op(
 	size_t     i_z           ,
 	size_t     i_y           ,
 	size_t     nc_sparsity   ,
@@ -151,7 +152,75 @@ inline void reverse_sparse_unary_op(
 	size_t j = nc_sparsity;
 	while(j--)
 		y[j] |= z[j];
+	return;
 }	
+
+/*!
+Reverse mode Hessian sparsity pattern for linear unary operators.
+
+The C++ source code corresponding to this operation is
+\verbatim
+        z = fun(y)
+\endverbatim
+where fun is a linear functions; e.g. abs, or
+\verbatim
+	z = op y
+\endverbatim
+where op is a linear operator; e.g., + or -.
+
+\copydetails reverse_sparse_hessian_unary_op
+*/
+template <class Pack>
+inline void reverse_sparse_hessian_linear_unary_op(
+	size_t      i_z           ,
+	size_t      i_y           ,
+	Pack        jac_z         ,
+	size_t      nc_sparsity   ,
+	const Pack* jac_sparsity  ,
+	Pack*       hes_sparsity  )
+{	
+	// check assumptions
+	CPPAD_ASSERT_UNKNOWN( i_y < i_z );
+
+	Pack* hes_z  = hes_sparsity + i_z * nc_sparsity;
+	Pack* hes_y  = hes_sparsity + i_y * nc_sparsity;
+	size_t j = nc_sparsity;
+	while(j--)
+		hes_y[j] |= hes_z[j];
+	return;
+}
+
+/*!
+Reverse mode Hessian sparsity pattern for non-linear unary operators.
+
+The C++ source code corresponding to this operation is
+\verbatim
+        z = fun(y)
+\endverbatim
+where fun is a non-linear functions; e.g. sin.
+
+\copydetails reverse_sparse_hessian_unary_op
+*/
+template <class Pack>
+inline void reverse_sparse_hessian_nonlinear_unary_op(
+	size_t      i_z           ,
+	size_t      i_y           ,
+	Pack        jac_z         ,
+	size_t      nc_sparsity   ,
+	const Pack* jac_sparsity  ,
+	Pack*       hes_sparsity  )
+{	
+	// check assumptions
+	CPPAD_ASSERT_UNKNOWN( i_y < i_z );
+
+	const Pack* hes_z  = hes_sparsity + i_z * nc_sparsity;
+	const Pack* jac_y  = jac_sparsity + i_y * nc_sparsity;
+	Pack* hes_y         = hes_sparsity + i_y * nc_sparsity;
+	size_t j = nc_sparsity;
+	while(j--)
+		hes_y[j] |= hes_z[j] | (jac_z & jac_y[j]);
+	return;
+}
 
 CPPAD_END_NAMESPACE
 # endif

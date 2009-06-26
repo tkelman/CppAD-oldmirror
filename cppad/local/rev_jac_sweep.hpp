@@ -182,7 +182,9 @@ void RevJacSweep(
 			case AbsOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
 			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			reverse_sparse_unary_op(i_var, ind[0], npv, RevJac);
+			reverse_sparse_jacobian_unary_op(
+				i_var, ind[0], npv, RevJac
+			);
 			break;
 			// -------------------------------------------------
 
@@ -385,7 +387,9 @@ void RevJacSweep(
 			case ExpOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
 			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			reverse_sparse_unary_op(i_var, ind[0], npv, RevJac);
+			reverse_sparse_jacobian_unary_op(
+				i_var, ind[0], npv, RevJac
+			);
 			break;
 			// -------------------------------------------------
 
