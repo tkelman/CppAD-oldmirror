@@ -376,7 +376,7 @@ void ADTape<Base>::RecordCondExp(
 		ind5 = falseCase.taddr_;	
 	}
 
-	CPPAD_ASSERT_UNKNOWN( NumInd(CExpOp) == 6 );
+	CPPAD_ASSERT_UNKNOWN( NumArg(CExpOp) == 6 );
 	CPPAD_ASSERT_UNKNOWN( ind1 > 0 );
 	Rec_.PutInd(ind0, ind1, ind2, ind3, ind4, ind5);
 

@@ -370,9 +370,7 @@ public:
 	*/
 	void start_forward(
 	OpCode& op, const size_t*& op_arg, size_t& op_index, size_t& var_index)
-	{	using CppAD::NumVar;
-		using CppAD::NumInd;
-
+	{
 		op        = op_          = rec_op_[0]; 
 		op_arg_   = 0;
 		op_arg    = rec_op_arg_;
@@ -381,7 +379,7 @@ public:
 # ifndef NDEBUG
 		CPPAD_ASSERT_UNKNOWN( op_         == NonOp );
 		CPPAD_ASSERT_UNKNOWN( NumVar(op_) == 1     );
-		CPPAD_ASSERT_UNKNOWN( NumInd(op_) == 0     );
+		CPPAD_ASSERT_UNKNOWN( NumArg(op_) == 0     );
 # endif
 		return;
 	}
@@ -414,10 +412,10 @@ public:
 	void next_forward(
 	OpCode& op, const size_t*& op_arg, size_t& op_index, size_t& var_index)
 	{	using CppAD::NumVar;
-		using CppAD::NumInd;
+		using CppAD::NumArg;
 
 		op_index    = ++op_index_;
-		op_arg_    += NumInd(op_);
+		op_arg_    += NumArg(op_);
 		var_index_ += NumVar(op_);
 
 		op          = op_         = rec_op_[ op_index_ ];
@@ -425,7 +423,7 @@ public:
 		var_index   = var_index_;
 
 		CPPAD_ASSERT_UNKNOWN( op_index_  < num_rec_op_ );
-		CPPAD_ASSERT_UNKNOWN( op_arg_ + NumInd(op) <= num_rec_op_arg_ );
+		CPPAD_ASSERT_UNKNOWN( op_arg_ + NumArg(op) <= num_rec_op_arg_ );
 		CPPAD_ASSERT_UNKNOWN( var_index_ + NumVar(op) <= num_rec_var_ );
 	}
 	/*!
@@ -477,14 +475,14 @@ public:
 	void next_reverse(
 	OpCode& op, const size_t*& op_arg, size_t& op_index, size_t& var_index)
 	{	using CppAD::NumVar;
-		using CppAD::NumInd;
+		using CppAD::NumArg;
 
 		CPPAD_ASSERT_UNKNOWN( op_index_  > 0 );
 		op_index    = --op_index_;
 		op_         = rec_op_[ op_index_ ];
 
-		CPPAD_ASSERT_UNKNOWN( op_arg_ >= NumInd(op_)  );
-		op_arg_    -= NumInd(op_);
+		CPPAD_ASSERT_UNKNOWN( op_arg_ >= NumArg(op_)  );
+		op_arg_    -= NumArg(op_);
 
 		CPPAD_ASSERT_UNKNOWN( var_index_ >= NumVar(op_) );
 		var_index_ -= NumVar(op_);

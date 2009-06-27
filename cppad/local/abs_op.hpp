@@ -41,7 +41,7 @@ inline void forward_abs_op(
 	static Base zero(0);
 
 	// check assumptions
-	CPPAD_ASSERT_UNKNOWN( NumInd(AbsOp) == 1 );
+	CPPAD_ASSERT_UNKNOWN( NumArg(AbsOp) == 1 );
 	CPPAD_ASSERT_UNKNOWN( NumVar(AbsOp) == 1 );
 	CPPAD_ASSERT_UNKNOWN( i_y < i_z );
 	CPPAD_ASSERT_UNKNOWN( p < nc_taylor );
@@ -84,7 +84,7 @@ inline void forward_abs_op_0(
 {
 
 	// check assumptions
-	CPPAD_ASSERT_UNKNOWN( NumInd(AbsOp) == 1 );
+	CPPAD_ASSERT_UNKNOWN( NumArg(AbsOp) == 1 );
 	CPPAD_ASSERT_UNKNOWN( NumVar(AbsOp) == 1 );
 	CPPAD_ASSERT_UNKNOWN( i_y < i_z );
 	CPPAD_ASSERT_UNKNOWN( 0 < nc_taylor );
@@ -124,7 +124,7 @@ inline void reverse_abs_op(
 
 
 	// check assumptions
-	CPPAD_ASSERT_UNKNOWN( NumInd(AbsOp) == 1 );
+	CPPAD_ASSERT_UNKNOWN( NumArg(AbsOp) == 1 );
 	CPPAD_ASSERT_UNKNOWN( NumVar(AbsOp) == 1 );
 	CPPAD_ASSERT_UNKNOWN( i_y < i_z );
 	CPPAD_ASSERT_UNKNOWN( p < nc_taylor );

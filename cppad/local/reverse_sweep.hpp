@@ -182,7 +182,7 @@ void ReverseSweep(
 
 		// corresponding number of varables and indices
 		n_var  = NumVar(op);
-		n_ind  = NumInd(op);
+		n_ind  = NumArg(op);
 
 		// value of Z and its partials for this op
 		Z   = Taylor + i_var * J;
@@ -190,7 +190,7 @@ void ReverseSweep(
 
 		// rest of informaiton depends on the case
 # if CPPAD_REVERSE_SWEEP_TRACE
-		n_ind = NumInd(op);
+		n_ind = NumArg(op);
 		printOp(
 			std::cout, 
 			Rec,

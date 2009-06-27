@@ -168,7 +168,7 @@ void RevHesSweep(
 
 		// corresponding number of varable and indices
 		n_var  = NumVar(op);
-		n_ind  = NumInd(op);
+		n_ind  = NumArg(op);
 
 		// sparsity for z corresponding to this op
 		Zf     = ForJac + i_var * npv;

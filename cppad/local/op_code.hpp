@@ -92,14 +92,14 @@ The i-th element in this table specifes the number of arguments stored for each
 occurance of the operator that is the i-th value in the OpCode enum type.
 For example, for the first three OpCode enum values we have
 \verbatim
-OpCode   j   NumIndTable[j]  Meaning
+OpCode   j   NumArgTable[j]  Meaning
 AbsOp    0                1  index of variable we are taking absolute value of
 AcosOp   1                1  index of variable we are taking cosine of
 AddpvOp  1                2  indices of parameter and variable we are adding
 \endverbatim
 Note that the meaning of the arguments depends on the operator.
 */
-const size_t NumIndTable[] = {
+const size_t NumArgTable[] = {
 	1, // AbsOp
 	1, // AcosOp
 	2, // AddpvOp
@@ -151,14 +151,14 @@ Number of arguments corresponding to the specified operator.
 \param op 
 Operator for which we are fetching the number of arugments.
 */
-inline size_t NumInd( OpCode op)
+inline size_t NumArg( OpCode op)
 {
 	CPPAD_ASSERT_UNKNOWN( size_t(SubvvOp) == 
-		sizeof(NumIndTable) / sizeof(NumIndTable[0]) - 1
+		sizeof(NumArgTable) / sizeof(NumArgTable[0]) - 1
 	);
 	CPPAD_ASSERT_UNKNOWN( size_t(op) <= size_t(SubvvOp) );
 
-	return NumIndTable[(size_t) op];
+	return NumArgTable[(size_t) op];
 }
 
 /*!
@@ -330,7 +330,7 @@ The operator code (OpCode) for this operation.
 
 \param ind
 is the vector of argument indices for this operation
-(must have NumInd(op) elements).
+(must have NumArg(op) elements).
 
 \param nfz
 is the number of forward sweep calculated values of type Value
@@ -428,40 +428,40 @@ void printOp(
 	switch( op )
 	{
 		case LdpOp:
-		CPPAD_ASSERT_UNKNOWN( NumInd(op) == 3 );
+		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 3 );
 		printOpField(os, "off=", ind[0], ncol);
 		printOpField(os, "  p=", *(Rec->GetPar(ind[1])), ncol);
 		break;
 
 		case LdvOp:
-		CPPAD_ASSERT_UNKNOWN( NumInd(op) == 3 );
+		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 3 );
 		printOpField(os, "off=", ind[0], ncol);
 		printOpField(os, "  v=", ind[1], ncol);
 		break;
 
 		case StppOp:
-		CPPAD_ASSERT_UNKNOWN( NumInd(op) == 3 );
+		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 3 );
 		printOpField(os, "off=", ind[0], ncol);
 		printOpField(os, " pl=", *(Rec->GetPar(ind[1])), ncol);
 		printOpField(os, " pr=", *(Rec->GetPar(ind[2])), ncol);
 		break;
 
 		case StpvOp:
-		CPPAD_ASSERT_UNKNOWN( NumInd(op) == 3 );
+		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 3 );
 		printOpField(os, "off=", ind[0], ncol);
 		printOpField(os, " pl=", *(Rec->GetPar(ind[1])), ncol);
 		printOpField(os, " vr=", ind[2], ncol);
 		break;
 
 		case StvpOp:
-		CPPAD_ASSERT_UNKNOWN( NumInd(op) == 3 );
+		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 3 );
 		printOpField(os, "off=", ind[0], ncol);
 		printOpField(os, " vl=", ind[1], ncol);
 		printOpField(os, " pr=", *(Rec->GetPar(ind[2])), ncol);
 		break;
 
 		case StvvOp:
-		CPPAD_ASSERT_UNKNOWN( NumInd(op) == 3 );
+		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 3 );
 		printOpField(os, "off=", ind[0], ncol);
 		printOpField(os, " vl=", ind[1], ncol);
 		printOpField(os, " vr=", ind[2], ncol);
@@ -472,7 +472,7 @@ void printOp(
 		case MulvvOp:
 		case PowvvOp:
 		case SubvvOp:
-		CPPAD_ASSERT_UNKNOWN( NumInd(op) == 2 );
+		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 2 );
 		printOpField(os, " vl=", ind[0], ncol);
 		printOpField(os, " vr=", ind[1], ncol);
 		break;
@@ -482,7 +482,7 @@ void printOp(
 		case MulpvOp:
 		case PowpvOp:
 		case DivpvOp:
-		CPPAD_ASSERT_UNKNOWN( NumInd(op) == 2 );
+		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 2 );
 		printOpField(os, " pl=", *(Rec->GetPar(ind[0])), ncol);
 		printOpField(os, " vr=", ind[1], ncol);
 		break;
@@ -492,7 +492,7 @@ void printOp(
 		case MulvpOp:
 		case PowvpOp:
 		case SubvpOp:
-		CPPAD_ASSERT_UNKNOWN( NumInd(op) == 2 );
+		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 2 );
 		printOpField(os, " vl=", ind[0], ncol);
 		printOpField(os, " pr=", *(Rec->GetPar(ind[1])), ncol);
 		break;
@@ -508,34 +508,34 @@ void printOp(
 		case SinOp:
 		case SinhOp:
 		case SqrtOp:
-		CPPAD_ASSERT_UNKNOWN( NumInd(op) == 1 );
+		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 1 );
 		printOpField(os, "  v=", ind[0], ncol);
 		break;
 
 		case ParOp:
-		CPPAD_ASSERT_UNKNOWN( NumInd(op) == 1 );
+		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 1 );
 		printOpField(os, "  p=", *(Rec->GetPar(ind[0])), ncol);
 		break;
 
 		case PripOp:
-		CPPAD_ASSERT_UNKNOWN( NumInd(op) == 2 );
+		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 2 );
 		printOpField(os, "txt=", *(Rec->GetTxt(ind[0])), ncol);
 		printOpField(os, "  p=", *(Rec->GetPar(ind[1])), ncol);
 		break;
 
 		case PrivOp:
-		CPPAD_ASSERT_UNKNOWN( NumInd(op) == 2 );
+		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 2 );
 		printOpField(os, "txt=", *(Rec->GetTxt(ind[0])), ncol);
 		printOpField(os, "  v=", ind[1], ncol);
 		break;
 
 		case InvOp:
 		case NonOp:
-		CPPAD_ASSERT_UNKNOWN( NumInd(op) == 0 );
+		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 0 );
 		break;
 
 		case DisOp:
-		CPPAD_ASSERT_UNKNOWN( NumInd(op) == 2 );
+		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 2 );
 		printOpField(os, "  v=", ind[0], ncol);
 		printOpField(os, "  f=", ind[1], ncol);
 		break;
@@ -543,7 +543,7 @@ void printOp(
 
 		case CExpOp:
 		CPPAD_ASSERT_UNKNOWN(ind[1] != 0);
-		CPPAD_ASSERT_UNKNOWN( NumInd(op) == 6 );
+		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 6 );
 		if( ind[1] & 1 )
 			printOpField(os, " vl=", ind[2], ncol);
 		else	printOpField(os, " pl=", *(Rec->GetPar(ind[2])), ncol);
@@ -560,7 +560,7 @@ void printOp(
 
 		case ComOp:
 		CPPAD_ASSERT_UNKNOWN(ind[1] != 0);
-		CPPAD_ASSERT_UNKNOWN( NumInd(op) == 4 );
+		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 4 );
 		if( ind[1] & 1 )
 			printOpField(os, "res=", 1, ncol);
 		else	printOpField(os, "res=", 0, ncol);

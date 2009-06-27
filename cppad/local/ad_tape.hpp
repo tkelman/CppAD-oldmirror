@@ -223,7 +223,7 @@ size_t ADTape<Base>::RecordParOp(const Base &z)
 {	size_t z_taddr;
 	size_t ind;
 	CPPAD_ASSERT_UNKNOWN( NumVar(ParOp) == 1 );
-	CPPAD_ASSERT_UNKNOWN( NumInd(ParOp) == 1 );
+	CPPAD_ASSERT_UNKNOWN( NumArg(ParOp) == 1 );
 	z_taddr = Rec_.PutOp(ParOp);
 	ind     = Rec_.PutPar(z);
 	Rec_.PutInd(ind);

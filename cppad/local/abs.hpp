@@ -141,7 +141,7 @@ AD<Base> AD<Base>::Abs (void) const
 	if( Variable(*this) ) 
 	{	// add this operation to the tape
 		CPPAD_ASSERT_UNKNOWN( NumVar(AbsOp) == 1 );
-		CPPAD_ASSERT_UNKNOWN( NumInd(AbsOp) == 1 );
+		CPPAD_ASSERT_UNKNOWN( NumArg(AbsOp) == 1 );
 		ADTape<Base> *tape = tape_this();
 
 		// corresponding operand address

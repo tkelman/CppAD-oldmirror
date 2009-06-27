@@ -173,7 +173,7 @@ void ADTape<Base>::RecordCompare(
 	ind0 = size_t (cop);
 
 	CPPAD_ASSERT_UNKNOWN( ind1 > 1 );
-	CPPAD_ASSERT_UNKNOWN( NumInd(ComOp) == 4 );
+	CPPAD_ASSERT_UNKNOWN( NumArg(ComOp) == 4 );
 	CPPAD_ASSERT_UNKNOWN( NumVar(ComOp) == 0 );
 
 	// put the operator in the tape

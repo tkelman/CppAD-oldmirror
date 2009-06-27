@@ -55,7 +55,7 @@ is the p-th order Taylor coefficient
 corresponding to z. 
 
 \par Checked Assertions where op is a unary operator with one result:
-\li NumInd(op) == 1
+\li NumArg(op) == 1
 \li NumVar(op) == 1
 \li i_y < i_z 
 \li p < nc_taylor
@@ -97,7 +97,7 @@ is the zero order Taylor coefficient corresponding to y.
 is the zero order Taylor coefficient corresponding to z. 
 
 \par Checked Assertions where op is the unary operator with one result:
-\li NumInd(op) == 1
+\li NumArg(op) == 1
 \li NumVar(op) == 1
 \li i_y < i_z 
 \li p < nc_taylor
@@ -162,7 +162,7 @@ for j = 0 , ... , p.
 
 
 \par Checked Assumptions where op is a unary operator with one result:
-\li NumInd(op) == 1
+\li NumArg(op) == 1
 \li NumVar(op) == 1
 \li i_y < i_z 
 \li p < nc_taylor

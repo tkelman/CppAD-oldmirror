@@ -152,7 +152,7 @@ pow(const AD<Base> &x, const AD<Base> &y)
 	{	if( var_y )
 		{	// result = variable^variable
 			CPPAD_ASSERT_UNKNOWN( NumVar(PowvvOp) == 3 );
-			CPPAD_ASSERT_UNKNOWN( NumInd(PowvvOp) == 2 );
+			CPPAD_ASSERT_UNKNOWN( NumArg(PowvvOp) == 2 );
 
 			// put operand addresses in tape
 			tape->Rec_.PutInd(x.taddr_, y.taddr_);
@@ -170,7 +170,7 @@ pow(const AD<Base> &x, const AD<Base> &y)
 		else
 		{	// result = variable^parameter 
 			CPPAD_ASSERT_UNKNOWN( NumVar(PowvpOp) == 3 );
-			CPPAD_ASSERT_UNKNOWN( NumInd(PowvpOp) == 2 );
+			CPPAD_ASSERT_UNKNOWN( NumArg(PowvpOp) == 2 );
 
 			// put operand addresses in tape
 			size_t p = tape->Rec_.PutPar(y.value_);
@@ -191,7 +191,7 @@ pow(const AD<Base> &x, const AD<Base> &y)
 		else
 		{	// result = variable^parameter 
 			CPPAD_ASSERT_UNKNOWN( NumVar(PowpvOp) == 3 );
-			CPPAD_ASSERT_UNKNOWN( NumInd(PowpvOp) == 2 );
+			CPPAD_ASSERT_UNKNOWN( NumArg(PowpvOp) == 2 );
 
 			// put operand addresses in tape
 			size_t p = tape->Rec_.PutPar(x.value_);

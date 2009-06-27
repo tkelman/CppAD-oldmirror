@@ -224,7 +224,7 @@ size_t forward0sweep(
 		n_var  = NumVar(op);
 
 		// index field values for this op
-		n_ind  = NumInd(op);
+		n_ind  = NumArg(op);
 
 		// value of z for this op
 		Z      = Taylor + i_var * J;
@@ -918,7 +918,7 @@ size_t forward0sweep(
 # endif
 	// check last n_var and n_ind
 	CPPAD_ASSERT_UNKNOWN( n_var == NumVar(op) );
-	CPPAD_ASSERT_UNKNOWN( n_ind == NumInd(op) );
+	CPPAD_ASSERT_UNKNOWN( n_ind == NumArg(op) );
 
 	CPPAD_ASSERT_UNKNOWN( (i_var + n_var) == Rec->num_rec_var() );
 	if( VectorInd != CPPAD_NULL )

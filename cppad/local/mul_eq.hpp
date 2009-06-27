@@ -50,7 +50,7 @@ AD<Base>& AD<Base>::operator *= (const AD<Base> &right)
 	{	if( var_right )
 		{	// this = variable * variable
 			CPPAD_ASSERT_UNKNOWN( NumVar(MulvvOp) == 1 );
-			CPPAD_ASSERT_UNKNOWN( NumInd(MulvvOp) == 2 );
+			CPPAD_ASSERT_UNKNOWN( NumArg(MulvvOp) == 2 );
 
 			// put operand addresses in tape
 			tape->Rec_.PutInd(taddr_, right.taddr_);
@@ -69,7 +69,7 @@ AD<Base>& AD<Base>::operator *= (const AD<Base> &right)
 		else
 		{	// this = variable * parameter
 			CPPAD_ASSERT_UNKNOWN( NumVar(MulvpOp) == 1 );
-			CPPAD_ASSERT_UNKNOWN( NumInd(MulvpOp) == 2 );
+			CPPAD_ASSERT_UNKNOWN( NumArg(MulvpOp) == 2 );
 
 			// put operand addresses in tape
 			size_t p = tape->Rec_.PutPar(right.value_);
@@ -91,7 +91,7 @@ AD<Base>& AD<Base>::operator *= (const AD<Base> &right)
 		else
 		{	// this = parameter * variable
 			CPPAD_ASSERT_UNKNOWN( NumVar(MulpvOp) == 1 );
-			CPPAD_ASSERT_UNKNOWN( NumInd(MulpvOp) == 2 );
+			CPPAD_ASSERT_UNKNOWN( NumArg(MulpvOp) == 2 );
 
 			// put operand addresses in tape
 			size_t p = tape->Rec_.PutPar(left);

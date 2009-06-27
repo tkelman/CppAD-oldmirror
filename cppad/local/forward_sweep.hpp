@@ -230,7 +230,7 @@ size_t forward_sweep(
 		n_var  = NumVar(op);
 
 		// index field values for this op
-		n_ind  = NumInd(op);
+		n_ind  = NumArg(op);
 
 		// value of z for this op
 		Z      = Taylor + i_var * J;

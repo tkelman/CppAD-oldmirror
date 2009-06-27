@@ -142,13 +142,13 @@ void ADTape<Base>::Independent(VectorAD &x)
 
 	// skip the first record (parameters use taddr zero)
 	CPPAD_ASSERT_UNKNOWN( NumVar(NonOp) == 1 );
-	CPPAD_ASSERT_UNKNOWN( NumInd(NonOp) == 0 );
+	CPPAD_ASSERT_UNKNOWN( NumArg(NonOp) == 0 );
 	Rec_.PutOp(NonOp);
 
 
 	// place each of the independent variables in the tape
 	CPPAD_ASSERT_UNKNOWN( NumVar(InvOp) == 1 );
-	CPPAD_ASSERT_UNKNOWN( NumInd(InvOp) == 0 );
+	CPPAD_ASSERT_UNKNOWN( NumArg(InvOp) == 0 );
 	size_t j;
 	for(j = 0; j < n; j++)
 	{	// tape address for this independent variable
