@@ -3,7 +3,7 @@
 # define CPPAD_DIV_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-08 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-09 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -59,7 +59,7 @@ AD<Base> operator / (const AD<Base> &left , const AD<Base> &right)
 			CPPAD_ASSERT_UNKNOWN( NumArg(DivvvOp) == 2 );
 
 			// put operand addresses in tape
-			tape->Rec_.PutInd(left.taddr_, right.taddr_);
+			tape->Rec_.PutArg(left.taddr_, right.taddr_);
 			// put operator in the tape
 			result.taddr_ = tape->Rec_.PutOp(DivvvOp);
 			// make result a variable
@@ -76,7 +76,7 @@ AD<Base> operator / (const AD<Base> &left , const AD<Base> &right)
 
 			// put operand addresses in tape
 			size_t p = tape->Rec_.PutPar(right.value_);
-			tape->Rec_.PutInd(left.taddr_, p);
+			tape->Rec_.PutArg(left.taddr_, p);
 			// put operator in the tape
 			result.taddr_ = tape->Rec_.PutOp(DivvpOp);
 			// make result a variable
@@ -94,7 +94,7 @@ AD<Base> operator / (const AD<Base> &left , const AD<Base> &right)
 
 			// put operand addresses in tape
 			size_t p = tape->Rec_.PutPar(left.value_);
-			tape->Rec_.PutInd(p, right.taddr_);
+			tape->Rec_.PutArg(p, right.taddr_);
 			// put operator in the tape
 			result.taddr_ = tape->Rec_.PutOp(DivpvOp);
 			// make result a variable

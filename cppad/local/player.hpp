@@ -124,8 +124,8 @@ public:
 		// VecInd
 		num_rec_vecad_ind_  = rec.NumberVecInd_;
 
-		// Ind
-		num_rec_op_arg_     = rec.NumberInd_;
+		// Arg
+		num_rec_op_arg_     = rec.NumberArg_;
 
 		// Par
 		num_rec_par_        = rec.NumberPar_;
@@ -164,7 +164,7 @@ public:
 			rec_vecad_ind_[i] = rec.VecInd_[i];
 		i = num_rec_op_arg_;
 		while(i--)
-			rec_op_arg_[i] = rec.Ind_[i];
+			rec_op_arg_[i] = rec.Arg_[i];
 		i = num_rec_par_;
 		while(i--)
 			rec_par_[i] = rec.Par_[i];

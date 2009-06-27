@@ -3,7 +3,7 @@
 # define CPPAD_COND_EXP_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-08 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-09 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -378,7 +378,7 @@ void ADTape<Base>::RecordCondExp(
 
 	CPPAD_ASSERT_UNKNOWN( NumArg(CExpOp) == 6 );
 	CPPAD_ASSERT_UNKNOWN( ind1 > 0 );
-	Rec_.PutInd(ind0, ind1, ind2, ind3, ind4, ind5);
+	Rec_.PutArg(ind0, ind1, ind2, ind3, ind4, ind5);
 
 	// check that returnValue is a dependent variable
 	CPPAD_ASSERT_UNKNOWN( Variable(returnValue) );

@@ -389,7 +389,7 @@ public:
 				CPPAD_ASSERT_UNKNOWN( NumArg(LdpOp) == 3 );
 
 				// put operand addresses in tape
-				tape->Rec_.PutInd(
+				tape->Rec_.PutArg(
 					vec_->offset_, i, result.taddr_
 				);
 				// put operator in the tape, x_ is a parameter
@@ -414,7 +414,7 @@ public:
 				CPPAD_ASSERT_UNKNOWN( x_.taddr_ > 0 );
 
 				// put operand addresses in tape
-				tape->Rec_.PutInd(
+				tape->Rec_.PutArg(
 					vec_->offset_, x_.taddr_, result.taddr_
 				);
 				// put operator in the tape, x_ is a variable
@@ -591,7 +591,7 @@ void VecAD_reference<Base>::operator=(const AD<Base> &y)
 		CPPAD_ASSERT_UNKNOWN( NumVar(StpvOp) == 0 );
 
 		// put operand addresses in tape
-		tape->Rec_.PutInd(vec_->offset_, i, y.taddr_);
+		tape->Rec_.PutArg(vec_->offset_, i, y.taddr_);
 
 		// put operator in the tape, x_ is parameter, y is variable
 		tape->Rec_.PutOp(StpvOp);
@@ -602,7 +602,7 @@ void VecAD_reference<Base>::operator=(const AD<Base> &y)
 		CPPAD_ASSERT_UNKNOWN( x_.taddr_ > 0 );
 
 		// put operand addresses in tape
-		tape->Rec_.PutInd(vec_->offset_, x_.taddr_, y.taddr_);
+		tape->Rec_.PutArg(vec_->offset_, x_.taddr_, y.taddr_);
 
 		// put operator in the tape, x_ is variable, y is variable
 		tape->Rec_.PutOp(StvvOp);
@@ -635,7 +635,7 @@ void VecAD_reference<Base>::operator=(const Base &y)
 		CPPAD_ASSERT_UNKNOWN( NumVar(StppOp) == 0 );
 
 		// put operand addresses in tape
-		tape->Rec_.PutInd(vec_->offset_, i, p);
+		tape->Rec_.PutArg(vec_->offset_, i, p);
 
 		// put operator in the tape, x_ is parameter, y is parameter
 		tape->Rec_.PutOp(StppOp);
@@ -646,7 +646,7 @@ void VecAD_reference<Base>::operator=(const Base &y)
 		CPPAD_ASSERT_UNKNOWN( x_.taddr_ > 0 );
 
 		// put operand addresses in tape
-		tape->Rec_.PutInd(vec_->offset_, x_.taddr_, p);
+		tape->Rec_.PutArg(vec_->offset_, x_.taddr_, p);
 
 		// put operator in the tape, x_ is variable, y is parameter
 		tape->Rec_.PutOp(StvpOp);

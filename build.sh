@@ -37,7 +37,10 @@ then
 	do
 		echo "========================================================"
 		echo "./build.sh $option"
-		./build.sh $option
+		if ! ./build.sh $option
+		then
+			exit 1
+		fi
 	done
 fi
 if [ "$1" = "all" ] && [ "$2" != "" ] && [ "$2" != "test" ] && [ "$2" != "dos" ]

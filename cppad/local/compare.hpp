@@ -3,7 +3,7 @@
 # define CPPAD_COMPARE_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-08 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-09 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -178,7 +178,7 @@ void ADTape<Base>::RecordCompare(
 
 	// put the operator in the tape
 	Rec_.PutOp(ComOp);
-	Rec_.PutInd(ind0, ind1, ind2, ind3);
+	Rec_.PutArg(ind0, ind1, ind2, ind3);
 }
 
 // -------------------------------- < -------------------------

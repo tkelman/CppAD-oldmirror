@@ -16,12 +16,12 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 $begin recorder$$ $comment CppAD Developer Documentation$$
 
 $spell
+	Arg
 	Var
 	inline
 	VecInd
 	sizeof
 	Num
-	Ind
 	Cpp
 	const
 	Op
@@ -80,8 +80,8 @@ the return index increases by the number of variables corresponding
 to the previous call to $code PutOp$$.
 This index starts at zero after each $code Erase$$ or default constructor.
 
-$head PutInd$$
-$index PutInd$$
+$head PutArg$$
+$index PutArg$$
 If $icode ind_j$$ has prototype
 $codei%
 	size_t %ind_j%
@@ -89,14 +89,14 @@ $codei%
 for $icode j$$ equal to $icode 0$$, ... , $icode 5$$,
 The following syntax
 $codei%
-	%rec%.PutInd(%ind_0%)
-	%rec%.PutInd(%ind_0%, %ind_1%)
+	%rec%.PutArg(%ind_0%)
+	%rec%.PutArg(%ind_0%, %ind_1%)
 	%.%
 	%.%
 	%.%
-	%rec%.PutInd(%ind_0%, %ind_1%, %...%, %ind_5%)
+	%rec%.PutArg(%ind_0%, %ind_1%, %...%, %ind_5%)
 %$$
-places the values passed to $codei PutInd$$ at the current end of the
+places the values passed to $codei PutArg$$ at the current end of the
 operation sequence index vector in the specified order, i.e., 
 $icode ind_0$$ comes before $icode ind_1$$ e.t.c.
 The proper number of indices $icode n$$ 
@@ -108,7 +108,7 @@ where $icode n$$ is a $code size_t$$ object and $icode op$$
 is an $code OpCode$$ object.
 The end of the operation sequence index vector starts at zero
 and increases by the number of indices placed in the vector
-by each call to $code PutInd$$.
+by each call to $code PutArg$$.
 The end of the vector starts at zero after each $code Erase$$ 
 or default constructor. 
 
@@ -202,9 +202,9 @@ public:
 		LengthVecInd_   = 0;
 		VecInd_         = CPPAD_NULL;
 
-		NumberInd_      = 0;
-		LengthInd_      = 0;
-		Ind_            = CPPAD_NULL;
+		NumberArg_      = 0;
+		LengthArg_      = 0;
+		Arg_            = CPPAD_NULL;
 
 		NumberPar_      = 0;
 		LengthPar_      = 0;
@@ -222,8 +222,8 @@ public:
 			CPPAD_TRACK_DEL_VEC(Op_);
 		if( LengthVecInd_ > 0 )
 			CPPAD_TRACK_DEL_VEC(VecInd_);
-		if( LengthInd_ > 0 )
-			CPPAD_TRACK_DEL_VEC(Ind_);
+		if( LengthArg_ > 0 )
+			CPPAD_TRACK_DEL_VEC(Arg_);
 		if( LengthPar_ > 0 )
 			CPPAD_TRACK_DEL_VEC(Par_);
 		if( LengthTxt_ > 0 )
@@ -236,7 +236,7 @@ public:
 		TotalNumberVar_  = 0;
 		NumberOp_        = 0;
 		NumberVecInd_    = 0;
-		NumberInd_       = 0;
+		NumberArg_       = 0;
 		NumberPar_       = 0;
 		NumberTxt_       = 0;
 
@@ -244,8 +244,8 @@ public:
 			CPPAD_TRACK_DEL_VEC(Op_);
 		if( LengthVecInd_ > 0 )
 			CPPAD_TRACK_DEL_VEC(VecInd_);
-		if( LengthInd_ > 0 )
-			CPPAD_TRACK_DEL_VEC(Ind_);
+		if( LengthArg_ > 0 )
+			CPPAD_TRACK_DEL_VEC(Arg_);
 		if( LengthPar_ > 0 )
 			CPPAD_TRACK_DEL_VEC(Par_);
 		if( LengthTxt_ > 0 )
@@ -253,7 +253,7 @@ public:
 
 		LengthOp_        = 0;
 		LengthVecInd_    = 0;
-		LengthInd_       = 0;
+		LengthArg_       = 0;
 		LengthPar_       = 0;
 		LengthTxt_       = 0;
 	}
@@ -262,13 +262,13 @@ public:
 	inline size_t PutOp(OpCode op);
 	inline size_t PutVecInd(size_t vecInd);
 	inline size_t PutPar(const Base &par);
-	inline void PutInd(size_t ind0); 
-	inline void PutInd(size_t ind0, size_t ind1); 
-	inline void PutInd(size_t ind0, size_t ind1, size_t ind2); 
-	inline void PutInd(size_t ind0, size_t ind1, size_t ind2, size_t ind3); 
-	inline void PutInd(size_t ind0, size_t ind1, size_t ind2, size_t ind3,
+	inline void PutArg(size_t ind0); 
+	inline void PutArg(size_t ind0, size_t ind1); 
+	inline void PutArg(size_t ind0, size_t ind1, size_t ind2); 
+	inline void PutArg(size_t ind0, size_t ind1, size_t ind2, size_t ind3); 
+	inline void PutArg(size_t ind0, size_t ind1, size_t ind2, size_t ind3,
 		size_t ind4);
-	inline void PutInd(size_t ind0, size_t ind1, size_t ind2, size_t ind3,
+	inline void PutArg(size_t ind0, size_t ind1, size_t ind2, size_t ind3,
 		size_t ind4, size_t ind5);
 
 	inline size_t PutTxt(const char *text);
@@ -281,7 +281,7 @@ public:
 	size_t Memory(void) const
 	{	return LengthOp_ * sizeof(OpCode) 
 		     + LengthVecInd_ * sizeof(size_t)
-		     + LengthInd_ * sizeof(size_t)
+		     + LengthArg_ * sizeof(size_t)
 		     + LengthPar_ * sizeof(Base)
 		     + LengthTxt_ * sizeof(char);
 	}
@@ -297,9 +297,9 @@ private:
 	size_t    LengthVecInd_;
 	size_t   *VecInd_;
 
-	size_t    NumberInd_;
-	size_t    LengthInd_;
-	size_t   *Ind_;
+	size_t    NumberArg_;
+	size_t    LengthArg_;
+	size_t   *Arg_;
 
 	size_t    NumberPar_;
 	size_t    LengthPar_;
@@ -366,92 +366,92 @@ inline size_t recorder<Base>::PutPar(const Base &par)
 
 	return NumberPar_ - 1;
 }
- // -------------------------- PutInd --------------------------------------
+ // -------------------------- PutArg --------------------------------------
 template <class Base>
-inline void recorder<Base>::PutInd(size_t ind0)
+inline void recorder<Base>::PutArg(size_t ind0)
 { 
-	CPPAD_ASSERT_UNKNOWN( NumberInd_ <= LengthInd_ );
-	if( NumberInd_ == LengthInd_ )
-	{	LengthInd_ = 2 * LengthInd_ + 8;
-		Ind_ = CPPAD_TRACK_EXTEND(LengthInd_, NumberInd_, Ind_);
+	CPPAD_ASSERT_UNKNOWN( NumberArg_ <= LengthArg_ );
+	if( NumberArg_ == LengthArg_ )
+	{	LengthArg_ = 2 * LengthArg_ + 8;
+		Arg_ = CPPAD_TRACK_EXTEND(LengthArg_, NumberArg_, Arg_);
 	}
-	CPPAD_ASSERT_UNKNOWN( NumberInd_ < LengthInd_ );
-	Ind_[NumberInd_++] = ind0;
+	CPPAD_ASSERT_UNKNOWN( NumberArg_ < LengthArg_ );
+	Arg_[NumberArg_++] = ind0;
 }
 template <class Base>
-inline void recorder<Base>::PutInd(size_t ind0, size_t ind1)
+inline void recorder<Base>::PutArg(size_t ind0, size_t ind1)
 { 
-	CPPAD_ASSERT_UNKNOWN( NumberInd_ <= LengthInd_ );
-	if( NumberInd_ + 1 >= LengthInd_ )
-	{	LengthInd_ = 2 * LengthInd_ + 8;
-		Ind_ = CPPAD_TRACK_EXTEND(LengthInd_, NumberInd_, Ind_);
+	CPPAD_ASSERT_UNKNOWN( NumberArg_ <= LengthArg_ );
+	if( NumberArg_ + 1 >= LengthArg_ )
+	{	LengthArg_ = 2 * LengthArg_ + 8;
+		Arg_ = CPPAD_TRACK_EXTEND(LengthArg_, NumberArg_, Arg_);
 	}
-	CPPAD_ASSERT_UNKNOWN( NumberInd_ + 1 < LengthInd_ );
-	Ind_[NumberInd_++] = ind0;
-	Ind_[NumberInd_++] = ind1;
+	CPPAD_ASSERT_UNKNOWN( NumberArg_ + 1 < LengthArg_ );
+	Arg_[NumberArg_++] = ind0;
+	Arg_[NumberArg_++] = ind1;
 }
 template <class Base>
-inline void recorder<Base>::PutInd(size_t ind0, size_t ind1, size_t ind2)
+inline void recorder<Base>::PutArg(size_t ind0, size_t ind1, size_t ind2)
 { 
-	CPPAD_ASSERT_UNKNOWN( NumberInd_ <= LengthInd_ );
-	if( NumberInd_ + 2 >= LengthInd_ )
-	{	LengthInd_ = 2 * LengthInd_ + 8;
-		Ind_ = CPPAD_TRACK_EXTEND(LengthInd_, NumberInd_, Ind_);
+	CPPAD_ASSERT_UNKNOWN( NumberArg_ <= LengthArg_ );
+	if( NumberArg_ + 2 >= LengthArg_ )
+	{	LengthArg_ = 2 * LengthArg_ + 8;
+		Arg_ = CPPAD_TRACK_EXTEND(LengthArg_, NumberArg_, Arg_);
 	}
-	CPPAD_ASSERT_UNKNOWN( NumberInd_ + 2 < LengthInd_ );
-	Ind_[NumberInd_++] = ind0;
-	Ind_[NumberInd_++] = ind1;
-	Ind_[NumberInd_++] = ind2;
+	CPPAD_ASSERT_UNKNOWN( NumberArg_ + 2 < LengthArg_ );
+	Arg_[NumberArg_++] = ind0;
+	Arg_[NumberArg_++] = ind1;
+	Arg_[NumberArg_++] = ind2;
 }
 template <class Base>
-inline void recorder<Base>::PutInd(size_t ind0, size_t ind1, size_t ind2,
+inline void recorder<Base>::PutArg(size_t ind0, size_t ind1, size_t ind2,
 	size_t ind3)
 { 
-	CPPAD_ASSERT_UNKNOWN( NumberInd_ <= LengthInd_ );
-	if( NumberInd_ + 3 >= LengthInd_ )
-	{	LengthInd_ = 2 * LengthInd_ + 8;
-		Ind_ = CPPAD_TRACK_EXTEND(LengthInd_, NumberInd_, Ind_);
+	CPPAD_ASSERT_UNKNOWN( NumberArg_ <= LengthArg_ );
+	if( NumberArg_ + 3 >= LengthArg_ )
+	{	LengthArg_ = 2 * LengthArg_ + 8;
+		Arg_ = CPPAD_TRACK_EXTEND(LengthArg_, NumberArg_, Arg_);
 	}
-	CPPAD_ASSERT_UNKNOWN( NumberInd_ + 3 < LengthInd_ );
-	Ind_[NumberInd_++] = ind0;
-	Ind_[NumberInd_++] = ind1;
-	Ind_[NumberInd_++] = ind2;
-	Ind_[NumberInd_++] = ind3;
+	CPPAD_ASSERT_UNKNOWN( NumberArg_ + 3 < LengthArg_ );
+	Arg_[NumberArg_++] = ind0;
+	Arg_[NumberArg_++] = ind1;
+	Arg_[NumberArg_++] = ind2;
+	Arg_[NumberArg_++] = ind3;
 
 }
 template <class Base>
-inline void recorder<Base>::PutInd(size_t ind0, size_t ind1, size_t ind2,
+inline void recorder<Base>::PutArg(size_t ind0, size_t ind1, size_t ind2,
 	size_t ind3, size_t ind4)
 { 
-	CPPAD_ASSERT_UNKNOWN( NumberInd_ <= LengthInd_ );
-	if( NumberInd_ + 4 >= LengthInd_ )
-	{	LengthInd_ = 2 * LengthInd_ + 8;
-		Ind_ = CPPAD_TRACK_EXTEND(LengthInd_, NumberInd_, Ind_);
+	CPPAD_ASSERT_UNKNOWN( NumberArg_ <= LengthArg_ );
+	if( NumberArg_ + 4 >= LengthArg_ )
+	{	LengthArg_ = 2 * LengthArg_ + 8;
+		Arg_ = CPPAD_TRACK_EXTEND(LengthArg_, NumberArg_, Arg_);
 	}
-	CPPAD_ASSERT_UNKNOWN( NumberInd_ + 4 < LengthInd_ );
-	Ind_[NumberInd_++] = ind0;
-	Ind_[NumberInd_++] = ind1;
-	Ind_[NumberInd_++] = ind2;
-	Ind_[NumberInd_++] = ind3;
-	Ind_[NumberInd_++] = ind4;
+	CPPAD_ASSERT_UNKNOWN( NumberArg_ + 4 < LengthArg_ );
+	Arg_[NumberArg_++] = ind0;
+	Arg_[NumberArg_++] = ind1;
+	Arg_[NumberArg_++] = ind2;
+	Arg_[NumberArg_++] = ind3;
+	Arg_[NumberArg_++] = ind4;
 
 }
 template <class Base>
-inline void recorder<Base>::PutInd(size_t ind0, size_t ind1, size_t ind2, 
+inline void recorder<Base>::PutArg(size_t ind0, size_t ind1, size_t ind2, 
 	size_t ind3, size_t ind4, size_t ind5)
 { 
-	CPPAD_ASSERT_UNKNOWN( NumberInd_ <= LengthInd_ );
-	if( NumberInd_ + 5 >= LengthInd_ )
-	{	LengthInd_ = 2 * LengthInd_ + 8;
-		Ind_ = CPPAD_TRACK_EXTEND(LengthInd_, NumberInd_, Ind_);
+	CPPAD_ASSERT_UNKNOWN( NumberArg_ <= LengthArg_ );
+	if( NumberArg_ + 5 >= LengthArg_ )
+	{	LengthArg_ = 2 * LengthArg_ + 8;
+		Arg_ = CPPAD_TRACK_EXTEND(LengthArg_, NumberArg_, Arg_);
 	}
-	CPPAD_ASSERT_UNKNOWN( NumberInd_ + 5 < LengthInd_ );
-	Ind_[NumberInd_++] = ind0;
-	Ind_[NumberInd_++] = ind1;
-	Ind_[NumberInd_++] = ind2;
-	Ind_[NumberInd_++] = ind3;
-	Ind_[NumberInd_++] = ind4;
-	Ind_[NumberInd_++] = ind5;
+	CPPAD_ASSERT_UNKNOWN( NumberArg_ + 5 < LengthArg_ );
+	Arg_[NumberArg_++] = ind0;
+	Arg_[NumberArg_++] = ind1;
+	Arg_[NumberArg_++] = ind2;
+	Arg_[NumberArg_++] = ind3;
+	Arg_[NumberArg_++] = ind4;
+	Arg_[NumberArg_++] = ind5;
 }
 
 template <class Base>

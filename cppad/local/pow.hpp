@@ -155,7 +155,7 @@ pow(const AD<Base> &x, const AD<Base> &y)
 			CPPAD_ASSERT_UNKNOWN( NumArg(PowvvOp) == 2 );
 
 			// put operand addresses in tape
-			tape->Rec_.PutInd(x.taddr_, y.taddr_);
+			tape->Rec_.PutArg(x.taddr_, y.taddr_);
 
 			// put operator in the tape
 			result.taddr_ = tape->Rec_.PutOp(PowvvOp);
@@ -174,7 +174,7 @@ pow(const AD<Base> &x, const AD<Base> &y)
 
 			// put operand addresses in tape
 			size_t p = tape->Rec_.PutPar(y.value_);
-			tape->Rec_.PutInd(x.taddr_, p);
+			tape->Rec_.PutArg(x.taddr_, p);
 
 			// put operator in the tape
 			result.taddr_ = tape->Rec_.PutOp(PowvpOp);
@@ -195,7 +195,7 @@ pow(const AD<Base> &x, const AD<Base> &y)
 
 			// put operand addresses in tape
 			size_t p = tape->Rec_.PutPar(x.value_);
-			tape->Rec_.PutInd(p, y.taddr_);
+			tape->Rec_.PutArg(p, y.taddr_);
 
 			// put operator in the tape
 			result.taddr_ = tape->Rec_.PutOp(PowpvOp);
