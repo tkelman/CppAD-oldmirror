@@ -13,7 +13,7 @@
 # Define your subversion commit by editing the definition of 
 # log_entry, add_list, delete_list, and change_list below:
 # 
-log_entry="Improve build.sh so can batch any combination of options.
+log_entry="
 " 
 add_list="
 "
@@ -23,7 +23,6 @@ old_list="
 "
 #
 change_list="
-	build.sh
 "
 #
 # log_entry
