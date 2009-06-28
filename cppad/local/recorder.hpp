@@ -82,23 +82,23 @@ This index starts at zero after each $code Erase$$ or default constructor.
 
 $head PutArg$$
 $index PutArg$$
-If $icode ind_j$$ has prototype
+If $icode arg_j$$ has prototype
 $codei%
-	size_t %ind_j%
+	size_t %arg_j%
 %$$
 for $icode j$$ equal to $icode 0$$, ... , $icode 5$$,
 The following syntax
 $codei%
-	%rec%.PutArg(%ind_0%)
-	%rec%.PutArg(%ind_0%, %ind_1%)
+	%rec%.PutArg(%arg_0%)
+	%rec%.PutArg(%arg_0%, %arg_1%)
 	%.%
 	%.%
 	%.%
-	%rec%.PutArg(%ind_0%, %ind_1%, %...%, %ind_5%)
+	%rec%.PutArg(%arg_0%, %arg_1%, %...%, %arg_5%)
 %$$
 places the values passed to $codei PutArg$$ at the current end of the
 operation sequence index vector in the specified order, i.e., 
-$icode ind_0$$ comes before $icode ind_1$$ e.t.c.
+$icode arg_0$$ comes before $icode arg_1$$ e.t.c.
 The proper number of indices $icode n$$ 
 corresponding to the operation $icode op$$ is given by
 $codei%
@@ -262,14 +262,14 @@ public:
 	inline size_t PutOp(OpCode op);
 	inline size_t PutVecInd(size_t vecInd);
 	inline size_t PutPar(const Base &par);
-	inline void PutArg(size_t ind0); 
-	inline void PutArg(size_t ind0, size_t ind1); 
-	inline void PutArg(size_t ind0, size_t ind1, size_t ind2); 
-	inline void PutArg(size_t ind0, size_t ind1, size_t ind2, size_t ind3); 
-	inline void PutArg(size_t ind0, size_t ind1, size_t ind2, size_t ind3,
-		size_t ind4);
-	inline void PutArg(size_t ind0, size_t ind1, size_t ind2, size_t ind3,
-		size_t ind4, size_t ind5);
+	inline void PutArg(size_t arg0); 
+	inline void PutArg(size_t arg0, size_t arg1); 
+	inline void PutArg(size_t arg0, size_t arg1, size_t arg2); 
+	inline void PutArg(size_t arg0, size_t arg1, size_t arg2, size_t arg3); 
+	inline void PutArg(size_t arg0, size_t arg1, size_t arg2, size_t arg3,
+		size_t arg4);
+	inline void PutArg(size_t arg0, size_t arg1, size_t arg2, size_t arg3,
+		size_t arg4, size_t arg5);
 
 	inline size_t PutTxt(const char *text);
 
@@ -368,7 +368,7 @@ inline size_t recorder<Base>::PutPar(const Base &par)
 }
  // -------------------------- PutArg --------------------------------------
 template <class Base>
-inline void recorder<Base>::PutArg(size_t ind0)
+inline void recorder<Base>::PutArg(size_t arg0)
 { 
 	CPPAD_ASSERT_UNKNOWN( NumberArg_ <= LengthArg_ );
 	if( NumberArg_ == LengthArg_ )
@@ -376,10 +376,10 @@ inline void recorder<Base>::PutArg(size_t ind0)
 		Arg_ = CPPAD_TRACK_EXTEND(LengthArg_, NumberArg_, Arg_);
 	}
 	CPPAD_ASSERT_UNKNOWN( NumberArg_ < LengthArg_ );
-	Arg_[NumberArg_++] = ind0;
+	Arg_[NumberArg_++] = arg0;
 }
 template <class Base>
-inline void recorder<Base>::PutArg(size_t ind0, size_t ind1)
+inline void recorder<Base>::PutArg(size_t arg0, size_t arg1)
 { 
 	CPPAD_ASSERT_UNKNOWN( NumberArg_ <= LengthArg_ );
 	if( NumberArg_ + 1 >= LengthArg_ )
@@ -387,11 +387,11 @@ inline void recorder<Base>::PutArg(size_t ind0, size_t ind1)
 		Arg_ = CPPAD_TRACK_EXTEND(LengthArg_, NumberArg_, Arg_);
 	}
 	CPPAD_ASSERT_UNKNOWN( NumberArg_ + 1 < LengthArg_ );
-	Arg_[NumberArg_++] = ind0;
-	Arg_[NumberArg_++] = ind1;
+	Arg_[NumberArg_++] = arg0;
+	Arg_[NumberArg_++] = arg1;
 }
 template <class Base>
-inline void recorder<Base>::PutArg(size_t ind0, size_t ind1, size_t ind2)
+inline void recorder<Base>::PutArg(size_t arg0, size_t arg1, size_t arg2)
 { 
 	CPPAD_ASSERT_UNKNOWN( NumberArg_ <= LengthArg_ );
 	if( NumberArg_ + 2 >= LengthArg_ )
@@ -399,13 +399,13 @@ inline void recorder<Base>::PutArg(size_t ind0, size_t ind1, size_t ind2)
 		Arg_ = CPPAD_TRACK_EXTEND(LengthArg_, NumberArg_, Arg_);
 	}
 	CPPAD_ASSERT_UNKNOWN( NumberArg_ + 2 < LengthArg_ );
-	Arg_[NumberArg_++] = ind0;
-	Arg_[NumberArg_++] = ind1;
-	Arg_[NumberArg_++] = ind2;
+	Arg_[NumberArg_++] = arg0;
+	Arg_[NumberArg_++] = arg1;
+	Arg_[NumberArg_++] = arg2;
 }
 template <class Base>
-inline void recorder<Base>::PutArg(size_t ind0, size_t ind1, size_t ind2,
-	size_t ind3)
+inline void recorder<Base>::PutArg(size_t arg0, size_t arg1, size_t arg2,
+	size_t arg3)
 { 
 	CPPAD_ASSERT_UNKNOWN( NumberArg_ <= LengthArg_ );
 	if( NumberArg_ + 3 >= LengthArg_ )
@@ -413,15 +413,15 @@ inline void recorder<Base>::PutArg(size_t ind0, size_t ind1, size_t ind2,
 		Arg_ = CPPAD_TRACK_EXTEND(LengthArg_, NumberArg_, Arg_);
 	}
 	CPPAD_ASSERT_UNKNOWN( NumberArg_ + 3 < LengthArg_ );
-	Arg_[NumberArg_++] = ind0;
-	Arg_[NumberArg_++] = ind1;
-	Arg_[NumberArg_++] = ind2;
-	Arg_[NumberArg_++] = ind3;
+	Arg_[NumberArg_++] = arg0;
+	Arg_[NumberArg_++] = arg1;
+	Arg_[NumberArg_++] = arg2;
+	Arg_[NumberArg_++] = arg3;
 
 }
 template <class Base>
-inline void recorder<Base>::PutArg(size_t ind0, size_t ind1, size_t ind2,
-	size_t ind3, size_t ind4)
+inline void recorder<Base>::PutArg(size_t arg0, size_t arg1, size_t arg2,
+	size_t arg3, size_t arg4)
 { 
 	CPPAD_ASSERT_UNKNOWN( NumberArg_ <= LengthArg_ );
 	if( NumberArg_ + 4 >= LengthArg_ )
@@ -429,16 +429,16 @@ inline void recorder<Base>::PutArg(size_t ind0, size_t ind1, size_t ind2,
 		Arg_ = CPPAD_TRACK_EXTEND(LengthArg_, NumberArg_, Arg_);
 	}
 	CPPAD_ASSERT_UNKNOWN( NumberArg_ + 4 < LengthArg_ );
-	Arg_[NumberArg_++] = ind0;
-	Arg_[NumberArg_++] = ind1;
-	Arg_[NumberArg_++] = ind2;
-	Arg_[NumberArg_++] = ind3;
-	Arg_[NumberArg_++] = ind4;
+	Arg_[NumberArg_++] = arg0;
+	Arg_[NumberArg_++] = arg1;
+	Arg_[NumberArg_++] = arg2;
+	Arg_[NumberArg_++] = arg3;
+	Arg_[NumberArg_++] = arg4;
 
 }
 template <class Base>
-inline void recorder<Base>::PutArg(size_t ind0, size_t ind1, size_t ind2, 
-	size_t ind3, size_t ind4, size_t ind5)
+inline void recorder<Base>::PutArg(size_t arg0, size_t arg1, size_t arg2, 
+	size_t arg3, size_t arg4, size_t arg5)
 { 
 	CPPAD_ASSERT_UNKNOWN( NumberArg_ <= LengthArg_ );
 	if( NumberArg_ + 5 >= LengthArg_ )
@@ -446,12 +446,12 @@ inline void recorder<Base>::PutArg(size_t ind0, size_t ind1, size_t ind2,
 		Arg_ = CPPAD_TRACK_EXTEND(LengthArg_, NumberArg_, Arg_);
 	}
 	CPPAD_ASSERT_UNKNOWN( NumberArg_ + 5 < LengthArg_ );
-	Arg_[NumberArg_++] = ind0;
-	Arg_[NumberArg_++] = ind1;
-	Arg_[NumberArg_++] = ind2;
-	Arg_[NumberArg_++] = ind3;
-	Arg_[NumberArg_++] = ind4;
-	Arg_[NumberArg_++] = ind5;
+	Arg_[NumberArg_++] = arg0;
+	Arg_[NumberArg_++] = arg1;
+	Arg_[NumberArg_++] = arg2;
+	Arg_[NumberArg_++] = arg3;
+	Arg_[NumberArg_++] = arg4;
+	Arg_[NumberArg_++] = arg5;
 }
 
 template <class Base>

@@ -146,9 +146,9 @@ void ReverseSweep(
 	size_t         i_op;
 	size_t        i_var;
 	size_t        n_var;
-	size_t        n_ind;
+	size_t        n_arg;
 
-	const size_t   *ind = 0;
+	const size_t   *arg = 0;
 	const Base       *P = 0;
 	const Base       *Z = 0;
 	const Base       *Y = 0;
@@ -178,11 +178,11 @@ void ReverseSweep(
 	i_op   = 2;
 	while(i_op > 1)
 	{	// next op
-		Rec->next_reverse(op, ind, i_op, i_var);
+		Rec->next_reverse(op, arg, i_op, i_var);
 
 		// corresponding number of varables and indices
 		n_var  = NumVar(op);
-		n_ind  = NumArg(op);
+		n_arg  = NumArg(op);
 
 		// value of Z and its partials for this op
 		Z   = Taylor + i_var * J;
@@ -190,13 +190,13 @@ void ReverseSweep(
 
 		// rest of informaiton depends on the case
 # if CPPAD_REVERSE_SWEEP_TRACE
-		n_ind = NumArg(op);
+		n_arg = NumArg(op);
 		printOp(
 			std::cout, 
 			Rec,
 			i_var,
 			op, 
-			ind,
+			arg,
 			d + 1, 
 			Z, 
 			d + 1, 
@@ -209,46 +209,46 @@ void ReverseSweep(
 
 			case AbsOp:
 			reverse_abs_op(
-				d, i_var, ind[0], J, Taylor, K, Partial
+				d, i_var, arg[0], J, Taylor, K, Partial
 			);
 			break;
 			// --------------------------------------------------
 
 			case AddvvOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
-			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-			CPPAD_ASSERT_UNKNOWN( ind[1] < i_var );
+			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
+			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
 
-			pX = Partial + ind[0] * K;
-			pY = Partial + ind[1] * K;
+			pX = Partial + arg[0] * K;
+			pY = Partial + arg[1] * K;
 			RevAddvvOp(d, pZ, pX, pY);
 			break;
 			// --------------------------------------------------
 
 			case AddpvOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
-			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
-			CPPAD_ASSERT_UNKNOWN( ind[1] < i_var );
+			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
 
-			pY = Partial + ind[1] * K;
+			pY = Partial + arg[1] * K;
 			RevAddpvOp(d, pZ, pY);
 			break;
 			// --------------------------------------------------
 
 			case AddvpOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
-			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
+			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 
-			pX = Partial + ind[0] * K;
+			pX = Partial + arg[0] * K;
 			RevAddvpOp(d, pZ, pX);
 			break;
 			// --------------------------------------------------
 
 			case AcosOp:
-			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
+			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
+			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 
 			// acos(x) and sqrt(1 - x * x) are computed in pairs
 			CPPAD_ASSERT_UNKNOWN( n_var == 2);
@@ -257,15 +257,15 @@ void ReverseSweep(
 			// use W for data stored in second record
 			W  = Taylor  + (i_var+1) * J;
 			pW = Partial + (i_var+1) * K;
-			X    = Taylor  + ind[0] * J;
-			pX   = Partial + ind[0] * K;
+			X    = Taylor  + arg[0] * J;
+			pX   = Partial + arg[0] * K;
 			RevAcosOp(d, Z, W, X, pZ, pW, pX);
 			break;
 			// --------------------------------------------------
 
 			case AsinOp:
-			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
+			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
+			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 
 			// atan(x) and 1 + x * x must be computed in pairs
 			CPPAD_ASSERT_UNKNOWN( n_var == 2);
@@ -274,15 +274,15 @@ void ReverseSweep(
 			// use W for data stored in second record
 			W  = Taylor  + (i_var+1) * J;
 			pW = Partial + (i_var+1) * K;
-			X    = Taylor  + ind[0] * J;
-			pX   = Partial + ind[0] * K;
+			X    = Taylor  + arg[0] * J;
+			pX   = Partial + arg[0] * K;
 			RevAsinOp(d, Z, W, X, pZ, pW, pX);
 			break;
 			// --------------------------------------------------
 
 			case AtanOp:
-			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
+			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
+			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 
 			// cosine and sine must come in pairs
 			CPPAD_ASSERT_UNKNOWN( n_var == 2);
@@ -291,36 +291,36 @@ void ReverseSweep(
 			// use W for data stored in second record
 			W  = Taylor  + (i_var+1) * J;
 			pW = Partial + (i_var+1) * K;
-			X    = Taylor  + ind[0] * J;
-			pX   = Partial + ind[0] * K;
+			X    = Taylor  + arg[0] * J;
+			pX   = Partial + arg[0] * K;
 			RevAtanOp(d, Z, W, X, pZ, pW, pX);
 			break;
 			// -------------------------------------------------
 
 			case CExpOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
-			CPPAD_ASSERT_UNKNOWN( n_ind == 6);
-			CPPAD_ASSERT_UNKNOWN( ind[1] != 0 );
-			if( ind[1] & 1 )
-				left = Taylor + ind[2] * J;
-			else	left = Rec->GetPar(ind[2]);
-			if( ind[1] & 2 )
-				right = Taylor + ind[3] * J;
-			else	right = Rec->GetPar(ind[3]);
-			if( ind[1] & 4 )
-			{	trueCase = Partial + ind[4] * K;
+			CPPAD_ASSERT_UNKNOWN( n_arg == 6);
+			CPPAD_ASSERT_UNKNOWN( arg[1] != 0 );
+			if( arg[1] & 1 )
+				left = Taylor + arg[2] * J;
+			else	left = Rec->GetPar(arg[2]);
+			if( arg[1] & 2 )
+				right = Taylor + arg[3] * J;
+			else	right = Rec->GetPar(arg[3]);
+			if( arg[1] & 4 )
+			{	trueCase = Partial + arg[4] * K;
 				trueCase[d] += CondExpOp(
-					CompareOp( ind[0] ),
+					CompareOp( arg[0] ),
 					*left,
 					*right,
 					pZ[d],
 					zero
 				);
 			}
-			if( ind[1] & 8 )
-			{	falseCase = Partial + ind[5] * K;
+			if( arg[1] & 8 )
+			{	falseCase = Partial + arg[5] * K;
 				falseCase[d] += CondExpOp(
-					CompareOp( ind[0] ),
+					CompareOp( arg[0] ),
 					*left,
 					*right,
 					zero,
@@ -332,14 +332,14 @@ void ReverseSweep(
 
 			case ComOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 0 );
-			CPPAD_ASSERT_UNKNOWN( n_ind == 4 );
-			CPPAD_ASSERT_UNKNOWN( ind[1] > 1 );
+			CPPAD_ASSERT_UNKNOWN( n_arg == 4 );
+			CPPAD_ASSERT_UNKNOWN( arg[1] > 1 );
 			break;
 			// --------------------------------------------------
 
 			case CosOp:
-			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
+			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
+			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 
 			// cosine and sine must come in pairs
 			CPPAD_ASSERT_UNKNOWN( n_var == 2);
@@ -348,15 +348,15 @@ void ReverseSweep(
 			// use W for data stored in second record
 			W  = Taylor  + (i_var+1) * J;
 			pW = Partial + (i_var+1) * K;
-			X    = Taylor  + ind[0] * J;
-			pX   = Partial + ind[0] * K;
+			X    = Taylor  + arg[0] * J;
+			pX   = Partial + arg[0] * K;
 			RevTrigSinCos(d, W, Z, X, pW, pZ, pX);
 			break;
 			// --------------------------------------------------
 
 			case CoshOp:
-			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
+			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
+			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 
 			// cosine and sine must come in pairs
 			CPPAD_ASSERT_UNKNOWN( n_var == 2);
@@ -365,68 +365,68 @@ void ReverseSweep(
 			// use W for data stored in second record
 			W  = Taylor  + (i_var+1) * J;
 			pW = Partial + (i_var+1) * K;
-			X    = Taylor  + ind[0] * J;
-			pX   = Partial + ind[0] * K;
+			X    = Taylor  + arg[0] * J;
+			pX   = Partial + arg[0] * K;
 			RevHypSinCos(d, W, Z, X, pW, pZ, pX);
 			break;
 			// --------------------------------------------------
 
 			case DisOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
-			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
+			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			break;
 			// --------------------------------------------------
 
 			case DivvvOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
-			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-			CPPAD_ASSERT_UNKNOWN( ind[1] < i_var );
+			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
+			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
 
-			X  = Taylor  + ind[0] * J;
-			pX = Partial + ind[0] * K;
-			Y  = Taylor  + ind[1] * J;
-			pY = Partial + ind[1] * K;
+			X  = Taylor  + arg[0] * J;
+			pX = Partial + arg[0] * K;
+			Y  = Taylor  + arg[1] * J;
+			pY = Partial + arg[1] * K;
 			RevDivvvOp(d, Z, X, Y, pZ, pX, pY);
 			break;
 			// --------------------------------------------------
 
 			case DivpvOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
-			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
-			CPPAD_ASSERT_UNKNOWN( ind[1] < i_var );
+			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
 
-			Y  = Taylor  + ind[1] * J;
-			pY = Partial + ind[1] * K;
-			P  = Rec->GetPar( ind[0] );
+			Y  = Taylor  + arg[1] * J;
+			pY = Partial + arg[1] * K;
+			P  = Rec->GetPar( arg[0] );
 			RevDivpvOp(d, Z, P, Y, pZ, pY);
 			break;
 			// --------------------------------------------------
 
 			case DivvpOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
-			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
+			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 
-			X  = Taylor  + ind[0] * J;
-			pX = Partial + ind[0] * K;
-			P  = Rec->GetPar( ind[1] );
+			X  = Taylor  + arg[0] * J;
+			pX = Partial + arg[0] * K;
+			P  = Rec->GetPar( arg[1] );
 			RevDivvpOp(d, Z, X, P, pZ, pX);
 			break;
 			// --------------------------------------------------
 
 			case ExpOp:
 			reverse_exp_op(
-				d, i_var, ind[0], J, Taylor, K, Partial
+				d, i_var, arg[0], J, Taylor, K, Partial
 			);
 			break;
 			// --------------------------------------------------
 			case LdpOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
-			CPPAD_ASSERT_UNKNOWN( n_ind == 3 );
-			CPPAD_ASSERT_UNKNOWN( ind[2] < i_var );
-			if( ind[2] > 0 )
-			{	pY     = Partial + ind[2] * K;
+			CPPAD_ASSERT_UNKNOWN( n_arg == 3 );
+			CPPAD_ASSERT_UNKNOWN( arg[2] < i_var );
+			if( arg[2] > 0 )
+			{	pY     = Partial + arg[2] * K;
 				pY[d] += pZ[d];
 			}
 			break;
@@ -434,10 +434,10 @@ void ReverseSweep(
 
 			case LdvOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
-			CPPAD_ASSERT_UNKNOWN( n_ind == 3 );
-			CPPAD_ASSERT_UNKNOWN( ind[2] < i_var );
-			if( ind[2] > 0 )
-			{	pY     = Partial + ind[2] * K;
+			CPPAD_ASSERT_UNKNOWN( n_arg == 3 );
+			CPPAD_ASSERT_UNKNOWN( arg[2] < i_var );
+			if( arg[2] > 0 )
+			{	pY     = Partial + arg[2] * K;
 				pY[d] += pZ[d];
 			}
 			break;
@@ -445,74 +445,74 @@ void ReverseSweep(
 
 			case InvOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
-			CPPAD_ASSERT_UNKNOWN( n_ind == 0 );
+			CPPAD_ASSERT_UNKNOWN( n_arg == 0 );
 			break;
 			// --------------------------------------------------
 
 			case LogOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
-			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
+			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
+			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 
-			X  = Taylor  + ind[0] * J;
-			pX = Partial + ind[0] * K;
+			X  = Taylor  + arg[0] * J;
+			pX = Partial + arg[0] * K;
 			RevLogOp(d, Z, X, pZ, pX);
 			break;
 			// --------------------------------------------------
 
 			case MulvvOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
-			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-			CPPAD_ASSERT_UNKNOWN( ind[1] < i_var );
+			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
+			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
 
-			X  = Taylor  + ind[0] * J;
-			pX = Partial + ind[0] * K;
-			Y  = Taylor  + ind[1] * J;
-			pY = Partial + ind[1] * K;
+			X  = Taylor  + arg[0] * J;
+			pX = Partial + arg[0] * K;
+			Y  = Taylor  + arg[1] * J;
+			pY = Partial + arg[1] * K;
 			RevMulvvOp(d, Z, X, Y, pZ, pX, pY);
 			break;
 			// --------------------------------------------------
 
 			case MulpvOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
-			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
-			CPPAD_ASSERT_UNKNOWN( ind[1] < i_var );
+			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
 
-			Y  = Taylor  + ind[1] * J;
-			pY = Partial + ind[1] * K;
-			P  = Rec->GetPar( ind[0] );
+			Y  = Taylor  + arg[1] * J;
+			pY = Partial + arg[1] * K;
+			P  = Rec->GetPar( arg[0] );
 			RevMulpvOp(d, Z, P, Y, pZ, pY);
 			break;
 			// --------------------------------------------------
 
 			case MulvpOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
-			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
+			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 
-			X  = Taylor  + ind[0] * J;
-			pX = Partial + ind[0] * K;
-			P  = Rec->GetPar( ind[1] );
+			X  = Taylor  + arg[0] * J;
+			pX = Partial + arg[0] * K;
+			P  = Rec->GetPar( arg[1] );
 			RevMulvpOp(d, Z, X, P, pZ, pX);
 			break;
 			// --------------------------------------------------
 
 			case NonOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
-			CPPAD_ASSERT_UNKNOWN( n_ind == 0 );
+			CPPAD_ASSERT_UNKNOWN( n_arg == 0 );
 			break;
 			// --------------------------------------------------
 
 			case ParOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
-			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
+			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
 			break;
 			// --------------------------------------------------
 
 			case PowvpOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 3);
-			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
+			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			U  = Z;
 			pU = pZ;
 			W  = U  + J;
@@ -526,12 +526,12 @@ void ReverseSweep(
 			);
 
 			// w = u * y
-			Y  = Rec->GetPar( ind[1] );
+			Y  = Rec->GetPar( arg[1] );
 			RevMulvpOp(d, W, U, Y, pW, pU);
 
 			// u = log(x)
-			X  = Taylor  + ind[0] * J;
-			pX = Partial + ind[0] * K;
+			X  = Taylor  + arg[0] * J;
+			pX = Partial + arg[0] * K;
 			RevLogOp(d, U, X, pU, pX);
 
 			break;
@@ -539,7 +539,7 @@ void ReverseSweep(
 
 			case PowpvOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 3);
-			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
+			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			U  = Z;
 			pU = pZ;
 			W  = U  + J;
@@ -553,8 +553,8 @@ void ReverseSweep(
 			);
 
 			// w = u * y
-			Y  = Taylor  + ind[1] * J;
-			pY = Partial + ind[1] * K;
+			Y  = Taylor  + arg[1] * J;
+			pY = Partial + arg[1] * K;
 			RevMulpvOp(d, W, U, Y, pW, pY);
 
 			// u = log(x)
@@ -565,7 +565,7 @@ void ReverseSweep(
 
 			case PowvvOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 3);
-			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
+			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			U  = Z;
 			pU = pZ;
 			W  = U  + J;
@@ -579,13 +579,13 @@ void ReverseSweep(
 			);
 
 			// w = u * y
-			Y  = Taylor  + ind[1] * J;
-			pY = Partial + ind[1] * K;
+			Y  = Taylor  + arg[1] * J;
+			pY = Partial + arg[1] * K;
 			RevMulvvOp(d, W, U, Y, pW, pU, pY);
 
 			// u = log(x)
-			X  = Taylor  + ind[0] * J;
-			pX = Partial + ind[0] * K;
+			X  = Taylor  + arg[0] * J;
+			pX = Partial + arg[0] * K;
 			RevLogOp(d, U, X, pU, pX);
 
 			break;
@@ -593,20 +593,20 @@ void ReverseSweep(
 			// --------------------------------------------------
 			case PripOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 0);
-			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
+			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			break;
 			// --------------------------------------------------
 
 			case PrivOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 0);
-			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
+			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			break;
 
 			// -------------------------------------------------
 
 			case SinOp:
-			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
+			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
+			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 
 			// sine and cosine come in pairs
 			CPPAD_ASSERT_UNKNOWN( n_var == 2);
@@ -615,15 +615,15 @@ void ReverseSweep(
 			// use W for data stored in cosine slot record
 			W  = Taylor  + (i_var+1) * J;
 			pW = Partial + (i_var+1) * K;
-			X    = Taylor  + ind[0] * J;
-			pX   = Partial + ind[0] * K;
+			X    = Taylor  + arg[0] * J;
+			pX   = Partial + arg[0] * K;
 			RevTrigSinCos(d, Z, W, X, pZ, pW, pX);
 			break;
 			// -------------------------------------------------
 
 			case SinhOp:
-			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
+			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
+			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 
 			// sine and cosine come in pairs
 			CPPAD_ASSERT_UNKNOWN( n_var == 2);
@@ -632,77 +632,77 @@ void ReverseSweep(
 			// use W for data stored in cosine slot record
 			W  = Taylor  + (i_var+1) * J;
 			pW = Partial + (i_var+1) * K;
-			X    = Taylor  + ind[0] * J;
-			pX   = Partial + ind[0] * K;
+			X    = Taylor  + arg[0] * J;
+			pX   = Partial + arg[0] * K;
 			RevHypSinCos(d, Z, W, X, pZ, pW, pX);
 			break;
 			// --------------------------------------------------
 
 			case SqrtOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
-			CPPAD_ASSERT_UNKNOWN( n_ind == 1 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
+			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
+			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 
-			X  = Taylor  + ind[0] * J;
-			pX = Partial + ind[0] * K;
+			X  = Taylor  + arg[0] * J;
+			pX = Partial + arg[0] * K;
 			RevSqrtOp(d, Z, X, pZ, pX);
 			break;
 			// --------------------------------------------------
 
 			case StppOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 0);
-			CPPAD_ASSERT_UNKNOWN( n_ind == 3 );
+			CPPAD_ASSERT_UNKNOWN( n_arg == 3 );
 			break;
 			// --------------------------------------------------
 
 			case StpvOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 0);
-			CPPAD_ASSERT_UNKNOWN( n_ind == 3 );
-			CPPAD_ASSERT_UNKNOWN( ind[2] < i_var );
+			CPPAD_ASSERT_UNKNOWN( n_arg == 3 );
+			CPPAD_ASSERT_UNKNOWN( arg[2] < i_var );
 			break;
 			// -------------------------------------------------
 
 			case StvpOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 0);
-			CPPAD_ASSERT_UNKNOWN( n_ind == 3 );
+			CPPAD_ASSERT_UNKNOWN( n_arg == 3 );
 			break;
 			// -------------------------------------------------
 
 			case StvvOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 0);
-			CPPAD_ASSERT_UNKNOWN( n_ind == 3 );
-			CPPAD_ASSERT_UNKNOWN( ind[2] < i_var );
+			CPPAD_ASSERT_UNKNOWN( n_arg == 3 );
+			CPPAD_ASSERT_UNKNOWN( arg[2] < i_var );
 			break;
 			// --------------------------------------------------
 
 			case SubvvOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
-			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
-			CPPAD_ASSERT_UNKNOWN( ind[1] < i_var );
+			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
+			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
 
-			pX = Partial + ind[0] * K;
-			pY = Partial + ind[1] * K;
+			pX = Partial + arg[0] * K;
+			pY = Partial + arg[1] * K;
 			RevSubvvOp(d, pZ, pX, pY);
 			break;
 			// --------------------------------------------------
 
 			case SubpvOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
-			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
-			CPPAD_ASSERT_UNKNOWN( ind[1] < i_var );
+			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
 
-			pY = Partial + ind[1] * K;
+			pY = Partial + arg[1] * K;
 			RevSubpvOp(d, pZ, pY);
 			break;
 			// --------------------------------------------------
 
 			case SubvpOp:
 			CPPAD_ASSERT_UNKNOWN( n_var == 1);
-			CPPAD_ASSERT_UNKNOWN( n_ind == 2 );
-			CPPAD_ASSERT_UNKNOWN( ind[0] < i_var );
+			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 
-			pX = Partial + ind[0] * K;
+			pX = Partial + arg[0] * K;
 			RevSubvpOp(d, pZ, pX);
 			break;
 			// --------------------------------------------------
