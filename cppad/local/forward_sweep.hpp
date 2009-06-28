@@ -785,12 +785,7 @@ size_t forward_sweep(
 			// -------------------------------------------------
 
 			case SqrtOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
-			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
-
-			X = Taylor + arg[0] * J;
-			ForSqrtOp(d, Z, X);
+			forward_sqrt_op(d, i_var, arg[0], J, Taylor);
 			break;
 			// -------------------------------------------------
 

@@ -26,7 +26,6 @@ $childtable%
 	cppad/local/div_op.hpp%
 	cppad/local/mul_op.hpp%
 	cppad/local/sin_cos.hpp%
-	cppad/local/sqrt_op.hpp%
 	cppad/local/sub_op.hpp
 %$$
 

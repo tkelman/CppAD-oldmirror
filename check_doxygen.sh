@@ -21,6 +21,7 @@ list="
 	player.hpp
 	prototype_op.hpp
 	sparse_op.hpp
+	sqrt_op.hpp
 "
 for name in $list
 do

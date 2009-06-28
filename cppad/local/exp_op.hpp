@@ -39,8 +39,6 @@ inline void forward_exp_op(
 	size_t nc_taylor   , 
 	Base*  taylor      )
 {	
-	size_t k;
-
 	// check assumptions
 	CPPAD_ASSERT_UNKNOWN( NumArg(ExpOp) == 1 );
 	CPPAD_ASSERT_UNKNOWN( NumRes(ExpOp) == 1 );
@@ -51,6 +49,7 @@ inline void forward_exp_op(
 	Base* x = taylor + i_x * nc_taylor;
 	Base* z = taylor + i_z * nc_taylor;
 
+	size_t k;
 	if( j == 0 )
 		z[0] = exp( x[0] );
 	else
@@ -79,7 +78,6 @@ inline void forward_exp_op_0(
 	size_t nc_taylor   , 
 	Base*  taylor      )
 {
-
 	// check assumptions
 	CPPAD_ASSERT_UNKNOWN( NumArg(ExpOp) == 1 );
 	CPPAD_ASSERT_UNKNOWN( NumRes(ExpOp) == 1 );
@@ -112,8 +110,7 @@ inline void reverse_exp_op(
 	const Base* taylor       ,
 	size_t      nc_partial   ,
 	Base*       partial      )
-{	size_t j, k;	
-
+{
 	// check assumptions
 	CPPAD_ASSERT_UNKNOWN( NumArg(ExpOp) == 1 );
 	CPPAD_ASSERT_UNKNOWN( NumRes(ExpOp) == 1 );
@@ -130,6 +127,7 @@ inline void reverse_exp_op(
 	Base* pz       = partial + i_z * nc_partial;
 
 	// lopp through orders in reverse
+	size_t j, k;
 	j = d;
 	while(j)
 	{	// scale partial w.r.t z[j]

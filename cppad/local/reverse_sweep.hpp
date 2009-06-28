@@ -645,13 +645,9 @@ void ReverseSweep(
 			// --------------------------------------------------
 
 			case SqrtOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
-			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
-
-			X  = Taylor  + arg[0] * J;
-			pX = Partial + arg[0] * K;
-			RevSqrtOp(d, Z, X, pZ, pX);
+			reverse_sqrt_op(
+				d, i_var, arg[0], J, Taylor, K, Partial
+			);
 			break;
 			// --------------------------------------------------
 
