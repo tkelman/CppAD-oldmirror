@@ -130,7 +130,7 @@ void RevHesSweep(
 	OpCode           op;
 	size_t         i_op;
 	size_t        i_var;
-	size_t        n_var;
+	size_t        n_res;
 	size_t        n_arg;
 
 	const size_t   *arg = 0;
@@ -167,7 +167,7 @@ void RevHesSweep(
 		Rec->next_reverse(op, arg, i_op, i_var);
 
 		// corresponding number of varable and indices
-		n_var  = NumRes(op);
+		n_res  = NumRes(op);
 		n_arg  = NumArg(op);
 
 		// sparsity for z corresponding to this op
@@ -193,7 +193,7 @@ void RevHesSweep(
 		switch( op )
 		{
 			case AbsOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
 			reverse_sparse_hessian_linear_unary_op(
 				i_var, arg[0], *Zr, npv, ForJac, RevHes
@@ -202,7 +202,7 @@ void RevHesSweep(
 			// -------------------------------------------------
 
 			case AddvvOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
@@ -217,7 +217,7 @@ void RevHesSweep(
 			// -------------------------------------------------
 
 			case AddpvOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			reverse_sparse_hessian_linear_unary_op(
 				i_var, arg[1], *Zr, npv, ForJac, RevHes
@@ -226,7 +226,7 @@ void RevHesSweep(
 			// -------------------------------------------------
 
 			case AddvpOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			reverse_sparse_hessian_linear_unary_op(
 				i_var, arg[0], *Zr, npv, ForJac, RevHes
@@ -238,7 +238,7 @@ void RevHesSweep(
 			// acos(x) and sqrt(1 - x * x) are computed in pairs
 			// but i_var + 1 should only be used here
 			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
-			CPPAD_ASSERT_UNKNOWN( n_var == 2);
+			CPPAD_ASSERT_UNKNOWN( n_res == 2);
 			reverse_sparse_hessian_nonlinear_unary_op(
 				i_var, arg[0], *Zr, npv, ForJac, RevHes
 			);
@@ -249,7 +249,7 @@ void RevHesSweep(
 			// asin(x) and sqrt(1 - x * x) are computed in pairs
 			// but i_var + 1 should only be used here
 			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
-			CPPAD_ASSERT_UNKNOWN( n_var == 2);
+			CPPAD_ASSERT_UNKNOWN( n_res == 2);
 			reverse_sparse_hessian_nonlinear_unary_op(
 				i_var, arg[0], *Zr, npv, ForJac, RevHes
 			);
@@ -260,14 +260,14 @@ void RevHesSweep(
 			// atan(x) and 1 + x * x must be computed in pairs
 			// but i_var + 1 should only be used here
 			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
-			CPPAD_ASSERT_UNKNOWN( n_var == 2);
+			CPPAD_ASSERT_UNKNOWN( n_res == 2);
 			reverse_sparse_hessian_nonlinear_unary_op(
 				i_var, arg[0], *Zr, npv, ForJac, RevHes
 			);
 			break;
 			// -------------------------------------------------
 			case CExpOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 6);
 			CPPAD_ASSERT_UNKNOWN( arg[1] != 0 );
 
@@ -305,7 +305,7 @@ void RevHesSweep(
 			// ---------------------------------------------------
 
 			case ComOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 0 );
+			CPPAD_ASSERT_UNKNOWN( n_res == 0 );
 			CPPAD_ASSERT_UNKNOWN( n_arg == 4 );
 			CPPAD_ASSERT_UNKNOWN( arg[1] > 1 );
 			break;
@@ -315,7 +315,7 @@ void RevHesSweep(
 			// cosine and sine must come in pairs
 			// but i_var + 1 should only be used here
 			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
-			CPPAD_ASSERT_UNKNOWN( n_var == 2);
+			CPPAD_ASSERT_UNKNOWN( n_res == 2);
 			reverse_sparse_hessian_nonlinear_unary_op(
 				i_var, arg[0], *Zr, npv, ForJac, RevHes
 			);
@@ -326,7 +326,7 @@ void RevHesSweep(
 			// hyperbolic cosine and sine must come in pairs
 			// but i_var + 1 should only be used here
 			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
-			CPPAD_ASSERT_UNKNOWN( n_var == 2);
+			CPPAD_ASSERT_UNKNOWN( n_res == 2);
 			reverse_sparse_hessian_nonlinear_unary_op(
 				i_var, arg[0], *Zr, npv, ForJac, RevHes
 			);
@@ -334,14 +334,14 @@ void RevHesSweep(
 			// -------------------------------------------------
 
 			case DisOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 
 			break;
 			// -------------------------------------------------
 
 			case DivvvOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
@@ -358,7 +358,7 @@ void RevHesSweep(
 			// -------------------------------------------------
 
 			case DivpvOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			reverse_sparse_hessian_nonlinear_unary_op(
 				i_var, arg[1], *Zr, npv, ForJac, RevHes
@@ -367,7 +367,7 @@ void RevHesSweep(
 			// -------------------------------------------------
 
 			case DivvpOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			reverse_sparse_hessian_linear_unary_op(
 				i_var, arg[0], *Zr, npv, ForJac, RevHes
@@ -376,7 +376,7 @@ void RevHesSweep(
 			// -------------------------------------------------
 
 			case ExpOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
 			reverse_sparse_hessian_nonlinear_unary_op(
 				i_var, arg[0], *Zr, npv, ForJac, RevHes
@@ -385,14 +385,14 @@ void RevHesSweep(
 			// -------------------------------------------------
 
 			case InvOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 0 );
 			// Z is already defined
 			break;
 			// -------------------------------------------------
 
 			case LdpOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 3 );
 			
 			CPPAD_ASSERT_UNKNOWN( arg[0] > 0 );
@@ -408,7 +408,7 @@ void RevHesSweep(
 			// -------------------------------------------------
 
 			case LdvOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 3 );
 			
 			CPPAD_ASSERT_UNKNOWN( arg[0] > 0 );
@@ -424,7 +424,7 @@ void RevHesSweep(
 			// -------------------------------------------------
 
 			case LogOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
 			reverse_sparse_hessian_nonlinear_unary_op(
 				i_var, arg[0], *Zr, npv, ForJac, RevHes
@@ -433,7 +433,7 @@ void RevHesSweep(
 			// -------------------------------------------------
 
 			case MulvvOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
@@ -450,7 +450,7 @@ void RevHesSweep(
 			// -------------------------------------------------
 
 			case MulpvOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			reverse_sparse_hessian_linear_unary_op(
 				i_var, arg[1], *Zr, npv, ForJac, RevHes
@@ -459,7 +459,7 @@ void RevHesSweep(
 			// -------------------------------------------------
 
 			case MulvpOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			reverse_sparse_hessian_linear_unary_op(
 				i_var, arg[0], *Zr, npv, ForJac, RevHes
@@ -468,14 +468,14 @@ void RevHesSweep(
 			// -------------------------------------------------
 
 			case NonOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 0 );
 
 			break;
 			// -------------------------------------------------
 
 			case ParOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
 
 			break;
@@ -484,7 +484,7 @@ void RevHesSweep(
 			case PowpvOp:
                         // Pow operator is a special case where final result
                         // comes at the end of the three variables
-			CPPAD_ASSERT_UNKNOWN( n_var == 3 );
+			CPPAD_ASSERT_UNKNOWN( n_res == 3 );
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			reverse_sparse_hessian_nonlinear_unary_op(
 				i_var+2, arg[1], *(Zr+2), npv, ForJac, RevHes
@@ -495,7 +495,7 @@ void RevHesSweep(
 			case PowvpOp:
                         // Pow operator is a special case where final result
                         // comes at the end of the three variables
-			CPPAD_ASSERT_UNKNOWN( n_var == 3 );
+			CPPAD_ASSERT_UNKNOWN( n_res == 3 );
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			reverse_sparse_hessian_nonlinear_unary_op(
 				i_var+2, arg[0], *(Zr+2), npv, ForJac, RevHes
@@ -508,7 +508,7 @@ void RevHesSweep(
                         // comes at the end of the three variables
 			Zr += 2;
 			Zh += 2 * npv;
-			CPPAD_ASSERT_UNKNOWN( n_var == 3 );
+			CPPAD_ASSERT_UNKNOWN( n_res == 3 );
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
@@ -525,13 +525,13 @@ void RevHesSweep(
 			// -------------------------------------------------
 
 			case PripOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 
 			break;
 			// -------------------------------------------------
 
 			case PrivOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 0);
+			CPPAD_ASSERT_UNKNOWN( n_res == 0);
 
 			break;
 			// -------------------------------------------------
@@ -540,7 +540,7 @@ void RevHesSweep(
 			// sine and cosine must come in pairs
 			// but i_var + 1 should only be used here
 			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
-			CPPAD_ASSERT_UNKNOWN( n_var == 2);
+			CPPAD_ASSERT_UNKNOWN( n_res == 2);
 			reverse_sparse_hessian_nonlinear_unary_op(
 				i_var, arg[0], *Zr, npv, ForJac, RevHes
 			);
@@ -551,7 +551,7 @@ void RevHesSweep(
 			// sine and cosine must come in pairs
 			// but i_var + 1 should only be used here
 			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
-			CPPAD_ASSERT_UNKNOWN( n_var == 2);
+			CPPAD_ASSERT_UNKNOWN( n_res == 2);
 			reverse_sparse_hessian_nonlinear_unary_op(
 				i_var, arg[0], *Zr, npv, ForJac, RevHes
 			);
@@ -559,7 +559,7 @@ void RevHesSweep(
 			// -------------------------------------------------
 
 			case SqrtOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
 			reverse_sparse_hessian_nonlinear_unary_op(
 				i_var, arg[0], *Zr, npv, ForJac, RevHes
@@ -568,31 +568,31 @@ void RevHesSweep(
 			// -------------------------------------------------
 
 			case StppOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 0);
+			CPPAD_ASSERT_UNKNOWN( n_res == 0);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 3 );
 			break;
 			// -------------------------------------------------
 
 			case StpvOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 0);
+			CPPAD_ASSERT_UNKNOWN( n_res == 0);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 3 );
 			break;
 			// -------------------------------------------------
 
 			case StvpOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 0);
+			CPPAD_ASSERT_UNKNOWN( n_res == 0);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 3 );
 			break;
 			// -------------------------------------------------
 
 			case StvvOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 0);
+			CPPAD_ASSERT_UNKNOWN( n_res == 0);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 3 );
 			break;
 			// -------------------------------------------------
 
 			case SubvvOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
@@ -607,7 +607,7 @@ void RevHesSweep(
 			// -------------------------------------------------
 
 			case SubpvOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			reverse_sparse_hessian_linear_unary_op(
 				i_var, arg[1], *Zr, npv, ForJac, RevHes
@@ -616,7 +616,7 @@ void RevHesSweep(
 			// -------------------------------------------------
 
 			case SubvpOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			reverse_sparse_hessian_linear_unary_op(
 				i_var, arg[0], *Zr, npv, ForJac, RevHes

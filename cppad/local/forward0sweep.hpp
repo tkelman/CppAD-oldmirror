@@ -180,7 +180,7 @@ size_t forward0sweep(
 
 	size_t          i;
 	size_t          len;
-	size_t          n_var = 0;
+	size_t          n_res = 0;
 	size_t          n_arg = 0;
 
 
@@ -221,7 +221,7 @@ size_t forward0sweep(
 		Rec->next_forward(op, arg, i_op, i_var);
 
 		// number of variables
-		n_var  = NumRes(op);
+		n_res  = NumRes(op);
 
 		// index field values for this op
 		n_arg  = NumArg(op);
@@ -239,7 +239,7 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case AddvvOp:
-			n_var = 1;
+			n_res = 1;
 			n_arg = 2;
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
@@ -251,7 +251,7 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case AddpvOp:
-			n_var = 1;
+			n_res = 1;
 			n_arg = 2;
 			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
 
@@ -262,7 +262,7 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case AddvpOp:
-			n_var = 1;
+			n_res = 1;
 			n_arg = 2;
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 
@@ -275,7 +275,7 @@ size_t forward0sweep(
 			case AcosOp:
 			// variables: acos(x),  sqrt(1 - x * x) 
 			n_arg = 1;
-			n_var = 2;
+			n_res = 2;
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
 
@@ -290,7 +290,7 @@ size_t forward0sweep(
 			case AsinOp:
 			// variables: asin(x),  sqrt(1 - x * x) 
 			n_arg = 1;
-			n_var = 2;
+			n_res = 2;
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
 
@@ -305,7 +305,7 @@ size_t forward0sweep(
 			case AtanOp:
 			// variables: atan(x),  1 + x * x 
 			n_arg = 1;
-			n_var = 2;
+			n_res = 2;
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
 
@@ -318,7 +318,7 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case CExpOp:
-			n_var = 1;
+			n_res = 1;
 			n_arg = 6;
 			CPPAD_ASSERT_UNKNOWN( arg[1] != 0 );
 			if( arg[1] & 1 )
@@ -346,7 +346,7 @@ size_t forward0sweep(
 			// ---------------------------------------------------
 
 			case ComOp:
-			n_var = 0;
+			n_res = 0;
 			n_arg = 4;
 			CPPAD_ASSERT_UNKNOWN( arg[1] > 1 );
 			// d == 0
@@ -400,7 +400,7 @@ size_t forward0sweep(
 			case CosOp:
 			// variables: cos(x), sin(x)
 			n_arg = 1;
-			n_var = 2;
+			n_res = 2;
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
 
@@ -415,7 +415,7 @@ size_t forward0sweep(
 			case CoshOp:
 			// variables: cosh(x), sinh(x)
 			n_arg = 1;
-			n_var = 2;
+			n_res = 2;
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
 
@@ -428,7 +428,7 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case DisOp:
-			n_var = 1;
+			n_res = 1;
 			n_arg = 2;
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 			// d == 0
@@ -439,7 +439,7 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case DivvvOp:
-			n_var = 1;
+			n_res = 1;
 			n_arg = 2;
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
@@ -451,7 +451,7 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case DivpvOp:
-			n_var = 1;
+			n_res = 1;
 			n_arg = 2;
 			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
 
@@ -462,7 +462,7 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case DivvpOp:
-			n_var = 1;
+			n_res = 1;
 			n_arg = 2;
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 
@@ -478,13 +478,13 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case InvOp:
-			n_var = 1;
+			n_res = 1;
 			n_arg = 0;
 			break;
 			// -------------------------------------------------
 
 			case LdpOp:
-			n_var = 1;
+			n_res = 1;
 			n_arg = 3;
 			
 			CPPAD_ASSERT_UNKNOWN( arg[0] > 0 );
@@ -522,7 +522,7 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case LdvOp:
-			n_var = 1;
+			n_res = 1;
 			n_arg = 3;
 			
 			CPPAD_ASSERT_UNKNOWN( arg[0] > 0 );
@@ -564,7 +564,7 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case LogOp:
-			n_var = 1;
+			n_res = 1;
 			n_arg = 1;
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 
@@ -574,7 +574,7 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case MulvvOp:
-			n_var = 1;
+			n_res = 1;
 			n_arg = 2;
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
@@ -586,7 +586,7 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case MulpvOp:
-			n_var = 1;
+			n_res = 1;
 			n_arg = 2;
 			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
 
@@ -597,7 +597,7 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case MulvpOp:
-			n_var = 1;
+			n_res = 1;
 			n_arg = 2;
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 
@@ -608,13 +608,13 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case NonOp:
-			n_var = 1;
+			n_res = 1;
 			n_arg = 0;
 			break;
 			// -------------------------------------------------
 
 			case ParOp:
-			n_var = 1;
+			n_res = 1;
 			n_arg = 1;
 
 			P = CPPAD_GET_PAR(arg[0]);
@@ -624,7 +624,7 @@ size_t forward0sweep(
 
 			case PowvpOp:
 			// variables: log(x), y * log(x), pow(x, y)
-			n_var = 3;
+			n_res = 3;
 			n_arg = 2;
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var);
 			U = Z;
@@ -649,7 +649,7 @@ size_t forward0sweep(
 
 			case PowpvOp:
 			// variables: log(x), y * log(x), pow(x, y)
-			n_var = 3;
+			n_res = 3;
 			n_arg = 2;
 			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var);
 			U = Z;
@@ -673,7 +673,7 @@ size_t forward0sweep(
 
 			case PowvvOp:
 			// variables: log(x), y * log(x), pow(x, y)
-			n_var = 3;
+			n_res = 3;
 			n_arg = 2;
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var);
 			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var);
@@ -697,7 +697,7 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case PripOp:
-			n_var = 0;
+			n_res = 0;
 			n_arg = 2;
 			if( print )
 			{	CPPAD_ASSERT_UNKNOWN( arg[0] < Rec->num_rec_text() );
@@ -708,7 +708,7 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case PrivOp:
-			n_var = 0;
+			n_res = 0;
 			n_arg = 2;
 			if( print )
 			{	CPPAD_ASSERT_UNKNOWN( arg[0] < Rec->num_rec_text() );
@@ -724,7 +724,7 @@ size_t forward0sweep(
 			case SinOp:
 			// variables: sin(x), cos(x)
 			n_arg = 1;
-			n_var = 2;
+			n_res = 2;
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
 
@@ -739,7 +739,7 @@ size_t forward0sweep(
 			case SinhOp:
 			// variables: sinh(x), cosh(x)
 			n_arg = 1;
-			n_var = 2;
+			n_res = 2;
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
 
@@ -752,7 +752,7 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case SqrtOp:
-			n_var = 1;
+			n_res = 1;
 			n_arg = 1;
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 
@@ -762,7 +762,7 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case StppOp:
-			n_var = 0;
+			n_res = 0;
 			n_arg = 3;
 
 			// d == 0
@@ -784,7 +784,7 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case StpvOp:
-			n_var = 0;
+			n_res = 0;
 			n_arg = 3;
 
 			// d == 0
@@ -805,7 +805,7 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case StvpOp:
-			n_var = 0;
+			n_res = 0;
 			n_arg = 3;
 
 			// d == 0
@@ -833,7 +833,7 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case StvvOp:
-			n_var = 0;
+			n_res = 0;
 			n_arg = 3;
 
 			// d == 0
@@ -860,7 +860,7 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case SubvvOp:
-			n_var = 1;
+			n_res = 1;
 			n_arg = 2;
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
@@ -872,7 +872,7 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case SubpvOp:
-			n_var = 1;
+			n_res = 1;
 			n_arg = 2;
 			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
 
@@ -883,7 +883,7 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case SubvpOp:
-			n_var = 1;
+			n_res = 1;
 			n_arg = 2;
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 
@@ -916,11 +916,11 @@ size_t forward0sweep(
 # else
 	}
 # endif
-	// check last n_var and n_arg
-	CPPAD_ASSERT_UNKNOWN( n_var == NumRes(op) );
+	// check last n_res and n_arg
+	CPPAD_ASSERT_UNKNOWN( n_res == NumRes(op) );
 	CPPAD_ASSERT_UNKNOWN( n_arg == NumArg(op) );
 
-	CPPAD_ASSERT_UNKNOWN( (i_var + n_var) == Rec->num_rec_var() );
+	CPPAD_ASSERT_UNKNOWN( (i_var + n_res) == Rec->num_rec_var() );
 	if( VectorInd != CPPAD_NULL )
 		CPPAD_TRACK_DEL_VEC(VectorInd);
 	if( VectorVar != CPPAD_NULL )

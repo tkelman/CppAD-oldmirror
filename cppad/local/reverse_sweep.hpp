@@ -145,7 +145,7 @@ void ReverseSweep(
 	OpCode           op;
 	size_t         i_op;
 	size_t        i_var;
-	size_t        n_var;
+	size_t        n_res;
 	size_t        n_arg;
 
 	const size_t   *arg = 0;
@@ -181,7 +181,7 @@ void ReverseSweep(
 		Rec->next_reverse(op, arg, i_op, i_var);
 
 		// corresponding number of varables and indices
-		n_var  = NumRes(op);
+		n_res  = NumRes(op);
 		n_arg  = NumArg(op);
 
 		// value of Z and its partials for this op
@@ -215,7 +215,7 @@ void ReverseSweep(
 			// --------------------------------------------------
 
 			case AddvvOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
@@ -227,7 +227,7 @@ void ReverseSweep(
 			// --------------------------------------------------
 
 			case AddpvOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
 
@@ -237,7 +237,7 @@ void ReverseSweep(
 			// --------------------------------------------------
 
 			case AddvpOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 
@@ -251,7 +251,7 @@ void ReverseSweep(
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 
 			// acos(x) and sqrt(1 - x * x) are computed in pairs
-			CPPAD_ASSERT_UNKNOWN( n_var == 2);
+			CPPAD_ASSERT_UNKNOWN( n_res == 2);
 			CPPAD_ASSERT_UNKNOWN( i_var < numvar - 1 );
 
 			// use W for data stored in second record
@@ -268,7 +268,7 @@ void ReverseSweep(
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 
 			// atan(x) and 1 + x * x must be computed in pairs
-			CPPAD_ASSERT_UNKNOWN( n_var == 2);
+			CPPAD_ASSERT_UNKNOWN( n_res == 2);
 			CPPAD_ASSERT_UNKNOWN( i_var < numvar - 1 );
 
 			// use W for data stored in second record
@@ -285,7 +285,7 @@ void ReverseSweep(
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 
 			// cosine and sine must come in pairs
-			CPPAD_ASSERT_UNKNOWN( n_var == 2);
+			CPPAD_ASSERT_UNKNOWN( n_res == 2);
 			CPPAD_ASSERT_UNKNOWN( i_var < numvar - 1 );
 
 			// use W for data stored in second record
@@ -298,7 +298,7 @@ void ReverseSweep(
 			// -------------------------------------------------
 
 			case CExpOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 6);
 			CPPAD_ASSERT_UNKNOWN( arg[1] != 0 );
 			if( arg[1] & 1 )
@@ -331,7 +331,7 @@ void ReverseSweep(
 			// --------------------------------------------------
 
 			case ComOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 0 );
+			CPPAD_ASSERT_UNKNOWN( n_res == 0 );
 			CPPAD_ASSERT_UNKNOWN( n_arg == 4 );
 			CPPAD_ASSERT_UNKNOWN( arg[1] > 1 );
 			break;
@@ -342,7 +342,7 @@ void ReverseSweep(
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 
 			// cosine and sine must come in pairs
-			CPPAD_ASSERT_UNKNOWN( n_var == 2);
+			CPPAD_ASSERT_UNKNOWN( n_res == 2);
 			CPPAD_ASSERT_UNKNOWN( i_var < numvar - 1 );
 
 			// use W for data stored in second record
@@ -359,7 +359,7 @@ void ReverseSweep(
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 
 			// cosine and sine must come in pairs
-			CPPAD_ASSERT_UNKNOWN( n_var == 2);
+			CPPAD_ASSERT_UNKNOWN( n_res == 2);
 			CPPAD_ASSERT_UNKNOWN( i_var < numvar - 1 );
 
 			// use W for data stored in second record
@@ -372,13 +372,13 @@ void ReverseSweep(
 			// --------------------------------------------------
 
 			case DisOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			break;
 			// --------------------------------------------------
 
 			case DivvvOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
@@ -392,7 +392,7 @@ void ReverseSweep(
 			// --------------------------------------------------
 
 			case DivpvOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
 
@@ -404,7 +404,7 @@ void ReverseSweep(
 			// --------------------------------------------------
 
 			case DivvpOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 
@@ -422,7 +422,7 @@ void ReverseSweep(
 			break;
 			// --------------------------------------------------
 			case LdpOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 3 );
 			CPPAD_ASSERT_UNKNOWN( arg[2] < i_var );
 			if( arg[2] > 0 )
@@ -433,7 +433,7 @@ void ReverseSweep(
 			// -------------------------------------------------
 
 			case LdvOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 3 );
 			CPPAD_ASSERT_UNKNOWN( arg[2] < i_var );
 			if( arg[2] > 0 )
@@ -444,13 +444,13 @@ void ReverseSweep(
 			// -------------------------------------------------
 
 			case InvOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 0 );
 			break;
 			// --------------------------------------------------
 
 			case LogOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 
@@ -461,7 +461,7 @@ void ReverseSweep(
 			// --------------------------------------------------
 
 			case MulvvOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
@@ -475,7 +475,7 @@ void ReverseSweep(
 			// --------------------------------------------------
 
 			case MulpvOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
 
@@ -487,7 +487,7 @@ void ReverseSweep(
 			// --------------------------------------------------
 
 			case MulvpOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 
@@ -499,19 +499,19 @@ void ReverseSweep(
 			// --------------------------------------------------
 
 			case NonOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 0 );
 			break;
 			// --------------------------------------------------
 
 			case ParOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
 			break;
 			// --------------------------------------------------
 
 			case PowvpOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 3);
+			CPPAD_ASSERT_UNKNOWN( n_res == 3);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			U  = Z;
 			pU = pZ;
@@ -538,7 +538,7 @@ void ReverseSweep(
 			// -------------------------------------------------
 
 			case PowpvOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 3);
+			CPPAD_ASSERT_UNKNOWN( n_res == 3);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			U  = Z;
 			pU = pZ;
@@ -564,7 +564,7 @@ void ReverseSweep(
 			// -------------------------------------------------
 
 			case PowvvOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 3);
+			CPPAD_ASSERT_UNKNOWN( n_res == 3);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			U  = Z;
 			pU = pZ;
@@ -592,13 +592,13 @@ void ReverseSweep(
 
 			// --------------------------------------------------
 			case PripOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 0);
+			CPPAD_ASSERT_UNKNOWN( n_res == 0);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			break;
 			// --------------------------------------------------
 
 			case PrivOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 0);
+			CPPAD_ASSERT_UNKNOWN( n_res == 0);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			break;
 
@@ -609,7 +609,7 @@ void ReverseSweep(
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 
 			// sine and cosine come in pairs
-			CPPAD_ASSERT_UNKNOWN( n_var == 2);
+			CPPAD_ASSERT_UNKNOWN( n_res == 2);
 			CPPAD_ASSERT_UNKNOWN( i_var < numvar - 1 );
 
 			// use W for data stored in cosine slot record
@@ -626,7 +626,7 @@ void ReverseSweep(
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 
 			// sine and cosine come in pairs
-			CPPAD_ASSERT_UNKNOWN( n_var == 2);
+			CPPAD_ASSERT_UNKNOWN( n_res == 2);
 			CPPAD_ASSERT_UNKNOWN( i_var < numvar - 1 );
 
 			// use W for data stored in cosine slot record
@@ -639,7 +639,7 @@ void ReverseSweep(
 			// --------------------------------------------------
 
 			case SqrtOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 
@@ -650,33 +650,33 @@ void ReverseSweep(
 			// --------------------------------------------------
 
 			case StppOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 0);
+			CPPAD_ASSERT_UNKNOWN( n_res == 0);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 3 );
 			break;
 			// --------------------------------------------------
 
 			case StpvOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 0);
+			CPPAD_ASSERT_UNKNOWN( n_res == 0);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 3 );
 			CPPAD_ASSERT_UNKNOWN( arg[2] < i_var );
 			break;
 			// -------------------------------------------------
 
 			case StvpOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 0);
+			CPPAD_ASSERT_UNKNOWN( n_res == 0);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 3 );
 			break;
 			// -------------------------------------------------
 
 			case StvvOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 0);
+			CPPAD_ASSERT_UNKNOWN( n_res == 0);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 3 );
 			CPPAD_ASSERT_UNKNOWN( arg[2] < i_var );
 			break;
 			// --------------------------------------------------
 
 			case SubvvOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
@@ -688,7 +688,7 @@ void ReverseSweep(
 			// --------------------------------------------------
 
 			case SubpvOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
 
@@ -698,7 +698,7 @@ void ReverseSweep(
 			// --------------------------------------------------
 
 			case SubvpOp:
-			CPPAD_ASSERT_UNKNOWN( n_var == 1);
+			CPPAD_ASSERT_UNKNOWN( n_res == 1);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 
