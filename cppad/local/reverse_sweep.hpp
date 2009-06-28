@@ -176,6 +176,9 @@ void ReverseSweep(
 	// Initialize
 	Rec->start_reverse();
 	i_op   = 2;
+# if CPPAD_REVERSE_SWEEP_TRACE
+	std::cout << std::endl;
+# endif
 	while(i_op > 1)
 	{	// next op
 		Rec->next_reverse(op, arg, i_op, i_var);
@@ -190,17 +193,25 @@ void ReverseSweep(
 
 		// rest of informaiton depends on the case
 # if CPPAD_REVERSE_SWEEP_TRACE
-		n_arg = NumArg(op);
+		size_t       i_tmp  = i_var;
+		const Base*  Z_tmp  = Z;
+		const Base*  pZ_tmp = pZ;
+
+		if( op == PowvpOp || op == PowpvOp || op == PowvvOp )
+		{	i_tmp  += 2;
+			Z_tmp  += 2 * J;
+			pZ_tmp += 2 * K;
+		}
 		printOp(
 			std::cout, 
 			Rec,
-			i_var,
+			i_tmp,
 			op, 
 			arg,
 			d + 1, 
-			Z, 
+			Z_tmp, 
 			d + 1, 
-			pZ 
+			pZ_tmp 
 		);
 # endif
 

@@ -900,10 +900,14 @@ size_t forward0sweep(
 		CPPAD_ASSERT_UNKNOWN( arg + n_arg <= arg_0 + Rec->num_rec_op_arg() );
 
 # if CPPAD_FORWARD0SWEEP_TRACE
+		size_t       d      = 0;
+		size_t       i_tmp  = i_var;
+		if( op == PowvpOp || op == PowpvOp || op == PowvvOp )
+			i_tmp  += 2;
 		printOp(
 			std::cout, 
 			Rec,
-			i_var,
+			i_tmp,
 			op, 
 			arg,
 			d + 1, 
