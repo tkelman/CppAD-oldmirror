@@ -180,8 +180,7 @@ void RevJacSweep(
 		switch( op )
 		{
 			case AbsOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
+			CPPAD_ASSERT_NARG_NRES(op, 1, 1);
 			reverse_sparse_jacobian_unary_op(
 				i_var, arg[0], npv, RevJac
 			);
@@ -189,8 +188,7 @@ void RevJacSweep(
 			// -------------------------------------------------
 
 			case AddvvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_NARG_NRES(op, 2, 1);
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
 
@@ -204,8 +202,7 @@ void RevJacSweep(
 			// -------------------------------------------------
 
 			case AddpvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_NARG_NRES(op, 2, 1);
 			reverse_sparse_jacobian_unary_op(
 				i_var, arg[1], npv, RevJac
 			);
@@ -213,8 +210,7 @@ void RevJacSweep(
 			// -------------------------------------------------
 
 			case AddvpOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_NARG_NRES(op, 2, 1);
 			reverse_sparse_jacobian_unary_op(
 				i_var, arg[0], npv, RevJac
 			);
@@ -224,8 +220,7 @@ void RevJacSweep(
 			case AcosOp:
 			// acos(x) and sqrt(1 - x * x) are computed in pairs
 			// but i_var + 1 should only be used here
-			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
-			CPPAD_ASSERT_UNKNOWN( n_res == 2);
+			CPPAD_ASSERT_NARG_NRES(op, 1, 2);
 			reverse_sparse_jacobian_unary_op(
 				i_var, arg[0], npv, RevJac
 			);
@@ -235,8 +230,7 @@ void RevJacSweep(
 			case AsinOp:
 			// asin(x) and sqrt(1 - x * x) are computed in pairs
 			// but i_var + 1 should only be used here
-			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
-			CPPAD_ASSERT_UNKNOWN( n_res == 2);
+			CPPAD_ASSERT_NARG_NRES(op, 1, 2);
 			reverse_sparse_jacobian_unary_op(
 				i_var, arg[0], npv, RevJac
 			);
@@ -246,8 +240,7 @@ void RevJacSweep(
 			case AtanOp:
 			// atan(x) and 1 + x * x must be computed in pairs
 			// but i_var + 1 should only be used here
-			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
-			CPPAD_ASSERT_UNKNOWN( n_res == 2);
+			CPPAD_ASSERT_NARG_NRES(op, 1, 2);
 			reverse_sparse_jacobian_unary_op(
 				i_var, arg[0], npv, RevJac
 			);
@@ -255,8 +248,7 @@ void RevJacSweep(
 			// -------------------------------------------------
 
 			case CExpOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 6);
+			CPPAD_ASSERT_NARG_NRES(op, 6, 1);
 			CPPAD_ASSERT_UNKNOWN( arg[1] != 0 );
 
 			if( arg[1] & 1 )
@@ -293,8 +285,7 @@ void RevJacSweep(
 			// ---------------------------------------------------
 
 			case ComOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 0 );
-			CPPAD_ASSERT_UNKNOWN( n_arg == 4 );
+			CPPAD_ASSERT_NARG_NRES(op, 4, 0);
 			CPPAD_ASSERT_UNKNOWN( arg[1] > 1 );
 			break;
 			// --------------------------------------------------
@@ -302,8 +293,7 @@ void RevJacSweep(
 			case CosOp:
 			// cosine and sine must come in pairs
 			// but i_var + 1 should only be used here
-			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
-			CPPAD_ASSERT_UNKNOWN( n_res == 2);
+			CPPAD_ASSERT_NARG_NRES(op, 1, 2);
 			reverse_sparse_jacobian_unary_op(
 				i_var, arg[0], npv, RevJac
 			);
@@ -313,8 +303,7 @@ void RevJacSweep(
 			case CoshOp:
 			// hyperbolic cosine and sine must come in pairs
 			// but i_var + 1 should only be used here
-			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
-			CPPAD_ASSERT_UNKNOWN( n_res == 2);
+			CPPAD_ASSERT_NARG_NRES(op, 1, 2);
 			reverse_sparse_jacobian_unary_op(
 				i_var, arg[0], npv, RevJac
 			);
@@ -322,15 +311,13 @@ void RevJacSweep(
 			// -------------------------------------------------
 
 			case DisOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_NARG_NRES(op, 2, 1);
 
 			break;
 			// -------------------------------------------------
 
 			case DivvvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_NARG_NRES(op, 2, 1);
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
 
@@ -344,8 +331,7 @@ void RevJacSweep(
 			// -------------------------------------------------
 
 			case DivpvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_NARG_NRES(op, 2, 1);
 			reverse_sparse_jacobian_unary_op(
 				i_var, arg[1], npv, RevJac
 			);
@@ -353,8 +339,7 @@ void RevJacSweep(
 			// -------------------------------------------------
 
 			case DivvpOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_NARG_NRES(op, 2, 1);
 			reverse_sparse_jacobian_unary_op(
 				i_var, arg[0], npv, RevJac
 			);
@@ -362,8 +347,7 @@ void RevJacSweep(
 			// -------------------------------------------------
 
 			case ExpOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
+			CPPAD_ASSERT_NARG_NRES(op, 1, 1);
 			reverse_sparse_jacobian_unary_op(
 				i_var, arg[0], npv, RevJac
 			);
@@ -371,15 +355,13 @@ void RevJacSweep(
 			// -------------------------------------------------
 
 			case InvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 0 );
+			CPPAD_ASSERT_NARG_NRES(op, 0, 1);
 			// Z is already defined
 			break;
 			// -------------------------------------------------
 
 			case LdpOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 3 );
+			CPPAD_ASSERT_NARG_NRES(op, 3, 1);
 			
 			CPPAD_ASSERT_UNKNOWN( arg[0] > 0 );
 			CPPAD_ASSERT_UNKNOWN( arg[0] < Rec->num_rec_vecad_ind() );
@@ -394,8 +376,7 @@ void RevJacSweep(
 			// -------------------------------------------------
 
 			case LdvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 3 );
+			CPPAD_ASSERT_NARG_NRES(op, 3, 1);
 			
 			CPPAD_ASSERT_UNKNOWN( arg[0] > 0 );
 			CPPAD_ASSERT_UNKNOWN( arg[0] < Rec->num_rec_vecad_ind() );
@@ -410,8 +391,7 @@ void RevJacSweep(
 			// -------------------------------------------------
 
 			case LogOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
+			CPPAD_ASSERT_NARG_NRES(op, 1, 1);
 			reverse_sparse_jacobian_unary_op(
 				i_var, arg[0], npv, RevJac
 			);
@@ -419,8 +399,7 @@ void RevJacSweep(
 			// -------------------------------------------------
 
 			case MulvvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_NARG_NRES(op, 2, 1);
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
 
@@ -434,8 +413,7 @@ void RevJacSweep(
 			// -------------------------------------------------
 
 			case MulpvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_NARG_NRES(op, 2, 1);
 			reverse_sparse_jacobian_unary_op(
 				i_var, arg[1], npv, RevJac
 			);
@@ -443,8 +421,7 @@ void RevJacSweep(
 			// -------------------------------------------------
 
 			case MulvpOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_NARG_NRES(op, 2, 1);
 			reverse_sparse_jacobian_unary_op(
 				i_var, arg[0], npv, RevJac
 			);
@@ -452,15 +429,13 @@ void RevJacSweep(
 			// -------------------------------------------------
 
 			case NonOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 0 );
+			CPPAD_ASSERT_NARG_NRES(op, 0, 1);
 
 			break;
 			// -------------------------------------------------
 
 			case ParOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
+			CPPAD_ASSERT_NARG_NRES(op, 1, 1);
 
 			break;
 			// -------------------------------------------------
@@ -468,8 +443,7 @@ void RevJacSweep(
 			case PowvpOp:
 			// Pow operator is a special case where final result
 			// comes at the end of the three variables
-			CPPAD_ASSERT_UNKNOWN( n_res == 3 );
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_NARG_NRES(op, 2, 3);
 			reverse_sparse_jacobian_unary_op(
 				i_var + 2, arg[0], npv, RevJac
 			);
@@ -479,8 +453,7 @@ void RevJacSweep(
 			case PowpvOp:
 			// Pow operator is a special case where final result
 			// comes at the end of the three variables
-			CPPAD_ASSERT_UNKNOWN( n_res == 3 );
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_NARG_NRES(op, 2, 3);
 			reverse_sparse_jacobian_unary_op(
 				i_var + 2, arg[1], npv, RevJac
 			);
@@ -491,8 +464,7 @@ void RevJacSweep(
 			// Pow operator is a special case where final result
 			// comes at the end of the three variables
 			Z += 2 * npv;
-			CPPAD_ASSERT_UNKNOWN( n_res == 3 );
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_NARG_NRES(op, 2, 3);
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
 
@@ -506,22 +478,20 @@ void RevJacSweep(
 			// -------------------------------------------------
 
 			case PripOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
+ 			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
 
 			break;
 			// -------------------------------------------------
 
 			case PrivOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 0);
-
+ 			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
 			break;
 			// -------------------------------------------------
 
 			case SinOp:
 			// sine and cosine must come in pairs
 			// but i_var + 1 should only be used here
-			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
-			CPPAD_ASSERT_UNKNOWN( n_res == 2);
+			CPPAD_ASSERT_NARG_NRES(op, 1, 2);
 			reverse_sparse_jacobian_unary_op(
 				i_var, arg[0], npv, RevJac
 			);
@@ -531,8 +501,7 @@ void RevJacSweep(
 			case SinhOp:
 			// hyperbolic sine and cosine must come in pairs
 			// but i_var + 1 should only be used here
-			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
-			CPPAD_ASSERT_UNKNOWN( n_res == 2);
+			CPPAD_ASSERT_NARG_NRES(op, 1, 2);
 			reverse_sparse_jacobian_unary_op(
 				i_var, arg[0], npv, RevJac
 			);
@@ -540,8 +509,7 @@ void RevJacSweep(
 			// -------------------------------------------------
 
 			case SqrtOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
+			CPPAD_ASSERT_NARG_NRES(op, 1, 1);
 			reverse_sparse_jacobian_unary_op(
 				i_var, arg[0], npv, RevJac
 			);
@@ -549,32 +517,27 @@ void RevJacSweep(
 			// -------------------------------------------------
 
 			case StppOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 0);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 3 );
+			CPPAD_ASSERT_NARG_NRES(op, 3, 0);
 			break;
 			// -------------------------------------------------
 
 			case StpvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 0);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 3 );
+			CPPAD_ASSERT_NARG_NRES(op, 3, 0);
 			break;
 			// -------------------------------------------------
 
 			case StvpOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 0);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 3 );
+			CPPAD_ASSERT_NARG_NRES(op, 3, 0);
 			break;
 			// -------------------------------------------------
 
 			case StvvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 0);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 3 );
+			CPPAD_ASSERT_NARG_NRES(op, 3, 0);
 			break;
 			// -------------------------------------------------
 
 			case SubvvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_NARG_NRES(op, 2, 1);
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
 
@@ -588,8 +551,7 @@ void RevJacSweep(
 			// -------------------------------------------------
 
 			case SubpvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_NARG_NRES(op, 2, 1);
 			reverse_sparse_jacobian_unary_op(
 				i_var, arg[1], npv, RevJac
 			);
@@ -597,8 +559,7 @@ void RevJacSweep(
 			// -------------------------------------------------
 
 			case SubvpOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_NARG_NRES(op, 2, 1);
 			reverse_sparse_jacobian_unary_op(
 				i_var, arg[0], npv, RevJac
 			);

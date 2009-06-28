@@ -150,8 +150,6 @@ void ForJacSweep(
 	OpCode           op;
 	size_t         i_op;
 	size_t        i_var;
-	size_t        n_arg;
-	size_t        n_res = 0; // assign to avoid warning
 
 	const size_t   *arg = 0;
 	const size_t *arg_0 = 0;
@@ -184,12 +182,6 @@ void ForJacSweep(
 	{
 		// this op
 		Rec->next_forward(op, arg, i_op, i_var);
-
-		// number of variables
-		n_res  = NumRes(op);
-
-		// index field values for this op
-		n_arg  = NumArg(op);
 
 		// value of z for this op
 		Z      = ForJac + i_var * npv;
@@ -607,7 +599,7 @@ void ForJacSweep(
 # else
 	}
 # endif
-	CPPAD_ASSERT_UNKNOWN( (i_var + n_res) == Rec->num_rec_var() );
+	CPPAD_ASSERT_UNKNOWN( (i_var + NumRes(op) ) == Rec->num_rec_var() );
 
 	// free vector of zeros
 	CPPAD_TRACK_DEL_VEC(zero);
