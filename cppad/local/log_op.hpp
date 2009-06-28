@@ -16,7 +16,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 /*!
 \file log_op.hpp
-Forward and reverse mode calculations for z = log(y).
+Forward and reverse mode calculations for z = log(x).
 */
 
 /*!
@@ -24,7 +24,7 @@ Forward mode Taylor coefficient for result of op = LogOp.
 
 The C++ source code corresponding to this operation is
 \verbatim
-	z = log(y)
+	z = log(x)
 \endverbatim
 
 \copydetails forward_unary1_op
@@ -33,7 +33,7 @@ template <class Base>
 inline void forward_log_op(
 	size_t j           ,
 	size_t i_z         ,
-	size_t i_y         ,
+	size_t i_x         ,
 	size_t nc_taylor   , 
 	Base*  taylor      )
 {	
@@ -42,25 +42,25 @@ inline void forward_log_op(
 	// check assumptions
 	CPPAD_ASSERT_UNKNOWN( NumArg(LogOp) == 1 );
 	CPPAD_ASSERT_UNKNOWN( NumRes(LogOp) == 1 );
-	CPPAD_ASSERT_UNKNOWN( i_y < i_z );
+	CPPAD_ASSERT_UNKNOWN( i_x < i_z );
 	CPPAD_ASSERT_UNKNOWN( j < nc_taylor );
 
 	// Taylor coefficients corresponding to argument and result
-	Base *y = taylor + i_y * nc_taylor;
-	Base *z = taylor + i_z * nc_taylor;
+	Base* x = taylor + i_x * nc_taylor;
+	Base* z = taylor + i_z * nc_taylor;
 
 	if( j == 0 )
-		z[0] = log( y[0] );
+		z[0] = log( x[0] );
 	else if ( j == 1 )
-		z[1] = y[1] / y[0];
+		z[1] = x[1] / x[0];
 	else
 	{
-		z[j] = -z[1] * y[j-1];
+		z[j] = -z[1] * x[j-1];
 		for(k = 2; k < j; k++)
-			z[j] -= Base(k) * z[k] * y[j-k];
+			z[j] -= Base(k) * z[k] * x[j-k];
 		z[j] /= Base(j);
-		z[j] += y[j];
-		z[j] /= y[0];
+		z[j] += x[j];
+		z[j] /= x[0];
 	}
 }
 
@@ -69,7 +69,7 @@ Zero order forward mode Taylor coefficient for result of op = LogOp.
 
 The C++ source code corresponding to this operation is
 \verbatim
-	z = log(y)
+	z = log(x)
 \endverbatim
 
 \copydetails forward_unary1_op_0
@@ -77,7 +77,7 @@ The C++ source code corresponding to this operation is
 template <class Base>
 inline void forward_log_op_0(
 	size_t i_z         ,
-	size_t i_y         ,
+	size_t i_x         ,
 	size_t nc_taylor   , 
 	Base*  taylor      )
 {
@@ -85,14 +85,14 @@ inline void forward_log_op_0(
 	// check assumptions
 	CPPAD_ASSERT_UNKNOWN( NumArg(LogOp) == 1 );
 	CPPAD_ASSERT_UNKNOWN( NumRes(LogOp) == 1 );
-	CPPAD_ASSERT_UNKNOWN( i_y < i_z );
+	CPPAD_ASSERT_UNKNOWN( i_x < i_z );
 	CPPAD_ASSERT_UNKNOWN( 0 < nc_taylor );
 
 	// Taylor coefficients corresponding to argument and result
-	Base *y = taylor + i_y * nc_taylor;
-	Base *z = taylor + i_z * nc_taylor;
+	Base* x = taylor + i_x * nc_taylor;
+	Base* z = taylor + i_z * nc_taylor;
 
-	z[0] = log( y[0] );
+	z[0] = log( x[0] );
 }
 
 /*!
@@ -100,7 +100,7 @@ Reverse mode partial derivatives for result of op = LogOp.
 
 The C++ source code corresponding to this operation is
 \verbatim
-	z = log(y)
+	z = log(x)
 \endverbatim
 
 \copydetails reverse_unary1_op
@@ -110,7 +110,7 @@ template <class Base>
 inline void reverse_log_op(
 	size_t      d            ,
 	size_t      i_z          ,
-	size_t      i_y          ,
+	size_t      i_x          ,
 	size_t      nc_taylor    , 
 	const Base* taylor       ,
 	size_t      nc_partial   ,
@@ -120,36 +120,36 @@ inline void reverse_log_op(
 	// check assumptions
 	CPPAD_ASSERT_UNKNOWN( NumArg(LogOp) == 1 );
 	CPPAD_ASSERT_UNKNOWN( NumRes(LogOp) == 1 );
-	CPPAD_ASSERT_UNKNOWN( i_y < i_z );
+	CPPAD_ASSERT_UNKNOWN( i_x < i_z );
 	CPPAD_ASSERT_UNKNOWN( d < nc_taylor );
 	CPPAD_ASSERT_UNKNOWN( d < nc_partial );
 
 	// Taylor coefficients and partials corresponding to argument
-	const Base *y  = taylor  + i_y * nc_taylor;
-	Base *py       = partial + i_y * nc_partial;
+	const Base* x  = taylor  + i_x * nc_taylor;
+	Base* px       = partial + i_x * nc_partial;
 
 	// Taylor coefficients and partials corresponding to result
-	const Base *z  = taylor  + i_z * nc_taylor;
-	Base *pz       = partial + i_z * nc_partial;
+	const Base* z  = taylor  + i_z * nc_taylor;
+	Base* pz       = partial + i_z * nc_partial;
 
 	j = d;
 	while(j)
 	{	// scale partial w.r.t z[j]
-		pz[j]   /= y[0];
+		pz[j]   /= x[0];
 
-		py[0]   -= pz[j] * z[j];
-		py[j]   += pz[j];
+		px[0]   -= pz[j] * z[j];
+		px[j]   += pz[j];
 
 		// further scale partial w.r.t. z[j]
 		pz[j]   /= Base(j);
 
 		for(k = 1; k < j; k++)
-		{	pz[k]   -= pz[j] * Base(k) * y[j-k];
-			py[j-k] -= pz[j] * Base(k) * z[k];
+		{	pz[k]   -= pz[j] * Base(k) * x[j-k];
+			px[j-k] -= pz[j] * Base(k) * z[k];
 		}
 		--j;
 	}
-	py[0] += pz[0] / y[0];
+	px[0] += pz[0] / x[0];
 }
 
 CPPAD_END_NAMESPACE
