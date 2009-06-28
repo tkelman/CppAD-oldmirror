@@ -48,12 +48,9 @@ inline void forward_exp_op(
 	CPPAD_ASSERT_UNKNOWN( i_y < i_z );
 	CPPAD_ASSERT_UNKNOWN( p < nc_taylor );
 
-	// Taylor coefficients corresponding to argument
+	// Taylor coefficients corresponding to argument and result
 	Base *y = taylor + i_y * nc_taylor;
-
-	// Taylor coefficients corresponding to result
 	Base *z = taylor + i_z * nc_taylor;
-
 
 	if( p == 0 )
 		z[0] = exp( y[0] );
@@ -90,10 +87,8 @@ inline void forward_exp_op_0(
 	CPPAD_ASSERT_UNKNOWN( i_y < i_z );
 	CPPAD_ASSERT_UNKNOWN( 0 < nc_taylor );
 
-	// Taylor coefficients corresponding to argument
+	// Taylor coefficients corresponding to argument and result
 	Base *y = taylor + i_y * nc_taylor;
-
-	// Taylor coefficients corresponding to result
 	Base *z = taylor + i_z * nc_taylor;
 
 	z[0] = exp( y[0] );

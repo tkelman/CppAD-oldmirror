@@ -364,8 +364,9 @@ void printOp(
 	size_t                 nrz    ,
 	const  Value          *rz     )
 {	
-	static char *CompareOpName[] = { "Lt", "Le", "Eq", "Ge", "Gt", "Ne" };
-	static char *OpName[] = {
+	static const char *CompareOpName[] = 
+		{ "Lt", "Le", "Eq", "Ge", "Gt", "Ne" };
+	static const char *OpName[] = {
 		"Abs"   ,
 		"Acos"  ,
 		"Addpv" ,
