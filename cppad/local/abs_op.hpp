@@ -32,37 +32,35 @@ The C++ source code corresponding to this operation is
 */
 template <class Base>
 inline void forward_abs_op(
-	size_t p           ,
+	size_t j           ,
 	size_t i_z         ,
 	size_t i_y         ,
 	size_t nc_taylor   , 
 	Base*  taylor      )
 {
+	size_t k;
 	static Base zero(0);
 
 	// check assumptions
 	CPPAD_ASSERT_UNKNOWN( NumArg(AbsOp) == 1 );
 	CPPAD_ASSERT_UNKNOWN( NumRes(AbsOp) == 1 );
 	CPPAD_ASSERT_UNKNOWN( i_y < i_z );
-	CPPAD_ASSERT_UNKNOWN( p < nc_taylor );
+	CPPAD_ASSERT_UNKNOWN( j < nc_taylor );
 
-	// Taylor coefficients corresponding to argument
+	// Taylor coefficients corresponding to argument and result
 	Base *y = taylor + i_y * nc_taylor;
-
-	// Taylor coefficients corresponding to result
 	Base *z = taylor + i_z * nc_taylor;
 
 	// order that decides positive, negative or zero
-	size_t k;
 	k = 0;
-	while( (k < p) & (y[k] == zero) )
+	while( (k < j) & (y[k] == zero) )
 		k++; 
 
 	if( GreaterThanZero(y[k]) )
-		z[p]  = y[p];
+		z[j]  = y[j];
 	else if( LessThanZero(y[k]) )
-		z[p] = -y[p]; 
-	else	z[p] = zero;
+		z[j] = -y[j]; 
+	else	z[j] = zero;
 }
 
 /*!
@@ -89,10 +87,8 @@ inline void forward_abs_op_0(
 	CPPAD_ASSERT_UNKNOWN( i_y < i_z );
 	CPPAD_ASSERT_UNKNOWN( 0 < nc_taylor );
 
-	// Taylor coefficients corresponding to argument
+	// Taylor coefficients corresponding to argument and result
 	Base y0 = *(taylor + i_y * nc_taylor);
-
-	// Taylor coefficients corresponding to result
 	Base *z = taylor + i_z * nc_taylor;
 
 	if( LessThanZero(y0) )
@@ -112,7 +108,7 @@ The C++ source code corresponding to this operation is
 
 template <class Base>
 inline void reverse_abs_op(
-	size_t      p            ,
+	size_t      d            ,
 	size_t      i_z          ,
 	size_t      i_y          ,
 	size_t      nc_taylor    , 
@@ -127,8 +123,8 @@ inline void reverse_abs_op(
 	CPPAD_ASSERT_UNKNOWN( NumArg(AbsOp) == 1 );
 	CPPAD_ASSERT_UNKNOWN( NumRes(AbsOp) == 1 );
 	CPPAD_ASSERT_UNKNOWN( i_y < i_z );
-	CPPAD_ASSERT_UNKNOWN( p < nc_taylor );
-	CPPAD_ASSERT_UNKNOWN( p < nc_partial );
+	CPPAD_ASSERT_UNKNOWN( d < nc_taylor );
+	CPPAD_ASSERT_UNKNOWN( d < nc_partial );
 
 	// Taylor coefficients and partials corresponding to argument
 	const Base *y  = taylor  + i_y * nc_taylor;
@@ -139,17 +135,17 @@ inline void reverse_abs_op(
 
 	// order that decides positive, negative or zero
 	k = 0;
-	while( (k < p) & (y[k] == zero) )
+	while( (k < d) & (y[k] == zero) )
 		k++; 
 
 	if( GreaterThanZero(y[k]) )
 	{	// partial of z w.r.t y is +1
-		for(j = k; j <= p; j++)
+		for(j = k; j <= d; j++)
 			py[j] += pz[j];
 	}
 	else if( LessThanZero(y[k]) )
 	{	// partial of z w.r.t y is -1
-		for(j = k; j <= p; j++)
+		for(j = k; j <= d; j++)
 			py[j] -= pz[j];
 	}
 }

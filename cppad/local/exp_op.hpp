@@ -33,33 +33,32 @@ The C++ source code corresponding to this operation is
 */
 template <class Base>
 inline void forward_exp_op(
-	size_t p           ,
+	size_t j           ,
 	size_t i_z         ,
 	size_t i_y         ,
 	size_t nc_taylor   , 
 	Base*  taylor      )
 {	
 	size_t k;
-	static Base zero(0);
 
 	// check assumptions
 	CPPAD_ASSERT_UNKNOWN( NumArg(ExpOp) == 1 );
 	CPPAD_ASSERT_UNKNOWN( NumRes(ExpOp) == 1 );
 	CPPAD_ASSERT_UNKNOWN( i_y < i_z );
-	CPPAD_ASSERT_UNKNOWN( p < nc_taylor );
+	CPPAD_ASSERT_UNKNOWN( j < nc_taylor );
 
 	// Taylor coefficients corresponding to argument and result
 	Base *y = taylor + i_y * nc_taylor;
 	Base *z = taylor + i_z * nc_taylor;
 
-	if( p == 0 )
+	if( j == 0 )
 		z[0] = exp( y[0] );
 	else
 	{
-		z[p] = zero;
-		for(k = 1; k <= p; k++)
-			z[p] += Base(k) * y[k] * z[p-k];
-		z[p] /= Base(p);
+		z[j] = y[1] * z[j-1];
+		for(k = 2; k <= j; k++)
+			z[j] += Base(k) * y[k] * z[j-k];
+		z[j] /= Base(j);
 	}
 }
 
@@ -106,7 +105,7 @@ The C++ source code corresponding to this operation is
 
 template <class Base>
 inline void reverse_exp_op(
-	size_t      p            ,
+	size_t      d            ,
 	size_t      i_z          ,
 	size_t      i_y          ,
 	size_t      nc_taylor    , 
@@ -119,8 +118,8 @@ inline void reverse_exp_op(
 	CPPAD_ASSERT_UNKNOWN( NumArg(ExpOp) == 1 );
 	CPPAD_ASSERT_UNKNOWN( NumRes(ExpOp) == 1 );
 	CPPAD_ASSERT_UNKNOWN( i_y < i_z );
-	CPPAD_ASSERT_UNKNOWN( p < nc_taylor );
-	CPPAD_ASSERT_UNKNOWN( p < nc_partial );
+	CPPAD_ASSERT_UNKNOWN( d < nc_taylor );
+	CPPAD_ASSERT_UNKNOWN( d < nc_partial );
 
 	// Taylor coefficients and partials corresponding to argument
 	const Base *y  = taylor  + i_y * nc_taylor;
@@ -130,8 +129,8 @@ inline void reverse_exp_op(
 	const Base *z  = taylor  + i_z * nc_taylor;
 	Base *pz       = partial + i_z * nc_partial;
 
-	// number of indices to access
-	j = p;
+	// lopp through orders in reverse
+	j = d;
 	while(j)
 	{	// scale partial w.r.t z[j]
 		pz[j] /= Base(j);

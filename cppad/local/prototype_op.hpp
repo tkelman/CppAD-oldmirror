@@ -28,7 +28,7 @@ Prototype for forward mode unary operator with one result (not used).
 base type for the operator; i.e., this operation was recorded
 using AD<Base> and computations by this routine are done using type Base.
 
-\param p
+\param j
 order of the Taylor coefficient that we are computing.
 
 \param i_z
@@ -43,28 +43,26 @@ i.e. the row index in taylor corresponding to y.
 number of colums in the matrix containing all the Taylor coefficients.
 
 \param taylor
-\b Input: \a taylor [ \a i_y * \a nc_taylor + j ] 
-is the j-th order Taylor coefficient corresponding to y 
-for j = 0 , ... , \a p . 
+\b Input: \a taylor [ \a i_y * \a nc_taylor + k ] 
+for k = 0 , ... , \a j
+is the k-th order Taylor coefficient corresponding to y.
 \n
-\b Input: \a taylor [ \a i_z * \a nc_taylor + j ] 
-is the j-th order Taylor coefficient 
-corresponding to z 
-for j = 0 , ... , \a p -1. 
+\b Input: \a taylor [ \a i_z * \a nc_taylor + k ] 
+for k = 0 , ... , \a j - 1
+is the k-th order Taylor coefficient corresponding to z.
 \n
-\b Output: \a taylor [ \a i_z * \a nc_taylor + p ] 
-is the p-th order Taylor coefficient 
-corresponding to z. 
+\b Output: \a taylor [ \a i_z * \a nc_taylor + j ] 
+is the j-th order Taylor coefficient corresponding to z. 
 
 \par Checked Assertions where op is a unary operator with one result:
 \li NumArg(op) == 1
 \li NumRes(op) == 1
 \li \a i_y < \a i_z 
-\li \a p < \a nc_taylor
+\li \a j < \a nc_taylor
 */
 template <class Base>
 inline void forward_unary1_op(
-	size_t p           ,
+	size_t j           ,
 	size_t i_z         ,
 	size_t i_y         ,
 	size_t nc_taylor   , 
@@ -102,7 +100,7 @@ is the zero order Taylor coefficient corresponding to z.
 \li NumArg(op) == 1
 \li NumRes(op) == 1
 \li \a i_y < \a i_z 
-\li \a p < \a nc_taylor
+\li \a j < \a nc_taylor
 */
 template <class Base>
 inline void forward_unary1_op_0(
@@ -124,8 +122,9 @@ and it uses them to compute the partial derivatives of
 	H(y, x, ... ) = G[ z(y) , y , x ... ]
 \endverbatim
 
-\param p
-order of the partial derivative that we are computing 
+\param d
+highest order Taylor coefficient that
+we are computing the partial derivatives with respect to.
 
 \param i_z
 variable index corresponding to the result for this operation; 
@@ -139,42 +138,48 @@ i.e. the row index in taylor corresponding to y.
 number of colums in the matrix containing all the Taylor coefficients.
 
 \param taylor
-\a taylor [ \a i_y * \a nc_taylor + j ] 
-is the j-th order Taylor coefficient corresponding to y 
-for j = 0 , ... , \a p -1. 
+\a taylor [ \a i_y * \a nc_taylor + k ] 
+for k = 0 , ... , \a d
+is the k-th order Taylor coefficient corresponding to y.
 \n
-\a taylor [ \a i_z * \a nc_taylor + j ] 
-is the j-th order Taylor coefficient corresponding to z 
-for j = 0 , ... , \a p -1. 
-
+\a taylor [ \a i_z * \a nc_taylor + k ] 
+for k = 0 , ... , \a d
+is the k-th order Taylor coefficient corresponding to z.
 
 \param nc_partial
 number of colums in the matrix containing all the partial derivatives.
 
 \param partial
-\b Input: \a partial [ \a i_y * \a nc_partial + j ] 
-is the j-th order partial derivative of G(z , y , x , ... ) with respect to y
-for j = 0 , ... , \a p . 
+\b Input: \a partial [ \a i_y * \a nc_partial + k ] 
+for k = 0 , ... , \a d
+is the partial derivative of G(z , y , x , ... ) with respect to 
+the k-th order Taylor coefficient for y.
 \n
-\b Input: \a partial [ \a i_z * \a nc_partial + j ] 
-is the j-th order partial derivative of G(z , y , x , ... ) with respect to z.
-for j = 0 , ... , \a p. 
+\b Input: \a partial [ \a i_z * \a nc_partial + k ] 
+for k = 0 , ... , \a d
+is the partial derivative of G(z , y , x , ... ) with respect to 
+the k-th order Taylor coefficient for z.
 \n
-\b Output: \a partial [ \a i_y * \a nc_partial + j ]
-is the j-th order partial derivative of H(y , x , ... ) with respect to y
-for j = 0 , ... , \a p .
+\b Output: \a partial [ \a i_y * \a nc_partial + k ]
+for k = 0 , ... , \a d
+is the partial derivative of H(y , x , ... ) with respect to 
+the k-th order Taylor coefficient for y.
+\n
+\b Output: \a partial [ \a i_z * \a nc_partial + k ]
+for k = 0 , ... , \a d 
+may be used as work space; i.e., may change in an unspecified manner.
 
 
 \par Checked Assumptions where op is a unary operator with one result:
 \li NumArg(op) == 1
 \li NumRes(op) == 1
 \li \a i_y < \a i_z 
-\li \a p < \a nc_taylor
-\li \a p < \a nc_partial
+\li \a d < \a nc_taylor
+\li \a d < \a nc_partial
 */
 template <class Base>
 inline void reverse_unary1_op(
-	size_t      p            ,
+	size_t      d            ,
 	size_t      i_z          ,
 	size_t      i_y          ,
 	size_t      nc_taylor    , 
@@ -219,23 +224,23 @@ number of packed values corresponding to each sparsity pattern; i.e.,
 the number of columns in the sparsity pattern matrices.
 
 \param jac_sparsity
-For j = 0 , ... , nc_sparsity - 1,
-jac_sparsity[ \a i_y * nc_sparsity + j ]
+for k = 0 , ... , \a nc_sparsity - 1,
+jac_sparsity[ \a i_y * \a nc_sparsity + k ]
 is the forward mode Jacobian sparsity pattern for the variable y. 
 
 \param hes_sparsity
-\b Input: hes_sparsity[ \a i_z * nc_sparsity + j ]
-for j = 0 , ... , nc_sparsity -1 
+\b Input: hes_sparsity[ \a i_z * \a nc_sparsity + k ]
+for k = 0 , ... , \a nc_sparsity -1 
 is the Hessian sparsity pattern for the fucntion G
 where one of the partials derivative is with respect to z.
 \n
-\b Input: hes_sparsity[ \a i_y * nc_sparsity + j ]
-for j = 0 , ... , nc_sparsity -1 
+\b Input: hes_sparsity[ \a i_y * \a nc_sparsity + k ]
+for k = 0 , ... , \a nc_sparsity -1 
 is the Hessian sparsity pattern for the fucntion G
 where one of the partials derivative is with respect to y.
 \n
-\b Output: hes_sparsity[ \a i_y * nc_sparsity + j ]
-for j = 0 , ... , nc_sparsity -1 
+\b Output: hes_sparsity[ \a i_y * \a nc_sparsity + k ]
+for k = 0 , ... , \a nc_sparsity -1 
 is the Hessian sparsity pattern for the fucntion H
 where one of the partials derivative is with respect to y.
 
