@@ -28,11 +28,11 @@ Defines the OpCode enum type and functions related to it.
 
 
 /*!
-Type used to distinguish different AD<Base> atomic operations.
+Type used to distinguish different AD< \a Base > atomic operations.
 
 Each of the operators ends with the characters Op. Ignoring the Op at the end,
 the operators appear in alphabetical order. Binary operation where both
-operands have type AD<Base> use the following convention for thier endings:
+operands have type AD< \a Base > use the following convention for thier endings:
 \verbatim
     Ending  Left-Operand  Right-Operand
       pvOp     parameter       variable  
@@ -308,11 +308,11 @@ void printOpField(
 Prints a single operator, its operands, and the corresponding result values.
 
 \tparam Base
-Is the base type for these AD<Base> operations.
+Is the base type for these AD< \a Base > operations.
 
 \tparam Value
 Determines the type of the values that we are printing
-(expected to be either Base or Pack where
+(expected to be either  \a Base  or Pack where
 Pack is the type used to pace sparsity patterns.
 
 \param os

@@ -198,8 +198,7 @@ void ForJacSweep(
 		switch( op )
 		{
 			case AbsOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
+			CPPAD_ASSERT_NARG_NRES(op, 1, 1);
 			forward_sparse_jacobian_unary_op(
 				i_var, arg[0], npv, ForJac
 			);
@@ -207,8 +206,7 @@ void ForJacSweep(
 			// -------------------------------------------------
 
 			case AddvvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_NARG_NRES(op, 2, 1);
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
 
@@ -220,8 +218,7 @@ void ForJacSweep(
 			// -------------------------------------------------
 
 			case AddpvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_NARG_NRES(op, 2, 1);
 			forward_sparse_jacobian_unary_op(
 				i_var, arg[1], npv, ForJac
 			);
@@ -229,8 +226,7 @@ void ForJacSweep(
 			// -------------------------------------------------
 
 			case AddvpOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_NARG_NRES(op, 2, 1);
 			forward_sparse_jacobian_unary_op(
 				i_var, arg[0], npv, ForJac
 			);
@@ -240,8 +236,7 @@ void ForJacSweep(
 			case AcosOp:
 			// acos(x) and sqrt(1 - x * x) are computed in pairs
 			// but ivar + 1 should only be used here
-			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
-			CPPAD_ASSERT_UNKNOWN( n_res == 2);
+			CPPAD_ASSERT_NARG_NRES(op, 1, 2);
 			forward_sparse_jacobian_unary_op(
 				i_var, arg[0], npv, ForJac
 			);
@@ -251,8 +246,7 @@ void ForJacSweep(
 			case AsinOp:
 			// asin(x) and sqrt(1 - x * x) are computed in pairs
 			// but ivar + 1 should only be used here
-			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
-			CPPAD_ASSERT_UNKNOWN( n_res == 2);
+			CPPAD_ASSERT_NARG_NRES(op, 1, 2);
 			forward_sparse_jacobian_unary_op(
 				i_var, arg[0], npv, ForJac
 			);
@@ -262,8 +256,7 @@ void ForJacSweep(
 			case AtanOp:
 			// atan(x) and 1 + x * x must be computed in pairs
 			// but ivar + 1 should only be used here
-			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
-			CPPAD_ASSERT_UNKNOWN( n_res == 2);
+			CPPAD_ASSERT_NARG_NRES(op, 1, 2);
 			forward_sparse_jacobian_unary_op(
 				i_var, arg[0], npv, ForJac
 			);
@@ -271,8 +264,7 @@ void ForJacSweep(
 			// -------------------------------------------------
 
 			case CExpOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 6);
+			CPPAD_ASSERT_NARG_NRES(op, 6, 1);
 			CPPAD_ASSERT_UNKNOWN( arg[1] != 0 );
 
 			if( arg[1] & 4 )
@@ -309,8 +301,7 @@ void ForJacSweep(
 			// ---------------------------------------------------
 
 			case ComOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 0 );
-			CPPAD_ASSERT_UNKNOWN( n_arg == 4 );
+			CPPAD_ASSERT_NARG_NRES(op, 4, 0);
 			CPPAD_ASSERT_UNKNOWN( arg[1] > 1 );
 			break;
 			// --------------------------------------------------
@@ -318,8 +309,7 @@ void ForJacSweep(
 			case CosOp:
 			// cosine and sine must come in pairs
 			// but ivar + 1 should only be used here
-			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
-			CPPAD_ASSERT_UNKNOWN( n_res == 2);
+			CPPAD_ASSERT_NARG_NRES(op, 1, 2);
 			forward_sparse_jacobian_unary_op(
 				i_var, arg[0], npv, ForJac
 			);
@@ -329,8 +319,7 @@ void ForJacSweep(
 			case CoshOp:
 			// hyperbolic cosine and sine must come in pairs
 			// but ivar + 1 should only be used here
-			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
-			CPPAD_ASSERT_UNKNOWN( n_res == 2);
+			CPPAD_ASSERT_NARG_NRES(op, 1, 2);
 			forward_sparse_jacobian_unary_op(
 				i_var, arg[0], npv, ForJac
 			);
@@ -338,8 +327,7 @@ void ForJacSweep(
 			// -------------------------------------------------
 
 			case DisOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_NARG_NRES(op, 2, 1);
 
 			for(j = 0; j < npv; j++)
 				Z[j] = 0;
@@ -347,8 +335,7 @@ void ForJacSweep(
 			// -------------------------------------------------
 
 			case DivvvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_NARG_NRES(op, 2, 1);
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
 
@@ -360,8 +347,7 @@ void ForJacSweep(
 			// -------------------------------------------------
 
 			case DivpvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_NARG_NRES(op, 2, 1);
 			forward_sparse_jacobian_unary_op(
 				i_var, arg[1], npv, ForJac
 			);
@@ -369,8 +355,7 @@ void ForJacSweep(
 			// -------------------------------------------------
 
 			case DivvpOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_NARG_NRES(op, 2, 1);
 			forward_sparse_jacobian_unary_op(
 				i_var, arg[0], npv, ForJac
 			);
@@ -378,8 +363,7 @@ void ForJacSweep(
 			// -------------------------------------------------
 
 			case ExpOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
+			CPPAD_ASSERT_NARG_NRES(op, 1, 1);
 			forward_sparse_jacobian_unary_op(
 				i_var, arg[0], npv, ForJac
 			);
@@ -387,15 +371,13 @@ void ForJacSweep(
 			// -------------------------------------------------
 
 			case InvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 0 );
+			CPPAD_ASSERT_NARG_NRES(op, 0, 1);
 			// Z is already defined
 			break;
 			// -------------------------------------------------
 
 			case LdpOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 3 );
+			CPPAD_ASSERT_NARG_NRES(op, 3, 1);
 			
 			CPPAD_ASSERT_UNKNOWN( arg[0] > 0 );
 			CPPAD_ASSERT_UNKNOWN( arg[0] < Rec->num_rec_vecad_ind() );
@@ -414,8 +396,7 @@ void ForJacSweep(
 			// -------------------------------------------------
 
 			case LdvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 3 );
+			CPPAD_ASSERT_NARG_NRES(op, 3, 1);
 			
 			CPPAD_ASSERT_UNKNOWN( arg[0] > 0 );
 			CPPAD_ASSERT_UNKNOWN( arg[0] < Rec->num_rec_vecad_ind() );
@@ -435,8 +416,7 @@ void ForJacSweep(
 			// -------------------------------------------------
 
 			case LogOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
+			CPPAD_ASSERT_NARG_NRES(op, 1, 1);
 			forward_sparse_jacobian_unary_op(
 				i_var, arg[0], npv, ForJac
 			);
@@ -444,8 +424,7 @@ void ForJacSweep(
 			// -------------------------------------------------
 
 			case MulvvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_NARG_NRES(op, 2, 1);
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
 
@@ -457,8 +436,7 @@ void ForJacSweep(
 			// -------------------------------------------------
 
 			case MulpvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_NARG_NRES(op, 2, 1);
 			forward_sparse_jacobian_unary_op(
 				i_var, arg[1], npv, ForJac
 			);
@@ -466,8 +444,7 @@ void ForJacSweep(
 			// -------------------------------------------------
 
 			case MulvpOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_NARG_NRES(op, 2, 1);
 			forward_sparse_jacobian_unary_op(
 				i_var, arg[0], npv, ForJac
 			);
@@ -475,15 +452,13 @@ void ForJacSweep(
 			// -------------------------------------------------
 
 			case NonOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 0 );
+			CPPAD_ASSERT_NARG_NRES(op, 0, 1);
 			for(j = 0; j < npv; j++)
 				Z[j] = 0;
 			break;
 
 			case ParOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
+			CPPAD_ASSERT_NARG_NRES(op, 1, 1);
 			for(j = 0; j < npv; j++)
 				Z[j] = 0;
 			break;
@@ -492,8 +467,7 @@ void ForJacSweep(
 			case PowvpOp:
 			// Pow operator is a special case where final result
 			// comes at the end of the three variables
-			CPPAD_ASSERT_UNKNOWN( n_res == 3 );
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_NARG_NRES(op, 2, 3);
 			forward_sparse_jacobian_unary_op(
 				i_var + 2, arg[0], npv, ForJac
 			);
@@ -503,8 +477,7 @@ void ForJacSweep(
 			case PowpvOp:
 			// Pow operator is a special case where final result
 			// comes at the end of the three variables
-			CPPAD_ASSERT_UNKNOWN( n_res == 3 );
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_NARG_NRES(op, 2, 3);
 			forward_sparse_jacobian_unary_op(
 				i_var + 2, arg[1], npv, ForJac
 			);
@@ -515,8 +488,7 @@ void ForJacSweep(
 			// Pow operator is a special case where final result
 			// comes at the end of the three variables
 			Z   += 2 * npv;
-			CPPAD_ASSERT_UNKNOWN( n_res == 3 );
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_NARG_NRES(op, 2, 3);
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
 
@@ -528,22 +500,21 @@ void ForJacSweep(
 			// -------------------------------------------------
 
 			case PripOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
+			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
 			for(j = 0; j < npv; j++)
 				Z[j] = 0;
 			break;
 			// -------------------------------------------------
 
 			case PrivOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 0);
+			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
 			break;
 			// -------------------------------------------------
 
 			case SinOp:
 			// sine and cosine must come in pairs
 			// but ivar + 1 should only be used here
-			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
-			CPPAD_ASSERT_UNKNOWN( n_res == 2);
+			CPPAD_ASSERT_NARG_NRES(op, 1, 2);
 			forward_sparse_jacobian_unary_op(
 				i_var, arg[0], npv, ForJac
 			);
@@ -553,8 +524,7 @@ void ForJacSweep(
 			case SinhOp:
 			// hyperbolic sine and cosine must come in pairs
 			// but ivar + 1 should only be used here
-			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
-			CPPAD_ASSERT_UNKNOWN( n_res == 2);
+			CPPAD_ASSERT_NARG_NRES(op, 1, 2);
 			forward_sparse_jacobian_unary_op(
 				i_var, arg[0], npv, ForJac
 			);
@@ -562,8 +532,7 @@ void ForJacSweep(
 			// -------------------------------------------------
 
 			case SqrtOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
+			CPPAD_ASSERT_NARG_NRES(op, 1, 1);
 			forward_sparse_jacobian_unary_op(
 				i_var, arg[0], npv, ForJac
 			);
@@ -571,32 +540,27 @@ void ForJacSweep(
 			// -------------------------------------------------
 
 			case StppOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 0);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 3 );
+			CPPAD_ASSERT_NARG_NRES(op, 3, 0);
 			break;
 			// -------------------------------------------------
 
 			case StpvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 0);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 3 );
+			CPPAD_ASSERT_NARG_NRES(op, 3, 0);
 			break;
 			// -------------------------------------------------
 
 			case StvpOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 0);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 3 );
+			CPPAD_ASSERT_NARG_NRES(op, 3, 0);
 			break;
 			// -------------------------------------------------
 
 			case StvvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 0);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 3 );
+			CPPAD_ASSERT_NARG_NRES(op, 3, 0);
 			break;
 			// -------------------------------------------------
 
 			case SubvvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_NARG_NRES(op, 2, 1);
 			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
 
@@ -608,8 +572,7 @@ void ForJacSweep(
 			// -------------------------------------------------
 
 			case SubpvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_NARG_NRES(op, 2, 1);
 			forward_sparse_jacobian_unary_op(
 				i_var, arg[1], npv, ForJac
 			);
@@ -617,8 +580,7 @@ void ForJacSweep(
 			// -------------------------------------------------
 
 			case SubvpOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
+			CPPAD_ASSERT_NARG_NRES(op, 2, 1);
 			forward_sparse_jacobian_unary_op(
 				i_var, arg[0], npv, ForJac
 			);

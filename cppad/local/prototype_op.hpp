@@ -43,22 +43,24 @@ i.e. the row index in taylor corresponding to y.
 number of colums in the matrix containing all the Taylor coefficients.
 
 \param taylor
-\b Input: taylor[ i_y * nc_taylor + j ] 
-is the j-th order Taylor coefficient corresponding to y for j = 0 , ... , p. 
+\b Input: \a taylor [ \a i_y * \a nc_taylor + j ] 
+is the j-th order Taylor coefficient corresponding to y 
+for j = 0 , ... , \a p . 
 \n
-\b Input: taylor[ i_z * nc_taylor + j ] 
+\b Input: \a taylor [ \a i_z * \a nc_taylor + j ] 
 is the j-th order Taylor coefficient 
-corresponding to z for j = 0 , ... , p-1. 
+corresponding to z 
+for j = 0 , ... , \a p -1. 
 \n
-\b Output: taylor[ i_z * nc_taylor + p ] 
+\b Output: \a taylor [ \a i_z * \a nc_taylor + p ] 
 is the p-th order Taylor coefficient 
 corresponding to z. 
 
 \par Checked Assertions where op is a unary operator with one result:
 \li NumArg(op) == 1
 \li NumRes(op) == 1
-\li i_y < i_z 
-\li p < nc_taylor
+\li \a i_y < \a i_z 
+\li \a p < \a nc_taylor
 */
 template <class Base>
 inline void forward_unary1_op(
@@ -90,17 +92,17 @@ i.e. the row index in taylor corresponding to y.
 number of colums in the matrix containing all the Taylor coefficients.
 
 \param taylor
-\b Input: taylor[ i_y * nc_taylor + 0 ] 
+\b Input: \a taylor [ \a i_y * \a nc_taylor + 0 ] 
 is the zero order Taylor coefficient corresponding to y. 
 \n
-\b Output: taylor[ i_z * nc_taylor + 0 ] 
+\b Output: \a taylor [ \a i_z * \a nc_taylor + 0 ] 
 is the zero order Taylor coefficient corresponding to z. 
 
 \par Checked Assertions where op is the unary operator with one result:
 \li NumArg(op) == 1
 \li NumRes(op) == 1
-\li i_y < i_z 
-\li p < nc_taylor
+\li \a i_y < \a i_z 
+\li \a p < \a nc_taylor
 */
 template <class Base>
 inline void forward_unary1_op_0(
@@ -137,36 +139,38 @@ i.e. the row index in taylor corresponding to y.
 number of colums in the matrix containing all the Taylor coefficients.
 
 \param taylor
-taylor[ i_y * nc_taylor + j ] 
-is the j-th order Taylor coefficient corresponding to y for j = 0 , ... , p-1. 
+\a taylor [ \a i_y * \a nc_taylor + j ] 
+is the j-th order Taylor coefficient corresponding to y 
+for j = 0 , ... , \a p -1. 
 \n
-taylor[ i_z * nc_taylor + j ] 
-is the j-th order Taylor coefficient corresponding to z for j = 0 , ... , p-1. 
+\a taylor [ \a i_z * \a nc_taylor + j ] 
+is the j-th order Taylor coefficient corresponding to z 
+for j = 0 , ... , \a p -1. 
 
 
 \param nc_partial
 number of colums in the matrix containing all the partial derivatives.
 
 \param partial
-\b Input: partial[ i_y * nc_taylor + j ] 
+\b Input: \a partial [ \a i_y * \a nc_partial + j ] 
 is the j-th order partial derivative of G(z , y , x , ... ) with respect to y
-for j = 0 , ... , p. 
+for j = 0 , ... , \a p . 
 \n
-\b Input: partial[ i_z * nc_taylor + j ] 
+\b Input: \a partial [ \a i_z * \a nc_partial + j ] 
 is the j-th order partial derivative of G(z , y , x , ... ) with respect to z.
-for j = 0 , ... , p. 
+for j = 0 , ... , \a p. 
 \n
-\b Output: partial[ i_y * nc_taylor + j ]
+\b Output: \a partial [ \a i_y * \a nc_partial + j ]
 is the j-th order partial derivative of H(y , x , ... ) with respect to y
-for j = 0 , ... , p.
+for j = 0 , ... , \a p .
 
 
 \par Checked Assumptions where op is a unary operator with one result:
 \li NumArg(op) == 1
 \li NumRes(op) == 1
-\li i_y < i_z 
-\li p < nc_taylor
-\li p < nc_partial
+\li \a i_y < \a i_z 
+\li \a p < \a nc_taylor
+\li \a p < \a nc_partial
 */
 template <class Base>
 inline void reverse_unary1_op(
@@ -216,27 +220,27 @@ the number of columns in the sparsity pattern matrices.
 
 \param jac_sparsity
 For j = 0 , ... , nc_sparsity - 1,
-jac_sparsity[ i_y * nc_sparsity + j ]
+jac_sparsity[ \a i_y * nc_sparsity + j ]
 is the forward mode Jacobian sparsity pattern for the variable y. 
 
 \param hes_sparsity
-\b Input: hes_sparsity[ i_z * nc_sparsity + j ]
+\b Input: hes_sparsity[ \a i_z * nc_sparsity + j ]
 for j = 0 , ... , nc_sparsity -1 
 is the Hessian sparsity pattern for the fucntion G
 where one of the partials derivative is with respect to z.
 \n
-\b Input: hes_sparsity[ i_y * nc_sparsity + j ]
+\b Input: hes_sparsity[ \a i_y * nc_sparsity + j ]
 for j = 0 , ... , nc_sparsity -1 
 is the Hessian sparsity pattern for the fucntion G
 where one of the partials derivative is with respect to y.
 \n
-\b Output: hes_sparsity[ i_y * nc_sparsity + j ]
+\b Output: hes_sparsity[ \a i_y * nc_sparsity + j ]
 for j = 0 , ... , nc_sparsity -1 
 is the Hessian sparsity pattern for the fucntion H
 where one of the partials derivative is with respect to y.
 
 \par Checked Assertions:
-\li i_y < i_z 
+\li \a i_y < \a i_z 
 */
 template <class Pack>
 inline void reverse_sparse_hessian_unary_op(

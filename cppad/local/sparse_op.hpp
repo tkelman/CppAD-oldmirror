@@ -51,18 +51,18 @@ number of packed values corresponding to each variable; i.e.,
 the number of columns in the sparsity pattern matrix.
 
 \param sparsity
-\b Input: sparsity[ i_y * nc_sparsity + j ]
-for j = 0 , ... , nc_sparsity - 1 
+\b Input: \a sparsity [ \a i_y * \a nc_sparsity + j ]
+for j = 0 , ... , \a nc_sparsity - 1 
 is the sparsity bit pattern for y.
 This identifies which of the independent variables the variable y
 depends on. 
 \n
-\b Output: sparsity[ i_z * nc_sparsity + j ] 
-for j = 0 , ... , nc_sparsity - 1 
+\b Output: \a sparsity [ \a i_z * \a nc_sparsity + j ] 
+for j = 0 , ... , \a nc_sparsity - 1 
 is the sparsity bit pattern for z.
 
 \par Checked Assertions:
-\li i_y < i_z 
+\li \a i_y < \a i_z 
 */
 
 template <class Pack>
@@ -120,20 +120,20 @@ number of packed values corresponding to each variable; i.e.,
 the number of columns in the sparsity pattern matrix.
 
 \param sparsity
-\b Input: sparsity[ i_z * nc_sparsity + j ]
-for j = 0 , ... , nc_sparsity - 1 
+\b Input: \a sparsity [ \a i_z * \a nc_sparsity + j ]
+for j = 0 , ... , \a nc_sparsity - 1 
 is the sparsity bit pattern for G with respect to the variable z. 
 \n
-\b Input: sparsity[ i_y * nc_sparsity + j ]
-for j = 0 , ... , nc_sparsity - 1 
+\b Input: \a sparsity [ \a i_y * \a nc_sparsity + j ]
+for j = 0 , ... , \a nc_sparsity - 1 
 is the sparsity bit pattern for G with respect to the variable y. 
 \n
-\b Output: sparsity[ i_y * nc_sparsity + j ] 
-for j = 0 , ... , nc_sparsity - 1 
+\b Output: \a sparsity [ \a i_y * \a nc_sparsity + j ] 
+for j = 0 , ... , \a nc_sparsity - 1 
 is the sparsity bit pattern for H with respect to the variable y.
 
 \par Checked Assertions:
-\li i_y < i_z 
+\li \a i_y < \a i_z 
 */
 
 template <class Pack>

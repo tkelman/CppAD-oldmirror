@@ -14,13 +14,18 @@ A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
+/*!
+\file player.hpp
+File used to define the player class.
+*/
+
 
 /*!
 Class used to store and play back an operation sequence recording.
 
 \tparam Base
-These were AD<Base> operations when recorded. Operations during playback
-are done using the type Base.
+These were AD< \a Base > operations when recorded. Operations during playback
+are done using the type  \a Base .
 */
 template <class Base>
 class player {

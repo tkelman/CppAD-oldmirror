@@ -14,6 +14,7 @@
 list="
 	abs_op.hpp
 	configure.hpp
+	cppad_assert.hpp
 	define.hpp
 	op_code.hpp
 	player.hpp
