@@ -221,6 +221,9 @@ size_t forward_sweep(
 	// skip the NonOp at the beginning of the recording
 	Rec->start_forward(op, arg, i_op, i_var);
 	arg_0 = arg;
+# if CPPAD_FORWARD_SWEEP_TRACE
+	std::cout << std::endl;
+# endif
 	while(i_op < numop_m1)
 	{
 		// this op
@@ -592,12 +595,7 @@ size_t forward_sweep(
 			// -------------------------------------------------
 
 			case LogOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
-			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
-
-			X = Taylor + arg[0] * J;
-			ForLogOp(d, Z, X);
+			forward_log_op(d, i_var, arg[0], J, Taylor);
 			break;
 			// -------------------------------------------------
 
@@ -663,7 +661,7 @@ size_t forward_sweep(
 
 			// u = log(x)
 			X = Taylor + arg[0] * J;
-			ForLogOp(d, U, X);
+			forward_log_op(d, i_var, arg[0], J, Taylor);
 
 			// w = u * y
 			Y = Rec->GetPar( arg[1] );
@@ -718,7 +716,7 @@ size_t forward_sweep(
 
 			// u = log(x)
 			X = Taylor + arg[0] * J;
-			ForLogOp(d, U, X);
+			forward_log_op(d, i_var, arg[0], J, Taylor);
 
 			// w = u * y
 			Y   = Taylor + arg[1] * J;

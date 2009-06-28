@@ -461,13 +461,9 @@ void ReverseSweep(
 			// --------------------------------------------------
 
 			case LogOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
-			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
-
-			X  = Taylor  + arg[0] * J;
-			pX = Partial + arg[0] * K;
-			RevLogOp(d, Z, X, pZ, pX);
+			reverse_log_op(
+				d, i_var, arg[0], J, Taylor, K, Partial
+			);
 			break;
 			// --------------------------------------------------
 
@@ -541,11 +537,11 @@ void ReverseSweep(
 			RevMulvpOp(d, W, U, Y, pW, pU);
 
 			// u = log(x)
-			X  = Taylor  + arg[0] * J;
-			pX = Partial + arg[0] * K;
-			RevLogOp(d, U, X, pU, pX);
-
+			reverse_log_op(
+				d, i_var, arg[0], J, Taylor, K, Partial
+			);
 			break;
+
 			// -------------------------------------------------
 
 			case PowpvOp:
@@ -570,8 +566,8 @@ void ReverseSweep(
 
 			// u = log(x)
 			// x is a parameter
-
 			break;
+
 			// -------------------------------------------------
 
 			case PowvvOp:
@@ -595,10 +591,9 @@ void ReverseSweep(
 			RevMulvvOp(d, W, U, Y, pW, pU, pY);
 
 			// u = log(x)
-			X  = Taylor  + arg[0] * J;
-			pX = Partial + arg[0] * K;
-			RevLogOp(d, U, X, pU, pX);
-
+			reverse_log_op(
+				d, i_var, arg[0], J, Taylor, K, Partial
+			);
 			break;
 
 			// --------------------------------------------------

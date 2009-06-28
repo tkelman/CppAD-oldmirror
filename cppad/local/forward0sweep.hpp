@@ -564,12 +564,7 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case LogOp:
-			n_res = 1;
-			n_arg = 1;
-			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
-
-			X = Taylor + arg[0] * J;
-			Z[0] = log( X[0] );
+			forward_log_op_0(i_var, arg[0], J, Taylor);
 			break;
 			// -------------------------------------------------
 

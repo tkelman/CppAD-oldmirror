@@ -16,6 +16,7 @@ list="
 	configure.hpp
 	cppad_assert.hpp
 	define.hpp
+	log_op.hpp
 	op_code.hpp
 	player.hpp
 	prototype_op.hpp
