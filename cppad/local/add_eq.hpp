@@ -49,7 +49,7 @@ AD<Base>& AD<Base>::operator += (const AD<Base> &right)
 	if( var_left )
 	{	if( var_right )
 		{	// this = variable + variable
-			CPPAD_ASSERT_UNKNOWN( NumVar(AddvvOp) == 1 );
+			CPPAD_ASSERT_UNKNOWN( NumRes(AddvvOp) == 1 );
 			CPPAD_ASSERT_UNKNOWN( NumArg(AddvvOp) == 2 );
 
 			// put operand addresses in tape
@@ -61,7 +61,7 @@ AD<Base>& AD<Base>::operator += (const AD<Base> &right)
 		}
 		else if( ! IdenticalZero( right.value_ ) )
 		{	// this = variable + parameter
-			CPPAD_ASSERT_UNKNOWN( NumVar(AddvpOp) == 1 );
+			CPPAD_ASSERT_UNKNOWN( NumRes(AddvpOp) == 1 );
 			CPPAD_ASSERT_UNKNOWN( NumArg(AddvpOp) == 2 );
 
 			// put operand addresses in tape
@@ -80,7 +80,7 @@ AD<Base>& AD<Base>::operator += (const AD<Base> &right)
 		}
 		else
 		{	// this = parameter + variable
-			CPPAD_ASSERT_UNKNOWN( NumVar(AddpvOp) == 1 );
+			CPPAD_ASSERT_UNKNOWN( NumRes(AddpvOp) == 1 );
 			CPPAD_ASSERT_UNKNOWN( NumArg(AddpvOp) == 2 );
 
 			// put operand addresses in tape

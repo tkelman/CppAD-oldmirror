@@ -168,14 +168,14 @@ The i-th element in this table specifes the number of varibles for each
 occurance of the operator that is the i-th value in the OpCode enum type.
 For example, for the first three OpCode enum values we have
 \verbatim
-OpCode   j   NumVarTable[j]  Meaning
+OpCode   j   NumResTable[j]  Meaning
 AbsOp    0                1  variable that is the result of the absolute value
 AcosOp   1                2  acos(x) and sqrt(1-x*x) are required for this op
 AddpvOp  1                1  variable that is the result of the addition
 \endverbatim
 */
 // alphabetical order (ignoring the Op at the end)
-const size_t NumVarTable[] = {
+const size_t NumResTable[] = {
 	1, // AbsOp
 	2, // AcosOp
 	1, // AddpvOp
@@ -228,15 +228,15 @@ number of variables resulting from the specified operator.
 \param op 
 Operator for which we are fetching the number of result variables.
 */
-inline size_t NumVar(OpCode op)
+inline size_t NumRes(OpCode op)
 {	// check ensuring conversion to size_t is as expected
 	CPPAD_ASSERT_UNKNOWN( size_t(SubvvOp) == 
-		sizeof(NumVarTable) / sizeof(NumVarTable[0]) - 2
+		sizeof(NumResTable) / sizeof(NumResTable[0]) - 2
 	);
 	// this test ensures that all indices are within the table
 	CPPAD_ASSERT_UNKNOWN( size_t(op) <= size_t(SubvvOp) );
 
-	return NumVarTable[(size_t) op];
+	return NumResTable[(size_t) op];
 }
 
 /*!
@@ -323,7 +323,7 @@ Is the entire recording for the tape that this operator is in.
 
 \param i_var
 is the index for the variable corresponding to the result of this operation
-(ignored if NumVar(op) == 0).
+(ignored if NumRes(op) == 0).
 
 \param op
 The operator code (OpCode) for this operation.
@@ -335,22 +335,22 @@ is the vector of argument indices for this operation
 \param nfz
 is the number of forward sweep calculated values of type Value
 that correspond to this operation
-(ignored if NumVar(op) == 0).
+(ignored if NumRes(op) == 0).
 
 \param fz
 points to the first forward calculated value
 that correspond to this operation
-(ignored if NumVar(op) == 0).
+(ignored if NumRes(op) == 0).
 
 \param nrz
 is the number of reverse sweep calculated values of type Value
 that correspond to this operation
-(ignored if NumVar(op) == 0).
+(ignored if NumRes(op) == 0).
 
 \param rz
 points to the first reverse calculated value
 that correspond to this operation
-(ignored if NumVar(op) == 0).
+(ignored if NumRes(op) == 0).
 */
 template <class Base, class Value>
 void printOp(
@@ -576,7 +576,7 @@ void printOp(
 		CPPAD_ASSERT_UNKNOWN(0);
 	}
 	size_t k;
-	if( NumVar(op) > 0 )
+	if( NumRes(op) > 0 )
 	{ 
 		for(k = 0; k < nfz; k++)
 			std::cout << "| fz[" << k << "]=" << fz[k];

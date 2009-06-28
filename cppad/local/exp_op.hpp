@@ -44,7 +44,7 @@ inline void forward_exp_op(
 
 	// check assumptions
 	CPPAD_ASSERT_UNKNOWN( NumArg(ExpOp) == 1 );
-	CPPAD_ASSERT_UNKNOWN( NumVar(ExpOp) == 1 );
+	CPPAD_ASSERT_UNKNOWN( NumRes(ExpOp) == 1 );
 	CPPAD_ASSERT_UNKNOWN( i_y < i_z );
 	CPPAD_ASSERT_UNKNOWN( p < nc_taylor );
 
@@ -86,7 +86,7 @@ inline void forward_exp_op_0(
 
 	// check assumptions
 	CPPAD_ASSERT_UNKNOWN( NumArg(ExpOp) == 1 );
-	CPPAD_ASSERT_UNKNOWN( NumVar(ExpOp) == 1 );
+	CPPAD_ASSERT_UNKNOWN( NumRes(ExpOp) == 1 );
 	CPPAD_ASSERT_UNKNOWN( i_y < i_z );
 	CPPAD_ASSERT_UNKNOWN( 0 < nc_taylor );
 
@@ -122,7 +122,7 @@ inline void reverse_exp_op(
 
 	// check assumptions
 	CPPAD_ASSERT_UNKNOWN( NumArg(ExpOp) == 1 );
-	CPPAD_ASSERT_UNKNOWN( NumVar(ExpOp) == 1 );
+	CPPAD_ASSERT_UNKNOWN( NumRes(ExpOp) == 1 );
 	CPPAD_ASSERT_UNKNOWN( i_y < i_z );
 	CPPAD_ASSERT_UNKNOWN( p < nc_taylor );
 	CPPAD_ASSERT_UNKNOWN( p < nc_partial );

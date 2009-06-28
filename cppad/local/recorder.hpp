@@ -16,8 +16,9 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 $begin recorder$$ $comment CppAD Developer Documentation$$
 
 $spell
+	var
+	Res
 	Arg
-	Var
 	inline
 	VecInd
 	sizeof
@@ -72,7 +73,7 @@ corresponding to the result of this operation.
 The number of variables $icode n$$ 
 corresponding to the operation is given by
 $codei%
-	%n% = NumVar(%op%)
+	%n% = NumRes(%op%)
 %$$
 where $icode n$$ is a $code size_t$$ object.
 With each call to $code PutOp$$, 
@@ -102,7 +103,7 @@ $icode arg_0$$ comes before $icode arg_1$$ e.t.c.
 The proper number of indices $icode n$$ 
 corresponding to the operation $icode op$$ is given by
 $codei%
-	%n% = NumVar(%op%)
+	%n% = NumRes(%op%)
 %$$
 where $icode n$$ is a $code size_t$$ object and $icode op$$
 is an $code OpCode$$ object.
@@ -321,7 +322,7 @@ inline size_t recorder<Base>::PutOp(OpCode op)
 	}
 	CPPAD_ASSERT_UNKNOWN( NumberOp_ < LengthOp_ );
 	Op_[NumberOp_++]  = op;
-	TotalNumberVar_ += NumVar(op);
+	TotalNumberVar_ += NumRes(op);
 
 	return varIndex;
 }

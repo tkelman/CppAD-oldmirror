@@ -227,7 +227,7 @@ size_t forward_sweep(
 		Rec->next_forward(op, arg, i_op, i_var);
 
 		// number of variables
-		n_var  = NumVar(op);
+		n_var  = NumRes(op);
 
 		// index field values for this op
 		n_arg  = NumArg(op);

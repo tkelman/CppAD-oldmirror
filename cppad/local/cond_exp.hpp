@@ -329,7 +329,7 @@ void ADTape<Base>::RecordCondExp(
 	size_t   returnValue_taddr;
 
 	// taddr_ of this variable
-	CPPAD_ASSERT_UNKNOWN( NumVar(CExpOp) == 1 );
+	CPPAD_ASSERT_UNKNOWN( NumRes(CExpOp) == 1 );
 	returnValue_taddr = Rec_.PutOp(CExpOp);
 
 	// ind[0] = cop

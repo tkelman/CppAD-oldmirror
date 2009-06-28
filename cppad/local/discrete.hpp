@@ -177,7 +177,7 @@ public:
 		result.value_ = f_(x.value_);
 		if( Variable(x) )
 		{	ADTape<Base> *tape = x.tape_this();
-			CPPAD_ASSERT_UNKNOWN( NumVar(DisOp) == 1 );
+			CPPAD_ASSERT_UNKNOWN( NumRes(DisOp) == 1 );
 			CPPAD_ASSERT_UNKNOWN( NumArg(DisOp) == 2 );
 
 			// put operand addresses in the tape

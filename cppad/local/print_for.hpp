@@ -109,7 +109,7 @@ namespace CppAD {
 		);
 
 		if( Parameter(u) )
-		{	CPPAD_ASSERT_UNKNOWN( NumVar(PripOp) == 0 );
+		{	CPPAD_ASSERT_UNKNOWN( NumRes(PripOp) == 0 );
 			CPPAD_ASSERT_UNKNOWN( NumArg(PripOp) == 2 );
 			// put operand addresses in tape
 			size_t t = tape->Rec_.PutTxt(text);
@@ -119,7 +119,7 @@ namespace CppAD {
 			tape->Rec_.PutOp(PripOp);
 		}
 		else
-		{	CPPAD_ASSERT_UNKNOWN( NumVar(PrivOp) == 0 );
+		{	CPPAD_ASSERT_UNKNOWN( NumRes(PrivOp) == 0 );
 			CPPAD_ASSERT_UNKNOWN( NumArg(PrivOp) == 2 );
 			// put operand addresses in tape
 			size_t t = tape->Rec_.PutTxt(text);

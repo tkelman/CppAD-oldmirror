@@ -262,7 +262,7 @@ $end
         CPPAD_ASSERT_UNKNOWN( Parameter(result) );                \
                                                                   \
         if( Variable(*this) )                                     \
-        {   CPPAD_ASSERT_UNKNOWN( NumVar(Op) <= 2 );              \
+        {   CPPAD_ASSERT_UNKNOWN( NumRes(Op) <= 2 );              \
             CPPAD_ASSERT_UNKNOWN( NumArg(Op) == 1 );              \
             ADTape<Base> *tape = tape_this();                     \
             tape->Rec_.PutArg(taddr_);                             \

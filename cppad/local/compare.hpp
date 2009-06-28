@@ -174,7 +174,7 @@ void ADTape<Base>::RecordCompare(
 
 	CPPAD_ASSERT_UNKNOWN( ind1 > 1 );
 	CPPAD_ASSERT_UNKNOWN( NumArg(ComOp) == 4 );
-	CPPAD_ASSERT_UNKNOWN( NumVar(ComOp) == 0 );
+	CPPAD_ASSERT_UNKNOWN( NumRes(ComOp) == 0 );
 
 	// put the operator in the tape
 	Rec_.PutOp(ComOp);

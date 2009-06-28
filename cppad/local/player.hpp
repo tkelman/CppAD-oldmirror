@@ -378,7 +378,7 @@ public:
 		var_index = var_index_   = 0;
 # ifndef NDEBUG
 		CPPAD_ASSERT_UNKNOWN( op_         == NonOp );
-		CPPAD_ASSERT_UNKNOWN( NumVar(op_) == 1     );
+		CPPAD_ASSERT_UNKNOWN( NumRes(op_) == 1     );
 		CPPAD_ASSERT_UNKNOWN( NumArg(op_) == 0     );
 # endif
 		return;
@@ -411,12 +411,12 @@ public:
 
 	void next_forward(
 	OpCode& op, const size_t*& op_arg, size_t& op_index, size_t& var_index)
-	{	using CppAD::NumVar;
+	{	using CppAD::NumRes;
 		using CppAD::NumArg;
 
 		op_index    = ++op_index_;
 		op_arg_    += NumArg(op_);
-		var_index_ += NumVar(op_);
+		var_index_ += NumRes(op_);
 
 		op          = op_         = rec_op_[ op_index_ ];
 		op_arg      = op_arg_ + rec_op_arg_;
@@ -424,7 +424,7 @@ public:
 
 		CPPAD_ASSERT_UNKNOWN( op_index_  < num_rec_op_ );
 		CPPAD_ASSERT_UNKNOWN( op_arg_ + NumArg(op) <= num_rec_op_arg_ );
-		CPPAD_ASSERT_UNKNOWN( var_index_ + NumVar(op) <= num_rec_var_ );
+		CPPAD_ASSERT_UNKNOWN( var_index_ + NumRes(op) <= num_rec_var_ );
 	}
 	/*!
 	Start a play back of the recording during a reverse sweep.
@@ -474,7 +474,7 @@ public:
 
 	void next_reverse(
 	OpCode& op, const size_t*& op_arg, size_t& op_index, size_t& var_index)
-	{	using CppAD::NumVar;
+	{	using CppAD::NumRes;
 		using CppAD::NumArg;
 
 		CPPAD_ASSERT_UNKNOWN( op_index_  > 0 );
@@ -484,8 +484,8 @@ public:
 		CPPAD_ASSERT_UNKNOWN( op_arg_ >= NumArg(op_)  );
 		op_arg_    -= NumArg(op_);
 
-		CPPAD_ASSERT_UNKNOWN( var_index_ >= NumVar(op_) );
-		var_index_ -= NumVar(op_);
+		CPPAD_ASSERT_UNKNOWN( var_index_ >= NumRes(op_) );
+		var_index_ -= NumRes(op_);
 
 		op          = op_;
 		op_arg      = op_arg_ + rec_op_arg_;

@@ -181,7 +181,7 @@ void ReverseSweep(
 		Rec->next_reverse(op, arg, i_op, i_var);
 
 		// corresponding number of varables and indices
-		n_var  = NumVar(op);
+		n_var  = NumRes(op);
 		n_arg  = NumArg(op);
 
 		// value of Z and its partials for this op
@@ -716,7 +716,7 @@ void ReverseSweep(
 # endif
 	CPPAD_ASSERT_UNKNOWN( i_op == 1 );
 	CPPAD_ASSERT_UNKNOWN( Rec->GetOp(i_op-1) == NonOp );
-	CPPAD_ASSERT_UNKNOWN( i_var == NumVar(NonOp)  );
+	CPPAD_ASSERT_UNKNOWN( i_var == NumRes(NonOp)  );
 }
 
 } // END CppAD namespace

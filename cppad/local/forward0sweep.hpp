@@ -221,7 +221,7 @@ size_t forward0sweep(
 		Rec->next_forward(op, arg, i_op, i_var);
 
 		// number of variables
-		n_var  = NumVar(op);
+		n_var  = NumRes(op);
 
 		// index field values for this op
 		n_arg  = NumArg(op);
@@ -917,7 +917,7 @@ size_t forward0sweep(
 	}
 # endif
 	// check last n_var and n_arg
-	CPPAD_ASSERT_UNKNOWN( n_var == NumVar(op) );
+	CPPAD_ASSERT_UNKNOWN( n_var == NumRes(op) );
 	CPPAD_ASSERT_UNKNOWN( n_arg == NumArg(op) );
 
 	CPPAD_ASSERT_UNKNOWN( (i_var + n_var) == Rec->num_rec_var() );
