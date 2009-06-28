@@ -128,8 +128,6 @@ void RevJacSweep(
 	OpCode           op;
 	size_t         i_op;
 	size_t        i_var;
-	size_t        n_res;
-	size_t        n_arg;
 
 	const size_t   *arg = 0;
 	Pack             *X = 0;
@@ -154,10 +152,6 @@ void RevJacSweep(
 	{
 		// next op
 		Rec->next_reverse(op, arg, i_op, i_var);
-
-		// corresponding number of varables and indices
-		n_res  = NumRes(op);
-		n_arg  = NumArg(op);
 
 		// sparsity for z corresponding to this op
 		Z      = RevJac + i_var * npv;
