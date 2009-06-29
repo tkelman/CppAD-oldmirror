@@ -380,16 +380,8 @@ size_t forward0sweep(
 
 			case CoshOp:
 			// variables: cosh(x), sinh(x)
-			n_arg = 1;
-			n_res = 2;
-			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
 			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
-
-			// use W for data stored in variable record
-			W = Taylor + (i_var+1) * J;
-			X = Taylor + arg[0] * J;
-			W[0] = sinh( X[0] );
-			Z[0] = cosh( X[0] );
+			forward_cosh_op_0(i_var, arg[0], J, Taylor);
 			break;
 			// -------------------------------------------------
 

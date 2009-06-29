@@ -399,15 +399,8 @@ size_t forward_sweep(
 
 			case CoshOp:
 			// variables: cosh(x), sinh(x)
-			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
-			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
-			CPPAD_ASSERT_UNKNOWN( n_res == 2);
 			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
-
-			// use W for data stored in variable record
-			W = Taylor + (i_var+1) * J;
-			X   = Taylor + arg[0] * J;
-			ForHypSinCos(d, W, Z, X);
+			forward_cosh_op(d, i_var, arg[0], J, Taylor);
 			break;
 			// -------------------------------------------------
 

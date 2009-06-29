@@ -95,6 +95,7 @@ nobase_myinclude_HEADERS =  \
 	cppad/local/cond_exp.hpp \
 	cppad/local/convert.hpp \
 	cppad/local/cos_op.hpp \
+	cppad/local/cosh_op.hpp \
 	cppad/local/cppad_assert.hpp \
 	cppad/local/declare_ad.hpp \
 	cppad/local/default.hpp \

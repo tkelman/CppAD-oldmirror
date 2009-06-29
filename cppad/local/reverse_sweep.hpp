@@ -333,19 +333,10 @@ void ReverseSweep(
 			// --------------------------------------------------
 
 			case CoshOp:
-			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
-			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
-
-			// cosine and sine must come in pairs
-			CPPAD_ASSERT_UNKNOWN( n_res == 2);
 			CPPAD_ASSERT_UNKNOWN( i_var < numvar - 1 );
-
-			// use W for data stored in second record
-			W  = Taylor  + (i_var+1) * J;
-			pW = Partial + (i_var+1) * K;
-			X    = Taylor  + arg[0] * J;
-			pX   = Partial + arg[0] * K;
-			RevHypSinCos(d, W, Z, X, pW, pZ, pX);
+			reverse_cosh_op(
+				d, i_var, arg[0], J, Taylor, K, Partial
+			);
 			break;
 			// --------------------------------------------------
 
