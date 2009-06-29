@@ -20,13 +20,16 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 Documentation for generic cases (these generic cases are never used).
 */
 
+// ==================== Unary operators with one result ====================
+
 
 /*!
 Prototype for forward mode unary operator with one result (not used).
 
 \tparam Base
 base type for the operator; i.e., this operation was recorded
-using AD<Base> and computations by this routine are done using type Base.
+using AD< \a Base > and computations by this routine are done using type 
+\a Base.
 
 \param j
 order of the Taylor coefficient that we are computing.
@@ -76,7 +79,8 @@ inline void forward_unary1_op(
 Prototype for zero order forward mode unary operator with one result (not used). 
 \tparam Base
 base type for the operator; i.e., this operation was recorded
-using AD<Base> and computations by this routine are done using type Base.
+using AD< \a Base > and computations by this routine are done using type 
+\a Base .
 
 \param i_z
 variable index corresponding to the result for this operation; 
@@ -121,6 +125,11 @@ and it uses them to compute the partial derivatives of
 \verbatim
 	H( x , w , u , ... ) = G[ z(x) , x , w , u , ... ]
 \endverbatim
+
+\tparam Base
+base type for the operator; i.e., this operation was recorded
+using AD< \a Base > and computations by this routine are done using type 
+\a Base .
 
 \param d
 highest order Taylor coefficient that
@@ -191,6 +200,217 @@ inline void reverse_unary1_op(
 	CPPAD_ASSERT_UNKNOWN( false );
 }
 
+// ==================== Unary operators with two results ====================
+
+/*!
+Prototype for forward mode unary operator with two results (not used).
+
+\tparam Base
+base type for the operator; i.e., this operation was recorded
+using AD< \a Base > and computations by this routine are done using type 
+\a Base.
+
+\param j
+order of the Taylor coefficients that we are computing.
+
+\param i_z
+variable index corresponding to the first result for this operation; 
+i.e. the row index in taylor corresponding to z. 
+The auxillary result is called y has index \a i_z + 1.
+
+\param i_x
+variable index corresponding to the argument for this operator;
+i.e. the row index in taylor corresponding to x.
+
+\param nc_taylor
+number of colums in the matrix containing all the Taylor coefficients.
+
+\param taylor
+\b Input: \a taylor [ \a i_x * \a nc_taylor + k ] 
+for k = 0 , ... , \a j
+is the k-th order Taylor coefficient corresponding to x.
+\n
+\b Input: \a taylor [ \a i_z * \a nc_taylor + k ] 
+for k = 0 , ... , \a j - 1
+is the k-th order Taylor coefficient corresponding to z.
+\n
+\b Input: \a taylor [ ( \a i_z + 1) * \a nc_taylor + k ] 
+for k = 0 , ... , \a j - 1
+is the k-th order Taylor coefficient corresponding to the auxillary result y.
+\n
+\b Output: \a taylor [ \a i_z * \a nc_taylor + j ] 
+is the j-th order Taylor coefficient corresponding to z. 
+\n
+\b Output: \a taylor [ ( \a i_z + 1 ) * \a nc_taylor + j ] 
+is the j-th order Taylor coefficient corresponding to 
+the autillary result y.
+
+\par Checked Assertions where op is a unary operator with two results:
+\li NumArg(op) == 1
+\li NumRes(op) == 2
+\li \a i_x < \a i_z 
+\li \a j < \a nc_taylor
+*/
+template <class Base>
+inline void forward_unary2_op(
+	size_t j           ,
+	size_t i_z         ,
+	size_t i_x         ,
+	size_t nc_taylor   , 
+	Base*  taylor      )
+{
+	// this routine should never be included, much less called.
+	CPPAD_ASSERT_UNKNOWN( false );
+}
+
+/*!
+Prototype for zero order forward mode unary operator with two results (not used). 
+\tparam Base
+base type for the operator; i.e., this operation was recorded
+using AD< \a Base > and computations by this routine are done using type 
+\a Base .
+
+\param i_z
+variable index corresponding to the result for this operation; 
+i.e. the row index in taylor corresponding to z. 
+The auxillary result is called y and has index \a i_z + 1.
+
+\param i_x
+variable index corresponding to the argument for this operator;
+i.e. the row index in taylor corresponding to x.
+
+\param nc_taylor
+number of colums in the matrix containing all the Taylor coefficients.
+
+\param taylor
+\b Input: \a taylor [ \a i_x * \a nc_taylor + 0 ] 
+is the zero order Taylor coefficient corresponding to x. 
+\n
+\b Output: \a taylor [ \a i_z * \a nc_taylor + 0 ] 
+is the zero order Taylor coefficient corresponding to z. 
+\n
+\b Output: \a taylor [ ( \a i_z + 1 ) * \a nc_taylor + j ] 
+is the j-th order Taylor coefficient corresponding to 
+the autillary result y. 
+
+\par Checked Assertions where op is the unary operator with two result:
+\li NumArg(op) == 1
+\li NumRes(op) == 2
+\li \a i_x < \a i_z 
+\li \a j < \a nc_taylor
+*/
+template <class Base>
+inline void forward_unary2_op_0(
+	size_t i_z         ,
+	size_t i_x         ,
+	size_t nc_taylor   , 
+	Base*  taylor      )
+{
+	// this routine should never be included, much less called.
+	CPPAD_ASSERT_UNKNOWN( false );
+}
+
+/*!
+Prototype for reverse mode unary operator with two results (not used).
+
+This routine is given the partial derivatives of a function 
+G( z , y , x , w , ... )
+and it uses them to compute the partial derivatives of 
+\verbatim
+	H( x , w , u , ... ) = G[ z(x) , y(x), x , w , u , ... ]
+\endverbatim
+
+\tparam Base
+base type for the operator; i.e., this operation was recorded
+using AD< \a Base > and computations by this routine are done using type 
+\a Base .
+
+\param d
+highest order Taylor coefficient that
+we are computing the partial derivatives with respect to.
+
+\param i_z
+variable index corresponding to the result for this operation; 
+i.e. the row index in taylor to z. 
+The auxillary result is called y and has index \a i_z + 1.
+
+\param i_x
+variable index corresponding to the argument for this operation;
+i.e. the row index in taylor corresponding to x.
+
+\param nc_taylor
+number of colums in the matrix containing all the Taylor coefficients.
+
+\param taylor
+\a taylor [ \a i_x * \a nc_taylor + k ] 
+for k = 0 , ... , \a d
+is the k-th order Taylor coefficient corresponding to x.
+\n
+\a taylor [ \a i_z * \a nc_taylor + k ] 
+for k = 0 , ... , \a d
+is the k-th order Taylor coefficient corresponding to z.
+\n
+\a taylor [ ( \a i_z + 1) * \a nc_taylor + k ] 
+for k = 0 , ... , \a d
+is the k-th order Taylor coefficient corresponding to 
+the auxillary variable y.
+
+\param nc_partial
+number of colums in the matrix containing all the partial derivatives.
+
+\param partial
+\b Input: \a partial [ \a i_x * \a nc_partial + k ] 
+for k = 0 , ... , \a d
+is the partial derivative of 
+G( z , y , x , w , u , ... ) 
+with respect to the k-th order Taylor coefficient for x.
+\n
+\b Input: \a partial [ \a i_z * \a nc_partial + k ] 
+for k = 0 , ... , \a d
+is the partial derivative of G( z , y , x , w , u , ... ) with respect to 
+the k-th order Taylor coefficient for z.
+\n
+\b Input: \a partial [ ( \a i_z + 1) * \a nc_partial + k ] 
+for k = 0 , ... , \a d
+is the partial derivative of G( z , x , w , u , ... ) with respect to 
+the k-th order Taylor coefficient for the auxillary variable y.
+\n
+\b Output: \a partial [ \a i_x * \a nc_partial + k ]
+for k = 0 , ... , \a d
+is the partial derivative of H( x , w , u , ... ) with respect to 
+the k-th order Taylor coefficient for x.
+\n
+\b Output: \a partial [ \a i_z * \a nc_partial + k ]
+for k = 0 , ... , \a d 
+may be used as work space; i.e., may change in an unspecified manner.
+\n
+\b Output: \a partial [ ( \a i_z + 1) * \a nc_partial + k ]
+for k = 0 , ... , \a d 
+may be used as work space; i.e., may change in an unspecified manner.
+
+
+\par Checked Assumptions where op is a unary operator with one result:
+\li NumArg(op) == 1
+\li NumRes(op) == 2
+\li \a i_x < \a i_z 
+\li \a d < \a nc_taylor
+\li \a d < \a nc_partial
+*/
+template <class Base>
+inline void reverse_unary2_op(
+	size_t      d            ,
+	size_t      i_z          ,
+	size_t      i_x          ,
+	size_t      nc_taylor    , 
+	const Base* taylor       ,
+	size_t      nc_partial   ,
+	Base*       partial      )
+{
+	// this routine should never be included, much less called.
+	CPPAD_ASSERT_UNKNOWN( false );
+}
+
+// ==================== Sparsity Calculations ==============================
 /*!
 Prototype for reverse mode Hessian sparsity, unary operators with one result (not used). 
 

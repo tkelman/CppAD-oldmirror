@@ -258,19 +258,9 @@ void ReverseSweep(
 			// --------------------------------------------------
 
 			case AcosOp:
-			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
-			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
-
-			// acos(x) and sqrt(1 - x * x) are computed in pairs
-			CPPAD_ASSERT_UNKNOWN( n_res == 2);
-			CPPAD_ASSERT_UNKNOWN( i_var < numvar - 1 );
-
-			// use W for data stored in second record
-			W  = Taylor  + (i_var+1) * J;
-			pW = Partial + (i_var+1) * K;
-			X    = Taylor  + arg[0] * J;
-			pX   = Partial + arg[0] * K;
-			RevAcosOp(d, Z, W, X, pZ, pW, pX);
+			reverse_acos_op(
+				d, i_var, arg[0], J, Taylor, K, Partial
+			);
 			break;
 			// --------------------------------------------------
 

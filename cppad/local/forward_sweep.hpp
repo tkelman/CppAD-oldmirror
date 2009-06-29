@@ -283,15 +283,7 @@ size_t forward_sweep(
 
 			case AcosOp:
 			// variables: acos(x),  sqrt(1 - x * x) 
-			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
-			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
-			CPPAD_ASSERT_UNKNOWN( n_res == 2);
-			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
-
-			// use W for data stored in variable record
-			W = Taylor + (i_var+1) * J;
-			X   = Taylor + arg[0] * J;
-			ForAcosOp(d, Z, W, X);
+			forward_acos_op(d, i_var, arg[0], J, Taylor);
 			break;
 			// -------------------------------------------------
 
