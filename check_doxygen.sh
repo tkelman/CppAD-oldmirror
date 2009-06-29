@@ -16,6 +16,7 @@ list="
 	acos_op.hpp
 	asin_op.hpp
 	configure.hpp
+	cos_op.hpp
 	cppad_assert.hpp
 	define.hpp
 	log_op.hpp

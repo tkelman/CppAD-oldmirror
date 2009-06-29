@@ -36,6 +36,7 @@ $end
 # include <cppad/local/acos_op.hpp>
 # include <cppad/local/asin_op.hpp>
 # include <cppad/local/atan_op.hpp>
+# include <cppad/local/cos_op.hpp>
 # include <cppad/local/div_op.hpp>
 # include <cppad/local/exp_op.hpp>
 # include <cppad/local/log_op.hpp>

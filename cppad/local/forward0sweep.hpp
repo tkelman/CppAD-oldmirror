@@ -372,17 +372,9 @@ size_t forward0sweep(
 			// ---------------------------------------------------
 
 			case CosOp:
-			// variables: cos(x), sin(x)
-			n_arg = 1;
-			n_res = 2;
-			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
+			// results: cos(x), sin(x)
 			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
-
-			// use W for data stored in variable record
-			W = Taylor + (i_var+1) * J;
-			X = Taylor + arg[0] * J;
-			W[0] = sin( X[0] );
-			Z[0] = cos( X[0] );
+			forward_cos_op_0(i_var, arg[0], J, Taylor);
 			break;
 			// ---------------------------------------------------
 
