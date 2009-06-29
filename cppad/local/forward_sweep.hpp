@@ -723,29 +723,15 @@ size_t forward_sweep(
 
 			case SinOp:
 			// variables: sin(x), cos(x)
-			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
-			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
-			CPPAD_ASSERT_UNKNOWN( n_res == 2);
 			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
-
-			// use W for data stored in second variable
-			W = Taylor + (i_var+1) * J;
-			X   = Taylor + arg[0] * J;
-			ForTrigSinCos(d, Z, W, X);
+			forward_sin_op(d, i_var, arg[0], J, Taylor);
 			break;
 			// -------------------------------------------------
 
 			case SinhOp:
 			// variables: sinh(x), cosh(x)
-			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
-			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
-			CPPAD_ASSERT_UNKNOWN( n_res == 2);
 			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
-
-			// use W for data stored in second variable
-			W = Taylor + (i_var+1) * J;
-			X   = Taylor + arg[0] * J;
-			ForHypSinCos(d, Z, W, X);
+			forward_sinh_op(d, i_var, arg[0], J, Taylor);
 			break;
 			// -------------------------------------------------
 

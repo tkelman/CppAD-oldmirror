@@ -22,7 +22,6 @@ $childtable%
 	cppad/local/add_op.hpp%
 	cppad/local/div_op.hpp%
 	cppad/local/mul_op.hpp%
-	cppad/local/sin_cos.hpp%
 	cppad/local/sub_op.hpp
 %$$
 
@@ -42,7 +41,8 @@ $end
 # include <cppad/local/exp_op.hpp>
 # include <cppad/local/log_op.hpp>
 # include <cppad/local/mul_op.hpp>
-# include <cppad/local/sin_cos.hpp>
+# include <cppad/local/sin_op.hpp>
+# include <cppad/local/sinh_op.hpp>
 # include <cppad/local/sqrt_op.hpp>
 # include <cppad/local/sub_op.hpp>
 # include <cppad/local/sparse_op.hpp>

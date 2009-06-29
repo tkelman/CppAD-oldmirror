@@ -56,6 +56,8 @@ inline void forward_cosh_op(
 	Base* c = taylor + i_z * nc_taylor;
 	Base* s = c      +       nc_taylor;
 
+	// rest of this routine is identical for the following cases:
+	// forward_sin_op, forward_cos_op, forward_sinh_op, forward_cosh_op.
 	size_t k;
 	if( j == 0 )
 	{	s[j] = sinh( x[0] );
@@ -155,7 +157,8 @@ inline void reverse_cosh_op(
 	const Base* s  = c  + nc_taylor; // called y in documentation
 	Base* ps       = pc + nc_partial;
 
-	// number of indices to access
+	// rest of this routine is identical for the following cases:
+	// reverse_sin_op, reverse_cos_op, reverse_sinh_op, reverse_cosh_op.
 	size_t j = d;
 	size_t k;
 	while(j)

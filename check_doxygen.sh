@@ -24,6 +24,8 @@ list="
 	op_code.hpp
 	player.hpp
 	prototype_op.hpp
+	sin_op.hpp
+	sinh_op.hpp
 	sparse_op.hpp
 	sqrt_op.hpp
 "
