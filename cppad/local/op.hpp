@@ -20,7 +20,6 @@ $section Compute Values and Derivatives for Taped Operations$$
 
 $childtable%
 	cppad/local/add_op.hpp%
-	cppad/local/asin_op.hpp%
 	cppad/local/atan_op.hpp%
 	cppad/local/div_op.hpp%
 	cppad/local/mul_op.hpp%

@@ -280,16 +280,7 @@ size_t forward0sweep(
 
 			case AsinOp:
 			// variables: asin(x),  sqrt(1 - x * x) 
-			n_arg = 1;
-			n_res = 2;
-			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
-			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
-
-			// use W for data stored in variable record
-			W = Taylor + (i_var+1) * J;
-			X = Taylor + arg[0] * J;
-			W[0] = sqrt( one - X[0] * X[0] );
-			Z[0] = asin( X[0] );
+			forward_asin_op_0(i_var, arg[0], J, Taylor);
 			break;
 			// -------------------------------------------------
 

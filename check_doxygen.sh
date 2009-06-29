@@ -14,6 +14,7 @@
 list="
 	abs_op.hpp
 	acos_op.hpp
+	asin_op.hpp
 	configure.hpp
 	cppad_assert.hpp
 	define.hpp
