@@ -283,27 +283,22 @@ size_t forward_sweep(
 
 			case AcosOp:
 			// variables: acos(x),  sqrt(1 - x * x) 
+			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
 			forward_acos_op(d, i_var, arg[0], J, Taylor);
 			break;
 			// -------------------------------------------------
 
 			case AsinOp:
-			// variables: asin(x),  sqrt(1 - x * x) 
+			// results: asin(x),  sqrt(1 - x * x) 
+			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
 			forward_asin_op(d, i_var, arg[0], J, Taylor);
 			break;
 			// -------------------------------------------------
 
 			case AtanOp:
-			// variables: atan(x),  1 + x * x 
-			CPPAD_ASSERT_UNKNOWN( n_arg == 1 );
-			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
-			CPPAD_ASSERT_UNKNOWN( n_res == 2);
+			// results: atan(x),  1 + x * x 
 			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
-
-			// use W for data stored in variable record
-			W = Taylor + (i_var+1) * J;
-			X   = Taylor + arg[0] * J;
-			ForAtanOp(d, Z, W, X);
+			forward_atan_op(d, i_var, arg[0], J, Taylor);
 			break;
 			// -------------------------------------------------
 
