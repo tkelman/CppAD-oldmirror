@@ -218,6 +218,14 @@ size_t forward_sweep(
 	// set the number of operators
 	numop_m1 = Rec->num_rec_op() - 1;
 
+	// pointer to the beginning of the parameter vector
+	const Base* parameter = Rec->GetPar(0);
+
+# ifndef NDEBUG
+	// length of the parameter vector (used by CppAD assert macros)
+	const size_t num_par = Rec->num_rec_par();
+# endif
+
 	// skip the NonOp at the beginning of the recording
 	Rec->start_forward(op, arg, i_op, i_var);
 	arg_0 = arg;
@@ -248,36 +256,19 @@ size_t forward_sweep(
 			// -------------------------------------------------
 
 			case AddvvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
-			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
-			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
-
-			X = Taylor + arg[0] * J;
-			Y = Taylor + arg[1] * J;
-			ForAddvvOp(d, Z, X, Y);
+			forward_addvv_op(d, i_var, arg, parameter, J, Taylor);
 			break;
 			// -------------------------------------------------
 
 			case AddpvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
-			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
-
-			P = Rec->GetPar( arg[0] );
-			Y = Taylor + arg[1] * J;
-			ForAddpvOp(d, Z, P, Y);
+			CPPAD_ASSERT_UNKNOWN( arg[0] < num_par );
+			forward_addpv_op(d, i_var, arg, parameter, J, Taylor);
 			break;
 			// -------------------------------------------------
 
 			case AddvpOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
-			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
-
-			X = Taylor + arg[0] * J;
-			P = Rec->GetPar( arg[1] );
-			ForAddvpOp(d, Z, X, P);
+			CPPAD_ASSERT_UNKNOWN( arg[1] < num_par );
+			forward_addvp_op(d, i_var, arg, parameter, J, Taylor);
 			break;
 			// -------------------------------------------------
 

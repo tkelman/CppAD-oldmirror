@@ -36,11 +36,11 @@ order of the Taylor coefficient that we are computing.
 
 \param i_z
 variable index corresponding to the result for this operation; 
-i.e. the row index in taylor corresponding to z. 
+i.e. the row index in \a taylor corresponding to z. 
 
 \param i_x
 variable index corresponding to the argument for this operator;
-i.e. the row index in taylor corresponding to x.
+i.e. the row index in \a taylor corresponding to x.
 
 \param nc_taylor
 number of colums in the matrix containing all the Taylor coefficients.
@@ -84,11 +84,11 @@ using AD< \a Base > and computations by this routine are done using type
 
 \param i_z
 variable index corresponding to the result for this operation; 
-i.e. the row index in taylor corresponding to z. 
+i.e. the row index in \a taylor corresponding to z. 
 
 \param i_x
 variable index corresponding to the argument for this operator;
-i.e. the row index in taylor corresponding to x.
+i.e. the row index in \a taylor corresponding to x.
 
 \param nc_taylor
 number of colums in the matrix containing all the Taylor coefficients.
@@ -137,11 +137,11 @@ we are computing the partial derivatives with respect to.
 
 \param i_z
 variable index corresponding to the result for this operation; 
-i.e. the row index in taylor to z. 
+i.e. the row index in \a taylor to z. 
 
 \param i_x
 variable index corresponding to the argument for this operation;
-i.e. the row index in taylor corresponding to x.
+i.e. the row index in \a taylor corresponding to x.
 
 \param nc_taylor
 number of colums in the matrix containing all the Taylor coefficients.
@@ -215,12 +215,12 @@ order of the Taylor coefficients that we are computing.
 
 \param i_z
 variable index corresponding to the first result for this operation; 
-i.e. the row index in taylor corresponding to z. 
+i.e. the row index in \a taylor corresponding to z. 
 The auxillary result is called y has index \a i_z + 1.
 
 \param i_x
 variable index corresponding to the argument for this operator;
-i.e. the row index in taylor corresponding to x.
+i.e. the row index in \a taylor corresponding to x.
 
 \param nc_taylor
 number of colums in the matrix containing all the Taylor coefficients.
@@ -272,12 +272,12 @@ using AD< \a Base > and computations by this routine are done using type
 
 \param i_z
 variable index corresponding to the result for this operation; 
-i.e. the row index in taylor corresponding to z. 
+i.e. the row index in \a taylor corresponding to z. 
 The auxillary result is called y and has index \a i_z + 1.
 
 \param i_x
 variable index corresponding to the argument for this operator;
-i.e. the row index in taylor corresponding to x.
+i.e. the row index in \a taylor corresponding to x.
 
 \param nc_taylor
 number of colums in the matrix containing all the Taylor coefficients.
@@ -331,12 +331,12 @@ we are computing the partial derivatives with respect to.
 
 \param i_z
 variable index corresponding to the result for this operation; 
-i.e. the row index in taylor to z. 
+i.e. the row index in \a taylor to z. 
 The auxillary result is called y and has index \a i_z + 1.
 
 \param i_x
 variable index corresponding to the argument for this operation;
-i.e. the row index in taylor corresponding to x.
+i.e. the row index in \a taylor corresponding to x.
 
 \param nc_taylor
 number of colums in the matrix containing all the Taylor coefficients.
@@ -409,7 +409,245 @@ inline void reverse_unary2_op(
 	// this routine should never be included, much less called.
 	CPPAD_ASSERT_UNKNOWN( false );
 }
+// =================== Binary operators with one result ====================
 
+/*!
+Prototype forward mode x op y (not used)
+
+\tparam Base
+base type for the operator; i.e., this operation was recorded
+using AD< \a Base > and computations by this routine are done using type 
+\a Base.
+
+\param d
+order of the Taylor coefficient that we are computing.
+
+\param i_z
+variable index corresponding to the result for this operation; 
+i.e. the row index in \a taylor corresponding to z. 
+
+\param arg
+\a arg[0]
+index corresponding to the left operand for this operator;
+i.e. the index corresponding to x.
+\n
+\a arg[1]
+index corresponding to the right operand for this operator;
+i.e. the index corresponding to y.
+
+\param parameter
+\b Input: If x is a parameter, \a parameter [ \a arg[0] ] 
+is the value corresponding to x.
+\n
+\b Input: If y is a parameter, \a parameter [ \a arg[1] ] 
+is the value corresponding to y.
+
+\param nc_taylor
+number of colums in the matrix containing all the Taylor coefficients.
+
+\param taylor
+\b Input: If x is a variable, \a taylor [ \a arg[0] * \a nc_taylor + k ] 
+for k = 0 , ... , \a d
+is the k-th order Taylor coefficient corresponding to x.
+\n
+\b Input: If y is a variable, \a taylor [ \a arg[1] * \a nc_taylor + k ] 
+for k = 0 , ... , \a d
+is the k-th order Taylor coefficient corresponding to y.
+\n
+\b Input: \a taylor [ \a i_z * \a nc_taylor + k ] 
+for k = 0 , ... , \a d - 1
+is the k-th order Taylor coefficient corresponding to z.
+\n
+\b Output: \a taylor [ \a i_z * \a nc_taylor + d ] 
+is the d-th order Taylor coefficient corresponding to z. 
+
+\par Checked Assertions where op is a binary operator:
+\li NumArg(op) == 2
+\li NumRes(op) == 1
+\li If x is a variable, \a arg[0] < \a i_z 
+\li If y is a variable, \a arg[1] < \a i_z 
+\li \a d < \a nc_taylor
+*/
+template <class Base>
+inline void forward_binary_op(
+	size_t         d         ,
+	size_t        i_z        ,
+	const size_t* arg        ,
+	const Base*   parameter  ,
+	size_t        nc_taylor  , 
+	Base*         taylor     )
+{
+	// this routine should never be included, much less called.
+	CPPAD_ASSERT_UNKNOWN( false );
+}
+
+
+/*!
+Prototype zero order forward mode x op y (not used)
+
+\tparam Base
+base type for the operator; i.e., this operation was recorded
+using AD< \a Base > and computations by this routine are done using type 
+\a Base.
+
+\param i_z
+variable index corresponding to the result for this operation; 
+i.e. the row index in \a taylor corresponding to z. 
+
+\param arg
+\a arg[0]
+index corresponding to the left operand for this operator;
+i.e. the index corresponding to x.
+\n
+\a arg[1]
+index corresponding to the right operand for this operator;
+i.e. the index corresponding to y.
+
+\param parameter
+\b Input: If x is a parameter, \a parameter [ \a arg[0] ] 
+is the value corresponding to x.
+\n
+\b Input: If y is a parameter, \a parameter [ \a arg[1] ] 
+is the value corresponding to y.
+
+\param nc_taylor
+number of colums in the matrix containing all the Taylor coefficients.
+
+\param taylor
+\b Input: If x is a variable, \a taylor [ \a arg[0] * \a nc_taylor + 0 ] 
+is the zero order Taylor coefficient corresponding to x.
+\n
+\b Input: If y is a variable, \a taylor [ \a arg[1] * \a nc_taylor + 0 ] 
+is the zero order Taylor coefficient corresponding to y.
+\n
+\b Output: \a taylor [ \a i_z * \a nc_taylor + 0 ] 
+is the zero order Taylor coefficient corresponding to z. 
+
+\par Checked Assertions where op is a binary operator:
+\li NumArg(op) == 2
+\li NumRes(op) == 1
+\li If x is a variable, \a arg[0] < \a i_z 
+\li If y is a variable, \a arg[1] < \a i_z 
+*/
+template <class Base>
+inline void forward_binary_op_0(
+	size_t        i_z         ,
+	const size_t* arg         ,
+	const Base*   parameter   ,
+	size_t        nc_taylor   , 
+	Base*         taylor      )
+{
+	// this routine should never be included, much less called.
+	CPPAD_ASSERT_UNKNOWN( false );
+}
+
+/*!
+Prototype for reverse mode binary operator x op y (not used).
+
+This routine is given the partial derivatives of a function 
+G( z , y , x , w , ... )
+and it uses them to compute the partial derivatives of 
+\verbatim
+	H( y, x , w , u , ... ) = G[ z(x,y) , y, x , w , u , ... ]
+\endverbatim
+
+\tparam Base
+base type for the operator; i.e., this operation was recorded
+using AD< \a Base > and computations by this routine are done using type 
+\a Base .
+
+\param d
+highest order Taylor coefficient that
+we are computing the partial derivatives with respect to.
+
+\param i_z
+variable index corresponding to the result for this operation; 
+i.e. the row index in \a taylor corresponding to z. 
+
+\param arg
+\a arg[0]
+index corresponding to the left operand for this operator;
+i.e. the index corresponding to x.
+\n
+\a arg[1]
+index corresponding to the right operand for this operator;
+i.e. the index corresponding to y.
+
+\param parameter
+\b Input: If x is a parameter, \a parameter [ \a arg[0] ] 
+is the value corresponding to x.
+\n
+\b Input: If y is a parameter, \a parameter [ \a arg[1] ] 
+is the value corresponding to y.
+
+\param nc_taylor
+number of colums in the matrix containing all the Taylor coefficients.
+
+\param taylor
+\b Input: \a taylor [ \a i_z * \a nc_taylor + k ] 
+for k = 0 , ... , \a d
+is the k-th order Taylor coefficient corresponding to z.
+\n
+\b Input: If x is a variable, \a taylor [ \a arg[0] * \a nc_taylor + k ] 
+for k = 0 , ... , \a d
+is the k-th order Taylor coefficient corresponding to x.
+\n
+\b Input: If y is a variable, \a taylor [ \a arg[1] * \a nc_taylor + k ] 
+for k = 0 , ... , \a d
+is the k-th order Taylor coefficient corresponding to y.
+\n
+
+\param nc_partial
+number of colums in the matrix containing all the partial derivatives.
+
+\param partial
+\b Input: \a partial [ \a i_z * \a nc_partial + k ] 
+for k = 0 , ... , \a d
+is the partial derivative of 
+G( z , y , x , w , u , ... ) 
+with respect to the k-th order Taylor coefficient for z.
+\n
+\b Input: If x is a variable, \a partial [ \a arg[0] * \a nc_partial + k ] 
+for k = 0 , ... , \a d
+is the partial derivative of G( z , y , x , w , u , ... ) with respect to 
+the k-th order Taylor coefficient for x.
+\n
+\b Input: If y is a variable, \a partial [ \a arg[1] * \a nc_partial + k ] 
+for k = 0 , ... , \a d
+is the partial derivative of G( z , x , w , u , ... ) with respect to 
+the k-th order Taylor coefficient for the auxillary variable y.
+\n
+\b Output: If x is a variable, \a partial [ \a arg[0] * \a nc_partial + k ]
+for k = 0 , ... , \a d
+is the partial derivative of H( y , x , w , u , ... ) with respect to 
+the k-th order Taylor coefficient for x.
+\n
+\b Output: If y is a variable, \a partial [ \a arg[1] * \a nc_partial + k ]
+for k = 0 , ... , \a d 
+is the partial derivative of H( y , x , w , u , ... ) with respect to 
+the k-th order Taylor coefficient for y.
+
+\par Checked Assumptions where op is a binary operator with one result:
+\li NumArg(op) == 2
+\li NumRes(op) == 1
+\li \a i_x < \a i_z 
+\li \a d < \a nc_taylor
+\li \a d < \a nc_partial
+*/
+template <class Base>
+inline void reverse_binary_op(
+	size_t      d            ,
+	size_t      i_z          ,
+	size_t*     arg          ,
+	const Base* parameter    ,
+	size_t      nc_taylor    , 
+	const Base* taylor       ,
+	size_t      nc_partial   ,
+	Base*       partial      )
+{
+	// this routine should never be included, much less called.
+	CPPAD_ASSERT_UNKNOWN( false );
+}
 // ==================== Sparsity Calculations ==============================
 /*!
 Prototype for reverse mode Hessian sparsity, unary operators with one result (not used). 

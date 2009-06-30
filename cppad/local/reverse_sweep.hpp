@@ -173,6 +173,14 @@ void ReverseSweep(
 	CPPAD_ASSERT_UNKNOWN( Rec->num_rec_var() == numvar );
 	CPPAD_ASSERT_UNKNOWN( numvar > 0 );
 
+	// pointer to the beginning of the parameter vector
+	const Base* parameter = Rec->GetPar(0);
+
+# ifndef NDEBUG
+	// length of the parameter vector (used by CppAD assert macros)
+	const size_t num_par = Rec->num_rec_par();
+# endif
+
 	// Initialize
 	Rec->start_reverse();
 	i_op   = 2;
@@ -226,34 +234,25 @@ void ReverseSweep(
 			// --------------------------------------------------
 
 			case AddvvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
-			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
-			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
-
-			pX = Partial + arg[0] * K;
-			pY = Partial + arg[1] * K;
-			RevAddvvOp(d, pZ, pX, pY);
+			reverse_addvv_op(
+				d, i_var, arg, parameter, J, Taylor, K, Partial
+			);
 			break;
 			// --------------------------------------------------
 
 			case AddpvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
-			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
-
-			pY = Partial + arg[1] * K;
-			RevAddpvOp(d, pZ, pY);
+			CPPAD_ASSERT_UNKNOWN( arg[0] < num_par );
+			reverse_addpv_op(
+				d, i_var, arg, parameter, J, Taylor, K, Partial
+			);
 			break;
 			// --------------------------------------------------
 
 			case AddvpOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
-			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
-
-			pX = Partial + arg[0] * K;
-			RevAddvpOp(d, pZ, pX);
+			CPPAD_ASSERT_UNKNOWN( arg[1] < num_par );
+			reverse_addvp_op(
+				d, i_var, arg, parameter, J, Taylor, K, Partial
+			);
 			break;
 			// --------------------------------------------------
 
