@@ -173,13 +173,13 @@ void ReverseSweep(
 	CPPAD_ASSERT_UNKNOWN( Rec->num_rec_var() == numvar );
 	CPPAD_ASSERT_UNKNOWN( numvar > 0 );
 
-	// pointer to the beginning of the parameter vector
-	const Base* parameter = Rec->GetPar(0);
-
-# ifndef NDEBUG
 	// length of the parameter vector (used by CppAD assert macros)
 	const size_t num_par = Rec->num_rec_par();
-# endif
+
+	// pointer to the beginning of the parameter vector
+	const Base* parameter = 0;
+	if( num_par > 0 )
+		parameter = Rec->GetPar(0);
 
 	// Initialize
 	Rec->start_reverse();
