@@ -22,7 +22,7 @@ Forward and reverse mode calculations for z = abs(x).
 
 
 /*!
-Forward mode Taylor coefficient for result of op = AbsOp.
+Compute forward mode Taylor coefficient for result of op = AbsOp.
 
 The C++ source code corresponding to this operation is
 \verbatim
@@ -65,7 +65,7 @@ inline void forward_abs_op(
 }
 
 /*!
-Zero order forward mode Taylor coefficient for result of op = AbsOp.
+Compute zero order forward mode Taylor coefficient for result of op = AbsOp.
 
 The C++ source code corresponding to this operation is
 \verbatim
@@ -97,7 +97,7 @@ inline void forward_abs_op_0(
 	else	z[0] = y0; 
 }
 /*!
-Reverse mode partial derivatives for result of op = AbsOp.
+Compute reverse mode partial derivatives for result of op = AbsOp.
 
 The C++ source code corresponding to this operation is
 \verbatim

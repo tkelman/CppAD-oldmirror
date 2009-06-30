@@ -22,7 +22,7 @@ Forward and reverse mode calculations for z = asin(x).
 
 
 /*!
-Forward mode Taylor coefficient for result of op = AsinOp.
+Compute forward mode Taylor coefficient for result of op = AsinOp.
 
 The C++ source code corresponding to this operation is
 \verbatim
@@ -85,7 +85,7 @@ inline void forward_asin_op(
 }
 
 /*!
-Zero order forward mode Taylor coefficient for result of op = AsinOp.
+Compute zero order forward mode Taylor coefficient for result of op = AsinOp.
 
 The C++ source code corresponding to this operation is
 \verbatim
@@ -121,7 +121,7 @@ inline void forward_asin_op_0(
 	b[0] = sqrt( Base(1) - x[0] * x[0] );
 }
 /*!
-Reverse mode partial derivatives for result of op = AsinOp.
+Compute reverse mode partial derivatives for result of op = AsinOp.
 
 The C++ source code corresponding to this operation is
 \verbatim

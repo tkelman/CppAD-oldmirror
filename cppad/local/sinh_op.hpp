@@ -22,7 +22,7 @@ Forward and reverse mode calculations for z = sinh(x).
 
 
 /*!
-Forward mode Taylor coefficient for result of op = SinhOp.
+Compute forward mode Taylor coefficient for result of op = SinhOp.
 
 The C++ source code corresponding to this operation is
 \verbatim
@@ -78,7 +78,7 @@ inline void forward_sinh_op(
 }
 
 /*!
-Zero order forward mode Taylor coefficient for result of op = SinhOp.
+Compute zero order forward mode Taylor coefficient for result of op = SinhOp.
 
 The C++ source code corresponding to this operation is
 \verbatim
@@ -114,7 +114,7 @@ inline void forward_sinh_op_0(
 	c[0] = cosh( x[0] );
 }
 /*!
-Reverse mode partial derivatives for result of op = SinhOp.
+Compute reverse mode partial derivatives for result of op = SinhOp.
 
 The C++ source code corresponding to this operation is
 \verbatim

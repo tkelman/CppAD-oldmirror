@@ -22,7 +22,7 @@ Forward and reverse mode calculations for z = sin(x).
 
 
 /*!
-Forward mode Taylor coefficient for result of op = SinOp.
+Compute forward mode Taylor coefficient for result of op = SinOp.
 
 The C++ source code corresponding to this operation is
 \verbatim
@@ -78,7 +78,7 @@ inline void forward_sin_op(
 
 
 /*!
-Zero order forward mode Taylor coefficient for result of op = SinOp.
+Compute zero order forward mode Taylor coefficient for result of op = SinOp.
 
 The C++ source code corresponding to this operation is
 \verbatim
@@ -115,7 +115,7 @@ inline void forward_sin_op_0(
 }
 
 /*!
-Reverse mode partial derivatives for result of op = SinOp.
+Compute reverse mode partial derivatives for result of op = SinOp.
 
 The C++ source code corresponding to this operation is
 \verbatim

@@ -20,7 +20,7 @@ Forward and reverse mode calculations for z = log(x).
 */
 
 /*!
-Forward mode Taylor coefficient for result of op = LogOp.
+Compute forward mode Taylor coefficient for result of op = LogOp.
 
 The C++ source code corresponding to this operation is
 \verbatim
@@ -65,7 +65,7 @@ inline void forward_log_op(
 }
 
 /*!
-Zero order forward mode Taylor coefficient for result of op = LogOp.
+Compute zero order forward mode Taylor coefficient for result of op = LogOp.
 
 The C++ source code corresponding to this operation is
 \verbatim
@@ -96,7 +96,7 @@ inline void forward_log_op_0(
 }
 
 /*!
-Reverse mode partial derivatives for result of op = LogOp.
+Compute reverse mode partial derivatives for result of op = LogOp.
 
 The C++ source code corresponding to this operation is
 \verbatim

@@ -22,7 +22,7 @@ Forward and reverse mode calculations for z = cosh(x).
 
 
 /*!
-Forward mode Taylor coefficient for result of op = CoshOp.
+Compute forward mode Taylor coefficient for result of op = CoshOp.
 
 The C++ source code corresponding to this operation is
 \verbatim
@@ -77,7 +77,7 @@ inline void forward_cosh_op(
 }
 
 /*!
-Zero order forward mode Taylor coefficient for result of op = CoshOp.
+Compute zero order forward mode Taylor coefficient for result of op = CoshOp.
 
 The C++ source code corresponding to this operation is
 \verbatim
@@ -113,7 +113,7 @@ inline void forward_cosh_op_0(
 	s[0] = sinh( x[0] );
 }
 /*!
-Reverse mode partial derivatives for result of op = CoshOp.
+Compute reverse mode partial derivatives for result of op = CoshOp.
 
 The C++ source code corresponding to this operation is
 \verbatim

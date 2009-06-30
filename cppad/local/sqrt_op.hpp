@@ -22,7 +22,7 @@ Forward and reverse mode calculations for z = sqrt(x).
 
 
 /*!
-Forward mode Taylor coefficient for result of op = SqrtOp.
+Compute forward mode Taylor coefficient for result of op = SqrtOp.
 
 The C++ source code corresponding to this operation is
 \verbatim
@@ -64,7 +64,7 @@ inline void forward_sqrt_op(
 }
 
 /*!
-Zero order forward mode Taylor coefficient for result of op = SqrtOp.
+Compute zero order forward mode Taylor coefficient for result of op = SqrtOp.
 
 The C++ source code corresponding to this operation is
 \verbatim
@@ -93,7 +93,7 @@ inline void forward_sqrt_op_0(
 	z[0] = sqrt( x[0] );
 }
 /*!
-Reverse mode partial derivatives for result of op = SqrtOp.
+Compute reverse mode partial derivatives for result of op = SqrtOp.
 
 The C++ source code corresponding to this operation is
 \verbatim

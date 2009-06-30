@@ -22,7 +22,7 @@ Forward and reverse mode calculations for z = cos(x).
 
 
 /*!
-Forward mode Taylor coefficient for result of op = CosOp.
+Compute forward mode Taylor coefficient for result of op = CosOp.
 
 The C++ source code corresponding to this operation is
 \verbatim
@@ -78,7 +78,7 @@ inline void forward_cos_op(
 }
 
 /*!
-Zero order forward mode Taylor coefficient for result of op = CosOp.
+Compute zero order forward mode Taylor coefficient for result of op = CosOp.
 
 The C++ source code corresponding to this operation is
 \verbatim
@@ -114,7 +114,7 @@ inline void forward_cos_op_0(
 	s[0] = sin( x[0] );
 }
 /*!
-Reverse mode partial derivatives for result of op = CosOp.
+Compute reverse mode partial derivatives for result of op = CosOp.
 
 The C++ source code corresponding to this operation is
 \verbatim
