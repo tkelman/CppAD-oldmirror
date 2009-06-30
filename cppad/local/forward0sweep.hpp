@@ -783,36 +783,19 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case SubvvOp:
-			n_res = 1;
-			n_arg = 2;
-			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
-			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
-
-			X = Taylor + arg[0] * J;
-			Y = Taylor + arg[1] * J;
-			Z[0] = X[0] - Y[0];
+			forward_subvv_op_0(i_var, arg, parameter, J, Taylor);
 			break;
 			// -------------------------------------------------
 
 			case SubpvOp:
-			n_res = 1;
-			n_arg = 2;
-			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
-
-			P = CPPAD_GET_PAR(arg[0]);
-			Y = Taylor + arg[1] * J;
-			Z[0] = P[0] - Y[0];
+			CPPAD_ASSERT_UNKNOWN( arg[0] < num_par );
+			forward_subpv_op_0(i_var, arg, parameter, J, Taylor);
 			break;
 			// -------------------------------------------------
 
 			case SubvpOp:
-			n_res = 1;
-			n_arg = 2;
-			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
-
-			X = Taylor + arg[0] * J;
-			P = CPPAD_GET_PAR(arg[1]);
-			Z[0] = X[0] - P[0];
+			CPPAD_ASSERT_UNKNOWN( arg[1] < num_par );
+			forward_subvp_op_0(i_var, arg, parameter, J, Taylor);
 			break;
 			// -------------------------------------------------
 

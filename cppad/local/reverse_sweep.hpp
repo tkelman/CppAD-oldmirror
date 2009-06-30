@@ -617,34 +617,25 @@ void ReverseSweep(
 			// --------------------------------------------------
 
 			case SubvvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
-			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
-			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
-
-			pX = Partial + arg[0] * K;
-			pY = Partial + arg[1] * K;
-			RevSubvvOp(d, pZ, pX, pY);
+			reverse_subvv_op(
+				d, i_var, arg, parameter, J, Taylor, K, Partial
+			);
 			break;
 			// --------------------------------------------------
 
 			case SubpvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
-			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
-
-			pY = Partial + arg[1] * K;
-			RevSubpvOp(d, pZ, pY);
+			CPPAD_ASSERT_UNKNOWN( arg[0] < num_par );
+			reverse_subpv_op(
+				d, i_var, arg, parameter, J, Taylor, K, Partial
+			);
 			break;
 			// --------------------------------------------------
 
 			case SubvpOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
-			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
-
-			pX = Partial + arg[0] * K;
-			RevSubvpOp(d, pZ, pX);
+			CPPAD_ASSERT_UNKNOWN( arg[1] < num_par );
+			reverse_subvp_op(
+				d, i_var, arg, parameter, J, Taylor, K, Partial
+			);
 			break;
 			// --------------------------------------------------
 

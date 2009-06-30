@@ -19,10 +19,8 @@ $begin Op$$ $comment CppAD Developer Documentation$$
 $section Compute Values and Derivatives for Taped Operations$$
 
 $childtable%
-	cppad/local/add_op.hpp%
 	cppad/local/div_op.hpp%
-	cppad/local/mul_op.hpp%
-	cppad/local/sub_op.hpp
+	cppad/local/mul_op.hpp
 %$$
 
 $end

@@ -218,6 +218,7 @@ size_t forward_sweep(
 	// set the number of operators
 	numop_m1 = Rec->num_rec_op() - 1;
 
+
 	// length of the parameter vector (used by CppAD assert macros)
 	const size_t num_par = Rec->num_rec_par();
 
@@ -830,36 +831,19 @@ size_t forward_sweep(
 			// -------------------------------------------------
 
 			case SubvvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
-			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
-			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
-
-			X = Taylor + arg[0] * J;
-			Y = Taylor + arg[1] * J;
-			ForSubvvOp(d, Z, X, Y);
+			forward_subvv_op(d, i_var, arg, parameter, J, Taylor);
 			break;
 			// -------------------------------------------------
 
 			case SubpvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
-			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
-
-			P = Rec->GetPar( arg[0] );
-			Y = Taylor + arg[1] * J;
-			ForSubpvOp(d, Z, P, Y);
+			CPPAD_ASSERT_UNKNOWN( arg[0] < num_par );
+			forward_subpv_op(d, i_var, arg, parameter, J, Taylor);
 			break;
 			// -------------------------------------------------
 
 			case SubvpOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
-			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
-
-			X = Taylor + arg[0] * J;
-			P = Rec->GetPar( arg[1] );
-			ForSubvpOp(d, Z, X, P);
+			CPPAD_ASSERT_UNKNOWN( arg[1] < num_par );
+			forward_subvp_op(d, i_var, arg, parameter, J, Taylor);
 			break;
 			// -------------------------------------------------
 

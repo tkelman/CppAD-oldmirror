@@ -29,6 +29,7 @@ list="
 	sinh_op.hpp
 	sparse_op.hpp
 	sqrt_op.hpp
+	sub_op.hpp
 "
 for name in $list
 do
