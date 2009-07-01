@@ -410,36 +410,19 @@ size_t forward_sweep(
 			// -------------------------------------------------
 
 			case DivvvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
-			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
-			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
-
-			X = Taylor + arg[0] * J;
-			Y = Taylor + arg[1] * J;
-			ForDivvvOp(d, Z, X, Y);
+			forward_divvv_op(d, i_var, arg, parameter, J, Taylor);
 			break;
 			// -------------------------------------------------
 
 			case DivpvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
-			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
-
-			Y = Taylor + arg[1] * J;
-			P = Rec->GetPar( arg[0] );
-			ForDivpvOp(d, Z, P, Y);
+			CPPAD_ASSERT_UNKNOWN( arg[0] < num_par );
+			forward_divpv_op(d, i_var, arg, parameter, J, Taylor);
 			break;
 			// -------------------------------------------------
 
 			case DivvpOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
-			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
-
-			P = Rec->GetPar( arg[1] );
-			X = Taylor + arg[0] * J;
-			ForDivvpOp(d, Z, X, P);
+			CPPAD_ASSERT_UNKNOWN( arg[1] < num_par );
+			forward_divvp_op(d, i_var, arg, parameter, J, Taylor);
 			break;
 			// -------------------------------------------------
 

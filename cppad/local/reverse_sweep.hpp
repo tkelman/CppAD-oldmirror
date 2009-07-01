@@ -150,14 +150,10 @@ void ReverseSweep(
 	size_t       adr[2];
 
 	const size_t   *arg = 0;
-	const Base       *P = 0;
 	const Base       *Z = 0;
-	const Base       *Y = 0;
-	const Base       *X = 0;
 
 	Base            *pZ = 0;
 	Base            *pY = 0;
-	Base            *pX = 0;
 
 	// used by CExp operator 
 	Base        *trueCase  = 0;
@@ -343,40 +339,25 @@ void ReverseSweep(
 			// --------------------------------------------------
 
 			case DivvvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
-			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
-			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
-
-			X  = Taylor  + arg[0] * J;
-			pX = Partial + arg[0] * K;
-			Y  = Taylor  + arg[1] * J;
-			pY = Partial + arg[1] * K;
-			RevDivvvOp(d, Z, X, Y, pZ, pX, pY);
+			reverse_divvv_op(
+				d, i_var, arg, parameter, J, Taylor, K, Partial
+			);
 			break;
 			// --------------------------------------------------
 
 			case DivpvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
-			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
-
-			Y  = Taylor  + arg[1] * J;
-			pY = Partial + arg[1] * K;
-			P  = Rec->GetPar( arg[0] );
-			RevDivpvOp(d, Z, P, Y, pZ, pY);
+			CPPAD_ASSERT_UNKNOWN( arg[0] < num_par );
+			reverse_divpv_op(
+				d, i_var, arg, parameter, J, Taylor, K, Partial
+			);
 			break;
 			// --------------------------------------------------
 
 			case DivvpOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
-			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
-
-			X  = Taylor  + arg[0] * J;
-			pX = Partial + arg[0] * K;
-			P  = Rec->GetPar( arg[1] );
-			RevDivvpOp(d, Z, X, P, pZ, pX);
+			CPPAD_ASSERT_UNKNOWN( arg[1] < num_par );
+			reverse_divvp_op(
+				d, i_var, arg, parameter, J, Taylor, K, Partial
+			);
 			break;
 			// --------------------------------------------------
 

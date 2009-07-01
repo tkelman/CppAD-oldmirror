@@ -13,19 +13,6 @@ A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
-/*
-$begin Op$$ $comment CppAD Developer Documentation$$
-
-$section Compute Values and Derivatives for Taped Operations$$
-
-$childtable%
-	cppad/local/div_op.hpp
-%$$
-
-$end
-*/
-
-
 # include <cppad/local/std_math_ad.hpp>
 # include <cppad/local/abs_op.hpp>
 # include <cppad/local/add_op.hpp>
