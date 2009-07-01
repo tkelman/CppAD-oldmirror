@@ -22,6 +22,7 @@ list="
 	cppad_assert.hpp
 	define.hpp
 	log_op.hpp
+	mul_op.hpp
 	op_code.hpp
 	player.hpp
 	prototype_op.hpp

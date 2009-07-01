@@ -147,20 +147,17 @@ void ReverseSweep(
 	size_t        i_var;
 	size_t        n_res;
 	size_t        n_arg;
+	size_t       adr[2];
 
 	const size_t   *arg = 0;
 	const Base       *P = 0;
 	const Base       *Z = 0;
 	const Base       *Y = 0;
 	const Base       *X = 0;
-	const Base       *W = 0;
-	const Base       *U = 0;
 
 	Base            *pZ = 0;
 	Base            *pY = 0;
 	Base            *pX = 0;
-	Base            *pW = 0;
-	Base            *pU = 0;
 
 	// used by CExp operator 
 	Base        *trueCase  = 0;
@@ -425,40 +422,25 @@ void ReverseSweep(
 			// --------------------------------------------------
 
 			case MulvvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
-			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
-			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
-
-			X  = Taylor  + arg[0] * J;
-			pX = Partial + arg[0] * K;
-			Y  = Taylor  + arg[1] * J;
-			pY = Partial + arg[1] * K;
-			RevMulvvOp(d, Z, X, Y, pZ, pX, pY);
+			reverse_mulvv_op(
+				d, i_var, arg, parameter, J, Taylor, K, Partial
+			);
 			break;
 			// --------------------------------------------------
 
 			case MulpvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
-			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var );
-
-			Y  = Taylor  + arg[1] * J;
-			pY = Partial + arg[1] * K;
-			P  = Rec->GetPar( arg[0] );
-			RevMulpvOp(d, Z, P, Y, pZ, pY);
+			CPPAD_ASSERT_UNKNOWN( arg[0] < num_par );
+			reverse_mulpv_op(
+				d, i_var, arg, parameter, J, Taylor, K, Partial
+			);
 			break;
 			// --------------------------------------------------
 
 			case MulvpOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
-			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var );
-
-			X  = Taylor  + arg[0] * J;
-			pX = Partial + arg[0] * K;
-			P  = Rec->GetPar( arg[1] );
-			RevMulvpOp(d, Z, X, P, pZ, pX);
+			CPPAD_ASSERT_UNKNOWN( arg[1] < num_par );
+			reverse_mulvp_op(
+				d, i_var, arg, parameter, J, Taylor, K, Partial
+			);
 			break;
 			// --------------------------------------------------
 
@@ -477,12 +459,7 @@ void ReverseSweep(
 			case PowvpOp:
 			CPPAD_ASSERT_UNKNOWN( n_res == 3);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
-			U  = Z;
-			pU = pZ;
-			W  = U  + J;
-			pW = pU + K;
-			Z  = W  + J;
-			pZ = pW + K;
+			CPPAD_ASSERT_UNKNOWN( arg[1] < num_par );
 
 			// Z = exp(w)
 			reverse_exp_op(
@@ -490,26 +467,23 @@ void ReverseSweep(
 			);
 
 			// w = u * y
-			Y  = Rec->GetPar( arg[1] );
-			RevMulvpOp(d, W, U, Y, pW, pU);
+			adr[0] = i_var;
+			adr[1] = arg[1];
+			reverse_mulvp_op(
+			d, i_var+1, adr, parameter, J, Taylor, K, Partial
+			);
 
 			// u = log(x)
 			reverse_log_op(
 				d, i_var, arg[0], J, Taylor, K, Partial
 			);
 			break;
-
 			// -------------------------------------------------
 
 			case PowpvOp:
 			CPPAD_ASSERT_UNKNOWN( n_res == 3);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
-			U  = Z;
-			pU = pZ;
-			W  = U  + J;
-			pW = pU + K;
-			Z  = W  + J;
-			pZ = pW + K;
+			CPPAD_ASSERT_UNKNOWN( arg[0] < num_par );
 
 			// Z = exp(w)
 			reverse_exp_op(
@@ -517,9 +491,11 @@ void ReverseSweep(
 			);
 
 			// w = u * y
-			Y  = Taylor  + arg[1] * J;
-			pY = Partial + arg[1] * K;
-			RevMulpvOp(d, W, U, Y, pW, pY);
+			adr[0] = i_var * J; // location of log(x) in Taylor
+			adr[1] = arg[1];
+			reverse_mulpv_op(
+				d, i_var+1, adr, Taylor, J, Taylor, K, Partial
+			);
 
 			// u = log(x)
 			// x is a parameter
@@ -530,12 +506,6 @@ void ReverseSweep(
 			case PowvvOp:
 			CPPAD_ASSERT_UNKNOWN( n_res == 3);
 			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
-			U  = Z;
-			pU = pZ;
-			W  = U  + J;
-			pW = pU + K;
-			Z  = W  + J;
-			pZ = pW + K;
 
 			// Z = exp(w)
 			reverse_exp_op(
@@ -543,9 +513,11 @@ void ReverseSweep(
 			);
 
 			// w = u * y
-			Y  = Taylor  + arg[1] * J;
-			pY = Partial + arg[1] * K;
-			RevMulvvOp(d, W, U, Y, pW, pU, pY);
+			adr[0] = i_var;
+			adr[1] = arg[1];
+			reverse_mulvv_op(
+			d, i_var+1, adr, parameter, J, Taylor, K, Partial
+			);
 
 			// u = log(x)
 			reverse_log_op(

@@ -170,16 +170,20 @@ inline void forward_addpv_op(
 	CPPAD_ASSERT_UNKNOWN( arg[1] < i_z );
 	CPPAD_ASSERT_UNKNOWN( d < nc_taylor );
 
-	// Paraemter value
-	Base x = parameter[ arg[0] ];
-
 	// Taylor coefficients corresponding to arguments and result
 	Base* y = taylor + arg[1] * nc_taylor;
 	Base* z = taylor + i_z    * nc_taylor;
 
+# if CPPAD_USE_FORWARD0SWEEP
+	CPPAD_ASSERT_UNKNOWN( d > 0 );
+	z[d] = y[d];
+# else
+	// Paraemter value
+	Base x = parameter[ arg[0] ];
 	if( d == 0 )
 		z[d] = x + y[d];
 	else	z[d] = y[d];
+# endif
 }
 /*!
 Compute zero order forward mode Taylor coefficient for result of op = AddpvOp.
@@ -289,17 +293,20 @@ inline void forward_addvp_op(
 	CPPAD_ASSERT_UNKNOWN( arg[1] < i_z );
 	CPPAD_ASSERT_UNKNOWN( d < nc_taylor );
 
-	// Parameter value
-	Base y = parameter[ arg[1] ];
-
 	// Taylor coefficients corresponding to arguments and result
 	Base* x = taylor + arg[0] * nc_taylor;
 	Base* z = taylor + i_z    * nc_taylor;
 
+# if CPPAD_USE_FORWARD0SWEEP
+	CPPAD_ASSERT_UNKNOWN( d > 0 );
+	z[d] = x[d];
+# else
+	// Parameter value
+	Base y = parameter[ arg[1] ];
 	if( d == 0 )
 		z[d] = x[d] + y;
 	else	z[d] = x[d];
-
+# endif
 }
 
 /*!
