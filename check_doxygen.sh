@@ -26,6 +26,7 @@ list="
 	mul_op.hpp
 	op_code.hpp
 	player.hpp
+	pow_op.hpp
 	prototype_op.hpp
 	sin_op.hpp
 	sinh_op.hpp

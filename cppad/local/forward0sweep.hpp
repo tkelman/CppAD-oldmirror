@@ -173,8 +173,6 @@ size_t forward0sweep(
 	bool result;
 
 	Base             *Z = 0;
-	Base             *W = 0;
-	Base             *U = 0;
 
 	size_t          i;
 	size_t          len;
@@ -533,76 +531,19 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case PowvpOp:
-			// variables: log(x), y * log(x), pow(x, y)
-			n_res = 3;
-			n_arg = 2;
-			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var);
-			U = Z;
-			W = U + J;
-			Z = W + J;
-
-			// u = log(x)
-			X = Taylor + arg[0] * J;
-			U[0] = log( X[0] );
-
-			// w = u * y
-			Y = CPPAD_GET_PAR(arg[1]);
-			W[0] = U[0] * Y[0];
-
-			// z = exp(w)
-			// zero order case exactly same as Base type operation
-			// d == 0
-			Z[0] = pow(X[0], Y[0]);
-
+			CPPAD_ASSERT_UNKNOWN( arg[1] < num_par );
+			forward_powvp_op_0(i_var, arg, parameter, J, Taylor);
 			break;
 			// -------------------------------------------------
 
 			case PowpvOp:
-			// variables: log(x), y * log(x), pow(x, y)
-			n_res = 3;
-			n_arg = 2;
-			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var);
-			U = Z;
-			W = U + J;
-			Z = W + J;
-
-			// u = log(x)
-			X = CPPAD_GET_PAR(arg[0]);
-			U[0] = log(X[0]);
-
-			// w = u * y
-			Y = Taylor + arg[1] * J;
-			W[0] = U[0] * Y[0];
-
-			// z = exp(w)
-			// zero order case exactly same as Base type operation
-			Z[0] = pow(X[0], Y[0]);
-
+			CPPAD_ASSERT_UNKNOWN( arg[0] < num_par );
+			forward_powpv_op_0(i_var, arg, parameter, J, Taylor);
 			break;
 			// -------------------------------------------------
 
 			case PowvvOp:
-			// variables: log(x), y * log(x), pow(x, y)
-			n_res = 3;
-			n_arg = 2;
-			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var);
-			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var);
-			U = Z;
-			W = U + J;
-			Z = W + J;
-
-			// u = log(x)
-			X = Taylor + arg[0] * J;
-			U[0] = log( X[0] );
-
-			// w = u * y
-			Y = Taylor + arg[1] * J;
-			W[0] = U[0] * Y[0];
-
-			// z = exp(w)
-			// zero order case exactly same as Base type operation
-			Z[0] = pow(X[0], Y[0]);
-
+			forward_powvv_op_0(i_var, arg, parameter, J, Taylor);
 			break;
 			// -------------------------------------------------
 
@@ -774,8 +715,11 @@ size_t forward0sweep(
 # if CPPAD_FORWARD0SWEEP_TRACE
 		size_t       d      = 0;
 		size_t       i_tmp  = i_var;
+		Base*        Z_tmp  = Z;
 		if( op == PowvpOp || op == PowpvOp || op == PowvvOp )
-			i_tmp  += 2;
+		{	i_tmp  += 2;
+			Z_tmp  += 2 * J;
+		}
 		printOp(
 			std::cout, 
 			Rec,
@@ -783,7 +727,7 @@ size_t forward0sweep(
 			op, 
 			arg,
 			d + 1, 
-			Z, 
+			Z_tmp, 
 			0, 
 			(Base *) CPPAD_NULL
 		);

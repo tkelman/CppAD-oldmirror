@@ -171,7 +171,6 @@ size_t forward_sweep(
 	size_t         i_op;
 	size_t        i_var;
 	size_t        i_arg;
-	size_t       adr[2];
 
 	const size_t   *arg = 0;
 	const size_t *arg_0 = 0;
@@ -187,8 +186,6 @@ size_t forward_sweep(
 	bool result;
 
 	Base             *Z = 0;
-	Base             *W = 0;
-	Base             *U = 0;
 
 	size_t            i;
 	size_t          len;
@@ -575,107 +572,19 @@ size_t forward_sweep(
 			// -------------------------------------------------
 
 			case PowvpOp:
-			// variables: log(x), y * log(x), pow(x, y)
-			CPPAD_ASSERT_UNKNOWN( n_res == 3);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
-			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var);
 			CPPAD_ASSERT_UNKNOWN( arg[1] < num_par );
-			Z += 2 * J; // for printOp
-
-			// u = log(x)
-			forward_log_op(d, i_var, arg[0], J, Taylor);
-
-			// w = u * y
-			adr[0] = i_var;
-			adr[1] = arg[1];
-			forward_mulvp_op(d, i_var+1, adr, parameter, J, Taylor);
-
-			// z = exp(w)
-			// zero order case exactly same as Base type operation
-# if CPPAD_USE_FORWARD0SWEEP
-			CPPAD_ASSERT_UNKNOWN( d > 0 );
-			forward_exp_op(d, i_var+2, i_var+1, J, Taylor);
-# else
-			X = Taylor + arg[0] * J;
-			if( d == 0 )
-			{	Y = parameter + arg[1];
-				Z[0] = pow(X[0], Y[0]);
-			}
-			else	forward_exp_op(d, i_var+2, i_var+1, J, Taylor);
-# endif
-
+			forward_powvp_op(d, i_var, arg, parameter, J, Taylor);
 			break;
 			// -------------------------------------------------
 
 			case PowpvOp:
-			// variables: log(x), y * log(x), pow(x, y)
-			CPPAD_ASSERT_UNKNOWN( n_res == 3);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
-			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var);
-			U = Z;       // i_var
-			W = U + J;   // i_var + 1
-			Z = W + J;   // i_var + 2
-
-			// u = log(x)
-# if CPPAD_USE_FORWARD0SWEEP
-			CPPAD_ASSERT_UNKNOWN( d > 0 );
-			U[d] = Base(0);
-# else
-			X = parameter + arg[0];
-			if( d == 0 )
-				U[0] = log(X[0]);
-			else	U[d] = Base(0);
-# endif
-
-			// w = u * y
-			adr[0] = i_var * J;
-			adr[1] = arg[1];
-			forward_mulpv_op(d, i_var+1, adr, Taylor, J, Taylor);
-
-			// z = exp(w)
-# if CPPAD_USE_FORWARD0SWEEP
-			forward_exp_op(d, i_var+2, i_var+1, J, Taylor);
-# else
-			// zero order case exactly same as Base type operation
-			if( d == 0 )
-			{	Y = Taylor + arg[1] * J;
-				Z[0] = pow(X[0], Y[0]);
-			}
-			else	forward_exp_op(d, i_var+2, i_var+1, J, Taylor);
-# endif
+			CPPAD_ASSERT_UNKNOWN( arg[0] < num_par );
+			forward_powpv_op(d, i_var, arg, parameter, J, Taylor);
 			break;
 			// -------------------------------------------------
 
 			case PowvvOp:
-			// variables: log(x), y * log(x), pow(x, y)
-			CPPAD_ASSERT_UNKNOWN( n_res == 3);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
-			CPPAD_ASSERT_UNKNOWN( arg[0] < i_var);
-			CPPAD_ASSERT_UNKNOWN( arg[1] < i_var);
-			U = Z;      // i_var
-			W = U + J;  // i_var + 1
-			Z = W + J;  // i_var + 2
-
-			// u = log(x)
-			X = Taylor + arg[0] * J;
-			forward_log_op(d, i_var, arg[0], J, Taylor);
-
-			// w = u * y
-			adr[0] = i_var;
-			adr[1] = arg[1];
-			forward_mulvv_op(d, i_var+1, adr, parameter, J, Taylor);
-
-			// z = exp(w)
-# if CPPAD_USE_FORWARD0SWEEP
-			forward_exp_op(d, i_var+2, i_var+1, J, Taylor);
-# else
-			// zero order case exactly same as Base type operation
-			if( d == 0 )
-			{	Y = Taylor + arg[1] * J;
-				Z[0] = pow(X[0], Y[0]);
-			}
-			else	forward_exp_op(d, i_var+2, i_var+1, J, Taylor);
-# endif
+			forward_powvv_op(d, i_var, arg, parameter, J, Taylor);
 			break;
 			// -------------------------------------------------
 
@@ -843,8 +752,11 @@ size_t forward_sweep(
 		}
 # if CPPAD_FORWARD_SWEEP_TRACE
 		size_t       i_tmp  = i_var;
+		Base*        Z_tmp  = Z;
 		if( op == PowvpOp || op == PowpvOp || op == PowvvOp )
-			i_tmp  += 2;
+		{	i_tmp  += 2;
+			Z_tmp  += 2 * J;
+		}
 		printOp(
 			std::cout, 
 			Rec,
@@ -852,7 +764,7 @@ size_t forward_sweep(
 			op, 
 			arg,
 			d + 1, 
-			Z, 
+			Z_tmp, 
 			0, 
 			(Base *) CPPAD_NULL
 		);

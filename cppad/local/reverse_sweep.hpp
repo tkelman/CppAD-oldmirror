@@ -147,7 +147,6 @@ void ReverseSweep(
 	size_t        i_var;
 	size_t        n_res;
 	size_t        n_arg;
-	size_t       adr[2];
 
 	const size_t   *arg = 0;
 	const Base       *Z = 0;
@@ -438,74 +437,26 @@ void ReverseSweep(
 			// --------------------------------------------------
 
 			case PowvpOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 3);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			CPPAD_ASSERT_UNKNOWN( arg[1] < num_par );
-
-			// Z = exp(w)
-			reverse_exp_op(
-				d, i_var+2, i_var+1, J, Taylor, K, Partial
-			);
-
-			// w = u * y
-			adr[0] = i_var;
-			adr[1] = arg[1];
-			reverse_mulvp_op(
-			d, i_var+1, adr, parameter, J, Taylor, K, Partial
-			);
-
-			// u = log(x)
-			reverse_log_op(
-				d, i_var, arg[0], J, Taylor, K, Partial
+			reverse_powvp_op(
+				d, i_var, arg, parameter, J, Taylor, K, Partial
 			);
 			break;
 			// -------------------------------------------------
 
 			case PowpvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 3);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
 			CPPAD_ASSERT_UNKNOWN( arg[0] < num_par );
-
-			// Z = exp(w)
-			reverse_exp_op(
-				d, i_var+2, i_var+1, J, Taylor, K, Partial
+			reverse_powpv_op(
+				d, i_var, arg, parameter, J, Taylor, K, Partial
 			);
-
-			// w = u * y
-			adr[0] = i_var * J; // location of log(x) in Taylor
-			adr[1] = arg[1];
-			reverse_mulpv_op(
-				d, i_var+1, adr, Taylor, J, Taylor, K, Partial
-			);
-
-			// u = log(x)
-			// x is a parameter
 			break;
-
 			// -------------------------------------------------
 
 			case PowvvOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 3);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 2 );
-
-			// Z = exp(w)
-			reverse_exp_op(
-				d, i_var+2, i_var+1, J, Taylor, K, Partial
-			);
-
-			// w = u * y
-			adr[0] = i_var;
-			adr[1] = arg[1];
-			reverse_mulvv_op(
-			d, i_var+1, adr, parameter, J, Taylor, K, Partial
-			);
-
-			// u = log(x)
-			reverse_log_op(
-				d, i_var, arg[0], J, Taylor, K, Partial
+			reverse_powvv_op(
+				d, i_var, arg, parameter, J, Taylor, K, Partial
 			);
 			break;
-
 			// --------------------------------------------------
 			case PripOp:
 			CPPAD_ASSERT_UNKNOWN( n_res == 0);
