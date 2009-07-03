@@ -71,7 +71,7 @@ inline void forward_unary1_op(
 	size_t nc_taylor   , 
 	Base*  taylor      )
 {
-	// this routine should never be included, much less called.
+	// This routine is only for documentaiton, it should not be used
 	CPPAD_ASSERT_UNKNOWN( false );
 }
 
@@ -113,7 +113,7 @@ inline void forward_unary1_op_0(
 	size_t nc_taylor   , 
 	Base*  taylor      )
 {
-	// this routine should never be included, much less called.
+	// This routine is only for documentaiton, it should not be used
 	CPPAD_ASSERT_UNKNOWN( false );
 }
 
@@ -196,7 +196,7 @@ inline void reverse_unary1_op(
 	size_t      nc_partial   ,
 	Base*       partial      )
 {
-	// this routine should never be included, much less called.
+	// This routine is only for documentaiton, it should not be used
 	CPPAD_ASSERT_UNKNOWN( false );
 }
 
@@ -259,7 +259,7 @@ inline void forward_unary2_op(
 	size_t nc_taylor   , 
 	Base*  taylor      )
 {
-	// this routine should never be included, much less called.
+	// This routine is only for documentaiton, it should not be used
 	CPPAD_ASSERT_UNKNOWN( false );
 }
 
@@ -306,7 +306,7 @@ inline void forward_unary2_op_0(
 	size_t nc_taylor   , 
 	Base*  taylor      )
 {
-	// this routine should never be included, much less called.
+	// This routine is only for documentaiton, it should not be used
 	CPPAD_ASSERT_UNKNOWN( false );
 }
 
@@ -406,7 +406,7 @@ inline void reverse_unary2_op(
 	size_t      nc_partial   ,
 	Base*       partial      )
 {
-	// this routine should never be included, much less called.
+	// This routine is only for documentaiton, it should not be used
 	CPPAD_ASSERT_UNKNOWN( false );
 }
 // =================== Binary operators with one result ====================
@@ -477,7 +477,7 @@ inline void forward_binary_op(
 	size_t        nc_taylor  , 
 	Base*         taylor     )
 {
-	// this routine should never be included, much less called.
+	// This routine is only for documentaiton, it should not be used
 	CPPAD_ASSERT_UNKNOWN( false );
 }
 
@@ -537,7 +537,7 @@ inline void forward_binary_op_0(
 	size_t        nc_taylor   , 
 	Base*         taylor      )
 {
-	// this routine should never be included, much less called.
+	// This routine is only for documentaiton, it should not be used
 	CPPAD_ASSERT_UNKNOWN( false );
 }
 
@@ -646,7 +646,7 @@ inline void reverse_binary_op(
 	size_t      nc_partial   ,
 	Base*       partial      )
 {
-	// this routine should never be included, much less called.
+	// This routine is only for documentaiton, it should not be used
 	CPPAD_ASSERT_UNKNOWN( false );
 }
 // ======================= Pow Function ===================================
@@ -724,7 +724,7 @@ inline void forward_pow_op(
 	size_t        nc_taylor  , 
 	Base*         taylor     )
 {
-	// this routine should never be included, much less called.
+	// This routine is only for documentaiton, it should not be used
 	CPPAD_ASSERT_UNKNOWN( false );
 }
 /*!
@@ -790,7 +790,7 @@ inline void forward_pow_op_0(
 	size_t        nc_taylor  , 
 	Base*         taylor     )
 {
-	// this routine should never be included, much less called.
+	// This routine is only for documentaiton, it should not be used
 	CPPAD_ASSERT_UNKNOWN( false );
 }
 /*!
@@ -906,7 +906,7 @@ inline void reverse_pow_op(
 	size_t      nc_partial   ,
 	Base*       partial      )
 {
-	// this routine should never be included, much less called.
+	// This routine is only for documentaiton, it should not be used
 	CPPAD_ASSERT_UNKNOWN( false );
 }
 // ==================== Sparsity Calculations ==============================
@@ -975,7 +975,7 @@ inline void reverse_sparse_hessian_unary_op(
 	const Pack* jac_sparsity  ,
 	Pack*       hes_sparsity  )
 {	
-	// this routine should never be included, much less called
+	// This routine is only for documentaiton, it should not be used
 	CPPAD_ASSERT_UNKNOWN( false );
 }
 
