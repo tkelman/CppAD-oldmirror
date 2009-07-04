@@ -488,24 +488,30 @@ inline void reverse_cond_op(
 	if( arg[1] & 4 )
 	{	CPPAD_ASSERT_UNKNOWN( arg[4] < i_z );
 		py_2 = partial + arg[4] * nc_partial;
-		py_2[d] += CondExpOp(
-			CompareOp( arg[0] ),
-			y_0,
-			y_1,
-			pz[d],
-			zero
-		);
+		size_t j = d + 1;
+		while(j--)
+		{	py_2[j] += CondExpOp(
+				CompareOp( arg[0] ),
+				y_0,
+				y_1,
+				pz[j],
+				zero
+			);
+		}
 	}
 	if( arg[1] & 8 )
 	{	CPPAD_ASSERT_UNKNOWN( arg[5] < i_z );
 		py_3 = partial + arg[5] * nc_partial;
-		py_3[d] += CondExpOp(
-			CompareOp( arg[0] ),
-			y_0,
-			y_1,
-			zero,
-			pz[d]
-		);
+		size_t j = d + 1;
+		while(j--)
+		{	py_3[j] += CondExpOp(
+				CompareOp( arg[0] ),
+				y_0,
+				y_1,
+				zero,
+				pz[j]
+			);
+		}
 	}
 	return;
 }

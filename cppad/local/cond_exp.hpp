@@ -55,7 +55,7 @@ $codei%
 		%result% = %exp_if_true%
 	else	%result% = %exp_if_false%
 %$$
-The notation $icode Rel$$ and $icode Cop$$ 
+The relational $icode Rel$$ and comparison operator $icode Cop$$ 
 above have the following correspondence: 
 $table
 $icode Rel$$ 
@@ -74,7 +74,8 @@ $icode Cop$$
 $tend
 If $icode f$$ is the $xref/ADFun/$$ object corresponding to the
 AD operation sequence,
-the choice in an AD conditional expression is made each time
+the assignment choice for $icode result$$
+in an AD conditional expression is made each time
 $xref/Forward//f.Forward/$$ is used to evaluate the zero order Taylor
 coefficients with new values for the 
 $cref/independent variables/glossary/Tape/Independent Variable/$$.
@@ -82,10 +83,11 @@ This is in contrast to the $xref/Compare//AD comparison operators/$$
 which are boolean valued and not included in the AD operation sequence. 
 
 $head Rel$$
-In the syntax above, $icode Rel$$ represents one of the following
+In the syntax above, the relation $icode Rel$$ represents one of the following
 two characters: $code Lt$$, $code Le$$, $code Eq$$, $code Ge$$, $code Gt$$. 
 As in the table above,
-$icode Rel$$ determines the comparison operator $icode Cop$$.
+$icode Rel$$ determines which comparison operator $icode Cop$$ is used
+when comparing $icode left$$ and $icode right$$.
 
 $head Type$$
 These functions are defined in the CppAD namespace for arguments of

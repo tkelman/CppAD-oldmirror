@@ -36,6 +36,7 @@ $spell
 	hpp
 	op
 	pycppad
+	cond_exp
 $$
 
 $section Changes and Additions to CppAD During 2009$$
@@ -46,6 +47,19 @@ This section contains a list of the changes to CppAD during 2009
 (in reverse order by date).
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
+
+$head 07-04$$
+Fixed a bug in second or higher order reverse mode calculations
+that included $cref/conditional expressions/CondExp/$$.
+This bug was demonstrated by the test case $code SecondOrderReverse$$
+in the file $code test_more/cond_exp.cpp$$.
+$pre
+
+$$
+A simpler and useful example was provided for
+$cref/conditional expressions/CondExp/$$; 
+see $cref/CondExp.cpp/$$.
+
 
 $head 07-03$$
 Some minor improvements were made to the documentation for 
