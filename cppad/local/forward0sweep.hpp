@@ -167,7 +167,7 @@ size_t forward0sweep(
 	const Base       *Y = 0;
 
 	// used by CExp operator (left and right also used by Com operator)
-	const Base  *left = 0, *right = 0, *trueCase = 0, *falseCase = 0;
+	const Base  *left = 0, *right = 0;
 
 	// used by Com operator
 	bool result;
@@ -281,29 +281,10 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case CExpOp:
-			n_res = 1;
-			n_arg = 6;
-			CPPAD_ASSERT_UNKNOWN( arg[1] != 0 );
-			if( arg[1] & 1 )
-				left = Taylor + arg[2] * J;
-			else	left = CPPAD_GET_PAR(arg[2]);
-			if( arg[1] & 2 )
-				right = Taylor + arg[3] * J;
-			else	right = CPPAD_GET_PAR(arg[3]);
-			// d == 0
-			{	if( arg[1] & 4 )
-					trueCase = Taylor + arg[4] * J;
-				else	trueCase = CPPAD_GET_PAR(arg[4]);
-				if( arg[1] & 8 )
-					falseCase = Taylor + arg[5] * J;
-				else	falseCase = CPPAD_GET_PAR(arg[5]);
-			}
-			Z[0] = CondExpOp(
-				CompareOp( arg[0] ),
-				*left,
-				*right,
-				*trueCase,
-				*falseCase
+			// Use the general case with d == 0 
+			// (could create an optimzied verison for this case)
+			forward_cond_op_0(
+				i_var, arg, num_par, parameter, J, Taylor
 			);
 			break;
 			// ---------------------------------------------------

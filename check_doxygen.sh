@@ -16,6 +16,7 @@ list="
 	add_op.hpp
 	acos_op.hpp
 	asin_op.hpp
+	cond_op.hpp
 	configure.hpp
 	cos_op.hpp
 	cosh_op.hpp

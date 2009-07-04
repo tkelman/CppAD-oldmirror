@@ -120,7 +120,8 @@ inline void forward_unary1_op_0(
 /*!
 Prototype for reverse mode unary operator with one result (not used).
 
-This routine is given the partial derivatives of a function G(z , y , ... )
+This routine is given the partial derivatives of a function 
+G(z , x , w, u ... )
 and it uses them to compute the partial derivatives of 
 \verbatim
 	H( x , w , u , ... ) = G[ z(x) , x , w , u , ... ]
@@ -458,8 +459,8 @@ is the k-th order Taylor coefficient corresponding to y.
 for k = 0 , ... , \a d - 1
 is the k-th order Taylor coefficient corresponding to z.
 \n
-\b Output: \a taylor [ \a i_z * \a nc_taylor + d ] 
-is the d-th order Taylor coefficient corresponding to z. 
+\b Output: \a taylor [ \a i_z * \a nc_taylor + \a d ] 
+is the \a d-th order Taylor coefficient corresponding to z. 
 
 \par Checked Assertions where op is a binary operator:
 \li NumArg(op) == 2
@@ -705,8 +706,8 @@ is the k-th order Taylor coefficient corresponding to y.
 for j = 0, 1, 2 , and for k = 0 , ... , \a d - 1
 is the k-th order Taylor coefficient corresponding to z_j.
 \n
-\b Output: \a taylor [ \a (i_z + j) * \a nc_taylor + d ] 
-is the d-th order Taylor coefficient corresponding to z_j.
+\b Output: \a taylor [ \a (i_z + j) * \a nc_taylor + \a d ] 
+is the \a d-th order Taylor coefficient corresponding to z_j.
 
 \par Checked Assertions where op is a binary operator:
 \li NumArg(op) == 2
@@ -978,7 +979,6 @@ inline void reverse_sparse_hessian_unary_op(
 	// This routine is only for documentaiton, it should not be used
 	CPPAD_ASSERT_UNKNOWN( false );
 }
-
 
 CPPAD_END_NAMESPACE
 # endif

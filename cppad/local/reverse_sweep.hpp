@@ -154,13 +154,6 @@ void ReverseSweep(
 	Base            *pZ = 0;
 	Base            *pY = 0;
 
-	// used by CExp operator 
-	Base        *trueCase  = 0;
-	Base        *falseCase = 0;
-	const Base  *left      = 0;
-	const Base  *right     = 0;
-	const Base   zero = Base(0);
-
 	// check numvar argument
 	CPPAD_ASSERT_UNKNOWN( Rec->num_rec_var() == numvar );
 	CPPAD_ASSERT_UNKNOWN( numvar > 0 );
@@ -276,35 +269,17 @@ void ReverseSweep(
 			// -------------------------------------------------
 
 			case CExpOp:
-			CPPAD_ASSERT_UNKNOWN( n_res == 1);
-			CPPAD_ASSERT_UNKNOWN( n_arg == 6);
-			CPPAD_ASSERT_UNKNOWN( arg[1] != 0 );
-			if( arg[1] & 1 )
-				left = Taylor + arg[2] * J;
-			else	left = Rec->GetPar(arg[2]);
-			if( arg[1] & 2 )
-				right = Taylor + arg[3] * J;
-			else	right = Rec->GetPar(arg[3]);
-			if( arg[1] & 4 )
-			{	trueCase = Partial + arg[4] * K;
-				trueCase[d] += CondExpOp(
-					CompareOp( arg[0] ),
-					*left,
-					*right,
-					pZ[d],
-					zero
-				);
-			}
-			if( arg[1] & 8 )
-			{	falseCase = Partial + arg[5] * K;
-				falseCase[d] += CondExpOp(
-					CompareOp( arg[0] ),
-					*left,
-					*right,
-					zero,
-					pZ[d]
-				);
-			}
+			reverse_cond_op(
+				d, 
+				i_var, 
+				arg, 
+				num_par, 
+				parameter, 
+				J, 
+				Taylor,
+				K, 
+				Partial
+			);
 			break;
 			// --------------------------------------------------
 
