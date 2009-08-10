@@ -51,6 +51,7 @@ $childtable%
 	cppad/local/drivers.hpp%
 	cppad/local/fun_check.hpp%
 	cppad/local/omp_max_thread.hpp%
+	cppad/local/optimize.hpp%
 	omh/fun_deprecated.omh
 %$$
 
@@ -205,6 +206,8 @@ public:
 		const BaseVector &x, const BaseVector &w, const BoolVector &p
 	); 
 
+	// Optimize the tape
+	void optimize(void);
 	// ------------------- Deprecated -----------------------------
 
 	// number of variables in opertion sequence
@@ -290,5 +293,6 @@ private:
 # include <cppad/local/drivers.hpp>
 # include <cppad/local/fun_check.hpp>
 # include <cppad/local/omp_max_thread.hpp>
+# include <cppad/local/optimize.hpp> 
 
 # endif
