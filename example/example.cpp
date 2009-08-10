@@ -111,6 +111,7 @@ extern bool OdeGearControl(void);
 extern bool OdeStiff(void);
 extern bool ode_taylor(void);
 extern bool ode_taylor_adolc(void);
+extern bool optimize(void);
 extern bool Output(void);
 extern bool ParVar(void);
 extern bool Poly(void);
@@ -249,6 +250,7 @@ int main(void)
 	ok &= Run( OdeGearControl,    "OdeGearControl"   );
 	ok &= Run( OdeStiff,          "OdeStiff"         );
 	ok &= Run( ode_taylor,        "ode_taylor"       );
+	ok &= Run( optimize,          "optimize"         );
 	ok &= Run( Output,            "Output"           );
 	ok &= Run( ParVar,            "ParVar"           );
 	ok &= Run( Pow,               "Poly"             );

@@ -155,6 +155,7 @@ $rref OdeStiff.cpp$$
 $rref ode_evaluate.cpp$$
 $rref ode_taylor.cpp$$
 $rref ode_taylor_adolc.cpp$$
+$rref optimize.cpp$$
 $rref Output.cpp$$
 $rref ParVar.cpp$$
 $rref Poly.cpp$$
