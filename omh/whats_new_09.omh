@@ -12,6 +12,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 $begin whats_new_09$$
 $spell
+	retape
 	isnan
 	atan
 	asin
@@ -51,6 +52,14 @@ The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
 (Comments about developer documentation are only important if you are
 trying to read and understand the CppAD source code.)
+
+$head 08-11$$
+Change the speed test $cref/main program/speed_main/$$ so
+that it uses a list of options instead of a boolean flag for each option.
+This will make it possible to add options in the future with out
+having to change all the existing tests because the options are now
+global variables instead of arguments to the speed test routines; for example,
+see $cref/retape/speed_main/option_list/retape/$$.
 
 $head 08-10$$
 The routine for $cref/optimizing/optimize/$$ the operation sequence
