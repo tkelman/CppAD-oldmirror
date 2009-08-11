@@ -158,10 +158,13 @@ void optimize(
 	// vecad maps a VecAD index (which corresponds to the beginning of the
 	// VecAD object) to the vecad_connected index for the VecAD object.
 	CppAD::vector<bool>   vecad_connected(num_vecad_vec);
+	CppAD::vector<size_t> vecad_offset(num_vecad_vec);
 	CppAD::vector<size_t> vecad(num_vecad_ind);
 	j = 0;
 	for(i = 0; i < num_vecad_vec; i++)
 	{	vecad_connected[i] = false;
+		// offset for this VecAD
+		vecad_offset[i] = j + 1;
 		// length of this VecAD
 		size_t length = play->GetVecInd(j);
 		// set to proper index for this VecAD
@@ -296,6 +299,13 @@ void optimize(
 			CPPAD_ASSERT_UNKNOWN(0);
 		}
 	}
+# if CPPAD_OPTIMIZE_TRACE
+	for(i = 0; i < num_vecad_vec; i++) 
+	{	std::cout << "VecAD: off=" << std::setw(5) << vecad_offset[i];
+		std::cout << "connected = " << vecad_connected[i];
+		std::cout << std::endl; 
+	}
+# endif
 	// -------------------------------------------------------------
 
 	// Erase all information in the recording
@@ -358,6 +368,10 @@ void optimize(
 			keep = false;
 			break;
 
+			case InvOp:
+			keep = true;
+			break;
+
 			case StppOp:
 			case StvpOp:
 			case StpvOp:
@@ -387,7 +401,8 @@ void optimize(
 			case SinOp:
 			case SinhOp:
 			case SqrtOp:
-			CPPAD_ASSERT_NARG_NRES(op, 1, 1);
+			CPPAD_ASSERT_UNKNOWN( NumArg(op) == 1 );
+			CPPAD_ASSERT_UNKNOWN( NumRes(op) > 0  );
 			new_arg[0] = new_var[ arg[0] ];
 			CPPAD_ASSERT_UNKNOWN( new_arg[0] < num_var );
 
@@ -425,29 +440,6 @@ void optimize(
 
 			rec->PutArg( new_arg[0], new_arg[1] );
 			new_var[ i_var ] = rec->PutOp(op);
-			break;
-
-			// Binary operation where left operand is text
-			// and right operand is a parameter, no result
-			case PripOp:
-			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
-			new_arg[0] = rec->PutTxt( play->GetTxt( arg[0] ) );
-			new_arg[1] = rec->PutPar( play->GetPar( arg[1] ) );
-
-			rec->PutArg( new_arg[0], new_arg[1] );
-			rec->PutOp(op);
-			break;
-
-			// Binary operation where left operand is text
-			// and right operand is a variable, no result
-			case PrivOp:
-			CPPAD_ASSERT_NARG_NRES(op, 2, 0);
-			new_arg[0] = rec->PutTxt( play->GetTxt( arg[0] ) );
-			new_arg[1] = new_var[ arg[1] ];
-			CPPAD_ASSERT_UNKNOWN( new_arg[1] < num_var );
-
-			rec->PutArg( new_arg[0], new_arg[1] );
-			rec->PutOp(op);
 			break;
 
 			// Binary operator where both operators are variables
@@ -493,34 +485,6 @@ void optimize(
 				new_arg[5] 
 			);
 			new_var[ i_var ] = rec->PutOp(op);
-			break;
-
-			// Compare operator
-			case ComOp:
-			CPPAD_ASSERT_NARG_NRES(op, 4, 0);
-			new_arg[0] = arg[0];
-			new_arg[1] = arg[1];
-			if( arg[1] & 2 )
-			{	new_arg[2] = new_var[ arg[2] ];
-				CPPAD_ASSERT_UNKNOWN( new_arg[2] < num_var );
-			}
-			else	new_arg[2] = rec->PutPar(
-					play->GetPar( arg[2] )
-			);
-			if( arg[1] & 4 )
-			{	new_arg[3] = new_var[ arg[3] ];
-				CPPAD_ASSERT_UNKNOWN( new_arg[3] < num_var );
-			}
-			else	new_arg[3] = rec->PutPar(
-					play->GetPar( arg[3] )
-			);
-			rec->PutArg(
-				new_arg[0],
-				new_arg[1],
-				new_arg[2],
-				new_arg[3]
-			);
-			rec->PutOp(op);
 			break;
 
 			// Operations with no arguments and one result
@@ -580,6 +544,7 @@ void optimize(
 				new_arg[1], 
 				new_arg[2]
 			);
+			rec->PutOp(op);
 			break;
 
 			// Store a parameter using a variable index
@@ -595,6 +560,7 @@ void optimize(
 				new_arg[1], 
 				new_arg[2]
 			);
+			rec->PutOp(op);
 			break;
 
 			// Store a variable using a parameter index
@@ -611,6 +577,7 @@ void optimize(
 				new_arg[1], 
 				new_arg[2]
 			);
+			rec->PutOp(op);
 			break;
 
 			// Store a variable using a variable index
@@ -627,6 +594,7 @@ void optimize(
 				new_arg[1], 
 				new_arg[2]
 			);
+			rec->PutOp(op);
 			break;
 
 
