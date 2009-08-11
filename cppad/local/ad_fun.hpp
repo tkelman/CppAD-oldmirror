@@ -124,6 +124,10 @@ public:
 	size_t size_par(void) const
 	{	return play_.num_rec_par(); }
 
+	// number of VecAD indices in the operation sequence
+	size_t size_VecAD(void) const
+	{	return play_.num_rec_vecad_ind(); }
+
 	// number of taylor_ coefficients currently calculated (per variable)
 	size_t size_taylor(void) const
 	{	return taylor_per_var_; } 

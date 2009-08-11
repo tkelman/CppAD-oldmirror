@@ -52,6 +52,19 @@ assist you in learning about changes between various versions of CppAD.
 (Comments about developer documentation are only important if you are
 trying to read and understand the CppAD source code.)
 
+$head 08-10$$
+The routine for $cref/optimizing/optimize/$$ the operation sequence
+has been added has been further tested using $code test_more/optimize.cpp$$.
+Some bugs have been fix and the routine can
+now be trusted to work correctly.
+$pre
+
+$$
+The function 
+$cref/size_VecAD/SeqProperty/size_VecAD/$$ function was added
+so that the user could see the $code VecAD$$ vectors 
+and elements corresponding to an operation sequence.
+
 $head 08-09$$
 A routine for $cref/optimizing/optimize/$$ the operation sequence
 has been added.
