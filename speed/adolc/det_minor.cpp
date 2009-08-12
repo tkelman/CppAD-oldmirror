@@ -37,7 +37,6 @@ $index minor, speed adolc$$
 
 $head link_det_minor$$
 $index link_det_minor$$
-Routine that computes the gradient of determinant using Adolc:
 $codep */
 # include <cppad/vector.hpp>
 # include <cppad/speed/det_by_minor.hpp>

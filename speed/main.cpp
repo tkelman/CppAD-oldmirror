@@ -146,11 +146,11 @@ sequence for all the repetitions of that speed test.
 The following tests have a fixed operation sequence:
 $code det_minor$$, $code ode$$, $code poly$$.
 
-$comment optimize
+$head optimize$$
 If the option code optimize is present, the symbol
-codep
-	extern bool main_optimize
-
+$codep
+	extern bool global_optimize
+$$
 is true and otherwise it is false.
 If this external symbol is true,
 and the AD package has an optional way to spend time optimizing
@@ -158,7 +158,6 @@ the operation sequence,
 this optimization should be done before doing computations.
 If it is false,
 this optimization should not be done.
-$$
 
 $head Correctness Results$$
 An output line is generated for each correctness test
@@ -197,6 +196,7 @@ CPPAD_DECLARE_SPEED(sparse_hessian);
 CPPAD_DECLARE_SPEED(ode);
 
 bool   global_retape;
+bool   global_optimize;
 
 namespace {
 	using std::cout;
@@ -293,9 +293,12 @@ int main(int argc, char *argv[])
 		iseed = std::atoi( argv[2] );
 		error |= iseed < 0;
 		global_retape   = false;
+		global_optimize = false;
 		for(i = 3; i < size_t(argc); i++)
 		{	if( strcmp(argv[i], "retape") == 0 )
 				global_retape = true;
+			else if( strcmp(argv[i], "optimize") == 0 )
+				global_optimize = true;
 			else
 				error = true;
 		}
@@ -309,7 +312,7 @@ int main(int argc, char *argv[])
 		cout << "." << endl << "seed choices: ";
 		cout << "a positive integer used as a random seed." << endl;
 		cout << "option choices: ";
-		cout << " \"retape\"." << endl << endl;
+		cout << " \"retape\", \"optimize\"." << endl << endl;
 		return 1;
 	}
 
@@ -326,7 +329,7 @@ int main(int argc, char *argv[])
 	for(i = 0; i < n_size; i++) 
 	{	size_det_lu[i]      = 3 * i + 1;
 		size_det_minor[i]   = i + 1;
-		size_ode[i]         = 2 * i + 1;
+		size_ode[i]         = i + 1;
 		size_poly[i]        = 8 * i + 1;
 		size_sparse_hessian[i] = 10 * (i + 1);
 	}

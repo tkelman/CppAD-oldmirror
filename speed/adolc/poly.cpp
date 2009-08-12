@@ -41,7 +41,6 @@ $index polynomial, speed adolc$$
 
 $head link_poly$$
 $index link_poly$$
-Routine that computes the second derivative of a polynomial using Adolc:
 $codep */
 # include <vector>
 

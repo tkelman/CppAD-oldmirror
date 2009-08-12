@@ -16,6 +16,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin optimize$$
 $spell
+	var
 $$
 
 $section Optimize the Tape Corresponding to an ADFun object$$
@@ -45,15 +46,34 @@ $icode%
 	ADFun<%Base%> %f%
 %$$
 
+$subhead Efficiency$$
+The $code optimize$$ member function
+may greatly reduce the number of variables 
+in the operation sequence; see $cref/size_var/SeqProperty/size_var/$$.
+If a $cref/zero order forward/ForwardZero/$$ calculation is done during
+the construction of f, it will require more memory
+and time that after the optimization procedure.
+In addition, it will need to be redone.
+For this reason, it is more efficient to use 
+$codei%
+	ADFun<%Base%> %f%;
+	%f%.Dependent(%x%, %y%);
+	%f%.optimize();
+%$$
+instead of
+$codei%
+	ADFun<%Base%> %f%(%x%, %y%)
+	%f%.optimize();
+%$$ 
+See the discussion about
+$cref/sequence constructors/FunConstruct/Sequence Constructor/$$.
+
+
 $head Comparisons$$
 Any comparison operators that are in the tape are removed by this operation.
 Hence the return value of $cref/CompareChange/$$ will always be zero
 for an optimized tape (even if $code NDEBUG$$ is not defined).
 
-$head Warning$$
-This is a preliminary version of the $code optimize$$ routine
-and it is not yet fully tested.
-See $cref/whats_new_09/$$ for progress on testing and debugging this routine.
 
 $head Example$$
 $children%

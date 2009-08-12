@@ -34,7 +34,6 @@ $index minor, speed fadbad$$
 
 $head link_det_minor$$
 $index link_det_minor$$
-Routine that computes the gradient of determinant using Fadbad:
 $codep */
 # include <FADBAD++/badiff.h>
 # include <cppad/speed/det_by_minor.hpp>

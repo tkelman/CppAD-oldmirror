@@ -12,6 +12,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin fadbad_ode.cpp$$
 $spell
+	Jacobian
 	cstring
 	cppad
 	hpp
@@ -23,19 +24,17 @@ $$
 
 $section Fadbad Speed: Ode$$
 
-Indicate that this test is not available:
 $codep */
-
-// The fadbad version of this test is not yet available
 
 # include <cstring>
 # include <cppad/vector.hpp>
 
+// The fadbad version of this test is not yet available
 bool link_ode(
 	size_t                     size       ,
 	size_t                     repeat     ,
 	CppAD::vector<double>      &x         ,
-	CppAD::vector<double>      &gradient
+	CppAD::vector<double>      &jacobian
 )
 {
 	return false;

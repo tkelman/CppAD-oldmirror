@@ -12,6 +12,12 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin cppad_ode.cpp$$
 $spell
+	endif
+	var
+	Jacobian
+	std
+	cout
+	endl
 	CppAD
 	cppad
 	hpp
@@ -19,20 +25,18 @@ $spell
 	cstring
 	retape
 	typedef
-	gradient gradient
 	cassert
 $$
 
 $section CppAD Speed: Gradient of Ode Solution$$
 
-$index cppad, speed ode gradient$$
-$index speed, cppad ode gradient$$
-$index gradient, ode speed cppad$$
-$index ode, gradient speed cppad$$
+$index cppad, speed ode jacobian$$
+$index speed, cppad ode jacobian$$
+$index jacobian, ode speed cppad$$
+$index ode, jacobian speed cppad$$
 
 $head link_ode$$
 $index link_ode$$
-Routine that computes the gradient of determinant using CppAD:
 $codep */
 # include <cstring>
 # include <cppad/cppad.hpp>
@@ -44,7 +48,7 @@ bool link_ode(
 	size_t                     size       ,
 	size_t                     repeat     ,
 	CppAD::vector<double>      &x         ,
-	CppAD::vector<double>      &gradient
+	CppAD::vector<double>      &jacobian
 )
 {	// -------------------------------------------------------------
 	// setup
@@ -56,14 +60,15 @@ bool link_ode(
 	size_t m = 0;
 	size_t n = size;
 	assert( x.size() == n );
+	assert( jacobian.size() == n * n );
 
 	ADVector  X(n);
-	ADVector  Y(1);
-	DblVector w(1);
-	w[0] = 1.;
+	ADVector  Y(n);
 
-	extern bool global_retape;
-	if( global_retape ) while(repeat--)
+	using std::cout;
+	using std::endl;
+	static bool print = true;
+	while(repeat--)
 	{ 	// choose next x value
 		uniform_01(n, x);
 		for(j = 0; j < n; j++)
@@ -76,35 +81,22 @@ bool link_ode(
 		CppAD::ode_evaluate(X, m, Y);
 
 		// create function object f : X -> Y
-		CppAD::ADFun<double>   F(X, Y);
-
-		// use reverse mode to compute gradient
-		gradient = F.Reverse(1, w);
-	}
-	else
-	{	// choose any x value
-		for(j = 0; j < n; j++)
-			X[j] = 0.;
-
-		// declare the independent variable vector
-		Independent(X);
-
-		// evaluate function
-		CppAD::ode_evaluate(X, m, Y);
-
-		// create function object f : X -> Y
-		CppAD::ADFun<double>   F(X, Y);
-
-		while(repeat--)
-		{ 	// choose next x value
-			uniform_01(n, x);
-			// zero order forward mode to evaluate function at x
-			F.Forward(0, x);
-			// first order reverse mode to compute gradient
-			gradient = F.Reverse(1, w);
+		CppAD::ADFun<double>   F;
+		F.Dependent(X, Y);
+		extern bool global_optimize;
+		if( global_optimize & (repeat > 1) & (n >= 3) & print ) 
+			cout << "before optimize: F.size_var() = " 
+		             << F.size_var() << endl; 
+		if( global_optimize )
+			F.optimize();
+		jacobian = F.Jacobian(x);
+		if( global_optimize & (repeat > 1) & (n >= 3) & print ) 
+		{
+			cout << "after optimize:  F.size_var() = "
+			     << F.size_var() << endl; 
+			print = false;
 		}
 	}
-
 	return true;
 }
 /* $$

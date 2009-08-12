@@ -34,7 +34,6 @@ $index minor, speed sacado$$
 
 $head link_det_minor$$
 $index link_det_minor$$
-Routine that computes the gradient of determinant using Sacado:
 $codep */
 # include <vector>
 # include <Sacado.hpp>

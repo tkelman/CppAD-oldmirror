@@ -42,7 +42,6 @@ $index polynomial, speed fadbad$$
 
 $head link_poly$$
 $index link_poly$$
-Routine that computes the derivative of a polynomial using Fadbad:
 $codep */
 # include <cppad/vector.hpp>
 # include <cppad/poly.hpp>
