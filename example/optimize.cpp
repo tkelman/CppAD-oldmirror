@@ -89,7 +89,8 @@ bool optimize(void)
 	// y:     the return value for the function fun and dependent variable.
 	ok &= (F.size_var() == 3);
 
-	// check result now
+	// Check result for a zero order calculation.
+	// This has already been checked if NDEBUG is not defined.
 	y = F.Forward(0, x);
 	ok &= y[0] == fun(x[0]);
 	return ok;

@@ -156,6 +156,8 @@ void speed_sparse_hessian(size_t n, size_t repeat)
 	CppAD::vector<double> x(n);
 	CppAD::vector<size_t> i(ell), j(ell);
 	CppAD::vector<double> hessian(n * n);
+
+	// note that cppad/sparse_hessian.cpp assumes that x.size() == size
 	link_sparse_hessian(repeat, x, i, j, hessian);
 	return;
 }

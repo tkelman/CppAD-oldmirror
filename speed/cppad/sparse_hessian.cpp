@@ -20,6 +20,9 @@ $spell
 	endif
 	tmp
 	std
+	var
+	cout
+	endl
 $$
 
 $section CppAD Speed: Sparse Hessian$$
@@ -74,6 +77,7 @@ bool link_sparse_hessian(
 	ADVector   Y(m);          // AD range space vector
 	DblVector  w(m);          // double range space vector
 	DblVector tmp(2 * ell);   // double temporary vector
+	CppAD::ADFun<double> f;   // AD function object
 
 	
 	// choose a value for x 
@@ -84,6 +88,9 @@ bool link_sparse_hessian(
 
 	// weights for hessian calculation (only one component of f)
 	w[0] = 1.;
+
+        static bool printed = false;
+        bool print_this_time = (! printed) & (repeat > 1) & (n >= 30);
 
 	// ------------------------------------------------------
 	while(repeat--)
@@ -105,7 +112,24 @@ bool link_sparse_hessian(
 		CppAD::sparse_evaluate< AD<double> >(X, i, j, order, Y);
 
 		// create function object f : X -> Y
-		CppAD::ADFun<double> f(X, Y);
+		f.Dependent(X, Y);
+
+		extern bool global_optimize;
+		if( global_optimize )
+		{	size_t before, after;
+			before = f.size_var();
+			f.optimize();
+			if( print_this_time ) 
+			{	after = f.size_var();
+				std::cout << "optimize: size = " << n
+				          << ": size_var() = "
+				          << before << "(before) " 
+				          << after << "(after) " 
+				          << std::endl;
+				printed         = true;
+				print_this_time = false;
+			}
+		}
 
 		// evaluate and return the hessian of f
 # if CPPAD_USE_SPARSE_HESSIAN

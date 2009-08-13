@@ -65,9 +65,10 @@ bool link_ode(
 	ADVector  X(n);
 	ADVector  Y(n);
 
-	using std::cout;
-	using std::endl;
-	static bool print = true;
+	CppAD::ADFun<double>   F;
+
+	static bool printed = false;
+	bool print_this_time = (! printed) & (repeat > 1) & (size >= 3);
 	while(repeat--)
 	{ 	// choose next x value
 		uniform_01(n, x);
@@ -81,21 +82,25 @@ bool link_ode(
 		CppAD::ode_evaluate(X, m, Y);
 
 		// create function object f : X -> Y
-		CppAD::ADFun<double>   F;
 		F.Dependent(X, Y);
+
 		extern bool global_optimize;
-		if( global_optimize & (repeat > 1) & (n >= 3) & print ) 
-			cout << "before optimize: F.size_var() = " 
-		             << F.size_var() << endl; 
 		if( global_optimize )
+		{	size_t before, after;
+			before = F.size_var();
 			F.optimize();
-		jacobian = F.Jacobian(x);
-		if( global_optimize & (repeat > 1) & (n >= 3) & print ) 
-		{
-			cout << "after optimize:  F.size_var() = "
-			     << F.size_var() << endl; 
-			print = false;
+			if( print_this_time ) 
+			{	after = F.size_var();
+				std::cout << "optimize: size = " << size
+				          << ": size_var() = "
+				          << before << "(before) " 
+				          << after << "(after) " 
+				          << std::endl;
+				printed         = true;
+				print_this_time = false;
+			}
 		}
+		jacobian = F.Jacobian(x);
 	}
 	return true;
 }

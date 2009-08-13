@@ -119,6 +119,7 @@ namespace {
 		ok &= F.size_var() == (n + 1 + opt);
 	
 		// check result now
+		// (should have already been checked if NDEBUG not defined)
 		y = F.Forward(0, x);
 		for(i = 0; i < m; i++)
 			ok &= (y[i] == check[i]);

@@ -146,7 +146,7 @@ sequence for all the repetitions of that speed test.
 The following tests have a fixed operation sequence:
 $code det_minor$$, $code ode$$, $code poly$$.
 
-$head optimize$$
+$subhead optimize$$
 If the option code optimize is present, the symbol
 $codep
 	extern bool global_optimize

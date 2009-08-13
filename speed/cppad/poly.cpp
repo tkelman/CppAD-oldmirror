@@ -29,6 +29,10 @@ $spell
 	const
 	CPPAD_TEST_VECTOR
 	bool
+	var
+	std
+	cout
+	endl
 $$
 
 $section CppAD Speed: Second Derivative of a Polynomial$$
@@ -74,7 +78,11 @@ bool link_poly(
 	dz[0]  = 1.;
 	ddz[0] = 0.;
 
+	// AD function object
 	CppAD::ADFun<double> f;
+
+	static bool printed = false;
+	bool print_this_time = (! printed) & (repeat > 1) & (size >= 10);
 
 	extern bool global_retape;
 	if( global_retape ) while(repeat--)
@@ -91,6 +99,23 @@ bool link_poly(
 
 		// create function object f : A -> detA
 		f.Dependent(Z, P);
+
+		extern bool global_optimize;
+		if( global_optimize )
+		{	size_t before, after;
+			before = f.size_var();
+			f.optimize();
+			if( print_this_time ) 
+			{	after = f.size_var();
+				std::cout << "optimize: size = " << size
+				          << ": size_var() = "
+				          << before << "(before) " 
+				          << after << "(after) " 
+				          << std::endl;
+				printed         = true;
+				print_this_time = false;
+			}
+		}
 
 		// pre-allocate memory for three forward mode calculations
 		f.capacity_taylor(3);
@@ -122,6 +147,23 @@ bool link_poly(
 
 		// create function object f : A -> detA
 		f.Dependent(Z, P);
+
+		extern bool global_optimize;
+		if( global_optimize )
+		{	size_t before, after;
+			before = f.size_var();
+			f.optimize();
+			if( print_this_time ) 
+			{	after = f.size_var();
+				std::cout << "optimize: size = " << size
+				          << ": size_var() = "
+				          << before << "(before) " 
+				          << after << "(after) " 
+				          << std::endl;
+				printed         = true;
+				print_this_time = false;
+			}
+		}
 
 		while(repeat--)
 		{	// sufficient memory is allocated by second repetition

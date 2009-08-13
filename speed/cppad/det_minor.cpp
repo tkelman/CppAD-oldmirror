@@ -24,6 +24,10 @@ $spell
 	CPPAD_TEST_VECTOR
 	bool
 	srand
+	var
+	std
+	cout
+	endl
 $$
 
 $section CppAD Speed: Gradient of Determinant by Minor Expansion$$
@@ -63,6 +67,12 @@ bool link_det_minor(
 	CppAD::vector<double> w(1);
 	w[0] = 1.;
 
+	// the AD function object
+	CppAD::ADFun<double> f;
+
+	static bool printed = false;
+	bool print_this_time = (! printed) & (repeat > 1) & (size >= 3);
+
 	extern bool global_retape;
 	if( global_retape ) while(repeat--)
 	{
@@ -78,7 +88,24 @@ bool link_det_minor(
 		detA[0] = Det(A);
 	
 		// create function object f : A -> detA
-		CppAD::ADFun<double> f(A, detA);
+		f.Dependent(A, detA);
+
+		extern bool global_optimize;
+		if( global_optimize )
+		{	size_t before, after;
+			before = f.size_var();
+			f.optimize();
+			if( print_this_time ) 
+			{	after = f.size_var();
+				std::cout << "optimize: size = " << size
+				          << ": size_var() = "
+				          << before << "(before) " 
+				          << after << "(after) " 
+				          << std::endl;
+				printed         = true;
+				print_this_time = false;
+			}
+		}
 	
 		// get the next matrix
 		CppAD::uniform_01(n, matrix);
@@ -103,7 +130,25 @@ bool link_det_minor(
 		detA[0] = Det(A);
 	
 		// create function object f : A -> detA
-		CppAD::ADFun<double> f(A, detA);
+		CppAD::ADFun<double> f;
+		f.Dependent(A, detA);
+
+		extern bool global_optimize;
+		if( global_optimize )
+		{	size_t before, after;
+			before = f.size_var();
+			f.optimize();
+			if( print_this_time ) 
+			{	after = f.size_var();
+				std::cout << "optimize: size = " << size
+				          << ": size_var() = "
+				          << before << "(before) " 
+				          << after << "(after) " 
+				          << std::endl;
+				printed         = true;
+				print_this_time = false;
+			}
+		}
 	
 		// ------------------------------------------------------
 		while(repeat--)
