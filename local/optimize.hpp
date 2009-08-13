@@ -16,6 +16,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin optimize$$
 $spell
+	Taylor
 	var
 $$
 
@@ -46,7 +47,15 @@ $icode%
 	ADFun<%Base%> %f%
 %$$
 
-$subhead Efficiency$$
+$head Improvements$$
+You can see the reduction in number of variables in the operation sequence
+by calling the function $cref/f.size_var()/SeqProperty/size_var/$$
+before and after the optimization procedure.
+Given that the optimization procedure takes time,
+it may be faster to skip this optimize procedure and just compute
+derivatives using the original operation sequence.
+
+$head Efficiency$$
 The $code optimize$$ member function
 may greatly reduce the number of variables 
 in the operation sequence; see $cref/size_var/SeqProperty/size_var/$$.
@@ -68,12 +77,21 @@ $codei%
 See the discussion about
 $cref/sequence constructors/FunConstruct/Sequence Constructor/$$.
 
-
-$head Comparisons$$
+$head Comparison Operators$$
 Any comparison operators that are in the tape are removed by this operation.
 Hence the return value of $cref/CompareChange/$$ will always be zero
 for an optimized tape (even if $code NDEBUG$$ is not defined).
 
+$head Checking Optimization$$
+$index NDEBUG$$
+If $code NDEBUG$$ is not defined
+and $cref/f.size_taylor()/size_taylor/$$ is greater than zero,
+a $cref/ForwardZero/$$ calculation is done using the optimized version
+of $icode f$$ and the results are checked to see that they are
+the same as before.
+If they are not the same, the
+$cref/ErrorHandler/$$ is called with a known error message
+related to $icode%f%.optimize()%$$.
 
 $head Example$$
 $children%
@@ -653,6 +671,25 @@ void CppAD::ADFun<Base>::optimize(void)
 	// number of independent variables
 	size_t n = ind_taddr_.size();
 
+# ifndef NDEBUG
+	size_t i, j, m = dep_taddr_.size();
+	CppAD::vector<Base> x(n), y(m), check(m);
+	bool check_zero_order = taylor_per_var_ > 0;
+	if( check_zero_order )
+	{	// zero order coefficients for independent vars
+		for(j = 0; j < n; j++)
+		{	CPPAD_ASSERT_UNKNOWN( play_.GetOp(j+1) == InvOp );
+			CPPAD_ASSERT_UNKNOWN( ind_taddr_[j]    == j+1   );
+			x[j] = taylor_[ ind_taddr_[j] * taylor_col_dim_ + 0];
+		}
+		// zero order coefficients for dependent vars
+		for(i = 0; i < m; i++)
+		{	CPPAD_ASSERT_UNKNOWN( dep_taddr_[i] < total_num_var_ );
+			y[i] = taylor_[ dep_taddr_[i] * taylor_col_dim_ + 0];
+		}
+	}
+# endif
+
 	// create the optimized recording
 	CppAD::optimize<Base>(n, dep_taddr_, &play_, &rec);
 
@@ -662,24 +699,37 @@ void CppAD::ADFun<Base>::optimize(void)
 	// number of variables in the recording
 	total_num_var_ = rec.num_rec_var();
 
-	// free old buffers
-	if( taylor_ != CPPAD_NULL )
-		CPPAD_TRACK_DEL_VEC(taylor_);
-	taylor_         = CPPAD_NULL;
-	taylor_per_var_ = 0;
-	taylor_col_dim_ = 0;
-
+	// free old sparse Jacobian memory
 	if( for_jac_ != CPPAD_NULL )
 		CPPAD_TRACK_DEL_VEC(for_jac_);
 	for_jac_         = CPPAD_NULL;
 	for_jac_bit_dim_ = 0;
 	for_jac_col_dim_ = 0;
 
-	for(size_t j = 0; j < n; j++)
-	{	CPPAD_ASSERT_UNKNOWN( play_.GetOp(j+1) == InvOp );
-		ind_taddr_[j] = j+1;
+	// free old Taylor coefficient memory
+	if( taylor_ != CPPAD_NULL )
+		CPPAD_TRACK_DEL_VEC(taylor_);
+	taylor_         = CPPAD_NULL;
+	taylor_per_var_ = 0;
+	taylor_col_dim_ = 0;
+
+# ifndef NDEBUG
+	if( check_zero_order )
+	{
+		// zero order forward calculation using new operation sequence
+		check = Forward(0, x);
+
+		// check results
+		for(i = 0; i < m; i++) CPPAD_ASSERT_KNOWN( 
+			check[i] == y[i] ,
+			"Error during check of f.optimize()."
+		);
+
+		// Erase memory that this calculation was done so NDEBUG gives 
+		// same final state for this object (from users perspective)
+		taylor_per_var_ = 0;
 	}
+# endif
 }
-	
 
 # endif
