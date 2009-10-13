@@ -76,8 +76,8 @@ template <class Base>
 class ADFun {
 public:
 // ------------------------------------------------------------
+// Private member variables
 private:
-
 	/// debug checking number of comparision operations that changed
 	size_t compare_change_;
 
@@ -115,9 +115,29 @@ private:
 	/// for_jac_sparse_pack_.n_set() == 0)
 	sparse_set       for_jac_sparse_set_;
 
+// ------------------------------------------------------------
+// Private member functions
+
 	/// change the operation sequence corresponding to this object
 	template <typename ADvector>
 	void Dependent(ADTape<Base> *tape, const ADvector &y);
+
+	/// vector of bool version of ForSparseJac
+	template <class VectorSet>
+	void ForSparseJacCase(
+		bool               set_type  ,
+		size_t             q         ,
+		const VectorSet&   r         ,  
+		VectorSet&         s
+	);
+	/// vector of std::set<size_t> version of ForSparseJac
+	template <class VectorSet>
+	void ForSparseJacCase(
+		const std::set<size_t>&  set_type  ,
+		size_t                   q         ,
+		const VectorSet&         r         ,  
+		VectorSet&               s
+	);
 
 // ------------------------------------------------------------
 public:
@@ -154,9 +174,9 @@ public:
 
 	// forward mode Jacobian sparsity 
 	// (see doxygen documentation in for_sparse_jac.hpp)
-	template <typename VectorBool>
-	VectorBool ForSparseJac(
-		size_t q, const VectorBool &Px, bool packed = true
+	template <typename VectorSet>
+	VectorSet ForSparseJac(
+		size_t q, const VectorSet &r
 	);
 	// reverse mode Jacobian sparsity 
 	// (see doxygen documentation in rev_sparse_hes.hpp)
