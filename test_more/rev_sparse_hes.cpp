@@ -399,8 +399,6 @@ bool case_four()
 bool rev_sparse_hes(void)
 {	bool ok = true;
 
-	// kludge: need to remove the argument packed and run both
-	// packed and set cases.
 	ok &= case_one();
 	ok &= case_two();
 	ok &= case_three();
