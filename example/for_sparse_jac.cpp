@@ -39,7 +39,7 @@ $end
 
 namespace { // -------------------------------------------------------------
 // define the template function BoolCases<Vector> 
-template <typename Vector> 
+template <typename Vector>  // vector class, elements of type bool
 bool BoolCases(void)
 {	bool ok = true;
 	using CppAD::AD;
@@ -87,7 +87,7 @@ bool BoolCases(void)
 	return ok;
 }
 // define the template function SetCases<Vector> 
-template <typename Vector> 
+template <typename Vector>  // vector class, elements of type std::set<size_t>
 bool SetCases(void)
 {	bool ok = true;
 	using CppAD::AD;

@@ -15,7 +15,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
  
 namespace { // Begin empty namespace
 
-bool case_one(bool packed)
+bool case_one()
 {	bool ok = true;
 	using namespace CppAD;
 
@@ -70,6 +70,7 @@ bool case_one(bool packed)
 	// create function object F : X -> Y
 	ADFun<double> F(X, Y);
 
+	// ------------------------------------------------------------------
 	// sparsity pattern for the identity function U(x) = x
 	CPPAD_TEST_VECTOR<bool> Px(n * n);
 	for(i = 0; i < n; i++)
@@ -99,10 +100,44 @@ bool case_one(bool packed)
 	for(j = 0; j < n * n; j++)
 		ok &= (! Pxx[j]);  // Hessian is identically zero
 
+	// ------------------------------------------------------------------
+	// sparsity pattern for the identity function U(x) = x
+	CPPAD_TEST_VECTOR< std::set<size_t> > Sx(n);
+	for(i = 0; i < n; i++)
+		Sx[i].insert(i);
+
+	// compute sparsity pattern for Jacobian of F(U(x))
+	F.ForSparseJac(n, Sx);
+
+	// compute sparsity pattern for Hessian of F_0 ( U(x) ) 
+	CPPAD_TEST_VECTOR< std::set<size_t> > Sy(1);
+	Sy[0].insert(0);
+	CPPAD_TEST_VECTOR< std::set<size_t> > Sxx(n);
+	Sxx = F.RevSparseHes(n, Sy);
+
+	// check values
+	for(i = 0; i < n; i++)
+	{	for(j = 0; j < n; j++)
+		{	bool found = Sxx[i].find(j) != Sxx[i].end();
+			ok &= (found == Check[i * n + j]);
+		}
+	}
+
+	// compute sparsity pattern for Hessian of F_1 ( U(x) )
+	Sy[0].clear();
+	Sy[0].insert(1);
+	Sxx = F.RevSparseHes(n, Sy);
+	for(i = 0; i < n; i++)
+	{	for(j = 0; j < n; j++)
+		{	bool found = Sxx[i].find(j) != Sxx[i].end();
+			ok &= ! found;
+		}
+	}
+
 	return ok;
 }
 
-bool case_two(bool packed)
+bool case_two()
 {	bool ok = true;
 	using namespace CppAD;
 
@@ -142,6 +177,7 @@ bool case_two(bool packed)
 	// create function object F : X -> Y
 	ADFun<double> F(X, Y);
 
+	// -----------------------------------------------------------------
 	// sparsity pattern for the identity function U(x) = x
 	CPPAD_TEST_VECTOR<bool> Px(n * n);
 	for(i = 0; i < n; i++)
@@ -163,10 +199,33 @@ bool case_two(bool packed)
 	for(j = 0; j < n * n; j++)
 		ok &= (Pxx[j] == Check[j]);
 
+	// ------------------------------------------------------------------
+	// sparsity pattern for the identity function U(x) = x
+	CPPAD_TEST_VECTOR< std::set<size_t> > Sx(n);
+	for(i = 0; i < n; i++)
+		Sx[i].insert(i);
+
+	// compute sparsity pattern for Jacobian of F(U(x))
+	F.ForSparseJac(n, Sx);
+
+	// compute sparsity pattern for Hessian of F_0 ( U(x) ) 
+	CPPAD_TEST_VECTOR< std::set<size_t> > Sy(1);
+	Sy[0].insert(0);
+	CPPAD_TEST_VECTOR< std::set<size_t> > Sxx(n);
+	Sxx = F.RevSparseHes(n, Sy);
+
+	// check values
+	for(i = 0; i < n; i++)
+	{	for(j = 0; j < n; j++)
+		{	bool found = Sxx[i].find(j) != Sxx[i].end();
+			ok &= (found == Check[i * n + j]);
+		}
+	}
+
 	return ok;
 }
 
-bool case_three(bool packed)
+bool case_three()
 {	bool ok = true;
 	using CppAD::AD;
 
@@ -189,6 +248,7 @@ bool case_three(bool packed)
 	// create f: X -> Y and stop tape recording
 	CppAD::ADFun<double> f(X, Y);
 
+	// ------------------------------------------------------------------
 	// sparsity pattern for the identity matrix
 	CppAD::vector<bool> r(n * n);
 	size_t i, j;
@@ -212,10 +272,29 @@ bool case_three(bool packed)
 	// check values
 	ok  &= (h[ 0 * n + 0 ] == true);  // second partial w.r.t x[0], x[0]
 
+	// ------------------------------------------------------------------
+	// sparsity pattern for the identity function U(x) = x
+	CPPAD_TEST_VECTOR< std::set<size_t> > Sx(n);
+	for(i = 0; i < n; i++)
+		Sx[i].insert(i);
+
+	// compute sparsity pattern for Jacobian of F(U(x))
+	f.ForSparseJac(n, Sx);
+
+	// compute sparsity pattern for Hessian of F_0 ( U(x) ) 
+	CPPAD_TEST_VECTOR< std::set<size_t> > Sy(1);
+	Sy[0].insert(0);
+	CPPAD_TEST_VECTOR< std::set<size_t> > Sxx(n);
+	Sxx = f.RevSparseHes(n, Sy);
+
+	// check value
+	bool found = Sxx[0].find(0) != Sxx[0].end();
+	ok &= (found == true);
+
 	return ok;
 }
 
-bool case_four(bool packed)
+bool case_four()
 {	bool ok = true;
 	using namespace CppAD;
 
@@ -267,6 +346,7 @@ bool case_four(bool packed)
 	// create function object F : X -> Y
 	ADFun<double> F(X, Y);
 
+	// -----------------------------------------------------
 	// compute the forward Jacobian sparsity pattern for F
 	CPPAD_TEST_VECTOR< bool > r(n * n);
 	size_t i, j;
@@ -288,6 +368,29 @@ bool case_four(bool packed)
 			ok &= (h[i * n + j] == Check[i * n + j]);
 	}	
 
+	// ------------------------------------------------------------------
+	// sparsity pattern for the identity function U(x) = x
+	CPPAD_TEST_VECTOR< std::set<size_t> > Sx(n);
+	for(i = 0; i < n; i++)
+		Sx[i].insert(i);
+
+	// compute sparsity pattern for Jacobian of F(U(x))
+	F.ForSparseJac(n, Sx);
+
+	// compute sparsity pattern for Hessian of F_0 ( U(x) ) 
+	CPPAD_TEST_VECTOR< std::set<size_t> > Sy(1);
+	Sy[0].insert(0);
+	CPPAD_TEST_VECTOR< std::set<size_t> > Sxx(n);
+	Sxx = F.RevSparseHes(n, Sy);
+
+	// check values
+	for(i = 0; i < n; i++)
+	{	for(j = 0; j < n; j++)
+		{	bool found = Sxx[i].find(j) != Sxx[i].end();
+			ok &= (found == Check[i * n + j]);
+		}
+	}
+
 	return ok;
 }
 
@@ -298,10 +401,10 @@ bool rev_sparse_hes(void)
 
 	// kludge: need to remove the argument packed and run both
 	// packed and set cases.
-	ok &= case_one(true);
-	ok &= case_two(true);
-	ok &= case_three(true);
-	ok &= case_four(true);
+	ok &= case_one();
+	ok &= case_two();
+	ok &= case_three();
+	ok &= case_four();
 
 	return ok;
 }

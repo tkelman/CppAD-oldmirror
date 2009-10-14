@@ -42,7 +42,7 @@ $icode%r% = %F%.RevSparseJac(%p%, %s%, %packed%)%$$
 
 
 $head Purpose$$
-We use $latex F : B^n \rightarrow B^m$$ to denote the
+We use $latex F : \R^n \rightarrow B^m$$ to denote the
 $xref/glossary/AD Function/AD function/$$ corresponding to $icode f$$.
 For a fixed $latex p \times m$$ matrix $latex S$$,
 the Jacobian of $latex S * F( x )$$
@@ -63,8 +63,8 @@ $codei%
 
 $head x$$
 the sparsity pattern is valid for all values of the independent 
-variables in $latex x \in B^n$$
-(even if you use $cref/CondExp/$$ or $cref/VecAD/$$).
+variables in $latex x \in \R^n$$
+(even if it has $cref/CondExp/$$ or $cref/VecAD/$$ operations).
 
 $head p$$
 The argument $icode p$$ has prototype
@@ -72,18 +72,19 @@ $codei%
 	size_t %p%
 %$$
 It specifies the number of rows in
-$latex S$$ and the Jacobian $latex J(x)$$. 
+$latex S \in \R^{p \times m}$$ and the 
+Jacobian $latex J(x) \in \R^{p \times n}$$. 
 
 $head s$$
 The argument $icode s$$ has prototype
 $codei%
-	const %VectorSet% &%s%
+	const %VectorSet%& %s%
 %$$
 (see $xref/RevSparseJac/VectorSet/VectorSet/$$ below).
 If it has elements of type $code bool$$,
 its size is $latex p * m$$.
 If it has elements of type $code std::set<size_t>$$,
-its size is $icode p$$ and all the set elements must be between
+its size is $icode p$$ and all its set elements are between
 zero and $latex m - 1$$.
 It specifies a 
 $xref/glossary/Sparsity Pattern/sparsity pattern/$$ 
@@ -241,10 +242,9 @@ void RevSparseJacBool(
 		// ind_taddr[j] is operator taddr for j-th independent variable
 		CPPAD_ASSERT_UNKNOWN( play.GetOp( ind_taddr[j] ) == InvOp );
 
-		// set bits 
+		// extract the result from var_sparsity
 		for(i = 0; i < p; i++) 
 			r[ i * n + j ] = false;
-
 		CPPAD_ASSERT_UNKNOWN( var_sparsity.end() == p );
 		var_sparsity.begin(j+1);
 		i = var_sparsity.next_element();
@@ -349,8 +349,8 @@ void RevSparseJacSet(
 		{	j = *itr; 
 			CPPAD_ASSERT_KNOWN(
 				j < m,
-				"RevSparseJac: a set element has value "
-				" greater than or equal m."
+				"RevSparseJac: an element of the set s[i] "
+				"has value greater than or equal m."
 			);
 			CPPAD_ASSERT_UNKNOWN( dep_taddr[j] < total_num_var );
 			var_sparsity.add_element( dep_taddr[j], i );
@@ -373,7 +373,8 @@ void RevSparseJacSet(
 		// ind_taddr[j] is operator taddr for j-th independent variable
 		CPPAD_ASSERT_UNKNOWN( play.GetOp( ind_taddr[j] ) == InvOp );
 
-		// add elements to sets
+		// extract result from rev_hes_sparsity
+		// and add corresponding elements to sets in r
 		CPPAD_ASSERT_UNKNOWN( var_sparsity.end() == p );
 		var_sparsity.begin(j+1);
 		i = var_sparsity.next_element();

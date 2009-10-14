@@ -12,6 +12,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 $begin whats_new_09$$
 $spell
+	std
 	bool
 	Microsoft
 	retape
@@ -57,14 +58,15 @@ assist you in learning about changes between various versions of CppAD.
 (Comments about developer documentation are only important if you are
 trying to read and understand the CppAD source code.)
 
-$head 10-13$$
+$head 10-14$$
 The $icode packed$$ parameter for the sparsity routines
-$cref/ForSparseJac/$$ and $cref/RevSparseJac/$$
+$cref/ForSparseJac/$$, $cref/RevSparseJac/$$, and $cref/RevSparseHes/$$
 (introduced on $cref/09-26/whats_new_09/09-26/$$) has been removed.
 It has been replaced by changing the argument and return values
 to be more versatile.
 To be specific, they can now represent sparsity
-using vectors of sets instead of just vectors of $code bool$$
+using vectors of $code std::set<size_t>$$
+instead of just as vectors of $code bool$$
 (see $cref/sparsity patterns/glossary/Sparsity Pattern/$$).
 
 $head 10-03$$
