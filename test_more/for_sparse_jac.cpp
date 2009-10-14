@@ -181,7 +181,6 @@ bool case_one()
 	Sy = F.ForSparseJac(n, Sx);
 
 	// check values
-	std::set<size_t>::iterator itr;
 	bool found;
 	for(i = 0; i < m; i++)
 	{	for(j = 0; j < n; j++)
@@ -290,7 +289,6 @@ bool case_two()
 	Sy = F.ForSparseJac(n, Sx);
 
 	// check values
-	std::set<size_t>::iterator itr;
 	bool found;
 	for(i = 0; i < m; i++)
 	{	for(j = 0; j < n; j++)

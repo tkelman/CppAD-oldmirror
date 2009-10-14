@@ -57,9 +57,9 @@ assist you in learning about changes between various versions of CppAD.
 (Comments about developer documentation are only important if you are
 trying to read and understand the CppAD source code.)
 
-$head 10-08$$
-The $icode packed$$ parameter for the sparsity routine
-$cref/ForSparseJac/$$
+$head 10-13$$
+The $icode packed$$ parameter for the sparsity routines
+$cref/ForSparseJac/$$ and $cref/RevSparseJac/$$
 (introduced on $cref/09-26/whats_new_09/09-26/$$) has been removed.
 It has been replaced by changing the argument and return values
 to be more versatile.

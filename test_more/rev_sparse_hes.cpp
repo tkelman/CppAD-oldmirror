@@ -79,7 +79,7 @@ bool case_one(bool packed)
 	}
 
 	// compute sparsity pattern for Jacobian of F(U(x))
-	F.ForSparseJac(n, Px, packed);
+	F.ForSparseJac(n, Px);
 
 	// compute sparsity pattern for Hessian of F_0 ( U(x) ) 
 	CPPAD_TEST_VECTOR<bool> Py(m);
@@ -151,7 +151,7 @@ bool case_two(bool packed)
 	}
 
 	// compute sparsity pattern for Jacobian of F(U(x))
-	F.ForSparseJac(n, Px, packed);
+	F.ForSparseJac(n, Px);
 
 	// compute sparsity pattern for Hessian of F_0 ( U(x) ) 
 	CPPAD_TEST_VECTOR<bool> Py(m);
@@ -199,7 +199,7 @@ bool case_three(bool packed)
 	}
 
 	// compute sparsity pattern for J(x) = F^{(1)} (x)
-	f.ForSparseJac(n, r, packed);
+	f.ForSparseJac(n, r);
 
 	// compute sparsity pattern for H(x) = F_0^{(2)} (x)
 	CppAD::vector<bool> s(m);
@@ -275,7 +275,7 @@ bool case_four(bool packed)
 			r[ i * n + j ] = false;
 		r[ i * n + i ] = true;
 	}
-	F.ForSparseJac(n, r, packed);
+	F.ForSparseJac(n, r);
 
 	// compute the reverse Hessian sparsity pattern for F
 	CPPAD_TEST_VECTOR< bool > s(m), h(n * n);
@@ -296,15 +296,12 @@ bool case_four(bool packed)
 bool rev_sparse_hes(void)
 {	bool ok = true;
 
+	// kludge: need to remove the argument packed and run both
+	// packed and set cases.
 	ok &= case_one(true);
 	ok &= case_two(true);
 	ok &= case_three(true);
 	ok &= case_four(true);
-
-	ok &= case_one(false);
-	ok &= case_two(false);
-	ok &= case_three(false);
-	ok &= case_four(false);
 
 	return ok;
 }

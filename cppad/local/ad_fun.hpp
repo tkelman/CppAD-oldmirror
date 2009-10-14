@@ -138,7 +138,22 @@ private:
 		const VectorSet&         r         ,  
 		VectorSet&               s
 	);
-
+	/// vector of bool version of RevSparseJac
+	template <class VectorSet>
+	void RevSparseJacCase(
+		bool               set_type  ,
+		size_t             p         ,
+		const VectorSet&   s         ,  
+		VectorSet&         r
+	);
+	/// vector of std::set<size_t> version of RevSparseJac
+	template <class VectorSet>
+	void RevSparseJacCase(
+		const std::set<size_t>&  set_type  ,
+		size_t                   p         ,
+		const VectorSet&         s         ,  
+		VectorSet&               r
+	);
 // ------------------------------------------------------------
 public:
 	/// default constructor
@@ -180,9 +195,9 @@ public:
 	);
 	// reverse mode Jacobian sparsity 
 	// (see doxygen documentation in rev_sparse_hes.hpp)
-	template <typename VectorBool>
-	VectorBool RevSparseJac(
-		size_t q, const VectorBool &Py, bool packed = true
+	template <typename VectorSet>
+	VectorSet RevSparseJac(
+		size_t q, const VectorSet &s
 	);
 	/// reverse mode Hessian sparsity 
 	template <typename VectorBool>
