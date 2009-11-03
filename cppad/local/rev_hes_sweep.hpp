@@ -558,9 +558,7 @@ void RevHesSweep(
 			Yf = ForJac + ind[1] * npv;
 			Yh = RevHes + ind[1] * npv;
 			for(j = 0; j < npv; j++)
-			{	Xh[j] |= Zh[j] | (*Zr & Yf[j]); 
-				Yh[j] |= Zh[j] | (*Zr & Xf[j]); 
-			}
+				Yh[j] |= Zh[j] | (*Zr & Yf[j]); 
 			break;
 			// -------------------------------------------------
 
@@ -572,9 +570,7 @@ void RevHesSweep(
 			Xf = ForJac + ind[0] * npv;
 			Xh = RevHes + ind[0] * npv;
 			for(j = 0; j < npv; j++)
-			{	Xh[j] |= Zh[j] | (*Zr & Xf[j]); 
-				Yh[j] |= Zh[j] | (*Zr & Xf[j]); 
-			}
+				Xh[j] |= Zh[j] | (*Zr & Xf[j]); 
 			break;
 			// -------------------------------------------------
 
