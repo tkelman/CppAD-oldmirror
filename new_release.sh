@@ -11,12 +11,22 @@
 # -----------------------------------------------------------------------------
 repository="https://projects.coin-or.org/svn/CppAD"
 stable_version="20090303"
-release="0"
+release="1"
 release_version="$stable_version.$release"
+msg="bug fix: Hessian sparsity calculation: x^y where x or y is a parameter."
 # -----------------------------------------------------------------------------
+if ! grep "AC_INIT(CppAD.*, $stable_version.$release" configure.ac >> /dev/null
+then
+	echo "Must change version number in build.sh,"
+	echo "then run build.sh all test, and check in all changes."
+	exit 1
+fi
+# -----------------------------------------------------------------------------
+exit 0
 rep_stable="$repository/stable/$stable_version"
 rep_release="$repository/releases/$release_version"
-msg="Creating releases/$release_version"
+msg="Creating releases/$release_version,
+$msg"
 echo "svn copy $rep_stable $rep_release -m \"$msg\""
 if ! svn copy $rep_stable $rep_release -m "$msg"
 then
