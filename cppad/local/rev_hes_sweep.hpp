@@ -259,7 +259,7 @@ void RevHesSweep(
 
 			case CosOp:
 			// cosine and sine must come in pairs
-			// but i_var + 1 should only be used here
+			// but i_var should only be used here
 			CPPAD_ASSERT_NARG_NRES(op, 1, 2)
 			reverse_sparse_hessian_nonlinear_unary_op(
 			i_var, arg[0], RevJac, for_jac_sparse, rev_hes_sparse
@@ -269,7 +269,7 @@ void RevHesSweep(
 
 			case CoshOp:
 			// hyperbolic cosine and sine must come in pairs
-			// but i_var + 1 should only be used here
+			// but i_var should only be used here
 			CPPAD_ASSERT_NARG_NRES(op, 1, 2)
 			reverse_sparse_hessian_nonlinear_unary_op(
 			i_var, arg[0], RevJac, for_jac_sparse, rev_hes_sparse
@@ -431,7 +431,7 @@ void RevHesSweep(
 
 			case SinOp:
 			// sine and cosine must come in pairs
-			// but i_var + 1 should only be used here
+			// but i_var should only be used here
 			CPPAD_ASSERT_NARG_NRES(op, 1, 2)
 			reverse_sparse_hessian_nonlinear_unary_op(
 			i_var, arg[0], RevJac, for_jac_sparse, rev_hes_sparse
@@ -441,7 +441,7 @@ void RevHesSweep(
 
 			case SinhOp:
 			// sine and cosine must come in pairs
-			// but i_var + 1 should only be used here
+			// but i_var should only be used here
 			CPPAD_ASSERT_NARG_NRES(op, 1, 2)
 			reverse_sparse_hessian_nonlinear_unary_op(
 			i_var, arg[0], RevJac, for_jac_sparse, rev_hes_sparse

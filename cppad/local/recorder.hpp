@@ -244,6 +244,10 @@ inline size_t recorder<Base>::PutOp(OpCode op)
 	{	case PowpvOp:
 		case PowvpOp:
 		case PowvvOp:
+		case CosOp:
+		case SinOp:
+		case CoshOp:
+		case SinhOp:
 		return num_rec_var_ - 1;
 		break;
 

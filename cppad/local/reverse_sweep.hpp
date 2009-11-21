@@ -268,7 +268,7 @@ void ReverseSweep(
 			// --------------------------------------------------
 
 			case CosOp:
-			CPPAD_ASSERT_UNKNOWN( i_var < numvar - 1 );
+			CPPAD_ASSERT_UNKNOWN( i_var < numvar );
 			reverse_cos_op(
 				d, i_var, arg[0], J, Taylor, K, Partial
 			);
@@ -276,7 +276,7 @@ void ReverseSweep(
 			// --------------------------------------------------
 
 			case CoshOp:
-			CPPAD_ASSERT_UNKNOWN( i_var < numvar - 1 );
+			CPPAD_ASSERT_UNKNOWN( i_var < numvar );
 			reverse_cosh_op(
 				d, i_var, arg[0], J, Taylor, K, Partial
 			);
@@ -409,7 +409,7 @@ void ReverseSweep(
 			// -------------------------------------------------
 
 			case SinOp:
-			CPPAD_ASSERT_UNKNOWN( i_var < numvar - 1 );
+			CPPAD_ASSERT_UNKNOWN( i_var < numvar );
 			reverse_sin_op(
 				d, i_var, arg[0], J, Taylor, K, Partial
 			);
@@ -417,7 +417,7 @@ void ReverseSweep(
 			// -------------------------------------------------
 
 			case SinhOp:
-			CPPAD_ASSERT_UNKNOWN( i_var < numvar - 1 );
+			CPPAD_ASSERT_UNKNOWN( i_var < numvar );
 			reverse_sinh_op(
 				d, i_var, arg[0], J, Taylor, K, Partial
 			);

@@ -535,6 +535,10 @@ public:
 		{	case PowpvOp:
 			case PowvpOp:
 			case PowvvOp:
+			case SinOp:
+			case CosOp:
+			case SinhOp:
+			case CoshOp:
 			var_index += NumRes(op) - 1;
 			break;
 
@@ -623,6 +627,10 @@ public:
 		{	case PowpvOp:
 			case PowvpOp:
 			case PowvvOp:
+			case SinOp:
+			case CosOp:
+			case SinhOp:
+			case CoshOp:
 			var_index += NumRes(op) - 1;
 			break;
 

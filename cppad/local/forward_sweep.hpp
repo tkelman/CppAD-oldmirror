@@ -244,15 +244,15 @@ size_t forward_sweep(
 			// ---------------------------------------------------
 
 			case CosOp:
-			// variables: cos(x), sin(x)
-			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
+			// variables: sin(x), cos(x)
+			CPPAD_ASSERT_UNKNOWN( i_var < numvar  );
 			forward_cos_op(d, i_var, arg[0], J, Taylor);
 			break;
 			// ---------------------------------------------------
 
 			case CoshOp:
-			// variables: cosh(x), sinh(x)
-			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
+			// variables: sinh(x), cosh(x)
+			CPPAD_ASSERT_UNKNOWN( i_var < numvar  );
 			forward_cosh_op(d, i_var, arg[0], J, Taylor);
 			break;
 			// -------------------------------------------------
@@ -417,15 +417,15 @@ size_t forward_sweep(
 			// -------------------------------------------------
 
 			case SinOp:
-			// variables: sin(x), cos(x)
-			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
+			// variables: cos(x), sin(x)
+			CPPAD_ASSERT_UNKNOWN( i_var < numvar  );
 			forward_sin_op(d, i_var, arg[0], J, Taylor);
 			break;
 			// -------------------------------------------------
 
 			case SinhOp:
-			// variables: sinh(x), cosh(x)
-			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
+			// variables: cosh(x), sinh(x)
+			CPPAD_ASSERT_UNKNOWN( i_var < numvar  );
 			forward_sinh_op(d, i_var, arg[0], J, Taylor);
 			break;
 			// -------------------------------------------------
@@ -554,6 +554,10 @@ size_t forward_sweep(
 	{	case PowpvOp:
 		case PowvpOp:
 		case PowvvOp:
+		case CosOp:
+		case SinOp:
+		case CoshOp:
+		case SinhOp:
 		check = i_var + 1;
 		break;
 
