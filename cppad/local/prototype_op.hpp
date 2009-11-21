@@ -662,7 +662,7 @@ using AD< \a Base > and computations by this routine are done using type
 order of the Taylor coefficient that we are computing.
 
 \param i_z
-variable index corresponding to the first result for this operation; 
+variable index corresponding to the final result for this operation; 
 i.e. the row index in \a taylor corresponding to z. 
 Note that there are three results for this operation,
 below they are referred to as z_0, z_1, z_2 and correspond to
@@ -671,7 +671,7 @@ below they are referred to as z_0, z_1, z_2 and correspond to
 	z_1 = z0 * y
 	z_2 = exp(z1)
 \endverbatim
-It follows that the last result is equal to z; i.e., z = z_2 = pow(x, y). 
+It follows that the final result is equal to z; i.e., z = z_2 = pow(x, y). 
 
 \param arg
 \a arg[0]
@@ -711,8 +711,8 @@ is the \a d-th order Taylor coefficient corresponding to z_j.
 \par Checked Assertions
 \li NumArg(op) == 2
 \li NumRes(op) == 3
-\li If x is a variable, \a arg[0] < \a i_z 
-\li If y is a variable, \a arg[1] < \a i_z 
+\li If x is a variable, \a arg[0] < \a i_z - 2 
+\li If y is a variable, \a arg[1] < \a i_z - 2
 \li \a d < \a nc_taylor
 */
 template <class Base>
@@ -736,7 +736,7 @@ using AD< \a Base > and computations by this routine are done using type
 \a Base.
 
 \param i_z
-variable index corresponding to the first result for this operation; 
+variable index corresponding to the final result for this operation; 
 i.e. the row index in \a taylor corresponding to z. 
 Note that there are three results for this operation,
 below they are referred to as z_0, z_1, z_2 and correspond to
@@ -745,7 +745,7 @@ below they are referred to as z_0, z_1, z_2 and correspond to
 	z_1 = z0 * y
 	z_2 = exp(z1)
 \endverbatim
-It follows that the last result is equal to z; i.e., z = z_2 = pow(x, y). 
+It follows that the final result is equal to z; i.e., z = z_2 = pow(x, y). 
 
 \param arg
 \a arg[0]
@@ -779,8 +779,8 @@ is the zero order Taylor coefficient corresponding to z_j.
 \par Checked Assertions
 \li NumArg(op) == 2
 \li NumRes(op) == 3
-\li If x is a variable, \a arg[0] < \a i_z 
-\li If y is a variable, \a arg[1] < \a i_z 
+\li If x is a variable, \a arg[0] < \a i_z - 2 
+\li If y is a variable, \a arg[1] < \a i_z - 2
 */
 template <class Base>
 inline void forward_pow_op_0(
@@ -813,7 +813,7 @@ highest order Taylor coefficient that
 we are computing the partial derivatives with respect to.
 
 \param i_z
-variable index corresponding to the first result for this operation; 
+variable index corresponding to the final result for this operation; 
 i.e. the row index in \a taylor corresponding to z. 
 Note that there are three results for this operation,
 below they are referred to as z_0, z_1, z_2 and correspond to
@@ -822,7 +822,7 @@ below they are referred to as z_0, z_1, z_2 and correspond to
 	z_1 = z0 * y
 	z_2 = exp(z1)
 \endverbatim
-It follows that the last result is equal to z; i.e., z = z_2 = pow(x, y). 
+It follows that the final result is equal to z; i.e., z = z_2 = pow(x, y). 
 
 \param arg
 \a arg[0]
@@ -889,8 +889,8 @@ the k-th order Taylor coefficient for y.
 \par Checked Assumptions
 \li NumArg(op) == 2
 \li NumRes(op) == 3
-\li \a If x is a variable, arg[0] < \a i_z 
-\li \a If y is a variable, arg[1] < \a i_z 
+\li \a If x is a variable, arg[0] < \a i_z - 2
+\li \a If y is a variable, arg[1] < \a i_z - 2
 \li \a d < \a nc_taylor
 \li \a d < \a nc_partial
 */

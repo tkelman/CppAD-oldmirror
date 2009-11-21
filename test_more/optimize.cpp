@@ -87,7 +87,7 @@ namespace {
 		size_t n  = 6;
 		CPPAD_TEST_VECTOR< AD<double> > X(n);
 		for(j = 0; j < n; j++)
-			X[j] = 1. / double(j + 1); 
+			X[j] = 1. / double(j + 2); 
 	
 		// declare independent variables and start tape recording
 		CppAD::Independent(X);

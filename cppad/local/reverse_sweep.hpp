@@ -175,11 +175,6 @@ void ReverseSweep(
 		const Base*  Z_tmp  = Taylor + i_var * J;
 		const Base*  pZ_tmp = Partial + i_var * K;
 
-		if( op == PowvpOp || op == PowpvOp || op == PowvvOp )
-		{	i_tmp  += 2;
-			Z_tmp  += 2 * J;
-			pZ_tmp += 2 * K;
-		}
 		printOp(
 			std::cout, 
 			Rec,

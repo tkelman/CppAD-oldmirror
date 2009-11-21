@@ -530,10 +530,6 @@ size_t forward_sweep(
 # if CPPAD_FORWARD_SWEEP_TRACE
 		size_t       i_tmp  = i_var;
 		Base*        Z_tmp  = Taylor + J * i_var;
-		if( op == PowvpOp || op == PowpvOp || op == PowvvOp )
-		{	i_tmp  += 2;
-			Z_tmp  += 2 * J;
-		}
 		printOp(
 			std::cout, 
 			Rec,
@@ -550,7 +546,22 @@ size_t forward_sweep(
 # else
 	}
 # endif
-	CPPAD_ASSERT_UNKNOWN( (i_var + NumRes(op) ) == Rec->num_rec_var() );
+# ifndef NDEBUG
+	// temporary: remove when all cases with NumRes(op) > 1 
+	// have been converted
+	size_t check = i_var + NumRes(op);
+	switch(op)
+	{	case PowpvOp:
+		case PowvpOp:
+		case PowvvOp:
+		check = i_var + 1;
+		break;
+
+		default:
+		break;
+	}
+	CPPAD_ASSERT_UNKNOWN( check == Rec->num_rec_var() );
+# endif
 	if( VectorInd != CPPAD_NULL )
 		CPPAD_TRACK_DEL_VEC(VectorInd);
 	if( VectorVar != CPPAD_NULL )

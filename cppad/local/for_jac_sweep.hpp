@@ -130,7 +130,7 @@ void ForJacSweep(
 
 # if CPPAD_FOR_JAC_SWEEP_TRACE
 	std::cout << std::endl;
-	CppAD::vector<bool> z_value(limit;
+	CppAD::vector<bool> z_value(limit);
 # endif
 
 	// skip the NonOp at the beginning of the recording
@@ -355,31 +355,25 @@ void ForJacSweep(
 			// -------------------------------------------------
 
 			case PowvpOp:
-			// Pow operator is a special case where final result
-			// comes at the end of the three variables
 			CPPAD_ASSERT_NARG_NRES(op, 2, 3);
 			forward_sparse_jacobian_unary_op(
-				i_var + 2, arg[0], var_sparsity
+				i_var, arg[0], var_sparsity
 			);
 			break;
 			// -------------------------------------------------
 
 			case PowpvOp:
-			// Pow operator is a special case where final result
-			// comes at the end of the three variables
 			CPPAD_ASSERT_NARG_NRES(op, 2, 3);
 			forward_sparse_jacobian_unary_op(
-				i_var + 2, arg[1], var_sparsity
+				i_var, arg[1], var_sparsity
 			);
 			break;
 			// -------------------------------------------------
 
 			case PowvvOp:
-			// Pow operator is a special case where final result
-			// comes at the end of the three variables
 			CPPAD_ASSERT_NARG_NRES(op, 2, 3);
 			forward_sparse_jacobian_binary_op(
-				i_var + 2, arg, var_sparsity
+				i_var, arg, var_sparsity
 			);
 			break;
 			// -------------------------------------------------
@@ -488,7 +482,7 @@ void ForJacSweep(
 		}
 # if CPPAD_FOR_JAC_SWEEP_TRACE
 		// value for this variable
-		for(j = 0; j < limit j++)
+		for(j = 0; j < limit; j++)
 			z_value[j] = false;
 		var_sparsity.begin(i_var);
 		j = var_sparsity.next_element();
@@ -512,7 +506,22 @@ void ForJacSweep(
 # else
 	}
 # endif
-	CPPAD_ASSERT_UNKNOWN( (i_var + NumRes(op) ) == play->num_rec_var() );
+# ifndef NDEBUG
+	// temporary: remove when all cases with NumRes(op) > 1 
+	// have been converted
+	size_t check = i_var + NumRes(op);
+	switch(op)
+	{	case PowpvOp:
+		case PowvpOp:
+		case PowvvOp:
+		check = i_var + 1;
+		break;
+
+		default:
+		break;
+	}
+	CPPAD_ASSERT_UNKNOWN( check == play->num_rec_var() );
+# endif
 
 	if( vecad_ind != CPPAD_NULL )
 		CPPAD_TRACK_DEL_VEC(vecad_ind);

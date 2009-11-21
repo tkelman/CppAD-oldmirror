@@ -179,37 +179,6 @@ void RevHesSweep(
 		CPPAD_ASSERT_UNKNOWN( (i_op > n)  | (op == InvOp) );
 		CPPAD_ASSERT_UNKNOWN( (i_op <= n) | (op != InvOp) );
 
-# if CPPAD_REV_HES_SWEEP_TRACE
-		for(j = 0; j < limit; j++)
-		{	zf_value[j] = false;
-			zh_value[j] = false;
-		}
-		for_jac_sparse.begin(i_var);;
-		j = for_jac_sparse.next_element();;
-		while( j < limit )
-		{	zf_value[j] = true;
-			j = for_jac_sparse.next_element();
-		}
-		rev_hes_sparse.begin(i_var);;
-		j = rev_hes_sparse.next_element();;
-		while( j < limit )
-		{	zh_value[j] = true;
-			j = rev_hes_sparse.next_element();
-		}
-		// should also print RevJac[i_var], but printOp does not
-		// yet allow for this.
-		printOp(
-			std::cout, 
-			play,
-			i_var,
-			op, 
-			arg,
-			1, 
-			&zf_value, 
-			1, 
-			&zh_value
-		);
-# endif
 
 		// rest of information depends on the case
 		switch( op )
@@ -427,31 +396,25 @@ void RevHesSweep(
 			// -------------------------------------------------
 
 			case PowpvOp:
-                        // Pow operator is a special case where final result
-                        // comes at the end of the three variables
 			CPPAD_ASSERT_NARG_NRES(op, 2, 3)
 			reverse_sparse_hessian_nonlinear_unary_op(
-			i_var+2, arg[1], RevJac, for_jac_sparse, rev_hes_sparse
+			i_var, arg[1], RevJac, for_jac_sparse, rev_hes_sparse
 			);
 			break;
 			// -------------------------------------------------
 
 			case PowvpOp:
-                        // Pow operator is a special case where final result
-                        // comes at the end of the three variables
 			CPPAD_ASSERT_NARG_NRES(op, 2, 3)
 			reverse_sparse_hessian_nonlinear_unary_op(
-			i_var+2, arg[0], RevJac, for_jac_sparse, rev_hes_sparse
+			i_var, arg[0], RevJac, for_jac_sparse, rev_hes_sparse
 			);
 			break;
 			// -------------------------------------------------
 
 			case PowvvOp:
-                        // Pow operator is a special case where final result
-                        // comes at the end of the three variables
 			CPPAD_ASSERT_NARG_NRES(op, 2, 3)
                         reverse_sparse_hessian_pow_op(
-			i_var+2, arg, RevJac, for_jac_sparse, rev_hes_sparse
+			i_var, arg, RevJac, for_jac_sparse, rev_hes_sparse
 			);
 			break;
 			// -------------------------------------------------
@@ -561,6 +524,37 @@ void RevHesSweep(
 			default:
 			CPPAD_ASSERT_UNKNOWN(0);
 		}
+# if CPPAD_REV_HES_SWEEP_TRACE
+		for(j = 0; j < limit; j++)
+		{	zf_value[j] = false;
+			zh_value[j] = false;
+		}
+		for_jac_sparse.begin(i_var);;
+		j = for_jac_sparse.next_element();;
+		while( j < limit )
+		{	zf_value[j] = true;
+			j = for_jac_sparse.next_element();
+		}
+		rev_hes_sparse.begin(i_var);;
+		j = rev_hes_sparse.next_element();;
+		while( j < limit )
+		{	zh_value[j] = true;
+			j = rev_hes_sparse.next_element();
+		}
+		// should also print RevJac[i_var], but printOp does not
+		// yet allow for this.
+		printOp(
+			std::cout, 
+			play,
+			i_var,
+			op, 
+			arg,
+			1, 
+			&zf_value, 
+			1, 
+			&zh_value
+		);
+# endif
 	}
 	CPPAD_ASSERT_UNKNOWN( i_op == 1 );
 	CPPAD_ASSERT_UNKNOWN( play->GetOp(i_op-1) == NonOp );

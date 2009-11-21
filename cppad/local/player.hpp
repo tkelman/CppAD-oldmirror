@@ -528,6 +528,19 @@ public:
 		CPPAD_ASSERT_UNKNOWN( op_index_  < num_rec_op_ );
 		CPPAD_ASSERT_UNKNOWN( op_arg_ + NumArg(op) <= num_rec_op_arg_ );
 		CPPAD_ASSERT_UNKNOWN( var_index_ + NumRes(op) <= num_rec_var_ );
+
+		// temporary: remove when all cases with NumRes(op) > 1
+		// have been converted
+		switch( op )
+		{	case PowpvOp:
+			case PowvpOp:
+			case PowvvOp:
+			var_index += NumRes(op) - 1;
+			break;
+
+			default:
+			break;
+		}
 	}
 	/*!
 	Get a non-constant version of op_arg returned by previous next_forward
@@ -603,6 +616,19 @@ public:
 		op          = op_;
 		op_arg      = op_arg_ + rec_op_arg_;
 		var_index   = var_index_;
+
+		// temporary: remove when all cases with NumRes(op) > 1
+		// have been converted
+		switch( op )
+		{	case PowpvOp:
+			case PowvpOp:
+			case PowvvOp:
+			var_index += NumRes(op) - 1;
+			break;
+
+			default:
+			break;
+		}
 
 	}
 

@@ -146,26 +146,6 @@ void RevJacSweep(
 		CPPAD_ASSERT_UNKNOWN( (i_op > n)  | (op == InvOp) );
 		CPPAD_ASSERT_UNKNOWN( (i_op <= n) | (op != InvOp) );
 
-# if CPPAD_REV_JAC_SWEEP_TRACE
-		for(j = 0; j < limit; j++)
-			z_value[j] = false;
-		j = var_sparsity.get_element(i_var, j);
-		while( j < limit )
-		{	z_value[j] = true;
-			j          = var_sparsity.get_element(i_var, j);
-		}
-		printOp(
-			std::cout, 
-			play,
-			i_var,
-			op, 
-			arg,
-			0, 
-			(CppAD::vector<bool> *) CPPAD_NULL,
-			1, 
-			&z_value
-		);
-# endif
 
 		// rest of information depends on the case
 		switch( op )
@@ -379,31 +359,24 @@ void RevJacSweep(
 			// -------------------------------------------------
 
 			case PowvpOp:
-			// Pow operator is a special case where final result
-			// comes at the end of the three variables
-			CPPAD_ASSERT_NARG_NRES(op, 2, 3);
 			reverse_sparse_jacobian_unary_op(
-				i_var + 2, arg[0], var_sparsity
+				i_var, arg[0], var_sparsity
 			);
 			break;
 			// -------------------------------------------------
 
 			case PowpvOp:
-			// Pow operator is a special case where final result
-			// comes at the end of the three variables
 			CPPAD_ASSERT_NARG_NRES(op, 2, 3);
 			reverse_sparse_jacobian_unary_op(
-				i_var + 2, arg[1], var_sparsity
+				i_var, arg[1], var_sparsity
 			);
 			break;
 			// -------------------------------------------------
 
 			case PowvvOp:
-			// Pow operator is a special case where final result
-			// comes at the end of the three variables
 			CPPAD_ASSERT_NARG_NRES(op, 2, 3);
 			reverse_sparse_jacobian_binary_op(
-				i_var + 2, arg, var_sparsity
+				i_var, arg, var_sparsity
 			);
 			break;
 			// -------------------------------------------------
@@ -509,6 +482,27 @@ void RevJacSweep(
 			default:
 			CPPAD_ASSERT_UNKNOWN(0);
 		}
+# if CPPAD_REV_JAC_SWEEP_TRACE
+		for(j = 0; j < limit; j++)
+			z_value[j] = false;
+		var_sparsity.begin(i_var);
+		j = var_sparsity.next_element();
+		while( j < limit )
+		{	z_value[j] = true;
+			j          = var_sparsity.next_element();
+		}
+		printOp(
+			std::cout, 
+			play,
+			i_var,
+			op, 
+			arg,
+			0, 
+			(CppAD::vector<bool> *) CPPAD_NULL,
+			1, 
+			&z_value
+		);
+# endif
 	}
 	CPPAD_ASSERT_UNKNOWN( i_op == 1 );
 	CPPAD_ASSERT_UNKNOWN( play->GetOp(i_op-1) == NonOp );

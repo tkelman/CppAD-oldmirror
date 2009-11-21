@@ -238,6 +238,19 @@ inline size_t recorder<Base>::PutOp(OpCode op)
 	rec_op_[num_rec_op_++]  = op;
 	num_rec_var_ += NumRes(op);
 
+	// temporary: make this the only return value when all cases with
+	// all cases with NumRes(op) > 1 have been converted
+	switch( op )
+	{	case PowpvOp:
+		case PowvpOp:
+		case PowvvOp:
+		return num_rec_var_ - 1;
+		break;
+
+		default:
+		break;
+	}
+
 	return varIndex;
 }
 
