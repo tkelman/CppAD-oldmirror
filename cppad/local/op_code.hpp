@@ -66,7 +66,7 @@ enum OpCode {
 	MulpvOp,  //      parameter  * variable
 	MulvpOp,  //      variable   * parameter
 	MulvvOp,  //      variable   * variable
-	NonOp,    //                             space holder
+	NonOp,    //  used to offset the first actual variable to have index 1
 	ParOp,    //      parameter
 	PowvpOp,  //  pow(variable,    parameter)
 	PowpvOp,  //  pow(parameter,   variable)
@@ -199,7 +199,7 @@ const size_t NumResTable[] = {
 	1, // MulvvOp
 	1, // MulpvOp
 	1, // MulvpOp
-	1, // NonOp
+	1, // NonOp    (used to offset the first variable to have index one)
 	1, // ParOp
 	3, // PowvpOp
 	3, // PowpvOp

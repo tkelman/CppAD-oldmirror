@@ -403,7 +403,8 @@ void optimize(
 	// start playing the operations in the forward direction
 	play->start_forward(op, arg, i_op, i_var);
 
-	// put the beginning NonOp in the recording
+	// playing forward skips NonOp at the beginning, but not the end.
+	// Put the beginning NonOp in the recording
 	CPPAD_ASSERT_UNKNOWN( op == NonOp );
 	CPPAD_ASSERT_NARG_NRES(NonOp, 0, 1);
 	new_var[ i_var ] = rec->PutOp(NonOp);
@@ -427,6 +428,7 @@ void optimize(
 			break;
 
 			case InvOp:
+			case NonOp:
 			keep = true;
 			break;
 

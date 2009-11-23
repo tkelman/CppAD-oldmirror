@@ -110,13 +110,15 @@ namespace {
 			ok &= (y[i] == check[i]);
 	
 		// Check size before optimization
-		ok &= F.size_var() == (n + 1 + original);
+		// (add 2 for the NonOp at the beginning and end of op seq)
+		ok &= F.size_var() == (n + 2 + original);
 	
 		// Optimize the operation sequence
 		F.optimize();
 	
 		// Check size after optimization
-		ok &= F.size_var() == (n + 1 + opt);
+		// (add 2 for the NonOp at the beginning and end of op seq)
+		ok &= F.size_var() == (n + 2 + opt);
 	
 		// check result now
 		// (should have already been checked if NDEBUG not defined)

@@ -56,8 +56,9 @@ bool seq_property(void)
 	using CppAD::AD;
 
 	// Use nvar to track the number of variables in the operation sequence.
-	// Start with one for the phantom variable at tape address zero.
-	size_t nvar = 1;
+	// Start with two for the phantom variable at the beginning and end
+	// of the tape.
+	size_t nvar = 2;
 
 	// Use npar to track the number of parameters in the operation sequence.
 	size_t npar = 0;

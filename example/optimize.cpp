@@ -72,7 +72,8 @@ bool optimize(void)
 	// X[0]:  the independent variable.
 	// a:     the temporary variable inside the function fun.
 	// y:     the return value for the function fun and dependent variable.
-	ok &= (F.size_var() == 4);
+	// NonOp: at the end of every operation sequence.
+	ok &= (F.size_var() == 5);
 
 	// Check zero order forward mode on the original operation sequence
 	CPPAD_TEST_VECTOR<double> x(n), y(m), check(m);
@@ -87,7 +88,8 @@ bool optimize(void)
 	// NonOp: at the beginning of every operation sequence.
 	// X[0]:  the independent variable.
 	// y:     the return value for the function fun and dependent variable.
-	ok &= (F.size_var() == 3);
+	// NonOp: at the end of every operation sequence.
+	ok &= (F.size_var() == 4);
 
 	// Check result for a zero order calculation.
 	// This has already been checked if NDEBUG is not defined.

@@ -443,7 +443,7 @@ private:
 	/// Current offser of the argument indices in rec_op_arg_ 
 	size_t    op_arg_;
 
-	/// Index for first variable corresponding to current operator
+	/// Index for primary (last) variable corresponding to current operator
 	size_t    var_index_;
 
 // ----------- Functions used in new method for palying back a recording ---
@@ -468,8 +468,8 @@ public:
 
 	\param var_index
 	The input value of var_index does not matter. Its output value is the
-	index of the first result variable corresponding to the the first
-	operator; i.e., 0.
+	index of the primary (last) result corresponding to the the first
+	operator (which must be a NonOp); i.e., 0.
 	*/
 	void start_forward(
 	OpCode& op, const size_t*& op_arg, size_t& op_index, size_t& var_index)
@@ -509,7 +509,7 @@ public:
 
 	\param var_index
 	The input value of var_index does not matter. Its output value is the
-	index of the first result variable corresponding to the operator op.
+	index of the primary (last) result corresponding to the operator op.
 	*/
 
 	void next_forward(
@@ -517,34 +517,22 @@ public:
 	{	using CppAD::NumRes;
 		using CppAD::NumArg;
 
+		// index for the next operator 
 		op_index    = ++op_index_;
-		op_arg_    += NumArg(op_);
-		var_index_ += NumRes(op_);
 
+		// first argument for next operator 
+		op_arg_    += NumArg(op_);            // index
+		op_arg      = op_arg_ + rec_op_arg_;  // pointer
+
+		// next operator
 		op          = op_         = rec_op_[ op_index_ ];
-		op_arg      = op_arg_ + rec_op_arg_;
-		var_index   = var_index_;
+
+		// index for last result for next operator
+		var_index   = var_index_ += NumRes(op);
 
 		CPPAD_ASSERT_UNKNOWN( op_index_  < num_rec_op_ );
 		CPPAD_ASSERT_UNKNOWN( op_arg_ + NumArg(op) <= num_rec_op_arg_ );
-		CPPAD_ASSERT_UNKNOWN( var_index_ + NumRes(op) <= num_rec_var_ );
-
-		// temporary: remove when all cases with NumRes(op) > 1
-		// have been converted
-		switch( op )
-		{	case PowpvOp:
-			case PowvpOp:
-			case PowvvOp:
-			case SinOp:
-			case CosOp:
-			case SinhOp:
-			case CoshOp:
-			var_index += NumRes(op) - 1;
-			break;
-
-			default:
-			break;
-		}
+		CPPAD_ASSERT_UNKNOWN( var_index_  < num_rec_var_ );
 	}
 	/*!
 	Get a non-constant version of op_arg returned by previous next_forward
@@ -559,13 +547,18 @@ public:
 	/*!
 	Start a play back of the recording during a reverse sweep.
 
+	Initialize by pointing to data for NonOp at the end of the tape.
 	Use repeated calls to next_reverse to play back one operator at a time.
+	The NonOp at the end is skipped by this procedure.
 	*/
 	void start_reverse(void)
 	{
 		op_arg_     = num_rec_op_arg_;
-		op_index_   = num_rec_op_;
-		var_index_  = num_rec_var_;
+		op_index_   = num_rec_op_ - 1;
+		var_index_  = num_rec_var_ - 1;
+		op_         = rec_op_[ op_index_ ];
+
+		CPPAD_ASSERT_UNKNOWN( op_ == NonOp );
 		return;
 	}
 
@@ -598,8 +591,9 @@ public:
 
 	\param var_index
 	The input value of var_index does not matter. Its output value is the
-	index of the first result variable corresponding to the operator op.
-	The last operator sets var_index equal to 0.
+	index of the primary (last) result corresponding to the operator op.
+	The last operator sets var_index equal to 0 (corresponding to NonOp
+	at beginning of operation sequence).
 	*/
 
 	void next_reverse(
@@ -607,37 +601,19 @@ public:
 	{	using CppAD::NumRes;
 		using CppAD::NumArg;
 
-		CPPAD_ASSERT_UNKNOWN( op_index_  > 0 );
-		op_index    = --op_index_;
-		op_         = rec_op_[ op_index_ ];
-
-		CPPAD_ASSERT_UNKNOWN( op_arg_ >= NumArg(op_)  );
-		op_arg_    -= NumArg(op_);
-
+		// index of the last result for the next operator
 		CPPAD_ASSERT_UNKNOWN( var_index_ >= NumRes(op_) );
-		var_index_ -= NumRes(op_);
+		var_index   = var_index_ -= NumRes(op_);
 
-		op          = op_;
-		op_arg      = op_arg_ + rec_op_arg_;
-		var_index   = var_index_;
+		// next operator
+		CPPAD_ASSERT_UNKNOWN( op_index_  > 0 );
+		op_index    = --op_index_;                           // index
+		op          = op_         = rec_op_[ op_index_ ];    // value
 
-		// temporary: remove when all cases with NumRes(op) > 1
-		// have been converted
-		switch( op )
-		{	case PowpvOp:
-			case PowvpOp:
-			case PowvvOp:
-			case SinOp:
-			case CosOp:
-			case SinhOp:
-			case CoshOp:
-			var_index += NumRes(op) - 1;
-			break;
-
-			default:
-			break;
-		}
-
+		// first argument for next operator
+		CPPAD_ASSERT_UNKNOWN( op_arg_ >= NumArg(op)  );
+		op_arg_    -= NumArg(op);                            // index
+		op_arg      = op_arg_ + rec_op_arg_;                 // pointer
 	}
 
 };

@@ -196,22 +196,22 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case AcosOp:
-			// results: acos(x),  sqrt(1 - x * x) 
-			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
+			// results: sqrt(1 - x * x), acos(x) 
+			CPPAD_ASSERT_UNKNOWN( i_var < numvar  );
 			forward_acos_op_0(i_var, arg[0], J, Taylor);
 			break;
 			// -------------------------------------------------
 
 			case AsinOp:
-			// results: asin(x),  sqrt(1 - x * x) 
-			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
+			// results: sqrt(1 - x * x), asin(x) 
+			CPPAD_ASSERT_UNKNOWN( i_var < numvar  );
 			forward_asin_op_0(i_var, arg[0], J, Taylor);
 			break;
 			// -------------------------------------------------
 
 			case AtanOp:
-			// results: atan(x),  1 + x * x 
-			CPPAD_ASSERT_UNKNOWN( (i_var+1) < numvar  );
+			// results: 1 + x * x, atan(x) 
+			CPPAD_ASSERT_UNKNOWN( i_var < numvar  );
 			forward_atan_op_0(i_var, arg[0], J, Taylor);
 			break;
 			// -------------------------------------------------
@@ -337,7 +337,7 @@ size_t forward0sweep(
 
 			case NonOp:
 			CPPAD_ASSERT_UNKNOWN( NumArg(op) == 0 );
-			CPPAD_ASSERT_UNKNOWN( NumRes(op) == 0 );
+			CPPAD_ASSERT_UNKNOWN( NumRes(op) == 1 );
 			break;
 			// -------------------------------------------------
 
@@ -495,27 +495,7 @@ size_t forward0sweep(
 # else
 	}
 # endif
-
-# ifndef NDEBUG
-	// temporary: remove when all cases with NumRes(op) > 1 
-	// have been converted
-	size_t check = i_var + NumRes(op);
-	switch(op)
-	{	case PowpvOp:
-		case PowvpOp:
-		case PowvvOp:
-		case CosOp:
-		case SinOp:
-		case CoshOp:
-		case SinhOp:
-		check = i_var + 1;
-		break;
-
-		default:
-		break;
-	}
-	CPPAD_ASSERT_UNKNOWN( check == Rec->num_rec_var() );
-# endif
+	CPPAD_ASSERT_UNKNOWN( i_var + 1 == Rec->num_rec_var() );
 
 	if( VectorInd != CPPAD_NULL )
 		CPPAD_TRACK_DEL_VEC(VectorInd);
