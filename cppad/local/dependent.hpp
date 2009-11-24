@@ -214,14 +214,14 @@ void ADFun<Base>::Dependent(ADTape<Base> *tape, const ADvector &y)
 		dep_taddr_[i] = y_taddr;
 	}
 
-	// put a NonOp at the end of the tape
-	tape->Rec_.PutOp(NonOp);
+	// put an EndOp at the end of the tape
+	tape->Rec_.PutOp(EndOp);
 
 	// total number of variables on the tape
 	total_num_var_ = tape->Rec_.num_rec_var();
 
 	// now that each dependent variable has a place in the tape,
-	// and there is a NonOp at the end of the tape,
+	// and there is a EndOp at the end of the tape,
 	// we can make a copy for this function and erase the tape.
 	play_ = tape->Rec_;
 

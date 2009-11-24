@@ -235,8 +235,9 @@ void optimize(
 	CPPAD_ASSERT_UNKNOWN( j == num_vecad_ind );
 
 	// Initialize a reverse mode sweep through the operation sequence
-	play->start_reverse();
-	size_t i_op = 2;
+	size_t i_op;
+	play->start_reverse(op, arg, i_op, i_var);
+	CPPAD_ASSERT_UNKNOWN( op == EndOp );
 	size_t mask;
 # if CPPAD_OPTIMIZE_TRACE
 	std::cout << std::endl;
@@ -318,9 +319,10 @@ void optimize(
 			}
 
 			// Operations where there is noting to do
+			case BeginOp:
 			case ComOp:
+			case EndOp:
 			case InvOp:
-			case NonOp:
 			case ParOp:
 			case PripOp:
 			case StppOp:
@@ -403,11 +405,11 @@ void optimize(
 	// start playing the operations in the forward direction
 	play->start_forward(op, arg, i_op, i_var);
 
-	// playing forward skips NonOp at the beginning, but not the end.
-	// Put the beginning NonOp in the recording
-	CPPAD_ASSERT_UNKNOWN( op == NonOp );
-	CPPAD_ASSERT_NARG_NRES(NonOp, 0, 1);
-	new_var[ i_var ] = rec->PutOp(NonOp);
+	// playing forward skips BeginOp at the beginning, but not EndOp at
+	// the end.  Put BeginOp at beginning of recording
+	CPPAD_ASSERT_UNKNOWN( op == BeginOp );
+	CPPAD_ASSERT_NARG_NRES(BeginOp, 0, 1);
+	new_var[ i_var ] = rec->PutOp(BeginOp);
 
 	// temporary buffer for new argument values
 	size_t new_arg[6];
@@ -428,7 +430,7 @@ void optimize(
 			break;
 
 			case InvOp:
-			case NonOp:
+			case EndOp:
 			keep = true;
 			break;
 
@@ -575,9 +577,13 @@ void optimize(
 			new_var[ i_var ] = rec->PutOp(op);
 			break;
 
+			// Operations with no arguments and no results
+			case EndOp:
+			CPPAD_ASSERT_NARG_NRES(op, 0, 0);
+			break;
+
 			// Operations with no arguments and one result
 			case InvOp:
-			case NonOp:
 			CPPAD_ASSERT_NARG_NRES(op, 0, 1);
 			new_var[ i_var ] = rec->PutOp(op);
 			break;

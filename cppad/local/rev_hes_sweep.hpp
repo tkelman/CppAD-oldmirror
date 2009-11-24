@@ -165,7 +165,8 @@ void RevHesSweep(
 	}
 
 	// Initialize
-	play->start_reverse();
+	play->start_reverse(op, arg, i_op, i_var);
+	CPPAD_ASSERT_UNKNOWN( op == EndOp );
 	i_op = 2;
 # if CPPAD_REV_HES_SWEEP_TRACE
 	std::cout << std::endl;
@@ -244,6 +245,12 @@ void RevHesSweep(
 			);
 			break;
 			// -------------------------------------------------
+
+			case BeginOp:
+			CPPAD_ASSERT_NARG_NRES(op, 0, 0)
+			break;
+			// -------------------------------------------------
+
 			case CExpOp:
 			reverse_sparse_hessian_cond_op(
 				i_var, arg, num_par, RevJac, rev_hes_sparse
@@ -380,12 +387,6 @@ void RevHesSweep(
 			reverse_sparse_hessian_linear_unary_op(
 			i_var, arg[0], RevJac, for_jac_sparse, rev_hes_sparse
 			);
-			break;
-			// -------------------------------------------------
-
-			case NonOp:
-			CPPAD_ASSERT_NARG_NRES(op, 0, 1)
-
 			break;
 			// -------------------------------------------------
 
@@ -557,8 +558,8 @@ void RevHesSweep(
 # endif
 	}
 	CPPAD_ASSERT_UNKNOWN( i_op == 1 );
-	CPPAD_ASSERT_UNKNOWN( play->GetOp(i_op-1) == NonOp );
-	CPPAD_ASSERT_UNKNOWN( i_var == NumRes(NonOp)  );
+	CPPAD_ASSERT_UNKNOWN( play->GetOp(i_op-1) == BeginOp );
+	CPPAD_ASSERT_UNKNOWN( i_var == NumRes(BeginOp)  );
 
 	if( vecad_jac != CPPAD_NULL )
 		CPPAD_TRACK_DEL_VEC(vecad_jac);

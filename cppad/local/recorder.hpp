@@ -237,7 +237,7 @@ inline size_t recorder<Base>::PutOp(OpCode op)
 	rec_op_[num_rec_op_++]  = op;
 	num_rec_var_ += NumRes(op);
 
-	// first operator should be a NonOp and NumRes( NonOp ) > 0
+	// first operator should be a BeginOp and NumRes( BeginOp ) > 0
 	CPPAD_ASSERT_UNKNOWN( num_rec_var_ > 0 );
 
 	return num_rec_var_ - 1;

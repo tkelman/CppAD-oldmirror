@@ -133,8 +133,9 @@ void ForJacSweep(
 	CppAD::vector<bool> z_value(limit);
 # endif
 
-	// skip the NonOp at the beginning of the recording
+	// skip the BeginOp at the beginning of the recording
         play->start_forward(op, arg, i_op, i_var);
+	CPPAD_ASSERT_UNKNOWN( op == BeginOp );
         arg_0 = arg;
 	while(i_op < numop_m1)
 	{
@@ -271,6 +272,11 @@ void ForJacSweep(
 			break;
 			// -------------------------------------------------
 
+			case EndOp:
+			CPPAD_ASSERT_NARG_NRES(op, 0, 0);
+			break;
+			// -------------------------------------------------
+
 			case ExpOp:
 			CPPAD_ASSERT_NARG_NRES(op, 1, 1);
 			forward_sparse_jacobian_unary_op(
@@ -342,11 +348,6 @@ void ForJacSweep(
 			);
 			break;
 			// -------------------------------------------------
-
-			case NonOp:
-			CPPAD_ASSERT_NARG_NRES(op, 0, 1);
-			var_sparsity.clear(i_var);
-			break;
 
 			case ParOp:
 			CPPAD_ASSERT_NARG_NRES(op, 1, 1);
@@ -506,26 +507,7 @@ void ForJacSweep(
 # else
 	}
 # endif
-# ifndef NDEBUG
-	// temporary: remove when all cases with NumRes(op) > 1 
-	// have been converted
-	size_t check = i_var + NumRes(op);
-	switch(op)
-	{	case PowpvOp:
-		case PowvpOp:
-		case PowvvOp:
-		case CosOp:
-		case SinOp:
-		case CoshOp:
-		case SinhOp:
-		check = i_var + 1;
-		break;
-
-		default:
-		break;
-	}
-	CPPAD_ASSERT_UNKNOWN( check == play->num_rec_var() );
-# endif
+	CPPAD_ASSERT_UNKNOWN( i_var + 1 == play->num_rec_var() );
 
 	if( vecad_ind != CPPAD_NULL )
 		CPPAD_TRACK_DEL_VEC(vecad_ind);

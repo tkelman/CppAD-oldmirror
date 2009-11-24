@@ -123,7 +123,7 @@ is the partial derivative of \f$ G( u ) \f$ with
 respect to \f$ u_j^{(k)} \f$.
 
 \par Assumptions
-The first operator on the tape is a NonOp,
+The first operator on the tape is a BeginOp,
 and the next \a n operators are InvOp operations for the 
 corresponding independent variables.
 */
@@ -158,7 +158,8 @@ void ReverseSweep(
 		parameter = Rec->GetPar();
 
 	// Initialize
-	Rec->start_reverse();
+	Rec->start_reverse(op, arg, i_op, i_var);
+	CPPAD_ASSERT_UNKNOWN( op == EndOp );
 	i_op   = 2;
 # if CPPAD_REVERSE_SWEEP_TRACE
 	std::cout << std::endl;
@@ -247,6 +248,11 @@ void ReverseSweep(
 			);
 			break;
 			// -------------------------------------------------
+
+			case BeginOp:
+			CPPAD_ASSERT_NARG_NRES(op, 0, 0);
+			break;
+			// --------------------------------------------------
 
 			case CExpOp:
 			reverse_cond_op(
@@ -366,10 +372,6 @@ void ReverseSweep(
 			break;
 			// --------------------------------------------------
 
-			case NonOp:
-			break;
-			// --------------------------------------------------
-
 			case ParOp:
 			break;
 			// --------------------------------------------------
@@ -478,8 +480,8 @@ void ReverseSweep(
 	std::cout << std::endl;
 # endif
 	CPPAD_ASSERT_UNKNOWN( i_op == 1 );
-	CPPAD_ASSERT_UNKNOWN( Rec->GetOp(i_op-1) == NonOp );
-	CPPAD_ASSERT_UNKNOWN( i_var == NumRes(NonOp)  );
+	CPPAD_ASSERT_UNKNOWN( Rec->GetOp(i_op-1) == BeginOp );
+	CPPAD_ASSERT_UNKNOWN( i_var == NumRes(BeginOp)  );
 }
 
 # undef CPPAD_REVERSE_SWEEP_TRACE

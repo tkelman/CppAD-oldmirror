@@ -168,9 +168,9 @@ size_t forward_sweep(
 		text = Rec->GetTxt(0);
 	
 
-	// skip the NonOp at the beginning of the recording
+	// skip the BeginOp at the beginning of the recording
 	Rec->start_forward(op, arg, i_op, i_var);
-	CPPAD_ASSERT_UNKNOWN( op == NonOp );
+	CPPAD_ASSERT_UNKNOWN( op == BeginOp );
 # if CPPAD_FORWARD_SWEEP_TRACE
 	std::cout << std::endl;
 # endif
@@ -285,6 +285,11 @@ size_t forward_sweep(
 			break;
 			// -------------------------------------------------
 
+			case EndOp:
+			CPPAD_ASSERT_NARG_NRES(op, 0, 0);
+			break;
+			// -------------------------------------------------
+
 			case ExpOp:
 			forward_exp_op(d, i_var, arg[0], J, Taylor);
 			break;
@@ -360,12 +365,6 @@ size_t forward_sweep(
 			case MulvpOp:
 			CPPAD_ASSERT_UNKNOWN( arg[1] < num_par );
 			forward_mulvp_op(d, i_var, arg, parameter, J, Taylor);
-			break;
-			// -------------------------------------------------
-
-			case NonOp:
-			CPPAD_ASSERT_UNKNOWN( NumArg(op) == 0 );
-			CPPAD_ASSERT_UNKNOWN( NumRes(op) == 1 );
 			break;
 			// -------------------------------------------------
 

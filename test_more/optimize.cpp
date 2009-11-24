@@ -87,7 +87,7 @@ namespace {
 		size_t n  = 6;
 		CPPAD_TEST_VECTOR< AD<double> > X(n);
 		for(j = 0; j < n; j++)
-			X[j] = 1. / double(j + 2); 
+			X[j] = 1. / double(j + 1); 
 	
 		// declare independent variables and start tape recording
 		CppAD::Independent(X);
@@ -110,15 +110,13 @@ namespace {
 			ok &= (y[i] == check[i]);
 	
 		// Check size before optimization
-		// (add 2 for the NonOp at the beginning and end of op seq)
-		ok &= F.size_var() == (n + 2 + original);
+		ok &= F.size_var() == (n + 1 + original);
 	
 		// Optimize the operation sequence
 		F.optimize();
 	
 		// Check size after optimization
-		// (add 2 for the NonOp at the beginning and end of op seq)
-		ok &= F.size_var() == (n + 2 + opt);
+		ok &= F.size_var() == (n + 1 + opt);
 	
 		// check result now
 		// (should have already been checked if NDEBUG not defined)
