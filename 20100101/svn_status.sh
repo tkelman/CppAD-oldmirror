@@ -1,7 +1,7 @@
 # ! /bin/bash 
 # $Id$
 # -----------------------------------------------------------------------------
-# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-09 Bradley M. Bell
+# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-10 Bradley M. Bell
 #
 # CppAD is distributed under multiple licenses. This distribution is under
 # the terms of the 
@@ -11,15 +11,15 @@
 # Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 # -----------------------------------------------------------------------------
 #
-flag="$1"
+flag="+"
 if [ "$flag" == "" ]
 then
 	echo "./svn_status.sh <automake flag>"
 	echo "where automake flag is either + or -"
 	exit 1
 fi
-yyyy_mm_dd=`date +%F`
-yyyymmdd=`echo $yyyy_mm_dd | sed -e 's|-||g'`
+yyyy_mm_dd="2010-01-01"
+yyyymmdd="20100101.0"
 #
 svn status | sed > svn_status.$$ \
 	-e '/^. *cppad\/configure.hpp$/d'                     \
