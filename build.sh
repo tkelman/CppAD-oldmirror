@@ -1,7 +1,7 @@
 # ! /bin/bash 
 # $Id$
 # -----------------------------------------------------------------------------
-# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-09 Bradley M. Bell
+# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-10 Bradley M. Bell
 #
 # CppAD is distributed under multiple licenses. This distribution is under
 # the terms of the 
@@ -136,8 +136,8 @@ then
 	#
 	# Today's date in yy-mm-dd decimal digit format where 
 	# yy is year in century, mm is month in year, dd is day in month.
-	yyyy_mm_dd=`date +%F`
-	yyyymmdd=`echo $yyyy_mm_dd | sed -e 's|-||g'`
+	yyyy_mm_dd="2010-01-01"
+	yyyymmdd="20100101.0"
 	#
 	# automatically change version for certain files
 	# (the [.0-9]* is for using build.sh in CppAD/stable/* directories)
@@ -361,12 +361,6 @@ then
 	done
 	#
 	# only build the *.xml version of the documentation for distribution
-	if ! grep < doc.omh > /dev/null \
-		'This comment is used to remove the table below' 
-	then
-		echo "Error: Missing comment expected in doc.omh"
-		exit 1
-	fi
 	mv doc.omh doc.tmp
 	sed < doc.tmp > doc.omh \
 		-e '/This comment is used to remove the table below/,/$tend/d'
