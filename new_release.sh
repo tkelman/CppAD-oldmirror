@@ -12,13 +12,13 @@
 # -----------------------------------------------------------------------------
 repository="https://projects.coin-or.org/svn/CppAD"
 stable_version="20100101"
-release="0"
+release="1"
 release_version="$stable_version.$release"
 msg="Creating releases/$release_version"
 # -----------------------------------------------------------------------------
 if ! grep "AC_INIT(CppAD.*, $stable_version.$release" configure.ac >> /dev/null
 then
-	echo "Must change version number in build.sh,"
+	echo "Must change version number in configure.ac,"
 	echo "then run build.sh all test, and check in changes."
 	exit 1
 fi
