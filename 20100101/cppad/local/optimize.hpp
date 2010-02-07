@@ -3,7 +3,7 @@
 # define CPPAD_OPTIMIZE_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-09 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-10 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -325,7 +325,7 @@ size_t optimize_unary_match(
 	if( op == tape[i].op )
 	{	size_t k = tape[i].arg[0];
 		CPPAD_ASSERT_UNKNOWN( k < i );
-		if (new_arg[0] == tape[k].new_var );
+		if (new_arg[0] == tape[k].new_var )
 			return tape[i].new_var;
 	}
 	return 0;
