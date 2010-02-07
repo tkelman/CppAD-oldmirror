@@ -23,7 +23,7 @@
 #define PACKAGE_NAME "CppAD"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "CppAD 20100101.0"
+#define PACKAGE_STRING "CppAD 20100101.1"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "cppad"
