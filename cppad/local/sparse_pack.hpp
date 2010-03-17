@@ -2,7 +2,7 @@
 # define CPPAD_SPARSE_PACK_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-09 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-10 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -179,12 +179,15 @@ public:
 
 		// search for next element of the set
 		Pack check = data_[ next_index_ * n_pack_ + j ];
-		while( next_element_ < end_ )
+		while( true )
 		{	if( check & (one << k) )
 			{	next_element_++;
 				return next_element_ - 1;
 			}
 			next_element_++;
+			// check if no more elements in the set
+			if( next_element_ == end_ )
+				return end_;
 			k++;
 			CPPAD_ASSERT_UNKNOWN( k <= n_bit_ );
 			if( k == n_bit_ )
@@ -194,7 +197,8 @@ public:
 				check = data_[ next_index_ * n_pack_ + j ];
 			}
 		}
-		next_element_ = end_;
+		// should never get here
+		CPPAD_ASSERT_UNKNOWN(false);
 		return end_;
 	}
 	// -----------------------------------------------------------------
