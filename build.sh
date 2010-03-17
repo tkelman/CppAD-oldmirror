@@ -126,7 +126,7 @@ export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$ADOLC_DIR/lib:$IPOPT_DIR/lib"
 #
 # get version currently in configure.ac file
 # (in a way that works when version is not a date)
-version=`grep "^ *AC_INIT(" configure.ac | \
+configure_ac_version=`grep "^ *AC_INIT(" configure.ac | \
 	sed -e 's/[^,]*, *\([^ ,]*\).*/\1/'`
 #
 # -----------------------------------------------------------------------------
@@ -137,7 +137,7 @@ then
 	# Today's date in yy-mm-dd decimal digit format where 
 	# yy is year in century, mm is month in year, dd is day in month.
 	yyyy_mm_dd="2010-01-01"
-	yyyymmdd="20100101.0"
+	yyyymmdd="$configure_ac_version"
 	#
 	# automatically change version for certain files
 	# (the [.0-9]* is for using build.sh in CppAD/stable/* directories)
