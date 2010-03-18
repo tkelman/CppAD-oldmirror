@@ -780,7 +780,6 @@ if [ "$1" = "move" ]
 then
 	# move tarballs and developer documentation into doc directory
 	list="
-		doxydoc
 		cppad-$version.cpl.tgz
 		cppad-$version.gpl.tgz
 	"
