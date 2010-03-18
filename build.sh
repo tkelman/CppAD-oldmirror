@@ -26,8 +26,6 @@ then
 			config_none 
 			make
 			dist
-			omhelp 
-			doxygen 
 			gpl 
 			move
 		"
