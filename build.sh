@@ -26,8 +26,6 @@ then
 			config_none 
 			make
 			dist
-			omhelp 
-			doxygen 
 			gpl 
 			move
 		"
@@ -137,7 +135,7 @@ then
 	# Today's date in yy-mm-dd decimal digit format where 
 	# yy is year in century, mm is month in year, dd is day in month.
 	yyyy_mm_dd="2010-01-01"
-	yyyymmdd="20100101.0"
+	yyyymmdd="$version"
 	#
 	# automatically change version for certain files
 	# (the [.0-9]* is for using build.sh in CppAD/stable/* directories)
@@ -782,7 +780,6 @@ if [ "$1" = "move" ]
 then
 	# move tarballs and developer documentation into doc directory
 	list="
-		doxydoc
 		cppad-$version.cpl.tgz
 		cppad-$version.gpl.tgz
 	"
