@@ -173,10 +173,11 @@ then
 	done
 	#
 	# change Autoconf version to today
-	version=$yyyymmdd
+	configure_ac_version=$yyyymmdd
 	#
 	exit 0
 fi
+version="$configure_ac_version"
 #
 # -----------------------------------------------------------------------------
 if [ "$1" = "automake" ] 
