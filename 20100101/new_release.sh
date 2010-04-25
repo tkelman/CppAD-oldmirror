@@ -12,27 +12,45 @@
 # -----------------------------------------------------------------------------
 repository="https://projects.coin-or.org/svn/CppAD"
 stable_version="20100101"
-release="2"
+release="3"
 release_version="$stable_version.$release"
 msg="Creating releases/$release_version"
 # -----------------------------------------------------------------------------
+echo "svn revert configure.ac"
+svn revert configure.ac
 if ! grep "AC_INIT(CppAD.*, $stable_version.$release" configure.ac >> /dev/null
 then
-	echo "Must change version number in configure.ac,"
-	echo "then run build.sh all test, and check in changes."
+	echo "Fix version number in configure.ac, then execute."
+	echo "	./build.sh version automake config_none"
+	echo "then commit the changes."
+	exit 1
+fi
+echo "svn revert cppad/config.h"
+svn revert cppad/config.h
+if ! grep "PACKAGE_STRING.*CppAD.*$stable_version.$release" \
+	cppad/config.h >> /dev/null
+then
+	echo "Fix version number in cppad/config.h does not match configure.ac."
+	echo "Must execute build.sh"
+	exit 1
+fi
+echo "svn revert cppad/configure.hpp"
+svn revert cppad/configure.hpp
+if ! grep "PACKAGE_STRING.*CppAD.*$stable_version.$release" \
+	cppad/configure.hpp >> /dev/null
+then
+	echo "Fix version number in cppad/config.h does not match configure.ac."
+	echo "Must execute build.sh"
 	exit 1
 fi
 # -----------------------------------------------------------------------------
-#
 # check initial working directory
-dir=`pwd | sed -e 's|.*/||'`
-if [ "$dir" != "trunk" ]
+dir=`pwd | sed -e 's|.*/[Cc][Pp][Pp][Aa][Dd]/||'`
+if [ "$dir" != "stable/$stable_version" ]
 then
-	echo "new_release.sh: must execute this script in the trunk"
+	echo "new_release.sh: can only execute in stable/$stable_version"
 	exit 1
 fi
-echo "cd .."
-cd ..
 # -----------------------------------------------------------------------------
 rep_stable="$repository/stable/$stable_version"
 rep_release="$repository/releases/$release_version"
@@ -43,6 +61,8 @@ then
 	exit 1
 fi
 # -----------------------------------------------------------------------------
+echo "cd ../.."
+cd ../..
 if [ -e conf ]
 then
 	echo "rm -rf conf"
@@ -69,6 +89,6 @@ sed -i projDesc.xml \
 	-e "/^ *<stable/,/^ *<\/stable/s/[0-9]\{8\}/$stable_version/" \
 	-e "/^ *<release/,/^ *<\/release/s/[0-9]\{8\}\.[0-9]*/$release_version/"
 #
-msg="Update stabel and release numbers in conf/projDesc.xml"
+msg="Update stable and release numbers in conf/projDesc.xml"
 echo "Use the command the following command to finish the process"
 echo "	svn commit -m \"$msg\" ../conf/projDesc.xml"
