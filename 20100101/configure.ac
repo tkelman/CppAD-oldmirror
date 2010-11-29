@@ -223,6 +223,26 @@ fi
 AC_SUBST(CXXFLAGS, "")
 AC_MSG_NOTICE([********** End Checking Command Line arguments ***************])
 
+dnl --------------------------------------------------------------------------
+dnl Determine link line for ipopt
+AC_SUBST(CPPAD_IPOPT_LIBS, "-L $IPOPT_DIR/lib -lipopt")
+dnl check for blas library
+AC_LANG_PUSH([Fortran])
+AC_CHECK_LIB(
+	[blas],
+	[ddot],
+	[CPPAD_IPOPT_LIBS="$CPPAD_IPOPT_LIBS -lblas"],
+)
+dnl check for lapack library
+AC_CHECK_LIB(
+	[lapack],
+	[dgesv],
+	[CPPAD_IPOPT_LIBS="$CPPAD_IPOPT_LIBS -llapack"],
+)
+AC_LANG_POP([Fortran])
+AC_MSG_RESULT([cppad_ipopt_nlp libraries: $CPPAD_IPOPT_LIBS])
+dnl --------------------------------------------------------------------------
+
 dnl Check which definition we are using for CPPAD_TEST_VECTOR
 if test "$stdvector$BOOST_DIR" = "no" ; then
 	AC_DEFINE(CPPAD_CPPADVECTOR, 1, [is CPPAD_TEST_VECTOR == CppAD::vector])
