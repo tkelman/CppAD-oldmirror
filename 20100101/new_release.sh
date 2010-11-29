@@ -16,31 +16,42 @@ release="4"
 release_version="$stable_version.$release"
 msg="Creating releases/$release_version"
 # -----------------------------------------------------------------------------
+if svn list $repository/releases | grep "$release_version" > /dev/null
+then
+	echo "new_release.sh: Release number $release_version already exists."
+	echo "In file new_release.sh, you must first change the assigment"
+	echo "	release=$release"
+	echo "to a higher release number."
+	exit 1
+fi
+# -----------------------------------------------------------------------------
 echo "svn revert configure.ac"
 svn revert configure.ac
-if ! grep "AC_INIT(CppAD.*, $stable_version.$release" configure.ac >> /dev/null
+if ! grep "AC_INIT(CppAD.*, $release_version" configure.ac > /dev/null
 then
-	echo "Fix version number in configure.ac, then execute."
+	echo "new_release.sh: Change version number in configure.ac to be"
+	echo "$release_version, then execute."
 	echo "	./build.sh version automake config_none"
 	echo "then commit the changes."
 	exit 1
 fi
 echo "svn revert cppad/config.h"
 svn revert cppad/config.h
-if ! grep "PACKAGE_STRING.*CppAD.*$stable_version.$release" \
-	cppad/config.h >> /dev/null
+if ! grep "PACKAGE_STRING.*CppAD.*$release_version" cppad/config.h > /dev/null
 then
-	echo "Fix version number in cppad/config.h does not match configure.ac."
-	echo "Must execute build.sh"
+	echo "new_release.sh: Version in cppad/config.h is not $release_version"
+	echo "	./build.sh version automake config_none"
+	echo "should fix this"
 	exit 1
 fi
 echo "svn revert cppad/configure.hpp"
 svn revert cppad/configure.hpp
-if ! grep "PACKAGE_STRING.*CppAD.*$stable_version.$release" \
-	cppad/configure.hpp >> /dev/null
+if ! grep "PACKAGE_STRING.*CppAD.*$release_version" \
+	cppad/configure.hpp > /dev/null
 then
-	echo "Fix version number in cppad/config.h does not match configure.ac."
-	echo "Must execute build.sh"
+	echo "new_release.sh: Version in cppad/sonfigure.hpp not $release_version"
+	echo "	./build.sh version automake config_none"
+	echo "should fix this"
 	exit 1
 fi
 # -----------------------------------------------------------------------------
