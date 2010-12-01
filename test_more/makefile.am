@@ -31,7 +31,8 @@ if CppAD_IPOPT_CPPAD
 IPOPT_SRC_FILES   = ../ipopt_cppad/ipopt_cppad_nlp.cpp ipopt_cppad.cpp
 IPOPT_EXTRA_FILES =
 IPOPT_INCLUDE     = -I$(IPOPT_DIR)/include
-IPOPT_LIB         = $(CPPAD_IPOPT_LIBS) $(FCLIBS)
+IPOPT_LIB         = -lipopt $(FCLIBS) $(PTHREAD_LIB) $(DL_LIB)
+IPOPT_LIB_DIR     = -L$(IPOPT_DIR)/lib
 IPOPT_FLAGS       = -DCPPAD_IPOPT_CPPAD_TEST
 else
 IPOPT_SRC_FILES   = 
@@ -60,7 +61,7 @@ AM_CPPFLAGS       = -I. \
 AM_CXXFLAGS       = -g $(ADOLC_FLAGS) $(IPOPT_FLAGS) $(CXX_FLAGS)
 #
 LDADD             = $(ADOLC_LIB) $(IPOPT_LIB)
-AM_LDFLAGS        = $(ADOLC_LIB_DIR) 
+AM_LDFLAGS        = $(ADOLC_LIB_DIR) $(IPOPT_LIB_DIR)
 #
 test_more_SOURCES  = \
 	$(ADOLC_SRC_FILES) \
