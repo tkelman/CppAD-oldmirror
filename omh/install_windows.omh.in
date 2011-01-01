@@ -1,6 +1,6 @@
 $Id$
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-08 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-11 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -83,9 +83,13 @@ and editor that has trouble viewing the files in Unix format.
 and then a line feed. 
 
 $table
-CPL License $pre  $$ $cnext $href%cppad-@VERSION@.cpl.tgz%$$ 
+CPL License $pre  $$ $cnext $href%
+http://www.coin-or.org/download/source/CppAD/cppad-@VERSION@.cpl.tgz%
+cppad-@VERSION@.cpl.tgz%$$ 
 $rnext
-GPL License $pre  $$ $cnext $href%cppad-@VERSION@.gpl.tgz%$$
+GPL License $pre  $$ $cnext $href%
+http://www.coin-or.org/download/source/CppAD/cppad-@VERSION@.gpl.tgz%
+cppad-@VERSION@.gpl.tgz%$$
 $tend
 
 The following steps will decompress and extract the files using
