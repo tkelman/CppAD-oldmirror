@@ -22,6 +22,15 @@ release="0"
 release_version="$stable_version.$release"
 msg="Creating releases/$release_version"
 # -----------------------------------------------------------------------------
+# check initial working directory
+dir=`pwd | sed -e 's|.*/[Cc][Pp][Pp][Aa][Dd]/||'`
+check="stable/$stable_version"
+if [ "$dir" != "$check" ]
+then
+	echo bin/"new_stable.sh: must execute this script in $check"
+	exit 1
+fi
+# -----------------------------------------------------------------------------
 # Check release version
 if svn list $repository/releases | grep "$release_version" > /dev/null
 then
