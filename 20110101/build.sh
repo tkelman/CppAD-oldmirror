@@ -20,7 +20,7 @@ IPOPT_DIR=$HOME/prefix/ipopt
 # library path for the ipopt and adolc
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$ADOLC_DIR/lib:$IPOPT_DIR/lib"
 # version type is one of "trunk" or "stable"
-version_type="trunk"
+version_type="stable"
 # -----------------------------------------------------------------------------
 if [ $0 != "./build.sh" ]
 then
