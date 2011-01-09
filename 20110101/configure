@@ -569,6 +569,7 @@ CppAD_PKG_CONFIG_FALSE
 CppAD_PKG_CONFIG_TRUE
 have_pkg_config
 ABS_TOP_SRCDIR
+ABS_TOP_BUILDDIR
 FCLIBS
 ac_ct_FC
 FCFLAGS
@@ -5142,6 +5143,9 @@ ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
+
+abs_top_builddir=`pwd`
+ABS_TOP_BUILDDIR="$abs_top_builddir"
 
 abs_top_srcdir=`cd $srcdir ; pwd`
 ABS_TOP_SRCDIR="$abs_top_srcdir"
