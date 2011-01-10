@@ -123,7 +123,7 @@ fi
 list=`sed -e '/@/! d' -e 's/@.*//' bin/commit.1.$$`
 msg=`sed -e '/@ *$/d' -e 's|.*/\([^/]*@\)|\1|' -e 's|@|:|' bin/commit.1.$$`
 # if cppad/config.h is in the list of files to be commited
-if (echo $list | grep '^cppad/config.h@' bin/commit.1.$$ > /dev/null)
+if (cat bin/commit.1.$$ | grep '^cppad/config.h@' > /dev/null)
 then
 	# and CPPAD_CPPADVECTOR is not defined as one
 	if ! grep '^# *define  *CPPAD_CPPADVECTOR  *1 *$' cppad/config.h \
