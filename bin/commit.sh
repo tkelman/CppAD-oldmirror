@@ -20,7 +20,15 @@ during
 	bin/commit.sh edit 
 for example this entire paragraph is preserved.
 
-bin/commit.sh@ For this example, bin/commit.sh is the only file committed.
+bin/check_include_omh.sh@
+bin/gpl_license.sh@
+bin/run_omhelp.sh@
+bin/svn_merge.sh@
+build.sh@
+dev.omh@
+makefile.am@
+makefile.in@
+omh/distribute.omh@
 EOF
 # -----------------------------------------------------------------------------
 if [ $0 != "bin/commit.sh" ]
