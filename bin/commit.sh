@@ -117,6 +117,7 @@ then
 	if [ "$abort" == "yes" ]
 	then
 		echo "bin/commit.sh: aborting because of suggested changes above."
+		echo "The script bin/edit_commit.sh can make these changes."
 		rm bin/commit.1.$$
 		exit 1
 	fi
