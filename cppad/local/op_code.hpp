@@ -84,9 +84,9 @@ enum OpCode {
 	SubvvOp,  //      variable   - variable
 	// user atomic operation codes (note yet implemented)
 	UserOp,   //  start of a user atomic operaiton
-	UservOp,  //  this argument is a variable
 	UserpOp,  //  this argument is a parameter
-	UserrOp   //  this is a result for the operation
+	UserrOp,  //  this is a result for the operation
+	UservOp   //  this argument is a variable
 };
 
 /*!
@@ -145,9 +145,9 @@ const size_t NumArgTable[] = {
 	2, // SubvpOp
 	2, // SubvvOp
 	3, // UserOp
-	1, // UservOp
 	1, // UserpOp
-	1  // UserrOp
+	0, // UserrOp
+	1  // UservOp
 };
 
 /*!
@@ -161,10 +161,10 @@ Operator for which we are fetching the number of arugments.
 */
 inline size_t NumArg( OpCode op)
 {
-	CPPAD_ASSERT_UNKNOWN( size_t(UserrOp) == 
+	CPPAD_ASSERT_UNKNOWN( size_t(UservOp) == 
 		sizeof(NumArgTable) / sizeof(NumArgTable[0]) - 1
 	);
-	CPPAD_ASSERT_UNKNOWN( size_t(op) <= size_t(SubvvOp) );
+	CPPAD_ASSERT_UNKNOWN( size_t(op) <= size_t(UservOp) );
 
 	return NumArgTable[(size_t) op];
 }
@@ -225,9 +225,9 @@ const size_t NumResTable[] = {
 	1, // SubvpOp
 	1, // SubvvOp
 	0, // UserOp
-	0, // UservOp
 	0, // UserpOp
 	1, // UserrOp
+	0, // UservOp
 	0  // Not used: avoids warning by g++ 4.3.2 when pycppad builds
 };
 
@@ -242,11 +242,11 @@ Operator for which we are fetching the number of result variables.
 */
 inline size_t NumRes(OpCode op)
 {	// check ensuring conversion to size_t is as expected
-	CPPAD_ASSERT_UNKNOWN( size_t(UserrOp) == 
+	CPPAD_ASSERT_UNKNOWN( size_t(UservOp) == 
 		sizeof(NumResTable) / sizeof(NumResTable[0]) - 2
 	);
 	// this test ensures that all indices are within the table
-	CPPAD_ASSERT_UNKNOWN( size_t(op) <= size_t(SubvvOp) );
+	CPPAD_ASSERT_UNKNOWN( size_t(op) <= size_t(UservOp) );
 
 	return NumResTable[(size_t) op];
 }
@@ -417,10 +417,14 @@ void printOp(
 		"Stvv"  ,
 		"Subpv" ,
 		"Subvp" ,
-		"Subvv"
+		"Subvv" ,
+		"UserOp",
+		"UserpOp",
+		"UserrOp",
+		"UservOp"
 	};
 	CPPAD_ASSERT_UNKNOWN( 
-		size_t(SubvvOp) == sizeof(OpName) / sizeof(OpName[0]) - 1
+		size_t(UservOp) == sizeof(OpName) / sizeof(OpName[0]) - 1
 	);
 
 	// print operator
@@ -535,13 +539,24 @@ void printOp(
 		case SinOp:
 		case SinhOp:
 		case SqrtOp:
+		case UservOp:
 		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 1 );
 		printOpField(os, "  v=", ind[0], ncol);
 		break;
 
 		case ParOp:
+		case UservOp:
 		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 1 );
 		printOpField(os, "  p=", Rec->GetPar(ind[0]), ncol);
+		break;
+
+		case UserOp:
+		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 3 );
+		{	const char* name = user_atomic<Base>::name(ind[0]);
+			printOpField(os, "name=", ind[0], ncol);
+			printOpField(os,   " n=", ind[1], ncol);
+			printOpField(os,   " m=", ind[2], ncol);
+		}
 		break;
 
 		case PripOp:
@@ -559,6 +574,7 @@ void printOp(
 		case BeginOp:
 		case EndOp:
 		case InvOp:
+		case UserrOp:
 		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 0 );
 		break;
 

@@ -371,8 +371,8 @@ public:
 	Put this object in the list of all objects for this calls and set
 	the constant private data name_, f_, r_, and index_.
 
-	\param name
-	is the user's name for this atomic operation.
+	\param Name
+	is the user's Name for this atomic operation.
 
 	\param f
 	user routine that does forward mode calculations for this operation.
@@ -380,8 +380,8 @@ public:
 	\param r
 	user routine that does reverse mode calculations for this operation.
 	*/
-	user_atomic(const char* name, F f, R r) : 
-	name_(name)
+	user_atomic(const char* Name, F f, R r) : 
+	name_(Name)
 	, f_(f)
 	, r_(r)
 	, index_( List()->size() )
@@ -481,6 +481,9 @@ public:
 		return;
 	}
 
+	/// Name corresponding to a user_atomic object
+	static const char* name(size_t index)
+	{	return *(List[index])->name_.c_str(); }
 	/*!
  	Link from forward mode sweep to users routine.
 
@@ -515,7 +518,7 @@ public:
 	)
 	{
 		CPPAD_ASSERT_UNKNOWN(index < List()->size() );
-		user_atomic* op = *List()[index];
+		user_atomic* op = *( List()[index] );
 
 		bool ok = op->f_(k, n, m, tx, ty);
 		if( ! ok )
@@ -570,7 +573,7 @@ public:
 	)
 	{
 		CPPAD_ASSERT_UNKNOWN(index < List()->size() );
-		user_atomic* op = *List()[index];
+		user_atomic* op = *( List()[index] );
 
 		bool ok = op->f_(k, n, m, tx, ty, px, py);
 		if( ! ok )
