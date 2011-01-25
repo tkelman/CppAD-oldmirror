@@ -3,7 +3,7 @@
 # define CPPAD_OPTIMIZE_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-10 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-11 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -908,7 +908,6 @@ void optimize(
 			case AtanOp:
 			case CosOp:
 			case CoshOp:
-			case DisOp:
 			case DivvpOp:
 			case ExpOp:
 			case LogOp:
@@ -921,6 +920,7 @@ void optimize(
 			break; // --------------------------------------------
 
 			// Unary operator where operand is arg[1]
+			case DisOp:
 			case DivpvOp:
 			case MulpvOp:
 			case PowpvOp:
@@ -1171,7 +1171,6 @@ void optimize(
 			case AtanOp:
 			case CosOp:
 			case CoshOp:
-			case DisOp:
 			case ExpOp:
 			case LogOp:
 			case SinOp:

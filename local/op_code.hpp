@@ -54,7 +54,7 @@ enum OpCode {
 	CosOp,    //  cos(variable)
 	CoshOp,   // cosh(variable)
 	CSumOp,   // Cummulative summation (has variable number of arguments)
-	DisOp,    //  dis(variable,    index)
+	DisOp,    //  discrete::eval(index, variable)
 	DivpvOp,  //      parameter  / variable
 	DivvpOp,  //      variable   / parameter
 	DivvvOp,  //      variable   / variable
@@ -545,7 +545,7 @@ void printOp(
 		break;
 
 		case ParOp:
-		case UservOp:
+		case UserpOp:
 		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 1 );
 		printOpField(os, "  p=", Rec->GetPar(ind[0]), ncol);
 		break;
@@ -553,7 +553,7 @@ void printOp(
 		case UserOp:
 		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 3 );
 		{	const char* name = user_atomic<Base>::name(ind[0]);
-			printOpField(os, "name=", ind[0], ncol);
+			printOpField(os, "name=",   name, ncol);
 			printOpField(os,   " n=", ind[1], ncol);
 			printOpField(os,   " m=", ind[2], ncol);
 		}
@@ -580,8 +580,10 @@ void printOp(
 
 		case DisOp:
 		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 2 );
-		printOpField(os, "  v=", ind[0], ncol);
-		printOpField(os, "  f=", ind[1], ncol);
+		{	const char* name = discrete<Base>::name(ind[0]);
+			printOpField(os, " f=", name, ncol);
+			printOpField(os, " x=", ind[1], ncol);
+		}
 		break;
 	
 
