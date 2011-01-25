@@ -3,7 +3,7 @@
 # define CPPAD_DISCRETE_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-09 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-11 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -151,9 +151,9 @@ $end
 # define CPPAD_DISCRETE_FUNCTION(Base, FunName)            \
 inline CppAD::AD<Base> FunName (const CppAD::AD<Base> &x)  \
 {                                                          \
-	static CppAD::ADDiscrete<Base> Fun(FunName);       \
+     static CppAD::discrete<Base> Fun(FunName);            \
                                                            \
-	return Fun.Eval(x);                                \
+     return Fun.Eval(x);                                   \
 }                                      
 
 # define CppADCreateDiscrete CPPAD_DISCRETE_FUNCTION
@@ -164,10 +164,10 @@ inline CppAD::AD<Base> FunName (const CppAD::AD<Base> &x)  \
 namespace CppAD {
 
 template <class Base>
-class ADDiscrete {
+class discrete {
 	typedef Base (*F) (const Base &x);
 public:
-	ADDiscrete(F f) : f_(f), f_index_( List()->size() )
+	discrete(F f) : f_(f), f_index_( List()->size() )
 	{	List()->push_back(this); }
 
 	// used during the recording process
@@ -204,8 +204,8 @@ private:
 	const F            f_;
 	const size_t f_index_;
 
-	static std::vector<ADDiscrete *> *List(void)
-	{	static std::vector<ADDiscrete *> list;
+	static std::vector<discrete *> *List(void)
+	{	static std::vector<discrete *> list;
 		return &list;
 	}
 		

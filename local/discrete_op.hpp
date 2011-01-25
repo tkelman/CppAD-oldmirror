@@ -3,7 +3,7 @@
 # define CPPAD_DISCRETE_OP_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-10 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-11 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -84,7 +84,7 @@ inline void forward_dis_op_0(
 	Base* x = taylor + arg[0] * nc_taylor;
 	Base* z = taylor + i_z * nc_taylor;
 
-	z[0]  = ADDiscrete<Base>::Eval(arg[1], x[0]);
+	z[0]  = discrete<Base>::Eval(arg[1], x[0]);
 }
 
 
