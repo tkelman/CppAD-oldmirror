@@ -3,7 +3,7 @@
 # define CPPAD_OP_CODE_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-10 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-11 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -81,7 +81,12 @@ enum OpCode {
 	StvvOp,   //    z[variable]  = variable
 	SubpvOp,  //      parameter  - variable
 	SubvpOp,  //      variable   - parameter
-	SubvvOp   //      variable   - variable
+	SubvvOp,  //      variable   - variable
+	// user atomic operation codes (note yet implemented)
+	UserOp,   //  start of a user atomic operaiton
+	UservOp,  //  this argument is a variable
+	UserpOp,  //  this argument is a parameter
+	UserrOp   //  this is a result for the operation
 };
 
 /*!
@@ -138,7 +143,11 @@ const size_t NumArgTable[] = {
 	3, // StvvOp
 	2, // SubpvOp
 	2, // SubvpOp
-	2  // SubvvOp
+	2, // SubvvOp
+	3, // UserOp
+	1, // UservOp
+	1, // UserpOp
+	1  // UserrOp
 };
 
 /*!
@@ -152,7 +161,7 @@ Operator for which we are fetching the number of arugments.
 */
 inline size_t NumArg( OpCode op)
 {
-	CPPAD_ASSERT_UNKNOWN( size_t(SubvvOp) == 
+	CPPAD_ASSERT_UNKNOWN( size_t(UserrOp) == 
 		sizeof(NumArgTable) / sizeof(NumArgTable[0]) - 1
 	);
 	CPPAD_ASSERT_UNKNOWN( size_t(op) <= size_t(SubvvOp) );
@@ -215,6 +224,10 @@ const size_t NumResTable[] = {
 	1, // SubpvOp
 	1, // SubvpOp
 	1, // SubvvOp
+	0, // UserOp
+	0, // UservOp
+	0, // UserpOp
+	1, // UserrOp
 	0  // Not used: avoids warning by g++ 4.3.2 when pycppad builds
 };
 
@@ -229,7 +242,7 @@ Operator for which we are fetching the number of result variables.
 */
 inline size_t NumRes(OpCode op)
 {	// check ensuring conversion to size_t is as expected
-	CPPAD_ASSERT_UNKNOWN( size_t(SubvvOp) == 
+	CPPAD_ASSERT_UNKNOWN( size_t(UserrOp) == 
 		sizeof(NumResTable) / sizeof(NumResTable[0]) - 2
 	);
 	// this test ensures that all indices are within the table
