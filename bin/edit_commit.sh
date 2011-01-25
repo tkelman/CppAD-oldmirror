@@ -10,11 +10,6 @@
 # A copy of this license is included in the COPYING file of this distribution.
 # Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 # -----------------------------------------------------------------------------
-# Bradley M. Bell has given COIN-OR permission to use this script to generate 
-# a distribution of CppAD that has "GNU General Public License Version 2"
-# in place of "Common Public License Version 1.0." in all occurrences
-# of the message above.
-# -----------------------------------------------------------------------------
 if [ $0 != "bin/edit_commit.sh" ]
 then
 	echo "bin/edit_commit.sh: must be executed from its parent directory"

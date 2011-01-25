@@ -321,8 +321,13 @@ inline bool name (                                           \
 /*!
 Class that actually implements the <tt>name(ax, ay)</tt> call.
 
-A new user_atomic object is generated for each time the user invokes
+A new user_atomic object is generated each time the user invokes
 the CPPAD_ATOMIC_FUNCTION macro; see static object in that macro.
+
+\par std::vector
+One can use CppAD::vector for instead of std::vector for debugging, but it 
+will appear that there is a memory leak because the corresponding objects
+are not distroyed before CPPAD_TRACK_COUNT is called by the test routines.
 */
 template <class Base>
 class user_atomic {
@@ -355,24 +360,24 @@ private:
 	const size_t         index_;
 
 	/// work space vector used for a Base copy of ax
-	vector<Base>             x_;
+	std::vector<Base>        x_;
 	/// work space vector used for a Base copy of ay
-	vector<Base>             y_;
+	std::vector<Base>        y_;
 
-	/// the list of all object in this class
-	static vector<user_atomic *> *List(void)
-	{	static vector<user_atomic *> list;
+	/// List of all objects in this class.
+	static std::vector<user_atomic *> *List(void)
+	{	static std::vector<user_atomic *> list;
 		return &list;
 	}
 public:
 	/*!
  	Constructor called for each invocation of CPPAD_ATOMIC_FUNCTION.
 
-	Put this object in the list of all objects for this calls and set
+	Put this object in the list of all objects for this class and set
 	the constant private data name_, f_, r_, and index_.
 
 	\param Name
-	is the user's Name for this atomic operation.
+	is the user's name for this atomic operation.
 
 	\param f
 	user routine that does forward mode calculations for this operation.
@@ -388,7 +393,7 @@ public:
 	{	List()->push_back(this); }
 
 	/*!
- 	Implement the user call <tt>name(ax, ay)</tt>.
+ 	Implement the user call to <tt>name(ax, ay)</tt>.
 
 	\param ax
 	is the argument vector for this call,
@@ -483,13 +488,12 @@ public:
 
 	/// Name corresponding to a user_atomic object
 	static const char* name(size_t index)
-	{	return *(List[index])->name_.c_str(); }
+	{	return (*List())[index]->name_.c_str(); }
 	/*!
  	Link from forward mode sweep to users routine.
 
 	\param index
-	index in the list of all user_atomic objects
-	corresponding to this function.
+	index for this function in the list of all user_atomic objects
 
 	\param k
 	order for this forward mode calculation.
@@ -506,7 +510,7 @@ public:
 	\param ty
 	Taylor coefficient corresponding to \c y for this calculation
 
-	See the forward mode documentation for user_atomic 
+	See the forward mode in user's documentation for user_atomic 
  	*/
 	static void forward(
 		size_t              index, 
@@ -518,7 +522,7 @@ public:
 	)
 	{
 		CPPAD_ASSERT_UNKNOWN(index < List()->size() );
-		user_atomic* op = *( List()[index] );
+		user_atomic* op = (*List())[index];
 
 		bool ok = op->f_(k, n, m, tx, ty);
 		if( ! ok )
