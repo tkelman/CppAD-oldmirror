@@ -16,6 +16,9 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin user_atomic$$
 $spell
+	afunction
+	vx
+	vy
 	bool
 	namespace
 	CppAD
@@ -35,13 +38,13 @@ $index operation, user defined$$
 $index function, user defined$$
 
 $head Syntax$$
-$codei%CPPAD_ATOMIC_FUNCTION(%Base%, %name%)
+$codei%CPPAD_ATOMIC_FUNCTION(%Base%, %afunction%, %forward%, %reverse%)
 %$$
-$icode%ok% = %name%(%ax%, %ay%)
+$icode%ok% = %afunction%(%ax%, %ay%)
 %$$
-$icode%ok% = %name%(%k%, %n%, %m%, %tx%, %ty%)
+$icode%ok% = %forward%(%k%, %n%, %m%, %vx%, %vy%, %tx%, %ty%)
 %$$
-$icode%ok% = %name%(%k%, %n%, %m%, %tx%, %ty%, %px%, %py%)
+$icode%ok% = %reverse%(%k%, %n%, %m%, %tx%, %ty%, %px%, %py%)
 %$$
 
 $head Purpose$$
@@ -66,12 +69,14 @@ i.e., we are adding $icode name$$,
 with arguments and results of type $codei%AD<%Base%>%$$,
 to the list of available atomic operations.
 
-$head name$$
-This is the name of the function (as it is used in the source code).
-The user must provide a version of $icode name$$
-where the arguments are vectors with elements of type $icode Base$$.
-CppAD uses this to create a version of $icode name$$
-where the argument are vectors with elements of  type $codei%AD<%Base%>%$$.
+$head afunction$$
+This is the name of the AD function corresponding to this atomic
+operation (as it is used in the source code).
+CppAD uses the functions $icode forward$$ and $icode reverse$$,
+where the arguments are vectors with elements of type $icode Base$$,
+to create $icode afunction$$
+where the argument are vectors with elements of type $codei%AD<%Base%>%$$.
+
 
 $head ok$$
 The return value $icode ok$$ has prototype
@@ -127,6 +132,40 @@ $codei%
 It is the size of the vector $icode ay$$ in the corresponding call to
 $icode%name%(%ax%, %ay%)%$$.
 
+$head vx$$
+The argument $icode vx$$ has prototype
+$codei%
+	const vector<bool>& %vx%
+%$$
+If $icode%vx%.size() == 0%$$, it should not be used.
+Otherwise, 
+$icode%k% == 0%$$, 
+$icode%vx%.size() >= %n%$$, 
+$icode%vy%.size() >= %n%$$, 
+and
+for $latex j = 0 , \ldots , n-1$$,
+If the value of $icode%ax%[%j%]%$$ may depend on the current 
+$cref/Independent/$$ variables (it is a variable),
+$icode%vx%[%j%]%$$ is true.
+
+$head vy$$
+The argument $icode vy$$ has prototype
+$codei%
+	vector<bool>& %vy%
+%$$
+If $icode%vy%.size() == 0%$$, it should not be used.
+Otherwise, 
+$icode%k% == 0%$$, 
+$icode%vx%.size() >= %n%$$, 
+$icode%vy%.size() >= %m%$$, 
+and
+the input value of the elements of $icode vy$$ does not matter.
+For $latex j = 0 , \ldots , m-1$$,
+if the value of $icode%ay%[%j%]%$$ may depend on the current 
+$cref/Independent/$$ variables (it is a variable),
+$icode%vy%[%j%]%$$ is true
+(the fewer true components the more efficiently derivatives will be computed).
+
 $head tx$$
 The argument $icode tx$$ has prototype
 $codei%
@@ -146,12 +185,12 @@ If $icode%tx%.size() > (%k% + 1) * %n%$$,
 the other components of $icode tx$$ are not specified.
 
 $head ty$$
-During $cref/forward mode/user_atomic/Forward Mode/$$ 
+During $cref/forward mode/user_atomic/forward/$$ 
 the argument $icode ty$$ has prototype
 $codei%
 	vector<%Base%>& %ty%
 %$$
-while during $cref/reverse mode/user_atomic/Reverse Mode/$$
+while during $cref/reverse mode/user_atomic/reverse/$$
 it has prototype
 $codei%
 	const vector<%Base%>& %ty%
@@ -209,10 +248,10 @@ This macro can be placed within a namespace
 (not the $code CppAD$$ namespace) 
 but must be outside of any routine.
 
-$head Forward Mode$$
+$head forward$$
 The user defined function
 $codei%
-	%name%(%k%, %n%, %m%, %tx%, %ty%)
+	%forward%(%k%, %n%, %m%, %vx%, %vy%, %tx%, %ty%)
 %$$
 is used to compute results during a $cref/forward/Forward/$$ mode sweep.
 For this call, we are given the Taylor coefficients for $latex x$$ 
@@ -230,10 +269,10 @@ $latex \[
 The other components of $icode ty$$ must be left unchanged.
 
 
-$head Reverse Mode$$
+$head reverse$$
 The user defined function
 $codei%
-	%name%(%k%, %n%, %m%, %tx%, %ty%, %px%, %py%)
+	%reverse%(%k%, %n%, %m%, %tx%, %ty%, %px%, %py%)
 %$$
 is used to compute results during a $cref/reverse/Reverse/$$ mode sweep. 
 The input value of the vectors $icode tx$$ and $icode ty$$
@@ -287,6 +326,14 @@ Perhaps these sort of improvements
 (at the expense of the user's routine being more complicated)
 should be added to the CppAD $cref/wish list/WishList/$$.
 
+$children%
+	example/user_atomic.cpp
+%$$
+$head Example$$
+The file $cref/user_atomic.cpp/$$ contains an example and test
+using $code CPPAD_ATOMIC_FUNCTION$$.
+It returns true if the test passes and false otherwise.
+
 $end
 ------------------------------------------------------------------------------
 */
@@ -297,25 +344,37 @@ user defined atomic operations.
 */
 
 /*!
-\def CPPAD_ATOMIC_FUNCTION(Base, name)
+\def CPPAD_ATOMIC_FUNCTION(Base, afunction, forward, reverse)
 Defines the function <tt>name(ax, ay)</tt>  
 where \c ax and \c ay are vectors with <tt>AD<Base></tt> elements.
 
 \par Base
 is the base type for the atomic operation.
 
-\par name 
-is the name of the user defined function that corresponding to this operation.
+\par afunction 
+is the name of the CppAD defined function that corresponding to this operation.
+Note that \c #afunction is a version of afunction with quotes arround it.
+
+\par forward
+is the name of the user defined function that computes corresponding
+results during forward mode.
+
+\par reverse
+is the name of the user defined function that computes corresponding
+results during reverse mode.
+
+\par memory allocation
+Also not that user_atomic is used as a static object, so its objects
+do note get deallocated until the program terminates. 
 */
 
-// note that #name is a version of name with quotes arround it.
-# define CPPAD_ATOMIC_FUNCTION(Base, name)                   \
-inline bool name (                                           \
-     const CppAD::vector< AD<Base> >& ax,                    \
-     CppAD::vector< AD<Base> >&       ay                     \
-)                                                            \
-{    static CppAD:user_atomic<Base> fun(#name, name, name);  \
-     return fun.ad(ax, ay);                                  \
+# define CPPAD_ATOMIC_FUNCTION(Base, afunction, forward, reverse)        \
+inline bool name (                                                       \
+     const CppAD::vector< AD<Base> >& ax,                                \
+     CppAD::vector< AD<Base> >&       ay                                 \
+)                                                                        \
+{    static CppAD:user_atomic<Base> fun(#afunction, forward, reverse);   \
+     return fun.ad(ax, ay);                                              \
 }
 
 /*!
@@ -336,6 +395,8 @@ class user_atomic {
 		size_t               k, 
 		size_t               n,
 		size_t               m,
+		const vector<bool>& vx,
+		vector<bool>&       vy,
 		const vector<Base>& tx, 
 		vector<Base>&       ty
 	);
@@ -350,7 +411,7 @@ class user_atomic {
 		vector<Base>&       py
 	);
 private:
-	/// name of this atomic operation
+	/// users name for the AD version of this atomic operation
 	const std::string     name_;
 	/// user's implementation of forward mode
 	const F                  f_;
@@ -359,15 +420,16 @@ private:
 	/// index of this object in the vector of all objects in this class
 	const size_t         index_;
 
-	/// work space vector used for a Base copy of ax
-	std::vector<Base>        x_;
-	/// work space vector used for a Base copy of ay
-	std::vector<Base>        y_;
+	/// temporary work space used to avoid memory allocation/deallocation
+	vector<bool>            vx_;
+	vector<bool>            vy_;
+	vector<Base>             x_;
+	vector<Base>             y_;
 
 	/// List of all objects in this class.
-	static std::vector<user_atomic *> *List(void)
+	static std::vector<user_atomic *>& List(void)
 	{	static std::vector<user_atomic *> list;
-		return &list;
+		return list;
 	}
 public:
 	/*!
@@ -376,8 +438,8 @@ public:
 	Put this object in the list of all objects for this class and set
 	the constant private data name_, f_, r_, and index_.
 
-	\param Name
-	is the user's name for this atomic operation.
+	\param afunction
+	is the user's name for the AD version of this atomic operation.
 
 	\param f
 	user routine that does forward mode calculations for this operation.
@@ -385,12 +447,12 @@ public:
 	\param r
 	user routine that does reverse mode calculations for this operation.
 	*/
-	user_atomic(const char* Name, F f, R r) : 
-	name_(Name)
+	user_atomic(const char* afunction, F f, R r) : 
+	name_(afunction)
 	, f_(f)
 	, r_(r)
-	, index_( List()->size() )
-	{	List()->push_back(this); }
+	, index_( List().size() )
+	{	List().push_back(this); }
 
 	/*!
  	Implement the user call to <tt>name(ax, ay)</tt>.
@@ -412,16 +474,21 @@ public:
 		size_t m = ay.size();
 		//
 		if( x_.size() < n )
-			x_.resize(n);
+		{	x_.resize(n);
+			vx_.resize(n);
+		}
 		if( y_.size() < m )
-			y_.resize(m);
+		{	y_.resize(m);
+			vy_.resize(m);
+		}
 		//
 		// Determine if we are going to have to tape this operation
 		size_t tape_id    = 0;
 		ADTape<Base> tape = CPPAD_NULL;
 		for(j = 0; j < n; j++)
 		{	x_[j]   = ax[j].value_;
-			if ( tape == CPPAD_NULL & Variable(ax[j]) )
+			vx_[j]  = Variable( ax[j] );
+			if ( tape == CPPAD_NULL & vx_[j] )
 			{	tape    = ax[j].tape_this();
 				tape_id = ax[j].id_;
 			}
@@ -434,7 +501,7 @@ public:
 # endif
 		}
 		// Use zero order forward mode to compute values
-		bool ok = f_(0, x_, y_);  
+		bool ok = f_(0, vx_, vy_, x_, y_);  
 		if( ! ok )
 		{	std::string msg = name_ +
 			": ok returned false from zero order forward mode calculation";
@@ -462,7 +529,7 @@ public:
 			CPPAD_ASSERT_UNKNOWN( NumArg(UservOp) == 1 );
 			CPPAD_ASSERT_UNKNOWN( NumArg(UserpOp) == 1 );
 			for(j = 0; j < n; j++)
-			{	if( Variable(ax[j]) )
+			{	if( vx_[j] )
 				{	// information for an argument that is a variable
 					tape->Rec_.PutArg(ax[j].taddr_);
 					tape->Rec_.PutOp(UservOp);
@@ -479,8 +546,11 @@ public:
 			CPPAD_ASSERT_UNKNOWN( NumRes(UserrOp) == 1 );
 			CPPAD_ASSERT_UNKNOWN( NumArg(UserrOp) == 0 );
 			for(i = 0; i < m; i++)
-			{	ay[i].taddr = tape->Rec_.PutOp(UserrOp);
-				ay[i].id_   = tape_id;
+			{	if( vy_[i] )
+				{	ay[i].taddr = tape->Rec_.PutOp(UserrOp);
+					ay[i].id_   = tape_id;
+				}
+				else	tape->Rec_.PutOp(UserrOp);
 			}
 		} 
 		return;
@@ -488,7 +558,7 @@ public:
 
 	/// Name corresponding to a user_atomic object
 	static const char* name(size_t index)
-	{	return (*List())[index]->name_.c_str(); }
+	{	return List()[index]->name_.c_str(); }
 	/*!
  	Link from forward mode sweep to users routine.
 
@@ -520,11 +590,12 @@ public:
 		const vector<Base>&    tx,
 		vector<Base>&          ty
 	)
-	{
-		CPPAD_ASSERT_UNKNOWN(index < List()->size() );
-		user_atomic* op = (*List())[index];
+	{	static vector<bool> empty(0);
 
-		bool ok = op->f_(k, n, m, tx, ty);
+		CPPAD_ASSERT_UNKNOWN(index < List().size() );
+		user_atomic* op = List()[index];
+
+		bool ok = op->f_(k, n, m, empty, empty, tx, ty);
 		if( ! ok )
 		{	std::stringstream ss;
 			ss << k;
@@ -576,10 +647,10 @@ public:
 		vector<Base>&          py
 	)
 	{
-		CPPAD_ASSERT_UNKNOWN(index < List()->size() );
-		user_atomic* op = *( List()[index] );
+		CPPAD_ASSERT_UNKNOWN(index < List().size() );
+		user_atomic* op = List()[index];
 
-		bool ok = op->f_(k, n, m, tx, ty, px, py);
+		bool ok = op->r_(k, n, m, tx, ty, px, py);
 		if( ! ok )
 		{	std::stringstream ss;
 			ss << k;
@@ -587,6 +658,18 @@ public:
 				ss.str() + " order reverse mode calculation";
 			CPPAD_ASSERT_KNOWN(false, msg.c_str());
 		}
+	}
+
+	/// Free static CppAD::vector memory used by this class (work space)
+	static void clear(void)
+	{	size_t i = List().size();
+		while(i--)
+		{	List()[i]->vx_.resize(0);
+			List()[i]->vy_.resize(0);
+			List()[i]->x_.resize(0);
+			List()[i]->y_.resize(0);
+		}
+		return;
 	}
 };
 

@@ -202,9 +202,9 @@ private:
 	there is a memory leak because this list is not distroyed before
 	CPPAD_TRACK_COUNT is called by the test routines.
 	*/
-	static std::vector<discrete *>* List(void)
+	static std::vector<discrete *>& List(void)
 	{	static std::vector<discrete *> list;
-		return &list;
+		return list;
 	}
 public:
 	/*!
@@ -222,8 +222,8 @@ public:
 	discrete(const char* Name, F f) : 
 	name_(Name)
 	, f_(f) 
-	, index_( List()->size() )
-	{	List()->push_back(this); }
+	, index_( List().size() )
+	{	List().push_back(this); }
 
 	/*!
  	Implement the user call to <code>ay = name(ax)</code>.
@@ -257,7 +257,7 @@ public:
 
 	/// Name corresponding to a discrete object
 	static const char* name(size_t index)
-	{	return (*List())[index]->name_.c_str(); }
+	{	return List()[index]->name_.c_str(); }
 
 	/*!
  	Link from forward mode sweep to users routine
@@ -270,9 +270,9 @@ public:
 	*/
 	static Base eval(size_t index, const Base& x)
 	{
-		CPPAD_ASSERT_UNKNOWN(index < List()->size() );
+		CPPAD_ASSERT_UNKNOWN(index < List().size() );
 
-		return (*List())[index]->f_(x);
+		return List()[index]->f_(x);
 	}
 };
 
