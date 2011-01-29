@@ -28,55 +28,57 @@ $end
 // BEGIN PROGRAM
 # include <cppad/cppad.hpp>
 
-namespace { // Begin empty namespace
+namespace { // Empty namespace 
 
-using CppAD::vector;
+	using CppAD::vector;
 
-class matrix_multiply {
-private:
-	// order of this operation plus one
-	size_t k_plus1_;
-	// number of rows in the left matrix
-	size_t nr_left_;
-	// number of columns (rows) in left (right) matrix
-	size_t nc_left_;
-	// number of columns in the right matrix
-	size_t nc_right_;
+	// number of orders for this operation (k + 1)
+	size_t n_order_;
+	// number of rows in the result matrix
+	size_t nr_result_;
+	// number of columns in left matrix and number of rows in right matrix
+	size_t n_middle_;
+	// number of columns in the result matrix
+	size_t nc_result_;
 
 	// index in tx of Taylor coefficient of order ell for left[i,j]
 	size_t left(size_t i, size_t j, size_t ell)
-	{	assert( i < nr_left_ );
-		assert( j < nc_left_ );
-		return (3 + i * nc_left_ + j) * k_plus1_ + ell;
+	{	assert( i < nr_result_ );
+		assert( j < n_middle_ );
+		return (3 + i * n_middle_ + j) * n_order_ + ell;
 	}
+
 	// index in tx of Taylor coefficient of order ell for right[i,j]
 	size_t right(size_t i, size_t j, size_t ell)
-	{	assert( i < nc_left_ );
-		assert( j < nc_right_ );
-		size_t offset = 3 + nr_left_ * nc_left_;
-		return (offset + i * nc_right_ + j) * k_plus1_ + ell;
+	{	assert( i < n_middle_ );
+		assert( j < nc_result_ );
+		size_t offset = 3 + nr_result_ * n_middle_;
+		return (offset + i * nc_result_ + j) * n_order_ + ell;
 	}
+
 	// index in ty of Taylor coefficinet of order ell for result[i,j]
 	size_t result(size_t i, size_t j, size_t ell)
-	{	assert( i < nr_left_ );
-		assert( j < nc_right_ );
-		return (i * nc_right_ + j) * k_plus1_ + ell;
+	{	assert( i < nr_result_ );
+		assert( j < nc_result_ );
+		return (i * nc_result_ + j) * n_order_ + ell;
 	}
+
 	// multiply left times right and sum into result
 	void multiply_and_sum(
 		size_t                order_left , 
 		size_t                order_right, 
 		const vector<double>&         tx ,
 		vector<double>&               ty ) 
-	{	size_t i, j, l, il_left, lj_right, ij_result;
+	{	size_t i, j;
 		size_t order_result = order_left + order_right; 
-		for(i = 0; i < nr_left_; i++)
-		{	for(j = 0; j < nc_right_; j++)
+		for(i = 0; i < nr_result_; i++)
+		{	for(j = 0; j < nc_result_; j++)
 			{	double sum = 0.;
-				for(l = 0; l < nc_left_; l++)
-				{	il_left  = left(i, l, order_left);
-					lj_right = right(l, j, order_right);
-					sum     += tx[il_left] * tx[lj_right];
+				size_t middle, im_left, mj_right, ij_result;
+				for(middle = 0; middle < n_middle_; middle++)
+				{	im_left  = left(i, middle, order_left);
+					mj_right = right(middle, j, order_right);
+					sum     += tx[im_left] * tx[mj_right];
 				}
 				ij_result = result(i, j, order_result);
 				ty[ ij_result ] += sum;
@@ -85,9 +87,33 @@ private:
 		return;
 	}
 
-public:
+	void reverse_multiply(
+		size_t                order_left , 
+		size_t                order_right, 
+		const vector<double>&         tx ,
+		const vector<double>&         ty ,
+		vector<double>&               px ,
+		const vector<double>          py ) 
+	{	size_t i, j;
+		size_t order_result = order_left + order_right; 
+		for(i = 0; i < nr_result_; i++)
+		{	for(j = 0; j < nc_result_; j++)
+			{	size_t middle, im_left, mj_right, ij_result;
+				for(middle = 0; middle < n_middle_; middle++)
+				{	ij_result = result(i, j, order_result);
+					im_left   = left(i, middle, order_left);
+					mj_right  = right(middle, j, order_right);
+					// sum       += tx[im_left]  * tx[mj_right];
+					px[im_left]  += tx[mj_right] * py[ij_result];
+					px[mj_right] += tx[im_left]  * py[ij_result];
+				}
+			}
+		}
+		return;
+	}
+
 	// forward mode routine
-	bool forward_multiply(
+	bool forward_mat_mul(
 		size_t                 k,
 		size_t                 n,
 		size_t                 m,
@@ -96,51 +122,94 @@ public:
 		const vector<double>& tx,
 		vector<double>&       ty
 	)
-	{	size_t i, j, l, il_left, lj_right, ell;
-		k_plus1_   = k + 1;	
-		nr_left_   = size_t ( tx[0 * k_plus1_ + 0] ); // stored in ax[0]
-		nc_left_   = size_t ( tx[1 * k_plus1_ + 0] ); // stored in ax[1]
-		nc_right_  = size_t ( tx[2 * k_plus1_ + 0] ); // stored in ax[2]
+	{	size_t i, j, ell;
+		n_order_   = k + 1;	
+		nr_result_ = size_t ( tx[0 * n_order_ + 0] ); // stored in ax[0]
+		n_middle_  = size_t ( tx[1 * n_order_ + 0] ); // stored in ax[1]
+		nc_result_ = size_t ( tx[2 * n_order_ + 0] ); // stored in ax[2]
 
 		// check total number of components in ax
-		assert( 3 + nr_left_ * nc_left_ + nc_left_ * nc_right_  == n );
+		assert( 3 + nr_result_ * n_middle_ + n_middle_ * nc_result_  == n );
 
 		// check if we are computing vy
 		if( vy.size() > 0 )
 		{	assert( k == 0 && vx.size() > 0 );
 			// multiply left times right
-			for(i = 0; i < nr_left_; i++)
-			{	for(j = 0; j < nc_right_; j++)
+			for(i = 0; i < nr_result_; i++)
+			{	for(j = 0; j < nc_result_; j++)
 				{	// compute vy[ result(i, j, 0) ]
 					bool   var = false;
 					bool   nz_left, nz_right;
-					for(l = 0; l < nc_left_; l++)
-					{	il_left  = left(i, l, k);
-						lj_right = right(l, j, k);
-						nz_left  = vx[il_left]  | (tx[il_left] != 0.);
-						nz_right = vx[lj_right] | (tx[lj_right]!= 0.);
+					size_t middle, im_left, mj_right, ij_result;
+					for(middle = 0; middle < n_middle_; middle++)
+					{	im_left  = left(i, middle, k);
+						mj_right = right(middle, j, k);
+						nz_left  = vx[im_left]  | (tx[im_left] != 0.);
+						nz_right = vx[mj_right] | (tx[mj_right]!= 0.);
 						// if not multiplying by the constant zero
 						if( nz_left & nz_right )
-							var |= vx[il_left] & vx[lj_right];
+							var |= vx[im_left] & vx[mj_right];
 					}
+					ij_result     = result(i, j, k);
+					vy[ij_result] = var;
 				}
 			}
 		}
 
 		// initialize result as zero
-		for(i = 0; i < nr_left_; i++)
-		{	for(j = 0; j < nc_right_; j++)
+		for(i = 0; i < nr_result_; i++)
+		{	for(j = 0; j < nc_result_; j++)
 				ty[ result(i, j, k) ] = 0.;
 		}
 		// sum the product of proper orders
 		for(ell = 0; ell <=k; ell++)
 			multiply_and_sum(ell, k-ell, tx, ty);
+
+		// no error condtitions to check for, so always return true
+		return true;
 	}
-};
+
+	// reverse mode routine
+	bool reverse_mat_mul(
+		size_t                 k,
+		size_t                 n,
+		size_t                 m,
+		const vector<double>& tx,
+		const vector<double>& ty,
+		vector<double>&       px,
+		const vector<double>& py
+	)
+	{	n_order_   = k + 1;	
+		nr_result_ = size_t ( tx[0 * n_order_ + 0] ); // stored in ax[0]
+		n_middle_  = size_t ( tx[1 * n_order_ + 0] ); // stored in ax[1]
+		nc_result_ = size_t ( tx[2 * n_order_ + 0] ); // stored in ax[2]
+
+		size_t order = n_order_;
+		while(order--)
+		{	// reverse sum the products for specified order
+			size_t ell;
+			for(ell = 0; ell <=order; ell++)
+				reverse_multiply(ell, order-ell, tx, ty, px, py);
+		}
+
+		// no error condtitions to check for, so always return true
+		return true;
+	}
+
+	inline bool mat_mul (
+     	const CppAD::vector< CppAD::AD<double> >& ax,
+     	CppAD::vector< CppAD::AD<double> >&       ay
+	)
+	{    static CppAD::user_atomic<double> mat_mul(
+			"mat_mul", forward_mat_mul, reverse_mat_mul
+		);
+     	return mat_mul.ad(ax, ay);
+	}
 
 } // End empty namespace
 
 bool user_atomic(void)
-{	return true; // not yet implemented
+{
+	return true; // not yet implemented
 }
 // END PROGRAM
