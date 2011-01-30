@@ -130,6 +130,7 @@ namespace { // Empty namespace
 
 		// check total number of components in ax
 		assert( 3 + nr_result_ * n_middle_ + n_middle_ * nc_result_  == n );
+		assert( nr_result_ * nc_result_ == m );
 
 		// check if we are computing vy
 		if( vy.size() > 0 )
@@ -184,6 +185,9 @@ namespace { // Empty namespace
 		n_middle_  = size_t ( tx[1 * n_order_ + 0] ); // stored in ax[1]
 		nc_result_ = size_t ( tx[2 * n_order_ + 0] ); // stored in ax[2]
 
+		assert( 3 + nr_result_ * n_middle_ + n_middle_ * nc_result_  == n );
+		assert( nr_result_ * nc_result_ == m );
+
 		size_t order = n_order_;
 		while(order--)
 		{	// reverse sum the products for specified order
@@ -196,20 +200,40 @@ namespace { // Empty namespace
 		return true;
 	}
 
-	inline bool mat_mul (
-     	const CppAD::vector< CppAD::AD<double> >& ax,
-     	CppAD::vector< CppAD::AD<double> >&       ay
-	)
-	{    static CppAD::user_atomic<double> mat_mul(
-			"mat_mul", forward_mat_mul, reverse_mat_mul
-		);
-     	return mat_mul.ad(ax, ay);
-	}
+	CPPAD_ATOMIC_FUNCTION(double, mat_mul, forward_mat_mul, reverse_mat_mul)
 
 } // End empty namespace
 
 bool user_atomic(void)
-{
-	return true; // not yet implemented
+{	bool ok = true;
+	
+	size_t nr_result = 2;
+	size_t n_middle  = 2;
+	size_t nc_result = 1;
+	size_t n = 3 + nr_result * n_middle + n_middle * nc_result;
+	size_t m = nr_result * nc_result;
+
+	CppAD::vector< CppAD::AD<double> > ax(n), ay(m);
+	ax[0] = nr_result;
+	ax[1] = n_middle;
+	ax[2] = nc_result;
+	ax[3] = 1.; // left[0,0]
+	ax[4] = 2.; // left[0,1]
+	ax[5] = 3.; // left[1,0]
+	ax[6] = 4.; // left[1,1]
+	ax[7] = 1.; // right[0]
+	ax[8] = 2.; // right[1]
+	// [ 1 , 2 ] * [1] = [5]
+	// [ 3 , 4 ]   [2]   [11]
+	mat_mul(ax, ay);
+	//
+	ok &= (ay[0] == 5.);
+	ok &= (ay[1] == 11.);
+	//
+	// Free temporary work space vectors (future calls to mat_mul 
+	// would create new temporary work space vectors).
+	CppAD::user_atomic<double>::clear();
+
+	return ok;
 }
 // END PROGRAM

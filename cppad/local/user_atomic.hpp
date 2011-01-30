@@ -46,6 +46,7 @@ $icode%ok% = %forward%(%k%, %n%, %m%, %vx%, %vy%, %tx%, %ty%)
 %$$
 $icode%ok% = %reverse%(%k%, %n%, %m%, %tx%, %ty%, %px%, %py%)
 %$$
+$codei%user_atomic::clear()%$$
 
 $head Purpose$$
 In some cases, the user knows how to compute the derivative
@@ -325,6 +326,16 @@ Perhaps these sort of improvements
 (at the expense of the user's routine being more complicated)
 should be added to the CppAD $cref/wish list/WishList/$$.
 
+$head clear$$
+User atomic functions hold onto static work space vectors in order to
+increase speed by avoiding memory allocation calls.
+The function call $codei%
+	user_atomic<%Base%>::clear()
+%$$ 
+frees this work space. It should be called before using
+$cref/CPPAD_COUNT_TRACK/TrackNewDel/TrackCount/$$ to check for
+a memory leak.
+
 $children%
 	example/user_atomic.cpp
 %$$
@@ -368,12 +379,12 @@ do note get deallocated until the program terminates.
 */
 
 # define CPPAD_ATOMIC_FUNCTION(Base, afun, forward, reverse)        \
-inline bool name (                                                  \
+inline bool afun (                                                  \
      const CppAD::vector< CppAD::AD<Base> >& ax,                    \
      CppAD::vector< CppAD::AD<Base> >&       ay                     \
 )                                                                   \
-{    static CppAD::user_atomic<Base> afun(#afun, forward, reverse); \
-     return afun.ad(ax, ay);                                        \
+{    static CppAD::user_atomic<Base> fun(#afun, forward, reverse);  \
+     return fun.ad(ax, ay);                                         \
 }
 
 /*!
