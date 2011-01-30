@@ -553,7 +553,7 @@ void printOp(
 		case UserOp:
 		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 3 );
 		{	const char* name = user_atomic<Base>::name(ind[0]);
-			printOpField(os, "name=",   name, ncol);
+			printOpField(os,   " f=",   name, ncol);
 			printOpField(os,   " n=", ind[1], ncol);
 			printOpField(os,   " m=", ind[2], ncol);
 		}

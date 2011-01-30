@@ -124,6 +124,7 @@ namespace { // Empty namespace
 	)
 	{	size_t i, j, ell;
 		n_order_   = k + 1;	
+		// storing dimensions in ax enables mat_mul to work for any size
 		nr_result_ = size_t ( tx[0 * n_order_ + 0] ); // stored in ax[0]
 		n_middle_  = size_t ( tx[1 * n_order_ + 0] ); // stored in ax[1]
 		nc_result_ = size_t ( tx[2 * n_order_ + 0] ); // stored in ax[2]
@@ -149,7 +150,7 @@ namespace { // Empty namespace
 						nz_right = vx[mj_right] | (tx[mj_right]!= 0.);
 						// if not multiplying by the constant zero
 						if( nz_left & nz_right )
-							var |= vx[im_left] & vx[mj_right];
+							var |= (vx[im_left] | vx[mj_right]);
 					}
 					ij_result     = result(i, j, k);
 					vy[ij_result] = var;
@@ -206,30 +207,58 @@ namespace { // Empty namespace
 
 bool user_atomic(void)
 {	bool ok = true;
-	
-	size_t nr_result = 2;
-	size_t n_middle  = 2;
-	size_t nc_result = 1;
-	size_t n = 3 + nr_result * n_middle + n_middle * nc_result;
-	size_t m = nr_result * nc_result;
+	using CppAD::AD;
 
-	CppAD::vector< CppAD::AD<double> > ax(n), ay(m);
-	ax[0] = nr_result;
-	ax[1] = n_middle;
-	ax[2] = nc_result;
-	ax[3] = 1.; // left[0,0]
-	ax[4] = 2.; // left[0,1]
-	ax[5] = 3.; // left[1,0]
-	ax[6] = 4.; // left[1,1]
-	ax[7] = 1.; // right[0]
-	ax[8] = 2.; // right[1]
-	// [ 1 , 2 ] * [1] = [5]
-	// [ 3 , 4 ]   [2]   [11]
+	CPPAD_TEST_VECTOR< AD<double> > X(4), Y(4); 
+	size_t i, j;
+	for(j = 0; j < X.size(); j++)
+		X[j] = (j + 1);
+	CppAD::Independent(X);
+	
+	// ax and ay must use CppAD::vector
+	size_t n = 3 + 2*2 + 2*2;
+	size_t m = 2*2;
+	CppAD::vector< AD<double> > ax(n), ay(m);
+	// sizes 
+	ax[0]  = 2;     // nr_result   = 2
+	ax[1]  = 2;     // n_middle    = 2 
+	ax[2]  = 2;     // nc_result   = 2
+	// left matrix
+	ax[3]  = X[0];  // left[0,0]   = x[0] = 1
+	ax[4]  = X[1];  // left[0,1]   = x[1] = 2
+	ax[5]  = 5.;    // left[1,0]   = 5
+	ax[6]  = 6.;    // left[1,1]   = 6
+	// right matrix
+	ax[7]  = X[2];  // right[0,0]  = x[2] = 3
+	ax[8]  = 7.;    // right[0,1]  = 7
+	ax[9]  = X[3];  // right[1,0]  = x[3] = 4 
+	ax[10] = 8.;    // right[1,1]  = 8
+	/*
+	[ x0 , x1 ] * [ x2 , 7 ] = [ x0*x2 + x1*x3 , x0*7 + x1*8 ]
+	[ 5  , 6 ]    [ x3 , 8 ]   [ 5*x2  + 6*x3  , 5*7 + 6*8 ]
+	*/
 	mat_mul(ax, ay);
 	//
-	ok &= (ay[0] == 5.);
-	ok &= (ay[1] == 11.);
+	ok &= ay[0] == (1*3 + 2*4); ok &= Variable( ay[0] );
+	ok &= ay[1] == (1*7 + 2*8); ok &= Variable( ay[1] );
+	ok &= ay[2] == (5*3 + 6*4); ok &= Variable( ay[2] );
+	ok &= ay[3] == (5*7 + 6*8); ok &= Parameter( ay[3] );
 	//
+	for(i = 0; i < Y.size(); i++)
+		Y[i] = ay[i]; 
+	CppAD::ADFun<double> F(X, Y);
+	// f(x) = [ x0*x2 + x1*x3 , x0*7 + x1*8 , 5*x2  + 6*x3  , 5*7 + 6*8 ]
+	//
+	// Test zero order forward mode
+	CPPAD_TEST_VECTOR<double> x( X.size() ), y( Y.size() );
+	for(j = 0; j < x.size(); j++)
+		x[j] = j + 2;
+	y = F.Forward(0, x);
+	ok &= y[0] == x[0] * x[2] + x[1] * x[3];
+	ok &= y[1] == x[0] * 7.   + x[1] * 8.;
+	ok &= y[2] == 5. * x[2]   + 6. * x[3];
+	ok &= y[3] == 5. * 7.     + 6. * 8.;
+	
 	// Free temporary work space vectors (future calls to mat_mul 
 	// would create new temporary work space vectors).
 	CppAD::user_atomic<double>::clear();
