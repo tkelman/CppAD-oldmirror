@@ -531,33 +531,35 @@ public:
 			// n + m operators follow for this one atomic operation
 
 			// Now put the information for the argument vector in the tape
-			CPPAD_ASSERT_UNKNOWN( NumRes(UservOp) == 0 );
-			CPPAD_ASSERT_UNKNOWN( NumRes(UserpOp) == 0 );
-			CPPAD_ASSERT_UNKNOWN( NumArg(UservOp) == 1 );
-			CPPAD_ASSERT_UNKNOWN( NumArg(UserpOp) == 1 );
+			CPPAD_ASSERT_UNKNOWN( NumRes(UsravOp) == 0 );
+			CPPAD_ASSERT_UNKNOWN( NumRes(UsrapOp) == 0 );
+			CPPAD_ASSERT_UNKNOWN( NumArg(UsravOp) == 1 );
+			CPPAD_ASSERT_UNKNOWN( NumArg(UsrapOp) == 1 );
 			for(j = 0; j < n; j++)
 			{	if( vx_[j] )
 				{	// information for an argument that is a variable
 					tape->Rec_.PutArg(ax[j].taddr_);
-					tape->Rec_.PutOp(UservOp);
+					tape->Rec_.PutOp(UsravOp);
 				}
 				else
 				{	// information for an arugment that is parameter
 					parameter = tape->Rec_.PutPar(ax[j].value_);
 					tape->Rec_.PutArg(parameter);
-					tape->Rec_.PutOp(UserpOp);
+					tape->Rec_.PutOp(UsrapOp);
 				}
 			}
 
 			// Now put the information for the results in the tape
-			CPPAD_ASSERT_UNKNOWN( NumRes(UserrOp) == 1 );
-			CPPAD_ASSERT_UNKNOWN( NumArg(UserrOp) == 0 );
+			CPPAD_ASSERT_UNKNOWN( NumRes(UsrrpOp) == 0 );
+			CPPAD_ASSERT_UNKNOWN( NumRes(UsrrvOp) == 1 );
+			CPPAD_ASSERT_UNKNOWN( NumArg(UsrrpOp) == 0 );
+			CPPAD_ASSERT_UNKNOWN( NumArg(UsrrvOp) == 0 );
 			for(i = 0; i < m; i++)
 			{	if( vy_[i] )
-				{	ay[i].taddr_ = tape->Rec_.PutOp(UserrOp);
+				{	ay[i].taddr_ = tape->Rec_.PutOp(UsrrvOp);
 					ay[i].id_    = tape_id;
 				}
-				else	tape->Rec_.PutOp(UserrOp);
+				else	tape->Rec_.PutOp(UsrrpOp);
 			}
 		} 
 		return true;
