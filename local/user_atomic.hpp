@@ -550,16 +550,20 @@ public:
 			}
 
 			// Now put the information for the results in the tape
+			CPPAD_ASSERT_UNKNOWN( NumArg(UsrrpOp) == 1 );
 			CPPAD_ASSERT_UNKNOWN( NumRes(UsrrpOp) == 0 );
-			CPPAD_ASSERT_UNKNOWN( NumRes(UsrrvOp) == 1 );
-			CPPAD_ASSERT_UNKNOWN( NumArg(UsrrpOp) == 0 );
 			CPPAD_ASSERT_UNKNOWN( NumArg(UsrrvOp) == 0 );
+			CPPAD_ASSERT_UNKNOWN( NumRes(UsrrvOp) == 1 );
 			for(i = 0; i < m; i++)
 			{	if( vy_[i] )
 				{	ay[i].taddr_ = tape->Rec_.PutOp(UsrrvOp);
 					ay[i].id_    = tape_id;
 				}
-				else	tape->Rec_.PutOp(UsrrpOp);
+				else
+				{	parameter = tape->Rec_.PutPar(ay[i].value_);
+					tape->Rec_.PutArg(parameter);
+					tape->Rec_.PutOp(UsrrpOp);
+				}
 			}
 
 			// End operators corresponding to one user_atomic operation.

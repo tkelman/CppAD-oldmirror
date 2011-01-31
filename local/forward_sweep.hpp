@@ -127,8 +127,8 @@ size_t forward_sweep(
 # endif
 	const size_t   *arg = 0;
 
-	// a temporary index
-	size_t            i;
+	// temporary indices
+	size_t i, ell;
 
 	// initialize the comparision operator (ComOp) counter
 	size_t compareCount = 0;
@@ -559,8 +559,8 @@ size_t forward_sweep(
 			CPPAD_ASSERT_UNKNOWN( user_j < user_n );
 			CPPAD_ASSERT_UNKNOWN( arg[0] < num_par );
 			user_tx[user_j * user_k1 + 0] = parameter[ arg[0]];
-			for(i = 1; i < user_k1; i++)
-				user_tx[user_j * user_k1 + i] = Base(0);
+			for(ell = 1; ell < user_k1; ell++)
+				user_tx[user_j * user_k1 + ell] = Base(0);
 			++user_j;
 			if( user_j == user_n )
 			{	// call users function for this operation
@@ -576,8 +576,8 @@ size_t forward_sweep(
 			CPPAD_ASSERT_UNKNOWN( user_state == user_arg );
 			CPPAD_ASSERT_UNKNOWN( user_j < user_n );
 			CPPAD_ASSERT_UNKNOWN( arg[0] <= i_var );
-			for(i = 0; i < user_k1; i++)
-				user_tx[user_j * user_k1 + i] = Taylor[ arg[0] * J + i];
+			for(ell = 0; ell < user_k1; ell++)
+				user_tx[user_j * user_k1 + ell] = Taylor[ arg[0] * J + ell];
 			++user_j;
 			if( user_j == user_n )
 			{	// call users function for this operation
