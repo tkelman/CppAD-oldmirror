@@ -524,7 +524,7 @@ public:
 			CPPAD_ASSERT_UNKNOWN( NumRes(UserOp) == 0 );
 			CPPAD_ASSERT_UNKNOWN( NumArg(UserOp) == 3 );
 
-			// Start of operators corresponding to a user atomic operation.
+			// Begin operators corresponding to one user_atomic operation.
 			// Put function index, domain size, and range size in tape
 			tape->Rec_.PutArg(index_, n, m);
 			tape->Rec_.PutOp(UserOp);
@@ -561,6 +561,11 @@ public:
 				}
 				else	tape->Rec_.PutOp(UsrrpOp);
 			}
+
+			// End operators corresponding to one user_atomic operation.
+			// Put function index, domain size, and range size in tape
+			tape->Rec_.PutArg(index_, n, m);
+			tape->Rec_.PutOp(UserOp);
 		} 
 		return true;
 	}

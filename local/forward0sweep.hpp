@@ -138,7 +138,7 @@ size_t forward0sweep(
 	// (Declared here to avoid repeated memory allocation and deallocation).
 	CppAD::vector<Base> user_tx, user_ty;
 	size_t user_index=0, user_i=0, user_j=0, user_k=0, user_m=0, user_n=0;
-	enum { user_none, user_arg, user_ret } user_state = user_none;
+	enum { user_start, user_arg, user_ret, user_end } user_state = user_start;
 
 	// check numvar argument
 	CPPAD_ASSERT_UNKNOWN( Rec->num_rec_var() == numvar );
@@ -478,17 +478,25 @@ size_t forward0sweep(
 			// start an atomic operation sequence
 			CPPAD_ASSERT_UNKNOWN( NumArg( UserOp ) == 3 );
 			CPPAD_ASSERT_UNKNOWN( NumRes( UserOp ) == 0 );
-			CPPAD_ASSERT_UNKNOWN( user_state == user_none );
-			user_index = arg[0];
-			user_n     = arg[1];
-			user_m     = arg[2];
-			if( (user_tx.size() < user_n) | (user_ty.size() < user_m) )
-			{	user_tx.resize(user_n);
-				user_ty.resize(user_m);
+			if( user_state == user_start )
+			{	user_index = arg[0];
+				user_n     = arg[1];
+				user_m     = arg[2];
+				if( (user_tx.size() < user_n) | (user_ty.size() < user_m) )
+				{	user_tx.resize(user_n);
+					user_ty.resize(user_m);
+				}
+				user_j     = 0;
+				user_i     = 0;
+				user_state = user_arg;
 			}
-			user_j     = 0;
-			user_i     = 0;
-			user_state = user_arg;
+			else
+			{	CPPAD_ASSERT_UNKNOWN( user_state == user_end );
+				CPPAD_ASSERT_UNKNOWN( user_index == arg[0] );
+				CPPAD_ASSERT_UNKNOWN( user_n     == arg[1] );
+				CPPAD_ASSERT_UNKNOWN( user_m     == arg[2] );
+				user_state = user_start;
+			}
 			break;
 
 			case UsrapOp:
@@ -527,7 +535,7 @@ size_t forward0sweep(
 			CPPAD_ASSERT_UNKNOWN( user_i < user_m );
 			user_i++;
 			if( user_i == user_m )
-				user_state = user_none;
+				user_state = user_end;
 			break;
 
 			case UsrrvOp:
@@ -536,7 +544,7 @@ size_t forward0sweep(
 			CPPAD_ASSERT_UNKNOWN( user_i < user_m );
 			Taylor[ i_var * J + 0 ] = user_ty[user_i++];
 			if( user_i == user_m )
-				user_state = user_none;
+				user_state = user_end;
 			break;
 			// -------------------------------------------------
 
@@ -564,6 +572,7 @@ size_t forward0sweep(
 # else
 	}
 # endif
+	CPPAD_ASSERT_UNKNOWN( user_state == user_start );
 	CPPAD_ASSERT_UNKNOWN( i_var + 1 == Rec->num_rec_var() );
 
 	if( VectorInd != CPPAD_NULL )
