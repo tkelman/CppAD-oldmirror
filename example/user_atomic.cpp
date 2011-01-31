@@ -247,9 +247,9 @@ bool user_atomic(void)
 	for(i = 0; i < Y.size(); i++)
 		Y[i] = ay[i]; 
 	CppAD::ADFun<double> F(X, Y);
-	// f(x) = [ x0*x2 + x1*x3 , x0*7 + x1*8 , 5*x2  + 6*x3  , 5*7 + 6*8 ]
+	// f(x) = [ x0*x2 + x1*x3 , x0*7 + x1*8 , 5*x2  + 6*x3  , 5*7 + 6*8 ]^T
 	//
-	// Test zero order forward mode
+	// Test zero order forward mode evaluation of f(x)
 	CPPAD_TEST_VECTOR<double> x( X.size() ), y( Y.size() );
 	for(j = 0; j < x.size(); j++)
 		x[j] = j + 2;
@@ -258,9 +258,24 @@ bool user_atomic(void)
 	ok &= y[1] == x[0] * 7.   + x[1] * 8.;
 	ok &= y[2] == 5. * x[2]   + 6. * x[3];
 	ok &= y[3] == 5. * 7.     + 6. * 8.;
+
+	// f'(x) = [ x2, x3, x0, x1 ]
+	//         [ 7 ,  8,  0, 0  ]
+	//         [ 0 ,  0,  5, 6  ]
+	//         [ 0 ,  0,  0, 0  ] 
+	//
+	// Test first order forward mode evaluation of f'(x) * [1, 2, 3, 4]^T 
+	CPPAD_TEST_VECTOR<double> dx( x.size() ), dy( y.size() );
+	for(j = 0; j < x.size(); j++)
+		dx[j] = j + 1;
+	dy = F.Forward(1, dx);
+	ok &= dy[0] == 1. * x[2] + 2. * x[3] + 3. * x[0] + 4. * x[1];
+	ok &= dy[1] == 1. * 7.   + 2. * 8.   + 3. * 0.   + 4. * 0.;
+	ok &= dy[2] == 1. * 0.   + 2. * 0.   + 3. * 5.   + 4. * 6.;
+	ok &= dy[3] == 1. * 0.   + 2. * 0.   + 3. * 0.   + 4. * 0.;
 	
-	// Free temporary work space vectors (future calls to mat_mul 
-	// would create new temporary work space vectors).
+	// Free temporary work space. (If there are future calls to 
+	// mat_mul they would create new temporary work space.)
 	CppAD::user_atomic<double>::clear();
 
 	return ok;
