@@ -85,7 +85,7 @@ enum OpCode {
 	// user atomic operation codes (note yet implemented)
 	UsrapOp,  //  this user atomic argument is a parameter
 	UsravOp,  //  this user atomic argument is a variable
-	UserOp,    //  start of a user atomic operaiton
+	UserOp,   //  start of a user atomic operaiton
 	UsrrpOp,  //  this user atomic result is a parameter
 	UsrrvOp   //  this user atomic result is a variable
 };
@@ -148,7 +148,7 @@ const size_t NumArgTable[] = {
 	1, // UsrapOp
 	1, // UsravOp
 	3, // UserOp
-	0, // UsrrpOp
+	1, // UsrrpOp
 	0  // UsrrvOp
 };
 
@@ -550,6 +550,7 @@ void printOp(
 
 		case ParOp:
 		case UsrapOp:
+		case UsrrpOp:
 		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 1 );
 		printOpField(os, "  p=", Rec->GetPar(ind[0]), ncol);
 		break;
@@ -578,7 +579,6 @@ void printOp(
 		case BeginOp:
 		case EndOp:
 		case InvOp:
-		case UsrrpOp:
 		case UsrrvOp:
 		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 0 );
 		break;
