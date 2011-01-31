@@ -550,7 +550,9 @@ size_t forward_sweep(
 			CPPAD_ASSERT_UNKNOWN( user_state == user_arg );
 			CPPAD_ASSERT_UNKNOWN( user_j < user_n );
 			CPPAD_ASSERT_UNKNOWN( arg[0] < num_par );
-				user_tx[user_j * user_k1 + 0] = parameter[ arg[0]];
+			user_tx[user_j * user_k1 + 0] = parameter[ arg[0]];
+			for(i = 1; i < user_k1; i++)
+				user_tx[user_j * user_k1 + i] = Base(0);
 			++user_j;
 			if( user_j == user_n )
 			{	// call users function for this operation
@@ -591,7 +593,8 @@ size_t forward_sweep(
 			// next result in an atomic operation sequence
 			CPPAD_ASSERT_UNKNOWN( user_state == user_ret );
 			CPPAD_ASSERT_UNKNOWN( user_i < user_m );
-			Taylor[ i_var * J + user_k ] = user_ty[user_i++];
+			Taylor[i_var * J + user_k] = user_ty[user_i * user_k1 + user_k];
+			++user_i;
 			if( user_i == user_m )
 				user_state = user_none;
 			break;
