@@ -138,6 +138,7 @@ size_t forward0sweep(
 	// (Declared here to avoid repeated memory allocation and deallocation).
 	CppAD::vector<Base> user_tx, user_ty;
 	size_t user_index=0, user_i=0, user_j=0, user_k=0, user_m=0, user_n=0;
+	enum { user_none, user_arg, user_ret } user_state = user_none;
 
 	// check numvar argument
 	CPPAD_ASSERT_UNKNOWN( Rec->num_rec_var() == numvar );
@@ -477,8 +478,7 @@ size_t forward0sweep(
 			// start an atomic operation sequence
 			CPPAD_ASSERT_UNKNOWN( NumArg( UserOp ) == 3 );
 			CPPAD_ASSERT_UNKNOWN( NumRes( UserOp ) == 0 );
-			CPPAD_ASSERT_UNKNOWN( user_i == 0 );
-			CPPAD_ASSERT_UNKNOWN( user_j == 0 );
+			CPPAD_ASSERT_UNKNOWN( user_state == user_none );
 			user_index = arg[0];
 			user_k     = 0;
 			user_n     = arg[1];
@@ -487,40 +487,56 @@ size_t forward0sweep(
 			{	user_tx.resize(user_n);
 				user_ty.resize(user_m);
 			}
+			user_j     = 0;
+			user_state = user_arg;
 			break;
 
-			case UservOp:
+			case UsrapOp:
 			// next argument in an atomic operation sequence
-			CPPAD_ASSERT_UNKNOWN( user_i == 0 );
-			CPPAD_ASSERT_UNKNOWN( user_j < user_n );
-			CPPAD_ASSERT_UNKNOWN( arg[0] <= i_var );
-			user_tx[user_j++] = Taylor[ arg[0] * J + 0 ];
-			break;
-
-			case UserpOp:
-			// next argument in an atomic operation sequence
-			CPPAD_ASSERT_UNKNOWN( user_i == 0 );
+			CPPAD_ASSERT_UNKNOWN( user_state == user_arg );
 			CPPAD_ASSERT_UNKNOWN( user_j < user_n );
 			CPPAD_ASSERT_UNKNOWN( arg[0] < num_par );
 			user_tx[user_j++] = parameter[ arg[0] ];
-			break;
-
-			case UserrOp:
-			// next result in an atomic operation sequence
-			CPPAD_ASSERT_UNKNOWN( user_i < user_m );
-			CPPAD_ASSERT_UNKNOWN( user_j == user_n || user_j == 0 );
-			CPPAD_ASSERT_UNKNOWN( NumRes(op) == 1 );
 			if( user_j == user_n )
 			{	// call users function for this operation
 				user_atomic<Base>::forward(
 					user_index, user_k, user_n, user_m, user_tx, user_ty
 				);
-				// zero indicates done with arguments
-				user_j = 0;
+				user_state = user_ret;
 			}
+			break;
+
+			case UsravOp:
+			// next argument in an atomic operation sequence
+			CPPAD_ASSERT_UNKNOWN( user_state == user_arg );
+			CPPAD_ASSERT_UNKNOWN( user_j < user_n );
+			CPPAD_ASSERT_UNKNOWN( arg[0] <= i_var );
+			user_tx[user_j++] = Taylor[ arg[0] * J + 0 ];
+			if( user_j == user_n )
+			{	// call users function for this operation
+				user_atomic<Base>::forward(
+					user_index, user_k, user_n, user_m, user_tx, user_ty
+				);
+				user_state = user_ret;
+			}
+			break;
+
+			case UsrrpOp:
+			// next result in an atomic operation sequence
+			CPPAD_ASSERT_UNKNOWN( user_state == user_ret );
+			CPPAD_ASSERT_UNKNOWN( user_i < user_m );
+			user_i++;
+			if( user_i == user_m )
+				user_state = user_none;
+			break;
+
+			case UsrrvOp:
+			// next result in an atomic operation sequence
+			CPPAD_ASSERT_UNKNOWN( user_state == user_ret );
+			CPPAD_ASSERT_UNKNOWN( user_i < user_m );
 			Taylor[ i_var * J + 0 ] = user_ty[user_i++];
 			if( user_i == user_m )
-				user_i = 0; // zero indicates done with results
+				user_state = user_none;
 			break;
 			// -------------------------------------------------
 

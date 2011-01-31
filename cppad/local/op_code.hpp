@@ -83,10 +83,11 @@ enum OpCode {
 	SubvpOp,  //      variable   - parameter
 	SubvvOp,  //      variable   - variable
 	// user atomic operation codes (note yet implemented)
-	UserOp,   //  start of a user atomic operaiton
-	UserpOp,  //  this argument is a parameter
-	UserrOp,  //  this is a result for the operation
-	UservOp   //  this argument is a variable
+	UsrapOp,  //  this user atomic argument is a parameter
+	UsravOp,  //  this user atomic argument is a variable
+	UserOp,    //  start of a user atomic operaiton
+	UsrrpOp,  //  this user atomic result is a parameter
+	UsrrvOp   //  this user atomic result is a variable
 };
 
 /*!
@@ -144,10 +145,11 @@ const size_t NumArgTable[] = {
 	2, // SubpvOp
 	2, // SubvpOp
 	2, // SubvvOp
+	1, // UsrapOp
+	1, // UsravOp
 	3, // UserOp
-	1, // UserpOp
-	0, // UserrOp
-	1  // UservOp
+	0, // UsrrpOp
+	0  // UsrrvOp
 };
 
 /*!
@@ -161,10 +163,10 @@ Operator for which we are fetching the number of arugments.
 */
 inline size_t NumArg( OpCode op)
 {
-	CPPAD_ASSERT_UNKNOWN( size_t(UservOp) == 
+	CPPAD_ASSERT_UNKNOWN( size_t(UsrrvOp) == 
 		sizeof(NumArgTable) / sizeof(NumArgTable[0]) - 1
 	);
-	CPPAD_ASSERT_UNKNOWN( size_t(op) <= size_t(UservOp) );
+	CPPAD_ASSERT_UNKNOWN( size_t(op) <= size_t(UsrrvOp) );
 
 	return NumArgTable[(size_t) op];
 }
@@ -224,10 +226,11 @@ const size_t NumResTable[] = {
 	1, // SubpvOp
 	1, // SubvpOp
 	1, // SubvvOp
+	0, // UsrapOp
+	0, // UsravOp
 	0, // UserOp
-	0, // UserpOp
-	1, // UserrOp
-	0, // UservOp
+	0, // UsrrpOp
+	1, // UsrrvOp
 	0  // Not used: avoids warning by g++ 4.3.2 when pycppad builds
 };
 
@@ -242,11 +245,11 @@ Operator for which we are fetching the number of result variables.
 */
 inline size_t NumRes(OpCode op)
 {	// check ensuring conversion to size_t is as expected
-	CPPAD_ASSERT_UNKNOWN( size_t(UservOp) == 
+	CPPAD_ASSERT_UNKNOWN( size_t(UsrrvOp) == 
 		sizeof(NumResTable) / sizeof(NumResTable[0]) - 2
 	);
 	// this test ensures that all indices are within the table
-	CPPAD_ASSERT_UNKNOWN( size_t(op) <= size_t(UservOp) );
+	CPPAD_ASSERT_UNKNOWN( size_t(op) <= size_t(UsrrvOp) );
 
 	return NumResTable[(size_t) op];
 }
@@ -418,13 +421,14 @@ void printOp(
 		"Subpv" ,
 		"Subvp" ,
 		"Subvv" ,
+		"UsrapOp",
+		"UsravOp",
 		"UserOp",
-		"UserpOp",
-		"UserrOp",
-		"UservOp"
+		"UsrrpOp",
+		"UsrrvOp"
 	};
 	CPPAD_ASSERT_UNKNOWN( 
-		size_t(UservOp) == sizeof(OpName) / sizeof(OpName[0]) - 1
+		size_t(UsrrvOp) == sizeof(OpName) / sizeof(OpName[0]) - 1
 	);
 
 	// print operator
@@ -539,13 +543,13 @@ void printOp(
 		case SinOp:
 		case SinhOp:
 		case SqrtOp:
-		case UservOp:
+		case UsravOp:
 		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 1 );
 		printOpField(os, "  v=", ind[0], ncol);
 		break;
 
 		case ParOp:
-		case UserpOp:
+		case UsrapOp:
 		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 1 );
 		printOpField(os, "  p=", Rec->GetPar(ind[0]), ncol);
 		break;
@@ -574,7 +578,8 @@ void printOp(
 		case BeginOp:
 		case EndOp:
 		case InvOp:
-		case UserrOp:
+		case UsrrpOp:
+		case UsrrvOp:
 		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 0 );
 		break;
 
