@@ -480,7 +480,6 @@ size_t forward0sweep(
 			CPPAD_ASSERT_UNKNOWN( NumRes( UserOp ) == 0 );
 			CPPAD_ASSERT_UNKNOWN( user_state == user_none );
 			user_index = arg[0];
-			user_k     = 0;
 			user_n     = arg[1];
 			user_m     = arg[2];
 			if( (user_tx.size() < user_n) | (user_ty.size() < user_m) )
@@ -488,6 +487,7 @@ size_t forward0sweep(
 				user_ty.resize(user_m);
 			}
 			user_j     = 0;
+			user_i     = 0;
 			user_state = user_arg;
 			break;
 
