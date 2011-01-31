@@ -20,15 +20,7 @@ during
 	bin/commit.sh edit 
 for example this entire paragraph is preserved.
 
-bin/check_include_omh.sh@
-bin/gpl_license.sh@
-bin/run_omhelp.sh@
-bin/svn_merge.sh@
-build.sh@
-dev.omh@
-makefile.am@
-makefile.in@
-omh/distribute.omh@
+dir/file.ext@ optional comment about this file.
 EOF
 # -----------------------------------------------------------------------------
 if [ $0 != "bin/commit.sh" ]
