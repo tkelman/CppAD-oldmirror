@@ -273,7 +273,24 @@ bool user_atomic(void)
 	ok &= dy[1] == 1. * 7.   + 2. * 8.   + 3. * 0.   + 4. * 0.;
 	ok &= dy[2] == 1. * 0.   + 2. * 0.   + 3. * 5.   + 4. * 6.;
 	ok &= dy[3] == 1. * 0.   + 2. * 0.   + 3. * 0.   + 4. * 0.;
-	
+
+	// f_0^2 (x) = [ 0, 0, 1, 0 ], f_0^2 (x) * [1] = [3]
+	//             [ 0, 0, 0, 1 ]              [2]   [4]
+	//             [ 1, 0, 0, 0 ]              [3]   [1]
+	//             [ 0, 1, 0, 0 ]              [4]   [2]
+	//
+	// Test second order forward mode evaluaiton of 
+	CPPAD_TEST_VECTOR<double> ddx( x.size() ), ddy( y.size() );
+	for(j = 0; j < x.size(); j++)
+		ddx[j] = 0.;
+	ddy = F.Forward(2, ddx);
+	// [1, 2, 3, 4] * f_0^2 (x) * [1, 2, 3, 4]^T = 1*3 + 2*4 + 3*1 + 4*2
+	ok &= 2. * ddy[0] == 1. * 3. + 2. * 4. + 3. * 1. + 4. * 2.; 
+	// for i > 0, [1, 2, 3, 4] * f_i^2 (x) * [1, 2, 3, 4]^T = 0
+	ok &= ddy[1] == 0.;
+	ok &= ddy[2] == 0.;
+	ok &= ddy[3] == 0.;
+
 	// Free temporary work space. (If there are future calls to 
 	// mat_mul they would create new temporary work space.)
 	CppAD::user_atomic<double>::clear();
