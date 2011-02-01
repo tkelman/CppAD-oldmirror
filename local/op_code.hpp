@@ -421,11 +421,11 @@ void printOp(
 		"Subpv" ,
 		"Subvp" ,
 		"Subvv" ,
-		"UsrapOp",
-		"UsravOp",
-		"UserOp",
-		"UsrrpOp",
-		"UsrrvOp"
+		"Usrap" ,
+		"Usrav" ,
+		"User"  ,
+		"Usrrp" ,
+		"Usrrv"
 	};
 	CPPAD_ASSERT_UNKNOWN( 
 		size_t(UsrrvOp) == sizeof(OpName) / sizeof(OpName[0]) - 1
