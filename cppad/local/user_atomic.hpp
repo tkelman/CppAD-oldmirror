@@ -218,7 +218,7 @@ For $latex j = 0 , \ldots , n-1$$ and $latex \ell = 0 , \ldots , k$$,
 $latex \[
 	px[ j * (k + 1 ) + \ell ]
 \] $$
-is a partial derivative of a scalar values function with respect to
+is a partial derivative of a scalar valued function with respect to
 the Taylor coefficient $latex x_j^\ell$$.
 If $icode%px%.size() > (%k% + 1) * %n%$$,
 the other components of $icode px$$ are not specified and should not be used.
@@ -233,7 +233,7 @@ For $latex i = 0 , \ldots , m-1$$ and $latex \ell = 0 , \ldots , k$$,
 $latex \[
 	py[ i * (k + 1 ) + \ell ]
 \] $$
-is a partial derivative of a scalar values function with respect to
+is a partial derivative of a scalar valued function with respect to
 the Taylor coefficient $latex y_i^\ell$$.
 If $icode%py%.size() > (%k% + 1) * %m%$$,
 the other components of $icode py$$ are not specified and should not be used.
@@ -279,16 +279,14 @@ is used to compute results during a $cref/reverse/Reverse/$$ mode sweep.
 The input value of the vectors $icode tx$$ and $icode ty$$
 contain Taylor coefficient up to order $icode k$$.
 There is an arbitrary function of these Taylor coefficients
-$latex g : B^{n \times k} \times B^{m \times k} \rightarrow B$$.
-The input value of the vectors $icode px$$ and $icode py$$ 
-contain the partial derivatives
-of $latex g$$ with w.r.t the Taylor coefficients.
+$latex f : B^{m \times k} \rightarrow B$$.
+The input value of the vector $icode py$$ 
+contains the partial derivatives
+of $latex f$$ with w.r.t the Taylor coefficients $icode ty$$.
 To be specific
 $latex \[
 \begin{array}{rcl}
-	\partial g / \partial x_j^\ell & = & px [ j * ( k + 1 ) + \ell ]
-	\\
-	\partial g / \partial y_i^\ell & = & py [ i * ( k + 1 ) + \ell ]
+	\partial f / \partial y_i^\ell & = & py [ i * ( k + 1 ) + \ell ]
 \end{array}
 \] $$
 Using the calculations from forward mode,
@@ -296,7 +294,7 @@ the Taylor coefficient for $icode y$$ are a function of the Taylor
 Coefficient for $icode x$$; so we write $latex y(x)$$ 
 for this function and define
 $latex \[
-	h(x) = g [ x , y(x) ]
+	h(x) = f [ y(x) ]
 \] $$
 The output values in the vector $icode px$$ contain the derivative
 of $latex h$$ with respect to $latex x$$.
@@ -307,24 +305,16 @@ $latex \[
 	px [ i * (k + 1) + k ] & = & \partial h / \partial x_j^\ell
 	\\
 	& = & 
-	\partial g / \partial x_j^\ell 
-	\; + \; 
 	( \partial g / \partial y^\ell ) ( \partial y / \partial x_j^\ell )
 \end{array}
 \] $$
 
 $head Efficiency$$
-If any elements of $icode ax$$ are variables,
-all of elements of $icode ay$$ must be treated as variables because
-the user's $icode name$$ routine does not get and track this information.
-In addition, no sparsity pattern information is passed to and from
+No sparsity pattern information is passed to and from
 the user's $icode name$$ routine. 
 Hence the 
-$cref/sparsity pattern/glossary/Sparsity Pattern/$$ will not be 
-as efficient they should be.
-Perhaps these sort of improvements
-(at the expense of the user's routine being more complicated)
-should be added to the CppAD $cref/wish list/WishList/$$.
+$cref/sparsity pattern/Sparse/$$ routines are not yet allowed
+with user_atomic functions.
 
 $head clear$$
 User atomic functions hold onto static work space vectors in order to

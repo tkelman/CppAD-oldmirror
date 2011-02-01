@@ -3,7 +3,7 @@
 # define CPPAD_REV_JAC_SWEEP_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-10 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-11 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -472,6 +472,15 @@ void RevJacSweep(
 			CPPAD_ASSERT_NARG_NRES(op, 2, 1);
 			reverse_sparse_jacobian_unary_op(
 				i_var, arg[0], var_sparsity
+			);
+			break;
+			// -------------------------------------------------
+
+			case UserOp:
+			CPPAD_ASSERT_KNOWN(
+				false,
+				"sparsity patterns for user atomic functions "
+				"are not yet supported"
 			);
 			break;
 			// -------------------------------------------------

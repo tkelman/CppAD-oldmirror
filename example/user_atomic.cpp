@@ -189,10 +189,13 @@ namespace { // Empty namespace
 		assert( 3 + nr_result_ * n_middle_ + n_middle_ * nc_result_  == n );
 		assert( nr_result_ * nc_result_ == m );
 
+		size_t ell = n * n_order_;
+		while(ell--)
+			px[ell] = 0.;
+
 		size_t order = n_order_;
 		while(order--)
 		{	// reverse sum the products for specified order
-			size_t ell;
 			for(ell = 0; ell <=order; ell++)
 				reverse_multiply(ell, order-ell, tx, ty, px, py);
 		}
@@ -279,7 +282,7 @@ bool user_atomic(void)
 	//             [ 1, 0, 0, 0 ]              [3]   [1]
 	//             [ 0, 1, 0, 0 ]              [4]   [2]
 	//
-	// Test second order forward mode evaluaiton of 
+	// Test second order forward mode 
 	CPPAD_TEST_VECTOR<double> ddx( x.size() ), ddy( y.size() );
 	for(j = 0; j < x.size(); j++)
 		ddx[j] = 0.;
@@ -291,6 +294,24 @@ bool user_atomic(void)
 	ok &= ddy[2] == 0.;
 	ok &= ddy[3] == 0.;
 
+	// Test second order reverse mode 
+	CPPAD_TEST_VECTOR<double> w( y.size() ), dw( 2 * x.size() );
+	for(i = 0.; i < y.size(); i++)
+		w[i] = 0.;
+	w[0] = 1.;
+	dw = F.Reverse(2, w);
+	// f_0'(x) = [ x2, x3, x0, x1 ]
+	ok &= dw[0*2 + 0] == x[2];
+	ok &= dw[1*2 + 0] == x[3];
+	ok &= dw[2*2 + 0] == x[0];
+	ok &= dw[3*2 + 0] == x[1];
+	// f_0'(x)   * [1, 2, 3, 4]  = 1 * x2 + 2 * x3 + 3 * x0 + 4 * x1
+	// f_0^2 (x) * [1, 2, 3, 4]  = [3, 4, 1, 2]
+	ok &= dw[0*2 + 1] == 3.;
+	ok &= dw[1*2 + 1] == 4.;
+	ok &= dw[2*2 + 1] == 1.;
+	ok &= dw[3*2 + 1] == 2.;
+	
 	// Free temporary work space. (If there are future calls to 
 	// mat_mul they would create new temporary work space.)
 	CppAD::user_atomic<double>::clear();
