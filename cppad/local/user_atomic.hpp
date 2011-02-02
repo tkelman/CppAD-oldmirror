@@ -62,55 +62,36 @@ $head vector$$
 Here and below $code vector$$ refers to the
 CppAD $cref/vector/CppAD_vector/$$ template class.
 
+$head CPPAD_ATOMIC_FUNCTION$$
+$index CPPAD_ATOMIC_FUNCTION$$
+The preprocessor macro invocation
+$codei%
+	CPPAD_ATOMIC_FUNCTION(%Base%, %afun%, %forward%, %reverse%)
+%$$ 
+defines the $codei%AD<%Base%>%$$ version of $icode afun$$.
+This macro can be placed within a namespace 
+(not the $code CppAD$$ namespace) 
+but must be outside of any routine.
+
 $head Base$$
 This is the 
 $cref/base type/base_require/$$
 corresponding to the operations sequence;
-i.e., we are adding $icode name$$, 
+i.e., we are adding $icode afun$$, 
 with arguments and results of type $codei%AD<%Base%>%$$,
 to the list of available atomic operations.
 
-$head afun$$
-This is the name of the AD function corresponding to this atomic
-operation (as it is used in the source code).
-CppAD uses the functions $icode forward$$ and $icode reverse$$,
-where the arguments are vectors with elements of type $icode Base$$,
-to create $icode afun$$
-where the argument are vectors with elements of type $codei%AD<%Base%>%$$.
-
-
 $head ok$$
-The return value $icode ok$$ has prototype
+For all routines documented below,
+the return value $icode ok$$ has prototype
 $codei%
 	bool %ok%
 %$$
 If it is $code true$$, the corresponding evaluation succeeded,
 otherwise it failed.
 
-$head ax$$
-The argument $icode ax$$ has prototype
-$codei%
-	const vector< AD<%Base%> >& %ax%
-%$$
-It is the argument value at which the $codei%AD<%Base%>%$$ version of 
-$latex y = f(x)$$ is to be evaluated.
-The size of this vector,
-(the dimension of the domain space for $latex f$$)
-may depend on the call to $icode name$$.
-
-$head ay$$
-The result $icode ay$$ has prototype
-$codei%
-	vector< AD<%Base%> > %ay%
-%$$
-It is the result of the evaluation of the $codei%AD<%Base%>%$$ version of 
-$latex y = f(x)$$.
-The size of this vector,
-(the dimension of the range space for $latex f$$)
-may depend on the call to $icode name$$.
-
 $head k$$
-The argument $icode k$$ has prototype
+For all routines documented below, the argument $icode k$$ has prototype
 $codei%
 	size_t %k%
 %$$
@@ -118,57 +99,25 @@ The value $icode%k%$$ is the order of the Taylor coefficient that
 we are either evaluating, or taking the derivative of.
 
 $head n$$
-The argument $icode n$$ has prototype
+For all routines documented below, 
+the argument $icode n$$ has prototype
 $codei%
 	size_t %n%
 %$$
 It is the size of the vector $icode ax$$ in the corresponding call to
-$icode%name%(%ax%, %ay%)%$$.
+$icode%afun%(%ax%, %ay%)%$$.
 
 $head m$$
-The argument $icode m$$ has prototype
+For all routines documented below, the argument $icode m$$ has prototype
 $codei%
 	size_t %m%
 %$$
 It is the size of the vector $icode ay$$ in the corresponding call to
-$icode%name%(%ax%, %ay%)%$$.
-
-$head vx$$
-The argument $icode vx$$ has prototype
-$codei%
-	const vector<bool>& %vx%
-%$$
-If $icode%vx%.size() == 0%$$, it should not be used.
-Otherwise, 
-$icode%k% == 0%$$, 
-$icode%vx%.size() >= %n%$$, 
-$icode%vy%.size() >= %n%$$, 
-and
-for $latex j = 0 , \ldots , n-1$$,
-If the value of $icode%ax%[%j%]%$$ may depend on the current 
-$cref/Independent/$$ variables (it is a variable),
-$icode%vx%[%j%]%$$ is true.
-
-$head vy$$
-The argument $icode vy$$ has prototype
-$codei%
-	vector<bool>& %vy%
-%$$
-If $icode%vy%.size() == 0%$$, it should not be used.
-Otherwise, 
-$icode%k% == 0%$$, 
-$icode%vx%.size() >= %n%$$, 
-$icode%vy%.size() >= %m%$$, 
-and
-the input value of the elements of $icode vy$$ does not matter.
-For $latex j = 0 , \ldots , m-1$$,
-if the value of $icode%ay%[%j%]%$$ may depend on the current 
-$cref/Independent/$$ variables (it is a variable),
-$icode%vy%[%j%]%$$ is true
-(the fewer true components the more efficiently derivatives will be computed).
+$icode%afun%(%ax%, %ay%)%$$.
 
 $head tx$$
-The argument $icode tx$$ has prototype
+For all routines documented below, 
+the argument $icode tx$$ has prototype
 $codei%
 	const vector<%Base%>& %tx%
 %$$
@@ -208,57 +157,49 @@ $latex \[
 If $icode%ty%.size() > (%k% + 1) * %m%$$,
 the other components of $icode ty$$ are not specified and should not be used.
 
-$head px$$
-The argument $icode px$$ has prototype
-$codei%
-	vector<%Base%>& %px%
+$head afun$$
+This is the name of the AD function corresponding to this atomic
+operation (as it is used in the source code).
+CppAD uses the functions $icode forward$$ and $icode reverse$$,
+where the arguments are vectors with elements of type $icode Base$$,
+to create the function call
+$icode
+	%ok% = %afun%(%ax%, %ay%)
 %$$
-and $icode%px%.size() >= (%k% + 1) * %n%$$.
-For $latex j = 0 , \ldots , n-1$$ and $latex \ell = 0 , \ldots , k$$,
-$latex \[
-	px[ j * (k + 1 ) + \ell ]
-\] $$
-is a partial derivative of a scalar valued function with respect to
-the Taylor coefficient $latex x_j^\ell$$.
-If $icode%px%.size() > (%k% + 1) * %n%$$,
-the other components of $icode px$$ are not specified and should not be used.
+where the argument are vectors with elements of type $codei%AD<%Base%>%$$.
 
-$head py$$
-The argument $icode py$$ has prototype
+$subhead ax$$
+The argument $icode ax$$ has prototype
 $codei%
-	const vector<%Base%>& %py%
+	const vector< AD<%Base%> >& %ax%
 %$$
-and $icode%py%.size() = (%k% + 1) * %m%$$.
-For $latex i = 0 , \ldots , m-1$$ and $latex \ell = 0 , \ldots , k$$,
-$latex \[
-	py[ i * (k + 1 ) + \ell ]
-\] $$
-is a partial derivative of a scalar valued function with respect to
-the Taylor coefficient $latex y_i^\ell$$.
-If $icode%py%.size() > (%k% + 1) * %m%$$,
-the other components of $icode py$$ are not specified and should not be used.
+It is the argument value at which the $codei%AD<%Base%>%$$ version of 
+$latex y = f(x)$$ is to be evaluated.
+The size of this vector,
+(the dimension of the domain space for $latex f$$)
+may depend on the call to $icode afun$$.
 
-$head Create AD Version$$
-$index CPPAD_ATOMIC_FUNCTION$$
-The preprocessor macro invocation
+$subhead ay$$
+The result $icode ay$$ has prototype
 $codei%
-	CPPAD_ATOMIC_FUNCTION(%Base%, %name%)
-%$$ 
-defines the $codei%AD<%Base%>%$$ version of $icode name$$.
-This macro can be placed within a namespace 
-(not the $code CppAD$$ namespace) 
-but must be outside of any routine.
+	vector< AD<%Base%> > %ay%
+%$$
+It is the result of the evaluation of the $codei%AD<%Base%>%$$ version of 
+$latex y = f(x)$$.
+The size of this vector,
+(the dimension of the range space for $latex f$$)
+may depend on the call to $icode afun$$.
 
 $head forward$$
 The user defined function
 $codei%
 	%forward%(%k%, %n%, %m%, %vx%, %vy%, %tx%, %ty%)
 %$$
-is used to compute results during a $cref/forward/Forward/$$ mode sweep.
-For this call, we are given the Taylor coefficients for $latex x$$ 
+computes results during a $cref/forward/Forward/$$ mode sweep.
+For this call, we are given the Taylor coefficients in $icode tx$$ 
 form order zero through $icode k$$,
-and the Taylor coefficient for $latex y$$ with order less than $icode k$$.
-The routine $icode name$$ must compute the 
+and the Taylor coefficients in  $icode ty$$ with order less than $icode k$$.
+The $icode forward$$ routine computes the 
 $icode k$$ order Taylor coefficients for $latex y$$ using the relations
 $latex \[
 	Y(t) = f[ X(t) ]
@@ -268,6 +209,40 @@ $latex \[
 	ty [ i * (k + 1) + k ] = y_i^k
 \] $$
 The other components of $icode ty$$ must be left unchanged.
+
+$subhead vx$$
+The argument $icode vx$$ has prototype
+$codei%
+	const vector<bool>& %vx%
+%$$
+If $icode%vx%.size() == 0%$$, it should not be used.
+Otherwise, 
+$icode%k% == 0%$$, 
+$icode%vx%.size() >= %n%$$, 
+$icode%vy%.size() >= %n%$$, 
+and
+for $latex j = 0 , \ldots , n-1$$,
+If the value of $icode%ax%[%j%]%$$ may depend on the current 
+$cref/Independent/$$ variables (it is a variable),
+$icode%vx%[%j%]%$$ is true.
+
+$subhead vy$$
+The argument $icode vy$$ has prototype
+$codei%
+	vector<bool>& %vy%
+%$$
+If $icode%vy%.size() == 0%$$, it should not be used.
+Otherwise, 
+$icode%k% == 0%$$, 
+$icode%vx%.size() >= %n%$$, 
+$icode%vy%.size() >= %m%$$, 
+and
+the input value of the elements of $icode vy$$ does not matter.
+For $latex j = 0 , \ldots , m-1$$,
+if the value of $icode%ay%[%j%]%$$ may depend on the current 
+$cref/Independent/$$ variables (it is a variable),
+$icode%vy%[%j%]%$$ is true
+(the fewer true components the more efficiently derivatives will be computed).
 
 $subhead Usage$$
 This $icode forward$$ routine, with $icode%k% == 0%$$, is used 
@@ -286,27 +261,39 @@ $codei%
 is used to compute results during a $cref/reverse/Reverse/$$ mode sweep. 
 The input value of the vectors $icode tx$$ and $icode ty$$
 contain Taylor coefficient up to order $icode k$$.
-There is an arbitrary function of these Taylor coefficients
-$latex f : B^{m \times k} \rightarrow B$$.
-The input value of the vector $icode py$$ 
-contains the partial derivatives
-of $latex f$$ with w.r.t the Taylor coefficients $icode ty$$.
-To be specific
+We use
+$latex g : B^{m \times k} \rightarrow B$$.
+to denote an arbitrary function of these Taylor coefficients:
+
+$subhead py$$
+The argument $icode py$$ has prototype
+$codei%
+	const vector<%Base%>& %py%
+%$$
+and $icode%py%.size() >= (%k% + 1) * %m%$$.
+For $latex i = 0 , \ldots , m-1$$ and $latex \ell = 0 , \ldots , k$$,
 $latex \[
-\begin{array}{rcl}
-	\partial f / \partial y_i^\ell & = & py [ i * ( k + 1 ) + \ell ]
-\end{array}
+	py[ i * (k + 1 ) + \ell ] = \partial g / \partial y_i^\ell
 \] $$
+i.e., the partial derivative of the scalar valued function $latex g(y)$$ 
+with respect to the Taylor coefficient $latex y_i^\ell$$.
+If $icode%py%.size() > (%k% + 1) * %m%$$,
+the other components of $icode py$$ are not specified and should not be used.
+
+$subhead px$$
 Using the calculations from forward mode,
-the Taylor coefficient for $icode y$$ are a function of the Taylor
-Coefficient for $icode x$$; so we write $latex y(x)$$ 
-for this function and define
+the Taylor coefficients for $icode y$$ are a function of the Taylor
+coefficients for $icode x$$; so we write $latex y(x)$$ and define
 $latex \[
-	h(x) = f [ y(x) ]
+	h(x) = g [ y(x) ]
 \] $$
-The output values in the vector $icode px$$ contain the derivative
-of $latex h$$ with respect to $latex x$$.
-To be specific, 
+The argument $icode px$$ has prototype
+$codei%
+	vector<%Base%>& %px%
+%$$
+and $icode%px%.size() >= (%k% + 1) * %n%$$.
+The input values of the elements of $icode px$$ do not matter.
+Upon return,
 for $latex j = 0 , \ldots , n-1$$ and $latex \ell = 0 , \ldots , k$$,
 $latex \[
 \begin{array}{rcl}
@@ -316,6 +303,10 @@ $latex \[
 	( \partial g / \partial y^\ell ) ( \partial y / \partial x_j^\ell )
 \end{array}
 \] $$
+i.e., the partial derivative of a scalar valued function $latex h$$
+with respect to the Taylor coefficient $latex x_j^\ell$$.
+If $icode%px%.size() > (%k% + 1) * %n%$$,
+the other components of $icode px$$ are not specified and should not be used.
 
 $subhead Usage$$
 This $icode reverse$$ routine 
@@ -361,7 +352,7 @@ user defined atomic operations.
 
 /*!
 \def CPPAD_ATOMIC_FUNCTION(Base, afun, forward, reverse)
-Defines the function <tt>name(ax, ay)</tt>  
+Defines the function <tt>afun(ax, ay)</tt>  
 where \c ax and \c ay are vectors with <tt>AD<Base></tt> elements.
 
 \par Base
@@ -394,7 +385,7 @@ inline bool afun (                                                  \
 }
 
 /*!
-Class that actually implements the <tt>name(ax, ay)</tt> call.
+Class that actually implements the <tt>afun(ax, ay)</tt> call.
 
 A new user_atomic object is generated each time the user invokes
 the CPPAD_ATOMIC_FUNCTION macro; see static object in that macro.
@@ -471,7 +462,7 @@ public:
 	{	List().push_back(this); }
 
 	/*!
- 	Implement the user call to <tt>name(ax, ay)</tt>.
+ 	Implement the user call to <tt>afun(ax, ay)</tt>.
 
 	\param ax
 	is the argument vector for this call,
