@@ -167,7 +167,8 @@ namespace { // Empty namespace
 		for(ell = 0; ell <=k; ell++)
 			multiply_and_sum(ell, k-ell, tx, ty);
 
-		// no error condtitions to check for, so always return true
+		// All orders are implemented and there are no possible error
+		// conditions, so always return true.
 		return true;
 	}
 
@@ -200,7 +201,8 @@ namespace { // Empty namespace
 				reverse_multiply(ell, order-ell, tx, ty, px, py);
 		}
 
-		// no error condtitions to check for, so always return true
+		// All orders are implemented and there are no possible error
+		// conditions, so always return true.
 		return true;
 	}
 

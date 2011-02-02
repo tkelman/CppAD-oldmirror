@@ -86,6 +86,10 @@ $codei%
 %$$
 If it is $code true$$, the corresponding evaluation succeeded,
 otherwise it failed.
+The user need not implement $icode forward$$
+or $icode reverse$$ for all orders $icode k$$.
+It $icode k$$ is to large for the users routine,
+the corresponding return should return $code false$$.
 
 $head ax$$
 The argument $icode ax$$ has prototype
