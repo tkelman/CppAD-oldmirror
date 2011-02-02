@@ -86,10 +86,6 @@ $codei%
 %$$
 If it is $code true$$, the corresponding evaluation succeeded,
 otherwise it failed.
-The user need not implement $icode forward$$
-or $icode reverse$$ for all orders $icode k$$.
-It $icode k$$ is to large for the users routine,
-the corresponding return should return $code false$$.
 
 $head ax$$
 The argument $icode ax$$ has prototype
@@ -273,6 +269,14 @@ $latex \[
 \] $$
 The other components of $icode ty$$ must be left unchanged.
 
+$subhead Usage$$
+This $icode forward$$ routine, with $icode%k% == 0%$$, is used 
+during each call to $icode afun$$.
+It is also used with $icode k$$ equal to the derivative order
+during each forward mode $cref/derivative calculation/ForwardAny/$$.
+If certain derivative orders are not used,
+$icode forward$$ can just return $icode%ok% == false%$$ 
+and need not be implemented for those orders.
 
 $head reverse$$
 The user defined function
@@ -312,6 +316,14 @@ $latex \[
 	( \partial g / \partial y^\ell ) ( \partial y / \partial x_j^\ell )
 \end{array}
 \] $$
+
+$subhead Usage$$
+This $icode reverse$$ routine 
+is used with $icode k$$ equal to the derivative order
+during each reverse mode $cref/derivative calculation/reverse_any/$$.
+If certain derivative orders are not used,
+$icode reverse$$ can just return $icode%ok% == false%$$ 
+and need not be implemented for those orders.
 
 $head Efficiency$$
 No sparsity pattern information is passed to and from
