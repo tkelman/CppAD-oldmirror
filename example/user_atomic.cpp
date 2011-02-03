@@ -206,7 +206,13 @@ namespace { // Empty namespace
 		return true;
 	}
 
-	CPPAD_ATOMIC_FUNCTION(double, mat_mul, forward_mat_mul, reverse_mat_mul)
+	CPPAD_ATOMIC_FUNCTION(
+		CPPAD_TEST_VECTOR ,
+		double            , 
+		mat_mul           , 
+		forward_mat_mul   , 
+		reverse_mat_mul
+	)
 
 } // End empty namespace
 
@@ -223,7 +229,7 @@ bool user_atomic(void)
 	// ax and ay must use CppAD::vector
 	size_t n = 3 + 2*2 + 2*2;
 	size_t m = 2*2;
-	CppAD::vector< AD<double> > ax(n), ay(m);
+	CPPAD_TEST_VECTOR< AD<double> > ax(n), ay(m);
 	// sizes 
 	ax[0]  = 2;     // nr_result   = 2
 	ax[1]  = 2;     // n_middle    = 2 

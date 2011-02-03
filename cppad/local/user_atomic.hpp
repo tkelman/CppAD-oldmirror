@@ -16,6 +16,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin user_atomic$$
 $spell
+	Tvector
 	afun
 	vx
 	vy
@@ -38,7 +39,7 @@ $index operation, user defined$$
 $index function, user defined$$
 
 $head Syntax$$
-$codei%CPPAD_ATOMIC_FUNCTION(%Base%, %afun%, %forward%, %reverse%)
+$codei%CPPAD_ATOMIC_FUNCTION(%Tvector%, %Base%, %afun%, %forward%, %reverse%)
 %$$
 $icode%ok% = %afun%(%ax%, %ay%)
 %$$
@@ -58,23 +59,23 @@ In this case, $code CPPAD_ATOMIC_FUNCTION$$ can be used
 make add the user code for $latex f(x)$$ and its derivatives
 to the set of $codei%AD<%Base%>%$$ atomic operations. 
 
-$head vector$$
-Here and below $code vector$$ refers to the
-CppAD $cref/vector/CppAD_vector/$$ template class.
-
 $head CPPAD_ATOMIC_FUNCTION$$
 $index CPPAD_ATOMIC_FUNCTION$$
 The preprocessor macro invocation
 $codei%
-	CPPAD_ATOMIC_FUNCTION(%Base%, %afun%, %forward%, %reverse%)
+	CPPAD_ATOMIC_FUNCTION(%Tvector%, %Base%, %afun%, %forward%, %reverse%)
 %$$ 
 defines the $codei%AD<%Base%>%$$ version of $icode afun$$.
 This macro can be placed within a namespace 
 (not the $code CppAD$$ namespace) 
 but must be outside of any routine.
 
-$head Base$$
-This is the 
+$subhead Tvector$$
+The preprocessor macro argument $icode Tvector$$ must be a
+$cref/simple vector template class/SimpleVector/$$.
+
+$subhead Base$$
+The preprocessor macro argument $icode Base$$ is the 
 $cref/base type/base_require/$$
 corresponding to the operations sequence;
 i.e., we are adding $icode afun$$, 
@@ -119,7 +120,7 @@ $head tx$$
 For all routines documented below, 
 the argument $icode tx$$ has prototype
 $codei%
-	const vector<%Base%>& %tx%
+	const CppAD::vector<%Base%>& %tx%
 %$$
 and $icode%tx%.size() >= (%k% + 1) * %n%$$.
 For $latex j = 0 , \ldots , n-1$$ and $latex \ell = 0 , \ldots , k$$,
@@ -138,12 +139,12 @@ $head ty$$
 During $cref/forward mode/user_atomic/forward/$$ 
 the argument $icode ty$$ has prototype
 $codei%
-	vector<%Base%>& %ty%
+	CppAD::vector<%Base%>& %ty%
 %$$
 while during $cref/reverse mode/user_atomic/reverse/$$
 it has prototype
 $codei%
-	const vector<%Base%>& %ty%
+	const CppAD::vector<%Base%>& %ty%
 %$$
 For $latex i = 0 , \ldots , m-1$$ and $latex \ell = 0 , \ldots , k$$,
 we use the Taylor coefficient notation
@@ -158,12 +159,13 @@ If $icode%ty%.size() > (%k% + 1) * %m%$$,
 the other components of $icode ty$$ are not specified and should not be used.
 
 $head afun$$
-This is the name of the AD function corresponding to this atomic
+The preprocessor macro argument $icode afun$$,
+is the name of the AD function corresponding to this atomic
 operation (as it is used in the source code).
 CppAD uses the functions $icode forward$$ and $icode reverse$$,
 where the arguments are vectors with elements of type $icode Base$$,
 to create the function call
-$icode
+$codei%
 	%ok% = %afun%(%ax%, %ay%)
 %$$
 where the argument are vectors with elements of type $codei%AD<%Base%>%$$.
@@ -171,7 +173,7 @@ where the argument are vectors with elements of type $codei%AD<%Base%>%$$.
 $subhead ax$$
 The argument $icode ax$$ has prototype
 $codei%
-	const vector< AD<%Base%> >& %ax%
+	const %Tvector%< AD<%Base%> >& %ax%
 %$$
 It is the argument value at which the $codei%AD<%Base%>%$$ version of 
 $latex y = f(x)$$ is to be evaluated.
@@ -182,7 +184,7 @@ may depend on the call to $icode afun$$.
 $subhead ay$$
 The result $icode ay$$ has prototype
 $codei%
-	vector< AD<%Base%> > %ay%
+	%Tvector%< AD<%Base%> >& %ay%
 %$$
 It is the result of the evaluation of the $codei%AD<%Base%>%$$ version of 
 $latex y = f(x)$$.
@@ -191,11 +193,12 @@ The size of this vector,
 may depend on the call to $icode afun$$.
 
 $head forward$$
-The user defined function
+The preprocessor macro argument $icode forward$$ is a
+user defined function
 $codei%
 	%forward%(%k%, %n%, %m%, %vx%, %vy%, %tx%, %ty%)
 %$$
-computes results during a $cref/forward/Forward/$$ mode sweep.
+that computes results during a $cref/forward/Forward/$$ mode sweep.
 For this call, we are given the Taylor coefficients in $icode tx$$ 
 form order zero through $icode k$$,
 and the Taylor coefficients in  $icode ty$$ with order less than $icode k$$.
@@ -213,7 +216,7 @@ The other components of $icode ty$$ must be left unchanged.
 $subhead vx$$
 The argument $icode vx$$ has prototype
 $codei%
-	const vector<bool>& %vx%
+	const CppAD::vector<bool>& %vx%
 %$$
 If $icode%vx%.size() == 0%$$, it should not be used.
 Otherwise, 
@@ -229,7 +232,7 @@ $icode%vx%[%j%]%$$ is true.
 $subhead vy$$
 The argument $icode vy$$ has prototype
 $codei%
-	vector<bool>& %vy%
+	CppAD::vector<bool>& %vy%
 %$$
 If $icode%vy%.size() == 0%$$, it should not be used.
 Otherwise, 
@@ -254,11 +257,12 @@ $icode forward$$ can just return $icode%ok% == false%$$
 and need not be implemented for those orders.
 
 $head reverse$$
-The user defined function
+The preprocessor macro argument $icode reverse$$
+is a user defined function
 $codei%
 	%reverse%(%k%, %n%, %m%, %tx%, %ty%, %px%, %py%)
 %$$
-is used to compute results during a $cref/reverse/Reverse/$$ mode sweep. 
+that is used to compute results during a $cref/reverse/Reverse/$$ mode sweep. 
 The input value of the vectors $icode tx$$ and $icode ty$$
 contain Taylor coefficient up to order $icode k$$.
 We use
@@ -268,7 +272,7 @@ to denote an arbitrary function of these Taylor coefficients:
 $subhead py$$
 The argument $icode py$$ has prototype
 $codei%
-	const vector<%Base%>& %py%
+	const CppAD::vector<%Base%>& %py%
 %$$
 and $icode%py%.size() >= (%k% + 1) * %m%$$.
 For $latex i = 0 , \ldots , m-1$$ and $latex \ell = 0 , \ldots , k$$,
@@ -289,7 +293,7 @@ $latex \[
 \] $$
 The argument $icode px$$ has prototype
 $codei%
-	vector<%Base%>& %px%
+	CppAD::vector<%Base%>& %px%
 %$$
 and $icode%px%.size() >= (%k% + 1) * %n%$$.
 The input values of the elements of $icode px$$ do not matter.
@@ -351,9 +355,12 @@ user defined atomic operations.
 */
 
 /*!
-\def CPPAD_ATOMIC_FUNCTION(Base, afun, forward, reverse)
+\def CPPAD_ATOMIC_FUNCTION(Tvector, Base, afun, forward, reverse)
 Defines the function <tt>afun(ax, ay)</tt>  
 where \c ax and \c ay are vectors with <tt>AD<Base></tt> elements.
+
+\par Tvector
+is the Simple Vector template class for this function.
 
 \par Base
 is the base type for the atomic operation.
@@ -375,13 +382,13 @@ Also not that user_atomic is used as a static object, so its objects
 do note get deallocated until the program terminates. 
 */
 
-# define CPPAD_ATOMIC_FUNCTION(Base, afun, forward, reverse)        \
-inline bool afun (                                                  \
-     const CppAD::vector< CppAD::AD<Base> >& ax,                    \
-     CppAD::vector< CppAD::AD<Base> >&       ay                     \
-)                                                                   \
-{    static CppAD::user_atomic<Base> fun(#afun, forward, reverse);  \
-     return fun.ad(ax, ay);                                         \
+# define CPPAD_ATOMIC_FUNCTION(Tvector, Base, afun, forward, reverse) \
+inline bool afun (                                                    \
+     const Tvector< CppAD::AD<Base> >& ax,                            \
+     Tvector< CppAD::AD<Base> >&       ay                             \
+)                                                                     \
+{    static CppAD::user_atomic<Base> fun(#afun, forward, reverse);    \
+     return fun.ad(ax, ay);                                           \
 }
 
 /*!
@@ -475,7 +482,8 @@ public:
 	This routine is not \c const because it may modify the works
 	space vectors \c x_ and \c y_.
  	*/
-	bool ad(const vector< AD<Base> >& ax, vector< AD<Base> >& ay)
+	template <class ADVector>
+	bool ad(const ADVector& ax, ADVector& ay)
 	{	size_t i, j;
 		size_t n = ax.size();
 		size_t m = ay.size();
