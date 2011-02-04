@@ -141,6 +141,8 @@ void ForJacSweep(
 	size_t user_n     = 0;       // size of arugment vector
 	// next expected operator in a UserOp sequence
 	enum { user_start, user_arg, user_ret, user_end } user_state = user_start;
+	// user atomic information vector 
+	vector<size_t> user_info(CPPAD_ATOMIC_INFO_SIZE);
 
 # if CPPAD_FOR_JAC_SWEEP_TRACE
 	std::cout << std::endl;
@@ -489,12 +491,16 @@ void ForJacSweep(
 
 			case UserOp:
 			// start an atomic operation sequence
-			CPPAD_ASSERT_UNKNOWN( NumArg( UserOp ) == 3 );
 			CPPAD_ASSERT_UNKNOWN( NumRes( UserOp ) == 0 );
+			CPPAD_ASSERT_UNKNOWN( 
+				NumArg( UserOp ) == 3 + CPPAD_ATOMIC_INFO_SIZE
+			);
 			if( user_state == user_start )
 			{	user_index = arg[0];
 				user_n     = arg[1];
 				user_m     = arg[2];
+				for(i = 0; i < CPPAD_ATOMIC_INFO_SIZE; i++)
+					user_info[i] = arg[3 + i];
 				if( (user_r.size() < user_n ) | 
 				    (user_s.size() < user_m ) ) 
 				{	user_r.resize(user_n);
@@ -509,10 +515,11 @@ void ForJacSweep(
 				CPPAD_ASSERT_UNKNOWN( user_index == arg[0] );
 				CPPAD_ASSERT_UNKNOWN( user_n     == arg[1] );
 				CPPAD_ASSERT_UNKNOWN( user_m     == arg[2] );
+				for(i = 0; i < CPPAD_ATOMIC_INFO_SIZE; i++)
+					CPPAD_ASSERT_UNKNOWN( user_info[i] == arg[3 + i] );
 				user_state = user_start;
 			}
 			break;
-			// -------------------------------------------------
 
 			case UsrapOp:
 			// next argument in an atomic operation sequence
@@ -524,8 +531,8 @@ void ForJacSweep(
 			++user_j;
 			if( user_j == user_n )
 			{	// call users function for this operation
-				user_atomic<Base>::for_jac_sparse(
-					user_index, user_n, user_m, user_q, user_r, user_s
+				user_atomic<Base>::for_jac_sparse(user_index, user_info,
+					user_n, user_m, user_q, user_r, user_s
 				);
 				user_state = user_ret;
 			}
@@ -545,8 +552,8 @@ void ForJacSweep(
 			++user_j;
 			if( user_j == user_n )
 			{	// call users function for this operation
-				user_atomic<Base>::for_jac_sparse(
-					user_index, user_n, user_m, user_q, user_r, user_s
+				user_atomic<Base>::for_jac_sparse(user_index, user_info,
+					user_n, user_m, user_q, user_r, user_s
 				);
 				user_state = user_ret;
 			}

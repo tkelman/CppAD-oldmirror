@@ -157,13 +157,23 @@ void ReverseSweep(
 	if( num_par > 0 )
 		parameter = Rec->GetPar();
 
-	// Temporary work space used by UserOp.
-	// (Declared here to avoid repeated memory allocation and deallocation).
-	CppAD::vector<size_t> user_ix;
-	CppAD::vector<Base> user_tx, user_ty, user_px, user_py;
-	size_t user_index=0, user_i=0, user_j=0, user_m=0, user_n=0;
-	size_t user_k=d, user_k1 = d+1;
+	// work space used by UserOp.
+	const size_t user_k  = d;    // order of this forward mode calculation
+	const size_t user_k1 = d+1;  // number of orders for this calculation
+	vector<size_t> user_ix;      // variable indices for argument vector
+	vector<Base> user_tx;        // argument vector Taylor coefficients
+	vector<Base> user_ty;        // result vector Taylor coefficients
+	vector<Base> user_px;        // partials w.r.t argument vector
+	vector<Base> user_py;        // partials w.r.t. result vector
+	size_t user_index = 0;       // indentifier for this user_atomic operation
+	size_t user_i     = 0;       // index in result vector
+	size_t user_j     = 0;       // index in argument vector
+	size_t user_m     = 0;       // size of result vector
+	size_t user_n     = 0;       // size of arugment vector
+	// next expected operator in a UserOp sequence
 	enum { user_start, user_arg, user_ret, user_end } user_state = user_end;
+	// user atomic information vector 
+	vector<size_t> user_info(CPPAD_ATOMIC_INFO_SIZE);
 
 	// temporary indices
 	size_t j, ell;
@@ -484,12 +494,16 @@ void ReverseSweep(
 
 			case UserOp:
 			// start an atomic operation sequence
-			CPPAD_ASSERT_UNKNOWN( NumArg( UserOp ) == 3 );
 			CPPAD_ASSERT_UNKNOWN( NumRes( UserOp ) == 0 );
+			CPPAD_ASSERT_UNKNOWN( 
+				NumArg( UserOp ) == 3 + CPPAD_ATOMIC_INFO_SIZE
+			);
 			if( user_state == user_end )
 			{	user_index = arg[0];
 				user_n     = arg[1];
 				user_m     = arg[2];
+				for(j = 0; j < CPPAD_ATOMIC_INFO_SIZE; j++)
+					user_info[j] = arg[3 + j];
 				if( (user_ix.size() < user_n)           | 
 				    (user_ty.size() < user_m * user_k1) )
 				{	user_ix.resize(user_n);
@@ -507,9 +521,12 @@ void ReverseSweep(
 				CPPAD_ASSERT_UNKNOWN( user_index == arg[0] );
 				CPPAD_ASSERT_UNKNOWN( user_n     == arg[1] );
 				CPPAD_ASSERT_UNKNOWN( user_m     == arg[2] );
+				for(j = 0; j < CPPAD_ATOMIC_INFO_SIZE; j++)
+					CPPAD_ASSERT_UNKNOWN( user_info[j] == arg[3 + j] );
+				user_state = user_start;
 				user_state = user_end;
-				user_atomic<Base>::reverse(
-					user_index, user_k, user_n, user_m, user_tx, user_ty,
+				user_atomic<Base>::reverse(user_index, user_info,
+					user_k, user_n, user_m, user_tx, user_ty,
 					user_px, user_py
 				);
 				for(j = 0; j < user_n; j++) if( user_ix[j] > 0 )

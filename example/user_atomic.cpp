@@ -45,14 +45,14 @@ namespace { // Empty namespace
 	size_t left(size_t i, size_t j, size_t ell)
 	{	assert( i < nr_result_ );
 		assert( j < n_middle_ );
-		return (3 + i * n_middle_ + j) * n_order_ + ell;
+		return (i * n_middle_ + j) * n_order_ + ell;
 	}
 
 	// index in tx of Taylor coefficient of order ell for right[i,j]
 	size_t right(size_t i, size_t j, size_t ell)
 	{	assert( i < n_middle_ );
 		assert( j < nc_result_ );
-		size_t offset = 3 + nr_result_ * n_middle_;
+		size_t offset = nr_result_ * n_middle_;
 		return (offset + i * nc_result_ + j) * n_order_ + ell;
 	}
 
@@ -114,23 +114,24 @@ namespace { // Empty namespace
 
 	// forward mode routine
 	bool forward_mat_mul(
-		size_t                 k,
-		size_t                 n,
-		size_t                 m,
-		const vector<bool>&   vx,
-		vector<bool>&         vy,
-		const vector<double>& tx,
-		vector<double>&       ty
+		const vector<size_t>&  info ,
+		size_t                    k ,
+		size_t                    n ,
+		size_t                    m ,
+		const vector<bool>&      vx ,
+		vector<bool>&            vy ,
+		const vector<double>&    tx ,
+		vector<double>&          ty
 	)
 	{	size_t i, j, ell;
 		n_order_   = k + 1;	
-		// storing dimensions in ax enables mat_mul to work for any size
-		nr_result_ = size_t ( tx[0 * n_order_ + 0] ); // stored in ax[0]
-		n_middle_  = size_t ( tx[1 * n_order_ + 0] ); // stored in ax[1]
-		nc_result_ = size_t ( tx[2 * n_order_ + 0] ); // stored in ax[2]
+		assert( info[0] == 3 ); // number of values in ainfo
+		nr_result_ = info[1];   // number of rows in left matrix
+		n_middle_  = info[2];   // # of columns in left and rows in right
+		nc_result_ = info[3];   // # of columns in right matrix
 
-		// check total number of components in ax
-		assert( 3 + nr_result_ * n_middle_ + n_middle_ * nc_result_  == n );
+		// check total number of components in ax and ay
+		assert( nr_result_ * n_middle_ + n_middle_ * nc_result_  == n );
 		assert( nr_result_ * nc_result_ == m );
 
 		// check if we are computing vy
@@ -174,20 +175,23 @@ namespace { // Empty namespace
 
 	// reverse mode routine
 	bool reverse_mat_mul(
-		size_t                 k,
-		size_t                 n,
-		size_t                 m,
-		const vector<double>& tx,
-		const vector<double>& ty,
-		vector<double>&       px,
-		const vector<double>& py
+		const vector<size_t>&  info ,
+		size_t                    k ,
+		size_t                    n ,
+		size_t                    m ,
+		const vector<double>&    tx ,
+		const vector<double>&    ty ,
+		vector<double>&          px ,
+		const vector<double>&    py
 	)
 	{	n_order_   = k + 1;	
-		nr_result_ = size_t ( tx[0 * n_order_ + 0] ); // stored in ax[0]
-		n_middle_  = size_t ( tx[1 * n_order_ + 0] ); // stored in ax[1]
-		nc_result_ = size_t ( tx[2 * n_order_ + 0] ); // stored in ax[2]
+		assert( info[0] == 3 ); // number of values in ainfo
+		nr_result_ = info[1];   // number of rows in left matrix
+		n_middle_  = info[2];   // # of columns in left and rows in right
+		nc_result_ = info[3];   // # of columns in right matrix
 
-		assert( 3 + nr_result_ * n_middle_ + n_middle_ * nc_result_  == n );
+		// check total number of components in ax and ay
+		assert( nr_result_ * n_middle_ + n_middle_ * nc_result_  == n );
 		assert( nr_result_ * nc_result_ == m );
 
 		size_t ell = n * n_order_;
@@ -207,12 +211,18 @@ namespace { // Empty namespace
 	}
 
 	bool for_jac_sparse_mat_mul(
-		size_t                                       n ,
-		size_t                                       m ,
-		size_t                                       q ,
-		const CppAD::vector< std::set<size_t> >&     r ,
-		CppAD::vector< std::set<size_t> >&           s )
+		const vector<size_t>&              info ,             
+		size_t                                n ,
+		size_t                                m ,
+		size_t                                q ,
+		const vector< std::set<size_t> >&     r ,
+		vector< std::set<size_t> >&           s )
 	{	
+		assert( info[0] == 3 ); // number of values in ainfo
+		nr_result_ = info[1];   // number of rows in left matrix
+		n_middle_  = info[2];   // # of columns in left and rows in right
+		nc_result_ = info[3];   // # of columns in right matrix
+
 		return false;
 	}
 
@@ -236,30 +246,32 @@ bool user_atomic(void)
 	for(j = 0; j < X.size(); j++)
 		X[j] = (j + 1);
 	CppAD::Independent(X);
+
+	// matrix sizes for this multiplication
+	CPPAD_TEST_VECTOR<size_t> ainfo(3);
+	size_t nr_left  = ainfo[0] = 2;
+	size_t n_middle = ainfo[1] = 2;
+	size_t nc_right = ainfo[2] = 2;
 	
 	// ax and ay must use CppAD::vector
-	size_t n = 3 + 2*2 + 2*2;
-	size_t m = 2*2;
+	size_t n = nr_left * n_middle + n_middle * nc_right;
+	size_t m = nr_left * nc_right;
 	CPPAD_TEST_VECTOR< AD<double> > ax(n), ay(m);
-	// sizes 
-	ax[0]  = 2;     // nr_result   = 2
-	ax[1]  = 2;     // n_middle    = 2 
-	ax[2]  = 2;     // nc_result   = 2
 	// left matrix
-	ax[3]  = X[0];  // left[0,0]   = x[0] = 1
-	ax[4]  = X[1];  // left[0,1]   = x[1] = 2
-	ax[5]  = 5.;    // left[1,0]   = 5
-	ax[6]  = 6.;    // left[1,1]   = 6
+	ax[0]  = X[0];  // left[0,0]   = x[0] = 1
+	ax[1]  = X[1];  // left[0,1]   = x[1] = 2
+	ax[2]  = 5.;    // left[1,0]   = 5
+	ax[3]  = 6.;    // left[1,1]   = 6
 	// right matrix
-	ax[7]  = X[2];  // right[0,0]  = x[2] = 3
-	ax[8]  = 7.;    // right[0,1]  = 7
-	ax[9]  = X[3];  // right[1,0]  = x[3] = 4 
-	ax[10] = 8.;    // right[1,1]  = 8
+	ax[4]  = X[2];  // right[0,0]  = x[2] = 3
+	ax[5]  = 7.;    // right[0,1]  = 7
+	ax[6]  = X[3];  // right[1,0]  = x[3] = 4 
+	ax[7]  = 8.;    // right[1,1]  = 8
 	/*
 	[ x0 , x1 ] * [ x2 , 7 ] = [ x0*x2 + x1*x3 , x0*7 + x1*8 ]
 	[ 5  , 6 ]    [ x3 , 8 ]   [ 5*x2  + 6*x3  , 5*7 + 6*8 ]
 	*/
-	mat_mul(ax, ay);
+	mat_mul(ainfo, ax, ay);
 	//
 	ok &= ay[0] == (1*3 + 2*4); ok &= Variable( ay[0] );
 	ok &= ay[1] == (1*7 + 2*8); ok &= Variable( ay[1] );
