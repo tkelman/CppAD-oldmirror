@@ -146,11 +146,17 @@ size_t forward_sweep(
 		}
 	}
 
-	// Temporary work space used by UserOp.
-	// (Declared here to avoid repeated memory allocation and deallocation).
-	CppAD::vector<Base> user_tx, user_ty;
-	size_t user_index=0, user_i=0, user_j=0, user_m=0, user_n=0;
-	size_t user_k=d, user_k1 = d+1;
+	// work space used by UserOp.
+	const size_t user_k  = d;    // order of this forward mode calculation
+	const size_t user_k1 = d+1;  // number of orders for this calculation
+	vector<Base> user_tx;        // argument vector Taylor coefficients 
+	vector<Base> user_ty;        // result vector Taylor coefficients 
+	size_t user_index = 0;       // indentifier for this user_atomic operation
+	size_t user_i     = 0;       // index in result vector
+	size_t user_j     = 0;       // index in argument vector
+	size_t user_m     = 0;       // size of result vector
+	size_t user_n     = 0;       // size of arugment vector
+	// next expected operator in a UserOp sequence
 	enum { user_start, user_arg, user_ret, user_end } user_state = user_start;
 
 	// check numvar argument
