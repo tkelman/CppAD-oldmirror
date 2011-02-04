@@ -43,12 +43,12 @@ For a fixed $latex n \times q$$ matrix $latex R$$,
 the Jacobian of $latex F[ x + R * u ]$$
 with respect to $latex u$$ at $latex u = 0$$ is
 $latex \[
-	J(x) = F^{(1)} ( x ) * R
+	S(x) = F^{(1)} ( x ) * R
 \] $$
 Given a
 $xref/glossary/Sparsity Pattern/sparsity pattern/$$ 
 for $latex R$$,
-$code ForSparseJac$$ returns a sparsity pattern for the $latex J(x)$$.
+$code ForSparseJac$$ returns a sparsity pattern for the $latex S(x)$$.
 
 $head f$$
 The object $icode f$$ has prototype
@@ -114,7 +114,7 @@ $codei%
 %$$
 It specifies the number of columns in 
 $latex R \in B^{n \times q}$$ and the Jacobian 
-$latex J(x) \in B^{m \times q}$$. 
+$latex S(x) \in B^{m \times q}$$. 
 
 $head r$$
 The argument $icode r$$ has prototype
@@ -126,7 +126,7 @@ If it has elements of type $code bool$$,
 its size is $latex n * q$$.
 If it has elements of type $code std::set<size_t>$$,
 its size is $latex n$$ and all the set elements must be between
-zero and $icode%q%-1%$$.
+zero and $icode%q%-1%$$ inclusive.
 It specifies a 
 $xref/glossary/Sparsity Pattern/sparsity pattern/$$ 
 for the matrix $icode R$$.
@@ -141,10 +141,10 @@ If it has elements of type $code bool$$,
 its size is $latex m * q$$.
 If it has elements of type $code std::set<size_t>$$,
 its size is $latex m$$ and all its set elements are between
-zero and $icode%q%-1%$$.
+zero and $icode%q%-1%$$ inclusive.
 It specifies a 
 $xref/glossary/Sparsity Pattern/sparsity pattern/$$ 
-for the matrix $latex J(x)$$.
+for the matrix $latex S(x)$$.
 
 $head VectorSet$$
 The type $icode VectorSet$$ must be a $xref/SimpleVector/$$ class with
@@ -158,7 +158,7 @@ Suppose that $latex q = n$$ and
 $latex R$$ is the $latex n \times n$$ identity matrix.
 In this case, 
 the corresponding value for $icode s$$ is a 
-sparsity pattern for the Jacobian $latex J(x) = F^{(1)} ( x )$$.
+sparsity pattern for the Jacobian $latex S(x) = F^{(1)} ( x )$$.
 
 $head Example$$
 $children%
@@ -209,7 +209,7 @@ corresponding to the operation sequence stored in \a play.
 The input value of the components of \c s does not matter.
 On output, \a s is the sparsity pattern for the matrix
 \f[
-	J(x) = F^{(1)} (x) * R
+	S(x) = F^{(1)} (x) * R
 \f]
 where \f$ F \f$ is the function corresponding to the operation sequence
 and \a x is any argument value.
@@ -338,7 +338,7 @@ corresponding to the operation sequence stored in \a play.
 On input, each element of \a s must be an empty set.
 On output, \a s is the sparsity pattern for the matrix
 \f[
-	J(x) = F^{(1)} (x) * R
+	S(x) = F^{(1)} (x) * R
 \f]
 where \f$ F \f$ is the function corresponding to the operation sequence
 and \a x is any argument value.
@@ -486,7 +486,7 @@ the return value \c s is a vector of sets with size \c m
 and with all its elements between zero and \a q - 1.
 The value of \a s is the sparsity pattern for the matrix
 \f[
-	J(x) = F^{(1)} (x) * R
+	S(x) = F^{(1)} (x) * R
 \f]
 where \f$ F \f$ is the function corresponding to the operation sequence
 and \a x is any argument value.

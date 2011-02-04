@@ -206,12 +206,23 @@ namespace { // Empty namespace
 		return true;
 	}
 
+	bool for_jac_sparse_mat_mul(
+		size_t                                       n ,
+		size_t                                       m ,
+		size_t                                       q ,
+		const CppAD::vector< std::set<size_t> >&     r ,
+		CppAD::vector< std::set<size_t> >&           s )
+	{	
+		return false;
+	}
+
 	CPPAD_ATOMIC_FUNCTION(
-		CPPAD_TEST_VECTOR ,
-		double            , 
-		mat_mul           , 
-		forward_mat_mul   , 
-		reverse_mat_mul
+		CPPAD_TEST_VECTOR       ,
+		double                  , 
+		mat_mul                 , 
+		forward_mat_mul         , 
+		reverse_mat_mul         ,
+		for_jac_sparse_mat_mul 
 	)
 
 } // End empty namespace
