@@ -3,7 +3,7 @@
 # define CPPAD_DEFINE_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-09 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-11 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -18,6 +18,13 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 Define processor symbols and macros that are used by CppAD.
 
 */
+
+/*!
+\def CPPAD_ATOMIC_INFO_SIZE
+Sets the number of elements in the user atomic operation \c info vector
+(which is the maximum number in the \c ainfo vector plus one).
+*/
+# define CPPAD_ATOMIC_INFO_SIZE 4
 
 /*!
 \def CPPAD_USE_FORWARD0SWEEP
