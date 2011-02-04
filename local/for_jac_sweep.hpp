@@ -548,7 +548,9 @@ void ForJacSweep(
 			var_sparsity.begin(arg[0]);
 			i = var_sparsity.next_element();
 			while( i < user_q )
-				user_r[user_j].insert(i);
+			{	user_r[user_j].insert(i);
+				i = var_sparsity.next_element();
+			}
 			++user_j;
 			if( user_j == user_n )
 			{	// call users function for this operation
