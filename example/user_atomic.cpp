@@ -217,13 +217,49 @@ namespace { // Empty namespace
 		size_t                                q ,
 		const vector< std::set<size_t> >&     r ,
 		vector< std::set<size_t> >&           s )
-	{	
+	{	size_t i, j, im_left, middle, mj_right, ij_result, order;
+		std::set<size_t> set_ij, temp;
+	
 		assert( info[0] == 3 ); // number of values in ainfo
+		n_order_   = 1;         // use order zero indexing
 		nr_result_ = info[1];   // number of rows in left matrix
 		n_middle_  = info[2];   // # of columns in left and rows in right
 		nc_result_ = info[3];   // # of columns in right matrix
 
-		return false;
+		order = 0;
+		for(i = 0; i < nr_result_; i++)
+		{	for(j = 0; j < nc_result_; j++)
+			{	// initialize result set as empty for this i,j
+				set_ij.clear();
+				// now add in dependencies
+				for(middle = 0; middle < n_middle_; middle++)
+				{	temp.clear();
+					im_left   = left(i, middle, order);
+					std::set_union(
+						r[im_left].begin()                ,
+						r[im_left].end()                  ,
+						set_ij.begin()                    ,
+						set_ij.end()                      ,
+						std::inserter(temp, temp.begin())
+					);
+					set_ij.swap(temp);
+					//
+					temp.clear();
+					mj_right = right(middle, j, order);
+					std::set_union(
+						r[mj_right].begin()                ,
+						r[mj_right].end()                  ,
+						set_ij.begin()                    ,
+						set_ij.end()                      ,
+						std::inserter(temp, temp.begin())
+					);
+					set_ij.swap(temp);
+				}
+				ij_result = result(i, j, order);
+				s[ ij_result ].swap(set_ij);
+			}
+		}
+		return true;
 	}
 
 	CPPAD_ATOMIC_FUNCTION(
@@ -241,12 +277,6 @@ bool user_atomic(void)
 {	bool ok = true;
 	using CppAD::AD;
 
-	CPPAD_TEST_VECTOR< AD<double> > X(4), Y(4); 
-	size_t i, j;
-	for(j = 0; j < X.size(); j++)
-		X[j] = (j + 1);
-	CppAD::Independent(X);
-
 	// matrix sizes for this multiplication
 	CPPAD_TEST_VECTOR<size_t> ainfo(3);
 	size_t nr_left  = ainfo[0] = 2;
@@ -256,7 +286,12 @@ bool user_atomic(void)
 	// ax and ay must use CppAD::vector
 	size_t n = nr_left * n_middle + n_middle * nc_right;
 	size_t m = nr_left * nc_right;
-	CPPAD_TEST_VECTOR< AD<double> > ax(n), ay(m);
+	CPPAD_TEST_VECTOR< AD<double> > X(4), ax(n), ay(m);
+	size_t i, j;
+	for(j = 0; j < X.size(); j++)
+		X[j] = (j + 1);
+
+	CppAD::Independent(X);
 	// left matrix
 	ax[0]  = X[0];  // left[0,0]   = x[0] = 1
 	ax[1]  = X[1];  // left[0,1]   = x[1] = 2
@@ -278,70 +313,97 @@ bool user_atomic(void)
 	ok &= ay[2] == (5*3 + 6*4); ok &= Variable( ay[2] );
 	ok &= ay[3] == (5*7 + 6*8); ok &= Parameter( ay[3] );
 	//
-	for(i = 0; i < Y.size(); i++)
-		Y[i] = ay[i]; 
-	CppAD::ADFun<double> F(X, Y);
-	// f(x) = [ x0*x2 + x1*x3 , x0*7 + x1*8 , 5*x2  + 6*x3  , 5*7 + 6*8 ]^T
+	CppAD::ADFun<double> G(X, ay);
+	// g(x) = [ x0*x2 + x1*x3 , x0*7 + x1*8 , 5*x2  + 6*x3  , 5*7 + 6*8 ]^T
 	//
-	// Test zero order forward mode evaluation of f(x)
-	CPPAD_TEST_VECTOR<double> x( X.size() ), y( Y.size() );
-	for(j = 0; j < x.size(); j++)
+	// Test zero order forward mode evaluation of g(x)
+	CPPAD_TEST_VECTOR<double> x( X.size() ), y(m);
+	for(j = 0; j <  X.size() ; j++)
 		x[j] = j + 2;
-	y = F.Forward(0, x);
+	y = G.Forward(0, x);
 	ok &= y[0] == x[0] * x[2] + x[1] * x[3];
 	ok &= y[1] == x[0] * 7.   + x[1] * 8.;
 	ok &= y[2] == 5. * x[2]   + 6. * x[3];
 	ok &= y[3] == 5. * 7.     + 6. * 8.;
 
-	// f'(x) = [ x2, x3, x0, x1 ]
+	// g'(x) = [ x2, x3, x0, x1 ]
 	//         [ 7 ,  8,  0, 0  ]
 	//         [ 0 ,  0,  5, 6  ]
 	//         [ 0 ,  0,  0, 0  ] 
 	//
-	// Test first order forward mode evaluation of f'(x) * [1, 2, 3, 4]^T 
-	CPPAD_TEST_VECTOR<double> dx( x.size() ), dy( y.size() );
-	for(j = 0; j < x.size(); j++)
+	// Test first order forward mode evaluation of g'(x) * [1, 2, 3, 4]^T 
+	CPPAD_TEST_VECTOR<double> dx( X.size() ), dy(m);
+	for(j = 0; j <  X.size() ; j++)
 		dx[j] = j + 1;
-	dy = F.Forward(1, dx);
+	dy = G.Forward(1, dx);
 	ok &= dy[0] == 1. * x[2] + 2. * x[3] + 3. * x[0] + 4. * x[1];
 	ok &= dy[1] == 1. * 7.   + 2. * 8.   + 3. * 0.   + 4. * 0.;
 	ok &= dy[2] == 1. * 0.   + 2. * 0.   + 3. * 5.   + 4. * 6.;
 	ok &= dy[3] == 1. * 0.   + 2. * 0.   + 3. * 0.   + 4. * 0.;
 
-	// f_0^2 (x) = [ 0, 0, 1, 0 ], f_0^2 (x) * [1] = [3]
+	// g_0^2 (x) = [ 0, 0, 1, 0 ], g_0^2 (x) * [1] = [3]
 	//             [ 0, 0, 0, 1 ]              [2]   [4]
 	//             [ 1, 0, 0, 0 ]              [3]   [1]
 	//             [ 0, 1, 0, 0 ]              [4]   [2]
 	//
 	// Test second order forward mode 
-	CPPAD_TEST_VECTOR<double> ddx( x.size() ), ddy( y.size() );
-	for(j = 0; j < x.size(); j++)
+	CPPAD_TEST_VECTOR<double> ddx( X.size() ), ddy(m);
+	for(j = 0; j <  X.size() ; j++)
 		ddx[j] = 0.;
-	ddy = F.Forward(2, ddx);
-	// [1, 2, 3, 4] * f_0^2 (x) * [1, 2, 3, 4]^T = 1*3 + 2*4 + 3*1 + 4*2
+	ddy = G.Forward(2, ddx);
+	// [1, 2, 3, 4] * g_0^2 (x) * [1, 2, 3, 4]^T = 1*3 + 2*4 + 3*1 + 4*2
 	ok &= 2. * ddy[0] == 1. * 3. + 2. * 4. + 3. * 1. + 4. * 2.; 
-	// for i > 0, [1, 2, 3, 4] * f_i^2 (x) * [1, 2, 3, 4]^T = 0
+	// for i > 0, [1, 2, 3, 4] * g_i^2 (x) * [1, 2, 3, 4]^T = 0
 	ok &= ddy[1] == 0.;
 	ok &= ddy[2] == 0.;
 	ok &= ddy[3] == 0.;
 
 	// Test second order reverse mode 
-	CPPAD_TEST_VECTOR<double> w( y.size() ), dw( 2 * x.size() );
-	for(i = 0.; i < y.size(); i++)
+	CPPAD_TEST_VECTOR<double> w(m), dw(2 *  X.size() );
+	for(i = 0.; i < m; i++)
 		w[i] = 0.;
 	w[0] = 1.;
-	dw = F.Reverse(2, w);
-	// f_0'(x) = [ x2, x3, x0, x1 ]
+	dw = G.Reverse(2, w);
+	// g_0'(x) = [ x2, x3, x0, x1 ]
 	ok &= dw[0*2 + 0] == x[2];
 	ok &= dw[1*2 + 0] == x[3];
 	ok &= dw[2*2 + 0] == x[0];
 	ok &= dw[3*2 + 0] == x[1];
-	// f_0'(x)   * [1, 2, 3, 4]  = 1 * x2 + 2 * x3 + 3 * x0 + 4 * x1
-	// f_0^2 (x) * [1, 2, 3, 4]  = [3, 4, 1, 2]
+	// g_0'(x)   * [1, 2, 3, 4]  = 1 * x2 + 2 * x3 + 3 * x0 + 4 * x1
+	// g_0^2 (x) * [1, 2, 3, 4]  = [3, 4, 1, 2]
 	ok &= dw[0*2 + 1] == 3.;
 	ok &= dw[1*2 + 1] == 4.;
 	ok &= dw[2*2 + 1] == 1.;
 	ok &= dw[3*2 + 1] == 2.;
+	/*
+	[ x0 , x1 ] * [ x2 , 7 ] = [ x0*x2 + x1*x3 , x0*7 + x1*8 ]
+	[ 5  , 6 ]    [ x3 , 8 ]   [ 5*x2  + 6*x3  , 5*7 + 6*8 ]
+	so the sparsity patter should be
+	s[0] = {0, 1, 2, 3}
+	s[1] = {0, 1}
+	s[2] = {2, 3}
+	s[3] = {}
+	*/
+	CPPAD_TEST_VECTOR< std::set<size_t> > r( X.size() ), s(m);
+	for(j = 0; j <  X.size() ; j++)
+	{	assert( r[j].empty() );
+		r[j].insert(j);
+	}
+	s = G.ForSparseJac( X.size() , r);
+	for(j = 0; j <  X.size() ; j++)
+	{	// s[0] = {0, 1, 2, 3}
+		ok &= s[0].find(j) != s[0].end();
+		// s[1] = {0, 1}
+		if( j < 2 )
+			ok &= s[1].find(j) != s[1].end();
+		else	ok &= s[1].find(j) == s[1].end();
+		// s[2] = {2, 3}
+		if( j < 2 )
+			ok &= s[2].find(j) == s[2].end();
+		else	ok &= s[2].find(j) != s[2].end();
+	}
+	// s[3] == {}
+	ok &= s[3].empty();
 	
 	// Free temporary work space. (If there are future calls to 
 	// mat_mul they would create new temporary work space.)
