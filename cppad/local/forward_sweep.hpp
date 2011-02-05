@@ -563,7 +563,7 @@ size_t forward_sweep(
 			break;
 
 			case UsrapOp:
-			// next argument in an atomic operation sequence
+			// parameter argument in an atomic operation sequence
 			CPPAD_ASSERT_UNKNOWN( user_state == user_arg );
 			CPPAD_ASSERT_UNKNOWN( user_j < user_n );
 			CPPAD_ASSERT_UNKNOWN( arg[0] < num_par );
@@ -581,7 +581,7 @@ size_t forward_sweep(
 			break;
 
 			case UsravOp:
-			// next argument in an atomic operation sequence
+			// variable argument in an atomic operation sequence
 			CPPAD_ASSERT_UNKNOWN( user_state == user_arg );
 			CPPAD_ASSERT_UNKNOWN( user_j < user_n );
 			CPPAD_ASSERT_UNKNOWN( arg[0] <= i_var );
@@ -598,7 +598,7 @@ size_t forward_sweep(
 			break;
 
 			case UsrrpOp:
-			// next result in an atomic operation sequence
+			// parameter result in an atomic operation sequence
 			CPPAD_ASSERT_UNKNOWN( user_state == user_ret );
 			CPPAD_ASSERT_UNKNOWN( user_i < user_m );
 			user_i++;
@@ -607,7 +607,7 @@ size_t forward_sweep(
 			break;
 
 			case UsrrvOp:
-			// next result in an atomic operation sequence
+			// variable result in an atomic operation sequence
 			CPPAD_ASSERT_UNKNOWN( user_state == user_ret );
 			CPPAD_ASSERT_UNKNOWN( user_i < user_m );
 			Taylor[i_var * J + user_k] = user_ty[user_i * user_k1 + user_k];

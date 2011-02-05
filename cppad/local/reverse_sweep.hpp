@@ -501,6 +501,7 @@ void ReverseSweep(
 				user_n     = arg[2];
 				user_m     = arg[3];
 				if( (user_ix.size() < user_n)           | 
+				    (user_tx.size() < user_n * user_k1) |
 				    (user_ty.size() < user_m * user_k1) )
 				{	user_ix.resize(user_n);
 					user_tx.resize(user_n * user_k1);
@@ -520,6 +521,8 @@ void ReverseSweep(
 				CPPAD_ASSERT_UNKNOWN( user_m     == arg[3] );
 				user_state = user_start;
 				user_state = user_end;
+
+				// call users function for this operation
 				user_atomic<Base>::reverse(user_index, user_id,
 					user_k, user_n, user_m, user_tx, user_ty,
 					user_px, user_py
@@ -533,7 +536,7 @@ void ReverseSweep(
 			break;
 
 			case UsrapOp:
-			// next argument in an atomic operation sequence
+			// parameter argument in an atomic operation sequence
 			CPPAD_ASSERT_UNKNOWN( user_state == user_arg );
 			CPPAD_ASSERT_UNKNOWN( 0 < user_j && user_j <= user_n );
 			CPPAD_ASSERT_UNKNOWN( NumArg(op) == 1 );
@@ -549,9 +552,9 @@ void ReverseSweep(
 			break;
 
 			case UsravOp:
-			// next argument in an atomic operation sequence
+			// variable argument in an atomic operation sequence
 			CPPAD_ASSERT_UNKNOWN( user_state == user_arg );
-			CPPAD_ASSERT_UNKNOWN( user_j < user_n );
+			CPPAD_ASSERT_UNKNOWN( 0 < user_j && user_j <= user_n );
 			CPPAD_ASSERT_UNKNOWN( NumArg(op) == 1 );
 			CPPAD_ASSERT_UNKNOWN( arg[0] <= i_var );
 			CPPAD_ASSERT_UNKNOWN( 0 < arg[0] );
@@ -564,7 +567,7 @@ void ReverseSweep(
 			break;
 
 			case UsrrpOp:
-			// previous result in an atomic operation sequence
+			// parameter result in an atomic operation sequence
 			CPPAD_ASSERT_UNKNOWN( user_state == user_ret );
 			CPPAD_ASSERT_UNKNOWN( 0 < user_i && user_i <= user_m );
 			CPPAD_ASSERT_UNKNOWN( NumArg(op) == 1 );
@@ -580,7 +583,7 @@ void ReverseSweep(
 			break;
 
 			case UsrrvOp:
-			// previous result in an atomic operation sequence
+			// variable result in an atomic operation sequence
 			CPPAD_ASSERT_UNKNOWN( user_state == user_ret );
 			CPPAD_ASSERT_UNKNOWN( 0 < user_i && user_i <= user_m );
 			--user_i;

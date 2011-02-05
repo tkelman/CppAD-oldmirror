@@ -52,6 +52,8 @@ $icode%ok% = %reverse%(%id%, %k%, %n%, %m%, %tx%, %ty%, %px%, %py%)
 %$$
 $icode%ok% = %for_jac_sparse%(%id%, %n%, %m%, %q%, %r%, %s%)
 %$$
+$icode%ok% = %rev_jac_sparse%(%id%, %n%, %m%, %q%, %r%, %s%)
+%$$
 $codei%user_atomic::clear()%$$
 
 $head Purpose$$
@@ -383,6 +385,51 @@ upon return all of its set elements are between
 zero and $icode%q%-1%$$ inclusive and
 it specifies a sparsity pattern for the matrix $latex S(x)$$.
 
+$head rev_jac_sparse$$
+The preprocessor macro argument $icode rev_jac_sparse$$
+is a user defined function
+$codei%
+	%ok% = %rev_jac_sparse%(%id%, %n%, %m%, %q%, %r%, %s%)
+%$$
+that is used to compute results during a $cref/RevSparseJac/$$ sweep.
+For a fixed $latex q \times m$$ matrix $latex S$$,
+the Jacobian of $latex S * f( x )$$ with respect to $latex x \in B^n$$ is
+$latex \[
+	R(x) = S * f^{(1)} (x)
+\] $$
+Given a $cref/sparsity pattern/glossary/Sparsity Pattern/$$ for $latex S$$,
+$icode rev_jac_sparse$$ returns a sparsity pattern for $latex R(x)$$.
+
+$subhead q$$
+The argument $icode q$$ has prototype
+$codei%
+     size_t %q%
+%$$
+It specifies the number of rows in 
+$latex S \in B^{q \times m}$$ and the Jacobian 
+$latex R(x) \in B^{q \times m}$$. 
+
+$subhead s$$
+The argument $icode s$$ has prototype
+$codei%
+     const CppAD::vector< std::set<size_t> >& %s%
+%$$
+Its size is $icode m$$ and all the set elements are between
+zero and $icode%q%-1%$$ inclusive.
+It specifies a sparsity pattern
+for the matrix $icode S$$.
+
+$head r$$
+The return value $icode r$$ has prototype
+$codei%
+	CppAD::vector< std::set<size_t> >& %r%
+%$$
+and its size is $icode n$$.
+The input values of its sets do not matter,
+upon return all of its set elements are between
+zero and $icode%q%-1%$$ inclusive and
+it specifies a sparsity pattern for the matrix $latex R(x)$$.
+
 $head clear$$
 User atomic functions hold onto static work space vectors in order to
 increase speed by avoiding memory allocation calls.
@@ -435,20 +482,40 @@ results during forward mode.
 is the name of the user defined function that computes corresponding
 results during reverse mode.
 
+\par for_jac_sparse
+is the name of the user defined routine that computes corresponding
+results during forward mode jacobian sparsity sweeps.
+
+\par rev_jac_sparse
+is the name of the user defined routine that computes corresponding
+results during reverse mode jacobian sparsity sweeps.
+
 \par memory allocation
-Also not that user_atomic is used as a static object, so its objects
+Note that user_atomic is used as a static object, so its objects
 do note get deallocated until the program terminates. 
 */
 
-# define CPPAD_ATOMIC_FUNCTION(Tvector, Base, afun,                   \
-	forward, reverse, for_jac_sparse)                                \
+# define CPPAD_ATOMIC_FUNCTION(                                       \
+     Tvector         ,                                                \
+     Base            ,                                                \
+     afun            ,                                                \
+	forward         ,                                                \
+     reverse         ,                                                \
+     for_jac_sparse  ,                                                \
+     rev_jac_sparse                                                   \
+)                                                                     \
 inline void afun (                                                    \
      size_t                               id ,                        \
      const Tvector< CppAD::AD<Base> >&    ax ,                        \
      Tvector< CppAD::AD<Base> >&          ay                          \
 )                                                                     \
-{    static CppAD::user_atomic<Base>                                  \
-		fun(#afun, forward, reverse, for_jac_sparse);               \
+{    static CppAD::user_atomic<Base> fun(                             \
+          #afun          ,                                            \
+          forward        ,                                            \
+          reverse        ,                                            \
+          for_jac_sparse ,                                            \
+          rev_jac_sparse                                              \
+     );                                                               \
      fun.ad(id, ax, ay);                                              \
 }
 
@@ -491,6 +558,15 @@ class user_atomic {
 		const vector< std::set<size_t> >& r ,
 		vector< std::set<size_t>  >&      s
 	);
+	/// type for user routine that computes reverse mode Jacobian sparsity
+	typedef bool (*RJS) (
+		size_t                           id ,
+		size_t                            n ,
+		size_t                            m ,
+		size_t                            q ,
+		vector< std::set<size_t> >&       r ,
+		const vector< std::set<size_t> >& s
+	);
 private:
 	/// users name for the AD version of this atomic operation
 	const std::string     name_;
@@ -500,6 +576,8 @@ private:
 	const R                  r_;
 	/// user's implements of forward jacobian sparsity calculations
 	const FJS              fjs_;
+	/// user's implements of reverse jacobian sparsity calculations
+	const RJS              rjs_;
 	/// index of this object in the vector of all objects in this class
 	const size_t         index_;
 
@@ -532,13 +610,17 @@ public:
 	user routine that does reverse mode calculations for this operation.
 
 	\param fjs
-	user routine that does forward jacobian sparsity calculations
+	user routine that does forward Jacobian sparsity calculations.
+
+	\param rjs
+	user routine that does reverse Jacobian sparsity calculations.
 	*/
-	user_atomic(const char* afun, F f, R r, FJS fjs) : 
+	user_atomic(const char* afun, F f, R r, FJS fjs, RJS rjs) : 
 	name_(afun)
 	, f_(f)
 	, r_(r)
 	, fjs_(fjs)
+	, rjs_(rjs)
 	, index_( List().size() )
 	{	List().push_back(this); }
 
@@ -783,7 +865,6 @@ public:
 	index in the list of all user_atomic objects
 	corresponding to this function.
 
-
 	\param id
 	extra information vector that is just passed through by CppAD,
 	and possibly used by user's routines.
@@ -819,6 +900,52 @@ public:
 		if( ! ok )
 		{	std::string msg = op->name_ + 
 				": ok returned false from for_jac_sparse calculation";
+			CPPAD_ASSERT_KNOWN(false, msg.c_str());
+		}
+	}
+
+	/*!
+ 	Link from reverse jacobian sparsity sweep to users routine.
+
+	\param index
+	index in the list of all user_atomic objects
+	corresponding to this function.
+
+	\param id
+	extra information vector that is just passed through by CppAD,
+	and possibly used by user's routines.
+
+	\param n
+	domain space size for this calcualtion.
+
+	\param m
+	range space size for this calculation.
+
+	\param q
+	is the row dimension for the sparsity partterns.
+
+	\param r
+	is the sparsity patter for the argument vector x
+
+	\param s
+	is the sparsity patter for the result vector y
+	*/
+	static void rev_jac_sparse(
+		size_t                            index ,
+		size_t                               id ,
+		size_t                                n , 
+		size_t                                m , 
+		size_t                                q ,
+		vector< std::set<size_t> >&           r ,
+		const vector< std::set<size_t> >&     s )
+	{
+		CPPAD_ASSERT_UNKNOWN(index < List().size() );
+		user_atomic* op = List()[index];
+
+		bool ok = op->rjs_(id, n, m, q, r, s);
+		if( ! ok )
+		{	std::string msg = op->name_ + 
+				": ok returned false from rev_jac_sparse calculation";
 			CPPAD_ASSERT_KNOWN(false, msg.c_str());
 		}
 	}

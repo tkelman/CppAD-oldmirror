@@ -69,7 +69,7 @@ namespace { // Empty namespace
 		return (i * nc_result_ + j) * n_order_ + ell;
 	}
 
-	// multiply left times right and sum into result
+	// forward mode, multiply left times right and sum into result
 	void multiply_and_sum(
 		size_t                order_left , 
 		size_t                order_right, 
@@ -93,6 +93,7 @@ namespace { // Empty namespace
 		return;
 	}
 
+	// reverse mode, compute partials for this order and sum into px, py
 	void reverse_multiply(
 		size_t                order_left , 
 		size_t                order_right, 
@@ -118,7 +119,22 @@ namespace { // Empty namespace
 		return;
 	}
 
-	// forward mode routine
+	void my_union(
+		std::set<size_t>&         result  ,
+		const std::set<size_t>&   left    ,
+		const std::set<size_t>&   right   )
+	{	std::set<size_t> temp;
+		std::set_union(
+			left.begin()              ,
+			left.end()                ,
+			right.begin()             ,
+			right.end()               ,
+			std::inserter(temp, temp.begin())
+		);
+		result.swap(temp);
+	}
+
+	// forward mode routine called by CppAD
 	bool forward_mat_mul(
 		size_t                   id ,
 		size_t                    k ,
@@ -178,7 +194,7 @@ namespace { // Empty namespace
 		return true;
 	}
 
-	// reverse mode routine
+	// reverse mode routine called by CppAD
 	bool reverse_mat_mul(
 		size_t                   id ,
 		size_t                    k ,
@@ -214,6 +230,7 @@ namespace { // Empty namespace
 		return true;
 	}
 
+	// forward Jacobian sparsity routine called by CppAD
 	bool for_jac_sparse_mat_mul(
 		size_t                               id ,             
 		size_t                                n ,
@@ -222,7 +239,6 @@ namespace { // Empty namespace
 		const vector< std::set<size_t> >&     r ,
 		vector< std::set<size_t> >&           s )
 	{	size_t i, j, im_left, middle, mj_right, ij_result, order;
-		std::set<size_t> set_ij, temp;
 	
 		n_order_   = 1;
 		nr_result_ = info_[id].nr_result; 
@@ -232,46 +248,69 @@ namespace { // Empty namespace
 		order = 0;
 		for(i = 0; i < nr_result_; i++)
 		{	for(j = 0; j < nc_result_; j++)
-			{	// initialize result set as empty for this i,j
-				set_ij.clear();
-				// now add in dependencies
+			{	ij_result = result(i, j, order);
+				s[ij_result].clear();
 				for(middle = 0; middle < n_middle_; middle++)
-				{	temp.clear();
-					im_left   = left(i, middle, order);
-					std::set_union(
-						r[im_left].begin()                ,
-						r[im_left].end()                  ,
-						set_ij.begin()                    ,
-						set_ij.end()                      ,
-						std::inserter(temp, temp.begin())
-					);
-					set_ij.swap(temp);
-					//
-					temp.clear();
-					mj_right = right(middle, j, order);
-					std::set_union(
-						r[mj_right].begin()                ,
-						r[mj_right].end()                  ,
-						set_ij.begin()                    ,
-						set_ij.end()                      ,
-						std::inserter(temp, temp.begin())
-					);
-					set_ij.swap(temp);
+				{	im_left   = left(i, middle, order);
+					mj_right  = right(middle, j, order);
+
+					// s[ij_result] = union( r[im_left], s[ij_result] )
+					my_union(s[ij_result], r[im_left], s[ij_result]);
+
+					// s[ij_result] = union( r[mj_right], s[ij_result] )
+					my_union(s[ij_result], r[mj_right], s[ij_result]);
 				}
-				ij_result = result(i, j, order);
-				s[ ij_result ].swap(set_ij);
 			}
 		}
 		return true;
 	}
 
+	// reverse Jacobian sparsity routine called by CppAD
+	bool rev_jac_sparse_mat_mul(
+		size_t                               id ,             
+		size_t                                n ,
+		size_t                                m ,
+		size_t                                q ,
+		vector< std::set<size_t> >&           r ,
+		const vector< std::set<size_t> >&     s )
+	{	size_t i, j, im_left, middle, mj_right, ij_result, order;
+	
+		n_order_   = 1;
+		nr_result_ = info_[id].nr_result; 
+		n_middle_  = info_[id].n_middle;
+		nc_result_ = info_[id].nc_result;
+
+		for(j = 0; j < n; j++)
+			r[j].clear();
+
+		order = 0;
+		for(i = 0; i < nr_result_; i++)
+		{	for(j = 0; j < nc_result_; j++)
+			{	ij_result = result(i, j, order);
+				for(middle = 0; middle < n_middle_; middle++)
+				{	im_left   = left(i, middle, order);
+					mj_right  = right(middle, j, order);
+
+					// r[im_left] = union( s[ij_result] , r[im_left] )
+					my_union(r[im_left], s[ij_result], r[im_left]);
+
+					// r[mj_right] = union( s[ij_result] , r[mj_right] )
+					my_union(r[mj_right], s[ij_result], r[mj_right]);
+				}
+			}
+		}
+		return true;
+	}
+
+	// declare the AD<double> routine mat_mul(id, ax, ay)
 	CPPAD_ATOMIC_FUNCTION(
 		CPPAD_TEST_VECTOR       ,
 		double                  , 
 		mat_mul                 , 
 		forward_mat_mul         , 
 		reverse_mat_mul         ,
-		for_jac_sparse_mat_mul 
+		for_jac_sparse_mat_mul  ,
+		rev_jac_sparse_mat_mul  
 	)
 
 } // End empty namespace
@@ -308,22 +347,29 @@ bool user_atomic(void)
 	[ x0 , x1 ] * [ x2 , 7 ] = [ x0*x2 + x1*x3 , x0*7 + x1*8 ]
 	[ 5  , 6 ]    [ x3 , 8 ]   [ 5*x2  + 6*x3  , 5*7 + 6*8 ]
 	*/
+
+	// This routine has to know the dimensions of the matrices.
+	// Store information about the matrix multiply for this call to mat_mul.
 	matrix_size sizes;
 	sizes.nr_result = nr_result;
 	sizes.n_middle  = n_middle;
 	sizes.nc_result = nc_result;
 	size_t id       = info_.size();
 	info_.push_back(sizes);
+
+	// user defined AD<double> version of matrix multiply
 	mat_mul(id, ax, ay);
-	//
+	//----------------------------------------------------------------------
+	// check AD<double>  results
 	ok &= ay[0] == (1*3 + 2*4); ok &= Variable( ay[0] );
 	ok &= ay[1] == (1*7 + 2*8); ok &= Variable( ay[1] );
 	ok &= ay[2] == (5*3 + 6*4); ok &= Variable( ay[2] );
 	ok &= ay[3] == (5*7 + 6*8); ok &= Parameter( ay[3] );
-	//
+	//----------------------------------------------------------------------
+	// use mat_mul to define a function g : X -> ay
 	CppAD::ADFun<double> G(X, ay);
 	// g(x) = [ x0*x2 + x1*x3 , x0*7 + x1*8 , 5*x2  + 6*x3  , 5*7 + 6*8 ]^T
-	//
+	//----------------------------------------------------------------------
 	// Test zero order forward mode evaluation of g(x)
 	CPPAD_TEST_VECTOR<double> x( X.size() ), y(m);
 	for(j = 0; j <  X.size() ; j++)
@@ -334,12 +380,12 @@ bool user_atomic(void)
 	ok &= y[2] == 5. * x[2]   + 6. * x[3];
 	ok &= y[3] == 5. * 7.     + 6. * 8.;
 
+	//----------------------------------------------------------------------
+	// Test first order forward mode evaluation of g'(x) * [1, 2, 3, 4]^T 
 	// g'(x) = [ x2, x3, x0, x1 ]
 	//         [ 7 ,  8,  0, 0  ]
 	//         [ 0 ,  0,  5, 6  ]
 	//         [ 0 ,  0,  0, 0  ] 
-	//
-	// Test first order forward mode evaluation of g'(x) * [1, 2, 3, 4]^T 
 	CPPAD_TEST_VECTOR<double> dx( X.size() ), dy(m);
 	for(j = 0; j <  X.size() ; j++)
 		dx[j] = j + 1;
@@ -349,12 +395,12 @@ bool user_atomic(void)
 	ok &= dy[2] == 1. * 0.   + 2. * 0.   + 3. * 5.   + 4. * 6.;
 	ok &= dy[3] == 1. * 0.   + 2. * 0.   + 3. * 0.   + 4. * 0.;
 
+	//----------------------------------------------------------------------
+	// Test second order forward mode 
 	// g_0^2 (x) = [ 0, 0, 1, 0 ], g_0^2 (x) * [1] = [3]
 	//             [ 0, 0, 0, 1 ]              [2]   [4]
 	//             [ 1, 0, 0, 0 ]              [3]   [1]
 	//             [ 0, 1, 0, 0 ]              [4]   [2]
-	//
-	// Test second order forward mode 
 	CPPAD_TEST_VECTOR<double> ddx( X.size() ), ddy(m);
 	for(j = 0; j <  X.size() ; j++)
 		ddx[j] = 0.;
@@ -366,6 +412,7 @@ bool user_atomic(void)
 	ok &= ddy[2] == 0.;
 	ok &= ddy[3] == 0.;
 
+	//----------------------------------------------------------------------
 	// Test second order reverse mode 
 	CPPAD_TEST_VECTOR<double> w(m), dw(2 *  X.size() );
 	for(i = 0.; i < m; i++)
@@ -383,6 +430,9 @@ bool user_atomic(void)
 	ok &= dw[1*2 + 1] == 4.;
 	ok &= dw[2*2 + 1] == 1.;
 	ok &= dw[3*2 + 1] == 2.;
+
+	//----------------------------------------------------------------------
+	// Test forward and reverse Jacobian sparsity pattern
 	/*
 	[ x0 , x1 ] * [ x2 , 7 ] = [ x0*x2 + x1*x3 , x0*7 + x1*8 ]
 	[ 5  , 6 ]    [ x3 , 8 ]   [ 5*x2  + 6*x3  , 5*7 + 6*8 ]
@@ -402,17 +452,50 @@ bool user_atomic(void)
 	{	// s[0] = {0, 1, 2, 3}
 		ok &= s[0].find(j) != s[0].end();
 		// s[1] = {0, 1}
-		if( j < 2 )
+		if( j == 0 || j == 1 )
 			ok &= s[1].find(j) != s[1].end();
 		else	ok &= s[1].find(j) == s[1].end();
 		// s[2] = {2, 3}
-		if( j < 2 )
-			ok &= s[2].find(j) == s[2].end();
-		else	ok &= s[2].find(j) != s[2].end();
+		if( j == 2 || j == 3 )
+			ok &= s[2].find(j) != s[2].end();
+		else	ok &= s[2].find(j) == s[2].end();
 	}
 	// s[3] == {}
 	ok &= s[3].empty();
 	
+	//----------------------------------------------------------------------
+	// Test reverse Jacobian sparsity pattern
+	/*
+	[ x0 , x1 ] * [ x2 , 7 ] = [ x0*x2 + x1*x3 , x0*7 + x1*8 ]
+	[ 5  , 6 ]    [ x3 , 8 ]   [ 5*x2  + 6*x3  , 5*7 + 6*8 ]
+	so the sparsity patter should be
+	r[0] = {0, 1, 2, 3}
+	r[1] = {0, 1}
+	r[2] = {2, 3}
+	r[3] = {}
+	*/
+	for(i = 0; i <  m; i++)
+	{	s[i].clear();
+		s[i].insert(i);
+	}
+	r = G.RevSparseJac( X.size() , s);
+	for(i = 0; i <  m; i++)
+	for(j = 0; j <  X.size() ; j++)
+	{	// r[0] = {0, 1, 2, 3}
+		ok &= r[0].find(j) != r[0].end();
+		// r[1] = {0, 1}
+		if( j == 0 || j == 1 )
+			ok &= r[1].find(j) != r[1].end();
+		else	ok &= r[1].find(j) == r[1].end();
+		// r[2] = {2, 3}
+		if( j == 2 || j == 3 )
+			ok &= r[2].find(j) != r[2].end();
+		else	ok &= r[2].find(j) == r[2].end();
+	}
+	// r[3] == {}
+	ok &= r[3].empty();
+
+	// --------------------------------------------------------------------
 	// Free temporary work space. (If there are future calls to 
 	// mat_mul they would create new temporary work space.)
 	CppAD::user_atomic<double>::clear();
