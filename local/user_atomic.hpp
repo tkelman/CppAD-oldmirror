@@ -69,9 +69,25 @@ In this case, $code CPPAD_ATOMIC_FUNCTION$$ can be used
 make add the user code for $latex f(x)$$ and its derivatives
 to the set of $codei%AD<%Base%>%$$ atomic operations. 
 
+$head Partial Implementation$$
+The routines 
+$icode forward$$,
+$icode reverse$$,
+$icode for_jac_spares$$ and
+$icode rev_jac_sparse$$,
+must be defined by the user.
+On $icode forward$$ mode for the case $icode k = 0$$ needs to 
+be implemented.
+Functions with the correct prototype,
+and that just return $icode false$$, 
+can be used for the other cases until they are required by 
+your calculations. For example, you need not implement
+$icode forward$$ for the case $icode%k% == 2%$$ until you require
+forward mode calculation of second derivatives.
+
 $head CPPAD_ATOMIC_FUNCTION$$
 $index CPPAD_ATOMIC_FUNCTION$$
-The preprocessor macro invocation
+The macro invocation
 $codei%
 	CPPAD_ATOMIC_FUNCTION(%Tvector%, %Base%, %afun%, %forward%, %reverse%)
 %$$ 
@@ -81,11 +97,11 @@ This macro can be placed within a namespace
 but must be outside of any routine.
 
 $subhead Tvector$$
-The preprocessor macro argument $icode Tvector$$ must be a
+The macro argument $icode Tvector$$ must be a
 $cref/simple vector template class/SimpleVector/$$.
 
 $subhead Base$$
-The preprocessor macro argument $icode Base$$ is the 
+The macro argument $icode Base$$ is the 
 $cref/base type/base_require/$$
 corresponding to the operations sequence;
 i.e., we are adding $icode afun$$, 
@@ -179,7 +195,7 @@ If $icode%ty%.size() > (%k% + 1) * %m%$$,
 the other components of $icode ty$$ are not specified and should not be used.
 
 $head afun$$
-The preprocessor macro argument $icode afun$$,
+The macro argument $icode afun$$,
 is the name of the AD function corresponding to this atomic
 operation (as it is used in the source code).
 CppAD uses the functions $icode forward$$ and $icode reverse$$,
@@ -191,7 +207,7 @@ $codei%
 where the argument are vectors with elements of type $codei%AD<%Base%>%$$.
 
 $subhead ax$$
-The argument $icode ax$$ has prototype
+The $icode afun$$ argument $icode ax$$ has prototype
 $codei%
 	const %Tvector%< AD<%Base%> >& %ax%
 %$$
@@ -202,7 +218,7 @@ The size of this vector,
 may depend on the call to $icode afun$$.
 
 $subhead ay$$
-The result $icode ay$$ has prototype
+The $icode afun$$ result $icode ay$$ has prototype
 $codei%
 	%Tvector%< AD<%Base%> >& %ay%
 %$$
@@ -213,7 +229,7 @@ The size of this vector,
 may depend on the call to $icode afun$$.
 
 $head forward$$
-The preprocessor macro argument $icode forward$$ is a
+The macro argument $icode forward$$ is a
 user defined function
 $codei%
 	%ok% = %forward%(%id%, %k%, %n%, %m%, %vx%, %vy%, %tx%, %ty%)
@@ -234,7 +250,7 @@ $latex \[
 The other components of $icode ty$$ must be left unchanged.
 
 $subhead vx$$
-The argument $icode vx$$ has prototype
+The $icode forward$$ argument $icode vx$$ has prototype
 $codei%
 	const CppAD::vector<bool>& %vx%
 %$$
@@ -250,7 +266,7 @@ $cref/Independent/$$ variables (it is a variable),
 $icode%vx%[%j%]%$$ is true.
 
 $subhead vy$$
-The argument $icode vy$$ has prototype
+The $icode forward$$ argument $icode vy$$ has prototype
 $codei%
 	CppAD::vector<bool>& %vy%
 %$$
@@ -267,17 +283,8 @@ $cref/Independent/$$ variables (it is a variable),
 $icode%vy%[%j%]%$$ is true
 (the fewer true components the more efficiently derivatives will be computed).
 
-$subhead Usage$$
-This $icode forward$$ routine, with $icode%k% == 0%$$, is used 
-during each call to $icode afun$$.
-It is also used with $icode k$$ equal to the derivative order
-during each forward mode $cref/derivative calculation/ForwardAny/$$.
-If certain derivative orders are not used,
-$icode forward$$ can just return $icode%ok% == false%$$ 
-and need not be implemented for those orders.
-
 $head reverse$$
-The preprocessor macro argument $icode reverse$$
+The macro argument $icode reverse$$
 is a user defined function
 $codei%
 	%ok% = %reverse%(%id%, %k%, %n%, %m%, %tx%, %ty%, %px%, %py%)
@@ -290,7 +297,7 @@ $latex g : B^{m \times k} \rightarrow B$$.
 to denote an arbitrary function of these Taylor coefficients:
 
 $subhead py$$
-The argument $icode py$$ has prototype
+The $icode reverse$$ argument $icode py$$ has prototype
 $codei%
 	const CppAD::vector<%Base%>& %py%
 %$$
@@ -311,7 +318,7 @@ coefficients for $icode x$$; so we write $latex y(x)$$ and define
 $latex \[
 	h(x) = g [ y(x) ]
 \] $$
-The argument $icode px$$ has prototype
+The $icode reverse$$ argument $icode px$$ has prototype
 $codei%
 	CppAD::vector<%Base%>& %px%
 %$$
@@ -332,16 +339,8 @@ with respect to the Taylor coefficient $latex x_j^\ell$$.
 If $icode%px%.size() > (%k% + 1) * %n%$$,
 the other components of $icode px$$ are not specified and should not be used.
 
-$subhead Usage$$
-This $icode reverse$$ routine 
-is used with $icode k$$ equal to the derivative order
-during each reverse mode $cref/derivative calculation/reverse_any/$$.
-If certain derivative orders are not used,
-$icode reverse$$ can just return $icode%ok% == false%$$ 
-and need not be implemented for those orders.
-
 $head for_jac_sparse$$
-The preprocessor macro argument $icode for_jac_sparse$$
+The macro argument $icode for_jac_sparse$$
 is a user defined function
 $codei%
 	%ok% = %for_jac_sparse%(%id%, %n%, %m%, %q%, %r%, %s%)
@@ -353,10 +352,10 @@ $latex \[
 	S(x) = f^{(1)} (x) * R
 \] $$
 Given a $cref/sparsity pattern/glossary/Sparsity Pattern/$$ for $latex R$$,
-$icode for_jac_sparse$$ returns a sparsity pattern for $latex S(x)$$.
+$icode for_jac_sparse$$ computes a sparsity pattern for $latex S(x)$$.
 
 $subhead q$$
-The argument $icode q$$ has prototype
+The $icode for_jac_sparse$$ argument $icode q$$ has prototype
 $codei%
      size_t %q%
 %$$
@@ -365,7 +364,7 @@ $latex R \in B^{n \times q}$$ and the Jacobian
 $latex S(x) \in B^{m \times q}$$. 
 
 $subhead r$$
-The argument $icode r$$ has prototype
+The $icode for_jac_sparse$$ argument $icode r$$ has prototype
 $codei%
      const CppAD::vector< std::set<size_t> >& %r%
 %$$
@@ -375,7 +374,7 @@ It specifies a sparsity pattern
 for the matrix $icode R$$.
 
 $head s$$
-The return value $icode s$$ has prototype
+The $icode for_jac_sparse$$ return value $icode s$$ has prototype
 $codei%
 	CppAD::vector< std::set<size_t> >& %s%
 %$$
@@ -386,7 +385,7 @@ zero and $icode%q%-1%$$ inclusive and
 it specifies a sparsity pattern for the matrix $latex S(x)$$.
 
 $head rev_jac_sparse$$
-The preprocessor macro argument $icode rev_jac_sparse$$
+The macro argument $icode rev_jac_sparse$$
 is a user defined function
 $codei%
 	%ok% = %rev_jac_sparse%(%id%, %n%, %m%, %q%, %r%, %s%)
@@ -398,10 +397,10 @@ $latex \[
 	R(x) = S * f^{(1)} (x)
 \] $$
 Given a $cref/sparsity pattern/glossary/Sparsity Pattern/$$ for $latex S$$,
-$icode rev_jac_sparse$$ returns a sparsity pattern for $latex R(x)$$.
+$icode rev_jac_sparse$$ computes a sparsity pattern for $latex R(x)$$.
 
 $subhead q$$
-The argument $icode q$$ has prototype
+The $icode rev_jac_sparse$$ argument $icode q$$ has prototype
 $codei%
      size_t %q%
 %$$
@@ -410,7 +409,7 @@ $latex S \in B^{q \times m}$$ and the Jacobian
 $latex R(x) \in B^{q \times m}$$. 
 
 $subhead s$$
-The argument $icode s$$ has prototype
+The $icode rev_jac_sparse$$ argument $icode s$$ has prototype
 $codei%
      const CppAD::vector< std::set<size_t> >& %s%
 %$$
@@ -420,7 +419,7 @@ It specifies a sparsity pattern
 for the matrix $icode S$$.
 
 $head r$$
-The return value $icode r$$ has prototype
+The $icode rev_jac_sparse$$ return value $icode r$$ has prototype
 $codei%
 	CppAD::vector< std::set<size_t> >& %r%
 %$$
