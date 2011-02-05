@@ -1,4 +1,3 @@
-/* $Id$ */
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-11 Bradley M. Bell
 
@@ -31,6 +30,13 @@ $end
 namespace { // Empty namespace 
 
 	using CppAD::vector;
+
+	struct matrix_size {
+		size_t nr_result;
+		size_t n_middle;
+		size_t nc_result;
+	};
+	vector<matrix_size> info_;
 
 	// number of orders for this operation (k + 1)
 	size_t n_order_;
@@ -114,7 +120,7 @@ namespace { // Empty namespace
 
 	// forward mode routine
 	bool forward_mat_mul(
-		const vector<size_t>&  info ,
+		size_t                   id ,
 		size_t                    k ,
 		size_t                    n ,
 		size_t                    m ,
@@ -125,10 +131,9 @@ namespace { // Empty namespace
 	)
 	{	size_t i, j, ell;
 		n_order_   = k + 1;	
-		assert( info[0] == 3 ); // number of values in ainfo
-		nr_result_ = info[1];   // number of rows in left matrix
-		n_middle_  = info[2];   // # of columns in left and rows in right
-		nc_result_ = info[3];   // # of columns in right matrix
+		nr_result_ = info_[id].nr_result; 
+		n_middle_  = info_[id].n_middle;
+		nc_result_ = info_[id].nc_result;
 
 		// check total number of components in ax and ay
 		assert( nr_result_ * n_middle_ + n_middle_ * nc_result_  == n );
@@ -175,7 +180,7 @@ namespace { // Empty namespace
 
 	// reverse mode routine
 	bool reverse_mat_mul(
-		const vector<size_t>&  info ,
+		size_t                   id ,
 		size_t                    k ,
 		size_t                    n ,
 		size_t                    m ,
@@ -185,10 +190,9 @@ namespace { // Empty namespace
 		const vector<double>&    py
 	)
 	{	n_order_   = k + 1;	
-		assert( info[0] == 3 ); // number of values in ainfo
-		nr_result_ = info[1];   // number of rows in left matrix
-		n_middle_  = info[2];   // # of columns in left and rows in right
-		nc_result_ = info[3];   // # of columns in right matrix
+		nr_result_ = info_[id].nr_result; 
+		n_middle_  = info_[id].n_middle;
+		nc_result_ = info_[id].nc_result;
 
 		// check total number of components in ax and ay
 		assert( nr_result_ * n_middle_ + n_middle_ * nc_result_  == n );
@@ -211,7 +215,7 @@ namespace { // Empty namespace
 	}
 
 	bool for_jac_sparse_mat_mul(
-		const vector<size_t>&              info ,             
+		size_t                               id ,             
 		size_t                                n ,
 		size_t                                m ,
 		size_t                                q ,
@@ -220,11 +224,10 @@ namespace { // Empty namespace
 	{	size_t i, j, im_left, middle, mj_right, ij_result, order;
 		std::set<size_t> set_ij, temp;
 	
-		assert( info[0] == 3 ); // number of values in ainfo
-		n_order_   = 1;         // use order zero indexing
-		nr_result_ = info[1];   // number of rows in left matrix
-		n_middle_  = info[2];   // # of columns in left and rows in right
-		nc_result_ = info[3];   // # of columns in right matrix
+		n_order_   = 1;
+		nr_result_ = info_[id].nr_result; 
+		n_middle_  = info_[id].n_middle;
+		nc_result_ = info_[id].nc_result;
 
 		order = 0;
 		for(i = 0; i < nr_result_; i++)
@@ -278,14 +281,13 @@ bool user_atomic(void)
 	using CppAD::AD;
 
 	// matrix sizes for this multiplication
-	CPPAD_TEST_VECTOR<size_t> ainfo(3);
-	size_t nr_left  = ainfo[0] = 2;
-	size_t n_middle = ainfo[1] = 2;
-	size_t nc_right = ainfo[2] = 2;
+	size_t nr_result = 2;
+	size_t n_middle  = 2;
+	size_t nc_result = 2;
 	
 	// ax and ay must use CppAD::vector
-	size_t n = nr_left * n_middle + n_middle * nc_right;
-	size_t m = nr_left * nc_right;
+	size_t n = nr_result * n_middle + n_middle * nc_result;
+	size_t m = nr_result * nc_result;
 	CPPAD_TEST_VECTOR< AD<double> > X(4), ax(n), ay(m);
 	size_t i, j;
 	for(j = 0; j < X.size(); j++)
@@ -306,7 +308,13 @@ bool user_atomic(void)
 	[ x0 , x1 ] * [ x2 , 7 ] = [ x0*x2 + x1*x3 , x0*7 + x1*8 ]
 	[ 5  , 6 ]    [ x3 , 8 ]   [ 5*x2  + 6*x3  , 5*7 + 6*8 ]
 	*/
-	mat_mul(ainfo, ax, ay);
+	matrix_size sizes;
+	sizes.nr_result = nr_result;
+	sizes.n_middle  = n_middle;
+	sizes.nc_result = nc_result;
+	size_t id       = info_.size();
+	info_.push_back(sizes);
+	mat_mul(id, ax, ay);
 	//
 	ok &= ay[0] == (1*3 + 2*4); ok &= Variable( ay[0] );
 	ok &= ay[1] == (1*7 + 2*8); ok &= Variable( ay[1] );
@@ -408,6 +416,7 @@ bool user_atomic(void)
 	// Free temporary work space. (If there are future calls to 
 	// mat_mul they would create new temporary work space.)
 	CppAD::user_atomic<double>::clear();
+	info_.resize(0);
 
 	return ok;
 }

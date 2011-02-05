@@ -152,14 +152,13 @@ size_t forward_sweep(
 	vector<Base> user_tx;        // argument vector Taylor coefficients 
 	vector<Base> user_ty;        // result vector Taylor coefficients 
 	size_t user_index = 0;       // indentifier for this user_atomic operation
+	size_t user_id    = 0;       // user identifier for this call to operator
 	size_t user_i     = 0;       // index in result vector
 	size_t user_j     = 0;       // index in argument vector
 	size_t user_m     = 0;       // size of result vector
 	size_t user_n     = 0;       // size of arugment vector
 	// next expected operator in a UserOp sequence
 	enum { user_start, user_arg, user_ret, user_end } user_state = user_start;
-	// user atomic information vector 
-	vector<size_t> user_info(CPPAD_ATOMIC_INFO_SIZE);
 
 	// check numvar argument
 	CPPAD_ASSERT_UNKNOWN( Rec->num_rec_var() == numvar );
@@ -538,15 +537,12 @@ size_t forward_sweep(
 			case UserOp:
 			// start an atomic operation sequence
 			CPPAD_ASSERT_UNKNOWN( NumRes( UserOp ) == 0 );
-			CPPAD_ASSERT_UNKNOWN( 
-				NumArg( UserOp ) == 3 + CPPAD_ATOMIC_INFO_SIZE
-			);
+			CPPAD_ASSERT_UNKNOWN( NumArg( UserOp ) == 4 );
 			if( user_state == user_start )
 			{	user_index = arg[0];
-				user_n     = arg[1];
-				user_m     = arg[2];
-				for(i = 0; i < CPPAD_ATOMIC_INFO_SIZE; i++)
-					user_info[i] = arg[3 + i];
+				user_id    = arg[1];
+				user_n     = arg[2];
+				user_m     = arg[3];
 				if( (user_tx.size() < user_n * user_k1) | 
 				    (user_ty.size() < user_m * user_k1) )
 				{	user_tx.resize(user_n * user_k1);
@@ -559,10 +555,9 @@ size_t forward_sweep(
 			else
 			{	CPPAD_ASSERT_UNKNOWN( user_state == user_end );
 				CPPAD_ASSERT_UNKNOWN( user_index == arg[0] );
-				CPPAD_ASSERT_UNKNOWN( user_n     == arg[1] );
-				CPPAD_ASSERT_UNKNOWN( user_m     == arg[2] );
-				for(i = 0; i < CPPAD_ATOMIC_INFO_SIZE; i++)
-					CPPAD_ASSERT_UNKNOWN( user_info[i] == arg[3 + i] );
+				CPPAD_ASSERT_UNKNOWN( user_id    == arg[1] );
+				CPPAD_ASSERT_UNKNOWN( user_n     == arg[2] );
+				CPPAD_ASSERT_UNKNOWN( user_m     == arg[3] );
 				user_state = user_start;
 			}
 			break;
@@ -578,7 +573,7 @@ size_t forward_sweep(
 			++user_j;
 			if( user_j == user_n )
 			{	// call users function for this operation
-				user_atomic<Base>::forward(user_index, user_info,
+				user_atomic<Base>::forward(user_index, user_id,
 					user_k, user_n, user_m, user_tx, user_ty
 				);
 				user_state = user_ret;
@@ -595,7 +590,7 @@ size_t forward_sweep(
 			++user_j;
 			if( user_j == user_n )
 			{	// call users function for this operation
-				user_atomic<Base>::forward(user_index, user_info,
+				user_atomic<Base>::forward(user_index, user_id,
 					user_k, user_n, user_m, user_tx, user_ty
 				);
 				user_state = user_ret;

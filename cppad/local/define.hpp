@@ -20,13 +20,6 @@ Define processor symbols and macros that are used by CppAD.
 */
 
 /*!
-\def CPPAD_ATOMIC_INFO_SIZE
-Sets the number of elements in the user atomic operation \c info vector
-(which is the maximum number in the \c ainfo vector plus one).
-*/
-# define CPPAD_ATOMIC_INFO_SIZE 4
-
-/*!
 \def CPPAD_USE_FORWARD0SWEEP
 If ture, use compute zero order sweeps using a specialized routine.
 
