@@ -147,7 +147,7 @@ const size_t NumArgTable[] = {
 	2, // SubvvOp
 	1, // UsrapOp
 	1, // UsravOp
-	3+CPPAD_ATOMIC_INFO_SIZE, // UserOp
+	4, // UserOp
 	1, // UsrrpOp
 	0  // UsrrvOp
 };
@@ -556,13 +556,12 @@ void printOp(
 		break;
 
 		case UserOp:
-		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 3+CPPAD_ATOMIC_INFO_SIZE );
+		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 4 );
 		{	const char* name = user_atomic<Base>::name(ind[0]);
 			printOpField(os, " f=",   name, ncol);
-			printOpField(os, " n=", ind[1], ncol);
-			printOpField(os, " m=", ind[2], ncol);
-			for(i = 0; i < CPPAD_ATOMIC_INFO_SIZE; i++)
-				printOpField(os, " i=", ind[3+i], ncol);
+			printOpField(os, " i=", ind[1], ncol);
+			printOpField(os, " n=", ind[2], ncol);
+			printOpField(os, " m=", ind[3], ncol);
 		}
 		break;
 

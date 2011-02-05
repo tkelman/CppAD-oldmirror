@@ -16,7 +16,6 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin user_atomic$$
 $spell
-	ainfo
 	std
 	Jacobian
 	jac
@@ -45,13 +44,13 @@ $index function, user defined$$
 $head Syntax$$
 $codei%CPPAD_ATOMIC_FUNCTION(%Tvector%, %Base%, %afun%, %forward%, %reverse%)
 %$$
-$icode%afun%(%ainfo%, %ax%, %ay%)
+$icode%afun%(%id%, %ax%, %ay%)
 %$$
-$icode%ok% = %forward%(%info%, %k%, %n%, %m%, %vx%, %vy%, %tx%, %ty%)
+$icode%ok% = %forward%(%id%, %k%, %n%, %m%, %vx%, %vy%, %tx%, %ty%)
 %$$
-$icode%ok% = %reverse%(%info%, %k%, %n%, %m%, %tx%, %ty%, %px%, %py%)
+$icode%ok% = %reverse%(%id%, %k%, %n%, %m%, %tx%, %ty%, %px%, %py%)
 %$$
-$icode%ok% = %for_jac_sparse%(%info%, %n%, %m%, %q%, %r%, %s%)
+$icode%ok% = %for_jac_sparse%(%id%, %n%, %m%, %q%, %r%, %s%)
 %$$
 $codei%user_atomic::clear()%$$
 
@@ -100,17 +99,15 @@ $codei%
 If it is $code true$$, the corresponding evaluation succeeded,
 otherwise it failed.
 
-$subhead info$$
+$head id$$
 For all routines documented below,
-the argument $icode info$$ has prototype
+the argument $icode id$$ has prototype
 $codei%
-	const CppAD::vector<size_t>& %info%
+	size_t %id%
 %$$
-The first element of $icode%info%[0]%$$ is the size
-of $icode ainfo$$ in the corresponding call to $icode afun$$.
-For $icode%i% = 1 , %...%, %info%[0]%$$,
-$icode%info%[i]%$$ is equal to $icode%ainfo%[i-1]%$$ in
-the corresponding call to $icode afun$$.
+It can be used to identify a call,
+or properties of a call,
+the routine $icode afun$$.
 
 $head k$$
 For all routines documented below, the argument $icode k$$ has prototype
@@ -187,18 +184,9 @@ CppAD uses the functions $icode forward$$ and $icode reverse$$,
 where the arguments are vectors with elements of type $icode Base$$,
 to create the function call
 $codei%
-	%afun%(%ainfo%, %ax%, %ay%)
+	%afun%(%id%, %ax%, %ay%)
 %$$
 where the argument are vectors with elements of type $codei%AD<%Base%>%$$.
-
-$subhead ainfo$$
-The argument $icode ainfo$$ has prototype
-$codei%
-	const %Tvector%<size_t>& %ainfo%
-%$$
-It is a vector with $icode%ainfo%.size() <= 3%$$.
-Its elements may contain information that is used to evaluate
-the user defined functions.
 
 $subhead ax$$
 The argument $icode ax$$ has prototype
@@ -226,7 +214,7 @@ $head forward$$
 The preprocessor macro argument $icode forward$$ is a
 user defined function
 $codei%
-	%ok% = %forward%(%info%, %k%, %n%, %m%, %vx%, %vy%, %tx%, %ty%)
+	%ok% = %forward%(%id%, %k%, %n%, %m%, %vx%, %vy%, %tx%, %ty%)
 %$$
 that computes results during a $cref/forward/Forward/$$ mode sweep.
 For this call, we are given the Taylor coefficients in $icode tx$$ 
@@ -290,7 +278,7 @@ $head reverse$$
 The preprocessor macro argument $icode reverse$$
 is a user defined function
 $codei%
-	%ok% = %reverse%(%info%, %k%, %n%, %m%, %tx%, %ty%, %px%, %py%)
+	%ok% = %reverse%(%id%, %k%, %n%, %m%, %tx%, %ty%, %px%, %py%)
 %$$
 that is used to compute results during a $cref/reverse/Reverse/$$ mode sweep. 
 The input value of the vectors $icode tx$$ and $icode ty$$
@@ -354,7 +342,7 @@ $head for_jac_sparse$$
 The preprocessor macro argument $icode for_jac_sparse$$
 is a user defined function
 $codei%
-	%ok% = %for_jac_sparse%(%info%, %n%, %m%, %q%, %r%, %s%)
+	%ok% = %for_jac_sparse%(%id%, %n%, %m%, %q%, %r%, %s%)
 %$$
 that is used to compute results during a $cref/ForSparseJac/$$ sweep.
 For a fixed $latex n \times q$$ matrix $latex R$$,
@@ -455,17 +443,17 @@ do note get deallocated until the program terminates.
 # define CPPAD_ATOMIC_FUNCTION(Tvector, Base, afun,                   \
 	forward, reverse, for_jac_sparse)                                \
 inline void afun (                                                    \
-     const Tvector< size_t >&          ainfo ,                        \
+     size_t                               id ,                        \
      const Tvector< CppAD::AD<Base> >&    ax ,                        \
      Tvector< CppAD::AD<Base> >&          ay                          \
 )                                                                     \
 {    static CppAD::user_atomic<Base>                                  \
 		fun(#afun, forward, reverse, for_jac_sparse);               \
-     fun.ad(ainfo, ax, ay);                                           \
+     fun.ad(id, ax, ay);                                              \
 }
 
 /*!
-Class that actually implements the <tt>afun(ainfo, ax, ay)</tt> calls.
+Class that actually implements the <tt>afun(id, ax, ay)</tt> calls.
 
 A new user_atomic object is generated each time the user invokes
 the CPPAD_ATOMIC_FUNCTION macro; see static object in that macro.
@@ -474,7 +462,7 @@ template <class Base>
 class user_atomic {
 	/// type for user routine that computes forward mode results
 	typedef bool (*F) (
-		const vector<size_t>& info ,
+		size_t                  id ,
 		size_t                   k , 
 		size_t                   n ,
 		size_t                   m ,
@@ -485,7 +473,7 @@ class user_atomic {
 	);
 	/// type for user routine that computes reverse mode results
 	typedef bool (*R) (
-		const vector<size_t>& info ,
+		size_t                  id ,
 		size_t                   k , 
 		size_t                   n , 
 		size_t                   m , 
@@ -496,7 +484,7 @@ class user_atomic {
 	);
 	/// type for user routine that computes forward mode Jacobian sparsity
 	typedef bool (*FJS) (
-		const vector<size_t>&          info ,
+		size_t                           id ,
 		size_t                            n ,
 		size_t                            m ,
 		size_t                            q ,
@@ -517,7 +505,6 @@ private:
 
 	/// temporary work space used to avoid memory allocation/deallocation
 	/// extra information to be passed to the functions
-	vector<size_t>        info_;
 	vector<bool>            vx_;
 	vector<bool>            vy_;
 	vector<Base>             x_;
@@ -556,12 +543,12 @@ public:
 	{	List().push_back(this); }
 
 	/*!
- 	Implement the user call to <tt>afun(ax, ay)</tt>.
+ 	Implement the user call to <tt>afun(id, ax, ay)</tt>.
 
 	\tparam ADVector
 	A simple vector class with elements of type <code>AD<Base></code>.
 
-	\param ainfo
+	\param id
 	extra information vector that is just passed through by CppAD,
 	and possibly used by user's routines.
 
@@ -576,23 +563,12 @@ public:
 	This routine is not \c const because it may modify the works
 	space vectors \c x_ and \c y_.
  	*/
-	template <class SVector, class ADVector>
-	void ad(const SVector& ainfo, const ADVector& ax, ADVector& ay)
+	template <class ADVector>
+	void ad(size_t id, const ADVector& ax, ADVector& ay)
 	{	size_t i, j, k;
 		size_t n = ax.size();
 		size_t m = ay.size();
 		//
-		bool ok = ainfo.size() < CPPAD_ATOMIC_INFO_SIZE;
-		if( ! ok )
-		{	std::stringstream ss;
-			ss << ainfo.size();
-			std::string msg = name_ + ": ainfo.size() = "
-				+ ss.str() + " which is to large";
-			CPPAD_ASSERT_KNOWN(false, msg.c_str());
-		}
-		//
-		if( info_.size() != CPPAD_ATOMIC_INFO_SIZE )
-			info_.resize(CPPAD_ATOMIC_INFO_SIZE);
 		if( x_.size() < n )
 		{	x_.resize(n);
 			vx_.resize(n);
@@ -602,11 +578,6 @@ public:
 			vy_.resize(m);
 		}
 		// 
-		// move into into form used by forward
-		info_[0] = ainfo.size();
-		for(i = 0; i < ainfo.size(); i++)
-			info_[i+1] = ainfo[i];
-		//
 		// Determine if we are going to have to tape this operation
 		size_t tape_id     = 0;
 		ADTape<Base>* tape = CPPAD_NULL;
@@ -625,7 +596,7 @@ public:
 		}
 		// Use zero order forward mode to compute values
 		k  = 0;
-		ok = f_(info_, k, n, m, vx_, vy_, x_, y_);  
+		bool ok = f_(id, k, n, m, vx_, vy_, x_, y_);  
 		if( ! ok )
 		{	std::stringstream ss;
 			ss << k;
@@ -641,15 +612,11 @@ public:
 		{	Base parameter;
 			// Note the actual number of results is m
 			CPPAD_ASSERT_UNKNOWN( NumRes(UserOp) == 0 );
-			CPPAD_ASSERT_UNKNOWN(
-				NumArg(UserOp) == 3+CPPAD_ATOMIC_INFO_SIZE
-			);
+			CPPAD_ASSERT_UNKNOWN( NumArg(UserOp) == 4 );
 
 			// Begin operators corresponding to one user_atomic operation.
-			// Put function index, domain size, range size, and info in tape
-			tape->Rec_.PutArg(index_, n, m);
-			for(i = 0; i < CPPAD_ATOMIC_INFO_SIZE; i++)
-				tape->Rec_.PutArg(info_[i]);
+			// Put function index, domain size, range size, and id in tape
+			tape->Rec_.PutArg(index_, id, n, m);
 			tape->Rec_.PutOp(UserOp);
 			// n + m operators follow for this one atomic operation
 
@@ -690,9 +657,7 @@ public:
 			}
 
 			// Put a duplicate UserOp at end of UserOp sequence
-			tape->Rec_.PutArg(index_, n, m);
-			for(i = 0; i < CPPAD_ATOMIC_INFO_SIZE; i++)
-				tape->Rec_.PutArg(info_[i]);
+			tape->Rec_.PutArg(index_, id, n, m);
 			tape->Rec_.PutOp(UserOp);
 		} 
 		return;
@@ -707,10 +672,9 @@ public:
 	\param index
 	index for this function in the list of all user_atomic objects
 
-	\param info
-	vector of size 4 with <code>info[0]</code>. The number of information
-	values is <code>info[i]</code> and the infomation values are
-	<code>info[i]</code> for <code>i = 1, ... , info[0]</code>.
+	\param id
+	extra information vector that is just passed through by CppAD,
+	and possibly used by user's routines.
 
 	\param k
 	order for this forward mode calculation.
@@ -731,7 +695,7 @@ public:
  	*/
 	static void forward(
 		size_t                index , 
-		const vector<size_t>&  info ,
+		size_t                   id ,
 		size_t                    k ,
 		size_t                    n , 
 		size_t                    m , 
@@ -742,7 +706,7 @@ public:
 		CPPAD_ASSERT_UNKNOWN(index < List().size() );
 		user_atomic* op = List()[index];
 
-		bool ok = op->f_(info, k, n, m, empty, empty, tx, ty);
+		bool ok = op->f_(id, k, n, m, empty, empty, tx, ty);
 		if( ! ok )
 		{	std::stringstream ss;
 			ss << k;
@@ -760,10 +724,10 @@ public:
 	index in the list of all user_atomic objects
 	corresponding to this function.
 
-	\param info
-	vector of size 4 with <code>info[0]</code>. The number of information
-	values is <code>info[i]</code> and the infomation values are
-	<code>info[i]</code> for <code>i = 1, ... , info[0]</code>.
+
+	\param id
+	extra information vector that is just passed through by CppAD,
+	and possibly used by user's routines.
 
 	\param k
 	order for this forward mode calculation.
@@ -790,7 +754,7 @@ public:
  	*/
 	static void reverse(
 		size_t               index , 
-		const vector<size_t>& info ,
+		size_t                  id ,
 		size_t                   k ,
 		size_t                   n , 
 		size_t                   m , 
@@ -802,7 +766,7 @@ public:
 		CPPAD_ASSERT_UNKNOWN(index < List().size() );
 		user_atomic* op = List()[index];
 
-		bool ok = op->r_(info, k, n, m, tx, ty, px, py);
+		bool ok = op->r_(id, k, n, m, tx, ty, px, py);
 		if( ! ok )
 		{	std::stringstream ss;
 			ss << k;
@@ -819,10 +783,10 @@ public:
 	index in the list of all user_atomic objects
 	corresponding to this function.
 
-	\param info
-	vector of size 4 with <code>info[0]</code>. The number of information
-	values is <code>info[i]</code> and the infomation values are
-	<code>info[i]</code> for <code>i = 1, ... , info[0]</code>.
+
+	\param id
+	extra information vector that is just passed through by CppAD,
+	and possibly used by user's routines.
 
 	\param n
 	domain space size for this calcualtion.
@@ -841,7 +805,7 @@ public:
 	*/
 	static void for_jac_sparse(
 		size_t                            index ,
-		const vector<size_t>&              info ,
+		size_t                               id ,
 		size_t                                n , 
 		size_t                                m , 
 		size_t                                q ,
@@ -851,7 +815,7 @@ public:
 		CPPAD_ASSERT_UNKNOWN(index < List().size() );
 		user_atomic* op = List()[index];
 
-		bool ok = op->fjs_(info, n, m, q, r, s);
+		bool ok = op->fjs_(id, n, m, q, r, s);
 		if( ! ok )
 		{	std::string msg = op->name_ + 
 				": ok returned false from for_jac_sparse calculation";
@@ -864,7 +828,6 @@ public:
 	{	size_t i = List().size();
 		while(i--)
 		{	user_atomic* op = List()[i];
-			op->info_.resize(0);
 			op->vx_.resize(0);
 			op->vy_.resize(0);
 			op->x_.resize(0);
