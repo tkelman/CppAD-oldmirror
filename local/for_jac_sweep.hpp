@@ -126,9 +126,9 @@ void ForJacSweep(
 		}
 		CPPAD_ASSERT_UNKNOWN( j == play->num_rec_vecad_ind() );
 	}
-	typedef std::set<size_t> size_set;
 
 	// work space used by UserOp.
+	typedef std::set<size_t> size_set;
 	const size_t user_q = limit; // maximum element plus one
 	size_set::iterator set_itr;  // iterator for a standard set
 	size_set::iterator set_end;  // iterator for a standard set
@@ -517,7 +517,7 @@ void ForJacSweep(
 			break;
 
 			case UsrapOp:
-			// next argument in an atomic operation sequence
+			// parameter argument in an atomic operation sequence
 			CPPAD_ASSERT_UNKNOWN( user_state == user_arg );
 			CPPAD_ASSERT_UNKNOWN( user_j < user_n );
 			CPPAD_ASSERT_UNKNOWN( arg[0] < num_par );
@@ -534,7 +534,7 @@ void ForJacSweep(
 			break;
 
 			case UsravOp:
-			// next argument in an atomic operation sequence
+			// variable argument in an atomic operation sequence
 			CPPAD_ASSERT_UNKNOWN( user_state == user_arg );
 			CPPAD_ASSERT_UNKNOWN( user_j < user_n );
 			CPPAD_ASSERT_UNKNOWN( arg[0] <= i_var );
@@ -557,7 +557,7 @@ void ForJacSweep(
 			break;
 
 			case UsrrpOp:
-			// next result in an atomic operation sequence
+			// parameter result in an atomic operation sequence
 			CPPAD_ASSERT_UNKNOWN( user_state == user_ret );
 			CPPAD_ASSERT_UNKNOWN( user_i < user_m );
 			user_i++;
@@ -566,9 +566,11 @@ void ForJacSweep(
 			break;
 
 			case UsrrvOp:
-			// next result in an atomic operation sequence
+			// variable result in an atomic operation sequence
 			CPPAD_ASSERT_UNKNOWN( user_state == user_ret );
 			CPPAD_ASSERT_UNKNOWN( user_i < user_m );
+			// It might be faster if we add set union to var_sparsity
+			// where one of the sets is not in var_sparsity
 			set_itr = user_s[user_i].begin();
 			set_end = user_s[user_i].end();
 			while( set_itr != set_end )
