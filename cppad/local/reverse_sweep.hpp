@@ -597,9 +597,10 @@ void ReverseSweep(
 			if( user_i == 0 )
 				user_state = user_arg;
 			break;
+			// ------------------------------------------------------------
 
 			default:
-			CPPAD_ASSERT_UNKNOWN(0);
+			CPPAD_ASSERT_UNKNOWN(false);
 		}
 	}
 # if CPPAD_REVERSE_SWEEP_TRACE

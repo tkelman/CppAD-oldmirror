@@ -253,6 +253,10 @@ $latex \[
 \] $$
 The other components of $icode ty$$ must be left unchanged.
 
+$subhead Usage$$
+This routine is used by calls to $icode afun$$ (with $icode%k% == 0%$$) 
+and by $cref/forward/ForwardAny/$$.
+
 $subhead vx$$
 The $icode forward$$ argument $icode vx$$ has prototype
 $codei%
@@ -299,6 +303,9 @@ contain Taylor coefficient up to order $icode k$$.
 We use
 $latex g : B^{m \times k} \rightarrow B$$.
 to denote an arbitrary function of these Taylor coefficients:
+
+$subhead Usage$$
+This routine is used by calls to $cref/reverse/reverse_any/$$.
 
 $subhead py$$
 The $icode reverse$$ argument $icode py$$ has prototype
@@ -358,6 +365,9 @@ $latex \[
 Given a $cref/sparsity pattern/glossary/Sparsity Pattern/$$ for $latex R$$,
 $icode for_jac_sparse$$ computes a sparsity pattern for $latex S(x)$$.
 
+$subhead Usage$$
+This routine is used by calls to $cref/ForSparseJac/$$.
+
 $subhead q$$
 The $icode for_jac_sparse$$ argument $icode q$$ has prototype
 $codei%
@@ -403,6 +413,11 @@ $latex \[
 Given a $cref/sparsity pattern/glossary/Sparsity Pattern/$$ for $latex S$$,
 $icode rev_jac_sparse$$ computes a sparsity pattern for $latex R(x)$$.
 
+$subhead Usage$$
+This routine is used by calls to $cref/RevSparseJac/$$
+and to $cref/optimize/$$.
+
+
 $subhead q$$
 The $icode rev_jac_sparse$$ argument $icode q$$ has prototype
 $codei%
@@ -445,6 +460,9 @@ This routine computes the sparsity pattern for
 $latex \[
 	V(x) = (g \circ f)^{(2)}( x ) R
 \] $$
+
+$subhead Usage$$
+This routine is used by calls to $cref/RevSparseHes/$$.
 
 $subhead q$$
 The $icode rev_hes_sparse$$ argument $icode q$$ has prototype
@@ -559,7 +577,9 @@ user defined atomic operations.
 */
 
 /*!
-\def CPPAD_USER_ATOMIC(Tvector, Base, afun, forward, reverse)
+\def CPPAD_USER_ATOMIC(afun, Tvector, 
+	forward, reverse, for_jac_sparse, rev_jac_sparse, rev_hes_sparse 
+)
 Defines the function <tt>afun(ax, ay)</tt>  
 where \c ax and \c ay are vectors with <tt>AD<Base></tt> elements.
 
@@ -599,9 +619,9 @@ do note get deallocated until the program terminates.
 */
 
 # define CPPAD_USER_ATOMIC(                                           \
+     afun            ,                                                \
      Tvector         ,                                                \
      Base            ,                                                \
-     afun            ,                                                \
 	forward         ,                                                \
      reverse         ,                                                \
      for_jac_sparse  ,                                                \

@@ -359,9 +359,9 @@ namespace { // Empty namespace
 
 	// declare the AD<double> routine mat_mul(id, ax, ay)
 	CPPAD_USER_ATOMIC(
+		mat_mul                 , 
 		CPPAD_TEST_VECTOR       ,
 		double                  , 
-		mat_mul                 , 
 		forward_mat_mul         , 
 		reverse_mat_mul         ,
 		for_jac_sparse_mat_mul  ,
