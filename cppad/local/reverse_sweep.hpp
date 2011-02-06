@@ -492,7 +492,7 @@ void ReverseSweep(
 			// --------------------------------------------------
 
 			case UserOp:
-			// start an atomic operation sequence
+			// start or end an atomic operation sequence
 			CPPAD_ASSERT_UNKNOWN( NumRes( UserOp ) == 0 );
 			CPPAD_ASSERT_UNKNOWN( NumArg( UserOp ) == 4 );
 			if( user_state == user_end )
@@ -500,13 +500,14 @@ void ReverseSweep(
 				user_id    = arg[1];
 				user_n     = arg[2];
 				user_m     = arg[3];
-				if( (user_ix.size() < user_n)           | 
-				    (user_tx.size() < user_n * user_k1) |
-				    (user_ty.size() < user_m * user_k1) )
-				{	user_ix.resize(user_n);
-					user_tx.resize(user_n * user_k1);
+				if(user_ix.size() < user_n)
+					user_ix.resize(user_n);
+				if(user_tx.size() < user_n * user_k1)
+				{	user_tx.resize(user_n * user_k1);
 					user_px.resize(user_n * user_k1);
-					user_ty.resize(user_m * user_k1);
+				}
+				if(user_ty.size() < user_m * user_k1)
+				{	user_ty.resize(user_m * user_k1);
 					user_py.resize(user_m * user_k1);
 				}
 				user_j     = user_n;

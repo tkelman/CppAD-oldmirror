@@ -482,7 +482,7 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case UserOp:
-			// start an atomic operation sequence
+			// start or end an atomic operation sequence
 			CPPAD_ASSERT_UNKNOWN( NumRes( UserOp ) == 0 );
 			CPPAD_ASSERT_UNKNOWN( NumArg( UserOp ) == 4 );
 			if( user_state == user_start )
@@ -490,10 +490,10 @@ size_t forward0sweep(
 				user_id    = arg[1];
 				user_n     = arg[2];
 				user_m     = arg[3];
-				if( (user_tx.size() < user_n) | (user_ty.size() < user_m) )
-				{	user_tx.resize(user_n);
+				if(user_tx.size() < user_n)
+					user_tx.resize(user_n);
+				if(user_ty.size() < user_m)
 					user_ty.resize(user_m);
-				}
 				user_j     = 0;
 				user_i     = 0;
 				user_state = user_arg;

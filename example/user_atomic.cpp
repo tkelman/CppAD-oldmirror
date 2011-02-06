@@ -302,15 +302,30 @@ namespace { // Empty namespace
 		return true;
 	}
 
+	// reverse Hessian sparsity routine called by CppAD
+	bool rev_hes_sparse_mat_mul(
+		size_t                               id ,             
+		size_t                                n ,
+		size_t                                m ,
+		size_t                                q ,
+		const vector< std::set<size_t> >&     r ,
+		const vector<bool>&                   s ,
+		vector<bool>&                         t ,
+		const vector< std::set<size_t> >&     u ,
+		vector< std::set<size_t> >&           v )
+	{	return false;
+	}
+
 	// declare the AD<double> routine mat_mul(id, ax, ay)
-	CPPAD_ATOMIC_FUNCTION(
+	CPPAD_USER_ATOMIC(
 		CPPAD_TEST_VECTOR       ,
 		double                  , 
 		mat_mul                 , 
 		forward_mat_mul         , 
 		reverse_mat_mul         ,
 		for_jac_sparse_mat_mul  ,
-		rev_jac_sparse_mat_mul  
+		rev_jac_sparse_mat_mul  ,
+		rev_hes_sparse_mat_mul  
 	)
 
 } // End empty namespace

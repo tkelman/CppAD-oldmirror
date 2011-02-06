@@ -131,7 +131,7 @@ void ForJacSweep(
 	typedef std::set<size_t> size_set;
 	const size_t user_q = limit; // maximum element plus one
 	size_set::iterator set_itr;  // iterator for a standard set
-	size_set::iterator set_end;  // iterator for a standard set
+	size_set::iterator set_end;  // end of iterator sequence
 	vector< size_set > user_r;   // sparsity pattern for the argument x
 	vector< size_set > user_s;   // sparisty pattern for the result y
 	size_t user_index = 0;       // indentifier for this user_atomic operation
@@ -489,7 +489,7 @@ void ForJacSweep(
 			// -------------------------------------------------
 
 			case UserOp:
-			// start an atomic operation sequence
+			// start or end an atomic operation sequence
 			CPPAD_ASSERT_UNKNOWN( NumRes( UserOp ) == 0 );
 			CPPAD_ASSERT_UNKNOWN( NumArg( UserOp ) == 4 );
 			if( user_state == user_start )
@@ -497,11 +497,10 @@ void ForJacSweep(
 				user_id    = arg[1];
 				user_n     = arg[2];
 				user_m     = arg[3];
-				if( (user_r.size() < user_n ) | 
-				    (user_s.size() < user_m ) ) 
-				{	user_r.resize(user_n);
+				if(user_r.size() < user_n )
+					user_r.resize(user_n);
+				if(user_s.size() < user_m )
 					user_s.resize(user_m);
-				}
 				user_j     = 0;
 				user_i     = 0;
 				user_state = user_arg;
