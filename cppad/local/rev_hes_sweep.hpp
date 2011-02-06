@@ -580,7 +580,7 @@ void RevHesSweep(
 				{	size_t i_x = user_ix[j];
 					RevJac[i_x] = user_t[j];
 					set_itr = user_v[j].begin();
-					set_end = user_r[j].end();
+					set_end = user_v[j].end();
 					while( set_itr != set_end )
 						rev_hes_sparse.add_element(i_x, *set_itr++);
 				}
@@ -613,7 +613,7 @@ void RevHesSweep(
 			for_jac_sparse.begin(arg[0]);
 			i = for_jac_sparse.next_element();
 			while( i < user_q )
-			{	user_r[user_i].insert(i);
+			{	user_r[user_j].insert(i);
 				i = for_jac_sparse.next_element();
 			}
 			if( user_j == 0 )

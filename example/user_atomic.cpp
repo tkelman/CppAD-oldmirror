@@ -254,11 +254,11 @@ namespace { // Empty namespace
 				{	im_left   = left(i, middle, order);
 					mj_right  = right(middle, j, order);
 
-					// s[ij_result] = union( r[im_left], s[ij_result] )
-					my_union(s[ij_result], r[im_left], s[ij_result]);
+					// s[ij_result] = union( s[ij_result], r[im_left] )
+					my_union(s[ij_result], s[ij_result], r[im_left]);
 
-					// s[ij_result] = union( r[mj_right], s[ij_result] )
-					my_union(s[ij_result], r[mj_right], s[ij_result]);
+					// s[ij_result] = union( s[ij_result], r[mj_right] )
+					my_union(s[ij_result], s[ij_result], r[mj_right]);
 				}
 			}
 		}
@@ -291,11 +291,11 @@ namespace { // Empty namespace
 				{	im_left   = left(i, middle, order);
 					mj_right  = right(middle, j, order);
 
-					// r[im_left] = union( s[ij_result] , r[im_left] )
-					my_union(r[im_left], s[ij_result], r[im_left]);
+					// r[im_left] = union( r[im_left], s[ij_result] )
+					my_union(r[im_left], r[im_left], s[ij_result]);
 
-					// r[mj_right] = union( s[ij_result] , r[mj_right] )
-					my_union(r[mj_right], s[ij_result], r[mj_right]);
+					// r[mj_right] = union( r[mj_right], s[ij_result] )
+					my_union(r[mj_right], r[mj_right], s[ij_result]);
 				}
 			}
 		}
@@ -313,7 +313,48 @@ namespace { // Empty namespace
 		vector<bool>&                         t ,
 		const vector< std::set<size_t> >&     u ,
 		vector< std::set<size_t> >&           v )
-	{	return false;
+	{	size_t i, j, im_left, middle, mj_right, ij_result, order;
+	
+		n_order_   = 1;
+		nr_result_ = info_[id].nr_result; 
+		n_middle_  = info_[id].n_middle;
+		nc_result_ = info_[id].nc_result;
+
+		for(j = 0; j < n; j++)
+		{	t[j] = false;	
+			v[j].clear();
+		}
+
+		order = 0;
+		for(i = 0; i < nr_result_; i++)
+		{	for(j = 0; j < nc_result_; j++)
+			{	ij_result = result(i, j, order);
+				for(middle = 0; middle < n_middle_; middle++)
+				{	im_left   = left(i, middle, order);
+					mj_right  = right(middle, j, order);
+
+					// back propogate Jacobian sparsity
+					t[im_left]   |= s[ij_result];
+					t[mj_right]  |= s[ij_result];
+
+					// back propotate Hessian sparsity 
+					// v[im_left] = union( v[im_left], u[ij_result] )
+					my_union(v[im_left], v[im_left], u[ij_result]);
+					// v[mj_right] = union( v[mj_right], u[ij_result] )
+					my_union(v[mj_right], v[mj_right], u[ij_result] );
+
+					// Check for reverse Jacobian times non-zero
+					// forward Jacobian (giving a Hessian result)
+					if( s[ij_result] )
+					{	// v[im_left] = union( v[im_left], r[mj_right] )
+						my_union(v[im_left], v[im_left], r[mj_right] );
+						// v[mj_right] = union( v[mj_right], r[im_left] )
+						my_union(v[mj_right], v[mj_right], r[im_left] );
+					}
+				}
+			}
+		}
+		return true;
 	}
 
 	// declare the AD<double> routine mat_mul(id, ax, ay)
@@ -451,7 +492,7 @@ bool user_atomic(void)
 	/*
 	[ x0 , x1 ] * [ x2 , 7 ] = [ x0*x2 + x1*x3 , x0*7 + x1*8 ]
 	[ 5  , 6 ]    [ x3 , 8 ]   [ 5*x2  + 6*x3  , 5*7 + 6*8 ]
-	so the sparsity patter should be
+	so the sparsity pattern should be
 	s[0] = {0, 1, 2, 3}
 	s[1] = {0, 1}
 	s[2] = {2, 3}
@@ -483,7 +524,7 @@ bool user_atomic(void)
 	/*
 	[ x0 , x1 ] * [ x2 , 7 ] = [ x0*x2 + x1*x3 , x0*7 + x1*8 ]
 	[ 5  , 6 ]    [ x3 , 8 ]   [ 5*x2  + 6*x3  , 5*7 + 6*8 ]
-	so the sparsity patter should be
+	so the sparsity pattern should be
 	r[0] = {0, 1, 2, 3}
 	r[1] = {0, 1}
 	r[2] = {2, 3}
@@ -493,8 +534,7 @@ bool user_atomic(void)
 	{	s[i].clear();
 		s[i].insert(i);
 	}
-	r = G.RevSparseJac( X.size() , s);
-	for(i = 0; i <  m; i++)
+	r = G.RevSparseJac(m, s);
 	for(j = 0; j <  X.size() ; j++)
 	{	// r[0] = {0, 1, 2, 3}
 		ok &= r[0].find(j) != r[0].end();
@@ -509,6 +549,41 @@ bool user_atomic(void)
 	}
 	// r[3] == {}
 	ok &= r[3].empty();
+
+	//----------------------------------------------------------------------
+	/* Test reverse Hessian sparsity pattern
+	g_0^2 (x) = [ 0, 0, 1, 0 ] and for i > 0, g_i^2 = 0
+	            [ 0, 0, 0, 1 ]
+	            [ 1, 0, 0, 0 ]
+	            [ 0, 1, 0, 0 ]
+	so for the sparsity pattern for the first component of g is
+	h[0] = {2}
+	h[1] = {3}
+	h[2] = {0}
+	h[3] = {1}
+	*/
+	CPPAD_TEST_VECTOR< std::set<size_t> > h( X.size() ), t(1);
+	t[0].clear();
+	t[0].insert(0);
+	h = G.RevSparseHes(X.size() , t);
+	size_t check[] = {2, 3, 0, 1};
+	for(j = 0; j <  X.size() ; j++)
+	{	// h[j] = { check[j] }
+		for(i = 0; i < n; i++) 
+		{	if( i == check[j] )
+				ok &= h[j].find(i) != h[j].end();
+			else	ok &= h[j].find(i) == h[j].end();
+		}
+	}
+	t[0].clear();
+	for( j = 1; j < X.size(); j++)
+			t[0].insert(j);
+	h = G.RevSparseHes(X.size() , t);
+	for(j = 0; j <  X.size() ; j++)
+	{	// h[j] = { }
+		for(i = 0; i < X.size(); i++) 
+			ok &= h[j].find(i) == h[j].end();
+	}
 
 	// --------------------------------------------------------------------
 	// Free temporary work space. (If there are future calls to 
