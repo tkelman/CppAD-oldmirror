@@ -297,6 +297,7 @@ namespace { // Empty namespace
 		size_t                               id ,             
 		size_t                                n ,
 		size_t                                m ,
+		const vector<bool>&                  vx ,
 		size_t                                q ,
 		vector< std::set<size_t> >&           r ,
 		const vector< std::set<size_t> >&     s )

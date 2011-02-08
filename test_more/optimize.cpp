@@ -1016,6 +1016,7 @@ namespace {
 		size_t                                  id ,
 		size_t                                   n ,
 		size_t                                   m ,
+		const CppAD::vector<bool>&              vx ,
 		size_t                                   q ,
 		CppAD::vector< std::set<size_t> >&       r ,
 		const CppAD::vector< std::set<size_t> >& s )

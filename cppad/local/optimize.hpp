@@ -887,6 +887,8 @@ void optimize(
 	// work space used by UserOp.
 	typedef std::set<size_t> size_set;
 	size_t user_q     = 0;       // maximum set element plus one
+	vector<bool> user_vx;        // variable flags for argument vector
+	vector<size_t> user_ix;      // variable index for argument vector
 	vector< size_set > user_r;   // sparsity pattern for the argument x
 	vector< size_set > user_s;   // sparisty pattern for the result y
 	size_t user_index = 0;       // indentifier for this user_atomic operation
@@ -1081,7 +1083,10 @@ void optimize(
 				user_m     = arg[3];
 				user_q     = 1;
 				if(user_r.size() < user_n )
+				{	user_vx.resize(user_n);
+					user_ix.resize(user_n);
 					user_r.resize(user_n);
+				}
 				if(user_s.size() < user_m )
 					user_s.resize(user_m);
 				user_j     = user_n;
@@ -1096,6 +1101,19 @@ void optimize(
 				CPPAD_ASSERT_UNKNOWN( user_n     == arg[2] );
 				CPPAD_ASSERT_UNKNOWN( user_m     == arg[3] );
 				user_state = user_end;
+
+				// call users function for this operation
+				user_atomic<Base>::rev_jac_sparse(user_index, user_id,
+					user_n, user_m, user_vx, user_q, user_r, user_s
+				);
+				for(j = 0; j < user_n; j++) 
+				{	if( user_vx[j] )
+					{	if( ! user_r[j].empty() )
+						{	tape[user_ix[j]].connect = yes_connected;
+							user_keep.top() = true;
+						}
+					}
+				}
                }
 			break;
 
@@ -1106,6 +1124,7 @@ void optimize(
 			CPPAD_ASSERT_UNKNOWN( NumArg(op) == 1 );
 			CPPAD_ASSERT_UNKNOWN( arg[0] < num_par );
 			--user_j;
+			user_vx[user_j] = false; // user_ix[user_j] not used
 			if( user_j == 0 )
 				user_state = user_start;
 			break;
@@ -1118,10 +1137,8 @@ void optimize(
 			CPPAD_ASSERT_UNKNOWN( arg[0] <= i_var );
 			CPPAD_ASSERT_UNKNOWN( 0 < arg[0] );
 			--user_j;
-			if( ! user_r[user_j].empty() )
-			{	tape[arg[0]].connect = yes_connected;
-				user_keep.top() = true;
-			}
+			user_vx[user_j] = true;
+			user_ix[user_j] = arg[0];
 			if( user_j == 0 )
 				user_state = user_start;
 			break;
@@ -1135,12 +1152,7 @@ void optimize(
 			--user_i;
 			user_s[user_i].clear();
 			if( user_i == 0 )
-			{	// call users function for this operation
-				user_atomic<Base>::rev_jac_sparse(user_index, user_id,
-					user_n, user_m, user_q, user_r, user_s
-				);
 				user_state = user_arg;
-			}
 			break;
 
 			case UsrrvOp:
@@ -1152,12 +1164,7 @@ void optimize(
 			if( tape[i_var].connect != not_connected )
 				user_s[user_i].insert(0);
 			if( user_i == 0 )
-			{	// call users function for this operation
-				user_atomic<Base>::rev_jac_sparse(user_index, user_id,
-					user_n, user_m, user_q, user_r, user_s
-				);
 				user_state = user_arg;
-			}
 			break;
 			// ============================================================
 

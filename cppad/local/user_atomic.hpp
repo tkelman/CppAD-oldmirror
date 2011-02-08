@@ -49,7 +49,7 @@ $codei%CPPAD_USER_ATOMIC(
 %$$
 $icode%afun%(%id%, %ax%, %ay%)
 %$$
-$icode%ok% = %variable%(%id%, %n%, %m%, %vx%, %tx%, %vy%)
+$icode%ok% = %variable%(%id%, %k%, %n%, %m%, %vx%, %tx%, %vy%)
 %$$
 $icode%ok% = %forward%(%id%, %k%, %n%, %m%, %vx%, %tx%, %ty%)
 %$$
@@ -57,7 +57,7 @@ $icode%ok% = %reverse%(%id%, %k%, %n%, %m%, %vx%, %tx%, %ty%, %px%, %py%)
 %$$
 $icode%ok% = %for_jac_sparse%(%id%, %n%, %m%, %vx%, %q%, %r%, %s%)
 %$$
-$icode%ok% = %rev_jac_sparse%(%id%, %n%, %m%, %q%, %r%, %s%)
+$icode%ok% = %rev_jac_sparse%(%id%, %n%, %m%, %vx%, %q%, %r%, %s%)
 %$$
 $icode%ok% = %rev_hes_sparse%(%id%, %n%, %m%, %q%, %r%, %s%, %t%, %u%, %v%)
 %$$
@@ -73,18 +73,20 @@ more efficiently than by coding it $codei%AD<%Base%>%$$
 $cref/atomic/glossary/Operation/Atomic/$$ operations
 and letting CppAD do the calculations.
 In this case, $code CPPAD_USER_ATOMIC$$ can be used
-make add the user code for $latex f(x)$$, and its derivatives,
+add the user code for $latex f(x)$$, and its derivatives,
 to the set of $codei%AD<%Base%>%$$ atomic operations. 
 
 $head Partial Implementation$$
 The routines 
+$cref/variable/user_atomic/variable/$$,
 $cref/forward/user_atomic/forward/$$,
 $cref/reverse/user_atomic/reverse/$$,
 $cref/for_jac_sparse/user_atomic/for_jac_sparse/$$,
 $cref/rev_jac_sparse/user_atomic/rev_jac_sparse/$$, and
 $cref/rev_hes_sparse/user_atomic/rev_hes_sparse/$$,
 must be defined by the user.
-For $icode forward$$, the case $icode%k%= 0%$$ must be implemented.
+The routines $icode variable$$,
+and $icode forward$$ for the case $icode%k%= 0%$$, must be implemented.
 Functions with the correct prototype,
 that just return $icode false$$, 
 can be used for the other cases 
@@ -97,8 +99,8 @@ $head CPPAD_USER_ATOMIC$$
 $index CPPAD_USER_ATOMIC$$
 The macro 
 $codei%
-CPPAD_USER_ATOMIC(%afun%, %Tvector%, %Base%, 
-	%variable%, %forward%, %reverse%, 
+CPPAD_USER_ATOMIC(
+	%afun%, %Tvector%, %Base%, %variable%, %forward%, %reverse%, 
 	%for_jac_sparse%, %rev_jac_sparse%, %rev_hes_sparse%
 )
 %$$ 
@@ -114,11 +116,10 @@ $cref/simple vector template class/SimpleVector/$$.
 $subhead Base$$
 The macro argument $icode Base$$ is the 
 $cref/base type/base_require/$$
-corresponding to the operations sequence;
-we defining the function $icode afun$$, 
+corresponding to the operations sequence; i.e.,
+the macro defines the function $icode afun$$, 
 with arguments and results that are vectors with 
-elements of type $codei%AD<%Base%>%$$,
-to the list of available atomic operations.
+elements of type $codei%AD<%Base%>%$$.
 
 $head ok$$
 For all routines documented below,
@@ -136,9 +137,12 @@ $codei%
 	size_t %id%
 %$$
 Its value in all the other calls is the same as in the corresponding
-call to $icode afun$$; i.e., it can be used to identify 
-extra (non $codei%AD%<Base>%$$) inputs 
-for a call to $icode afun$$ that are not in the vector $icode ax$$.
+call to $icode afun$$.
+All of the $codei%AD<%Base%>%$$ inputs to $icode afun$$ should
+be in the vector $icode ax$$.
+The value $icode id$$ can be used to identify other inputs 
+for a call to $icode afun$$, that are not in the vector $icode ax$$
+(besides the values $icode n$$ and $icode m$$ which are passed explicitly).
 
 $head k$$
 For all routines documented below, the argument $icode k$$ has prototype
@@ -206,6 +210,7 @@ but during $cref/reverse mode/user_atomic/reverse/$$ it has prototype
 $codei%
 	const CppAD::vector<%Base%>& %ty%
 %$$
+and $icode%tx%.size() >= (%k% + 1) * %m%$$.
 For $latex i = 0 , \ldots , m-1$$ and $latex \ell = 0 , \ldots , k$$,
 we use the Taylor coefficient notation
 $latex \[
@@ -223,12 +228,13 @@ The macro argument $icode afun$$,
 is the name of the AD function corresponding to this atomic
 operation (as it is used in the source code).
 CppAD uses the other functions,
-where the arguments are vectors with elements of type $icode Base$$,
+which have arguments that are vectors with elements of type $icode Base$$,
 to create the function 
 $codei%
 	%afun%(%id%, %ax%, %ay%)
 %$$
-where the argument are vectors with elements of type $codei%AD<%Base%>%$$.
+which has arguments that are vectors with elements of type 
+$codei%AD<%Base%>%$$.
 
 $subhead ax$$
 The $icode afun$$ argument $icode ax$$ has prototype
@@ -298,8 +304,9 @@ $latex \[
 The other components of $icode ty$$ must be left unchanged.
 
 $subhead Usage$$
-This routine is used (with $icode%k% == 0%$$) by calls to $icode afun$$
-and by calls to $cref/forward/ForwardAny/$$.
+This routine, with $icode%k% == 0%$$, is used by calls to $icode afun$$.
+It used by calls to $cref/forward/ForwardAny/$$
+with $code k$$ equal to the order of the derivative being calculated.
 
 $head reverse$$
 The macro argument $icode reverse$$
@@ -308,14 +315,13 @@ $codei%
 	%ok% = %reverse%(%id%, %k%, %n%, %m%, %vx%, %tx%, %ty%, %px%, %py%)
 %$$
 that computes results during a $cref/reverse/Reverse/$$ mode sweep. 
-The input value of the vectors $icode tx$$ and $icode ty$$
-contain Taylor coefficient up to order $icode k$$.
-We use
-$latex g : B^{m \times k} \rightarrow B$$.
-to denote an arbitrary function of these Taylor coefficients:
+We use $latex g : B^{m \times k} \rightarrow B$$
+to denote an arbitrary scalar function of the Taylor coefficients
+for $latex x$$ and $latex y$$:
 
 $subhead Usage$$
-This routine is used by calls to $cref/reverse/reverse_any/$$.
+This routine is used by calls to $cref/reverse/reverse_any/$$
+where the order of the derivative being calculated is $icode k + 1$$.
 
 $subhead py$$
 The $icode reverse$$ argument $icode py$$ has prototype
@@ -412,10 +418,10 @@ $head rev_jac_sparse$$
 The macro argument $icode rev_jac_sparse$$
 is a user defined function
 $codei%
-	%ok% = %rev_jac_sparse%(%id%, %n%, %m%, %q%, %r%, %s%)
+	%ok% = %rev_jac_sparse%(%id%, %n%, %m%, %vx%, %q%, %r%, %s%)
 %$$
 that is used to compute results during a reverse Jacobian sparsity sweep.
-For a fixed $latex q \times m$$ matrix $latex S$$,
+For a fixed $latex S \in B^{q \times m}$$
 the Jacobian of $latex S * f( x )$$ with respect to $latex x \in B^n$$ is
 $latex \[
 	R(x) = S * f^{(1)} (x)
@@ -426,7 +432,6 @@ $icode rev_jac_sparse$$ computes a sparsity pattern for $latex R(x)$$.
 $subhead Usage$$
 This routine is used by calls to $cref/RevSparseJac/$$
 and to $cref/optimize/$$.
-
 
 $subhead q$$
 The $icode rev_jac_sparse$$ argument $icode q$$ has prototype
@@ -587,8 +592,8 @@ user defined atomic operations.
 */
 
 /*!
-\def CPPAD_USER_ATOMIC(afun, Tvector, 
-	variable, forward, reverse, 
+\def CPPAD_USER_ATOMIC(
+	afun, Tvector, Base, variable, forward, reverse, 
 	for_jac_sparse, rev_jac_sparse, rev_hes_sparse 
 )
 Defines the function <tt>afun(id, ax, ay)</tt>  
@@ -715,6 +720,7 @@ class user_atomic {
 		size_t                           id ,
 		size_t                            n ,
 		size_t                            m ,
+		const vector<bool>&               vx ,
 		size_t                            q ,
 		vector< std::set<size_t> >&       r ,
 		const vector< std::set<size_t> >& s
@@ -873,7 +879,7 @@ public:
 			ay[i].value_ = y_[i];
 		//
 		if( tape != CPPAD_NULL )
-		{	Base parameter;
+		{	
 			// Note the actual number of results is m
 			CPPAD_ASSERT_UNKNOWN( NumRes(UserOp) == 0 );
 			CPPAD_ASSERT_UNKNOWN( NumArg(UserOp) == 4 );
@@ -897,8 +903,8 @@ public:
 				}
 				else
 				{	// information for an arugment that is parameter
-					parameter = tape->Rec_.PutPar(ax[j].value_);
-					tape->Rec_.PutArg(parameter);
+					size_t p = tape->Rec_.PutPar(ax[j].value_);
+					tape->Rec_.PutArg(p);
 					tape->Rec_.PutOp(UsrapOp);
 				}
 			}
@@ -914,8 +920,8 @@ public:
 					ay[i].id_    = tape_id;
 				}
 				else
-				{	parameter = tape->Rec_.PutPar(ay[i].value_);
-					tape->Rec_.PutArg(parameter);
+				{	size_t p = tape->Rec_.PutPar(ay[i].value_);
+					tape->Rec_.PutArg(p);
 					tape->Rec_.PutOp(UsrrpOp);
 				}
 			}
@@ -1127,6 +1133,10 @@ public:
 	\param m
 	range space size for this calculation.
 
+	\param vx
+	identifies which of the components of \c x are variables in the
+	corresponding call to \c afun.
+
 	\param q
 	is the row dimension for the Jacobian sparsity partterns.
 
@@ -1141,6 +1151,7 @@ public:
 		size_t                               id ,
 		size_t                                n , 
 		size_t                                m , 
+		const vector<bool>&                  vx ,
 		size_t                                q ,
 		vector< std::set<size_t> >&           r ,
 		const vector< std::set<size_t> >&     s )
@@ -1150,7 +1161,7 @@ public:
 		CPPAD_ASSERT_UNKNOWN( s.size() >= m );
 		user_atomic* op = List()[index];
 
-		bool ok = op->rjs_(id, n, m, q, r, s);
+		bool ok = op->rjs_(id, n, m, vx, q, r, s);
 		if( ! ok )
 		{	std::string msg = op->name_ + 
 				": ok returned false from rev_jac_sparse calculation";
