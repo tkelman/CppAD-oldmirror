@@ -42,17 +42,20 @@ $index operation, user atomic$$
 $index function, user atomic$$
 
 $head Syntax$$
-$codei%CPPAD_USER_ATOMIC(%afun%, %Tvector%, %Base%, 
-	%forward%, %reverse%, %for_jac_sparse%, %rev_jac_sparse%, %rev_hes_sparse%
+$codei%CPPAD_USER_ATOMIC(
+	%afun%, %Tvector%, %Base%, %variable%, %forward%, %reverse%, 
+	%for_jac_sparse%, %rev_jac_sparse%, %rev_hes_sparse%
 )
 %$$
 $icode%afun%(%id%, %ax%, %ay%)
 %$$
-$icode%ok% = %forward%(%id%, %k%, %n%, %m%, %vx%, %vy%, %tx%, %ty%)
+$icode%ok% = %variable%(%id%, %n%, %m%, %vx%, %tx%, %vy%)
 %$$
-$icode%ok% = %reverse%(%id%, %k%, %n%, %m%, %tx%, %ty%, %px%, %py%)
+$icode%ok% = %forward%(%id%, %k%, %n%, %m%, %vx%, %tx%, %ty%)
 %$$
-$icode%ok% = %for_jac_sparse%(%id%, %n%, %m%, %q%, %r%, %s%)
+$icode%ok% = %reverse%(%id%, %k%, %n%, %m%, %vx%, %tx%, %ty%, %px%, %py%)
+%$$
+$icode%ok% = %for_jac_sparse%(%id%, %n%, %m%, %vx%, %q%, %r%, %s%)
 %$$
 $icode%ok% = %rev_jac_sparse%(%id%, %n%, %m%, %q%, %r%, %s%)
 %$$
@@ -95,7 +98,8 @@ $index CPPAD_USER_ATOMIC$$
 The macro 
 $codei%
 CPPAD_USER_ATOMIC(%afun%, %Tvector%, %Base%, 
-	%forward%, %reverse%, %for_jac_sparse%, %rev_jac_sparse%, %rev_hes_sparse%
+	%variable%, %forward%, %reverse%, 
+	%for_jac_sparse%, %rev_jac_sparse%, %rev_hes_sparse%
 )
 %$$ 
 defines the $codei%AD<%Base%>%$$ version of $icode afun$$.
@@ -142,7 +146,7 @@ $codei%
 	size_t %k%
 %$$
 The value $icode%k%$$ is the order of the Taylor coefficient that
-we are either evaluating, or taking the derivative of.
+we are using, evaluating, or taking the derivative of.
 
 $head n$$
 For all routines documented below, 
@@ -160,6 +164,18 @@ $codei%
 %$$
 It is the size of the vector $icode ay$$ in the corresponding call to
 $icode%afun%(%id%, %ax%, %ay%)%$$.
+
+$head vx$$
+For all the routines documented below,
+the argument $icode vx$$ has prototype
+$codei%
+	const CppAD::vector<bool>& %vx%
+%$$
+and $icode%vx%.size() >= %n%$$.
+For $latex j = 0 , \ldots , n-1$$,
+$icode%vx%[%j%]%$$ is true if and only if
+$icode%ax%[%j%]%$$ is a $cref/variable/glossary/Variable/$$
+in the corresponding call to $icode afun$$.
 
 $head tx$$
 For all routines documented below, 
@@ -236,11 +252,35 @@ The size of this vector; i.e.,
 the dimension of the range space for $latex f$$,
 may depend on the call to $icode afun$$.
 
+$head variable$$
+The macro argument $icode variable$$ is a
+user defined function
+$codei%
+	%ok% = %variable%(%id%, %k%, %n%, %m%, %vx%, %tx%, %vy%)
+%$$
+For this call, $icode%k% == 0%$$ and we are given the Taylor coefficients 
+of order zero in $icode tx$$ and the variable information in $icode vx$$.
+
+$subhead Usage$$
+This routine is used by calls to $icode afun$$.
+
+$subhead vy$$
+The $icode variable$$ argument $icode vy$$ has prototype
+$codei%
+	CppAD::vector<bool>& %vy%
+%$$
+The input value of the elements of $icode vy$$ does not matter.
+Upon return, for $latex j = 0 , \ldots , m-1$$,
+$icode%vy%[%i%]%$$ is true if and only if
+$icode%ay%[%j%]%$$ is a variable
+in the corresponding call to $icode afun$$.
+(CppAD uses this information to reduce the necessary computations.)
+
 $head forward$$
 The macro argument $icode forward$$ is a
 user defined function
 $codei%
-	%ok% = %forward%(%id%, %k%, %n%, %m%, %vx%, %vy%, %tx%, %ty%)
+	%ok% = %forward%(%id%, %k%, %n%, %m%, %vx%, %tx%, %ty%)
 %$$
 that computes results during a $cref/forward/Forward/$$ mode sweep.
 For this call, we are given the Taylor coefficients in $icode tx$$ 
@@ -258,40 +298,14 @@ $latex \[
 The other components of $icode ty$$ must be left unchanged.
 
 $subhead Usage$$
-This routine is used by calls to $icode afun$$ (with $icode%k% == 0%$$) 
-and by $cref/forward/ForwardAny/$$.
-
-$subhead vx$$
-The $icode forward$$ argument $icode vx$$ has prototype
-$codei%
-	const CppAD::vector<bool>& %vx%
-%$$
-If $icode%vx%.size() == 0%$$, it should not be used.
-Otherwise, 
-$icode%k% == 0%$$, $icode%vx%.size() >= %n%$$, and
-for $latex j = 0 , \ldots , n-1$$,
-$icode%vx%[%j%]%$$ is true if and only if
-$icode%ax%[%j%]%$$ is a $cref/variable/glossary/Variable/$$.
-
-$subhead vy$$
-The $icode forward$$ argument $icode vy$$ has prototype
-$codei%
-	CppAD::vector<bool>& %vy%
-%$$
-If $icode%vy%.size() == 0%$$, it should not be used.
-Otherwise, 
-$icode%k% == 0%$$ and $icode%vy%.size() >= %m%$$.
-The input value of the elements of $icode vy$$ does not matter.
-Upon return, for $latex j = 0 , \ldots , m-1$$,
-$icode%vy%[%i%]%$$ is true if and only if
-$icode%ay%[%j%]%$$ is a variable
-(CppAD uses this information to reduce the necessary computations).
+This routine is used (with $icode%k% == 0%$$) by calls to $icode afun$$
+and by calls to $cref/forward/ForwardAny/$$.
 
 $head reverse$$
 The macro argument $icode reverse$$
 is a user defined function
 $codei%
-	%ok% = %reverse%(%id%, %k%, %n%, %m%, %tx%, %ty%, %px%, %py%)
+	%ok% = %reverse%(%id%, %k%, %n%, %m%, %vx%, %tx%, %ty%, %px%, %py%)
 %$$
 that computes results during a $cref/reverse/Reverse/$$ mode sweep. 
 The input value of the vectors $icode tx$$ and $icode ty$$
@@ -350,7 +364,7 @@ $head for_jac_sparse$$
 The macro argument $icode for_jac_sparse$$
 is a user defined function
 $codei%
-	%ok% = %for_jac_sparse%(%id%, %n%, %m%, %q%, %r%, %s%)
+	%ok% = %for_jac_sparse%(%id%, %n%, %m%, %vx%, %q%, %r%, %s%)
 %$$
 that is used to compute results during a forward Jacobian sparsity sweep.
 For a fixed $latex n \times q$$ matrix $latex R$$,
@@ -574,7 +588,8 @@ user defined atomic operations.
 
 /*!
 \def CPPAD_USER_ATOMIC(afun, Tvector, 
-	forward, reverse, for_jac_sparse, rev_jac_sparse, rev_hes_sparse 
+	variable, forward, reverse, 
+	for_jac_sparse, rev_jac_sparse, rev_hes_sparse 
 )
 Defines the function <tt>afun(id, ax, ay)</tt>  
 where \c id is \c ax and \c ay are vectors with <tt>AD<Base></tt> elements.
@@ -588,6 +603,9 @@ the base type for the atomic operation.
 \par afun 
 name of the CppAD defined function that corresponding to this operation.
 Note that \c #afun is a version of afun with quotes arround it.
+
+\par variable
+name of the user defined function that computes variable information.
 
 \par forward
 name of the user defined function that computes corresponding
@@ -618,6 +636,7 @@ do note get deallocated until the program terminates.
      afun            ,                                                \
      Tvector         ,                                                \
      Base            ,                                                \
+	variable        ,                                                \
 	forward         ,                                                \
      reverse         ,                                                \
      for_jac_sparse  ,                                                \
@@ -631,6 +650,7 @@ inline void afun (                                                    \
 )                                                                     \
 {    static CppAD::user_atomic<Base> fun(                             \
           #afun          ,                                            \
+          variable       ,                                            \
           forward        ,                                            \
           reverse        ,                                            \
           for_jac_sparse ,                                            \
@@ -648,6 +668,16 @@ the CPPAD_USER_ATOMIC macro; see static object in that macro.
 */
 template <class Base>
 class user_atomic {
+	/// type for user routine that computes variable information 
+	typedef bool (*V) (
+		size_t                  id ,
+		size_t                   k , 
+		size_t                   n ,
+		size_t                   m ,
+		const vector<bool>&     vx ,
+		const vector<Base>&     tx , 
+		vector<bool>&           vy
+	);
 	/// type for user routine that computes forward mode results
 	typedef bool (*F) (
 		size_t                  id ,
@@ -655,7 +685,6 @@ class user_atomic {
 		size_t                   n ,
 		size_t                   m ,
 		const vector<bool>&     vx ,
-		vector<bool>&           vy ,
 		const vector<Base>&     tx , 
 		vector<Base>&           ty
 	);
@@ -665,6 +694,7 @@ class user_atomic {
 		size_t                   k , 
 		size_t                   n , 
 		size_t                   m , 
+		const vector<bool>&     vx ,
 		const vector<Base>&     tx , 
 		const vector<Base>&     ty ,
 		vector<Base>&           px ,
@@ -672,12 +702,13 @@ class user_atomic {
 	);
 	/// type for user routine that computes forward mode Jacobian sparsity
 	typedef bool (*FJS) (
-		size_t                           id ,
-		size_t                            n ,
-		size_t                            m ,
-		size_t                            q ,
-		const vector< std::set<size_t> >& r ,
-		vector< std::set<size_t>  >&      s
+		size_t                            id ,
+		size_t                             n ,
+		size_t                             m ,
+		const vector<bool>&               vx ,
+		size_t                             q ,
+		const vector< std::set<size_t> >&  r ,
+		vector< std::set<size_t>  >&       s
 	);
 	/// type for user routine that computes reverse mode Jacobian sparsity
 	typedef bool (*RJS) (
@@ -703,6 +734,8 @@ class user_atomic {
 private:
 	/// users name for the AD version of this atomic operation
 	const std::string     name_;
+	/// user's computation of variable information
+	const V                  v_;
 	/// user's implementation of forward mode
 	const F                  f_;
 	/// user's implementation of reverse mode
@@ -738,6 +771,9 @@ public:
 	\param afun
 	is the user's name for the AD version of this atomic operation.
 
+	\param v
+	user routine that does variable information calculations.
+
 	\param f
 	user routine that does forward mode calculations for this operation.
 
@@ -753,8 +789,9 @@ public:
 	\param rhs
 	user routine that does reverse Hessian sparsity calculations.
 	*/
-	user_atomic(const char* afun, F f, R r, FJS fjs, RJS rjs, RHS rhs) : 
+	user_atomic(const char* afun, V v, F f, R r, FJS fjs, RJS rjs, RHS rhs) : 
 	name_(afun)
+	, v_(v)
 	, f_(f)
 	, r_(r)
 	, fjs_(fjs)
@@ -815,13 +852,19 @@ public:
 				CPPAD_ASSERT_KNOWN(false, msg.c_str());
 			}
 		}
+		// variable infroamtion computation
+		k  = 0;
+		bool ok = v_(id, k, n, m, vx_, x_, vy_);  
+		if( ! ok )
+		{	std::string msg = name_ + ": ok returned false from "
+				"variable calculation.";
+			CPPAD_ASSERT_KNOWN(false, msg.c_str());
+		}
 		// Use zero order forward mode to compute values
 		k  = 0;
-		bool ok = f_(id, k, n, m, vx_, vy_, x_, y_);  
+		ok = f_(id, k, n, m, vx_, x_, y_);  
 		if( ! ok )
-		{	std::stringstream ss;
-			ss << k;
-			std::string msg = name_ + ": ok returned false from "
+		{	std::string msg = name_ + ": ok returned false from "
 				"zero order forward mode calculation.";
 			CPPAD_ASSERT_KNOWN(false, msg.c_str());
 		}
@@ -906,6 +949,10 @@ public:
 	\param m
 	range space size for this calculation.
 
+	\param vx
+	identifies which of the components of \c x are variables in the
+	corresponding call to \c afun.
+
 	\param tx
 	Taylor coefficients corresponding to \c x for this calculation.
 
@@ -920,17 +967,18 @@ public:
 		size_t                    k ,
 		size_t                    n , 
 		size_t                    m , 
+		const vector<bool>&      vx ,
 		const vector<Base>&      tx ,
 		vector<Base>&            ty )
-	{	static vector<bool> empty(0);
-		
+	{ 
+		CPPAD_ASSERT_UNKNOWN( vx.size() >= n );
 		CPPAD_ASSERT_UNKNOWN( tx.size() >= n * k );
 		CPPAD_ASSERT_UNKNOWN( ty.size() >= m * k );
 
 		CPPAD_ASSERT_UNKNOWN(index < List().size() );
 		user_atomic* op = List()[index];
 
-		bool ok = op->f_(id, k, n, m, empty, empty, tx, ty);
+		bool ok = op->f_(id, k, n, m, vx, tx, ty);
 		if( ! ok )
 		{	std::stringstream ss;
 			ss << k;
@@ -962,6 +1010,10 @@ public:
 	\param m
 	range space size for this calculation.
 
+	\param vx
+	identifies which of the components of \c x are variables in the
+	corresponding call to \c afun.
+
 	\param tx
 	Taylor coefficients corresponding to \c x for this calculation.
 
@@ -982,6 +1034,7 @@ public:
 		size_t                   k ,
 		size_t                   n , 
 		size_t                   m , 
+		const vector<bool>&     vx ,
 		const vector<Base>&     tx ,
 		const vector<Base>&     ty ,
 		vector<Base>&           px ,
@@ -994,7 +1047,7 @@ public:
 		CPPAD_ASSERT_UNKNOWN( py.size() >= m * k );
 		user_atomic* op = List()[index];
 
-		bool ok = op->r_(id, k, n, m, tx, ty, px, py);
+		bool ok = op->r_(id, k, n, m, vx, tx, ty, px, py);
 		if( ! ok )
 		{	std::stringstream ss;
 			ss << k;
@@ -1021,6 +1074,10 @@ public:
 	\param m
 	range space size for this calculation.
 
+	\param vx
+	identifies which of the components of \c x are variables in the
+	corresponding call to \c afun.
+
 	\param q
 	is the column dimension for the Jacobian sparsity partterns.
 
@@ -1035,6 +1092,7 @@ public:
 		size_t                               id ,
 		size_t                                n , 
 		size_t                                m , 
+		const vector<bool>&                  vx ,
 		size_t                                q ,
 		const vector< std::set<size_t> >&     r ,
 		vector< std::set<size_t> >&           s )
@@ -1044,7 +1102,7 @@ public:
 		CPPAD_ASSERT_UNKNOWN( s.size() >= m );
 		user_atomic* op = List()[index];
 
-		bool ok = op->fjs_(id, n, m, q, r, s);
+		bool ok = op->fjs_(id, n, m, vx, q, r, s);
 		if( ! ok )
 		{	std::string msg = op->name_ + 
 				": ok returned false from for_jac_sparse calculation";

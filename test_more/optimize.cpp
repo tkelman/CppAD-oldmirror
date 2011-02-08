@@ -951,13 +951,30 @@ namespace {
 		result.swap(temp);
 	}
 
+	bool user_atomic_variable(
+		size_t                         id ,
+		size_t                          k , 
+		size_t                          n ,
+		size_t                          m ,
+		const CppAD::vector<bool>&     vx ,
+		const CppAD::vector<double>&   tx , 
+		CppAD::vector<bool>&           vy )
+	{	assert(n == 3 && m == 2);
+		if( k > 0 ) 
+			return false;
+
+		vy[0] = (vx[0] | vx[1]);
+		vy[1] = (vx[1] | vx[2]);
+
+		return true; 
+	}
+
 	bool user_atomic_forward(
 		size_t                         id ,
 		size_t                          k , 
 		size_t                          n ,
 		size_t                          m ,
 		const CppAD::vector<bool>&     vx ,
-		CppAD::vector<bool>&           vy ,
 		const CppAD::vector<double>&   tx , 
 		CppAD::vector<double>&         ty )
 	{	assert(n == 3 && m == 2);
@@ -970,10 +987,6 @@ namespace {
 		// y[1] = x[1] + x[2]
 		ty[1] = tx[1] + tx[2];
 		
-		if( vy.size() > 0 )
-		{	vy[0] = (vx[0] | vx[1]);
-			vy[1] = (vx[1] | vx[2]);
-		}
 		return true; 
 	}
 
@@ -982,6 +995,7 @@ namespace {
 		size_t                          k , 
 		size_t                          n , 
 		size_t                          m , 
+		const CppAD::vector<bool>&     vx ,
 		const CppAD::vector<double>&   tx , 
 		const CppAD::vector<double>&   ty ,
 		CppAD::vector<double>&         px ,
@@ -992,6 +1006,7 @@ namespace {
 		size_t                                  id ,
 		size_t                                   n ,
 		size_t                                   m ,
+		const CppAD::vector<bool>&              vx ,
 		size_t                                   q ,
 		const CppAD::vector< std::set<size_t> >& r ,
 		CppAD::vector< std::set<size_t>  >&      s )
@@ -1034,6 +1049,7 @@ namespace {
 		my_user_atomic             ,
 		CPPAD_TEST_VECTOR          ,
 		double                     ,
+		user_atomic_variable       ,
 		user_atomic_forward        ,
 		user_atomic_reverse        ,
 		user_atomic_for_jac_sparse ,

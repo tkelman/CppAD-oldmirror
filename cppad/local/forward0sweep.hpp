@@ -136,6 +136,7 @@ size_t forward0sweep(
 
 	// work space used by UserOp.
 	const size_t user_k = 0;     // order of this forward mode calculation
+	vector<bool> user_vx;        // which argument components are variables
 	vector<Base> user_tx;        // argument vector Taylor coefficients 
 	vector<Base> user_ty;        // result vector Taylor coefficients 
 	size_t user_index = 0;       // indentifier for this user_atomic operation
@@ -490,8 +491,10 @@ size_t forward0sweep(
 				user_id    = arg[1];
 				user_n     = arg[2];
 				user_m     = arg[3];
-				if(user_tx.size() < user_n)
+				if(user_vx.size() < user_n)
+				{	user_vx.resize(user_n);
 					user_tx.resize(user_n);
+				}
 				if(user_ty.size() < user_m)
 					user_ty.resize(user_m);
 				user_j     = 0;
@@ -513,11 +516,13 @@ size_t forward0sweep(
 			CPPAD_ASSERT_UNKNOWN( user_state == user_arg );
 			CPPAD_ASSERT_UNKNOWN( user_j < user_n );
 			CPPAD_ASSERT_UNKNOWN( arg[0] < num_par );
-			user_tx[user_j++] = parameter[ arg[0] ];
+			user_vx[user_j] = false;
+			user_tx[user_j] = parameter[ arg[0] ];
+			user_j++;
 			if( user_j == user_n )
 			{	// call users function for this operation
 				user_atomic<Base>::forward(user_index, user_id, 
-					user_k, user_n, user_m, user_tx, user_ty
+					user_k, user_n, user_m, user_vx, user_tx, user_ty
 				);
 				user_state = user_ret;
 			}
@@ -528,11 +533,13 @@ size_t forward0sweep(
 			CPPAD_ASSERT_UNKNOWN( user_state == user_arg );
 			CPPAD_ASSERT_UNKNOWN( user_j < user_n );
 			CPPAD_ASSERT_UNKNOWN( arg[0] <= i_var );
-			user_tx[user_j++] = Taylor[ arg[0] * J + 0 ];
+			user_vx[user_j] = true;
+			user_tx[user_j] = Taylor[ arg[0] * J + 0 ];
+			user_j++;
 			if( user_j == user_n )
 			{	// call users function for this operation
 				user_atomic<Base>::forward(user_index, user_id,
-					user_k, user_n, user_m, user_tx, user_ty
+					user_k, user_n, user_m, user_vx, user_tx, user_ty
 				);
 				user_state = user_ret;
 			}

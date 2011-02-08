@@ -138,6 +138,50 @@ namespace { // Empty namespace
 	}
 
 	// ----------------------------------------------------------------------
+	// variable calculation routine called by CppAD
+	bool variable_mat_mul(
+		size_t                   id ,
+		size_t                    k ,
+		size_t                    n ,
+		size_t                    m ,
+		const vector<bool>&      vx ,
+		const vector<double>&    tx ,
+		vector<bool>&            vy 
+	)
+	{	size_t i, j;
+		n_order_   = k + 1;	
+		nr_result_ = info_[id].nr_result; 
+		n_middle_  = info_[id].n_middle;
+		nc_result_ = info_[id].nc_result;
+
+		// check total number of components in ax and ay
+		assert( nr_result_ * n_middle_ + n_middle_ * nc_result_  == n );
+		assert( nr_result_ * nc_result_ == m );
+		assert( k == 0  );
+
+		for(i = 0; i < nr_result_; i++)
+		{	for(j = 0; j < nc_result_; j++)
+			{	// compute vy[ result(i, j, 0) ]
+				bool   var = false;
+				bool   nz_left, nz_right;
+				size_t middle, im_left, mj_right, ij_result;
+				for(middle = 0; middle < n_middle_; middle++)
+				{	im_left  = left(i, middle, k);
+					mj_right = right(middle, j, k);
+					nz_left  = vx[im_left]  | (tx[im_left] != 0.);
+					nz_right = vx[mj_right] | (tx[mj_right]!= 0.);
+					// if not multiplying by the constant zero
+					if( nz_left & nz_right )
+						var |= (vx[im_left] | vx[mj_right]);
+				}
+				ij_result     = result(i, j, k);
+				vy[ij_result] = var;
+			}
+		}
+		return true;
+	}
+
+	// ----------------------------------------------------------------------
 	// forward mode routine called by CppAD
 	bool forward_mat_mul(
 		size_t                   id ,
@@ -145,7 +189,6 @@ namespace { // Empty namespace
 		size_t                    n ,
 		size_t                    m ,
 		const vector<bool>&      vx ,
-		vector<bool>&            vy ,
 		const vector<double>&    tx ,
 		vector<double>&          ty
 	)
@@ -158,31 +201,6 @@ namespace { // Empty namespace
 		// check total number of components in ax and ay
 		assert( nr_result_ * n_middle_ + n_middle_ * nc_result_  == n );
 		assert( nr_result_ * nc_result_ == m );
-
-		// check if we are computing vy
-		if( vy.size() > 0 )
-		{	assert( k == 0 && vx.size() > 0 );
-			// multiply left times right
-			for(i = 0; i < nr_result_; i++)
-			{	for(j = 0; j < nc_result_; j++)
-				{	// compute vy[ result(i, j, 0) ]
-					bool   var = false;
-					bool   nz_left, nz_right;
-					size_t middle, im_left, mj_right, ij_result;
-					for(middle = 0; middle < n_middle_; middle++)
-					{	im_left  = left(i, middle, k);
-						mj_right = right(middle, j, k);
-						nz_left  = vx[im_left]  | (tx[im_left] != 0.);
-						nz_right = vx[mj_right] | (tx[mj_right]!= 0.);
-						// if not multiplying by the constant zero
-						if( nz_left & nz_right )
-							var |= (vx[im_left] | vx[mj_right]);
-					}
-					ij_result     = result(i, j, k);
-					vy[ij_result] = var;
-				}
-			}
-		}
 
 		// initialize result as zero
 		for(i = 0; i < nr_result_; i++)
@@ -205,6 +223,7 @@ namespace { // Empty namespace
 		size_t                    k ,
 		size_t                    n ,
 		size_t                    m ,
+		const vector<bool>&      vx ,
 		const vector<double>&    tx ,
 		const vector<double>&    ty ,
 		vector<double>&          px ,
@@ -241,6 +260,7 @@ namespace { // Empty namespace
 		size_t                               id ,             
 		size_t                                n ,
 		size_t                                m ,
+		const vector<bool>&                  vx ,
 		size_t                                q ,
 		const vector< std::set<size_t> >&     r ,
 		vector< std::set<size_t> >&           s )
@@ -371,6 +391,7 @@ namespace { // Empty namespace
 		mat_mul                 , 
 		CPPAD_TEST_VECTOR       ,
 		double                  , 
+		variable_mat_mul        , 
 		forward_mat_mul         , 
 		reverse_mat_mul         ,
 		for_jac_sparse_mat_mul  ,

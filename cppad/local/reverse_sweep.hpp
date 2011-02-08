@@ -160,6 +160,7 @@ void ReverseSweep(
 	// work space used by UserOp.
 	const size_t user_k  = d;    // order of this forward mode calculation
 	const size_t user_k1 = d+1;  // number of orders for this calculation
+	vector<bool> user_vx;        // variable indices for argument vector
 	vector<size_t> user_ix;      // variable indices for argument vector
 	vector<Base> user_tx;        // argument vector Taylor coefficients
 	vector<Base> user_ty;        // result vector Taylor coefficients
@@ -500,8 +501,10 @@ void ReverseSweep(
 				user_id    = arg[1];
 				user_n     = arg[2];
 				user_m     = arg[3];
-				if(user_ix.size() < user_n)
+				if(user_vx.size() < user_n)
+				{	user_vx.resize(user_n);
 					user_ix.resize(user_n);
+				}
 				if(user_tx.size() < user_n * user_k1)
 				{	user_tx.resize(user_n * user_k1);
 					user_px.resize(user_n * user_k1);
@@ -525,10 +528,10 @@ void ReverseSweep(
 
 				// call users function for this operation
 				user_atomic<Base>::reverse(user_index, user_id,
-					user_k, user_n, user_m, user_tx, user_ty,
-					user_px, user_py
+					user_k, user_n, user_m, user_vx,
+					user_tx, user_ty, user_px, user_py
 				);
-				for(j = 0; j < user_n; j++) if( user_ix[j] > 0 )
+				for(j = 0; j < user_n; j++) if( user_vx[j] )
 				{	for(ell = 0; ell < user_k1; ell++)
 						Partial[user_ix[j] * K + ell] +=
 							user_px[j * user_k1 + ell];
@@ -543,7 +546,7 @@ void ReverseSweep(
 			CPPAD_ASSERT_UNKNOWN( NumArg(op) == 1 );
 			CPPAD_ASSERT_UNKNOWN( arg[0] < num_par );
 			--user_j;
-			user_ix[user_j] = 0;
+			user_vx[user_j] = false;
 			user_tx[user_j * user_k1 + 0] = parameter[ arg[0]];
 			for(ell = 1; ell < user_k1; ell++)
 				user_tx[user_j * user_k1 + ell] = Base(0.);
@@ -560,6 +563,7 @@ void ReverseSweep(
 			CPPAD_ASSERT_UNKNOWN( arg[0] <= i_var );
 			CPPAD_ASSERT_UNKNOWN( 0 < arg[0] );
 			--user_j;
+			user_vx[user_j] = true;
 			user_ix[user_j] = arg[0];
 			for(ell = 0; ell < user_k1; ell++)
 				user_tx[user_j*user_k1 + ell] = Taylor[ arg[0] * J + ell];

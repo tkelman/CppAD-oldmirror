@@ -149,6 +149,7 @@ size_t forward_sweep(
 	// work space used by UserOp.
 	const size_t user_k  = d;    // order of this forward mode calculation
 	const size_t user_k1 = d+1;  // number of orders for this calculation
+	vector<bool> user_vx;        // which argument components are variables
 	vector<Base> user_tx;        // argument vector Taylor coefficients 
 	vector<Base> user_ty;        // result vector Taylor coefficients 
 	size_t user_index = 0;       // indentifier for this user_atomic operation
@@ -543,6 +544,8 @@ size_t forward_sweep(
 				user_id    = arg[1];
 				user_n     = arg[2];
 				user_m     = arg[3];
+				if( user_vx.size() < user_n )
+					user_vx.resize(user_n);
 				if(user_tx.size() < user_n * user_k1)
 					user_tx.resize(user_n * user_k1);
 				if(user_ty.size() < user_m * user_k1)
@@ -566,6 +569,7 @@ size_t forward_sweep(
 			CPPAD_ASSERT_UNKNOWN( user_state == user_arg );
 			CPPAD_ASSERT_UNKNOWN( user_j < user_n );
 			CPPAD_ASSERT_UNKNOWN( arg[0] < num_par );
+			user_vx[user_j]               = false;
 			user_tx[user_j * user_k1 + 0] = parameter[ arg[0]];
 			for(ell = 1; ell < user_k1; ell++)
 				user_tx[user_j * user_k1 + ell] = Base(0);
@@ -573,7 +577,7 @@ size_t forward_sweep(
 			if( user_j == user_n )
 			{	// call users function for this operation
 				user_atomic<Base>::forward(user_index, user_id,
-					user_k, user_n, user_m, user_tx, user_ty
+					user_k, user_n, user_m, user_vx, user_tx, user_ty
 				);
 				user_state = user_ret;
 			}
@@ -584,13 +588,14 @@ size_t forward_sweep(
 			CPPAD_ASSERT_UNKNOWN( user_state == user_arg );
 			CPPAD_ASSERT_UNKNOWN( user_j < user_n );
 			CPPAD_ASSERT_UNKNOWN( arg[0] <= i_var );
+			user_vx[user_j]  = true;
 			for(ell = 0; ell < user_k1; ell++)
 				user_tx[user_j * user_k1 + ell] = Taylor[ arg[0] * J + ell];
 			++user_j;
 			if( user_j == user_n )
 			{	// call users function for this operation
 				user_atomic<Base>::forward(user_index, user_id,
-					user_k, user_n, user_m, user_tx, user_ty
+					user_k, user_n, user_m, user_vx, user_tx, user_ty
 				);
 				user_state = user_ret;
 			}

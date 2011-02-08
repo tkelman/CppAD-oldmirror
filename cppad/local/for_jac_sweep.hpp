@@ -128,6 +128,7 @@ void ForJacSweep(
 	}
 
 	// work space used by UserOp.
+	vector<bool> user_vx;        // which argument components are variables
 	typedef std::set<size_t> size_set;
 	const size_t user_q = limit; // maximum element plus one
 	size_set::iterator set_itr;  // iterator for a standard set
@@ -498,7 +499,9 @@ void ForJacSweep(
 				user_n     = arg[2];
 				user_m     = arg[3];
 				if(user_r.size() < user_n )
-					user_r.resize(user_n);
+				{	user_r.resize(user_n);
+					user_vx.resize(user_n);
+				}
 				if(user_s.size() < user_m )
 					user_s.resize(user_m);
 				user_j     = 0;
@@ -521,12 +524,13 @@ void ForJacSweep(
 			CPPAD_ASSERT_UNKNOWN( user_j < user_n );
 			CPPAD_ASSERT_UNKNOWN( arg[0] < num_par );
 			// parameters have an empty sparsity pattern
+			user_vx[user_j] = false;
 			user_r[user_j].clear();
 			++user_j;
 			if( user_j == user_n )
 			{	// call users function for this operation
 				user_atomic<Base>::for_jac_sparse(user_index, user_id,
-					user_n, user_m, user_q, user_r, user_s
+					user_n, user_m, user_vx, user_q, user_r, user_s
 				);
 				user_state = user_ret;
 			}
@@ -538,6 +542,7 @@ void ForJacSweep(
 			CPPAD_ASSERT_UNKNOWN( user_j < user_n );
 			CPPAD_ASSERT_UNKNOWN( arg[0] <= i_var );
 			// set user_r[user_j] to sparsity pattern for variable arg[0]
+			user_vx[user_j] = true;
 			user_r[user_j].clear();
 			var_sparsity.begin(arg[0]);
 			i = var_sparsity.next_element();
@@ -549,7 +554,7 @@ void ForJacSweep(
 			if( user_j == user_n )
 			{	// call users function for this operation
 				user_atomic<Base>::for_jac_sparse(user_index, user_id,
-					user_n, user_m, user_q, user_r, user_s
+					user_n, user_m, user_vx, user_q, user_r, user_s
 				);
 				user_state = user_ret;
 			}
