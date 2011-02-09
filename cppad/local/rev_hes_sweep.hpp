@@ -169,6 +169,7 @@ void RevHesSweep(
 	const size_t user_q = limit; // maximum element plus one
 	size_set::iterator set_itr;  // iterator for a standard set
 	size_set::iterator set_end;  // end of iterator sequence
+	vector<bool>       user_vx;  // variable flags for argument vector x
 	vector<size_t>     user_ix;  // variable indices for argument vector x
 	vector< size_set > user_r;   // forward Jacobian sparsity pattern for x
 	vector<bool>       user_s;   // reverse Jacobian sparsity for y
@@ -551,6 +552,7 @@ void RevHesSweep(
 				user_m     = arg[3];
 				if(user_ix.size() < user_n)
 				{	user_ix.resize(user_n);
+					user_vx.resize(user_n);
 					user_r.resize(user_n);
 					user_t.resize(user_n);
 					user_v.resize(user_n);
@@ -573,10 +575,10 @@ void RevHesSweep(
 
 				// call users function for this operation
 				user_atomic<Base>::rev_hes_sparse(user_index, user_id,
-					user_n, user_m, 
+					user_n, user_m, user_vx,
 					user_q, user_r, user_s, user_t, user_u, user_v
 				);
-				for(j = 0; j < user_n; j++) if( user_ix[j] > 0 )
+				for(j = 0; j < user_n; j++) if( user_vx[j] > 0 )
 				{	size_t i_x = user_ix[j];
 					RevJac[i_x] = user_t[j];
 					set_itr = user_v[j].begin();
@@ -594,7 +596,7 @@ void RevHesSweep(
 			CPPAD_ASSERT_UNKNOWN( NumArg(op) == 1 );
 			CPPAD_ASSERT_UNKNOWN( arg[0] < num_par );
 			--user_j;
-			user_ix[user_j] = 0;
+			user_vx[user_j] = false; // user_ix[user_j] not used
 			user_r[user_j].clear();
 			if( user_j == 0 )
 				user_state = user_start;
@@ -608,6 +610,7 @@ void RevHesSweep(
 			CPPAD_ASSERT_UNKNOWN( arg[0] <= i_var );
 			CPPAD_ASSERT_UNKNOWN( 0 < arg[0] );
 			--user_j;
+			user_vx[user_j] = true;
 			user_ix[user_j] = arg[0];
 			user_r[user_j].clear();
 			for_jac_sparse.begin(arg[0]);

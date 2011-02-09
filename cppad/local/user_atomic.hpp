@@ -59,7 +59,8 @@ $icode%ok% = %for_jac_sparse%(%id%, %n%, %m%, %vx%, %q%, %r%, %s%)
 %$$
 $icode%ok% = %rev_jac_sparse%(%id%, %n%, %m%, %vx%, %q%, %r%, %s%)
 %$$
-$icode%ok% = %rev_hes_sparse%(%id%, %n%, %m%, %q%, %r%, %s%, %t%, %u%, %v%)
+$icode%ok% =%$$
+$icode%rev_hes_sparse%(%id%, %n%, %m%, %vx%, %q%, %r%, %s%, %t%, %u%, %v%)
 %$$
 $codei%user_atomic<%Base%>::clear()%$$
 
@@ -355,7 +356,7 @@ Upon return,
 for $latex j = 0 , \ldots , n-1$$ and $latex \ell = 0 , \ldots , k$$,
 $latex \[
 \begin{array}{rcl}
-	px [ i * (k + 1) + k ] & = & \partial h / \partial x_j^\ell
+	px [ i * (k + 1) + \ell ] & = & \partial h / \partial x_j^\ell
 	\\
 	& = & 
 	( \partial g / \partial y ) ( \partial y / \partial x_j^\ell )
@@ -409,8 +410,8 @@ $codei%
 	CppAD::vector< std::set<size_t> >& %s%
 %$$
 and its size is $icode m$$.
-The input values of its sets do not matter,
-upon return all of its set elements are between
+The input values of its sets do not matter.
+Upon return all of its set elements are between
 zero and $icode%q%-1%$$ inclusive and
 it specifies a sparsity pattern for the matrix $latex S(x)$$.
 
@@ -427,7 +428,8 @@ $latex \[
 	R(x) = S * f^{(1)} (x)
 \] $$
 Given a $cref/sparsity pattern/glossary/Sparsity Pattern/$$ for $latex S$$,
-$icode rev_jac_sparse$$ computes a sparsity pattern for $latex R(x)$$.
+$icode rev_jac_sparse$$ computes a sparsity pattern for 
+$latex R(x) \in B^{q \times m}$$.
 
 $subhead Usage$$
 This routine is used by calls to $cref/RevSparseJac/$$
@@ -467,14 +469,13 @@ $head rev_hes_sparse$$
 The macro argument $icode rev_hes_sparse$$
 is a user defined function
 $codei%
-	%ok% = %rev_hes_sparse%(%id%, %n%, %m%, %q%, %r%, %s%, %t%, %u%, %v%)
+	%ok% = %rev_hes_sparse%(%id%, %n%, %m%, %vx%, %q%, %r%, %s%, %t%, %u%, %v%)
 %$$
-There is an unspecified scalar valued function 
-$latex g : B^m \rightarrow B$$.
 This routine computes the sparsity pattern for
 $latex \[
 	V(x) = (g \circ f)^{(2)}( x ) R
 \] $$
+where $latex g : B^m \rightarrow B$$ is an unspecified scalar valued function.
 
 $subhead Usage$$
 This routine is used by calls to $cref/RevSparseHes/$$.
@@ -537,7 +538,7 @@ g^{(2)} [ f (x) ] f^{(1)} (x) R
 \end{array}
 \] $$
 
-$subhead V$$
+$subhead v$$
 The $icode rev_hes_sparse$$ argument $icode v$$ has prototype
 $codei%
      CppAD::vector< std::set<size_t> >& %v%
@@ -730,6 +731,7 @@ class user_atomic {
 		size_t                           id ,
 		size_t                            n ,
 		size_t                            m ,
+		const vector<bool>&              vx ,
 		size_t                            q ,
 		const vector< std::set<size_t> >& r ,
 		const vector<bool>&               s ,
@@ -1186,6 +1188,10 @@ public:
 	\param m
 	range space size for this calculation.
 
+	\param vx
+	identifies which of the components of \c x are variables in the
+	corresponding call to \c afun.
+
 	\param q
 	is the column dimension for the sparsity partterns.
 
@@ -1209,6 +1215,7 @@ public:
 		size_t                               id ,
 		size_t                                n , 
 		size_t                                m , 
+		const vector<bool>&                  vx ,
 		size_t                                q ,
 		vector< std::set<size_t> >&           r ,
 		const vector<bool>&                   s ,
@@ -1224,7 +1231,7 @@ public:
 		CPPAD_ASSERT_UNKNOWN( v.size() >= n );
 		user_atomic* op = List()[index];
 
-		bool ok = op->rhs_(id, n, m, q, r, s, t, u, v);
+		bool ok = op->rhs_(id, n, m, vx, q, r, s, t, u, v);
 		if( ! ok )
 		{	std::string msg = op->name_ + 
 				": ok returned false from rev_jac_sparse calculation";

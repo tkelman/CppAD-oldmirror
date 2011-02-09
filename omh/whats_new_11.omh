@@ -12,6 +12,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 $begin whats_new_11$$
 $spell
+	vx
 	prefixdir
 	pkgconfig
 	Fadbad
@@ -34,6 +35,19 @@ This section contains a list of the changes to CppAD during 2011
 (in reverse order by date).
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
+
+$head 02-08$$
+$list number$$
+Fix a bug where a variable in $code user_atomic.hpp$$ was declared
+$icode Base$$ when it should have been $code size_t$$.
+This caused the $cref user_atomic$$ functions to fail with certain 
+base types.
+$lnext
+Improve documentation for $cref user_atomic$$ functions.
+$lnext
+Add $icode vx$$ to all the user call back routines.
+This enables the user to create more optimized code.
+$lend
 
 $head 02-06$$
 $list number$$

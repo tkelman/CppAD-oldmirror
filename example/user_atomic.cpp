@@ -139,7 +139,7 @@ namespace { // Empty namespace
 
 	// ----------------------------------------------------------------------
 	// variable calculation routine called by CppAD
-	bool variable_mat_mul(
+	bool mat_mul_variable(
 		size_t                   id ,
 		size_t                    k ,
 		size_t                    n ,
@@ -183,7 +183,7 @@ namespace { // Empty namespace
 
 	// ----------------------------------------------------------------------
 	// forward mode routine called by CppAD
-	bool forward_mat_mul(
+	bool mat_mul_forward(
 		size_t                   id ,
 		size_t                    k ,
 		size_t                    n ,
@@ -218,7 +218,7 @@ namespace { // Empty namespace
 
 	// ----------------------------------------------------------------------
 	// reverse mode routine called by CppAD
-	bool reverse_mat_mul(
+	bool mat_mul_reverse(
 		size_t                   id ,
 		size_t                    k ,
 		size_t                    n ,
@@ -256,7 +256,7 @@ namespace { // Empty namespace
 
 	// ----------------------------------------------------------------------
 	// forward Jacobian sparsity routine called by CppAD
-	bool for_jac_sparse_mat_mul(
+	bool for_jac_mat_mul_sparse(
 		size_t                               id ,             
 		size_t                                n ,
 		size_t                                m ,
@@ -293,7 +293,7 @@ namespace { // Empty namespace
 
 	// ----------------------------------------------------------------------
 	// reverse Jacobian sparsity routine called by CppAD
-	bool rev_jac_sparse_mat_mul(
+	bool rev_jac_mat_mul_sparse(
 		size_t                               id ,             
 		size_t                                n ,
 		size_t                                m ,
@@ -332,17 +332,18 @@ namespace { // Empty namespace
 
 	// ----------------------------------------------------------------------
 	// reverse Hessian sparsity routine called by CppAD
-	bool rev_hes_sparse_mat_mul(
+	bool rev_hes_mat_mul_sparse(
 		size_t                               id ,             
 		size_t                                n ,
 		size_t                                m ,
+		const vector<bool>&                  vx ,
 		size_t                                q ,
 		const vector< std::set<size_t> >&     r ,
 		const vector<bool>&                   s ,
 		vector<bool>&                         t ,
 		const vector< std::set<size_t> >&     u ,
 		vector< std::set<size_t> >&           v )
-	{	size_t i, j, im_left, middle, mj_right, ij_result, order;
+	{	size_t i, j, im_left, middle, mj_right, ij_result;
 	
 		n_order_   = 1;
 		nr_result_ = info_[id].nr_result; 
@@ -354,7 +355,7 @@ namespace { // Empty namespace
 			v[j].clear();
 		}
 
-		order = 0;
+		size_t order = 0;
 		for(i = 0; i < nr_result_; i++)
 		{	for(j = 0; j < nc_result_; j++)
 			{	ij_result = result(i, j, order);
@@ -372,9 +373,11 @@ namespace { // Empty namespace
 					// v[mj_right] = union( v[mj_right], u[ij_result] )
 					my_union(v[mj_right], v[mj_right], u[ij_result] );
 
-					// Check for reverse Jacobian times non-zero
-					// forward Jacobian (giving a Hessian result)
-					if( s[ij_result] )
+					// If the reverse Jacobian for ij_result is non-zero
+					// and both the left and right operands are variables,
+					// the multiplication will result in non-zero 
+					// Hessian entries.
+					if( s[ij_result] & vx[im_left] & vx[mj_right] )
 					{	// v[im_left] = union( v[im_left], r[mj_right] )
 						my_union(v[im_left], v[im_left], r[mj_right] );
 						// v[mj_right] = union( v[mj_right], r[im_left] )
@@ -392,12 +395,12 @@ namespace { // Empty namespace
 		mat_mul                 , 
 		CPPAD_TEST_VECTOR       ,
 		double                  , 
-		variable_mat_mul        , 
-		forward_mat_mul         , 
-		reverse_mat_mul         ,
-		for_jac_sparse_mat_mul  ,
-		rev_jac_sparse_mat_mul  ,
-		rev_hes_sparse_mat_mul  
+		mat_mul_variable        , 
+		mat_mul_forward         , 
+		mat_mul_reverse         ,
+		for_jac_mat_mul_sparse  ,
+		rev_jac_mat_mul_sparse  ,
+		rev_hes_mat_mul_sparse  
 	)
 
 } // End empty namespace
