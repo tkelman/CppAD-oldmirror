@@ -18,7 +18,7 @@ fi
 # -----------------------------------------------------------------------------
 repository="https://projects.coin-or.org/svn/CppAD"
 stable_version="20110101"
-release="2"
+release="3"
 release_version="$stable_version.$release"
 msg="Creating releases/$release_version"
 # -----------------------------------------------------------------------------
@@ -37,7 +37,7 @@ then
 	echo bin/"new_release.sh: Release number $release_version already exists."
 	echo "You must first change the assigment"
 	echo "	release=$release"
-	echo "in filebin/ new_release.sh to a higher release number."
+	echo "in file bin/new_release.sh to a higher release number."
 	exit 1
 fi
 echo "svn revert configure.ac"
