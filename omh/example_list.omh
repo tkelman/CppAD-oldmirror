@@ -169,6 +169,7 @@ $rref OdeStiff.cpp$$
 $rref ode_evaluate.cpp$$
 $rref ode_taylor.cpp$$
 $rref ode_taylor_adolc.cpp$$
+$rref omp_alloc.cpp$$
 $rref opt_val_hes.cpp$$
 $rref optimize.cpp$$
 $rref Output.cpp$$

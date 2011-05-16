@@ -117,6 +117,7 @@ extern bool OdeGearControl(void);
 extern bool OdeStiff(void);
 extern bool ode_taylor(void);
 extern bool ode_taylor_adolc(void);
+extern bool omp_alloc(void);
 extern bool opt_val_hes(void);
 extern bool optimize(void);
 extern bool Output(void);
@@ -264,6 +265,7 @@ int main(void)
 	ok &= Run( OdeGearControl,    "OdeGearControl"   );
 	ok &= Run( OdeStiff,          "OdeStiff"         );
 	ok &= Run( ode_taylor,        "ode_taylor"       );
+	ok &= Run( omp_alloc,         "omp_alloc"        );
 	ok &= Run( opt_val_hes,       "opt_val_hes"      );
 	ok &= Run( optimize,          "optimize"         );
 	ok &= Run( Output,            "Output"           );

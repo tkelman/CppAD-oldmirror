@@ -238,6 +238,7 @@ nobase_myinclude_HEADERS =  \
 	cppad/ode_err_control.hpp \
 	cppad/ode_gear_control.hpp \
 	cppad/ode_gear.hpp \
+	cppad/omp_alloc.hpp \
 	cppad/poly.hpp \
 	cppad/pow_int.hpp \
 	cppad/romberg_mul.hpp \
