@@ -12,31 +12,6 @@ the terms of the
 A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
-/*
-$begin omp_alloc$$
-$spell
-	openmp
-$$
-
-$section A Memory Allocator that works well with OpenMP multi-threading$$
-
-$index multi-threading, memory allocation$$
-$index openmp, memory allocation$$
-$index memory, multi-threading allocation$$
-$index allocation, multi-threading$$ 
-
-$head Under Construction$$
-
-$children%
-	example/omp_alloc.cpp
-%$$
-$head Example$$
-The file $cref/omp_alloc.cpp/$$ contains an example and test of this
-memory allocator.
-It returns true, if it succeeds, and false otherwise.
-
-$end
-*/
 
 # include <limits>
 # include <memory>
@@ -105,9 +80,9 @@ private:
 	/// pointer to the next memory allocation with the same index
 	void*              next_;
 	// ---------------------------------------------------------------------
-	/// construct information attached to each allocated memory block
-	omp_alloc(void)
-	: index_(0), next_(0)
+	/// make default constructor private. It is only used by the constructor
+	/// for \c root array in the function \c root_vector below.
+	omp_alloc(void) : index_(0), next_(0) 
 	{ }
 	// ---------------------------------------------------------------------
 	static const omp_alloc_capacity* capacity_info(void)
@@ -130,14 +105,14 @@ private:
 
 	// -----------------------------------------------------------------------
 	/*!
- 	Increase the number of bytes of memory that are currently inuse; i.e.,
+ 	Increase the number of bytes of memory that are currently in use; i.e.,
 	that been obtained with \c get_memory and not yet returned. 
 
 	\param inc [in]
-	amount to increase inuse.
+	amount to increase memory in use.
 
 	\param thread [in]
-	Thread for which we are increasing the number of bytes inuse
+	Thread for which we are increasing the number of bytes in use
 	(must be < CPPAD_MAX_NUM_THREADS).
 	Durring parallel execution, this must be the thread 
 	that is currently executing.
@@ -178,14 +153,14 @@ private:
 	}
 	// -----------------------------------------------------------------------
 	/*!
- 	Decrease the number of bytes of memory that are currently inuse; i.e.,
+ 	Decrease the number of bytes of memory that are currently in use; i.e.,
 	that been obtained with \c get_memory and not yet returned. 
 
 	\param dec [in]
-	amount to decrease inuse.
+	amount to decrease number of bytes in use.
 
 	\param thread [in]
-	Thread for which we are decreasing the number of bytes inuse
+	Thread for which we are decreasing the number of bytes in use
 	(must be < CPPAD_MAX_NUM_THREADS).
 	Durring parallel execution, this must be the thread 
 	that is currently executing.
@@ -231,7 +206,32 @@ private:
 
 // ============================================================================
 public:
-	// -----------------------------------------------------------------------
+/* -----------------------------------------------------------------------
+$begin get_thread_num$$
+$spell
+	num
+	omp_alloc
+$$
+
+$section Get the Current OpenMP Thread Number$$
+
+$index get_thread_num, omp_alloc$$
+$index thread, current$$
+$index current, thread$$
+
+$head Syntax$$
+$icode%thread% = omp_alloc::get_thread_num()%$$
+
+$head Purpose$$
+Some of the $cref/omp_alloc/$$ allocation routines have a thread number.
+This routine enables you to determine the current thread.
+
+$head thread$$
+The return value $icode thread$$ is the currently executing thread number.
+If $code OPENMP_$$ is not defined, $icode thread$$ is zero.
+
+$end
+*/
 	/// Get current OpenMP thread number (zero if _OpenMP not defined).
 	static size_t get_thread_num(void)
 	{
@@ -247,7 +247,38 @@ public:
 # endif
 	}
 
-	// -----------------------------------------------------------------------
+/* -----------------------------------------------------------------------
+$begin in_parallel$$
+
+$section Is The Current Execution in OpenMP Parallel Mode$$
+$spell
+	omp_alloc
+	bool
+$$
+
+$index parallel, execution$$
+$index execution, parallel$$
+$index current, parallel execution$$
+$index sequential, execution$$
+
+$head Syntax$$
+$icode%flag% = omp_alloc::in_parallel()%$$
+
+$head Purpose$$
+Some of the $cref/omp_alloc/$$ allocation routines have different
+specifications for parallel (not sequential) execution mode.
+This routine enables you to determine the current thread.
+
+$head flag$$
+The return value has prototype
+$codei%
+	bool %flag%
+%$$
+It is true if the current execution is in parallel mode 
+(possibly multi-threaded) and false otherwise (sequential mode).
+
+$end
+*/
 	/// Are we in a parallel execution state; i.e., is it possible that
 	/// other threads are currently executing.
 	static bool in_parallel(void)
@@ -258,6 +289,62 @@ public:
 		return false;
 # endif
 	}
+/* -----------------------------------------------------------------------
+$begin get_memory$$
+$spell
+	num
+	ptr
+	omp_alloc
+$$
+
+$section Get the Current OpenMP Thread Number$$
+
+$index get_thread_num, omp_alloc$$
+$index thread, current$$
+$index current, thread$$
+
+$head Syntax$$
+$icode%v_ptr% = omp_alloc::get_memory(%min_bytes%, %num_bytes%)%$$
+
+$head Purpose$$
+Use $cref/omp_alloc/$$ to obtain a minimum number of bytes of memory
+(for use by the $cref/current thread/get_thread_num/$$).
+
+$head min_bytes$$
+this argument has prototype
+$codei%
+	size_t %min_bytes%
+%$$
+It specifies the minimum number of bytes to allocate.
+
+$head num_bytes$$
+this argument has prototype
+$code%
+	size_t& %num_bytes%
+%$$
+It's input value does not matter.
+Upon return, it is the actual number of bytes that have been allocated for use.
+
+$head v_ptr$$
+The return value $icode v_ptr$$ has prototype
+$code%
+	void* %v_ptr%
+%$$
+It is the location where the $icode num_bytes$$ of memory 
+that have been allocated for use begins.
+
+$head Allocation Speed$$
+This allocation should be faster if the following conditions hold:
+$list number$$
+The memory allocated by a previous call to $code get_memory$$ 
+is currently available for use.
+$lnext
+The current $icode min_bytes$$ is between 
+the previous $icode min_bytes$$ and previous $icode num_bytes$$,
+$lend
+
+$end
+*/
 	/*!
  	Use omp_alloc to get a specified amount of memory.
 
@@ -274,7 +361,7 @@ public:
 	The actual number of bytes of memory obtained for use.
 
 	\return
-	pointer to the beginning of the memory.
+	pointer to the beginning of the memory allocted for use.
  	*/
 	static void* get_memory(size_t min_bytes, size_t& num_bytes)
 	{	size_t num_cap = capacity_info()->number;
@@ -324,15 +411,56 @@ public:
 		return reinterpret_cast<void*>(node + 1);
 	}
 
-	// -----------------------------------------------------------------------
+/* -----------------------------------------------------------------------
+$begin return_memory$$
+$spell
+	ptr
+	omp_alloc
+$$
+
+$section Make Allocated Memory Available for Future Use by Same Thread$$
+
+$index return_memory, omp_alloc$$
+$index free, memory$$
+$index available, memory$$
+$index thread, return memory$$
+
+$head Syntax$$
+$icode%omp_alloc::return_memory(%v_ptr%)%$$
+
+$head Purpose$$
+Makes memory that is in use for a specific thread available (quickly)
+for future use (by the same thread).
+
+$head v_ptr$$
+this argument has prototype
+$codei%
+	void* %v_ptr%
+%$$.
+It must be a pointer to memory that is currently in use; i.e.
+obtained by a previous call to $cref/get_memory/$$ and not yet returned.
+
+$head Thread$$
+Either the $cref/current thread/get_thread_num/$$ must be the same as during
+the corresponding call to $cref/get_memory/$$,
+or the current execution mode must be sequential 
+(not $cref/parallel/in_parallel/$$).
+
+$end
+*/
 	/*!
  	Return memory that was obtained by \c get_memory.
 	The returned memory becomes available for use by 
 	\c get_memory for this thread.
 
 	\param v_ptr [in]
-	Value of the pointer returned by \c get_memory and still inuse.
-	After this call, this pointer will available (and not inuse).
+	Value of the pointer returned by \c get_memory and still in use.
+	After this call, this pointer will available (and not in use).
+
+	\par
+	We must either be in sequential (not parallel) execution mode,
+	or the current thread must be the same as for the corresponding call
+	to \c \get_memory.
  	*/
 	static void return_memory(void* v_ptr)
 	{	size_t num_cap   = capacity_info()->number;
@@ -347,13 +475,48 @@ public:
 		size_t thread    = index / num_cap;
 		size_t cap       = index % num_cap;
 		size_t capacity  = capacity_info()->value[cap];
-		CPPAD_ASSERT_UNKNOWN( thread == get_thread_num() );
+		CPPAD_ASSERT_UNKNOWN( thread < CPPAD_MAX_NUM_THREADS );
+		CPPAD_ASSERT_KNOWN( 
+			thread == get_thread_num() || (! in_parallel()),
+			"Attempt to return memory for a different thread "
+			"while in parallel mode"
+		);
 
 		// adjust counts
 		dec_inuse(capacity, thread);
 		inc_available(capacity, thread);
 	}
-	// -----------------------------------------------------------------------
+/* -----------------------------------------------------------------------
+$begin free_available$$
+$spell
+	omp_alloc
+$$
+
+$section Free Memory Currently Available for Quick Use by a Thread$$
+
+$index free_available, omp_alloc$$
+$index free, available$$
+$index available, free$$
+$index thread, free memory$$
+
+$head Syntax$$
+$icode%omp_alloc::free_available(%thread%)%$$
+
+$head Purpose$$
+Free memory, currently available for quick use by a specific thread, 
+for general future use.
+
+$head thread$$
+this argument has prototype
+$codei%
+	size_t %thread%
+%$$
+Either $cref/get_thread_num/$$ must be the same as $icode thread$$,
+or the current execution mode must be sequential 
+(not $cref/parallel/in_parallel/$$).
+
+$end
+*/
 	/*!
 	Return all the memory being held as available for a thread to the system.
 
@@ -394,6 +557,47 @@ public:
 		}
 		CPPAD_ASSERT_UNKNOWN( available(thread) == 0 );
 	}
+/* -----------------------------------------------------------------------
+$begin inuse$$
+$spell
+	num
+	inuse
+	omp_alloc
+$$
+
+$section Amount of Memory a Thread is Currently Using$$
+
+$index inuse, omp_alloc$$
+$index use, thread memory$$
+$index thread, memory inuse $$
+
+$head Syntax$$
+$icode%num_bytes% = omp_alloc::inuse(%thread%)%$$
+
+$head Purpose$$
+Memory being managed by $cref/omp_alloc/$$ has two states,
+currently in use by the specified thread,
+and quickly available for future use by the specified thread.
+This function informs the program how much memory is in use.
+
+$head thread$$
+this argument has prototype
+$codei%
+	size_t %thread%
+%$$
+Either $cref/get_thread_num/$$ must be the same as $icode thread$$,
+or the current execution mode must be sequential 
+(not $cref/parallel/in_parallel/$$).
+
+$head num_bytes$$
+The return value has prototype
+$codei%
+	size_t %num_bytes%
+%$$
+It is the number of bytes currently in use by the specified thread.
+
+$end
+*/
 	/*!
 	Determine the amount of memory that is currently inuse.
 
@@ -414,6 +618,45 @@ public:
 		);
 		return inuse_vector()[thread];
 	}
+/* -----------------------------------------------------------------------
+$begin available$$
+$spell
+	num
+	omp_alloc
+$$
+
+$section Amount of Memory Available for Quick Use by a Thread$$
+
+$index available, omp_alloc$$
+$index memory, available$$
+$index thread, available memory$$
+
+$head Syntax$$
+$icode%num_bytes% = omp_alloc::available(%thread%)%$$
+
+$head Purpose$$
+Memory being managed by $cref/omp_alloc/$$ has two states,
+currently in use by the specified thread,
+and quickly available for future use by the specified thread.
+This function informs the program how much memory is available.
+
+$head thread$$
+this argument has prototype
+$codei%
+	size_t %thread%
+%$$
+Either $cref/get_thread_num/$$ must be the same as $icode thread$$,
+or the current execution mode must be sequential 
+(not $cref/parallel/in_parallel/$$).
+
+$head num_bytes$$
+The return value has prototype
+$codei%
+	size_t %num_bytes%
+%$$
+It is the number of bytes currently available for use by the specified thread.
+$end
+*/
 	/*!
 	Determine the amount of memory that is currently available for use.
 
