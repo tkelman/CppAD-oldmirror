@@ -81,7 +81,7 @@ private:
 	void*              next_;
 	// ---------------------------------------------------------------------
 	/// make default constructor private. It is only used by the constructor
-	/// for \c root array in the function \c root_available below.
+	/// for \c root arrays below.
 	omp_alloc(void) : index_(0), next_(0) 
 	{ }
 	// ---------------------------------------------------------------------
@@ -197,7 +197,16 @@ private:
 
 	// ----------------------------------------------------------------------
 	/// Vector of length CPAD_MAX_NUM_THREADS times CPPAD_MAX_NUM_CAPACITIES 
-	/// for use as root nodes of corresponding lists.
+	/// for use as root nodes of inuse lists.
+	static omp_alloc* root_inuse(void)
+	{	static omp_alloc  
+		root[CPPAD_MAX_NUM_THREADS * CPPAD_MAX_NUM_CAPACITY];
+		return root;
+	}
+
+	// ----------------------------------------------------------------------
+	/// Vector of length CPAD_MAX_NUM_THREADS times CPPAD_MAX_NUM_CAPACITIES 
+	/// for use as root nodes of available lists.
 	static omp_alloc* root_available(void)
 	{	static omp_alloc  
 		root[CPPAD_MAX_NUM_THREADS * CPPAD_MAX_NUM_CAPACITY];
@@ -380,31 +389,43 @@ $end
 		size_t thread = get_thread_num();
 		size_t index  = thread * num_cap + cap;
 
-		// check if we already have a node we can use
-		omp_alloc* root_avail = root_available() + index;
-		void* v_ptr           = root_avail->next_;
-		omp_alloc* node       = reinterpret_cast<omp_alloc*>(v_ptr);
-		if( node != 0 )
-		{	// remove node from linked list
-			root_avail->next_ = node->next_;
+		// root nodes for both lists
+		omp_alloc* inuse_root     = root_inuse() + index;
+		omp_alloc* available_root = root_available() + index;
 
-			// set information this allocation
-			CPPAD_ASSERT_UNKNOWN( node->index_ == index );
-			node->next_  = 0;
+		// check if we already have a node we can use
+		void* v_ptr               = available_root->next_;
+		omp_alloc* node           = reinterpret_cast<omp_alloc*>(v_ptr);
+		if( node != 0 )
+		{	CPPAD_ASSERT_UNKNOWN( node->index_ == index );
+
+			// remove node from available list
+			available_root->next_ = node->next_;
+
+# ifndef NDEBUG
+			// add node to inuse list
+			node->next_           = inuse_root->next_;
+			inuse_root->next_     = v_ptr;
+# endif
 
 			// adjust counts
 			inc_inuse(num_bytes, thread);
 			dec_available(num_bytes, thread);
 
-			// return pointer to memory after omp_alloc information
+			// return pointer to memory, do not inclue omp_alloc information
 			return reinterpret_cast<void*>(node + 1);
 		}
 
-		// create a new node plus extra memory and use it
+		// create a new node with omp_alloc information at front
 		v_ptr           = ::operator new(sizeof(omp_alloc) + num_bytes);
 		node            = reinterpret_cast<omp_alloc*>(v_ptr);
 		node->index_    = index;
-		node->next_     = 0;
+
+# ifndef NDEBUG
+		// add node to inuse list
+		node->next_       = inuse_root->next_;
+		inuse_root->next_ = v_ptr;
+# endif
 
 		// adjust counts
 		inc_inuse(num_bytes, thread);
@@ -419,7 +440,7 @@ $spell
 	omp_alloc
 $$
 
-$section Make Allocated Memory Available for Future Use by Same Thread$$
+$section Make Memory Available for Future Use by Same Thread$$
 
 $index return_memory, omp_alloc$$
 $index free, memory$$
@@ -427,7 +448,7 @@ $index available, memory$$
 $index thread, return memory$$
 
 $head Syntax$$
-$icode%omp_alloc::return_memory(%v_ptr%)%$$
+$codei%omp_alloc::return_memory(%v_ptr%)%$$
 
 $head Purpose$$
 Makes memory that is in use for a specific thread available (quickly)
@@ -447,6 +468,11 @@ the corresponding call to $cref/get_memory/$$,
 or the current execution mode must be sequential 
 (not $cref/parallel/in_parallel/$$).
 
+$head NDEBUG$$
+If $code NDEBUG$$ is defined, $icode v_ptr$$ is not checked (this is faster).
+Otherwise, a list of in use pointers is searched to make sure
+that $icode v_ptr$$ is in the list. 
+
 $end
 */
 	/*!
@@ -461,21 +487,38 @@ $end
 	\par
 	We must either be in sequential (not parallel) execution mode,
 	or the current thread must be the same as for the corresponding call
-	to \c \get_memory.
+	to \c get_memory.
  	*/
 	static void return_memory(void* v_ptr)
 	{	size_t num_cap   = capacity_info()->number;
 
-		omp_alloc* node          = reinterpret_cast<omp_alloc*>(v_ptr) - 1;
-		size_t index             = node->index_;
-		omp_alloc* root_avail  	= root_available() + index;
-		node->next_              = root_avail->next_;
-		root_avail->next_        = node;
+		omp_alloc* node           = reinterpret_cast<omp_alloc*>(v_ptr) - 1;
+		v_ptr                     = reinterpret_cast<void*>(node);
+		size_t index              = node->index_;
+		omp_alloc* inuse_root     = root_inuse() + index;
+		omp_alloc* available_root = root_available() + index;
+
+# ifndef NDEBUG
+		// remove node from inuse list
+		omp_alloc* previous  = inuse_root;
+		while( (previous->next_ != 0) & (previous->next_ != v_ptr) )
+			previous = reinterpret_cast<omp_alloc*>(previous->next_);	
+		CPPAD_ASSERT_KNOWN(
+			previous->next_ == v_ptr,
+			"Attempt to return memory that is not currently in use"
+		); 
+		previous->next_  = node->next_;
+# endif
+
+		// add node to available list
+		node->next_               = available_root->next_;
+		available_root->next_     = reinterpret_cast<void*>(node);
 
 		// extract thread and capacity from index
 		size_t thread    = index / num_cap;
 		size_t cap       = index % num_cap;
 		size_t capacity  = capacity_info()->value[cap];
+
 		CPPAD_ASSERT_UNKNOWN( thread < CPPAD_MAX_NUM_THREADS );
 		CPPAD_ASSERT_KNOWN( 
 			thread == get_thread_num() || (! in_parallel()),
@@ -501,7 +544,7 @@ $index available, free$$
 $index thread, free memory$$
 
 $head Syntax$$
-$icode%omp_alloc::free_available(%thread%)%$$
+$codei%omp_alloc::free_available(%thread%)%$$
 
 $head Purpose$$
 Free memory, currently available for quick use by a specific thread, 
@@ -544,9 +587,9 @@ $end
 		size_t cap, index;
 		for(cap = 0; cap < num_cap; cap++)
 		{	size_t capacity = capacity_vec[cap];
-			index                 = thread * num_cap + cap;
-			omp_alloc* root_avail = root_available() + index;
-			void* v_ptr           = root_avail->next_;
+			index                     = thread * num_cap + cap;
+			omp_alloc* available_root = root_available() + index;
+			void* v_ptr               = available_root->next_;
 			while( v_ptr != 0 )
 			{	omp_alloc* node = reinterpret_cast<omp_alloc*>(v_ptr); 
 				void* next      = node->next_;
@@ -555,7 +598,7 @@ $end
 
 				dec_available(capacity, thread);
 			}
-			root_avail->next_ = 0;
+			available_root->next_ = 0;
 		}
 		CPPAD_ASSERT_UNKNOWN( available(thread) == 0 );
 	}
