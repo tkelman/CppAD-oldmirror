@@ -81,7 +81,7 @@ private:
 	void*              next_;
 	// ---------------------------------------------------------------------
 	/// make default constructor private. It is only used by the constructor
-	/// for \c root array in the function \c root_vector below.
+	/// for \c root array in the function \c root_available below.
 	omp_alloc(void) : index_(0), next_(0) 
 	{ }
 	// ---------------------------------------------------------------------
@@ -198,7 +198,7 @@ private:
 	// ----------------------------------------------------------------------
 	/// Vector of length CPAD_MAX_NUM_THREADS times CPPAD_MAX_NUM_CAPACITIES 
 	/// for use as root nodes of corresponding lists.
-	static omp_alloc* root_vector(void)
+	static omp_alloc* root_available(void)
 	{	static omp_alloc  
 		root[CPPAD_MAX_NUM_THREADS * CPPAD_MAX_NUM_CAPACITY];
 		return root;
@@ -297,7 +297,7 @@ $spell
 	omp_alloc
 $$
 
-$section Get the Current OpenMP Thread Number$$
+$section Get At Least A Specified Amount of Memory$$
 
 $index get_thread_num, omp_alloc$$
 $index thread, current$$
@@ -319,15 +319,16 @@ It specifies the minimum number of bytes to allocate.
 
 $head num_bytes$$
 this argument has prototype
-$code%
+$codei%
 	size_t& %num_bytes%
 %$$
 It's input value does not matter.
-Upon return, it is the actual number of bytes that have been allocated for use.
+Upon return, it is the actual number of bytes that have been allocated for use
+( $icode%min_bytes %<=% num_bytes%$$).
 
 $head v_ptr$$
 The return value $icode v_ptr$$ has prototype
-$code%
+$codei%
 	void* %v_ptr%
 %$$
 It is the location where the $icode num_bytes$$ of memory 
@@ -340,7 +341,7 @@ The memory allocated by a previous call to $code get_memory$$
 is currently available for use.
 $lnext
 The current $icode min_bytes$$ is between 
-the previous $icode min_bytes$$ and previous $icode num_bytes$$,
+the previous $icode min_bytes$$ and previous $icode num_bytes$$.
 $lend
 
 $end
@@ -380,12 +381,12 @@ $end
 		size_t index  = thread * num_cap + cap;
 
 		// check if we already have a node we can use
-		omp_alloc* root_vec   = root_vector();
-		void* v_ptr           = root_vec[index].next_;
+		omp_alloc* root_avail = root_available() + index;
+		void* v_ptr           = root_avail->next_;
 		omp_alloc* node       = reinterpret_cast<omp_alloc*>(v_ptr);
 		if( node != 0 )
 		{	// remove node from linked list
-			root_vec[index].next_ = node->next_;
+			root_avail->next_ = node->next_;
 
 			// set information this allocation
 			CPPAD_ASSERT_UNKNOWN( node->index_ == index );
@@ -466,10 +467,10 @@ $end
 	{	size_t num_cap   = capacity_info()->number;
 
 		omp_alloc* node          = reinterpret_cast<omp_alloc*>(v_ptr) - 1;
-		omp_alloc* root_vec    	= root_vector();
 		size_t index             = node->index_;
-		node->next_              = root_vec[index].next_;
-		root_vec[index].next_    = node;
+		omp_alloc* root_avail  	= root_available() + index;
+		node->next_              = root_avail->next_;
+		root_avail->next_        = node;
 
 		// extract thread and capacity from index
 		size_t thread    = index / num_cap;
@@ -539,13 +540,13 @@ $end
 		size_t num_cap = capacity_info()->number;
 		if( num_cap == 0 )
 			return;
-		omp_alloc* root_vec             = root_vector();
 		const size_t*     capacity_vec  = capacity_info()->value;
 		size_t cap, index;
 		for(cap = 0; cap < num_cap; cap++)
 		{	size_t capacity = capacity_vec[cap];
-			index = thread * num_cap + cap;
-			void* v_ptr = root_vec[index].next_;
+			index                 = thread * num_cap + cap;
+			omp_alloc* root_avail = root_available() + index;
+			void* v_ptr           = root_avail->next_;
 			while( v_ptr != 0 )
 			{	omp_alloc* node = reinterpret_cast<omp_alloc*>(v_ptr); 
 				void* next      = node->next_;
@@ -554,6 +555,7 @@ $end
 
 				dec_available(capacity, thread);
 			}
+			root_avail->next_ = 0;
 		}
 		CPPAD_ASSERT_UNKNOWN( available(thread) == 0 );
 	}
