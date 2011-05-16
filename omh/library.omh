@@ -53,7 +53,8 @@ $children%
 	cppad/std_math_unary.hpp%
 	cppad/vector.hpp%
 	cppad/track_new_del.hpp%
-	omh/omp_alloc.omh
+	omh/omp_alloc.omh%
+	cppad/extend_vector.hpp
 %$$
 
 $head Error Handler$$
@@ -118,6 +119,8 @@ $table
 $rref std_math_unary$$
 $rref CppAD_vector$$
 $rref TrackNewDel$$
+$rref omp_alloc$$
+$rref extend_vector$$
 $tend
 
 $end

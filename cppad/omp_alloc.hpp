@@ -22,7 +22,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 CPPAD_BEGIN_NAMESPACE
 /*!
 \file omp_alloc.hpp
-File used to defin the CppAD allocator class
+File used to define the CppAD OpenMP allocator class
 */
 
 /*!
@@ -218,8 +218,10 @@ public:
 /* -----------------------------------------------------------------------
 $begin get_thread_num$$
 $spell
+	CppAD
 	num
 	omp_alloc
+	cppad.hpp
 $$
 
 $section Get the Current OpenMP Thread Number$$
@@ -229,11 +231,18 @@ $index thread, current$$
 $index current, thread$$
 
 $head Syntax$$
+$codei%include <cppad/omp_alloc.hpp>
+%$$
 $icode%thread% = omp_alloc::get_thread_num()%$$
 
 $head Purpose$$
 Some of the $cref/omp_alloc/$$ allocation routines have a thread number.
 This routine enables you to determine the current thread.
+
+$head Include$$
+The file $code cppad/extend_vector.hpp$$ is included by
+$code cppad/cppad.hpp$$, but it can also be included separately with out
+the rest of the $code CppAD$$ routines.
 
 $head thread$$
 The return value $icode thread$$ is the currently executing thread number.
@@ -309,8 +318,8 @@ $$
 $section Get At Least A Specified Amount of Memory$$
 
 $index get_thread_num, omp_alloc$$
-$index thread, current$$
-$index current, thread$$
+$index memory, allocate$$
+$index allocate, memory$$
 
 $head Syntax$$
 $icode%v_ptr% = omp_alloc::get_memory(%min_bytes%, %num_bytes%)%$$
@@ -320,14 +329,14 @@ Use $cref/omp_alloc/$$ to obtain a minimum number of bytes of memory
 (for use by the $cref/current thread/get_thread_num/$$).
 
 $head min_bytes$$
-this argument has prototype
+This argument has prototype
 $codei%
 	size_t %min_bytes%
 %$$
 It specifies the minimum number of bytes to allocate.
 
 $head num_bytes$$
-this argument has prototype
+This argument has prototype
 $codei%
 	size_t& %num_bytes%
 %$$
@@ -443,9 +452,9 @@ $$
 $section Make Memory Available for Future Use by Same Thread$$
 
 $index return_memory, omp_alloc$$
-$index free, memory$$
+$index memory, available$$
 $index available, memory$$
-$index thread, return memory$$
+$index thread, available memory$$
 
 $head Syntax$$
 $codei%omp_alloc::return_memory(%v_ptr%)%$$
@@ -455,7 +464,7 @@ Makes memory that is in use for a specific thread available (quickly)
 for future use (by the same thread).
 
 $head v_ptr$$
-this argument has prototype
+This argument has prototype
 $codei%
 	void* %v_ptr%
 %$$.
@@ -551,7 +560,7 @@ Free memory, currently available for quick use by a specific thread,
 for general future use.
 
 $head thread$$
-this argument has prototype
+This argument has prototype
 $codei%
 	size_t %thread%
 %$$
@@ -613,8 +622,8 @@ $$
 $section Amount of Memory a Thread is Currently Using$$
 
 $index inuse, omp_alloc$$
-$index use, thread memory$$
-$index thread, memory inuse $$
+$index use, memory$$
+$index thread, memory inuse$$
 
 $head Syntax$$
 $icode%num_bytes% = omp_alloc::inuse(%thread%)%$$
@@ -626,7 +635,7 @@ and quickly available for future use by the specified thread.
 This function informs the program how much memory is in use.
 
 $head thread$$
-this argument has prototype
+This argument has prototype
 $codei%
 	size_t %thread%
 %$$
@@ -686,7 +695,7 @@ and quickly available for future use by the specified thread.
 This function informs the program how much memory is available.
 
 $head thread$$
-this argument has prototype
+This argument has prototype
 $codei%
 	size_t %thread%
 %$$
@@ -716,6 +725,7 @@ $end
 		return available_vector()[thread];
 	}
 };
+
 
 CPPAD_END_NAMESPACE
 # endif

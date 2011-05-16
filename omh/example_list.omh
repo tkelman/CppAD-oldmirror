@@ -114,6 +114,7 @@ $rref Erf.cpp$$
 $rref ErrorHandler.cpp$$
 $rref Example.cpp$$
 $rref Exp.cpp$$
+$rref extend_vector.cpp$$
 $rref ForOne.cpp$$
 $rref ForTwo.cpp$$
 $rref Forward.cpp$$
