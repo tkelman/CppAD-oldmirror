@@ -86,7 +86,7 @@ public:
 		number           = 0;
 		size_t capacity  = sizeof(CPPAD_MIN_CAPACITY);
 		while( capacity < std::numeric_limits<size_t>::max() / 2 )
-		{	assert( number < CPPAD_MAX_NUM_CAPACITY );
+		{	CPPAD_ASSERT_UNKNOWN( number < CPPAD_MAX_NUM_CAPACITY );
 			value[number++] = capacity;
 			capacity       *= 2;
 		} 		 
@@ -133,10 +133,10 @@ private:
  	Increase the number of bytes of memory that are currently inuse; i.e.,
 	that been obtained with \c get_memory and not yet returned. 
 
-	\param inc
+	\param inc [in]
 	amount to increase inuse.
 
-	\param thread
+	\param thread [in]
 	Thread for which we are increasing the number of bytes inuse
 	(must be < CPPAD_MAX_NUM_THREADS).
 	Durring parallel execution, this must be the thread 
@@ -181,10 +181,10 @@ private:
  	Decrease the number of bytes of memory that are currently inuse; i.e.,
 	that been obtained with \c get_memory and not yet returned. 
 
-	\param dec
+	\param dec [in]
 	amount to decrease inuse.
 
-	\param thread
+	\param thread [in]
 	Thread for which we are decreasing the number of bytes inuse
 	(must be < CPPAD_MAX_NUM_THREADS).
 	Durring parallel execution, this must be the thread 
@@ -237,7 +237,10 @@ public:
 	{
 # ifdef _OPENMP
 		size_t thread = static_cast<size_t>( omp_get_thread_num() );
-		assert( thread < MAX_NUM_THREADS );
+		CPPAD_ASSERT_KNOWN(
+			thread < CPPAD_MAX_NUM_THREADS,
+			"more than CPPAD_MAX_NUM_THREADS are running"
+		);
 		return thread;
 # else
 		return 0;
@@ -258,24 +261,32 @@ public:
 	/*!
  	Use omp_alloc to get a specified amount of memory.
 
-	\param size
-	The number of bytes of memory to be obtained.
+	If the memory allocated by a previous call to \c get_memory is now 
+	avaialable, and \c min_bytes is between its previous value
+	and the previous \c num_bytes, this memory allocation will have
+	optimal speed. Otherwise, the memory allocation is more complicated and
+	may have to wait for other threads to complete an allocation.
+
+	\param min_bytes [in]
+	The minimum number of bytes of memory to be obtained for use.
+
+	\param num_bytes [out]
+	The actual number of bytes of memory obtained for use.
 
 	\return
 	pointer to the beginning of the memory.
  	*/
-	static void* get_memory(size_t size)
+	static void* get_memory(size_t min_bytes, size_t& num_bytes)
 	{	size_t num_cap = capacity_info()->number;
-		assert( size > 0 );
 
 		// determine the capacity for this request
 		size_t cap       = 0;
 		const size_t* capacity_vec = capacity_info()->value;
-		while( capacity_vec[cap] < size )
+		while( capacity_vec[cap] < min_bytes )
 		{	++cap;	
-			assert(cap < num_cap );
+			CPPAD_ASSERT_UNKNOWN(cap < num_cap );
 		}
-		size_t capacity = capacity_vec[cap];
+		num_bytes = capacity_vec[cap];
 
 		// determine the thread and index
 		size_t thread = get_thread_num();
@@ -294,21 +305,21 @@ public:
 			node->next_  = 0;
 
 			// adjust counts
-			inc_inuse(capacity, thread);
-			dec_available(capacity, thread);
+			inc_inuse(num_bytes, thread);
+			dec_available(num_bytes, thread);
 
 			// return pointer to memory after omp_alloc information
 			return reinterpret_cast<void*>(node + 1);
 		}
 
 		// create a new node plus extra memory and use it
-		v_ptr           = ::operator new(sizeof(omp_alloc) + capacity);
+		v_ptr           = ::operator new(sizeof(omp_alloc) + num_bytes);
 		node            = reinterpret_cast<omp_alloc*>(v_ptr);
 		node->index_    = index;
 		node->next_     = 0;
 
 		// adjust counts
-		inc_inuse(capacity, thread);
+		inc_inuse(num_bytes, thread);
 
 		return reinterpret_cast<void*>(node + 1);
 	}
@@ -316,10 +327,12 @@ public:
 	// -----------------------------------------------------------------------
 	/*!
  	Return memory that was obtained by \c get_memory.
-	The returned memory becomes available for use by the current thread.
+	The returned memory becomes available for use by 
+	\c get_memory for this thread.
 
-	\param v_ptr
-	Value of the pointer returned by \c get_memory.
+	\param v_ptr [in]
+	Value of the pointer returned by \c get_memory and still inuse.
+	After this call, this pointer will available (and not inuse).
  	*/
 	static void return_memory(void* v_ptr)
 	{	size_t num_cap   = capacity_info()->number;
@@ -342,40 +355,49 @@ public:
 	}
 	// -----------------------------------------------------------------------
 	/*!
-	Return all memory being held for all threads to the system.
-	This function assumes that only one thread will be executing 
-	during this function call.
+	Return all the memory being held as available for a thread to the system.
+
+	\param thread [in]
+	this thread that will no longer have any available memory after this call.
+	This must either be the thread currently executing, or we must be 
+	in sequential (not parallel) execution mode.
 	*/
-	static void free_available(void)
-	{	size_t num_cap = capacity_info()->number;
+	static void free_available(size_t thread)
+	{	CPPAD_ASSERT_KNOWN(
+			thread < CPPAD_MAX_NUM_THREADS,
+			"Attempt to free memory for a thread >= CPPAD_MAX_NUM_THREADS"
+		);
+		CPPAD_ASSERT_KNOWN( 
+			thread == get_thread_num() || (! in_parallel()),
+			"Attempt to free memory for a different thread "
+			"while in parallel mode"
+		);
 	
-		assert( ! in_parallel() );
+		size_t num_cap = capacity_info()->number;
 		if( num_cap == 0 )
 			return;
 		omp_alloc* root_vec             = root_vector();
 		const size_t*     capacity_vec  = capacity_info()->value;
-		size_t thread, cap, index;
-		for(thread = 0; thread < CPPAD_MAX_NUM_THREADS; thread++)
-		{	for(cap = 0; cap < num_cap; cap++)
-			{	size_t capacity = capacity_vec[cap];
-				index = thread * num_cap + cap;
-				void* v_ptr = root_vec[index].next_;
-				while( v_ptr != 0 )
-				{	omp_alloc* node = reinterpret_cast<omp_alloc*>(v_ptr); 
-					void* next      = node->next_;
-					::operator delete(v_ptr);
-					v_ptr           = next;
+		size_t cap, index;
+		for(cap = 0; cap < num_cap; cap++)
+		{	size_t capacity = capacity_vec[cap];
+			index = thread * num_cap + cap;
+			void* v_ptr = root_vec[index].next_;
+			while( v_ptr != 0 )
+			{	omp_alloc* node = reinterpret_cast<omp_alloc*>(v_ptr); 
+				void* next      = node->next_;
+				::operator delete(v_ptr);
+				v_ptr           = next;
 
-					dec_available(capacity, thread);
-				}
+				dec_available(capacity, thread);
 			}
-			assert( available(thread) == 0 );
 		}
+		CPPAD_ASSERT_UNKNOWN( available(thread) == 0 );
 	}
 	/*!
 	Determine the amount of memory that is currently inuse.
 
-	\param thread
+	\param thread [in]
 	Thread for which we are determining the amount of memory
 	(must be < CPPAD_MAX_NUM_THREADS).
 	Durring parallel execution, this must be the thread 
