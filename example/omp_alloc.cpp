@@ -48,8 +48,12 @@ bool omp_alloc(void)
 		ok &= omp_alloc::available(thread) == 0;
 	}
 
+	// determine the currently executing thread
+	// (should be zero because not in parallel mode)
+	thread = omp_alloc::get_thread_num();
+	ok    &= thread == 0;
+
 	// repeatedly allocate enough memory for at least two size_t values.
-	thread            = omp_alloc::get_thread_num();
 	size_t min_size_t = 2;
 	size_t min_bytes  = min_size_t * sizeof(size_t);
 	size_t n_repeat   = 100;
@@ -61,7 +65,7 @@ bool omp_alloc(void)
 		// determine the number of size_t valuse we have obtained
 		size_t  num_size_t = num_bytes / sizeof(size_t);
 		ok                &= min_size_t <= num_size_t;
-		// use placement new to call the size_t constructor
+		// use placement new to call the size_t copy constructor
 		for(j = 0; j < num_size_t; j++)
 			new(ptr + j) size_t(i + j);
 		// check that the constructor worked

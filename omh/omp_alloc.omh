@@ -1,0 +1,19 @@
+$begin omp_alloc$$
+$spell
+	openmp
+$$
+
+$section A Quick OpenMP Memory Allocator$$
+
+$index multi-threading, memory allocation$$
+$index openmp, memory allocation$$
+$index memory, multi-threading allocation$$
+$index allocation, multi-threading$$ 
+
+$childtable%
+	cppad/omp_alloc.hpp%
+	example/omp_alloc.cpp
+%$$
+
+$end
+*/

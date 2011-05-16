@@ -53,7 +53,7 @@ $children%
 	cppad/std_math_unary.hpp%
 	cppad/vector.hpp%
 	cppad/track_new_del.hpp%
-	cppad/omp_alloc.hpp
+	omh/omp_alloc.omh
 %$$
 
 $head Error Handler$$
