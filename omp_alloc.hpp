@@ -57,11 +57,42 @@ This must be larger than the log base two of numeric_limit<size_t>::max().
 */
 # define CPPAD_MAX_NUM_CAPACITY 100
 
+/*!
+\def CPPAD_MIN_CAPACITY
+Minimum capacity that will be allocated (must be a positive integer).
+*/
+# define CPPAD_MIN_CAPACITY 100
+
 /*
 Note that Section 3.6.2 of ISO/IEC 14882:1998(E) states: "The storage for 
 objects with static storage duration (3.7.1) shall be zero-initialized
 (8.5) before any other initialization takes place."
 */
+
+/*
+Capacity vector for memory allocation block sizes.
+*/
+
+class omp_alloc_capacity {
+public:
+	size_t number;
+	size_t value[CPPAD_MAX_NUM_CAPACITY];
+	omp_alloc_capacity(void)
+	{
+# ifdef _OPENMP
+		CPPAD_ASSERT_UNKNOWN( ! omp_in_parallel() );
+# endif
+
+		number           = 0;
+		size_t capacity  = sizeof(CPPAD_MIN_CAPACITY);
+		while( capacity < std::numeric_limits<size_t>::max() / 2 )
+		{	assert( number < CPPAD_MAX_NUM_CAPACITY );
+			value[number++] = capacity;
+			capacity       *= 2;
+		} 		 
+		CPPAD_ASSERT_UNKNOWN( number > 0 );
+	}
+};
 
 /*!
 Allocator class that works well with an OpenMP multi-threading environment.
@@ -70,14 +101,19 @@ class omp_alloc{
 // ============================================================================
 private:
 	/// index in the root_list correspondinig to a memory allocation
-	size_t        index_;
+	size_t             index_;
 	/// pointer to the next memory allocation with the same index
-	void*         next_;
+	void*              next_;
 	// ---------------------------------------------------------------------
 	/// construct information attached to each allocated memory block
 	omp_alloc(void)
 	: index_(0), next_(0)
 	{ }
+	// ---------------------------------------------------------------------
+	static const omp_alloc_capacity* capacity_info(void)
+	{	static omp_alloc_capacity capacity;
+		return &capacity;
+	}
 	// ---------------------------------------------------------------------
 	/// number of bytes of memory that are currently in use for each thread
 	static size_t* inuse_vector(void)
@@ -187,54 +223,10 @@ private:
 	// ----------------------------------------------------------------------
 	/// Vector of length CPAD_MAX_NUM_THREADS times CPPAD_MAX_NUM_CAPACITIES 
 	/// for use as root nodes of corresponding lists.
-	static omp_alloc** root_vector(void)
-	{	static omp_alloc*  
+	static omp_alloc* root_vector(void)
+	{	static omp_alloc  
 		root[CPPAD_MAX_NUM_THREADS * CPPAD_MAX_NUM_CAPACITY];
 		return root;
-	}
-
-	// ----------------------------------------------------------------------
-	/// Vector of lenght CPPAD_MAX_NUM_CAPACITIES
-	/// will hold the capacities for memory allocated by omp_alloc.
-	static size_t* capacity_vector(void)
-	{	static size_t capacity[CPPAD_MAX_NUM_CAPACITY];
-		return capacity;
-	}
-
-	// ----------------------------------------------------------------------
-	/// Number of actual capacities in the list
-	static size_t num_capacity(void)
-	{	static size_t num_cap = 0;
-		if( num_cap > 0 )
-			return num_cap;
-		// All public functions the use the information initialized below
-		// acces num_capacity() before doing anything else.
-		CPPAD_ASSERT_UNKNOWN( ! in_parallel() );
-
-		// initialize capacity_vector
-		size_t* capacity_vec = capacity_vector();
-		size_t capacity      = sizeof(omp_alloc);
-		while( capacity < std::numeric_limits<size_t>::max() / 2 )
-		{	assert( num_cap < CPPAD_MAX_NUM_CAPACITY );
-			capacity_vec[num_cap++] = capacity;
-			capacity               *= 2;
-		} 		 
-		assert( num_cap > 0 );
-
-		// initialize each list as beginning with a default entry
-		size_t thread, cap, index;
-		omp_alloc** root_vec = root_vector();
-		for(thread = 0; thread < CPPAD_MAX_NUM_THREADS; thread++)
-		{	assert( inuse(thread) == 0 );
-			assert( available(thread) == 0 );
-			for(cap = 0; cap < num_cap; cap++)
-			{	index           = thread * num_cap + cap;
-				root_vec[index] = new omp_alloc;
-			}
-		}
-
-		// now we are initialized
-		return num_cap;
 	}
 
 // ============================================================================
@@ -273,12 +265,12 @@ public:
 	pointer to the beginning of the memory.
  	*/
 	static void* get_memory(size_t size)
-	{	size_t num_cap = num_capacity();
+	{	size_t num_cap = capacity_info()->number;
 		assert( size > 0 );
 
 		// determine the capacity for this request
 		size_t cap       = 0;
-		size_t* capacity_vec = capacity_vector();
+		const size_t* capacity_vec = capacity_info()->value;
 		while( capacity_vec[cap] < size )
 		{	++cap;	
 			assert(cap < num_cap );
@@ -290,12 +282,12 @@ public:
 		size_t index  = thread * num_cap + cap;
 
 		// check if we already have a node we can use
-		omp_alloc** root_vec  = root_vector();
-		void* v_ptr           = root_vec[index]->next_;
+		omp_alloc* root_vec   = root_vector();
+		void* v_ptr           = root_vec[index].next_;
 		omp_alloc* node       = reinterpret_cast<omp_alloc*>(v_ptr);
 		if( node != 0 )
 		{	// remove node from linked list
-			root_vec[index]->next_ = node->next_;
+			root_vec[index].next_ = node->next_;
 
 			// set information this allocation
 			CPPAD_ASSERT_UNKNOWN( node->index_ == index );
@@ -330,18 +322,18 @@ public:
 	Value of the pointer returned by \c get_memory.
  	*/
 	static void return_memory(void* v_ptr)
-	{	size_t num_cap   = num_capacity();
+	{	size_t num_cap   = capacity_info()->number;
 
 		omp_alloc* node          = reinterpret_cast<omp_alloc*>(v_ptr) - 1;
-		omp_alloc** root_vec    	= root_vector();
+		omp_alloc* root_vec    	= root_vector();
 		size_t index             = node->index_;
-		node->next_              = root_vec[index]->next_;
-		root_vec[index]->next_   = node;
+		node->next_              = root_vec[index].next_;
+		root_vec[index].next_    = node;
 
 		// extract thread and capacity from index
 		size_t thread    = index / num_cap;
 		size_t cap       = index % num_cap;
-		size_t capacity  = capacity_vector()[cap];
+		size_t capacity  = capacity_info()->value[cap];
 		CPPAD_ASSERT_UNKNOWN( thread == get_thread_num() );
 
 		// adjust counts
@@ -355,19 +347,19 @@ public:
 	during this function call.
 	*/
 	static void free_available(void)
-	{	size_t num_cap = num_capacity();
+	{	size_t num_cap = capacity_info()->number;
 	
 		assert( ! in_parallel() );
 		if( num_cap == 0 )
 			return;
-		omp_alloc** root_vec      = root_vector();
-		size_t*     capacity_vec  = capacity_vector();
+		omp_alloc* root_vec             = root_vector();
+		const size_t*     capacity_vec  = capacity_info()->value;
 		size_t thread, cap, index;
 		for(thread = 0; thread < CPPAD_MAX_NUM_THREADS; thread++)
 		{	for(cap = 0; cap < num_cap; cap++)
 			{	size_t capacity = capacity_vec[cap];
 				index = thread * num_cap + cap;
-				void* v_ptr = root_vec[index]->next_;
+				void* v_ptr = root_vec[index].next_;
 				while( v_ptr != 0 )
 				{	omp_alloc* node = reinterpret_cast<omp_alloc*>(v_ptr); 
 					void* next      = node->next_;
