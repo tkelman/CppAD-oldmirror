@@ -84,7 +84,7 @@ private:
 	// ---------------------------------------------------------------------
 	/// make default constructor private. It is only used by the constructor
 	/// for \c root arrays below.
-	omp_alloc(void) : index_(0), next_(0) 
+	omp_alloc(void) : extra_(0), index_(0), next_(0) 
 	{ }
 	// ---------------------------------------------------------------------
 	static const omp_alloc_capacity* capacity_info(void)
@@ -780,6 +780,17 @@ The default constructor for $icode Type$$ is used to initialize the
 elements of $icode array$$.
 Note that $cref/delete_array/$$
 should be used to destroy the array when it is no longer needed.
+
+$head Delta$$
+The amount of memory $cref inuse$$, will increase $icode delta$$ where
+$codei%
+	sizeof(%Type%) * (%size_out% + 1) > %delta% >= sizeof(%Type%) * %size_out%
+%$$
+The $cref available$$ memory will decrease by $icode delta$$,
+(and the allocation will be faster)
+if a previous allocation with $icode size_min$$ between its current value
+and $icode size_out$$ is available. 
+
 $end 
 */
 	/*!
@@ -864,6 +875,12 @@ same as when $cref/create_array/$$ returned the value $icode array$$.
 There is an exception to this rule:
 when the current execution mode is sequential
 (not $cref/parallel/in_parallel/$$) the current thread number does not matter.
+
+$head Delta$$
+The amount of memory $cref inuse$$ will decrease by $icode delta$$,
+and the $cref available$$ memory will increase by $icode delta$$,
+where $cref/delta/create_array/Delta/$$ 
+is the same as for the corresponding call to $code create_array$$.
 
 $end 
 */

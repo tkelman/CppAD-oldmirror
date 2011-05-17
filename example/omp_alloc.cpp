@@ -31,7 +31,7 @@ $end
 */
 // BEGIN PROGRAM
 # include <cppad/omp_alloc.hpp>
-# include <cppad/vector.hpp>
+# include <vector>
 
 namespace { // Begin empty namespace
 
@@ -63,7 +63,9 @@ bool omp_alloc_bytes(void)
 	size_t n_inner    = 5;
 	size_t num_bytes, i, j, k;
 	for(i = 0; i < n_outter; i++)
-	{	CppAD::vector<void*> v_ptr(n_inner);
+	{	// Do not use CppAD::vector here because its use of omp_alloc
+		// complicates the inuse and avaialble results.	
+		std::vector<void*> v_ptr(n_inner);
 		for( j = 0; j < n_inner; j++)
 		{	// allocate enough memory for min_size_t size_t objects
 			v_ptr[j]    = omp_alloc::get_memory(min_bytes, num_bytes);
@@ -143,14 +145,14 @@ bool omp_alloc_array(void)
 	// check the amount of inuse and available memory
 	// (an extra size_t value is used for each memory block).
 	size_t check = sizeof(my_char)*(size_one + size_two);
-	ok   &= omp_alloc::inuse(thread) == check;
+	ok   &= omp_alloc::inuse(thread) - check < sizeof(my_char);
 	ok   &= omp_alloc::available(thread) == 0;
 
 	// delete the arrays 
 	omp_alloc::delete_array(array_one);
 	omp_alloc::delete_array(array_two);
 	ok   &= omp_alloc::inuse(thread) == 0;
-	ok   &= omp_alloc::available(thread) == check;
+	ok   &= omp_alloc::available(thread) - check < sizeof(my_char);
 
 	// free the memory for use by any thread
 	omp_alloc::free_available(thread);
@@ -163,6 +165,12 @@ bool omp_alloc_array(void)
 
 bool omp_alloc(void)
 {	bool ok  = true;
+
+	// CppAD uses omp_alloc for fast memory allocation, and does not return 
+	// the memory to the system until you call free_avaiable.
+	size_t thread = CppAD::omp_alloc::get_thread_num();
+	CppAD::omp_alloc::free_available(thread);
+
 	ok      &= omp_alloc_bytes();
 	ok      &= omp_alloc_array();
 	return ok;
