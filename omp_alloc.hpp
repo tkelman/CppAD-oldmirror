@@ -227,22 +227,16 @@ $$
 $section Get the Current OpenMP Thread Number$$
 
 $index get_thread_num, omp_alloc$$
+$index omp_alloc, get_thread_num$$
 $index thread, current$$
 $index current, thread$$
 
 $head Syntax$$
-$codei%include <cppad/omp_alloc.hpp>
-%$$
 $icode%thread% = omp_alloc::get_thread_num()%$$
 
 $head Purpose$$
 Some of the $cref/omp_alloc/$$ allocation routines have a thread number.
 This routine enables you to determine the current thread.
-
-$head Include$$
-The file $code cppad/extend_vector.hpp$$ is included by
-$code cppad/cppad.hpp$$, but it can also be included separately with out
-the rest of the $code CppAD$$ routines.
 
 $head thread$$
 The return value $icode thread$$ is the currently executing thread number.
@@ -274,9 +268,10 @@ $spell
 	bool
 $$
 
+$index in_parallel, omp_alloc$$
+$index omp_alloc, in_parallel$$
 $index parallel, execution$$
 $index execution, parallel$$
-$index current, parallel execution$$
 $index sequential, execution$$
 
 $head Syntax$$
@@ -318,6 +313,7 @@ $$
 $section Get At Least A Specified Amount of Memory$$
 
 $index get_thread_num, omp_alloc$$
+$index omp_alloc, get_thread_num$$
 $index memory, allocate$$
 $index allocate, memory$$
 
@@ -452,6 +448,7 @@ $$
 $section Make Memory Available for Future Use by Same Thread$$
 
 $index return_memory, omp_alloc$$
+$index omp_alloc, return_memory$$
 $index memory, available$$
 $index available, memory$$
 $index thread, available memory$$
@@ -548,6 +545,7 @@ $$
 $section Free Memory Currently Available for Quick Use by a Thread$$
 
 $index free_available, omp_alloc$$
+$index omp_alloc, free_available$$
 $index free, available$$
 $index available, free$$
 $index thread, free memory$$
@@ -622,6 +620,7 @@ $$
 $section Amount of Memory a Thread is Currently Using$$
 
 $index inuse, omp_alloc$$
+$index omp_alloc, inuse$$
 $index use, memory$$
 $index thread, memory inuse$$
 
@@ -682,6 +681,7 @@ $$
 $section Amount of Memory Available for Quick Use by a Thread$$
 
 $index available, omp_alloc$$
+$index omp_alloc, available$$
 $index memory, available$$
 $index thread, available memory$$
 
@@ -724,8 +724,174 @@ $end
 		);
 		return available_vector()[thread];
 	}
-};
+/* -----------------------------------------------------------------------
+$begin create_array$$
+$spell
+	omp_alloc
+	sizeof
+$$
 
+$section Allocate Memory and Create A Raw Array$$
+
+$index create_array, omp_alloc$$
+$index omp_alloc, create_array$$
+$index array, allocate$$
+$index allocate, array$$
+
+$head Syntax$$
+$icode%array% = omp_alloc::create_array<%Type%>(%size_min%, %size_out%)%$$.
+
+$head Purpose$$
+Create a new raw array using $cref/omp_alloc/$$ a fast memory allocator 
+that works well in a multi-threading OpenMP environment.
+
+$head Type$$
+The type of the elements of the array.
+
+$head size_min$$
+This argument has prototype
+$codei%
+	size_t %size_min%
+%$$
+This is the minimum number of elements that there can be
+in the resulting $icode array$$.
+
+$head size_out$$
+This argument has prototype
+$codei%
+	size_t& %size_out%
+%$$
+The input value of this argument does not matter.
+Upon return, it is the actual number of elements 
+in $icode array$$ 
+($icode% size_min %<=% size_out%$$).
+Note that an extra $code sizeof(size_t)$$ bytes are used to store
+$icode size_out$$ so that it can be used during the corresponding call to
+$cref/delete_array/$$.
+
+$head array$$
+The return value $icode array$$ has prototype
+$codei%
+	%Type%* %array%
+%$$
+It is array with $icode size_out$$ elements.
+The default constructor for $icode Type$$ is used to initialize the 
+elements of $icode array$$.
+Note that $cref/delete_array/$$
+should be used to destroy the array when it is no longer needed.
+$end 
+*/
+	/*!
+	Use omp_alloc to Create a Raw Array.
+
+	\tparam Type
+	The type of the elements of the array.
+
+	\param size_min [in]
+	The minimum number of elements in the array.
+
+	\param size_out [out]
+	The actual number of elements in the array.
+
+	\return
+	pointer to the first element of the array.
+	The default constructor is used to initialize 
+	all the elements of the array.
+	*/
+	template <class Type>
+	static Type* create_array(size_t size_min, size_t& size_out)
+	{	// minimum number of bytes to allocate
+		size_t min_bytes = size_min * sizeof(Type) + sizeof(size_t);
+		// do the allocation 
+		size_t num_bytes;
+		void*  v_ptr     = get_memory(min_bytes, num_bytes);
+		// number of Type values in the allocation
+		size_out         = (num_bytes - sizeof(size_t)) / sizeof(Type);
+		// store this numbe in the size_t value at beginning
+		size_t* s_ptr    = reinterpret_cast<size_t*>(v_ptr);
+		*s_ptr           = size_out;
+		// start the array just after the size_t value
+		Type*  array     = reinterpret_cast<Type*>(s_ptr + 1);
+
+		// call default constructor for each element
+		size_t i;
+		for(i = 0; i < size_out; i++)
+			new(array + i) Type();
+
+		return array;
+	}
+/* -----------------------------------------------------------------------
+$begin delete_array$$
+$spell
+	omp_alloc
+	sizeof
+$$
+
+$section Return A Raw Array to The Available Memory for a Thread$$
+
+$index delete_array, omp_alloc$$
+$index omp_alloc, delete_array$$
+$index array, allocate$$
+$index allocate, array$$
+
+$head Syntax$$
+$codei%omp_alloc::delete_array(%array%)%$$.
+
+$head Purpose$$
+Returns memory corresponding to a raw array 
+(create by $cref/create_array/$$) to the 
+$cref/omp_alloc/$$ available memory pool for the current thread.
+
+$head Type$$
+The type of the elements of the array.
+
+$head array$$
+The argument $icode array$$ has prototype
+$codei%
+	%Type%* %array%
+%$$
+It is a value returned by $cref/create_array/$$ and not yet deleted.
+The $icode Type$$ destructor is called for each element in the array.
+
+$head Thread$$
+The $cref/current thread/get_thread_num/$$ must be the
+same as when $cref/create_array/$$ returned the value $icode array$$.
+There is an exception to this rule:
+when the current execution mode is sequential
+(not $cref/parallel/in_parallel/$$) the current thread number does not matter.
+
+$end 
+*/
+	/*!
+	Return Memory Used for a Raw Array to the Available Pool.
+
+	\tparam Type
+	The type of the elements of the array.
+
+	\param array [in]
+	A value returned by \c create_array that has not yet been deleted.
+	The \c Type destructor is used to destroy each of the elements 
+	of the array.
+
+	\par
+	Durring parallel execution, the current thread must be the same
+	as during the corresponding call to \c create_array.
+	*/
+	template <class Type>
+	static void delete_array(Type* array)
+	{	// determine the number of values in the array
+		size_t *s_ptr = reinterpret_cast<size_t*>(array) - 1;
+		size_t size   = *s_ptr;
+
+		// call destructor for each element
+		size_t i;
+		for(i = 0; i < size; i++)
+			(array + i)->~Type();
+
+		// return the memory to the available pool for this thread
+		omp_alloc::return_memory( reinterpret_cast<void*>(s_ptr) );
+	}
+};
 
 CPPAD_END_NAMESPACE
 # endif
