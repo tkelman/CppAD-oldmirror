@@ -96,7 +96,6 @@ example_SOURCES   = \
 	erf.cpp \
 	error_handler.cpp \
 	exp.cpp \
-	extend_vector.cpp \
 	for_one.cpp \
 	for_two.cpp \
 	forward.cpp \

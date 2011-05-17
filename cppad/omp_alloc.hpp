@@ -75,6 +75,8 @@ Allocator class that works well with an OpenMP multi-threading environment.
 class omp_alloc{
 // ============================================================================
 private:
+	/// extra information (currently only used by create and delete array)
+	size_t             extra_;
 	/// index in the root_list correspondinig to a memory allocation
 	size_t             index_;
 	/// pointer to the next memory allocation with the same index
@@ -395,7 +397,9 @@ $end
 		size_t index  = thread * num_cap + cap;
 
 		// root nodes for both lists
+# ifndef NDEBUG
 		omp_alloc* inuse_root     = root_inuse() + index;
+# endif
 		omp_alloc* available_root = root_available() + index;
 
 		// check if we already have a node we can use
@@ -501,12 +505,12 @@ $end
 		omp_alloc* node           = reinterpret_cast<omp_alloc*>(v_ptr) - 1;
 		v_ptr                     = reinterpret_cast<void*>(node);
 		size_t index              = node->index_;
-		omp_alloc* inuse_root     = root_inuse() + index;
 		omp_alloc* available_root = root_available() + index;
 
 # ifndef NDEBUG
 		// remove node from inuse list
-		omp_alloc* previous  = inuse_root;
+		omp_alloc* inuse_root     = root_inuse() + index;
+		omp_alloc* previous       = inuse_root;
 		while( (previous->next_ != 0) & (previous->next_ != v_ptr) )
 			previous = reinterpret_cast<omp_alloc*>(previous->next_);	
 		CPPAD_ASSERT_KNOWN(
@@ -765,9 +769,6 @@ The input value of this argument does not matter.
 Upon return, it is the actual number of elements 
 in $icode array$$ 
 ($icode% size_min %<=% size_out%$$).
-Note that an extra $code sizeof(size_t)$$ bytes are used to store
-$icode size_out$$ so that it can be used during the corresponding call to
-$cref/delete_array/$$.
 
 $head array$$
 The return value $icode array$$ has prototype
@@ -797,21 +798,25 @@ $end
 	pointer to the first element of the array.
 	The default constructor is used to initialize 
 	all the elements of the array.
+
+	\par
+	The \c extra_ field, in the \c omp_alloc node before the return value,
+	is set to size_out.
 	*/
 	template <class Type>
 	static Type* create_array(size_t size_min, size_t& size_out)
 	{	// minimum number of bytes to allocate
-		size_t min_bytes = size_min * sizeof(Type) + sizeof(size_t);
+		size_t min_bytes = size_min * sizeof(Type);
 		// do the allocation 
 		size_t num_bytes;
 		void*  v_ptr     = get_memory(min_bytes, num_bytes);
+		// This is where the array starts
+		Type*  array     = reinterpret_cast<Type*>(v_ptr);
 		// number of Type values in the allocation
-		size_out         = (num_bytes - sizeof(size_t)) / sizeof(Type);
-		// store this numbe in the size_t value at beginning
-		size_t* s_ptr    = reinterpret_cast<size_t*>(v_ptr);
-		*s_ptr           = size_out;
-		// start the array just after the size_t value
-		Type*  array     = reinterpret_cast<Type*>(s_ptr + 1);
+		size_out         = num_bytes / sizeof(Type);
+		// store this number in the extra field
+		omp_alloc* node  = reinterpret_cast<omp_alloc*>(v_ptr) - 1;
+		node->extra_     = size_out;
 
 		// call default constructor for each element
 		size_t i;
@@ -880,8 +885,8 @@ $end
 	template <class Type>
 	static void delete_array(Type* array)
 	{	// determine the number of values in the array
-		size_t *s_ptr = reinterpret_cast<size_t*>(array) - 1;
-		size_t size   = *s_ptr;
+		omp_alloc* node = reinterpret_cast<omp_alloc*>(array) - 1;
+		size_t size     = node->extra_;
 
 		// call destructor for each element
 		size_t i;
@@ -889,7 +894,7 @@ $end
 			(array + i)->~Type();
 
 		// return the memory to the available pool for this thread
-		omp_alloc::return_memory( reinterpret_cast<void*>(s_ptr) );
+		omp_alloc::return_memory( reinterpret_cast<void*>(array) );
 	}
 };
 

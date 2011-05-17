@@ -142,7 +142,7 @@ bool omp_alloc_array(void)
 
 	// check the amount of inuse and available memory
 	// (an extra size_t value is used for each memory block).
-	size_t check = sizeof(my_char)*(size_one + size_two) + 2*sizeof(size_t);
+	size_t check = sizeof(my_char)*(size_one + size_two);
 	ok   &= omp_alloc::inuse(thread) == check;
 	ok   &= omp_alloc::available(thread) == 0;
 

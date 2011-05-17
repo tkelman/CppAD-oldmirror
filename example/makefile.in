@@ -51,17 +51,17 @@ am__example_SOURCES_DIST = mul_level_adolc.cpp ode_taylor_adolc.cpp \
 	compare.cpp compare_change.cpp complex_poly.cpp cond_exp.cpp \
 	conj_grad.cpp copy_ad.cpp copy_base.cpp cos.cpp cosh.cpp \
 	cppad_vector.cpp default.cpp div.cpp div_eq.cpp eq.cpp \
-	equal_op_seq.cpp erf.cpp error_handler.cpp exp.cpp \
-	extend_vector.cpp for_one.cpp for_two.cpp forward.cpp \
-	for_sparse_jac.cpp fun_assign.cpp fun_check.cpp \
-	hes_lagrangian.cpp hes_lu_det.cpp hes_minor_det.cpp \
-	hessian.cpp hes_times_dir.cpp independent.cpp integer.cpp \
-	interface_2c.cpp interp_onetape.cpp interp_retape.cpp \
-	jac_lu_det.cpp jac_minor_det.cpp jacobian.cpp log.cpp \
-	log_10.cpp lu_factor.cpp lu_invert.cpp lu_ratio.cpp \
-	lu_solve.cpp lu_vec_ad.cpp lu_vec_ad.hpp lu_vec_ad_ok.cpp \
-	mat_mul.cpp mat_mul.hpp mul.cpp mul_eq.cpp mul_level.cpp \
-	nan.cpp near_equal.cpp near_equal_ext.cpp not_complex_ad.cpp \
+	equal_op_seq.cpp erf.cpp error_handler.cpp exp.cpp for_one.cpp \
+	for_two.cpp forward.cpp for_sparse_jac.cpp fun_assign.cpp \
+	fun_check.cpp hes_lagrangian.cpp hes_lu_det.cpp \
+	hes_minor_det.cpp hessian.cpp hes_times_dir.cpp \
+	independent.cpp integer.cpp interface_2c.cpp \
+	interp_onetape.cpp interp_retape.cpp jac_lu_det.cpp \
+	jac_minor_det.cpp jacobian.cpp log.cpp log_10.cpp \
+	lu_factor.cpp lu_invert.cpp lu_ratio.cpp lu_solve.cpp \
+	lu_vec_ad.cpp lu_vec_ad.hpp lu_vec_ad_ok.cpp mat_mul.cpp \
+	mat_mul.hpp mul.cpp mul_eq.cpp mul_level.cpp nan.cpp \
+	near_equal.cpp near_equal_ext.cpp not_complex_ad.cpp \
 	numeric_type.cpp ode_err_control.cpp ode_err_maxabs.cpp \
 	ode_gear.cpp ode_gear_control.cpp ode_stiff.cpp ode_taylor.cpp \
 	omp_alloc.cpp opt_val_hes.cpp optimize.cpp output.cpp \
@@ -89,8 +89,8 @@ am_example_OBJECTS = $(am__objects_1) example.$(OBJEXT) \
 	cosh.$(OBJEXT) cppad_vector.$(OBJEXT) default.$(OBJEXT) \
 	div.$(OBJEXT) div_eq.$(OBJEXT) eq.$(OBJEXT) \
 	equal_op_seq.$(OBJEXT) erf.$(OBJEXT) error_handler.$(OBJEXT) \
-	exp.$(OBJEXT) extend_vector.$(OBJEXT) for_one.$(OBJEXT) \
-	for_two.$(OBJEXT) forward.$(OBJEXT) for_sparse_jac.$(OBJEXT) \
+	exp.$(OBJEXT) for_one.$(OBJEXT) for_two.$(OBJEXT) \
+	forward.$(OBJEXT) for_sparse_jac.$(OBJEXT) \
 	fun_assign.$(OBJEXT) fun_check.$(OBJEXT) \
 	hes_lagrangian.$(OBJEXT) hes_lu_det.$(OBJEXT) \
 	hes_minor_det.$(OBJEXT) hessian.$(OBJEXT) \
@@ -346,7 +346,6 @@ example_SOURCES = \
 	erf.cpp \
 	error_handler.cpp \
 	exp.cpp \
-	extend_vector.cpp \
 	for_one.cpp \
 	for_two.cpp \
 	forward.cpp \
@@ -515,7 +514,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/error_handler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/example.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/exp.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/extend_vector.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/for_one.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/for_sparse_jac.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/for_two.Po@am__quote@
