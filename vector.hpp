@@ -3,7 +3,7 @@
 # define CPPAD_VECTOR_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-08 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-11 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -37,8 +37,6 @@ $section The CppAD::vector Template Class$$
 
 $head Syntax$$
 $code # include <cppad/vector.hpp>$$
-
-
 
 $head Description$$
 The include file $code cppad/vector.hpp$$ defines the
@@ -233,8 +231,10 @@ $end
 # include <iostream>
 # include <limits>
 # include <cppad/local/cppad_assert.hpp>
-# include <cppad/track_new_del.hpp>
 # include <cppad/check_simple_vector.hpp>
+
+# include <cppad/omp_alloc.hpp>
+# include <cppad/track_new_del.hpp>
 
 # ifndef CPPAD_NULL
 # define CPPAD_NULL 0
@@ -247,94 +247,111 @@ namespace CppAD { //  BEGIN CppAD namespace
 template <class Type>
 class vector {
 private:
-	size_t capacity;
-	size_t length;
-	Type   * data;
+	size_t capacity_;
+	size_t length_;
+	Type   * data_;
 public:
 	// type of the elements in the vector
 	typedef Type value_type;
 
 	// default constructor
-	inline vector(void) : capacity(0), length(0) , data(CPPAD_NULL)
+	inline vector(void) 
+	: capacity_(0), length_(0), data_(0)
 	{ }
 	// constructor with a specified size
-	inline vector(size_t n) : capacity(n), length(n)
-	{
-		data = CPPAD_NULL;
-		if( length > 0 )
-			data = CPPAD_TRACK_NEW_VEC(capacity, data);
+	inline vector(size_t n) 
+	: capacity_(0), length_(n), data_(0)
+	{	if( length_ > 0 )
+		{	// set capacity and data
+			data_ = omp_alloc::create_array<Type>(length_, capacity_); 
+		}
 	}
 	// copy constructor
-	inline vector(const vector &x) : capacity(x.length), length(x.length)
-	{	size_t i;
-		data = CPPAD_NULL;
-		if( length > 0 )
-			data = CPPAD_TRACK_NEW_VEC(capacity, data);
+	inline vector(const vector &x) 
+	: capacity_(0), length_(x.length_), data_(0)
+	{	if( length_ > 0 )
+		{	// set capacity and data	
+			data_ = omp_alloc::create_array<Type>(length_, capacity_); 
 
-		for(i = 0; i < length; i++)
-			data[i] = x.data[i];
+			// copy values using assignment operator
+			size_t i;
+			for(i = 0; i < length_; i++)
+				data_[i] = x.data_[i];
+		}
 	}
 	// destructor
 	~vector(void)
-	{	if( data != CPPAD_NULL )
-			CPPAD_TRACK_DEL_VEC(data); 
+	{	if( capacity_ > 0 )
+			omp_alloc::delete_array(data_); 
 	}
 
 	// size function
 	inline size_t size(void) const
-	{	return length; }
+	{	return length_; }
 
 	// resize function
 	inline void resize(size_t n)
-	{	length = n;
-		if( (capacity >= n) & (n > 0)  )
+	{	length_ = n;
+		// check if we can use current memory
+		if( (capacity_ >= length_) & (length_ > 0)  )
 			return;
-		if( data != CPPAD_NULL  )
-			CPPAD_TRACK_DEL_VEC(data);
-		capacity = n;
-		if( capacity == 0 )
-			data = CPPAD_NULL;
-		else	data = CPPAD_TRACK_NEW_VEC(capacity, data);
+		// check if the is old memory to be freed
+		if( capacity_ > 0 )
+			omp_alloc::delete_array(data_);
+		// check if we need new memory 
+		if( length_ == 0 )
+			capacity_ = 0;
+		else
+		{	// get new memory and set capacity
+			data_ = omp_alloc::create_array<Type>(length_, capacity_);
+		}
 	}
 	// assignment operator
 	inline vector & operator=(const vector &x)
 	{	size_t i;
 		CPPAD_ASSERT_KNOWN(
-			length == x.length ,
-			"size miss match in assignment operation"
+			length_ == x.length_ ,
+			"vector: size miss match in assignment operation"
 		);
-		for(i = 0; i < length; i++)
-			data[i] = x.data[i];
+		for(i = 0; i < length_; i++)
+			data_[i] = x.data_[i];
 		return *this;
 	}
 	// non-constant element access
 	Type & operator[](size_t i)
 	{	CPPAD_ASSERT_KNOWN(
-			i < length,
-			"vector index greater than or equal vector size"
+			i < length_,
+			"vector: index greater than or equal vector size"
 		);
-		return data[i]; 
+		return data_[i]; 
 	}
 	// constant element access
 	const Type & operator[](size_t i) const
 	{	CPPAD_ASSERT_KNOWN(
-			i < length,
-			"vector index greater than or equal vector size"
+			i < length_,
+			"vector: index greater than or equal vector size"
 		);
-		return data[i]; 
+		return data_[i]; 
 	}
 	// add scalar to the back of the array
 	void push_back(const Type &s)
-	{	CPPAD_ASSERT_UNKNOWN( length <= capacity );
-		if( length + 1 > capacity )
-		{	// allocate more capacity
-			if( capacity == 0 )
-				capacity = 2;
-			else	capacity = 2 * length;
-			data = CPPAD_TRACK_EXTEND(capacity, length, data);
+	{	CPPAD_ASSERT_UNKNOWN( length_ <= capacity_ );
+		if( length_ + 1 > capacity_ )
+		{	// store old capacity and data values
+			size_t old_capacity = capacity_;
+			Type*  old_data     = data_;
+			// set new capacity and data values
+			data_ = omp_alloc::create_array<Type>(length_ + 1, capacity_);
+			// copy old data values
+			size_t i;
+			for(i = 0; i < length_; i++)
+				data_[i] = old_data[i];
+			// free old data
+			if( old_capacity > 0 )
+				omp_alloc::delete_array(old_data);
 		}
-		data[length++] = s;
-		CPPAD_ASSERT_UNKNOWN( length <= capacity );
+		data_[length_++] = s;
+		CPPAD_ASSERT_UNKNOWN( length_ <= capacity_ );
 	}
 
 	// add vector to the back of the array
@@ -343,17 +360,25 @@ public:
 	template <class Vector>
 	void push_vector(const Vector &v)
 	{	CheckSimpleVector<Type, Vector>();
+		CPPAD_ASSERT_UNKNOWN( length_ <= capacity_ );
 		size_t m = v.size();
-		CPPAD_ASSERT_UNKNOWN( length <= capacity );
-		if( length + m > capacity )
-		{	// allocate more capacity
-			capacity = length + m;
-			data     = CPPAD_TRACK_EXTEND(capacity, length, data);
-		}
 		size_t i;
+		if( length_ + m > capacity_ )
+		{	// store old capacity and data values
+			size_t old_capacity = capacity_;
+			Type*  old_data     = data_;
+			// set new capacity and data values
+			data_ = omp_alloc::create_array<Type>(length_ + m, capacity_);
+			// copy old data values
+			for(i = 0; i < length_; i++)
+				data_[i] = old_data[i];
+			// free old data
+			if( old_capacity > 0 )
+				omp_alloc::delete_array(old_data);
+		}
 		for(i = 0; i < m; i++)
-			data[length++] = v[i];
-		CPPAD_ASSERT_UNKNOWN( length <= capacity );
+			data_[length_++] = v[i];
+		CPPAD_ASSERT_UNKNOWN( length_ <= capacity_ );
 	}
 };
 
