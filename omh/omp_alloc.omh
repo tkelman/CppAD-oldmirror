@@ -12,6 +12,8 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 $begin omp_alloc$$
 $spell
 	openmp
+	cppad/omp_alloc.hpp
+	CppAD
 $$
 
 $section A Quick OpenMP Memory Allocator$$
@@ -20,6 +22,17 @@ $index multi-threading, memory allocation$$
 $index openmp, memory allocation$$
 $index memory, multi-threading allocation$$
 $index allocation, multi-threading$$ 
+
+$head Syntax$$
+$code # include <cppad/omp_alloc.hpp>$$
+
+$head Include$$
+The routines in sections below are defined by $code cppad/omp_alloc.hpp$$.
+This file is included by
+$code cppad/cppad.hpp$$, but it can also be included separately with out
+the rest of the $code CppAD$$.
+
+
 
 $childtable%
 	cppad/omp_alloc.hpp%

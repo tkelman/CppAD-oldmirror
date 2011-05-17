@@ -12,6 +12,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 $begin whats_new_11$$
 $spell
+	omp_alloc
 	isnan
 	gcc
 	hasnan
@@ -42,6 +43,18 @@ This section contains a list of the changes to CppAD during 2011
 (in reverse order by date).
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
+
+$head branches/omp_alloc$$
+$list number$$
+The specifications for a 
+$cref/SimpleVector/$$ have been improved to explicitly state that the
+default constructor is called for each element, 
+see $cref/
+	element constructor and destructor/
+	SimpleVector/
+	Element Constructor and Destructor
+/$$.
+$lend
 
 $head 05-11$$
 $list number$$

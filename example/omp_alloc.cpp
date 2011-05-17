@@ -33,7 +33,9 @@ $end
 # include <cppad/omp_alloc.hpp>
 # include <cppad/vector.hpp>
 
-bool omp_alloc(void)
+namespace { // Begin empty namespace
+
+bool omp_alloc_bytes(void)
 {	bool ok = true;
 	using CppAD::omp_alloc;
 
@@ -93,5 +95,78 @@ bool omp_alloc(void)
 	
 	return ok;
 }
+
+class my_char {
+public:
+	char ch_ ;
+	my_char(void) : ch_(' ')
+	{ }
+	my_char(const my_char& my_ch) : ch_(my_ch.ch_)
+	{ }
+};
+
+bool omp_alloc_array(void)
+{	bool ok = true;
+	using CppAD::omp_alloc;
+	size_t i; 
+
+	// check initial memory values
+	size_t thread = omp_alloc::get_thread_num();
+	ok &= omp_alloc::inuse(thread) == 0;
+	ok &= omp_alloc::available(thread) == 0;
+
+	// initial allocation of an array
+	size_t  size_min  = 3;
+	size_t  size_one;
+	my_char *array_one  = 
+		omp_alloc::create_array<my_char>(size_min, size_one);
+
+	// check the values and change them to null 'x'
+	for(i = 0; i < size_one; i++)
+	{	ok &= array_one[i].ch_ == ' ';
+		array_one[i].ch_ = 'x';
+	}
+
+	// now create a longer array
+	size_t size_two;
+	my_char *array_two = 
+		omp_alloc::create_array<my_char>(2 * size_min, size_two);
+
+	// check the values in array one
+	for(i = 0; i < size_one; i++)
+		ok &= array_one[i].ch_ == 'x';
+
+	// check the values in array two
+	for(i = 0; i < size_two; i++)
+		ok &= array_two[i].ch_ == ' ';
+
+	// check the amount of inuse and available memory
+	// (an extra size_t value is used for each memory block).
+	size_t check = sizeof(my_char)*(size_one + size_two) + 2*sizeof(size_t);
+	ok   &= omp_alloc::inuse(thread) == check;
+	ok   &= omp_alloc::available(thread) == 0;
+
+	// delete the arrays 
+	omp_alloc::delete_array(array_one);
+	omp_alloc::delete_array(array_two);
+	ok   &= omp_alloc::inuse(thread) == 0;
+	ok   &= omp_alloc::available(thread) == check;
+
+	// free the memory for use by any thread
+	omp_alloc::free_available(thread);
+	ok &= omp_alloc::inuse(thread) == 0;
+	ok &= omp_alloc::available(thread) == 0;
+
+	return ok;
+}
+} // End empty namespace
+
+bool omp_alloc(void)
+{	bool ok  = true;
+	ok      &= omp_alloc_bytes();
+	ok      &= omp_alloc_array();
+	return ok;
+}
+
 
 // END PROGRAM
