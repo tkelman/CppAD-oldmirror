@@ -40,6 +40,7 @@ AM_LDFLAGS      = -L../src
 #
 cppad_SOURCES = \
 	../main.cpp \
+	compare.sh \
 	det_lu.cpp  \
 	det_minor.cpp \
 	mat_mul.cpp \
@@ -48,7 +49,10 @@ cppad_SOURCES = \
 	sparse_hessian.cpp \
 	sparse_jacobian.cpp
 
-test.sh: cppad$(EXEEXT)
+compare.sh: $(srcdir)/compare.sh
+	cp $(srcdir)/compare.sh compare.sh
+
+test.sh: cppad$(EXEEXT) compare.sh
 	echo "#! /bin/sh -e"                 > test.sh
 	echo "./cppad correct 123"          >> test.sh
 	echo "./cppad correct 123 retape"   >> test.sh

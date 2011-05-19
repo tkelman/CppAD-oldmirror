@@ -3,7 +3,7 @@
 # define CPPAD_PLAYER_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-10 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-11 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -134,19 +134,19 @@ public:
 		num_rec_var_        = rec.num_rec_var_;
 
 		// Op
-		num_rec_op_         = rec.num_rec_op_;
+		num_rec_op_         = rec.rec_op_.size();
 
 		// VecInd
-		num_rec_vecad_ind_  = rec.num_rec_vecad_ind_;
+		num_rec_vecad_ind_  = rec.rec_vecad_ind_.size();
 
 		// Arg
-		num_rec_op_arg_     = rec.num_rec_op_arg_;
+		num_rec_op_arg_     = rec.rec_op_arg_.size();
 
 		// Par
-		num_rec_par_        = rec.num_rec_par_;
+		num_rec_par_        = rec.rec_par_.size();
 
 		// Txt
-		num_rec_text_       = rec.num_rec_text_;
+		num_rec_text_       = rec.rec_text_.size();
 
 		// Allocate the memory
 		if( num_rec_op_ == 0 )
