@@ -58,7 +58,7 @@ private:
 // --------------- Functions used to create and maniplate a recording -------
 public:
 	/// Default constructor
-	player(void) : num_rec_var_(0), num_rec_vecad_vec_(0), rec_par_(false)
+	player(void) : num_rec_var_(0), num_rec_vecad_vec_(0)
 	{ }
 
 	/// Destructor
