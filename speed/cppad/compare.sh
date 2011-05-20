@@ -13,19 +13,21 @@
 # Source code directory that is changing.
 dir="$HOME/cppad/branches/omp_alloc/cppad/local"
 # Source code files that are changing (new version in $dir/new).
-change_list="player.hpp recorder.hpp"
+change_list="player.hpp"
 # New source code files in $dir/new.
-new_list="pod_vector.hpp"
+new_list=""
 #
 # check if we alread have results for current version
 if [ ! -e speed_cur.out ]
 then
 	# Revert the source code to the current version
-	for file in $change_list
-	do
-		echo "svn revert $dir/$file"
-		svn revert $dir/$file
-	done
+	if [ "$change_list" != "" ] ; then
+		for file in $change_list
+		do
+			echo "svn revert $dir/$file"
+			svn revert $dir/$file
+		done
+	fi
 	#
 	# compile and link the current version
 	echo "pushd ../src; make clean; make; popd; make clean; make test.sh"
@@ -37,11 +39,13 @@ then
 fi
 #
 # Convert source to the new version
-for file in $change_list $new_list
-do
-	echo "cp $dir/new/$file $dir/$file"
-	cp $dir/new/$file $dir/$file
-done
+if [ "$new_list" != "" ] ; then
+	for file in $change_list "$new_list"
+	do
+		echo "cp $dir/new/$file $dir/$file"
+		cp $dir/new/$file $dir/$file
+	done
+fi
 #
 # compile and link the new current 
 echo "pushd ../src; make clean; make; popd; make clean; make test.sh"

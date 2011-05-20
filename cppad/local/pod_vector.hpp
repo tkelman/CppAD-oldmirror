@@ -58,7 +58,13 @@ public:
 	/// current capacity (amount of allocated storage) for this vector.
 	inline size_t capacity(void) const
 	{	return capacity_; }
-	
+	/// current data pointer, no longer valid after any of the following:
+	/// extend, erase, operator=, and ~pod_vector. 
+	/// Take extreem care when using this function.
+	inline Type* data(void)
+	{	return data_; }
+	inline const Type* data(void) const
+	{	return data_; }
 	// ----------------------------------------------------------------------
 	/*!
 	Increase the number of elements the end of this vector. 
@@ -142,6 +148,25 @@ public:
 		capacity_ = length_ = 0;
 		return;
 	}	
+	/// vector assignment operator
+	void operator=(
+		/// right hand size of the assingment operation
+		const pod_vector& x
+	)
+	{	size_t i;
+		if( capacity_ == x.capacity_ )
+			length_ = x.length_;
+		else
+		{	// free old memory and get new memory of sufficient length
+			erase();
+			extend( x.length_ );
+			// In both cases should be first omp_alloc capacity >= length 
+			CPPAD_ASSERT_UNKNOWN( capacity_ == x.capacity_ );
+		}
+		CPPAD_ASSERT_UNKNOWN( length_ == x.length_ );
+		for(i = 0; i < length_; i++)
+		{	data_[i] = x.data_[i]; }
+	}
 };
 
 CPPAD_END_NAMESPACE

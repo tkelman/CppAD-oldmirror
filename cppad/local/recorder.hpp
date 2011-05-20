@@ -110,7 +110,7 @@ public:
 	{	return rec_op_.capacity() * sizeof(OpCode) 
 		     + rec_vecad_ind_.capacity() * sizeof(size_t)
 		     + rec_op_arg_.capacity() * sizeof(size_t)
-		     + rec_par_.size() * sizeof(Base)
+		     + rec_par_.capacity() * sizeof(Base)
 		     + rec_text_.capacity() * sizeof(char);
 	}
 };
