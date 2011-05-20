@@ -28,7 +28,8 @@ A list of which Types pod_vector<Type> consideres to be plain old data
 */
 /// default value is false
 template <class Type> struct is_pod { static const bool value = false; };
-/// system pod types so far: are char, double, float, size_t
+/// system pod types so far: are bool, char, double, float, size_t
+template <> struct is_pod<bool>     { static const bool value = true; };
 template <> struct is_pod<char>     { static const bool value = true; };
 template <> struct is_pod<double>   { static const bool value = true; };
 template <> struct is_pod<float>    { static const bool value = true; };
