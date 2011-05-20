@@ -55,7 +55,7 @@ private:
 // ---------------------- Public Functions -----------------------------------
 public:
 	/// Default constructor
-	recorder(void) : num_rec_var_(0), rec_par_(false)
+	recorder(void) : num_rec_var_(0)
 	{ }
 
 	/// Destructor

@@ -39,8 +39,8 @@ then
 fi
 #
 # Convert source to the new version
-if [ "$new_list" != "" ] ; then
-	for file in $change_list "$new_list"
+if [ "$new_list" != "" ] || [ "$change_list" != "" ] ; then
+	for file in $change_list $new_list
 	do
 		echo "cp $dir/new/$file $dir/$file"
 		cp $dir/new/$file $dir/$file

@@ -13,14 +13,28 @@ A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
-# include <cppad/local/cppad_assert.hpp>
 # include <cppad/omp_alloc.hpp>
+# include <cppad/local/cppad_assert.hpp>
+# include <cppad/local/op_code.hpp>
 
 CPPAD_BEGIN_NAMESPACE
 /*!
 \file pod_vector.hpp
 File used to define pod_vector class
 */
+
+/*
+A list of which Types pod_vector<Type> consideres to be plain old data
+*/
+/// default value is false
+template <class Type> struct is_pod { static const bool value = false; };
+/// system pod types so far: are char, double, float, size_t
+template <> struct is_pod<char>     { static const bool value = true; };
+template <> struct is_pod<double>   { static const bool value = true; };
+template <> struct is_pod<float>    { static const bool value = true; };
+template <> struct is_pod<size_t>   { static const bool value = true; };
+/// CppAD pod types so far: OpCode 
+template <> struct is_pod<OpCode>   { static const bool value = true; };
 
 // ---------------------------------------------------------------------------
 /*!
@@ -37,21 +51,10 @@ private:
 	/// pointer to the first type elements 
 	/// (not defined and should not be used when capacity_ = 0)
 	Type   *data_;
-	/// is Type Plain Old Data (POD); i.e., does not need constructor
-	/// and desctuctor to be called
-	bool pod_;
 public:
 	/// Constructors set capacity, length, and data to zero.
-	/// The defautl constructor sets pod to true.
 	inline pod_vector(void) 
-	: capacity_(0), length_(0), data_(0), pod_(true)
-	{ }
-	/// Constructor that specifies the value for plain old data.
-	inline pod_vector(
-		/// is Type plain old data; i.e., it does not need C++ constructors
-		/// and destructors to be called.
-		bool pod
-	) : capacity_(0), length_(0), data_(0), pod_(pod)
+	: capacity_(0), length_(0), data_(0)
 	{ }
 	// ----------------------------------------------------------------------
 	/// Destructor: returns allocated memory to \c omp_alloc; see \c extend.
@@ -60,7 +63,7 @@ public:
 	~pod_vector(void)
 	{	if( capacity_ > 0 )
 		{	void* v_ptr = reinterpret_cast<void*>( data_ );
-			if( ! pod_ )
+			if( ! is_pod<Type>::value )
 			{	// call destructor for each element
 				size_t i;
 				for(i = 0; i < length_; i++)
@@ -108,7 +111,7 @@ public:
 		length_            += n;
 		// check if we can use current memory
 		if( capacity_ >= length_ )
-		{	if( ! pod_ )
+		{	if( ! is_pod<Type>::value )
 			{	// call constructor for each new element
 				size_t i;
 				for(i = old_length; i < length_; i++)
@@ -129,7 +132,7 @@ public:
 		CPPAD_ASSERT_UNKNOWN( length_ <= capacity_ );
 
 		size_t i;
-		if( ! pod_ )
+		if( ! is_pod<Type>::value )
 		{	// call constructor for each new element
 			for(i = 0; i < length_; i++)
 				new(data_ + i) Type();
@@ -179,7 +182,7 @@ public:
 	void erase(void)
 	{	if( capacity_ > 0 )
 		{	void* v_ptr = reinterpret_cast<void*>( data_ );
-			if( ! pod_ )
+			if( ! is_pod<Type>::value )
 			{	// call destructor for each element
 				size_t i;
 				for(i = 0; i < length_; i++)
