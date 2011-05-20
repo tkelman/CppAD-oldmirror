@@ -46,7 +46,8 @@ private:
 	pod_vector<size_t> rec_op_arg_;
 
 	/// The parameters in the recording.
-	vector<Base> rec_par_;
+	/// Note that Base may not be plain old data, so use false in consructor.
+	pod_vector<Base> rec_par_;
 
 	/// Character strings ('\\0' terminated) in the recording.
 	pod_vector<char> rec_text_;
@@ -54,7 +55,7 @@ private:
 // ---------------------- Public Functions -----------------------------------
 public:
 	/// Default constructor
-	recorder(void) : num_rec_var_(0)
+	recorder(void) : num_rec_var_(0), rec_par_(false)
 	{ }
 
 	/// Destructor
@@ -74,7 +75,7 @@ public:
 		rec_op_.erase();
 		rec_vecad_ind_.erase();
 		rec_op_arg_.erase();
-		rec_par_.resize(0);
+		rec_par_.erase();
 		rec_text_.erase();
 	}
 	/// Start recording the next operator in the operation sequence.
@@ -107,11 +108,11 @@ public:
 
 	/// Approximate amount of memory used by the recording 
 	size_t Memory(void) const
-	{	return rec_op_.capacity() * sizeof(OpCode) 
+	{	return rec_op_.capacity()        * sizeof(OpCode) 
 		     + rec_vecad_ind_.capacity() * sizeof(size_t)
-		     + rec_op_arg_.capacity() * sizeof(size_t)
-		     + rec_par_.capacity() * sizeof(Base)
-		     + rec_text_.capacity() * sizeof(char);
+		     + rec_op_arg_.capacity()    * sizeof(size_t)
+		     + rec_par_.capacity()       * sizeof(Base)
+		     + rec_text_.capacity()      * sizeof(char);
 	}
 };
 
@@ -218,8 +219,8 @@ size_t recorder<Base>::PutPar(const Base &par)
 	}
 	
 	// place a new value in the table
-	i           = rec_par_.size();
-	rec_par_.push_back(par);
+	i           = rec_par_.extend(1);
+	rec_par_[i] = par;
 	CPPAD_ASSERT_UNKNOWN( rec_par_.size() == i + 1 );
 
 	// make the hash code point to this new value

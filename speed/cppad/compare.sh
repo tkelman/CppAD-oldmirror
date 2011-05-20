@@ -13,7 +13,7 @@
 # Source code directory that is changing.
 dir="$HOME/cppad/branches/omp_alloc/cppad/local"
 # Source code files that are changing (new version in $dir/new).
-change_list="player.hpp"
+change_list="recorder.hpp player.hpp pod_vector.hpp"
 # New source code files in $dir/new.
 new_list=""
 #

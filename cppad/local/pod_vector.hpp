@@ -24,7 +24,8 @@ File used to define pod_vector class
 
 // ---------------------------------------------------------------------------
 /*!
-Vector class with Type elements where Type is Plain Old Data.
+A vector class with Type element that does not use element constructors
+or destructors when Type is Plain Old Data (pod).
 */
 template <class Type>
 class pod_vector {
@@ -36,18 +37,35 @@ private:
 	/// pointer to the first type elements 
 	/// (not defined and should not be used when capacity_ = 0)
 	Type   *data_;
+	/// is Type Plain Old Data (POD); i.e., does not need constructor
+	/// and desctuctor to be called
+	bool pod_;
 public:
-	/// Default constructor: sets capacity and length to zero
-	/// (data is also set to zero to avoid compiler warnings).
+	/// Constructors set capacity, length, and data to zero.
+	/// The defautl constructor sets pod to true.
 	inline pod_vector(void) 
-	: capacity_(0), length_(0), data_(0)
+	: capacity_(0), length_(0), data_(0), pod_(true)
+	{ }
+	/// Constructor that specifies the value for plain old data.
+	inline pod_vector(
+		/// is Type plain old data; i.e., it does not need C++ constructors
+		/// and destructors to be called.
+		bool pod
+	) : capacity_(0), length_(0), data_(0), pod_(pod)
 	{ }
 	// ----------------------------------------------------------------------
 	/// Destructor: returns allocated memory to \c omp_alloc; see \c extend.
-	/// The element destructors are not called because this is Plain Old Data.
+	/// If this is not plain old data, 
+	/// the destructor for each element is called.
 	~pod_vector(void)
 	{	if( capacity_ > 0 )
 		{	void* v_ptr = reinterpret_cast<void*>( data_ );
+			if( ! pod_ )
+			{	// call destructor for each element
+				size_t i;
+				for(i = 0; i < length_; i++)
+					(data_ + i)->~Type();
+			}
 			omp_alloc::return_memory(v_ptr); 
 		}
 	}
@@ -63,6 +81,7 @@ public:
 	/// Take extreem care when using this function.
 	inline Type* data(void)
 	{	return data_; }
+	/// const version of \c data pointer
 	inline const Type* data(void) const
 	{	return data_; }
 	// ----------------------------------------------------------------------
@@ -75,19 +94,28 @@ public:
 	\return
 	is the number  of elements in the vector before it was extended.
 
-	- The new elements are not initialized; i.e., their constructor 
-	is not called (becasue they are Plain Old Data; i.e. pod).
+	- If \c Type is plain old data, new elements are not initialized; 
+	i.e., their constructor is not called. Otherwise, the constructor
+	is called for each new element.
 
 	- This is the only routine that allocates memory for \c pod_vector.
 	and it uses omp_alloc for this allocation, hence this determines
 	which thread corresponds to this vector (when in parallel mode).
 	*/
 	inline size_t extend(size_t n)
-	{	size_t old_length = length_;
-		length_          += n;
+	{	size_t old_length   = length_;
+		size_t old_capacity = capacity_;
+		length_            += n;
 		// check if we can use current memory
 		if( capacity_ >= length_ )
+		{	if( ! pod_ )
+			{	// call constructor for each new element
+				size_t i;
+				for(i = old_length; i < length_; i++)
+					new(data_ + i) Type();
+			}
 			return old_length;
+		}
 
 		// save old memory pointer
 		Type* old_data      = data_;
@@ -100,18 +128,24 @@ public:
 		data_       = reinterpret_cast<Type*>(v_ptr);
 		CPPAD_ASSERT_UNKNOWN( length_ <= capacity_ );
 
-		// copy old data to new data
 		size_t i;
+		if( ! pod_ )
+		{	// call constructor for each new element
+			for(i = 0; i < length_; i++)
+				new(data_ + i) Type();
+		}
+		
+		// copy old data to new data
 		for(i = 0; i < old_length; i++)
 			data_[i] = old_data[i];
 
 		// return old memory to available pool
-		if( old_length > 0 )
+		if( old_capacity > 0 )
 		{	v_ptr = reinterpret_cast<void*>( old_data );
 			omp_alloc::return_memory(v_ptr); 
 		}
 
-		// return value for extend is the old length
+		// return value for extend(n) is the old length
 		return old_length;
 	}
 	// ----------------------------------------------------------------------
@@ -136,13 +170,21 @@ public:
 	/*!
  	Erase all the information in this vector.
 
-	- size and capacity of this vector are set to zero.
+	- size and capacity of this vector are set to zero
 
-	- the memory allocated for this vector is returned to \c omp_alloc.
+	- if not plain old data, the destructor for each element is called
+
+	- the memory allocated for this vector is returned to \c omp_alloc
 	*/
 	void erase(void)
 	{	if( capacity_ > 0 )
 		{	void* v_ptr = reinterpret_cast<void*>( data_ );
+			if( ! pod_ )
+			{	// call destructor for each element
+				size_t i;
+				for(i = 0; i < length_; i++)
+					(data_ + i)->~Type();
+			}
 			omp_alloc::return_memory(v_ptr); 
 		}
 		capacity_ = length_ = 0;
