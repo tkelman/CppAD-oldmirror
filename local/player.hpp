@@ -48,7 +48,8 @@ private:
 	pod_vector<size_t> rec_op_arg_;
 
 	/// The parameters in the recording.
-	vector<Base> rec_par_;
+	/// Note that Base may not be plain old data, so use false in consructor.
+	pod_vector<Base> rec_par_;
 
 	/// Character strings ('\\0' terminated) in the recording.
 	pod_vector<char> rec_text_;
@@ -57,11 +58,8 @@ private:
 // --------------- Functions used to create and maniplate a recording -------
 public:
 	/// Default constructor
-	player(void) 
-	{	
-		num_rec_var_       = 0;
-		num_rec_vecad_vec_ = 0;
-	}
+	player(void) : num_rec_var_(0), num_rec_vecad_vec_(0), rec_par_(false)
+	{ }
 
 	/// Destructor
 	~player(void)
@@ -91,7 +89,6 @@ public:
 		rec_op_arg_         = rec.rec_op_arg_;
 
 		// Par
-		rec_par_.resize( rec.rec_par_.size() );
 		rec_par_            = rec.rec_par_;
 
 		// Txt
@@ -128,7 +125,6 @@ public:
 		rec_op_arg_         = play.rec_op_arg_;
 
 		// Par
-		rec_par_.resize( play.rec_par_.size() );
 		rec_par_            = play.rec_par_;
 
 		// Txt
@@ -146,7 +142,7 @@ public:
 		rec_op_.erase();
 		rec_vecad_ind_.erase();
 		rec_op_arg_.erase();
-		rec_par_.resize(0);
+		rec_par_.erase();
 		rec_text_.erase();
 	}
 

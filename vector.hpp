@@ -327,12 +327,6 @@ public:
 	inline size_t size(void) const
 	{	return length_; }
 
-	/// current data pointer. This is no longer valid after any of the
-	/// following operations: ~vector, resize, push_back, push_vector.
-	/// (This is not part of the user API and should be used with care.)
-	const inline Type* data(void) const
-	{	return data_; }
-
 	/// change the number of elements in this vector.
 	inline void resize(
 		/// new number of elements for this vector, if zero
