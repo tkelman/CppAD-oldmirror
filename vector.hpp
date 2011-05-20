@@ -50,6 +50,19 @@ The file $code cppad/vector.hpp$$ is included by $code cppad/cppad.hpp$$
 but it can also be included separately with out the rest of the 
 CppAD include files.
 
+$head capacity$$
+If $icode x$$ is a $codei%CppAD::vector<%Scalar%>%$$,
+and $icode cap$$ is a $code size_t$$ object,
+$codei%
+	%cap% = %x%.capacity()
+%$$
+set $icode cap$$ to the number of $icode Scalar$$ objects that
+could fit in the memory currently allocated for $icode x$$.
+Note that
+$codei%
+	%x%.size() <= %x%.capacity()
+%$$
+
 $head Assignment$$
 $index assignment, CppAD vector$$
 If $icode x$$ and $icode y$$ are 
@@ -306,9 +319,19 @@ public:
 			omp_alloc::delete_array(data_); 
 	}
 
-	/// number of elements in this vector.
+	/// maximum number of elements current allocation can store
+	inline size_t capacity(void) const
+	{	return capacity_; }
+
+	/// number of elements currently in this vector.
 	inline size_t size(void) const
 	{	return length_; }
+
+	/// current data pointer. This is no longer valid after any of the
+	/// following operations: ~vector, resize, push_back, push_vector.
+	/// (This is not part of the user API and should be used with care.)
+	const inline Type* data(void) const
+	{	return data_; }
 
 	/// change the number of elements in this vector.
 	inline void resize(
@@ -559,6 +582,11 @@ public:
 	/// number of elements in this vector
 	inline size_t size(void) const
 	{	return length_; }
+
+	/// maximum number of elements current allocation can store
+	inline size_t capacity(void) const
+	{	return n_unit_ * bit_per_unit_; }
+
 
 	/// change number of elements in this vector
 	inline void resize(
