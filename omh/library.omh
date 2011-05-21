@@ -52,8 +52,9 @@ $children%
 
 	cppad/std_math_unary.hpp%
 	cppad/vector.hpp%
-	cppad/track_new_del.hpp%
-	omh/omp_alloc.omh
+	omh/omp_alloc.omh%
+
+	cppad/track_new_del.hpp
 %$$
 
 $head Error Handler$$
@@ -117,8 +118,11 @@ The classes listed are used to support CppAD calculations:
 $table
 $rref std_math_unary$$
 $rref CppAD_vector$$
-$rref TrackNewDel$$
 $rref omp_alloc$$
 $tend
+
+$head Deprecated Library routines$$
+The memory management routine $cref/TrackNewDel/$$ has been deprecated,
+use $cref/omp_alloc/$$ instead.
 
 $end

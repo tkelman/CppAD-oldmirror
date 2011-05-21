@@ -79,6 +79,7 @@ extern bool std_math(void);
 extern bool Sub(void);
 extern bool SubEq(void);
 extern bool SubZero(void);
+extern bool track_new_del(void);
 extern bool Value(void);
 extern bool VecAD(void);
 extern bool VecADPar(void);
@@ -192,6 +193,7 @@ int main(void)
 	ok &= Run( Sub,             "Sub"            );
 	ok &= Run( SubEq,           "SubEq"          );
 	ok &= Run( SubZero,         "SubZero"        );
+	ok &= Run( track_new_del,   "track_new_del"  );
 	ok &= Run( Value,           "Value"          );
 	ok &= Run( VecAD,           "VecAD"          );
 	ok &= Run( VecADPar,        "VecADPar"       );
