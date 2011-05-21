@@ -13,6 +13,7 @@ A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
+# include <sstream>
 # include <limits>
 # include <memory>
 # include <omp.h>
@@ -36,7 +37,23 @@ This must be larger than the log base two of numeric_limit<size_t>::max().
 \def CPPAD_MIN_CAPACITY
 Minimum capacity that will be allocated (must be a positive integer).
 */
-# define CPPAD_MIN_CAPACITY 100
+# define CPPAD_MIN_CAPACITY 16
+
+/*!
+\def CPPAD_TRACE_CAPACITY
+If NDEBUG is not defined, print all calls to \c get_memory and \c return_memory
+that correspond to this capacity and thread CPPAD_TRACE_THEAD.
+(Note that if CPPAD_TRACE_CAPACITY is zero, or any other value not in the list
+of capacities, no tracing will be done.)
+*/
+# define CPPAD_TRACE_CAPACITY 0
+
+/*!
+\def CPPAD_TRACE_THREAD
+If NDEBUG is not defined, print all calls to \c get_memory and \c return_memory
+that correspond to this thead and capacity CPPAD_TRACE_CAPACITY.
+*/
+# define CPPAD_TRACE_THREAD 0
 
 /*
 Note that Section 3.6.2 of ISO/IEC 14882:1998(E) states: "The storage for 
@@ -59,7 +76,7 @@ public:
 # endif
 
 		number           = 0;
-		size_t capacity  = sizeof(CPPAD_MIN_CAPACITY);
+		size_t capacity  = CPPAD_MIN_CAPACITY;
 		while( capacity < std::numeric_limits<size_t>::max() / 2 )
 		{	CPPAD_ASSERT_UNKNOWN( number < CPPAD_MAX_NUM_CAPACITY );
 			value[number++] = capacity;
@@ -382,6 +399,8 @@ $end
  	*/
 	static void* get_memory(size_t min_bytes, size_t& num_bytes)
 	{	size_t num_cap = capacity_info()->number;
+		using std::cout;
+		using std::endl;
 
 		// determine the capacity for this request
 		size_t cap       = 0;
@@ -396,8 +415,18 @@ $end
 		size_t thread = get_thread_num();
 		size_t index  = thread * num_cap + cap;
 
-		// root nodes for both lists
 # ifndef NDEBUG
+		// trace allocation
+		static bool first_trace = true;
+		if(	num_bytes == CPPAD_TRACE_CAPACITY && 
+		     thread    ==  CPPAD_TRACE_THREAD  && first_trace )
+		{	cout << endl;	
+			cout << "omp_alloc: Trace for Thread = " << thread;
+			cout << " and capacity = " << num_bytes << endl;
+			first_trace = false;
+		}
+
+		// root nodes for both lists
 		omp_alloc* inuse_root     = root_inuse() + index;
 # endif
 		omp_alloc* available_root = root_available() + index;
@@ -415,6 +444,11 @@ $end
 			// add node to inuse list
 			node->next_           = inuse_root->next_;
 			inuse_root->next_     = v_ptr;
+
+			// trace allocation
+			if(	num_bytes == CPPAD_TRACE_CAPACITY && 
+			     thread    ==  CPPAD_TRACE_THREAD   )
+			{	cout << "get_memory:    v_ptr = " << v_ptr << endl; } 
 # endif
 
 			// adjust counts
@@ -434,6 +468,11 @@ $end
 		// add node to inuse list
 		node->next_       = inuse_root->next_;
 		inuse_root->next_ = v_ptr;
+
+		// trace allocation
+		if( num_bytes == CPPAD_TRACE_CAPACITY && 
+		    thread    == CPPAD_TRACE_THREAD    )
+		{	cout << "get_memory:    v_ptr = " << v_ptr << endl; }
 # endif
 
 		// adjust counts
@@ -505,26 +544,6 @@ $end
 		omp_alloc* node           = reinterpret_cast<omp_alloc*>(v_ptr) - 1;
 		v_ptr                     = reinterpret_cast<void*>(node);
 		size_t index              = node->index_;
-		omp_alloc* available_root = root_available() + index;
-
-# ifndef NDEBUG
-		// remove node from inuse list
-		omp_alloc* inuse_root     = root_inuse() + index;
-		omp_alloc* previous       = inuse_root;
-		while( (previous->next_ != 0) & (previous->next_ != v_ptr) )
-			previous = reinterpret_cast<omp_alloc*>(previous->next_);	
-		CPPAD_ASSERT_KNOWN(
-			previous->next_ == v_ptr,
-			"Attempt to return memory that is not currently in use"
-		); 
-		previous->next_  = node->next_;
-# endif
-
-		// add node to available list
-		node->next_               = available_root->next_;
-		available_root->next_     = reinterpret_cast<void*>(node);
-
-		// extract thread and capacity from index
 		size_t thread    = index / num_cap;
 		size_t cap       = index % num_cap;
 		size_t capacity  = capacity_info()->value[cap];
@@ -535,6 +554,36 @@ $end
 			"Attempt to return memory for a different thread "
 			"while in parallel mode"
 		);
+
+# ifndef NDEBUG
+		// remove node from inuse list
+		omp_alloc* inuse_root     = root_inuse() + index;
+		omp_alloc* previous       = inuse_root;
+		while( (previous->next_ != 0) & (previous->next_ != v_ptr) )
+			previous = reinterpret_cast<omp_alloc*>(previous->next_);	
+
+		// check that v_ptr is valid
+		if( previous->next_ != v_ptr )
+		{	std::ostringstream oss;
+			oss << "return_memory: attempt to return memory not in use";
+			oss << std::endl;
+			oss << "v_ptr    = " << v_ptr    << std::endl;   
+			oss << "thread   = " << thread   << std::endl;   
+			oss << "capacity = " << capacity << std::endl;   
+			CPPAD_ASSERT_KNOWN(false, oss.str().c_str()	); 
+		}
+
+		// trace option
+		if( capacity==CPPAD_TRACE_CAPACITY && thread==CPPAD_TRACE_THREAD )
+		{	std::cout << "return_memory: v_ptr = " << v_ptr << std::endl; }
+
+		// remove v_ptr from inuse list
+		previous->next_  = node->next_;
+# endif
+		// add node to available list
+		omp_alloc* available_root = root_available() + index;
+		node->next_               = available_root->next_;
+		available_root->next_     = reinterpret_cast<void*>(node);
 
 		// adjust counts
 		dec_inuse(capacity, thread);
