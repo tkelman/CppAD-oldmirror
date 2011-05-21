@@ -13,6 +13,7 @@ A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
+# include <algorithm>
 # include <cppad/omp_alloc.hpp>
 # include <cppad/local/cppad_assert.hpp>
 # include <cppad/local/op_code.hpp>
@@ -62,7 +63,8 @@ public:
 	/// If this is not plain old data, 
 	/// the destructor for each element is called.
 	~pod_vector(void)
-	{	if( capacity_ > 0 )
+	{
+		if( capacity_ > 0 )
 		{	void* v_ptr = reinterpret_cast<void*>( data_ );
 			if( ! is_pod<Type>::value )
 			{	// call destructor for each element
@@ -212,6 +214,17 @@ public:
 		CPPAD_ASSERT_UNKNOWN( length_ == x.length_ );
 		for(i = 0; i < length_; i++)
 		{	data_[i] = x.data_[i]; }
+	}
+	/*!
+	Swap all properties of this vector with another.
+
+	\param other
+	is the other vector that we are swapping this vector with.
+ 	*/
+	void swap(pod_vector& other)
+	{	std::swap(capacity_, other.capacity_);
+		std::swap(length_,   other.length_);
+		std::swap(data_,     other.data_);
 	}
 };
 

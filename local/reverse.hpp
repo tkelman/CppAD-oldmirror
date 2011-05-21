@@ -177,7 +177,7 @@ VectorBase ADFun<Base>::Reverse(size_t p, const VectorBase &w)
 		total_num_var_,
 		&play_,
 		taylor_col_dim_,
-		taylor_,
+		taylor_.data(),
 		p,
 		Partial.data()
 	);
