@@ -569,12 +569,15 @@ $end
 
 		// check that v_ptr is valid
 		if( previous->next_ != v_ptr )
-		{	std::ostringstream oss;
+		{	using std::endl;
+			std::ostringstream oss;
 			oss << "return_memory: attempt to return memory not in use";
-			oss << std::endl;
-			oss << "v_ptr    = " << v_ptr    << std::endl;   
-			oss << "thread   = " << thread   << std::endl;   
-			oss << "capacity = " << capacity << std::endl;   
+			oss << endl;
+			oss << "v_ptr    = " << v_ptr    << endl;   
+			oss << "thread   = " << thread   << endl;   
+			oss << "capacity = " << capacity << endl;   
+			oss << "See CPPAD_TRACE_THREAD & CPPAD_TRACE_CAPACITY in";
+			oss << endl << "# include <cppad/omp_alloc.hpp>" << endl;
 			CPPAD_ASSERT_KNOWN(false, oss.str().c_str()	); 
 		}
 

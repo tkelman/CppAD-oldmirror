@@ -53,6 +53,9 @@ private:
 	/// pointer to the first type elements 
 	/// (not defined and should not be used when capacity_ = 0)
 	Type   *data_;
+	/// do not use the copy constructor
+	explicit pod_vector(const pod_vector& )
+	{	CPPAD_ASSERT_UNKNOWN(false); }
 public:
 	/// Constructors set capacity, length, and data to zero.
 	inline pod_vector(void) 
