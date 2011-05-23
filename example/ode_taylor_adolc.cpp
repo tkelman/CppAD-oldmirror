@@ -285,7 +285,7 @@ bool ode_taylor_adolc(void)
 
 	// set up for omp_alloc memory allocator
 	using CppAD::omp_alloc; // the allocator
-	size_t capacity;
+	size_t capacity;        // capacity of an allocation
 
 	// the vector x with lenght n (or greater) in double 
 	double* x = omp_alloc::create_array<double>(n, capacity);

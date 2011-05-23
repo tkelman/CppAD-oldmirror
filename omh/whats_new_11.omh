@@ -52,9 +52,11 @@ $list number$$
 The old memory tracking routines $cref/TrackNewDel/$$ have been deprecated.
 Their use should be replaced using the $cref/omp_alloc/$$
 a memory allocator which is designed to work well in a multi-threading OpenMP 
-environment.
-This replacement has been throughout the CppAD source code, 
-including the examples
+environment; see $cref/purpose/omp_alloc/Purpose/$$.
+$lnext
+The replacement of $code TrackNewDel$$ by $code omp_alloc$$
+has been throughout the CppAD source code, including the examples
+that used $code TrackNewDel$$; namely,
 $cref/mul_level_adolc.cpp/$$, $cref/ode_taylor_adolc.cpp/$$.
 $lnext
 The CppAD vector template class

@@ -38,7 +38,7 @@ This must be larger than the log base two of numeric_limit<size_t>::max().
 Minimum capacity that will be allocated 
 (must be a an integer greater than or equal 4).
 */
-# define CPPAD_MIN_CAPACITY 64
+# define CPPAD_MIN_CAPACITY 128
 
 /*!
 \def CPPAD_TRACE_CAPACITY
@@ -84,8 +84,7 @@ public:
 		{	CPPAD_ASSERT_UNKNOWN( number < CPPAD_MAX_NUM_CAPACITY );
 			value[number++] = capacity;
 			// next capactiy is 3/2 times the current one
-			capacity       /= 2;
-			capacity       *= 3;
+			capacity        = 3 * ( (capacity + 1) / 2 );
 		} 		 
 		CPPAD_ASSERT_UNKNOWN( number > 0 );
 	}
@@ -307,7 +306,8 @@ $icode%flag% = omp_alloc::in_parallel()%$$
 $head Purpose$$
 Some of the $cref/omp_alloc/$$ allocation routines have different
 specifications for parallel (not sequential) execution mode.
-This routine enables you to determine the current thread.
+This routine enables you to determine if the current execution mode
+is sequential or parallel.
 
 $head flag$$
 The return value has prototype
@@ -867,7 +867,8 @@ Note that $cref/delete_array/$$
 should be used to destroy the array when it is no longer needed.
 
 $head Delta$$
-The amount of memory $cref inuse$$, will increase $icode delta$$ where
+The amount of memory $cref inuse$$ by the current thread, 
+will increase $icode delta$$ where
 $codei%
 	sizeof(%Type%) * (%size_out% + 1) > %delta% >= sizeof(%Type%) * %size_out%
 %$$
@@ -944,7 +945,7 @@ $codei%omp_alloc::delete_array(%array%)%$$.
 $head Purpose$$
 Returns memory corresponding to a raw array 
 (create by $cref/create_array/$$) to the 
-$cref/omp_alloc/$$ available memory pool for the current thread.
+$cref/available/$$ memory pool for the current thread.
 
 $head Type$$
 The type of the elements of the array.

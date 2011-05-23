@@ -184,15 +184,12 @@ namespace {
 	bool memory_leak(void)
 	{	bool leak = false;
 
-		// check that we are not using the deprecated memory tracking
-		// (use omp_alloc instead).
-		assert( CPPAD_TRACK_COUNT() == 0 );
-
 		// dump the memory pool being held for this thread
 		using CppAD::omp_alloc;
 		size_t thread = omp_alloc::get_thread_num();
 		omp_alloc::free_available(thread);
 	
+		leak |= CPPAD_TRACK_COUNT() != 0;
 		leak |= omp_alloc::available(thread) != 0;
 		leak |= omp_alloc::inuse(thread) != 0;
 
