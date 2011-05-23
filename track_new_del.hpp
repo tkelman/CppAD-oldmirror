@@ -31,7 +31,8 @@ $index delete, track$$
 $index track, new and delete$$
 $index memory, track$$
 
-$head Warning$$
+$head Deprecated$$
+$index deprecated, track memory$$
 This routine has been deprecated.
 You should use the $cref/omp_alloc/$$ memory allocator instead
 (which works better in both a single thread and multi-threading environment).
