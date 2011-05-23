@@ -220,7 +220,7 @@ private:
 	}
 
 	// ----------------------------------------------------------------------
-	/// Vector of length CPAD_MAX_NUM_THREADS times CPPAD_MAX_NUM_CAPACITIES 
+	/// Vector of length CPPAD_MAX_NUM_THREADS times CPPAD_MAX_NUM_CAPACITIES 
 	/// for use as root nodes of inuse lists.
 	static omp_alloc* root_inuse(void)
 	{	static omp_alloc  
@@ -229,7 +229,7 @@ private:
 	}
 
 	// ----------------------------------------------------------------------
-	/// Vector of length CPAD_MAX_NUM_THREADS times CPPAD_MAX_NUM_CAPACITIES 
+	/// Vector of length CPPAD_MAX_NUM_THREADS times CPPAD_MAX_NUM_CAPACITIES 
 	/// for use as root nodes of available lists.
 	static omp_alloc* root_available(void)
 	{	static omp_alloc  
@@ -265,6 +265,9 @@ This routine enables you to determine the current thread.
 $head thread$$
 The return value $icode thread$$ is the currently executing thread number.
 If $code OPENMP_$$ is not defined, $icode thread$$ is zero.
+
+$head Example$$
+$cref/omp_alloc.cpp/$$
 
 $end
 */
@@ -314,6 +317,9 @@ $codei%
 It is true if the current execution is in parallel mode 
 (possibly multi-threaded) and false otherwise (sequential mode).
 
+$head Example$$
+$cref/omp_alloc.cpp/$$
+
 $end
 */
 	/// Are we in a parallel execution state; i.e., is it possible that
@@ -342,7 +348,7 @@ $index memory, allocate$$
 $index allocate, memory$$
 
 $head Syntax$$
-$icode%v_ptr% = omp_alloc::get_memory(%min_bytes%, %num_bytes%)%$$
+$icode%v_ptr% = omp_alloc::get_memory(%min_bytes%, %cap_bytes%)%$$
 
 $head Purpose$$
 Use $cref/omp_alloc/$$ to obtain a minimum number of bytes of memory
@@ -355,21 +361,24 @@ $codei%
 %$$
 It specifies the minimum number of bytes to allocate.
 
-$head num_bytes$$
+$head cap_bytes$$
 This argument has prototype
 $codei%
-	size_t& %num_bytes%
+	size_t& %cap_bytes%
 %$$
 It's input value does not matter.
-Upon return, it is the actual number of bytes that have been allocated for use
-( $icode%min_bytes %<=% num_bytes%$$).
+Upon return, it is the actual number of bytes (capacity) 
+that have been allocated for use,
+$codei%
+	%min_bytes% <= %cap_bytes%
+%$$
 
 $head v_ptr$$
 The return value $icode v_ptr$$ has prototype
 $codei%
 	void* %v_ptr%
 %$$
-It is the location where the $icode num_bytes$$ of memory 
+It is the location where the $icode cap_bytes$$ of memory 
 that have been allocated for use begins.
 
 $head Allocation Speed$$
@@ -379,8 +388,11 @@ The memory allocated by a previous call to $code get_memory$$
 is currently available for use.
 $lnext
 The current $icode min_bytes$$ is between 
-the previous $icode min_bytes$$ and previous $icode num_bytes$$.
+the previous $icode min_bytes$$ and previous $icode cap_bytes$$.
 $lend
+
+$head Example$$
+$cref/omp_alloc.cpp/$$
 
 $end
 */
@@ -389,20 +401,20 @@ $end
 
 	If the memory allocated by a previous call to \c get_memory is now 
 	avaialable, and \c min_bytes is between its previous value
-	and the previous \c num_bytes, this memory allocation will have
+	and the previous \c cap_bytes, this memory allocation will have
 	optimal speed. Otherwise, the memory allocation is more complicated and
 	may have to wait for other threads to complete an allocation.
 
 	\param min_bytes [in]
 	The minimum number of bytes of memory to be obtained for use.
 
-	\param num_bytes [out]
+	\param cap_bytes [out]
 	The actual number of bytes of memory obtained for use.
 
 	\return
 	pointer to the beginning of the memory allocted for use.
  	*/
-	static void* get_memory(size_t min_bytes, size_t& num_bytes)
+	static void* get_memory(size_t min_bytes, size_t& cap_bytes)
 	{	size_t num_cap = capacity_info()->number;
 		using std::cout;
 		using std::endl;
@@ -414,7 +426,7 @@ $end
 		{	++cap;	
 			CPPAD_ASSERT_UNKNOWN(cap < num_cap );
 		}
-		num_bytes = capacity_vec[cap];
+		cap_bytes = capacity_vec[cap];
 
 		// determine the thread and index
 		size_t thread = get_thread_num();
@@ -423,15 +435,16 @@ $end
 # ifndef NDEBUG
 		// trace allocation
 		static bool first_trace = true;
-		if(	num_bytes == CPPAD_TRACE_CAPACITY && 
+		if(	cap_bytes == CPPAD_TRACE_CAPACITY && 
 		     thread    ==  CPPAD_TRACE_THREAD  && first_trace )
 		{	cout << endl;	
 			cout << "omp_alloc: Trace for Thread = " << thread;
-			cout << " and capacity = " << num_bytes << endl;
+			cout << " and capacity = " << cap_bytes << endl;
 			first_trace = false;
 		}
 
-		// root nodes for both lists
+		// Root nodes for both lists. Note these are different for different 
+		// threads because index is different for different threads.
 		omp_alloc* inuse_root     = root_inuse() + index;
 # endif
 		omp_alloc* available_root = root_available() + index;
@@ -451,21 +464,23 @@ $end
 			inuse_root->next_     = v_ptr;
 
 			// trace allocation
-			if(	num_bytes == CPPAD_TRACE_CAPACITY && 
+			if(	cap_bytes == CPPAD_TRACE_CAPACITY && 
 			     thread    ==  CPPAD_TRACE_THREAD   )
 			{	cout << "get_memory:    v_ptr = " << v_ptr << endl; } 
 # endif
 
 			// adjust counts
-			inc_inuse(num_bytes, thread);
-			dec_available(num_bytes, thread);
+			inc_inuse(cap_bytes, thread);
+			dec_available(cap_bytes, thread);
 
 			// return pointer to memory, do not inclue omp_alloc information
 			return reinterpret_cast<void*>(node + 1);
 		}
 
-		// create a new node with omp_alloc information at front
-		v_ptr           = ::operator new(sizeof(omp_alloc) + num_bytes);
+		// Create a new node with omp_alloc information at front.
+		// This uses the system allocator, which is thread safe, but slower,
+		// because the thread might wait for a lock on the allocator.
+		v_ptr           = ::operator new(sizeof(omp_alloc) + cap_bytes);
 		node            = reinterpret_cast<omp_alloc*>(v_ptr);
 		node->index_    = index;
 
@@ -475,13 +490,13 @@ $end
 		inuse_root->next_ = v_ptr;
 
 		// trace allocation
-		if( num_bytes == CPPAD_TRACE_CAPACITY && 
+		if( cap_bytes == CPPAD_TRACE_CAPACITY && 
 		    thread    == CPPAD_TRACE_THREAD    )
 		{	cout << "get_memory:    v_ptr = " << v_ptr << endl; }
 # endif
 
 		// adjust counts
-		inc_inuse(num_bytes, thread);
+		inc_inuse(cap_bytes, thread);
 
 		return reinterpret_cast<void*>(node + 1);
 	}
@@ -527,6 +542,9 @@ If $code NDEBUG$$ is defined, $icode v_ptr$$ is not checked (this is faster).
 Otherwise, a list of in use pointers is searched to make sure
 that $icode v_ptr$$ is in the list. 
 
+$head Example$$
+$cref/omp_alloc.cpp/$$
+
 $end
 */
 	/*!
@@ -546,9 +564,9 @@ $end
 	static void return_memory(void* v_ptr)
 	{	size_t num_cap   = capacity_info()->number;
 
-		omp_alloc* node           = reinterpret_cast<omp_alloc*>(v_ptr) - 1;
-		v_ptr                     = reinterpret_cast<void*>(node);
-		size_t index              = node->index_;
+		omp_alloc* node  = reinterpret_cast<omp_alloc*>(v_ptr) - 1;
+		v_ptr            = reinterpret_cast<void*>(node);
+		size_t index     = node->index_;
 		size_t thread    = index / num_cap;
 		size_t cap       = index % num_cap;
 		size_t capacity  = capacity_info()->value[cap];
@@ -626,6 +644,9 @@ $codei%
 Either $cref/get_thread_num/$$ must be the same as $icode thread$$,
 or the current execution mode must be sequential 
 (not $cref/parallel/in_parallel/$$).
+
+$head Example$$
+$cref/omp_alloc.cpp/$$
 
 $end
 */
@@ -710,6 +731,9 @@ $codei%
 %$$
 It is the number of bytes currently in use by the specified thread.
 
+$head Example$$
+$cref/omp_alloc.cpp/$$
+
 $end
 */
 	/*!
@@ -770,6 +794,10 @@ $codei%
 	size_t %num_bytes%
 %$$
 It is the number of bytes currently available for use by the specified thread.
+
+$head Example$$
+$cref/omp_alloc.cpp/$$
+
 $end
 */
 	/*!
@@ -847,6 +875,9 @@ The $cref available$$ memory will decrease by $icode delta$$,
 (and the allocation will be faster)
 if a previous allocation with $icode size_min$$ between its current value
 and $icode size_out$$ is available. 
+
+$head Example$$
+$cref/omp_alloc.cpp/$$
 
 $end 
 */
@@ -938,6 +969,9 @@ The amount of memory $cref inuse$$ will decrease by $icode delta$$,
 and the $cref available$$ memory will increase by $icode delta$$,
 where $cref/delta/create_array/Delta/$$ 
 is the same as for the corresponding call to $code create_array$$.
+
+$head Example$$
+$cref/omp_alloc.cpp/$$
 
 $end 
 */

@@ -40,7 +40,6 @@ AM_LDFLAGS      = -L../src
 #
 cppad_SOURCES = \
 	../main.cpp \
-	compare.sh \
 	det_lu.cpp  \
 	det_minor.cpp \
 	mat_mul.cpp \
@@ -48,9 +47,6 @@ cppad_SOURCES = \
 	poly.cpp \
 	sparse_hessian.cpp \
 	sparse_jacobian.cpp
-
-cur_versus_new.sh: compare.sh
-	cp $(srcdir)/compare.sh cur_versus_new.sh
 
 test.sh: cppad$(EXEEXT)
 	echo "#! /bin/sh -e"                 > test.sh

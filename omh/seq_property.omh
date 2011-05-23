@@ -217,10 +217,10 @@ $codei%
 	    + %f%.size_text()   * sizeof(char)
 	    + %f%.size_VecAD()  * sizeof(size_t)
 %$$
-Note that this is just the size of the corresponding vectors.
-The actual 
-$cref/capacity/CppAD_vector/capacity/$$
-(amount of memory allocated) may be larger.
+Note that this is the minimal amount of memory that can hold
+the information corresponding to an operation sequence.
+The actual amount of memory allocated ($cref/inuse/$$)
+for the operations sequence may be larger.
 
 $head Example$$
 $children%

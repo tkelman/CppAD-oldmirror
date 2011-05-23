@@ -94,9 +94,8 @@ $head Element Constructor and Destructor$$
 $index constructor, element$$
 $index destructor, element$$
 The default constructor for type $icode Scalar$$ is called
-for every element in a vector is called
-when the vector element is created.
-The  $icode Scalar$$ destructor is called when it is removed
+for every element in a vector when the vector element is created.
+The $icode Scalar$$ destructor is called when it is removed
 from the vector (this includes when the vector is destroyed).
 
 $head Assignment$$

@@ -207,7 +207,6 @@ $rref SubEq.cpp$$
 $rref Tan.cpp$$
 $rref Tanh.cpp$$
 $rref TapeIndex.cpp$$
-$rref TrackNewDel.cpp$$
 $rref UnaryMinus.cpp$$
 $rref UnaryPlus.cpp$$
 $rref Value.cpp$$

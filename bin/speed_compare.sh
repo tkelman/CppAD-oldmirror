@@ -11,47 +11,59 @@
 # Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 # -----------------------------------------------------------------------------
 # Source code directory that is changing.
-dir="$HOME/cppad/branches/omp_alloc/cppad/local"
+dir="cppad/local"
+# -----------------------------------------------------------------------------
+if [ $0 != "bin/speed_compare.sh" ]
+then
+	echo "bin/speed_compare.sh: must be executed from its parent directory"
+	exit 1
+fi
 # Source code files that are changing (new version in $dir/new).
-change_list="recorder.hpp player.hpp pod_vector.hpp"
-# New source code files in $dir/new.
-new_list=""
+list=`cd $dir/new ; ls`
+if [ "$list" == "" ] ; then
+	echo "speed_compare.sh: $dir/new is empty"
+	exit 1
+fi
 #
 # check if we alread have results for current version
 if [ ! -e speed_cur.out ]
 then
 	# Revert the source code to the current version
-	if [ "$change_list" != "" ] ; then
-		for file in $change_list
-		do
-			echo "svn revert $dir/$file"
-			svn revert $dir/$file
-		done
-	fi
-	#
-	# compile and link the current version
-	echo "pushd ../src; make clean; make; popd; make clean; make test.sh"
-	pushd ../src; make clean; make; popd; make clean; make test.sh
-	#
-	# run speed test for the current version
-	echo "./cppad speed 123 retape > speed_cur.out"
-	./cppad speed 123 retape > speed_cur.out
-fi
-#
-# Convert source to the new version
-if [ "$new_list" != "" ] || [ "$change_list" != "" ] ; then
-	for file in $change_list $new_list
+	for file in $list
 	do
-		echo "cp $dir/new/$file $dir/$file"
-		cp $dir/new/$file $dir/$file
+		echo "svn revert $dir/$file"
+		svn revert $dir/$file
 	done
 fi
 #
-# compile and link the new current 
-echo "pushd ../src; make clean; make; popd; make clean; make test.sh"
-pushd ../src; make clean; make; popd; make clean; make test.sh
+# compile and link the current version
+echo "cd work/speed/src; make clean; make"
+cd work/speed/src; make clean; make
+#
+echo "cd ../cppad; make clean; make test.sh"
+cd ../cppad; make clean; make test.sh
 #
 # run speed test for the current version
+echo "./cppad speed 123 retape > speed_cur.out"
+./cppad speed 123 retape > speed_cur.out
+#
+dir="../../../$dir"
+#
+# Convert source to the new version
+for file in $list
+do
+	echo "cp $dir/new/$file $dir/$file"
+	cp $dir/new/$file $dir/$file
+done
+#
+# compile and link the new version
+echo "cd ../src; make clean; make"
+cd ../src; make clean; make
+#
+echo "cd ../cppad; make clean; make test.sh"
+cd ../cppad; make clean; make test.sh
+#
+# run speed test for the new version
 echo "./cppad speed 123 retape > speed_new.out"
 ./cppad speed 123 retape > speed_new.out
 #

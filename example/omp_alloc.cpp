@@ -61,35 +61,35 @@ bool omp_alloc_bytes(void)
 	size_t min_bytes  = min_size_t * sizeof(size_t);
 	size_t n_outter   = 10;
 	size_t n_inner    = 5;
-	size_t num_bytes, i, j, k;
+	size_t cap_bytes, i, j, k;
 	for(i = 0; i < n_outter; i++)
 	{	// Do not use CppAD::vector here because its use of omp_alloc
 		// complicates the inuse and avaialble results.	
 		std::vector<void*> v_ptr(n_inner);
 		for( j = 0; j < n_inner; j++)
 		{	// allocate enough memory for min_size_t size_t objects
-			v_ptr[j]    = omp_alloc::get_memory(min_bytes, num_bytes);
+			v_ptr[j]    = omp_alloc::get_memory(min_bytes, cap_bytes);
 			size_t* ptr = reinterpret_cast<size_t*>(v_ptr[j]);
-			// determine the number of size_t valuse we have obtained
-			size_t  num_size_t = num_bytes / sizeof(size_t);
-			ok                &= min_size_t <= num_size_t;
+			// determine the number of size_t values we have obtained
+			size_t  cap_size_t = cap_bytes / sizeof(size_t);
+			ok                &= min_size_t <= cap_size_t;
 			// use placement new to call the size_t copy constructor
-			for(k = 0; k < num_size_t; k++)
+			for(k = 0; k < cap_size_t; k++)
 				new(ptr + k) size_t(i + j + k);
 			// check that the constructor worked
-			for(k = 0; k < num_size_t; k++)
+			for(k = 0; k < cap_size_t; k++)
 				ok &= ptr[k] == (i + j + k);
 		}
-		// check that n_inner * num_bytes are inuse and none are available
-		ok &= omp_alloc::inuse(thread) == n_inner * num_bytes;
+		// check that n_inner * cap_bytes are inuse and none are available
+		ok &= omp_alloc::inuse(thread) == n_inner * cap_bytes;
 		ok &= omp_alloc::available(thread) == 0;
 		// return the memrory to omp_alloc
 		for(j = 0; j < n_inner; j++)
 			omp_alloc::return_memory(v_ptr[j]);
-		// check that now n_inner * num_bytes are now available
+		// check that now n_inner * cap_bytes are now available
 		// and none are in use
 		ok &= omp_alloc::inuse(thread) == 0;
-		ok &= omp_alloc::available(thread) == n_inner * num_bytes;
+		ok &= omp_alloc::available(thread) == n_inner * cap_bytes;
 	}
 	// return all the available memory to the system
 	omp_alloc::free_available(thread);
