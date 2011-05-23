@@ -34,11 +34,10 @@ This must be larger than the log base two of numeric_limit<size_t>::max().
 # define CPPAD_MAX_NUM_CAPACITY 100
 
 /*!
-\def CPPAD_MIN_CAPACITY
-Minimum capacity that will be allocated 
-(must be a an integer greater than or equal 4).
+\def CPPAD_MIN_DOUBLE_CAPACITY
+Minimum number of double values that will fit in an allocation.
 */
-# define CPPAD_MIN_CAPACITY 128
+# define CPPAD_MIN_DOUBLE_CAPACITY 16
 
 /*!
 \def CPPAD_TRACE_CAPACITY
@@ -75,11 +74,8 @@ public:
 # ifdef _OPENMP
 		CPPAD_ASSERT_UNKNOWN( ! omp_in_parallel() );
 # endif
-		// make sure capacity increases each iteration of while loop below
-		CPPAD_ASSERT_UNKNOWN( CPPAD_MIN_CAPACITY >= 4 );
-
 		number           = 0;
-		size_t capacity  = CPPAD_MIN_CAPACITY;
+		size_t capacity  = CPPAD_MIN_DOUBLE_CAPACITY * sizeof(double);
 		while( capacity < std::numeric_limits<size_t>::max() / 2 )
 		{	CPPAD_ASSERT_UNKNOWN( number < CPPAD_MAX_NUM_CAPACITY );
 			value[number++] = capacity;
