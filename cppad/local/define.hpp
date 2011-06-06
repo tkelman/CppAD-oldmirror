@@ -19,6 +19,17 @@ Define processor symbols and macros that are used by CppAD.
 */
 
 /*!
+\def CPPAD_OP_CODE_TYPE
+Is the type used to store enum OpCode values. If not the same as OpCode, then 
+<code>sizeof(CPPAD_OP_CODE_TYPE) <= sizeof( enum OpCode )</code>
+to conserve memory.
+This type must support \c std::numeric_limits,
+the \c <= operator,
+and conversion to \c size_t.
+*/
+# define CPPAD_OP_CODE_TYPE size_t
+
+/*!
 \def CPPAD_USE_FORWARD0SWEEP
 If ture, use compute zero order sweeps using a specialized routine.
 

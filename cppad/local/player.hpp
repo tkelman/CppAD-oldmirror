@@ -36,7 +36,7 @@ private:
 	size_t    num_rec_var_;
 
 	/// The operators in the recording.
-	pod_vector<OpCode> rec_op_;
+	pod_vector<CPPAD_OP_CODE_TYPE> rec_op_;
 
 	/// Number of VecAD vectors in the recording
 	size_t    num_rec_vecad_vec_;
@@ -159,7 +159,7 @@ public:
 	the index of the operator in recording
 	*/
 	OpCode GetOp (size_t i) const
-	{	return rec_op_[i]; }
+	{	return OpCode(rec_op_[i]); }
 
 	/*! 
 	\brief 
@@ -307,7 +307,7 @@ public:
 	void start_forward(
 	OpCode& op, const size_t*& op_arg, size_t& op_index, size_t& var_index)
 	{
-		op        = op_          = rec_op_[0]; 
+		op        = op_          = OpCode( rec_op_[0] ); 
 		op_arg_   = 0;
 		op_arg    = rec_op_arg_.data();
 		op_index  = op_index_    = 0;
@@ -360,7 +360,7 @@ public:
 		op_arg      = op_arg_ + rec_op_arg_.data();  // pointer
 
 		// next operator
-		op          = op_         = rec_op_[ op_index_ ];
+		op          = op_         = OpCode( rec_op_[ op_index_ ] );
 
 		// index for last result for next operator
 		var_index   = var_index_ += NumRes(op);
@@ -456,7 +456,7 @@ public:
 		op_index    = op_index_   = rec_op_.size() - 1; 
 		var_index   = var_index_  = num_rec_var_ - 1;
 
-		op          = op_         = rec_op_[ op_index_ ];
+		op          = op_         = OpCode( rec_op_[ op_index_ ] );
 		CPPAD_ASSERT_UNKNOWN( op_ == EndOp );
 		CPPAD_ASSERT_NARG_NRES(op, 0, 0);
 		return;
@@ -511,8 +511,8 @@ public:
 
 		// next operator
 		CPPAD_ASSERT_UNKNOWN( op_index_  > 0 );
-		op_index    = --op_index_;                           // index
-		op          = op_         = rec_op_[ op_index_ ];    // value
+		op_index    = --op_index_;                                  // index
+		op          = op_         = OpCode( rec_op_[ op_index_ ] ); // value
 
 		// first argument for next operator
 		CPPAD_ASSERT_UNKNOWN( op_arg_ >= NumArg(op)  );
