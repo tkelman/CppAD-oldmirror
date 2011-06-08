@@ -26,8 +26,10 @@ to conserve memory.
 This type must support \c std::numeric_limits,
 the \c <= operator,
 and conversion to \c size_t.
+Make sure that the type chosen returns true for is_pod<CPPAD_OP_CODE_TYPE>
+in pod_vector.hpp.
 */
-# define CPPAD_OP_CODE_TYPE size_t
+# define CPPAD_OP_CODE_TYPE unsigned char
 
 /*!
 \def CPPAD_USE_FORWARD0SWEEP
