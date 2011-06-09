@@ -36,7 +36,7 @@ private:
 	size_t    num_rec_var_;
 
 	/// The operators in the recording.
-	pod_vector<CPPAD_OP_CODE_TYPE> rec_op_;
+	pod_vector<code_t> rec_op_;
 
 	/// Number of VecAD vectors in the recording
 	size_t    num_rec_vecad_vec_;
