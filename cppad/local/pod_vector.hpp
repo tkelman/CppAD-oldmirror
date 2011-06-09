@@ -51,6 +51,8 @@ or destructors when Type is Plain Old Data (pod).
 template <class Type>
 class pod_vector {
 private:
+	/// maximum number of elements that should ever be in this vector
+	size_t max_length_;
 	/// number of elements currently in this vector
 	size_t length_;
 	/// maximum number of Type elements current allocation can hold
@@ -63,8 +65,13 @@ private:
 	{	CPPAD_ASSERT_UNKNOWN(false); }
 public:
 	/// Constructors set capacity, length, and data to zero.
-	inline pod_vector(void) 
-	: length_(0), capacity_(0), data_(0)
+	///
+	/// \param max_length
+	/// value for maximum number of elements in this vector.
+	inline pod_vector(
+		size_t max_length = std::numeric_limits<size_t>::max()
+	) 
+	: max_length_(max_length), length_(0), capacity_(0), data_(0)
 	{ }
 	// ----------------------------------------------------------------------
 	/// Destructor: returns allocated memory to \c omp_alloc; see \c extend.
@@ -114,10 +121,18 @@ public:
 	- This is the only routine that allocates memory for \c pod_vector.
 	and it uses omp_alloc for this allocation, hence this determines
 	which thread corresponds to this vector (when in parallel mode).
+
+	- If the resulting length of the vector would be more than \c max_length_,
+	and \c NDEBUG is not defined, a CPPAD_ASSERT is generated.
 	*/
 	inline size_t extend(size_t n)
 	{	size_t old_length   = length_;
 		length_            += n;
+		CPPAD_ASSERT_KNOWN(
+			length_ <= max_length_ ,
+			"pod_vector.hpp: attempt to create to large a vector.\n"
+			"If Type is CPPAD_TYPE_ADDR_TYPE, tape is too long for Type."
+		);
 		// check if we can use current memory
 		if( capacity_ >= length_ )
 			return old_length;
@@ -187,6 +202,9 @@ public:
 		return;
 	}	
 	/// vector assignment operator
+	/// If the resulting length of the vector would be more than 
+	/// \c max_length_, and \c NDEBUG is not defined, 
+	/// a CPPAD_ASSERT is generated.
 	void operator=(
 		/// right hand size of the assingment operation
 		const pod_vector& x
@@ -196,6 +214,11 @@ public:
 		if( x.length_ <= capacity_ )
 		{	// use existing allocation for this vector
 			length_ = x.length_;
+			CPPAD_ASSERT_KNOWN(
+				length_ <= max_length_ ,
+				"pod_vector.hpp: attempt to create to large a vector.\n"
+				"If Type is CPPAD_TYPE_ADDR_TYPE, tape long for Type."
+			);
 		}
 		else
 		{	// free old memory and get new memory of sufficient length
