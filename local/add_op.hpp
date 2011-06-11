@@ -3,7 +3,7 @@
 # define CPPAD_ADD_OP_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-10 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-11 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -38,7 +38,7 @@ template <class Base>
 inline void forward_addvv_op(
 	size_t        d           , 
 	size_t        i_z         ,
-	const size_t* arg         ,
+	const addr_t* arg         ,
 	const Base*   parameter   ,
 	size_t        nc_taylor   ,
 	Base*         taylor      )
@@ -75,7 +75,7 @@ and the argument \a parameter is not used.
 template <class Base>
 inline void forward_addvv_op_0(
 	size_t        i_z         ,
-	const size_t* arg         ,
+	const addr_t* arg         ,
 	const Base*   parameter   ,
 	size_t        nc_taylor   ,
 	Base*         taylor      )
@@ -112,7 +112,7 @@ template <class Base>
 inline void reverse_addvv_op(
 	size_t        d           , 
 	size_t        i_z         ,
-	const size_t* arg         ,
+	const addr_t* arg         ,
 	const Base*   parameter   ,
 	size_t        nc_taylor   ,
 	const Base*   taylor      ,
@@ -159,7 +159,7 @@ template <class Base>
 inline void forward_addpv_op(
 	size_t        d           , 
 	size_t        i_z         ,
-	const size_t* arg         ,
+	const addr_t* arg         ,
 	const Base*   parameter   ,
 	size_t        nc_taylor   ,
 	Base*         taylor      )
@@ -201,7 +201,7 @@ this operations is for the case where x is a parameter and y is a variable.
 template <class Base>
 inline void forward_addpv_op_0(
 	size_t        i_z         ,
-	const size_t* arg         ,
+	const addr_t* arg         ,
 	const Base*   parameter   ,
 	size_t        nc_taylor   ,
 	Base*         taylor      )
@@ -238,7 +238,7 @@ template <class Base>
 inline void reverse_addpv_op(
 	size_t        d           , 
 	size_t        i_z         ,
-	const size_t* arg         ,
+	const addr_t* arg         ,
 	const Base*   parameter   ,
 	size_t        nc_taylor   ,
 	const Base*   taylor      ,

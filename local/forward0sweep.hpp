@@ -115,8 +115,8 @@ size_t forward0sweep(
 	size_t        i_var;
 
 	// constant and non-constant version of the operation argument indices
-	size_t*         non_const_arg;
-	const size_t   *arg = 0;
+	addr_t*         non_const_arg;
+	const addr_t*   arg = 0;
 
 	// initialize the comparision operator (ComOp) counter
 	size_t compareCount = 0;

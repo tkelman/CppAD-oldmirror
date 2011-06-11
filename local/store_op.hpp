@@ -3,7 +3,7 @@
 # define CPPAD_STORE_OP_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-10 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-11 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -27,7 +27,7 @@ Zero order forward mode implementation of op = StppOp.
 template <class Base>
 inline void forward_store_pp_op_0(
 	size_t         i_z         ,
-	const size_t*  arg         , 
+	const addr_t*  arg         , 
 	size_t         num_par     ,
 	size_t         nc_taylor   ,
 	Base*          taylor      ,
@@ -60,7 +60,7 @@ Zero order forward mode implementation of op = StpvOp.
 template <class Base>
 inline void forward_store_pv_op_0(
 	size_t         i_z         ,
-	const size_t*  arg         , 
+	const addr_t*  arg         , 
 	size_t         num_par     ,
 	size_t         nc_taylor   ,
 	Base*          taylor      ,
@@ -93,7 +93,7 @@ Zero order forward mode implementation of op = StvpOp.
 template <class Base>
 inline void forward_store_vp_op_0(
 	size_t         i_z         ,
-	const size_t*  arg         , 
+	const addr_t*  arg         , 
 	size_t         num_par     ,
 	size_t         nc_taylor   ,
 	Base*          taylor      ,
@@ -128,7 +128,7 @@ Zero order forward mode implementation of op = StvvOp.
 template <class Base>
 inline void forward_store_vv_op_0(
 	size_t         i_z         ,
-	const size_t*  arg         , 
+	const addr_t*  arg         , 
 	size_t         num_par     ,
 	size_t         nc_taylor   ,
 	Base*          taylor      ,
@@ -163,7 +163,7 @@ Forward mode sparsity operations for StpvOp and StvvOp
 template <class Vector_set>
 inline void forward_sparse_store_op(
 	OpCode              op             ,
-	const size_t*       arg            , 
+	const addr_t*       arg            , 
 	size_t              num_combined   ,
 	const size_t*       combined       ,
 	Vector_set&         var_sparsity   ,
@@ -197,7 +197,7 @@ sparsity patterns for
 template <class Vector_set>
 inline void reverse_sparse_jacobian_store_op(
 	OpCode             op              ,
-	const size_t*      arg             , 
+	const addr_t*      arg             , 
 	size_t             num_combined    ,
 	const size_t*      combined        ,
 	Vector_set&        var_sparsity    ,
@@ -243,7 +243,7 @@ and on output it corresponds to the function H.
 template <class Vector_set>
 inline void reverse_sparse_hessian_store_op(
 	OpCode             op           ,
-	const size_t*      arg          , 
+	const addr_t*      arg          , 
 	size_t             num_combined ,
 	const size_t*      combined     ,
 	Vector_set&        var_sparsity ,

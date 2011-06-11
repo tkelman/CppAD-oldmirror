@@ -45,7 +45,7 @@ private:
 	pod_vector<size_t> rec_vecad_ind_;
 
 	/// The operation argument indices in the recording
-	pod_vector<size_t> rec_op_arg_;
+	pod_vector<addr_t> rec_op_arg_;
 
 	/// The parameters in the recording.
 	/// Note that Base may not be plain old data, so use false in consructor.
@@ -224,7 +224,7 @@ public:
 	is the new normal index value.
 	*/
 	void ReplaceInd(size_t i, size_t value)
-	{	rec_op_arg_[i] = value; }
+	{	rec_op_arg_[i] =  static_cast<addr_t>( value ); }
 
 	/// Fetch number of variables in the recording.
 	size_t num_rec_var(void) const
@@ -258,7 +258,7 @@ public:
 	/// (just lengths, not capacities). 
 	size_t Memory(void) const
 	{	return rec_op_.size()        * sizeof(OpCode) 
-		     + rec_op_arg_.size()    * sizeof(size_t)
+		     + rec_op_arg_.size()    * sizeof(addr_t)
 		     + rec_par_.size()       * sizeof(Base)
 		     + rec_text_.size()      * sizeof(char)
 		     + rec_vecad_ind_.size() * sizeof(size_t)
@@ -305,7 +305,7 @@ public:
 	operator (which must be a BeginOp); i.e., 0.
 	*/
 	void start_forward(
-	OpCode& op, const size_t*& op_arg, size_t& op_index, size_t& var_index)
+	OpCode& op, const addr_t*& op_arg, size_t& op_index, size_t& var_index)
 	{
 		op        = op_          = OpCode( rec_op_[0] ); 
 		op_arg_   = 0;
@@ -348,7 +348,7 @@ public:
 	*/
 
 	void next_forward(
-	OpCode& op, const size_t*& op_arg, size_t& op_index, size_t& var_index)
+	OpCode& op, const addr_t*& op_arg, size_t& op_index, size_t& var_index)
 	{	using CppAD::NumRes;
 		using CppAD::NumArg;
 
@@ -391,7 +391,7 @@ public:
 	index of the primary (last) result corresponding to this.
 	*/
 	void forward_csum(
-	OpCode& op, const size_t*& op_arg, size_t& op_index, size_t& var_index)
+	OpCode& op, const addr_t*& op_arg, size_t& op_index, size_t& var_index)
 	{	using CppAD::NumRes;
 		using CppAD::NumArg;
 		CPPAD_ASSERT_UNKNOWN( op == CSumOp );
@@ -418,7 +418,7 @@ public:
 	The return value is equal to the return value of op_arg 
 	corresponding to the previous call to next_forward.
 	*/
-	size_t* forward_non_const_arg(void)
+	addr_t* forward_non_const_arg(void)
 	{	return op_arg_ + rec_op_arg_.data(); }
 
 	/*!
@@ -448,7 +448,7 @@ public:
 	*/
 
 	void start_reverse(
-	OpCode& op, const size_t*& op_arg, size_t& op_index, size_t& var_index)
+	OpCode& op, const addr_t*& op_arg, size_t& op_index, size_t& var_index)
 	{
 		op_arg_     = rec_op_arg_.size();                // index
 		op_arg      = op_arg_ + rec_op_arg_.data();      // pointer
@@ -501,7 +501,7 @@ public:
 	*/
 
 	void next_reverse(
-	OpCode& op, const size_t*& op_arg, size_t& op_index, size_t& var_index)
+	OpCode& op, const addr_t*& op_arg, size_t& op_index, size_t& var_index)
 	{	using CppAD::NumRes;
 		using CppAD::NumArg;
 
@@ -543,7 +543,7 @@ public:
 	*/
 
 	void reverse_csum(
-	OpCode& op, const size_t*& op_arg, size_t& op_index, size_t& var_index)
+	OpCode& op, const addr_t*& op_arg, size_t& op_index, size_t& var_index)
 	{	using CppAD::NumRes;
 		using CppAD::NumArg;
 		CPPAD_ASSERT_UNKNOWN( op == CSumOp );

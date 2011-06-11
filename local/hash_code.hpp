@@ -3,7 +3,7 @@
 # define CPPAD_HASH_CODE_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-10 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-11 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -122,7 +122,7 @@ is a hash code that is between zero and CPPAD_HASH_TABLE_SIZE - 1.
 template <class Base>
 unsigned short hash_code(
 	OpCode        op      , 
-	const size_t* arg     , 
+	const addr_t* arg     , 
 	size_t npar           , 
 	const Base* par       )
 {	CPPAD_ASSERT_UNKNOWN( 

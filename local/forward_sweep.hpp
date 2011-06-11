@@ -123,9 +123,9 @@ size_t forward_sweep(
 # if CPPAD_USE_FORWARD0SWEEP
 	CPPAD_ASSERT_UNKNOWN( d > 0 );
 # else
-	size_t*         non_const_arg;
+	addr_t*         non_const_arg;
 # endif
-	const size_t   *arg = 0;
+	const addr_t*   arg = 0;
 
 	// temporary indices
 	size_t i, ell;

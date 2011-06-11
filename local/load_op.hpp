@@ -3,7 +3,7 @@
 # define CPPAD_LOAD_OP_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-10 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-11 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -28,7 +28,7 @@ Zero order forward mode implementation of op = LdpOp.
 template <class Base>
 inline void forward_load_p_op_0(
 	size_t         i_z         ,
-	size_t*        arg         , 
+	addr_t*        arg         , 
 	size_t         num_par     ,
 	const Base*    parameter   ,
 	size_t         nc_taylor   ,
@@ -75,7 +75,7 @@ Zero order forward mode implementation of op = LdvOp.
 template <class Base>
 inline void forward_load_v_op_0(
 	size_t         i_z         ,
-	size_t*        arg         , 
+	addr_t*        arg         , 
 	size_t         num_par     ,
 	const Base*    parameter   ,
 	size_t         nc_taylor   ,
@@ -169,7 +169,7 @@ inline void forward_load_op(
 	OpCode         op          ,
 	size_t         d           ,
 	size_t         i_z         ,
-	const size_t*  arg         , 
+	const addr_t*  arg         , 
 	size_t         nc_taylor   ,
 	Base*          taylor      )
 {
@@ -269,7 +269,7 @@ inline void reverse_load_op(
 	OpCode         op          ,
 	size_t         d           ,
 	size_t         i_z         ,
-	const size_t*  arg         , 
+	const addr_t*  arg         , 
 	size_t         nc_taylor   ,
 	const Base*    taylor      ,
 	size_t         nc_partial  ,
@@ -301,7 +301,7 @@ template <class Vector_set>
 inline void forward_sparse_load_op(
 	OpCode             op             ,
 	size_t             i_z            ,
-	const size_t*      arg            , 
+	const addr_t*      arg            , 
 	size_t             num_combined   ,
 	const size_t*      combined       ,
 	Vector_set&        var_sparsity   ,
@@ -329,7 +329,7 @@ template <class Vector_set>
 inline void reverse_sparse_jacobian_load_op(
 	OpCode             op             ,
 	size_t             i_z            ,
-	const size_t*      arg            , 
+	const addr_t*      arg            , 
 	size_t             num_combined   ,
 	const size_t*      combined       ,
 	Vector_set&        var_sparsity   ,
@@ -377,7 +377,7 @@ template <class Vector_set>
 inline void reverse_sparse_hessian_load_op(
 	OpCode             op             ,
 	size_t             i_z            ,
-	const size_t*      arg            , 
+	const addr_t*      arg            , 
 	size_t             num_combined   ,
 	const size_t*      combined       ,
 	Vector_set&        var_sparsity   ,

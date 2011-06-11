@@ -3,7 +3,7 @@
 # define CPPAD_PRINT_OP_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-10 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-11 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -78,7 +78,7 @@ that will be printed after the text.
 */
 template <class Base>
 inline void forward_prip_0(
-	const size_t* arg         ,
+	const addr_t* arg         ,
 	size_t        num_text    ,
 	const char*   text        ,
 	size_t        num_par     ,
@@ -156,7 +156,7 @@ is zero order taylor coefficient that will be printed.
 template <class Base>
 inline void forward_priv_0(
 	size_t        i_z         ,
-	const size_t* arg         ,
+	const addr_t* arg         ,
 	size_t        num_text    ,
 	const char*   text        ,
 	size_t        nc_taylor   ,

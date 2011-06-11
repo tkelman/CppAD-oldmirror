@@ -3,7 +3,7 @@
 # define CPPAD_COMP_OP_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-10 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-11 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -105,7 +105,7 @@ If right is a variable, \a taylor[ arg[3] * nc_taylor + 0 ] is its value.
 template <class Base>
 inline void forward_comp_op_0(
 	size_t&        count       ,
-	const size_t*  arg         , 
+	const addr_t*  arg         , 
 	size_t         num_par     ,
 	const Base*    parameter   ,
 	size_t         nc_taylor   ,
