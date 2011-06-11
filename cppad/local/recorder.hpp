@@ -55,7 +55,9 @@ private:
 // ---------------------- Public Functions -----------------------------------
 public:
 	/// Default constructor
-	recorder(void) : num_rec_var_(0)
+	recorder(void) : 
+	num_rec_var_(0) ,
+	rec_op_( std::numeric_limits<addr_t>::max() )
 	{ }
 
 	/// Destructor
