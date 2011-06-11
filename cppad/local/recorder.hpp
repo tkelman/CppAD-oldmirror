@@ -43,7 +43,7 @@ private:
 	pod_vector<size_t> rec_vecad_ind_;
 
 	/// The argument indices in the recording
-	pod_vector<size_t> rec_op_arg_;
+	pod_vector<addr_t> rec_op_arg_;
 
 	/// The parameters in the recording.
 	/// Note that Base may not be plain old data, so use false in consructor.
@@ -110,7 +110,7 @@ public:
 	size_t Memory(void) const
 	{	return rec_op_.capacity()        * sizeof(code_t) 
 		     + rec_vecad_ind_.capacity() * sizeof(size_t)
-		     + rec_op_arg_.capacity()    * sizeof(size_t)
+		     + rec_op_arg_.capacity()    * sizeof(addr_t)
 		     + rec_par_.capacity()       * sizeof(Base)
 		     + rec_text_.capacity()      * sizeof(char);
 	}
@@ -270,7 +270,7 @@ template <class Base>
 inline void recorder<Base>::PutArg(size_t arg0)
 { 
 	size_t i       = rec_op_arg_.extend(1);
-	rec_op_arg_[i] = arg0;
+	rec_op_arg_[i] =  static_cast<addr_t>( arg0 );
 	CPPAD_ASSERT_UNKNOWN( rec_op_arg_.size() == i + 1 );
 }
 /*!
@@ -288,8 +288,8 @@ template <class Base>
 inline void recorder<Base>::PutArg(size_t arg0, size_t arg1)
 { 
 	size_t i         = rec_op_arg_.extend(2);
-	rec_op_arg_[i++] = arg0;
-	rec_op_arg_[i]   = arg1;
+	rec_op_arg_[i++] =  static_cast<addr_t>( arg0 );
+	rec_op_arg_[i]   =  static_cast<addr_t>( arg1 );
 	CPPAD_ASSERT_UNKNOWN( rec_op_arg_.size() == i + 1 );
 }
 /*!
@@ -310,9 +310,9 @@ template <class Base>
 inline void recorder<Base>::PutArg(size_t arg0, size_t arg1, size_t arg2)
 { 
 	size_t i         = rec_op_arg_.extend(3);
-	rec_op_arg_[i++] = arg0;
-	rec_op_arg_[i++] = arg1;
-	rec_op_arg_[i]   = arg2;
+	rec_op_arg_[i++] =  static_cast<addr_t>( arg0 );
+	rec_op_arg_[i++] =  static_cast<addr_t>( arg1 );
+	rec_op_arg_[i]   =  static_cast<addr_t>( arg2 );
 	CPPAD_ASSERT_UNKNOWN( rec_op_arg_.size() == i + 1 );
 }
 /*!
@@ -337,10 +337,10 @@ inline void recorder<Base>::PutArg(size_t arg0, size_t arg1, size_t arg2,
 	size_t arg3)
 { 
 	size_t i         = rec_op_arg_.extend(4);
-	rec_op_arg_[i++] = arg0;
-	rec_op_arg_[i++] = arg1;
-	rec_op_arg_[i++] = arg2;
-	rec_op_arg_[i]   = arg3;
+	rec_op_arg_[i++] =  static_cast<addr_t>( arg0 );
+	rec_op_arg_[i++] =  static_cast<addr_t>( arg1 );
+	rec_op_arg_[i++] =  static_cast<addr_t>( arg2 );
+	rec_op_arg_[i]   =  static_cast<addr_t>( arg3 );
 	CPPAD_ASSERT_UNKNOWN( rec_op_arg_.size() == i + 1 );
 
 }
@@ -369,11 +369,11 @@ inline void recorder<Base>::PutArg(size_t arg0, size_t arg1, size_t arg2,
 	size_t arg3, size_t arg4)
 { 
 	size_t i         = rec_op_arg_.extend(5);
-	rec_op_arg_[i++] = arg0;
-	rec_op_arg_[i++] = arg1;
-	rec_op_arg_[i++] = arg2;
-	rec_op_arg_[i++] = arg3;
-	rec_op_arg_[i]   = arg4;
+	rec_op_arg_[i++] =  static_cast<addr_t>( arg0 );
+	rec_op_arg_[i++] =  static_cast<addr_t>( arg1 );
+	rec_op_arg_[i++] =  static_cast<addr_t>( arg2 );
+	rec_op_arg_[i++] =  static_cast<addr_t>( arg3 );
+	rec_op_arg_[i]   =  static_cast<addr_t>( arg4 );
 	CPPAD_ASSERT_UNKNOWN( rec_op_arg_.size() == i + 1 );
 
 }
@@ -405,12 +405,12 @@ inline void recorder<Base>::PutArg(size_t arg0, size_t arg1, size_t arg2,
 	size_t arg3, size_t arg4, size_t arg5)
 { 
 	size_t i         = rec_op_arg_.extend(6);
-	rec_op_arg_[i++] = arg0;
-	rec_op_arg_[i++] = arg1;
-	rec_op_arg_[i++] = arg2;
-	rec_op_arg_[i++] = arg3;
-	rec_op_arg_[i++] = arg4;
-	rec_op_arg_[i]   = arg5;
+	rec_op_arg_[i++] =  static_cast<addr_t>( arg0 );
+	rec_op_arg_[i++] =  static_cast<addr_t>( arg1 );
+	rec_op_arg_[i++] =  static_cast<addr_t>( arg2 );
+	rec_op_arg_[i++] =  static_cast<addr_t>( arg3 );
+	rec_op_arg_[i++] =  static_cast<addr_t>( arg4 );
+	rec_op_arg_[i]   =  static_cast<addr_t>( arg5 );
 	CPPAD_ASSERT_UNKNOWN( rec_op_arg_.size() == i + 1 );
 }
 // --------------------------------------------------------------------------

@@ -112,7 +112,7 @@ void RevHesSweep(
 	size_t         i_op;
 	size_t        i_var;
 
-	const size_t   *arg = 0;
+	const addr_t*   arg = 0;
 
 	// length of the parameter vector (used by CppAD assert macros)
 	const size_t num_par = play->num_rec_par();

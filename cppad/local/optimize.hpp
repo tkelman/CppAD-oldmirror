@@ -169,14 +169,14 @@ struct optimize_old_variable {
 
 	/// Pointer to first argument (child) for this operator.
 	/// Set by the reverse sweep at beginning of optimization.
-	const size_t*       arg;
+	const addr_t*       arg;
 
 	/// How is this variable connected to the independent variables
 	optimize_connection connect; 
 
 	/// Set during forward sweep to the index in the
 	/// new operation sequence corresponding to this old varable.
-	size_t new_var;
+	addr_t new_var;
 };
 
 /*!
@@ -189,7 +189,7 @@ struct optimize_csum_variable {
 
 	/// Pointer to first argument (child) for this operator.
 	/// Set by the reverse sweep at beginning of optimization.
-	const size_t*       arg;
+	const addr_t*       arg;
 
 	/// Is this variable added to the summation
 	/// (if not it is subtracted)
@@ -304,9 +304,9 @@ size_t optimize_unary_match(
 	const Base*                                        par            ,
 	const CppAD::vector<size_t>&                       hash_table_var ,
 	unsigned short&                                    code           )
-{	const size_t *arg = tape[current].arg;
+{	const addr_t* arg = tape[current].arg;
 	OpCode        op  = tape[current].op;
-	size_t new_arg[1];
+	addr_t new_arg[1];
 	
 	CPPAD_ASSERT_UNKNOWN( NumArg(op) == 1 );
 	CPPAD_ASSERT_UNKNOWN( NumRes(op) > 0  );
@@ -348,8 +348,8 @@ inline size_t optimize_binary_match(
 	const CppAD::vector<size_t>&                       hash_table_var ,
 	unsigned short&                                    code           )
 {	OpCode        op         = tape[current].op;
-	const size_t* arg        = tape[current].arg;
-	size_t        new_arg[2];
+	const addr_t* arg        = tape[current].arg;
+	addr_t        new_arg[2];
 	bool          parameter[2];
 
 	// initialize return value
@@ -492,7 +492,7 @@ size_t optimize_record_pv(
 	const Base*                                        par            ,
 	recorder<Base>*                                    rec            ,
 	OpCode                                             op             ,
-	const size_t*                                      arg            )
+	const addr_t*                                      arg            )
 {
 # ifndef NDEBUG
 	switch(op)
@@ -509,7 +509,7 @@ size_t optimize_record_pv(
 # endif
 	CPPAD_ASSERT_UNKNOWN( arg[0] < npar    );
 	CPPAD_ASSERT_UNKNOWN( arg[1] < current );
-	size_t new_arg[2];
+	addr_t new_arg[2];
 	new_arg[0]   = rec->PutPar( par[arg[0]] );
 	new_arg[1]   = tape[ arg[1] ].new_var;
 	rec->PutArg( new_arg[0], new_arg[1] );
@@ -546,7 +546,7 @@ size_t optimize_record_vp(
 	const Base*                                        par            ,
 	recorder<Base>*                                    rec            ,
 	OpCode                                             op             ,
-	const size_t*                                      arg            )
+	const addr_t*                                      arg            )
 {
 # ifndef NDEBUG
 	switch(op)
@@ -561,7 +561,7 @@ size_t optimize_record_vp(
 # endif
 	CPPAD_ASSERT_UNKNOWN( arg[0] < current );
 	CPPAD_ASSERT_UNKNOWN( arg[1] < npar    );
-	size_t new_arg[2];
+	addr_t new_arg[2];
 	new_arg[0]   = tape[ arg[0] ].new_var;
 	new_arg[1]   = rec->PutPar( par[arg[1]] );
 	rec->PutArg( new_arg[0], new_arg[1] );
@@ -597,7 +597,7 @@ size_t optimize_record_vv(
 	const Base*                                        par            ,
 	recorder<Base>*                                    rec            ,
 	OpCode                                             op             ,
-	const size_t*                                      arg            )
+	const addr_t*                                      arg            )
 {
 # ifndef NDEBUG
 	switch(op)
@@ -614,7 +614,7 @@ size_t optimize_record_vv(
 # endif
 	CPPAD_ASSERT_UNKNOWN( arg[0] < current );
 	CPPAD_ASSERT_UNKNOWN( arg[1] < current );
-	size_t new_arg[2];
+	addr_t new_arg[2];
 	new_arg[0]   = tape[ arg[0] ].new_var;
 	new_arg[1]   = tape[ arg[1] ].new_var;
 	rec->PutArg( new_arg[0], new_arg[1] );
@@ -679,7 +679,7 @@ size_t optimize_record_csum(
 
 	size_t                        i;
 	OpCode                        op;
-	const size_t*                 arg;
+	const addr_t*                 arg;
 	bool                          add;
 	struct optimize_csum_variable var;
 
@@ -829,7 +829,7 @@ void optimize(
 
 	// temporary variables
 	OpCode        op;   // current operator
-	const size_t *arg;  // operator arguments
+	const addr_t* arg;  // operator arguments
 	size_t        i_var;  // index of first result for current operator
 
 	// range and domain dimensions for F
@@ -1221,7 +1221,7 @@ void optimize(
 	tape[i_var].new_var = rec->PutOp(BeginOp);
 
 	// temporary buffer for new argument values
-	size_t new_arg[6];
+	addr_t new_arg[6];
 
 	// temporary work space used by optimize_record_csum
 	// (decalared here to avoid realloaction of memory)

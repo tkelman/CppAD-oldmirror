@@ -88,7 +88,7 @@ template <class Base>
 inline void forward_csum_op(
 	size_t        d           , 
 	size_t        i_z         ,
-	const size_t* arg         ,
+	const addr_t* arg         ,
 	size_t        num_par     ,
 	const Base*   parameter   ,
 	size_t        nc_taylor   ,
@@ -204,7 +204,7 @@ template <class Base>
 inline void reverse_csum_op(
 	size_t        d           , 
 	size_t        i_z         ,
-	const size_t* arg         ,
+	const addr_t* arg         ,
 	size_t        nc_partial  ,
 	Base*         partial     )
 {
@@ -296,7 +296,7 @@ depends on.
 template <class Vector_set>
 inline void forward_sparse_jacobian_csum_op(
 	size_t           i_z         ,
-	const size_t*    arg         ,
+	const addr_t*    arg         ,
 	Vector_set&      sparsity    )
 {	sparsity.clear(i_z);
 
@@ -373,7 +373,7 @@ On input it corresponds to \c G and on output it is undefined.
 template <class Vector_set>
 inline void reverse_sparse_jacobian_csum_op(
 	size_t           i_z         ,
-	const size_t*    arg         ,
+	const addr_t*    arg         ,
 	Vector_set&      sparsity    )
 {
 	size_t i, j;
@@ -471,7 +471,7 @@ and on output it corresponds to the function H.
 template <class Vector_set>
 inline void reverse_sparse_hessian_csum_op(
 	size_t           i_z                 ,
-	const size_t*    arg                 ,
+	const addr_t*    arg                 ,
 	bool*            rev_jacobian        ,
 	Vector_set&      rev_hes_sparsity    )
 {

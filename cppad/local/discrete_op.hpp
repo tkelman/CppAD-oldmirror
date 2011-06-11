@@ -70,7 +70,7 @@ is the zero order Taylor coefficient corresponding to z.
 template <class Base>
 inline void forward_dis_op_0(
 	size_t        i_z         ,
-	const size_t* arg         ,
+	const addr_t* arg         ,
 	size_t        nc_taylor   , 
 	Base*         taylor      )
 {	

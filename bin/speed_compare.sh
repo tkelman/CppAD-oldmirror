@@ -27,7 +27,7 @@ then
 fi
 if [ "$2" == "retape" ] || [ "$2" == "optimize" ]
 then
-	options="_$1_$2"
+	options="${options}_$2"
 elif [ "$2" != "none" ]
 then
 	echo "usage: bin/speed_compare.sh option_1 option_2"

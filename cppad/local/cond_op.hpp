@@ -2,7 +2,7 @@
 # ifndef CPPAD_COND_OP_INCLUDED
 # define CPPAD_COND_OP_INCLUDED
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-10 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-11 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -45,7 +45,7 @@ template <class Base>
 inline void forward_cond_op(
 	size_t         d           ,
 	size_t         i_z         ,
-	const size_t*  arg         , 
+	const addr_t*  arg         , 
 	size_t         num_par     ,
 	const Base*    parameter   ,
 	size_t         nc_taylor   ,
@@ -138,7 +138,7 @@ is the zero order Taylor coefficient corresponding to z.
 template <class Base>
 inline void forward_cond_op_0(
 	size_t         i_z         ,
-	const size_t*  arg         , 
+	const addr_t*  arg         , 
 	size_t         num_par     ,
 	const Base*    parameter   ,
 	size_t         nc_taylor   ,
@@ -249,7 +249,7 @@ template <class Base>
 inline void reverse_cond_op(
 	size_t         d           ,
 	size_t         i_z         ,
-	const size_t*  arg         , 
+	const addr_t*  arg         , 
 	size_t         num_par     ,
 	const Base*    parameter   ,
 	size_t         nc_taylor   ,
@@ -342,7 +342,7 @@ depends on.
 template <class Vector_set>
 inline void forward_sparse_jacobian_cond_op(
 	size_t             i_z           ,
-	const size_t*      arg           , 
+	const addr_t*      arg           , 
 	size_t             num_par       ,
 	Vector_set&        sparsity      )
 {
@@ -427,7 +427,7 @@ On input and output, this pattern corresponds to the function G.
 template <class Vector_set>
 inline void reverse_sparse_jacobian_cond_op(
 	size_t              i_z           ,
-	const size_t*       arg           , 
+	const addr_t*       arg           , 
 	size_t              num_par       ,
 	Vector_set&         sparsity      )
 {	
@@ -528,7 +528,7 @@ On output, this pattern corresponds to the function H.
 template <class Vector_set>
 inline void reverse_sparse_hessian_cond_op(
 	size_t               i_z           ,
-	const size_t*        arg           , 
+	const addr_t*        arg           , 
 	size_t               num_par       ,
 	bool*                jac_reverse   ,
 	Vector_set&          hes_sparsity  )

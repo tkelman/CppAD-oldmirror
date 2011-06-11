@@ -87,8 +87,8 @@ void ForJacSweep(
 	size_t         i_op;
 	size_t        i_var;
 
-	const size_t   *arg = 0;
-	const size_t *arg_0 = 0;
+	const addr_t*   arg = 0;
+	const addr_t* arg_0 = 0;
 
 	size_t            i, j, k;
 
