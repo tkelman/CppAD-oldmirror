@@ -44,7 +44,7 @@ Make sure that the type chosen returns true for is_pod<CPPAD_TAPE_ADDR_TYPE>
 in pod_vector.hpp.
 This type is later defined as \c addr_t in the CppAD namespace.
 */
-# define CPPAD_TAPE_ADDR_TYPE unsigned int
+# define CPPAD_TAPE_ADDR_TYPE unsigned short int
 
 /*!
 \def CPPAD_USE_FORWARD0SWEEP

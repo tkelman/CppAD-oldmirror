@@ -42,7 +42,7 @@ private:
 	size_t    num_rec_vecad_vec_;
 
 	/// The VecAD indices in the recording.
-	pod_vector<size_t> rec_vecad_ind_;
+	pod_vector<addr_t> rec_vecad_ind_;
 
 	/// The operation argument indices in the recording
 	pod_vector<addr_t> rec_op_arg_;
@@ -58,7 +58,12 @@ private:
 // --------------- Functions used to create and maniplate a recording -------
 public:
 	/// Default constructor
-	player(void) : num_rec_var_(0), num_rec_vecad_vec_(0)
+	player(void) : 
+	num_rec_var_(0)                                      ,
+	rec_op_( std::numeric_limits<addr_t>::max() )        ,
+	rec_vecad_ind_( std::numeric_limits<addr_t>::max() ) ,
+	rec_par_( std::numeric_limits<addr_t>::max() )       ,
+	rec_text_( std::numeric_limits<addr_t>::max() )
 	{ }
 
 	/// Destructor
@@ -261,7 +266,7 @@ public:
 		     + rec_op_arg_.size()    * sizeof(addr_t)
 		     + rec_par_.size()       * sizeof(Base)
 		     + rec_text_.size()      * sizeof(char)
-		     + rec_vecad_ind_.size() * sizeof(size_t)
+		     + rec_vecad_ind_.size() * sizeof(addr_t)
 		;
 	}
 

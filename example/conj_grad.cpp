@@ -212,7 +212,7 @@ bool conj_grad(void)
 
 
 	// size of the vectors  
-	size_t n  = 150;
+	size_t n  = 50;
 	vector<double> D(n * n), Dt(n * n), A(n * n), x(n), b(n), c(n);
 	vector< AD<double> > a_A(n * n), a_x(n), a_b(n);
 
@@ -284,6 +284,7 @@ bool conj_grad(void)
 	db[0] = 1.;
 
 	// check db = A * dx 
+	delta = 5. * delta;
 	dx = f.Forward(1, db);
 	mat_mul(n, A, dx, c);
 	for(i = 0; i < n; i++)
