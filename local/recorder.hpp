@@ -40,7 +40,7 @@ private:
 	pod_vector<code_t> rec_op_;
 
 	/// The VecAD indices in the recording.
-	pod_vector<size_t> rec_vecad_ind_;
+	pod_vector<addr_t> rec_vecad_ind_;
 
 	/// The argument indices in the recording
 	pod_vector<addr_t> rec_op_arg_;
@@ -56,8 +56,11 @@ private:
 public:
 	/// Default constructor
 	recorder(void) : 
-	num_rec_var_(0) ,
-	rec_op_( std::numeric_limits<addr_t>::max() )
+	num_rec_var_(0)                                      ,
+	rec_op_( std::numeric_limits<addr_t>::max() )        ,
+	rec_vecad_ind_( std::numeric_limits<addr_t>::max() ) ,
+	rec_par_( std::numeric_limits<addr_t>::max() )       ,
+	rec_text_( std::numeric_limits<addr_t>::max() )
 	{ }
 
 	/// Destructor
