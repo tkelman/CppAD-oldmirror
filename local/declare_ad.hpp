@@ -15,7 +15,6 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 namespace CppAD {
 	// simple typedefs
-	typedef CPPAD_OP_CODE_TYPE   code_t;
 	typedef CPPAD_TAPE_ADDR_TYPE addr_t;
 
 	// classes

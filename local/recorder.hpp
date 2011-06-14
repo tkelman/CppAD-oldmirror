@@ -37,7 +37,7 @@ private:
 	size_t    num_rec_var_;
 
 	/// The operators in the recording.
-	pod_vector<code_t> rec_op_;
+	pod_vector<CPPAD_OP_CODE_TYPE> rec_op_;
 
 	/// The VecAD indices in the recording.
 	pod_vector<addr_t> rec_vecad_ind_;
@@ -113,7 +113,7 @@ public:
 
 	/// Approximate amount of memory used by the recording 
 	size_t Memory(void) const
-	{	return rec_op_.capacity()        * sizeof(code_t) 
+	{	return rec_op_.capacity()        * sizeof(CPPAD_OP_CODE_TYPE) 
 		     + rec_vecad_ind_.capacity() * sizeof(size_t)
 		     + rec_op_arg_.capacity()    * sizeof(addr_t)
 		     + rec_par_.capacity()       * sizeof(Base)
@@ -151,7 +151,7 @@ and after each call to Erase.
 template <class Base>
 inline size_t recorder<Base>::PutOp(OpCode op)
 {	size_t i    = rec_op_.extend(1);
-	rec_op_[i]  = static_cast<code_t>(op);
+	rec_op_[i]  = static_cast<CPPAD_OP_CODE_TYPE>(op);
 	CPPAD_ASSERT_UNKNOWN( rec_op_.size() == i + 1 );
 
 	// first operator should be a BeginOp and NumRes( BeginOp ) > 0

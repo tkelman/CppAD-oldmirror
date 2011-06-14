@@ -269,8 +269,9 @@ void  AD<Base>::tape_delete(size_t id_old)
 	// increase the id for this thread in a way such that 
 	// thread = id % CPPAD_MAX_NUM_THREADS
 	CPPAD_ASSERT_KNOWN(
-	size_t(*id) + CPPAD_MAX_NUM_THREADS <= std::numeric_limits<addr_t>::max(),
-	"To many different tapes given the type used for CPPAD_TAPE_ADDR_TYPE"
+	size_t(*id) + CPPAD_MAX_NUM_THREADS <= 
+		std::numeric_limits<CPPAD_TAPE_ID_TYPE>::max(),
+	"To many different tapes given the type used for CPPAD_TAPE_ID_TYPE"
 	);
 	*id  += CPPAD_MAX_NUM_THREADS;
 
