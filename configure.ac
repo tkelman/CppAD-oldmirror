@@ -244,7 +244,16 @@ fi
 AC_SUBST(CXX_FLAGS_FADBAD, "$cxx_flags_fadbad")
 AC_MSG_NOTICE([********** End Checking Command Line arguments ***************])
 
-dnl Check which definition we are using for CPPAD_TEST_VECTOR
+dnl Determine if size_t has same size as unsigned int 
+AC_CHECK_SIZEOF([size_t])
+AC_CHECK_SIZEOF([unsigned int])
+if test "$ac_cv_size_t" == "$ac_cv_unsigned_int" ; then
+	AC_SUBST(CPPAD_SIZE_T_SAME_UNSIGNED_INT, 1)
+else
+	AC_SUBST(CPPAD_SIZE_T_SAME_UNSIGNED_INT, 0)
+fi
+
+dnl Determine which definition we are using for CPPAD_TEST_VECTOR
 if test "$stdvector$BOOST_DIR" = "no" ; then
 	AC_SUBST(CPPAD_CPPADVECTOR, 1)
 else 

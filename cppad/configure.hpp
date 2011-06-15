@@ -53,7 +53,7 @@ we are using boost vector for CPPAD_TEST_VECTOR.
 It this symbol is zero, 
 we are not using boost vector for CPPAD_TEST_VECTOR.
 */
-# define CPPAD_BOOSTVECTOR 0
+#define CPPAD_BOOSTVECTOR 0
 
 /*!
 \def CPPAD_CPPADVECTOR
@@ -62,7 +62,7 @@ we are using CppAD vector for CPPAD_TEST_VECTOR.
 It this symbol is zero, 
 we are not using CppAD vector for CPPAD_TEST_VECTOR.
 */
-# define CPPAD_CPPADVECTOR 1
+#define CPPAD_CPPADVECTOR 1
 
 /*!
 \def CPPAD_STDVECTOR
@@ -81,4 +81,10 @@ Otherwise, this smybol should be zero.
 */
 # define CPPAD_GETTIMEOFDAY 1
 
+/*!
+\def CPPAD_SIZE_T_SAME_UNSIGNED_INT 
+If this symgole is one, sizeof(size_t) == sizeof(unsigned int),
+otherwise this symbol is zero.
+*/
+# define CPPAD_SIZE_T_SAME_UNSIGNED_INT 1
 

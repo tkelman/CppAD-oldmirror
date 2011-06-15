@@ -81,4 +81,10 @@ Otherwise, this smybol should be zero.
 */
 # define CPPAD_GETTIMEOFDAY @CPPAD_GETTIMEOFDAY@
 
+/*!
+\def CPPAD_SIZE_T_SAME_UNSIGNED_INT 
+If this symgole is one, sizeof(size_t) == sizeof(unsigned int),
+otherwise this symbol is zero.
+*/
+# define CPPAD_SIZE_T_SAME_UNSIGNED_INT @CPPAD_SIZE_T_SAME_UNSIGNED_INT@
 

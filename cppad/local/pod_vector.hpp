@@ -29,19 +29,28 @@ A list of which Types pod_vector<Type> consideres to be plain old data
 */
 /// default value is false
 template <class Type> struct is_pod { static const bool value = false; };
-/// system pod types so far: are bool, char, double, float, size_t
-template <> struct is_pod<bool>     { static const bool value = true; };
-template <> struct is_pod<char>     { static const bool value = true; };
-template <> struct is_pod<double>   { static const bool value = true; };
-template <> struct is_pod<float>    { static const bool value = true; };
-template <> struct is_pod<size_t>   { static const bool value = true; };
-// more system types so far are unsigned: char, short int
-template <> struct is_pod<unsigned char>     
+/// system pod types so far:
+template <> struct is_pod<bool>                        // bool
 	{ static const bool value = true; };
-template <> struct is_pod<unsigned short int>     
+template <> struct is_pod<char>                        // char
 	{ static const bool value = true; };
-/// CppAD pod types so far: OpCode 
-template <> struct is_pod<OpCode>   { static const bool value = true; };
+template <> struct is_pod<float>                       // float
+	{ static const bool value = true; };
+template <> struct is_pod<double>                      // double
+	{ static const bool value = true; };
+template <> struct is_pod<unsigned char>               // unsigned char
+	{ static const bool value = true; };
+template <> struct is_pod<unsigned short int>          // unsigned short int
+	{ static const bool value = true; };
+template <> struct is_pod<unsigned int>                // unsigned int      
+	{ static const bool value = true; };
+# if ! CPPAD_SIZE_T_SAME_UNSIGNED_INT
+template <> struct is_pod<size_t>                      // size_t
+	{ static const bool value = true; };
+# endif
+/// CppAD pod types so far: 
+template <> struct is_pod<OpCode>
+	{ static const bool value = true; };
 
 // ---------------------------------------------------------------------------
 /*!
