@@ -154,8 +154,12 @@ CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CPP = @CPP@
+CPPAD_BOOSTVECTOR = @CPPAD_BOOSTVECTOR@
+CPPAD_CPPADVECTOR = @CPPAD_CPPADVECTOR@
+CPPAD_GETTIMEOFDAY = @CPPAD_GETTIMEOFDAY@
 CPPAD_IPOPT_LD_PATH = @CPPAD_IPOPT_LD_PATH@
 CPPAD_IPOPT_LIBS = @CPPAD_IPOPT_LIBS@
+CPPAD_STDVECTOR = @CPPAD_STDVECTOR@
 CPPFLAGS = @CPPFLAGS@
 CXX = @CXX@
 CXXDEPMODE = @CXXDEPMODE@
@@ -265,7 +269,7 @@ top_srcdir = @top_srcdir@
 # Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 # -----------------------------------------------------------------------------
 #
-# Note that config.h is needed by VC++; i.e., for users that do not run
+# Note that configure.hpp is needed by VC++; i.e., for users that do not run
 # the configure script but rather use the project files 
 #
 @CppAD_POSTFIX_TRUE@postfix_dir = $(POSTFIX_DIR)
@@ -326,7 +330,6 @@ myinclude_HEADERS = \
 nobase_myinclude_HEADERS = \
 	cppad/CheckNumericType.h \
 	cppad/CheckSimpleVector.h \
-	cppad/config.h \
 	cppad/CppAD.h \
 	cppad/CppAD_vector.h \
 	cppad/ErrorHandler.h \

@@ -82,8 +82,12 @@ CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CPP = @CPP@
+CPPAD_BOOSTVECTOR = @CPPAD_BOOSTVECTOR@
+CPPAD_CPPADVECTOR = @CPPAD_CPPADVECTOR@
+CPPAD_GETTIMEOFDAY = @CPPAD_GETTIMEOFDAY@
 CPPAD_IPOPT_LD_PATH = @CPPAD_IPOPT_LD_PATH@
 CPPAD_IPOPT_LIBS = @CPPAD_IPOPT_LIBS@
+CPPAD_STDVECTOR = @CPPAD_STDVECTOR@
 CPPFLAGS = @CPPFLAGS@
 CXX = @CXX@
 CXXDEPMODE = @CXXDEPMODE@
@@ -105,7 +109,7 @@ CYGPATH_W = @CYGPATH_W@
 # -----------------------------------------------------------------------------
 # automake input file
 #
-# CppAD pusts all it's preprocessor definitions in the cppad/config.h file
+# CppAD pusts all it's preprocessor definitions in the cppad/configure.hpp
 DEFS = 
 DEPDIR = @DEPDIR@
 DL_LIB = @DL_LIB@

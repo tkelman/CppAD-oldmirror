@@ -12,7 +12,7 @@ dnl ---------------------------------------------------------------------------
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl   package   version              bug-report
-AC_INIT(CppAD, 20110612, cppad@list.coin-or.org)
+AC_INIT(CppAD, 20110615, cppad@list.coin-or.org)
 AC_SUBST(PACKAGE_URL, "http://www.coin-or.org/CppAD")
 AC_SUBST(PACKAGE_DESCRIPTION, "Differentiation of C++ Algorithms")
 
@@ -135,9 +135,9 @@ AC_ARG_WITH(stdvector,
 	[stdvector="no"]
 )
 if test "$stdvector" = "yes" ; then
-	AC_DEFINE(CPPAD_STDVECTOR, 1, [is CPPAD_TEST_VECTOR == std::vector])
+	AC_SUBST(CPPAD_STDVECTOR, 1)
 else
-	AC_DEFINE(CPPAD_STDVECTOR, 0, [is CPPAD_TEST_VECTOR == std::vector])
+	AC_SUBST(CPPAD_STDVECTOR, 0)
 fi
 AC_MSG_RESULT([$stdvector])
 
@@ -220,14 +220,10 @@ AC_ARG_VAR(BOOST_DIR,
 )
 AM_CONDITIONAL(CppAD_BOOSTVECTOR, test "$BOOST_DIR" != "")
 if test "$BOOST_DIR" != "" ; then
-	AC_DEFINE(CPPAD_BOOSTVECTOR, 1, 
-	[is CPPAD_TEST_VECTOR = boost vector (overriden if _MSC_VER defined)]
-	)
+	AC_SUBST(CPPAD_BOOSTVECTOR, 1)
 	AC_MSG_RESULT([$BOOST_DIR])
 else
-	AC_DEFINE(CPPAD_BOOSTVECTOR, 0, 
-	[is CPPAD_TEST_VECTOR = boost vector (overriden if _MSC_VER defined)]
-	)
+	AC_SUBST(CPPAD_BOOSTVECTOR, 0)
 	AC_MSG_RESULT([no])
 fi
 
@@ -250,9 +246,9 @@ AC_MSG_NOTICE([********** End Checking Command Line arguments ***************])
 
 dnl Check which definition we are using for CPPAD_TEST_VECTOR
 if test "$stdvector$BOOST_DIR" = "no" ; then
-	AC_DEFINE(CPPAD_CPPADVECTOR, 1, [is CPPAD_TEST_VECTOR == CppAD::vector])
+	AC_SUBST(CPPAD_CPPADVECTOR, 1)
 else 
-	AC_DEFINE(CPPAD_CPPADVECTOR, 0, [is CPPAD_TEST_VECTOR == CppAD::vector])
+	AC_SUBST(CPPAD_CPPADVECTOR, 0)
 fi
 
 dnl the gettimeofday check automatically generates a yes / no configure msg
@@ -262,13 +258,9 @@ AC_CHECK_FUNC(
 	[gettimeofday="no"]
 )
 if test "$gettimeofday" = "yes" ; then
-	AC_DEFINE(CPPAD_GETTIMEOFDAY, 1, 
-	[does system support gettimeofday (overriden if _MSC_VER defined)]
-	)
+	AC_SUBST(CPPAD_GETTIMEOFDAY, 1)
 else
-	AC_DEFINE(CPPAD_GETTIMEOFDAY, 0, 
-	[does system support gettimeofday (overriden if _MSC_VER defined)]
-	)
+	AC_SUBST(CPPAD_GETTIMEOFDAY, 0)
 fi
 
 dnl Run any macros required for proper operation of generated makefiles
@@ -296,6 +288,7 @@ dnl Have configure check source directory to see if cppad/CppAD.h is there
 AC_CONFIG_SRCDIR(cppad/CppAD.h)
 
 dnl Use config.h instead of make file command line arguments
+dnl (actually, cppad/configure.hpp is used and cppad/config.h is ignored).
 AC_CONFIG_HEADER(cppad/config.h)
 
 dnl AC_PROG_CP outputs CPP as command to run C preprocessor
