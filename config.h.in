@@ -1,17 +1,5 @@
 /* cppad/config.h.in.  Generated from configure.ac by autoheader.  */
 
-/* is CPPAD_TEST_VECTOR = boost vector (overriden if _MSC_VER defined) */
-#undef CPPAD_BOOSTVECTOR
-
-/* is CPPAD_TEST_VECTOR == CppAD::vector */
-#undef CPPAD_CPPADVECTOR
-
-/* does system support gettimeofday (overriden if _MSC_VER defined) */
-#undef CPPAD_GETTIMEOFDAY
-
-/* is CPPAD_TEST_VECTOR == std::vector */
-#undef CPPAD_STDVECTOR
-
 /* Name of package */
 #undef PACKAGE
 
