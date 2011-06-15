@@ -32,20 +32,6 @@ in pod_vector.hpp.
 # define CPPAD_OP_CODE_TYPE unsigned char
 
 /*!
-\def CPPAD_TAPE_ADDR_TYPE
-Is the type used to store address on the tape. If not size_t, then 
-<code>sizeof(CPPAD_TAPE_ADDR_TYPE) <= sizeof( size_t )</code>
-to conserve memory.
-This type must support \c std::numeric_limits,
-the \c <= operator,
-and conversion to \c size_t.
-Make sure that the type chosen returns true for is_pod<CPPAD_TAPE_ADDR_TYPE>
-in pod_vector.hpp.
-This type is later defined as \c addr_t in the CppAD namespace.
-*/
-# define CPPAD_TAPE_ADDR_TYPE unsigned int
-
-/*!
 \def CPPAD_TAPE_ID_TYPE
 Is the type used to store tape identifies on the tape. If not size_t, then 
 <code>sizeof(CPPAD_TAPE_ID_TYPE) <= sizeof( size_t )</code>
