@@ -181,9 +181,6 @@ then
 	echo "aclocal"
 	aclocal
 	#
-	echo "autoheader"
-	autoheader
-	#
 	echo "skipping libtoolize"
 	# echo "libtoolize -c -f -i"
 	# if ! libtoolize -c -f -i

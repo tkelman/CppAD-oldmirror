@@ -662,6 +662,8 @@ CPPFLAGS
 LDFLAGS
 CFLAGS
 CC
+CPPAD_TAPE_ADDR_TYPE
+TAPE_ADDR_TYPE
 CXX_FLAGS_FADBAD
 CXX_FLAGS
 CXXFLAGS
@@ -760,6 +762,7 @@ SACADO_DIR
 IPOPT_DIR
 BOOST_DIR
 CXX_FLAGS
+TAPE_ADDR_TYPE
 CC
 CFLAGS
 LDFLAGS
@@ -1412,6 +1415,8 @@ Some influential environment variables:
   IPOPT_DIR   value of the configure prefix directory during Ipopt install
   BOOST_DIR   parent directory directly above boost directory
   CXX_FLAGS   CXXFLAGS is ignored, use CXX_FLAGS for compiler flags
+  TAPE_ADDR_TYPE
+              type used for addresses in AD tapes
   CC          C compiler command
   CFLAGS      C compiler flags
   LDFLAGS     linker flags, e.g. -L<lib dir> if you have libraries in a
@@ -2841,6 +2846,27 @@ $as_echo "no" >&6; }
 fi
 CXX_FLAGS_FADBAD="$cxx_flags_fadbad"
 
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking TAPE_ADDR_TYPE" >&5
+$as_echo_n "checking TAPE_ADDR_TYPE... " >&6; }
+
+if test "$TAPE_ADDR_TYPE" == "" ; then
+	addr_t="unsigned int"
+else
+	addr_t="$TAPE_ADDR_TYPE"
+fi
+CPPAD_TAPE_ADDR_TYPE=$addr_t
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $addr_t" >&5
+$as_echo "$addr_t" >&6; }
+if test "$addr_t" != "size_t" ; then
+	if test "$addr_t" != "unsigned int" ; then
+		if test "$addr_t" != "unsigned short int" ; then
+  		as_fn_error $? "TAPE_ADDR_TYPE is not size_t, unsigned int, or unsigned short int
+		" "$LINENO" 5
+		fi
+	fi
+fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: ********** End Checking Command Line arguments ***************" >&5
 $as_echo "$as_me: ********** End Checking Command Line arguments ***************" >&6;}
 

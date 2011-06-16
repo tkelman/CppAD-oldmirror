@@ -242,6 +242,26 @@ else
 	cxx_flags_fadbad=""
 fi 
 AC_SUBST(CXX_FLAGS_FADBAD, "$cxx_flags_fadbad")
+
+dnl The type used for addresses in AD tapes [ default = unsigned int ] ---
+AC_MSG_CHECKING([TAPE_ADDR_TYPE])
+AC_ARG_VAR(TAPE_ADDR_TYPE, [type used for addresses in AD tapes])
+if test "$TAPE_ADDR_TYPE" == "" ; then
+	addr_t="unsigned int"
+else
+	addr_t="$TAPE_ADDR_TYPE"
+fi
+AC_SUBST(CPPAD_TAPE_ADDR_TYPE, [$addr_t])
+AC_MSG_RESULT([$addr_t])
+if test "$addr_t" != "size_t" ; then
+	if test "$addr_t" != "unsigned int" ; then
+		if test "$addr_t" != "unsigned short int" ; then
+  		AC_MSG_ERROR(
+		[TAPE_ADDR_TYPE is not size_t, unsigned int, or unsigned short int]
+		)
+		fi
+	fi
+fi
 AC_MSG_NOTICE([********** End Checking Command Line arguments ***************])
 
 dnl Determine if size_t has same size as unsigned int 
