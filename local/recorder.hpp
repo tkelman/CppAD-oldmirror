@@ -91,19 +91,19 @@ public:
 	/// Find or add a parameter to the current vector of parameters.
 	inline size_t PutPar(const Base &par);
 	/// Put one operation argument index in the recording
-	inline void PutArg(size_t arg0); 
+	inline void PutArg(addr_t arg0); 
 	/// Put two operation argument index in the recording
-	inline void PutArg(size_t arg0, size_t arg1); 
+	inline void PutArg(addr_t arg0, addr_t arg1); 
 	/// Put three operation argument index in the recording
-	inline void PutArg(size_t arg0, size_t arg1, size_t arg2); 
+	inline void PutArg(addr_t arg0, addr_t arg1, addr_t arg2); 
 	/// Put four operation argument index in the recording
-	inline void PutArg(size_t arg0, size_t arg1, size_t arg2, size_t arg3); 
+	inline void PutArg(addr_t arg0, addr_t arg1, addr_t arg2, addr_t arg3); 
 	/// Put five operation argument index in the recording
-	inline void PutArg(size_t arg0, size_t arg1, size_t arg2, size_t arg3,
-		size_t arg4);
+	inline void PutArg(addr_t arg0, addr_t arg1, addr_t arg2, addr_t arg3,
+		addr_t arg4);
 	/// Put six operation argument index in the recording
-	inline void PutArg(size_t arg0, size_t arg1, size_t arg2, size_t arg3,
-		size_t arg4, size_t arg5);
+	inline void PutArg(addr_t arg0, addr_t arg1, addr_t arg2, addr_t arg3,
+		addr_t arg4, addr_t arg5);
 
 	/// Put a character string in the text for this recording.
 	inline size_t PutTxt(const char *text);
@@ -273,7 +273,7 @@ The operation argument index
 \copydetails prototype_put_arg 
 */
 template <class Base>
-inline void recorder<Base>::PutArg(size_t arg0)
+inline void recorder<Base>::PutArg(addr_t arg0)
 { 
 	size_t i       = rec_op_arg_.extend(1);
 	rec_op_arg_[i] =  static_cast<addr_t>( arg0 );
@@ -291,7 +291,7 @@ Second operation argument index.
 \copydetails prototype_put_arg 
 */
 template <class Base>
-inline void recorder<Base>::PutArg(size_t arg0, size_t arg1)
+inline void recorder<Base>::PutArg(addr_t arg0, addr_t arg1)
 { 
 	size_t i         = rec_op_arg_.extend(2);
 	rec_op_arg_[i++] =  static_cast<addr_t>( arg0 );
@@ -313,7 +313,7 @@ Third operation argument index.
 \copydetails prototype_put_arg 
 */
 template <class Base>
-inline void recorder<Base>::PutArg(size_t arg0, size_t arg1, size_t arg2)
+inline void recorder<Base>::PutArg(addr_t arg0, addr_t arg1, addr_t arg2)
 { 
 	size_t i         = rec_op_arg_.extend(3);
 	rec_op_arg_[i++] =  static_cast<addr_t>( arg0 );
@@ -339,8 +339,8 @@ Fourth operation argument index.
 \copydetails prototype_put_arg 
 */
 template <class Base>
-inline void recorder<Base>::PutArg(size_t arg0, size_t arg1, size_t arg2,
-	size_t arg3)
+inline void recorder<Base>::PutArg(addr_t arg0, addr_t arg1, addr_t arg2,
+	addr_t arg3)
 { 
 	size_t i         = rec_op_arg_.extend(4);
 	rec_op_arg_[i++] =  static_cast<addr_t>( arg0 );
@@ -371,8 +371,8 @@ Fifth operation argument index.
 \copydetails prototype_put_arg 
 */
 template <class Base>
-inline void recorder<Base>::PutArg(size_t arg0, size_t arg1, size_t arg2,
-	size_t arg3, size_t arg4)
+inline void recorder<Base>::PutArg(addr_t arg0, addr_t arg1, addr_t arg2,
+	addr_t arg3, addr_t arg4)
 { 
 	size_t i         = rec_op_arg_.extend(5);
 	rec_op_arg_[i++] =  static_cast<addr_t>( arg0 );
@@ -407,8 +407,8 @@ Sixth operation argument index.
 \copydetails prototype_put_arg 
 */
 template <class Base>
-inline void recorder<Base>::PutArg(size_t arg0, size_t arg1, size_t arg2, 
-	size_t arg3, size_t arg4, size_t arg5)
+inline void recorder<Base>::PutArg(addr_t arg0, addr_t arg1, addr_t arg2, 
+	addr_t arg3, addr_t arg4, addr_t arg5)
 { 
 	size_t i         = rec_op_arg_.extend(6);
 	rec_op_arg_[i++] =  static_cast<addr_t>( arg0 );
