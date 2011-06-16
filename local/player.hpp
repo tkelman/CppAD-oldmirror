@@ -62,6 +62,7 @@ public:
 	num_rec_var_(0)                                      ,
 	rec_op_( std::numeric_limits<addr_t>::max() )        ,
 	rec_vecad_ind_( std::numeric_limits<addr_t>::max() ) ,
+	rec_op_arg_( std::numeric_limits<addr_t>::max() )    ,
 	rec_par_( std::numeric_limits<addr_t>::max() )       ,
 	rec_text_( std::numeric_limits<addr_t>::max() )
 	{ }

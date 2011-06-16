@@ -44,7 +44,7 @@ Replacement for config.h so that all preprocessor symbols begin with CPPAD_
 \def CPPAD_PACKAGE_STRING
 cppad-yyyymmdd as a C string where yyyy is year, mm is month, and dd is day.
 */
-# define CPPAD_PACKAGE_STRING "cppad-20110615"
+# define CPPAD_PACKAGE_STRING "cppad-20110616"
 
 /*!
 \def CPPAD_BOOSTVECTOR
@@ -53,7 +53,7 @@ we are using boost vector for CPPAD_TEST_VECTOR.
 It this symbol is zero, 
 we are not using boost vector for CPPAD_TEST_VECTOR.
 */
-#define CPPAD_BOOSTVECTOR 0
+# define CPPAD_BOOSTVECTOR 1
 
 /*!
 \def CPPAD_CPPADVECTOR
@@ -62,7 +62,7 @@ we are using CppAD vector for CPPAD_TEST_VECTOR.
 It this symbol is zero, 
 we are not using CppAD vector for CPPAD_TEST_VECTOR.
 */
-#define CPPAD_CPPADVECTOR 1
+# define CPPAD_CPPADVECTOR 0
 
 /*!
 \def CPPAD_STDVECTOR
