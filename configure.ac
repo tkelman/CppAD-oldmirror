@@ -12,7 +12,7 @@ dnl ---------------------------------------------------------------------------
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl   package   version              bug-report
-AC_INIT(CppAD, 20110615, cppad@list.coin-or.org)
+AC_INIT(CppAD, 20110616, cppad@list.coin-or.org)
 AC_SUBST(PACKAGE_URL, "http://www.coin-or.org/CppAD")
 AC_SUBST(PACKAGE_DESCRIPTION, "Differentiation of C++ Algorithms")
 
@@ -315,10 +315,6 @@ fi
 
 dnl Have configure check source directory to see if cppad/CppAD.h is there
 AC_CONFIG_SRCDIR(cppad/CppAD.h)
-
-dnl Use config.h instead of make file command line arguments
-dnl (actually, cppad/configure.hpp is used and cppad/config.h is ignored).
-AC_CONFIG_HEADER(cppad/config.h)
 
 dnl AC_PROG_CP outputs CPP as command to run C preprocessor
 AC_PROG_CPP

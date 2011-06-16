@@ -41,6 +41,8 @@ $icode%s% = %f%.size_op()
 %$$
 $icode%s% = %f%.size_op_arg()
 %$$
+$icode%s% = %f%.size_text()
+%$$
 $icode%s% = %f%.size_VecAD()
 %$$
 $icode%s% = %f%.size_op_seq()
