@@ -90,14 +90,8 @@ then
 		rm bin/commit.1.$$
 		exit 0
 	fi
+	# -------------------------------------------------
 	abort="no"
-	config_changed="no"
-	if grep 'cppad/config\.h' bin/commit.1.$$ > /dev/null
-	then
-		config_changed="yes"
-		# remove cppad/config.h from the list
-		sed -i bin/commit.1.$$ -e '/cppad\/config\.h/d'
-	fi
 	list=`cat bin/commit.1.$$`
 	for file in $list
 	do
@@ -109,7 +103,7 @@ then
 			if ! diff $file bin/commit.2.$$ > /dev/null
 			then
 				echo "---------------------------------------"
-				echo "bin/commit.sh: suggest changes to $file:"
+				echo "bin/commit.sh: automatic changes to $file:"
 				if diff $file bin/commit.2.$$
 				then
 					echo "bin/commit.sh: program error"
@@ -118,14 +112,14 @@ then
 					exit 1
 				fi
 				abort="yes"
+				mv bin/commit.2.$$ $file
 			fi
-			rm bin/commit.2.$$
 		fi
 	done
 	if [ "$abort" == "yes" ]
 	then
-		echo "bin/commit.sh: aborting because of suggested changes above."
-		echo "The script bin/edit_commit.sh can make these changes."
+		echo "bin/commit.sh: aborting because of automatic edits above."
+		echo "If these edits are ok, rerun bin/commit.sh edit" 
 		rm bin/commit.1.$$
 		exit 1
 	fi
@@ -149,11 +143,6 @@ then
      echo "chmod +x bin/commit.sh"
            chmod +x bin/commit.sh
 	#
-	if [ "$config_changed" = "yes" ]
-	then
-		echo "Not sure changes to cppad/config.h should be commited."
-		echo "You must include it yourself (by hand) if they should."
-	fi
 	exit 0
 fi
 # -----------------------------------------------------------------------
