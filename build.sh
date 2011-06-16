@@ -250,11 +250,13 @@ then
 	dir_list=`echo $dir_list | sed -e 's|\t\t*| |g'`
 	echo "../configure \\"
 	echo "$dir_list" | sed -e 's| | \\\n\t|g' -e 's|$| \\|' -e 's|^|\t|'
-	echo "CXX_FLAGS=\"-Wall -ansi -pedantic-errors -std=c++98 -Wshadow\"\\"
+	echo "	CXX_FLAGS=\"-Wall -ansi -pedantic-errors -std=c++98 -Wshadow\"\\"
+	echo "	TAPE_ADDR_TYPE=\"unsigned short int\"\\"
 	echo "--with-Documentation"
 	#
 	../configure $dir_list \
 		CXX_FLAGS="-Wall -ansi -pedantic-errors -std=c++98 -Wshadow" \
+		TAPE_ADDR_TYPE="unsigned short int" \
 		--with-Documentation
 	#
 	for file in $configure_file_list

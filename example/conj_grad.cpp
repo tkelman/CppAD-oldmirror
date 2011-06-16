@@ -212,7 +212,7 @@ bool conj_grad(void)
 
 
 	// size of the vectors  
-	size_t n  = 50;
+	size_t n  = 40;
 	vector<double> D(n * n), Dt(n * n), A(n * n), x(n), b(n), c(n);
 	vector< AD<double> > a_A(n * n), a_x(n), a_b(n);
 
@@ -266,7 +266,7 @@ bool conj_grad(void)
 	ok &= (k <= n);
 
 	// accuracy to which we expect values to agree
-	double delta = epsilon * std::sqrt( double(n) );
+	double delta = 10. * epsilon * std::sqrt( double(n) );
 
 	// copy x from AD<double> to double
 	for(i = 0; i < n; i++)
