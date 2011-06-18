@@ -60,6 +60,18 @@ EOF
 	exit 1
 fi
 # -----------------------------------------------------------------------
+for file  in bin/commit.sed bin/commit.sh
+do
+	abort=`svn status $file`
+	if [ "$abort" != "" ]
+	then
+		echo "svn status $file"
+		svn status $file
+		echo "bin/commit.sh: aborting because $file changed"
+		exit 1
+	fi
+done
+# -----------------------------------------------------------------------
 if [ "$1" == 'list' ] || [ "$1" == 'edit' ]
 then
 	# -------------------------------------------------
