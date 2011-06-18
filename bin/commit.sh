@@ -60,7 +60,7 @@ EOF
 	exit 1
 fi
 # -----------------------------------------------------------------------
-for file  in bin/commit.sed bin/commit.sh
+for file  in bin/commit.sed 
 do
 	abort=`svn status $file`
 	if [ "$abort" != "" ]
@@ -68,6 +68,7 @@ do
 		echo "svn status $file"
 		svn status $file
 		echo "bin/commit.sh: aborting because $file changed"
+		rm bin/commit.1.$$
 		exit 1
 	fi
 done
@@ -88,6 +89,7 @@ then
 	then
 		echo "bin/commit.sh: abort because following are unknown to svn"
 		echo $unknown
+		rm bin/commit.1.$$
 		exit 1
 	fi
 	# -------------------------------------------------
@@ -143,7 +145,6 @@ then
 	sed -n -e '1,/@/p' bin/commit.sh.old | sed -e '/@/d' > bin/commit.sh
 	sed bin/commit.1.$$ -e 's/$/@/'                     >> bin/commit.sh
 	sed -n -e '/^EOF/,$p' bin/commit.sh.old             >> bin/commit.sh
-	rm  bin/commit.1.$$
 	#
 	echo "------------------------------------"
 	echo "diff bin/commit.sh.old bin/commit.sh"
@@ -155,6 +156,7 @@ then
      echo "chmod +x bin/commit.sh"
            chmod +x bin/commit.sh
 	#
+	rm  bin/commit.1.$$
 	exit 0
 fi
 # -----------------------------------------------------------------------
