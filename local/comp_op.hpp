@@ -96,7 +96,7 @@ If right is a variable, \a taylor[ arg[3] * nc_taylor + 0 ] is its value.
 \par Checked Assertions where op is a binary operator:
 \li NumArg(ComOp) == 4
 \li NumRes(ComOp) == 0
-\li arg[0] <= static_cast<size_t>( CompareNe )
+\li size_t(arg[0]) <= static_cast<size_t>( CompareNe )
 \li arg[1] != 0 (either left or right is a variable)
 \li if left is a parameter, \a arg[2] < \a num_par
 \li if right is a parameter, \a arg[3] < \a num_par
@@ -116,7 +116,7 @@ inline void forward_comp_op_0(
 
 	CPPAD_ASSERT_UNKNOWN( NumArg(ComOp) == 4 );
 	CPPAD_ASSERT_UNKNOWN( NumRes(ComOp) == 0 );
-	CPPAD_ASSERT_UNKNOWN( arg[0] <= static_cast<size_t> (CompareNe) );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) <= static_cast<size_t> (CompareNe) );
 	CPPAD_ASSERT_UNKNOWN( arg[1] != 0 );
 
 	// result of comparision during recording
@@ -126,7 +126,7 @@ inline void forward_comp_op_0(
 	if( arg[1] & 2 )
 		left = taylor[ arg[2] * nc_taylor + 0 ];
 	else
-	{	CPPAD_ASSERT_UNKNOWN( arg[2] < num_par );
+	{	CPPAD_ASSERT_UNKNOWN( size_t(arg[2]) < num_par );
 		left = parameter[ arg[2] ];
 	}
 
@@ -134,7 +134,7 @@ inline void forward_comp_op_0(
 	if( arg[1] & 4 )
 		right = taylor[ arg[3] * nc_taylor + 0 ];
 	else
-	{	CPPAD_ASSERT_UNKNOWN( arg[3] < num_par );
+	{	CPPAD_ASSERT_UNKNOWN( size_t(arg[3]) < num_par );
 		right = parameter[ arg[3] ];
 	}
 	switch( CompareOp( arg[0] ) )

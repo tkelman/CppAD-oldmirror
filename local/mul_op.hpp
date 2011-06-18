@@ -46,8 +46,8 @@ inline void forward_mulvv_op(
 	// check assumptions
 	CPPAD_ASSERT_UNKNOWN( NumArg(MulvvOp) == 2 );
 	CPPAD_ASSERT_UNKNOWN( NumRes(MulvvOp) == 1 );
-	CPPAD_ASSERT_UNKNOWN( arg[0] < i_z );
-	CPPAD_ASSERT_UNKNOWN( arg[1] < i_z );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) < i_z );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[1]) < i_z );
 	CPPAD_ASSERT_UNKNOWN( d < nc_taylor );
 
 	// Taylor coefficients corresponding to arguments and result
@@ -86,8 +86,8 @@ inline void forward_mulvv_op_0(
 	// check assumptions
 	CPPAD_ASSERT_UNKNOWN( NumArg(MulvvOp) == 2 );
 	CPPAD_ASSERT_UNKNOWN( NumRes(MulvvOp) == 1 );
-	CPPAD_ASSERT_UNKNOWN( arg[0] < i_z );
-	CPPAD_ASSERT_UNKNOWN( arg[1] < i_z );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) < i_z );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[1]) < i_z );
 
 	// Taylor coefficients corresponding to arguments and result
 	Base* x = taylor + arg[0] * nc_taylor;
@@ -125,8 +125,8 @@ inline void reverse_mulvv_op(
 	// check assumptions
 	CPPAD_ASSERT_UNKNOWN( NumArg(MulvvOp) == 2 );
 	CPPAD_ASSERT_UNKNOWN( NumRes(MulvvOp) == 1 );
-	CPPAD_ASSERT_UNKNOWN( arg[0] < i_z );
-	CPPAD_ASSERT_UNKNOWN( arg[1] < i_z );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) < i_z );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[1]) < i_z );
 	CPPAD_ASSERT_UNKNOWN( d < nc_taylor );
 	CPPAD_ASSERT_UNKNOWN( d < nc_partial );
 
@@ -178,7 +178,7 @@ inline void forward_mulpv_op(
 	// check assumptions
 	CPPAD_ASSERT_UNKNOWN( NumArg(MulpvOp) == 2 );
 	CPPAD_ASSERT_UNKNOWN( NumRes(MulpvOp) == 1 );
-	CPPAD_ASSERT_UNKNOWN( arg[1] < i_z );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[1]) < i_z );
 	CPPAD_ASSERT_UNKNOWN( d < nc_taylor );
 
 	// Taylor coefficients corresponding to arguments and result
@@ -214,7 +214,7 @@ inline void forward_mulpv_op_0(
 	// check assumptions
 	CPPAD_ASSERT_UNKNOWN( NumArg(MulpvOp) == 2 );
 	CPPAD_ASSERT_UNKNOWN( NumRes(MulpvOp) == 1 );
-	CPPAD_ASSERT_UNKNOWN( arg[1] < i_z );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[1]) < i_z );
 
 	// Paraemter value
 	Base x = parameter[ arg[0] ];
@@ -253,7 +253,7 @@ inline void reverse_mulpv_op(
 	// check assumptions
 	CPPAD_ASSERT_UNKNOWN( NumArg(MulvvOp) == 2 );
 	CPPAD_ASSERT_UNKNOWN( NumRes(MulvvOp) == 1 );
-	CPPAD_ASSERT_UNKNOWN( arg[1] < i_z );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[1]) < i_z );
 	CPPAD_ASSERT_UNKNOWN( d < nc_taylor );
 	CPPAD_ASSERT_UNKNOWN( d < nc_partial );
 

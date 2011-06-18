@@ -508,10 +508,10 @@ void ForJacSweep(
 			}
 			else
 			{	CPPAD_ASSERT_UNKNOWN( user_state == user_end );
-				CPPAD_ASSERT_UNKNOWN( user_index == arg[0] );
-				CPPAD_ASSERT_UNKNOWN( user_id    == arg[1] );
-				CPPAD_ASSERT_UNKNOWN( user_n     == arg[2] );
-				CPPAD_ASSERT_UNKNOWN( user_m     == arg[3] );
+				CPPAD_ASSERT_UNKNOWN( user_index == size_t(arg[0]) );
+				CPPAD_ASSERT_UNKNOWN( user_id    == size_t(arg[1]) );
+				CPPAD_ASSERT_UNKNOWN( user_n     == size_t(arg[2]) );
+				CPPAD_ASSERT_UNKNOWN( user_m     == size_t(arg[3]) );
 				user_state = user_start;
 			}
 			break;
@@ -520,7 +520,7 @@ void ForJacSweep(
 			// parameter argument in an atomic operation sequence
 			CPPAD_ASSERT_UNKNOWN( user_state == user_arg );
 			CPPAD_ASSERT_UNKNOWN( user_j < user_n );
-			CPPAD_ASSERT_UNKNOWN( arg[0] < num_par );
+			CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) < num_par );
 			// parameters have an empty sparsity pattern
 			user_r[user_j].clear();
 			++user_j;
@@ -537,7 +537,7 @@ void ForJacSweep(
 			// variable argument in an atomic operation sequence
 			CPPAD_ASSERT_UNKNOWN( user_state == user_arg );
 			CPPAD_ASSERT_UNKNOWN( user_j < user_n );
-			CPPAD_ASSERT_UNKNOWN( arg[0] <= i_var );
+			CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) <= i_var );
 			// set user_r[user_j] to sparsity pattern for variable arg[0]
 			user_r[user_j].clear();
 			var_sparsity.begin(arg[0]);
