@@ -46,8 +46,8 @@ inline void forward_addvv_op(
 	// check assumptions
 	CPPAD_ASSERT_UNKNOWN( NumArg(AddvvOp) == 2 );
 	CPPAD_ASSERT_UNKNOWN( NumRes(AddvvOp) == 1 );
-	CPPAD_ASSERT_UNKNOWN( arg[0] < i_z );
-	CPPAD_ASSERT_UNKNOWN( arg[1] < i_z );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) < i_z );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[1]) < i_z );
 	CPPAD_ASSERT_UNKNOWN( d < nc_taylor );
 
 	// Taylor coefficients corresponding to arguments and result
@@ -83,8 +83,8 @@ inline void forward_addvv_op_0(
 	// check assumptions
 	CPPAD_ASSERT_UNKNOWN( NumArg(AddvvOp) == 2 );
 	CPPAD_ASSERT_UNKNOWN( NumRes(AddvvOp) == 1 );
-	CPPAD_ASSERT_UNKNOWN( arg[0] < i_z );
-	CPPAD_ASSERT_UNKNOWN( arg[1] < i_z );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) < i_z );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[1]) < i_z );
 
 	// Taylor coefficients corresponding to arguments and result
 	Base* x = taylor + arg[0] * nc_taylor;
@@ -122,8 +122,8 @@ inline void reverse_addvv_op(
 	// check assumptions
 	CPPAD_ASSERT_UNKNOWN( NumArg(AddvvOp) == 2 );
 	CPPAD_ASSERT_UNKNOWN( NumRes(AddvvOp) == 1 );
-	CPPAD_ASSERT_UNKNOWN( arg[0] < i_z );
-	CPPAD_ASSERT_UNKNOWN( arg[1] < i_z );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) < i_z );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[1]) < i_z );
 	CPPAD_ASSERT_UNKNOWN( d < nc_taylor );
 	CPPAD_ASSERT_UNKNOWN( d < nc_partial );
 
@@ -167,7 +167,7 @@ inline void forward_addpv_op(
 	// check assumptions
 	CPPAD_ASSERT_UNKNOWN( NumArg(AddpvOp) == 2 );
 	CPPAD_ASSERT_UNKNOWN( NumRes(AddpvOp) == 1 );
-	CPPAD_ASSERT_UNKNOWN( arg[1] < i_z );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[1]) < i_z );
 	CPPAD_ASSERT_UNKNOWN( d < nc_taylor );
 
 	// Taylor coefficients corresponding to arguments and result
@@ -209,7 +209,7 @@ inline void forward_addpv_op_0(
 	// check assumptions
 	CPPAD_ASSERT_UNKNOWN( NumArg(AddpvOp) == 2 );
 	CPPAD_ASSERT_UNKNOWN( NumRes(AddpvOp) == 1 );
-	CPPAD_ASSERT_UNKNOWN( arg[1] < i_z );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[1]) < i_z );
 
 	// Paraemter value
 	Base x = parameter[ arg[0] ];
@@ -248,7 +248,7 @@ inline void reverse_addpv_op(
 	// check assumptions
 	CPPAD_ASSERT_UNKNOWN( NumArg(AddvvOp) == 2 );
 	CPPAD_ASSERT_UNKNOWN( NumRes(AddvvOp) == 1 );
-	CPPAD_ASSERT_UNKNOWN( arg[1] < i_z );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[1]) < i_z );
 	CPPAD_ASSERT_UNKNOWN( d < nc_taylor );
 	CPPAD_ASSERT_UNKNOWN( d < nc_partial );
 

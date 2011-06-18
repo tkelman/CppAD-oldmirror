@@ -83,8 +83,8 @@ inline void forward_sparse_jacobian_binary_op(
 	Vector_set&       sparsity      )
 {	
 	// check assumptions
-	CPPAD_ASSERT_UNKNOWN( arg[0] < i_z );
-	CPPAD_ASSERT_UNKNOWN( arg[1] < i_z );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) < i_z );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[1]) < i_z );
 
 	sparsity.binary_union(i_z, arg[0], arg[1], sparsity);
 
@@ -159,8 +159,8 @@ inline void reverse_sparse_jacobian_binary_op(
 	Vector_set&         sparsity      )
 {	
 	// check assumptions
-	CPPAD_ASSERT_UNKNOWN( arg[0] < i_z );
-	CPPAD_ASSERT_UNKNOWN( arg[1] < i_z );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) < i_z );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[1]) < i_z );
 
 	sparsity.binary_union(arg[0], arg[0], i_z, sparsity);
 	sparsity.binary_union(arg[1], arg[1], i_z, sparsity);
@@ -188,8 +188,8 @@ inline void reverse_sparse_hessian_addsub_op(
 	Vector_set&          rev_hes_sparsity   )
 {	
 	// check assumptions
-	CPPAD_ASSERT_UNKNOWN( arg[0] < i_z );
-	CPPAD_ASSERT_UNKNOWN( arg[1] < i_z );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) < i_z );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[1]) < i_z );
 
 	rev_hes_sparsity.binary_union(arg[0], arg[0], i_z, rev_hes_sparsity);
 	rev_hes_sparsity.binary_union(arg[1], arg[1], i_z, rev_hes_sparsity);
@@ -220,8 +220,8 @@ inline void reverse_sparse_hessian_mul_op(
 	Vector_set&          rev_hes_sparsity   )
 {	
 	// check assumptions
-	CPPAD_ASSERT_UNKNOWN( arg[0] < i_z );
-	CPPAD_ASSERT_UNKNOWN( arg[1] < i_z );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) < i_z );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[1]) < i_z );
 
 	rev_hes_sparsity.binary_union(arg[0], arg[0], i_z, rev_hes_sparsity);
 	rev_hes_sparsity.binary_union(arg[1], arg[1], i_z, rev_hes_sparsity);
@@ -258,8 +258,8 @@ inline void reverse_sparse_hessian_div_op(
 	Vector_set&          rev_hes_sparsity   )
 {	
 	// check assumptions
-	CPPAD_ASSERT_UNKNOWN( arg[0] < i_z );
-	CPPAD_ASSERT_UNKNOWN( arg[1] < i_z );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) < i_z );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[1]) < i_z );
 
 	rev_hes_sparsity.binary_union(arg[0], arg[0], i_z, rev_hes_sparsity);
 	rev_hes_sparsity.binary_union(arg[1], arg[1], i_z, rev_hes_sparsity);
@@ -298,8 +298,8 @@ inline void reverse_sparse_hessian_pow_op(
 	Vector_set&          rev_hes_sparsity   )
 {	
 	// check assumptions
-	CPPAD_ASSERT_UNKNOWN( arg[0] < i_z );
-	CPPAD_ASSERT_UNKNOWN( arg[1] < i_z );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) < i_z );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[1]) < i_z );
 
 	rev_hes_sparsity.binary_union(arg[0], arg[0], i_z, rev_hes_sparsity);
 	rev_hes_sparsity.binary_union(arg[1], arg[1], i_z, rev_hes_sparsity);

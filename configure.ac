@@ -12,7 +12,7 @@ dnl ---------------------------------------------------------------------------
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl   package   version              bug-report
-AC_INIT(CppAD, 20110616, cppad@list.coin-or.org)
+AC_INIT(CppAD, 20110618, cppad@list.coin-or.org)
 AC_SUBST(PACKAGE_URL, "http://www.coin-or.org/CppAD")
 AC_SUBST(PACKAGE_DESCRIPTION, "Differentiation of C++ Algorithms")
 
@@ -253,14 +253,26 @@ else
 fi
 AC_SUBST(CPPAD_TAPE_ADDR_TYPE, [$addr_t])
 AC_MSG_RESULT([$addr_t])
-if test "$addr_t" != "size_t" ; then
-	if test "$addr_t" != "unsigned int" ; then
-		if test "$addr_t" != "unsigned short int" ; then
-  		AC_MSG_ERROR(
-		[TAPE_ADDR_TYPE is not size_t, unsigned int, or unsigned short int]
-		)
-		fi
-	fi
+ok="no"
+if test "$addr_t" == "size_t" ; then
+	ok="yes"
+fi
+if test "$addr_t" == "int" ; then
+	AC_MSG_WARN(
+		[TAPE_ADDR_TYPE=int is for CppAD developers (not users)]
+	)
+	ok="yes"
+fi
+if test "$addr_t" == "unsigned int" ; then
+	ok="yes"
+fi
+if test "$addr_t" == "unsigned short int" ; then
+	ok="yes"
+fi
+if test "$ok" == "no" ; then
+  	AC_MSG_ERROR(
+		[$addr_t is not a valid choice for TAPE_ADDR_TYPE]
+	)
 fi
 AC_MSG_NOTICE([********** End Checking Command Line arguments ***************])
 

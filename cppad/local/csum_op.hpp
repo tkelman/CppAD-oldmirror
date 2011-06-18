@@ -98,7 +98,7 @@ inline void forward_csum_op(
 	// check assumptions
 	CPPAD_ASSERT_UNKNOWN( NumRes(CSumOp) == 1 );
 	CPPAD_ASSERT_UNKNOWN( d < nc_taylor );
-	CPPAD_ASSERT_UNKNOWN( arg[2] < num_par );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[2]) < num_par );
 	CPPAD_ASSERT_UNKNOWN( 
 		arg[0] + arg[1] == arg[ arg[0] + arg[1] + 3 ]
 	); 
@@ -113,13 +113,13 @@ inline void forward_csum_op(
 	i = arg[0];
 	j = 2;
 	while(i--)
-	{	CPPAD_ASSERT_UNKNOWN( arg[j+1] < i_z );
+	{	CPPAD_ASSERT_UNKNOWN( size_t(arg[j+1]) < i_z );
 		x     = taylor + arg[++j] * nc_taylor;
 		z[d] += x[d];
 	}	
 	i = arg[1];
 	while(i--)
-	{	CPPAD_ASSERT_UNKNOWN( arg[j+1] < i_z );
+	{	CPPAD_ASSERT_UNKNOWN( size_t(arg[j+1]) < i_z );
 		x     = taylor + arg[++j] * nc_taylor;
 		z[d] -= x[d];
 	}	
@@ -220,7 +220,7 @@ inline void reverse_csum_op(
 	i = arg[0];
 	j = 2;
 	while(i--)
-	{	CPPAD_ASSERT_UNKNOWN( arg[j+1] < i_z );
+	{	CPPAD_ASSERT_UNKNOWN( size_t(arg[j+1]) < i_z );
 		px    = partial + arg[++j] * nc_partial;
 		k = d1;
 		while(k--)
@@ -228,7 +228,7 @@ inline void reverse_csum_op(
 	}	
 	i = arg[1];
 	while(i--)
-	{	CPPAD_ASSERT_UNKNOWN( arg[j+1] < i_z );
+	{	CPPAD_ASSERT_UNKNOWN( size_t(arg[j+1]) < i_z );
 		px    = partial + arg[++j] * nc_partial;
 		k = d1;
 		while(k--)
@@ -304,7 +304,7 @@ inline void forward_sparse_jacobian_csum_op(
 	i = arg[0] + arg[1];
 	j = 2;
 	while(i--)
-	{	CPPAD_ASSERT_UNKNOWN( arg[j+1] < i_z );
+	{	CPPAD_ASSERT_UNKNOWN( size_t(arg[j+1]) < i_z );
 		sparsity.binary_union(
 			i_z        , // index in sparsity for result
 			i_z        , // index in sparsity for left operand
@@ -381,7 +381,7 @@ inline void reverse_sparse_jacobian_csum_op(
 	j = 2;
 	while(i--)
 	{	++j;
-		CPPAD_ASSERT_UNKNOWN( arg[j] < i_z );
+		CPPAD_ASSERT_UNKNOWN( size_t(arg[j]) < i_z );
 		sparsity.binary_union(
 			arg[j]     , // index in sparsity for result
 			arg[j]     , // index in sparsity for left operand
@@ -480,7 +480,7 @@ inline void reverse_sparse_hessian_csum_op(
 	j = 2;
 	while(i--)
 	{	++j;
-		CPPAD_ASSERT_UNKNOWN( arg[j] < i_z );
+		CPPAD_ASSERT_UNKNOWN( size_t(arg[j]) < i_z );
 		rev_hes_sparsity.binary_union(
 		arg[j]             , // index in sparsity for result
 		arg[j]             , // index in sparsity for left operand

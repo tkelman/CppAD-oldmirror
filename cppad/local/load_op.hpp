@@ -89,7 +89,7 @@ inline void forward_load_v_op_0(
 	CPPAD_ASSERT_UNKNOWN( NumArg(LdvOp) == 3 );
 	CPPAD_ASSERT_UNKNOWN( NumRes(LdvOp) == 1 );
 	CPPAD_ASSERT_UNKNOWN( 0 < arg[0] );
-	CPPAD_ASSERT_UNKNOWN( arg[1] < i_z );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[1]) < i_z );
 
 	size_t i_vec = Integer( taylor[ arg[1] * nc_taylor + 0 ] );
 	CPPAD_ASSERT_KNOWN( 
@@ -162,7 +162,7 @@ is the d-order Taylor coefficient for the variable z.
 \li NumArg(op) == 3
 \li NumRes(op) == 1
 \li 0 < d < nc_taylor
-\li arg[2] < i_z
+\li size_t(arg[2]) < i_z
 */
 template <class Base>
 inline void forward_load_op(
@@ -178,7 +178,7 @@ inline void forward_load_op(
 	CPPAD_ASSERT_UNKNOWN( NumRes(op) == 1 );
 	CPPAD_ASSERT_UNKNOWN( d > 0 )
 	CPPAD_ASSERT_UNKNOWN( d < nc_taylor );
-	CPPAD_ASSERT_UNKNOWN( arg[2] < i_z );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[2]) < i_z );
 
 	Base* z      = taylor + i_z * nc_taylor;
 	if( arg[2] > 0 )
@@ -262,7 +262,7 @@ and on output it corresponds to the the function H.
 \li NumArg(op) == 3
 \li NumRes(op) == 1
 \li d < nc_taylor
-\li arg[2] < i_z
+\li size_t(arg[2]) < i_z
 */
 template <class Base>
 inline void reverse_load_op(
@@ -279,7 +279,7 @@ inline void reverse_load_op(
 	CPPAD_ASSERT_UNKNOWN( NumArg(op) == 3 );
 	CPPAD_ASSERT_UNKNOWN( NumRes(op) == 1 );
 	CPPAD_ASSERT_UNKNOWN( d < nc_taylor );
-	CPPAD_ASSERT_UNKNOWN( arg[2] < i_z );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[2]) < i_z );
 
 	if( arg[2] > 0 )
 	{
@@ -310,7 +310,7 @@ inline void forward_sparse_load_op(
 	CPPAD_ASSERT_UNKNOWN( NumArg(op) == 3 );
 	CPPAD_ASSERT_UNKNOWN( NumRes(op) == 1 );
 	CPPAD_ASSERT_UNKNOWN( 0 < arg[0] );
-	CPPAD_ASSERT_UNKNOWN( arg[0] < num_combined );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) < num_combined );
 	size_t i_v = combined[ arg[0] - 1 ];
 	CPPAD_ASSERT_UNKNOWN( i_v < vecad_sparsity.n_set() );
 
@@ -338,7 +338,7 @@ inline void reverse_sparse_jacobian_load_op(
 	CPPAD_ASSERT_UNKNOWN( NumArg(op) == 3 );
 	CPPAD_ASSERT_UNKNOWN( NumRes(op) == 1 );
 	CPPAD_ASSERT_UNKNOWN( 0 < arg[0] );
-	CPPAD_ASSERT_UNKNOWN( arg[0] < num_combined );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) < num_combined );
 	size_t i_v = combined[ arg[0] - 1 ];
 	CPPAD_ASSERT_UNKNOWN( i_v < vecad_sparsity.n_set() );
 
@@ -388,7 +388,7 @@ inline void reverse_sparse_hessian_load_op(
 	CPPAD_ASSERT_UNKNOWN( NumArg(op) == 3 );
 	CPPAD_ASSERT_UNKNOWN( NumRes(op) == 1 );
 	CPPAD_ASSERT_UNKNOWN( 0 < arg[0] );
-	CPPAD_ASSERT_UNKNOWN( arg[0] < num_combined );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) < num_combined );
 	size_t i_v = combined[ arg[0] - 1 ];
 	CPPAD_ASSERT_UNKNOWN( i_v < vecad_sparsity.n_set() );
 

@@ -73,8 +73,8 @@ that will be printed after the text.
 \li parameter != CPPAD_NULL
 \li NumArg(PripOp) == 2
 \li NumRes(PripOp) == 0
-\li arg[0] < num_text
-\li arg[1] < num_par
+\li size_t(arg[0]) < num_text
+\li size_t(arg[1]) < num_par
 */
 template <class Base>
 inline void forward_prip_0(
@@ -89,8 +89,8 @@ inline void forward_prip_0(
 	CPPAD_ASSERT_UNKNOWN( parameter != CPPAD_NULL )
 	CPPAD_ASSERT_UNKNOWN( NumArg(PripOp) == 2 );
 	CPPAD_ASSERT_UNKNOWN( NumRes(PripOp) == 0 );
-	CPPAD_ASSERT_UNKNOWN( arg[0] < num_text );
-	CPPAD_ASSERT_UNKNOWN( arg[1] < num_par );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) < num_text );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[1]) < num_par );
 
 	std::cout << text + arg[0];
 	std::cout << parameter[ arg[1] ];
@@ -150,8 +150,8 @@ is zero order taylor coefficient that will be printed.
 \li text != CPPAD_NULL
 \li NumArg(PrivOp) == 2
 \li NumRes(PrivOp) == 0
-\li arg[0] < num_test
-\li arg[1] <= i_z
+\li size_t(arg[0]) < num_test
+\li size_t(arg[1]) <= i_z
 */
 template <class Base>
 inline void forward_priv_0(
@@ -166,8 +166,8 @@ inline void forward_priv_0(
 	CPPAD_ASSERT_UNKNOWN( text != CPPAD_NULL )
 	CPPAD_ASSERT_UNKNOWN( NumArg(PripOp) == 2 );
 	CPPAD_ASSERT_UNKNOWN( NumRes(PripOp) == 0 );
-	CPPAD_ASSERT_UNKNOWN( arg[0] < num_text );
-	CPPAD_ASSERT_UNKNOWN( arg[1] <= i_z );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) < num_text );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[1]) <= i_z );
 
 	std::cout << text + arg[0];
 	std::cout << taylor[ arg[1] * nc_taylor + 0 ];

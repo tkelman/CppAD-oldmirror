@@ -77,7 +77,7 @@ inline void forward_dis_op_0(
 	// check assumptions
 	CPPAD_ASSERT_UNKNOWN( NumArg(DisOp) == 2 );
 	CPPAD_ASSERT_UNKNOWN( NumRes(DisOp) == 1 );
-	CPPAD_ASSERT_UNKNOWN( arg[1] < i_z );
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[1]) < i_z );
 	CPPAD_ASSERT_UNKNOWN( 0 < nc_taylor );
 
 	// Taylor coefficients corresponding to argument and result

@@ -247,16 +247,18 @@ then
 		dir_list="$dir_list 
 		IPOPT_DIR=$IPOPT_DIR"
 	fi
+	# Use TAPE_ADDR_TYPE=int (a signed type) to do more checking for 
+	# slicing from size_t to addr_t.
 	dir_list=`echo $dir_list | sed -e 's|\t\t*| |g'`
 	echo "../configure \\"
 	echo "$dir_list" | sed -e 's| | \\\n\t|g' -e 's|$| \\|' -e 's|^|\t|'
 	echo "	CXX_FLAGS=\"-Wall -ansi -pedantic-errors -std=c++98 -Wshadow\"\\"
-	echo "	TAPE_ADDR_TYPE=\"unsigned short int\"\\"
+	echo "	TAPE_ADDR_TYPE=\"int\"\\"
 	echo "--with-Documentation"
 	#
 	../configure $dir_list \
 		CXX_FLAGS="-Wall -ansi -pedantic-errors -std=c++98 -Wshadow" \
-		TAPE_ADDR_TYPE="unsigned short int" \
+		TAPE_ADDR_TYPE="int" \
 		--with-Documentation
 	#
 	for file in $configure_file_list
