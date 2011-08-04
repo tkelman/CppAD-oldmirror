@@ -60,6 +60,19 @@ This section contains a list of the changes to CppAD during 2011
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
 
+$head branches/base_require$$
+The $icode Base$$ type $cref/requirements/base_require/$$ need to be changed
+to fix an 
+$href%
+	http://list.coin-or.org/pipermail/cppad/2011q3/000210.html%
+	optimize bug
+%$$.
+These changes were done in the svn branch $code branches/base_require$$.
+
+$subhead 08-04$$
+Change the $cref/include/base_require/Include/$$ file requirements
+in $cref/base_require/$$.
+
 $head 08-03$$
 Change $cref/PrintFor/$$ condition from less than or equal zero 
 to not greater than zero;i.e., not positive.

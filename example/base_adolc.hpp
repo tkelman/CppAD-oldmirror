@@ -70,13 +70,11 @@ The file $cref/ode_taylor_adolc.cpp/$$ contains a more realistic
 
 
 $head Include File$$
-This file is included before $code <cppad/cppad.hpp>$$
-so it is necessary to define the error handler
-in addition to including
-$cref/declare.hpp/base_require/declare.hpp/$$
+This file $code base_adolc.hpp$$ is included before $code <cppad/cppad.hpp>$$,
+but it is to include parts of CppAD that are used by this file.
+This is done with the following include command:
 $codep */
-# include <cppad/declare.hpp>
-# include <cppad/error_handler.hpp>
+# include <cppad/base_require.hpp>
 
 /* $$
 

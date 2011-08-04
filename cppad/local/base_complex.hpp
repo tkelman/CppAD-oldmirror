@@ -14,7 +14,6 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin base_complex.hpp$$
 $spell
-	omp_alloc
 	imag
 	gcc
 	isnan
@@ -62,13 +61,11 @@ $head Include File$$
 This file is included before $code <cppad/cppad.hpp>$$
 so it is necessary to define the error handler
 in addition to including
-$cref/declare.hpp/base_require/declare.hpp/$$
+$cref/base_require.hpp/base_require/Include/$$
 $codep */
 # include <limits>
 # include <complex>
-# include <cppad/declare.hpp>
-# include <cppad/error_handler.hpp>
-# include <cppad/omp_alloc.hpp>
+# include <cppad/base_require.hpp>
 # include <cppad/local/cppad_assert.hpp>
 /* $$
 

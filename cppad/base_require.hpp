@@ -1,5 +1,8 @@
-$Id$
-d/* --------------------------------------------------------------------------
+// $Id$
+# ifndef CPPAD_BASE_REQUIRE_INCLUDED
+# define CPPAD_BASE_REQUIRE_INCLUDED
+
+/* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-11 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
@@ -10,6 +13,7 @@ A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
+/*
 $begin base_require$$
 $spell
 	isnan
@@ -48,9 +52,18 @@ $index type, Base require$$
 
 $section AD<Base> Requirements for Base Type$$
 
+$head Syntax$$
+$code include <cppad/base_require.hpp>$$
+
+$head Warning$$
+This is a preliminary version of these specifications
+and it is subject to change in future versions of CppAD.
+
 $head Purpose$$
 This section lists the requirements for the type
 $italic Base$$ so that the type $syntax%AD<%Base%>%$$ can be used.
+
+$subhead Standard Base Types$$
 In the case where $italic Base$$ is 
 $code float$$, 
 $code double$$,
@@ -60,29 +73,21 @@ or $syntax%AD<%Other%>%$$,
 these requirements are provided by including he file
 $code cppad/cppad.hpp$$.
 
-$head Warning$$
-This is a preliminary version of these specifications
-and it is subject to change in future versions of CppAD.
+$head Include$$
+If you are linking a non-standard base type to CppAD,
+you must first include the file $code cppad/base_require.hpp/$$,
+then provide the specifications below, 
+and then include the file $code cppad/cppad.hpp$$.
 
 $head Numeric Type$$
 The type $italic Base$$ must support all the operations for a 
 $cref/NumericType/$$.
-
-$head declare.hpp$$
-The base type requirements must be included before the rest of
-CppAD. It is however necessary to declare the $code enum$$ type
-$code CompareOp$$ (and possible other things).
-This should be done with the following include command:
-$codep 
-	# include <cppad/local/declare.hpp>
-$$
 
 $head isnan$$
 If your base type defines the $code isnan$$ function,
 you may have to override its definition in the CppAD namespace
 (to avoid a function ambiguity).
 For example, see the complex version of $cref/isnan/base_complex.hpp/isnan/$$.
-
 
 $head CondExp$$
 $index CondExp, Base require$$
@@ -399,3 +404,9 @@ $cref/base_complex.hpp/$$ and $cref/base_adolc.hpp/$$
 contain example implementations of these requirements.
 
 $end
+*/
+# include <cppad/declare.hpp>
+# include <cppad/error_handler.hpp>
+# include <cppad/local/cppad_assert.hpp>
+
+# endif
