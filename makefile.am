@@ -109,7 +109,6 @@ nobase_myinclude_HEADERS =  \
 	cppad/check_simple_vector.hpp \
 	cppad/configure.hpp \
 	cppad/cppad.hpp \
-	cppad/declare.hpp \
 	cppad/elapsed_seconds.hpp \
 	cppad/error_handler.hpp \
 	cppad/local/abort_recording.hpp \
@@ -130,6 +129,9 @@ nobase_myinclude_HEADERS =  \
 	cppad/local/atan2.hpp \
 	cppad/local/atan_op.hpp \
 	cppad/local/base_complex.hpp \
+	cppad/local/base_cond_exp.hpp \
+	cppad/local/base_double.hpp \
+	cppad/local/base_float.hpp \
 	cppad/local/bender_quad.hpp \
 	cppad/local/bool_fun.hpp \
 	cppad/local/bool_valued.hpp \

@@ -12,6 +12,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 $begin whats_new_11$$
 $spell
+	CondExp
 	num
 	Taylor
 	Tanh
@@ -70,8 +71,13 @@ $href%
 These changes were done in the svn branch $code branches/base_require$$.
 
 $subhead 08-04$$
+$list number$$
 Change the $cref/include/base_require/Include/$$ file requirements
 in $cref/base_require/$$.
+$lnext
+Use $cref base_float.hpp$$ and $cref base_double.hpp$$ as additional examples
+in the $code/CondExp/base_require/CondExp/$$ $icode Base$$ requirements.
+$lend
 
 $head 08-03$$
 Change $cref/PrintFor/$$ condition from less than or equal zero 

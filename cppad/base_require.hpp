@@ -61,15 +61,15 @@ and it is subject to change in future versions of CppAD.
 
 $head Purpose$$
 This section lists the requirements for the type
-$italic Base$$ so that the type $syntax%AD<%Base%>%$$ can be used.
+$icode Base$$ so that the type $codei%AD<%Base%>%$$ can be used.
 
 $subhead Standard Base Types$$
-In the case where $italic Base$$ is 
+In the case where $icode Base$$ is 
 $code float$$, 
 $code double$$,
 $code std::complex<float>$$, 
 $code std::complex<double>$$,
-or $syntax%AD<%Other%>%$$,
+or $codei%AD<%Other%>%$$,
 these requirements are provided by including he file
 $code cppad/cppad.hpp$$.
 
@@ -80,7 +80,7 @@ then provide the specifications below,
 and then include the file $code cppad/cppad.hpp$$.
 
 $head Numeric Type$$
-The type $italic Base$$ must support all the operations for a 
+The type $icode Base$$ must support all the operations for a 
 $cref/NumericType/$$.
 
 $head isnan$$
@@ -89,99 +89,31 @@ you may have to override its definition in the CppAD namespace
 (to avoid a function ambiguity).
 For example, see the complex version of $cref/isnan/base_complex.hpp/isnan/$$.
 
-$head CondExp$$
-$index CondExp, Base require$$
-The type $italic Base$$ must support the syntax
-$syntax%
-	%result% = CondExpOp(%cop%, %left%, %right%, %trueCase%, %falseCase%)
-%$$
-which computes the result for the corresponding $cref/CondExp/$$ function.
-The argument $italic cop$$ has prototype
-$syntax%
-	enum CppAD::CompareOp %cop%
-%$$ 
-The possible values for this enum type are
-$code CompareLt$$,
-$code CompareLe$$,
-$code CompareEq$$,
-$code CompareGe$$, and
-$code CompareGt$$.
-The other arguments have the prototype
-$syntax%
-	const %Base%      &%left% ,
-	const %Base%     &%right% ,
-	const %Base%  &%trueCase% ,
-	const %Base% &%falseCase% )
-%$$
-The result has prototype
-$syntax%
-	%Base%  &%result%
-%$$
-
-$subhead Ordered Type$$
-If $italic Base$$ is a relatively simple type
-(does not record operations for future calculations) and it supports
-$code <$$, $code <=$$, $code ==$$, $code >=$$, and $code >$$ operators
-its $code CondExpOp$$ function can be defined by
-$syntax%
-namespace CppAD {
-	inline %Base% CondExpOp(
-	enum CppAD::CompareOp      cop ,
-	const %Base%             &left ,
-	const %Base%            &right ,
-	const %Base%         &trueCase ,
-	const %Base%        &falseCase )
-	{	return CppAD::CondExpTemplate(
-			cop, left, right, trueCase, falseCase);
-	}
-}
-%$$
-
-$subhead Not Ordered$$
-If the type $italic Base$$ does not support ordering,
-the $code CondExpOp$$ function does not make sense.
-In this case one might (but need not) define $code CondExpOp$$ as follows:
-$syntax%
-namespace CppAD {
-	inline %Base% CondExpOp(
-	enum CompareOp      cop ,
-	const %Base%      &left ,
-	const %Base%     &right ,
-	const %Base%  &trueCase ,
-	const %Base% &falseCase )
-	{	// attempt to use CondExp with a %Base% argument
-		assert(0);
-		return %Base%(0);
-	}
-}
-%$$
-
-
 $head EqualOpSeq$$
 $index EqualOpSeq, Base require$$
 If function $cref/EqualOpSeq/$$ is used with 
-arguments of type $syntax%AD<%Base%>%$$,
-the type $italic Base$$ must support the syntax
-$syntax%
+arguments of type $codei%AD<%Base%>%$$,
+the type $icode Base$$ must support the syntax
+$codei%
 	%b% = EqualOpSeq(%x%, %y%)
 %$$
-which returns true if and only if $italic x$$ is equal to $italic y$$
+which returns true if and only if $icode x$$ is equal to $icode y$$
 (this is used by the $cref/EqualOpSeq/$$ function).
-The arguments $italic x$$ and $italic y$$ have prototype
-$syntax%
-	const %Base% &%x%
-	const %Base% &%y%
+The arguments $icode x$$ and $icode y$$ have prototype
+$codei%
+	const %Base%& %x%
+	const %Base%& %y%
 %$$
-The return value $italic b$$ has prototype
-$syntax%
+The return value $icode b$$ has prototype
+$codei%
 	bool %b%
 %$$
 
 $subhead Suggestion$$
-If $italic Base$$ is a relatively simple type
+If $icode Base$$ is a relatively simple type
 (does not record operations for future calculations),
 the $code EqualOpSeq$$ function can be defined by
-$syntax%
+$codei%
 namespace CppAD {
 	inline %Base% EqualOpSeq(const %Base% &x, const %Base% &y)
 	{	return x == y; }
@@ -190,61 +122,61 @@ namespace CppAD {
 
 $head Identical$$
 $index Identical, Base require$$
-If the type $italic Base$$ records what operations are preformed by
-$syntax%AD<%Base%>%$$,
-CppAD must know if the $italic Base$$ value corresponding to an operation 
+If the type $icode Base$$ records what operations are preformed by
+$codei%AD<%Base%>%$$,
+CppAD must know if the $icode Base$$ value corresponding to an operation 
 will be the same. 
 For example, suppose the current operation is between two
-$syntax%AD<%Base%>%$$ objects where $italic Base$$ is $code AD<double>$$;
+$codei%AD<%Base%>%$$ objects where $icode Base$$ is $code AD<double>$$;
 some optimizations depend on one of the objects being a
 $cref/parameter/glossary/Parameter/$$ as well as its
-corresponding $italic Base$$ value also being a parameter.
-In general, the type $italic Base$$ must support the following functions:
+corresponding $icode Base$$ value also being a parameter.
+In general, the type $icode Base$$ must support the following functions:
 
 $table
 $bold Syntax$$ $cnext $bold Result$$
 $rnext
-$syntax%%b% = IdenticalPar(%x%)%$$ $pre  $$
-	$cnext the $italic Base$$ value will always be the same 
+$icode%b% = IdenticalPar(%x%)%$$ $pre  $$
+	$cnext the $icode Base$$ value will always be the same 
 $rnext
-$syntax%%b% = IdenticalZero(%x%)%$$ $pre  $$
-	$cnext $italic x$$ equals zero and $syntax%IdenticalPar(%x%)%$$
+$icode%b% = IdenticalZero(%x%)%$$ $pre  $$
+	$cnext $icode x$$ equals zero and $codei%IdenticalPar(%x%)%$$
 $rnext
-$syntax%%b% = IdenticalOne(%x%)%$$ $pre  $$
-	$cnext $italic x$$ equals one and $syntax%IdenticalPar(%x%)%$$
+$icode%b% = IdenticalOne(%x%)%$$ $pre  $$
+	$cnext $icode x$$ equals one and $codei%IdenticalPar(%x%)%$$
 $rnext
-$syntax%%b% = IdenticalEqualPar(%x%, %y%)%$$ $pre  $$
-	$cnext $italic x$$ equals $italic y$$,
- 	$syntax%IdenticalPar(%x%)%$$ and
- 	$syntax%IdenticalPar(%y%)%$$
+$icode%b% = IdenticalEqualPar(%x%, %y%)%$$ $pre  $$
+	$cnext $icode x$$ equals $icode y$$,
+ 	$codei%IdenticalPar(%x%)%$$ and
+ 	$codei%IdenticalPar(%y%)%$$
 $tend
 
-The argument $italic x$$ has prototype
-$syntax%
+The argument $icode x$$ has prototype
+$codei%
 	const %Base% %x%
 %$$
-If it is present, the argument $italic y$$ has prototype
-$syntax%
+If it is present, the argument $icode y$$ has prototype
+$codei%
 	const %Base% %y%
 %$$
-The result $italic b$$ has prototype
-$syntax%
+The result $icode b$$ has prototype
+$codei%
 	bool %b%
 %$$
 
 $subhead Suggestion$$
 Note that $code false$$ is a slow but safer option for all of these functions.
-If $italic Base$$ is a relatively simple type
+If $icode Base$$ is a relatively simple type
 (does not record operations for future calculations),
 the $code IdenticalPar$$ function can be defined by
-$syntax%
+$codei%
 namespace CppAD {
 	inline bool IdenticalPar(const %Base% &x)
 	{	return true; }
 }
 %$$
 and the $code IdenticalZero$$ function can be defined by
-$syntax%
+$codei%
 namespace CppAD {
 	inline bool IdenticalZero(const %Base% &x)
         {       return x == Base(0); }
@@ -254,32 +186,32 @@ The other functions could be defined in a similar manner.
 $pre
 
 $$
-If the $italic Base$$ type records operations and may change 
-the value of $italic x$$ or $italic y$$ during some future calculation,
+If the $icode Base$$ type records operations and may change 
+the value of $icode x$$ or $icode y$$ during some future calculation,
 these functions should return false.
 If you are not sure what should be returned, 
 false is a safer value (but makes some calculations slower).
 
 $head Integer$$
 $index Integer, Base require$$
-The type $italic Base$$ must support the syntax
-$syntax%
+The type $icode Base$$ must support the syntax
+$codei%
 	%i% = Integer(%x%)
 %$$
-which converts $italic x$$ to an $code int$$.
-The argument $italic x$$ has prototype
-$syntax%
-	const %Base% &%x%
+which converts $icode x$$ to an $code int$$.
+The argument $icode x$$ has prototype
+$codei%
+	const %Base%& %x%
 %$$
-and the return value $italic i$$ has prototype
-$syntax%
+and the return value $icode i$$ has prototype
+$codei%
 	int %i%
 %$$
 
 $subhead Suggestion$$
-The $italic Base$$ version of the $code Integer$$ function
+The $icode Base$$ version of the $code Integer$$ function
 might be defined by
-$syntax%
+$codei%
 namespace CppAD {
 	inline int Integer(const %Base% &x)
 	{	return static_cast<int>(x); }
@@ -295,36 +227,36 @@ $index LessThanOrZero, Base require$$
 
 So that CppAD can be used with a base type that does not support the 
 ordering operations $code >$$, $code >=$$, $code <$$, or $code <=$$,
-$italic Base$$ must support the following functions:
+$icode Base$$ must support the following functions:
 $table
 $bold Syntax$$ $cnext $bold Result$$
 $rnext
-$syntax%%b% = GreaterThanZero(%x%)%$$   $pre  $$
+$icode%b% = GreaterThanZero(%x%)%$$   $pre  $$
 	$cnext $latex x > 0$$
 $rnext
-$syntax%%b% = GreaterThanOrZero(%x%)%$$ $pre  $$
+$icode%b% = GreaterThanOrZero(%x%)%$$ $pre  $$
 	$cnext $latex x \geq 0$$
 $rnext
-$syntax%%b% = LessThanZero(%x%)%$$      $pre  $$
+$icode%b% = LessThanZero(%x%)%$$      $pre  $$
 	$cnext $latex x < 0$$
 $rnext
-$syntax%%b% = LessThanOrZero(%x%)%$$    $pre  $$
+$icode%b% = LessThanOrZero(%x%)%$$    $pre  $$
 	$cnext $latex x \leq 0$$
 $tend
-The argument $italic x$$ has prototype
-$syntax%
-	const %Base% &%x%
+The argument $icode x$$ has prototype
+$codei%
+	const %Base%& %x%
 %$$
-and the result $italic b$$ has prototype
-$syntax%
+and the result $icode b$$ has prototype
+$codei%
 	bool %b%
 %$$
 
 $subhead Ordered Type$$
-If the type $italic Base$$ supports ordered operations,
+If the type $icode Base$$ supports ordered operations,
 these functions should have their corresponding definitions.
 For example,
-$syntax%
+$codei%
 namespace CppAD {
 	inline bool GreaterThanZero(const %Base% &x)
 	{	return (x > 0);
@@ -334,9 +266,9 @@ namespace CppAD {
 The other functions would replace $code >$$ by the corresponding operator.
 
 $subhead Not Ordered$$
-If the type $italic Base$$ does not support ordering,
+If the type $icode Base$$ does not support ordering,
 one might (but need not) define $code GreaterThanZero$$ as follows:
-$syntax%
+$codei%
 namespace CppAD {
 	inline bool GreaterThanZero(const %Base% &x)
 	{	// attempt to use GreaterThanZero with a %Base% argument
@@ -349,64 +281,70 @@ The other functions would have the corresponding definition.
 
 $head pow$$
 $index pow, Base require$$
-The type $italic Base$$ must support the syntax
-$syntax%
+The type $icode Base$$ must support the syntax
+$codei%
 	%z% = pow(%x%, %y%)
 %$$
 which computes $latex z = x^y$$.
-The arguments $italic x$$ and $italic y$$ have prototypes
-$syntax%
-	const %Base% &%x%
-	const %Base% &%y%
+The arguments $icode x$$ and $icode y$$ have prototypes
+$codei%
+	const %Base%& %x%
+	const %Base%& %y%
 %$$
-The return value $italic z$$ has prototype
-$syntax%
+The return value $icode z$$ has prototype
+$codei%
 	%Base% %z%
 %$$
 
 $head Standard Math Unary$$
 $index math, Base require$$
-The type $italic Base$$ must support the following 
+The type $icode Base$$ must support the following 
 $cref/standard math unary functions/std_math_ad/$$:
 $table
 $bold Syntax$$ $cnext $bold Result$$ 
 $rnext
-$syntax%%y% = acos(%x%)%$$ $cnext inverse cosine $rnext
-$syntax%%y% = asin(%x%)%$$ $cnext inverse sine   $rnext
-$syntax%%y% = atan(%x%)%$$ $cnext inverse tangent   $rnext
-$syntax%%y% = cos(%x%)%$$  $cnext cosine            $rnext
-$syntax%%y% = cosh(%x%)%$$ $cnext hyperbolic cosine $rnext
-$syntax%%y% = exp(%x%)%$$ $cnext exponential        $rnext
-$syntax%%y% = log(%x%)%$$ $cnext natural logarithm          $rnext
-$syntax%%y% = sin(%x%)%$$ $cnext sine               $rnext
-$syntax%%y% = sinh(%x%)%$$ $cnext hyperbolic sine   $rnext
-$syntax%%y% = sqrt(%x%)%$$ $cnext square root       $rnext
-$syntax%%y% = tan(%x%)%$$  $cnext tangent           
+$icode%y% = acos(%x%)%$$ $cnext inverse cosine $rnext
+$icode%y% = asin(%x%)%$$ $cnext inverse sine   $rnext
+$icode%y% = atan(%x%)%$$ $cnext inverse tangent   $rnext
+$icode%y% = cos(%x%)%$$  $cnext cosine            $rnext
+$icode%y% = cosh(%x%)%$$ $cnext hyperbolic cosine $rnext
+$icode%y% = exp(%x%)%$$ $cnext exponential        $rnext
+$icode%y% = log(%x%)%$$ $cnext natural logarithm          $rnext
+$icode%y% = sin(%x%)%$$ $cnext sine               $rnext
+$icode%y% = sinh(%x%)%$$ $cnext hyperbolic sine   $rnext
+$icode%y% = sqrt(%x%)%$$ $cnext square root       $rnext
+$icode%y% = tan(%x%)%$$  $cnext tangent           
 $tend
 
-The argument $italic x$$ has prototype
-$syntax%
-	const %Base% &%x%
+The argument $icode x$$ has prototype
+$codei%
+	const %Base%& %x%
 %$$
-and the result $italic y$$ has prototype
-$syntax%
+and the result $icode y$$ has prototype
+$codei%
 	%Base% %y%
 %$$
 
-$children%
+$childtable%
+	cppad/local/base_cond_exp.hpp%
+	cppad/local/base_float.hpp%
+	cppad/local/base_double.hpp%
 	cppad/local/base_complex.hpp%
 	example/base_adolc.hpp
 %$$
 
-$head Example$$
-The files
-$cref/base_complex.hpp/$$ and $cref/base_adolc.hpp/$$ 
-contain example implementations of these requirements.
-
 $end
 */
-# include <cppad/declare.hpp>
+
+// definitions that must come before base implementations
 # include <cppad/error_handler.hpp>
+# include <cppad/local/define.hpp>
 # include <cppad/local/cppad_assert.hpp>
+# include <cppad/local/base_cond_exp.hpp>
+
+// base implementations that come with CppAD
+# include <cppad/local/base_float.hpp>
+# include <cppad/local/base_double.hpp>
+# include <cppad/local/base_complex.hpp>
 
 # endif
