@@ -350,49 +350,6 @@ CPPAD_INLINE AD<Base> CondExp(
 }
 
 # undef CPPAD_COND_EXP
-# define CPPAD_COND_EXP(Name, Op, Type)                             \
-	inline Type CondExp##Name(                                  \
-		const Type &left      ,                             \
-		const Type &right     ,                             \
-		const Type &exp_if_true  ,                             \
-		const Type &exp_if_false )                             \
-	{	Type returnValue;                                   \
-		if( left Op right )                                 \
-			returnValue = exp_if_true;                     \
-		else	returnValue = exp_if_false;                    \
-		return returnValue;                                 \
-	}
-
-// float
-CPPAD_COND_EXP(Lt,  <, float)
-CPPAD_COND_EXP(Le, <=, float)
-CPPAD_COND_EXP(Eq, ==, float)
-CPPAD_COND_EXP(Ge, >=, float)
-CPPAD_COND_EXP(Gt,  >, float)
-inline float CondExp(
-	const float &flag      , 
-	const float &exp_if_true  ,
-	const float &exp_if_false )
-{	
-	return CondExpGt(flag, float(0), exp_if_true, exp_if_false);
-}
-
-// double
-CPPAD_COND_EXP(Lt,  <, double)
-CPPAD_COND_EXP(Le, <=, double)
-CPPAD_COND_EXP(Eq, ==, double)
-CPPAD_COND_EXP(Ge, >=, double)
-CPPAD_COND_EXP(Gt,  >, double)
-inline double CondExp(
-	const double &flag      , 
-	const double &exp_if_true  ,
-	const double &exp_if_false )
-{	
-	return CondExpGt(flag, 0., exp_if_true, exp_if_false);
-}
-
-# undef CPPAD_COND_EXP
-
 } // END CppAD namespace
 
 # endif 
