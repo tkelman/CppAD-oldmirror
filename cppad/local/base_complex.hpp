@@ -14,6 +14,8 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin base_complex.hpp$$
 $spell
+	Rel
+	Lt Le Eq Ge Gt
 	imag
 	gcc
 	isnan
@@ -113,6 +115,18 @@ namespace CppAD {
 	}
 }
 /* $$
+
+$head CondExpRel$$
+The following macro invocation
+$codep */
+namespace CppAD {
+	CPPAD_COND_EXP_REL( std::complex<double> )
+}
+/* $$
+used $code CondExpOp$$ above to
+define $codei%CondExp%Rel%$$ for $code std::complex<double>$$ arguments
+and $icode%Rel%$$ equal to
+$code Lt$$, $code Le$$, $code Eq$$, $code Ge$$, and $code Gt$$.
 
 $head EqualOpSeq$$
 Complex numbers do not carry operation sequence information. 
@@ -284,6 +298,8 @@ namespace CppAD {
 		);
 		return std::complex<float>(0);
 	}
+	// CondExpRel --------------------------------------------------------
+	CPPAD_COND_EXP_REL( std::complex<float> )
 	// EqualOpSeq -----------------------------------------------------
 	inline bool EqualOpSeq(
 		const std::complex<float> &x , 

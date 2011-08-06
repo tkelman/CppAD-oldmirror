@@ -16,6 +16,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /* 
 $begin base_cond_exp$$
 $spell
+	Rel
 	hpp
 	enum
 	namespace
@@ -125,9 +126,28 @@ namespace CppAD {
 	}
 }
 %$$
-For example see
+For example, see
 $cref/complex CondExpOp/base_complex.hpp/CondExpOp/$$.
  
+$head CondExpRel$$
+The macro invocation
+$codei%
+	CPPAD_COND_EXP_REL(%Base%)
+%$$
+uses $code CondExpOp$$ above to define the following functions
+$codei%
+	CondExpLt(%left%, %right%, %exp_if_true%, %exp_if_false%)
+	CondExpLe(%left%, %right%, %exp_if_true%, %exp_if_false%)
+	CondExpEq(%left%, %right%, %exp_if_true%, %exp_if_false%)
+	CondExpGe(%left%, %right%, %exp_if_true%, %exp_if_false%)
+	CondExpGt(%left%, %right%, %exp_if_true%, %exp_if_false%)
+%$$
+where the arguments have type $icode Base$$.
+This should be done inside of the CppAD namespace.
+For example, see
+$cref/float/base_float.hpp/CondExpRel/$$,
+$cref/double/base_double.hpp/CondExpRel/$$, and
+$cref/complex/base_complex.hpp/CondExpRel/$$.
 
 $end
 */
@@ -137,6 +157,49 @@ CPPAD_BEGIN_NAMESPACE
 /*!
 \file base_cond_exp.hpp
 CondExp operations that aid in meeting Base type requirements.
+*/
+
+/*!
+\def CPPAD_COND_EXP_BASE_REL(Type, Rel, Op)
+The macro defines the operation
+\verbatim
+	CondExpRel(left, right, exp_if_true, exp_if_false)
+\endverbatim
+The argument \c Type is the \c Base type for this base require operation.
+The argument \c Rel is one of \c Lt, \c Le, \c Eq, \c Ge, \c Gt.
+The argument \c Op is the corresponding \c CompareOp value.
+*/
+# define CPPAD_COND_EXP_BASE_REL(Type, Rel, Op)       \
+	inline Type CondExp##Rel(                        \
+		const Type& left      ,                     \
+		const Type& right     ,                     \
+		const Type& exp_if_true  ,                  \
+		const Type& exp_if_false )                  \
+	{	return CondExpOp(Op, left, right, exp_if_true, exp_if_false); \
+	}
+
+/*!
+\def CPPAD_COND_EXP_REL(Type)
+The macro defines the operations
+\verbatim
+	CondExpLt(left, right, exp_if_true, exp_if_false)
+	CondExpLe(left, right, exp_if_true, exp_if_false)
+	CondExpEq(left, right, exp_if_true, exp_if_false)
+	CondExpGe(left, right, exp_if_true, exp_if_false)
+	CondExpGt(left, right, exp_if_true, exp_if_false)
+\endverbatim
+The argument \c Type is the \c Base type for this base require operation.
+*/
+# define CPPAD_COND_EXP_REL(Type)                     \
+	CPPAD_COND_EXP_BASE_REL(Type, Lt, CompareLt)     \
+	CPPAD_COND_EXP_BASE_REL(Type, Le, CompareLe)     \
+	CPPAD_COND_EXP_BASE_REL(Type, Eq, CompareEq)     \
+	CPPAD_COND_EXP_BASE_REL(Type, Ge, CompareGe)     \
+	CPPAD_COND_EXP_BASE_REL(Type, Gt, CompareGt)
+
+/*!
+Template function to implement Conditional Expressions for simple types
+that have comparision operators.
 
 \tparam CompareType
 is the type of the left and right operands to the comparision operator.
@@ -163,7 +226,7 @@ is the right operand to the comparision operator.
 \param exp_if_true
 is the return value is the comparision results in true.
 
-\param exp_if_true
+\param exp_if_false
 is the return value is the comparision results in false.
 
 \return

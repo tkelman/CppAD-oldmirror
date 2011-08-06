@@ -14,6 +14,8 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin base_double.hpp$$
 $spell
+	Lt Le Eq Ge Gt
+	Rel
 	CppAD
 	CondExpOp
 	namespace
@@ -47,6 +49,19 @@ namespace CppAD {
 	}
 }
 /* $$
+
+$head CondExpRel$$
+The following macro invocation
+$codep */
+namespace CppAD {
+	CPPAD_COND_EXP_REL(double)
+}
+/* $$
+uses $code CondExpOp$$ above to
+define $codei%CondExp%Rel%$$ for $code double$$ arguments
+and $icode%Rel%$$ equal to
+$code Lt$$, $code Le$$, $code Eq$$, $code Ge$$, and $code Gt$$.
+
 $end
 */
 

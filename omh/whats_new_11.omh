@@ -12,7 +12,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 $begin whats_new_11$$
 $spell
-	CondExp
+	CondExpRel
 	num
 	Taylor
 	Tanh
@@ -69,6 +69,13 @@ $href%
 	optimize bug
 %$$.
 These changes were done in the svn branch $code branches/base_require$$.
+
+$subhead 08-06$$
+Add the $cref/CondExpRel/base_cond_exp/CondExpRel/$$ paragraph to the 
+base requirements documentation. 
+This was missing and are required for
+$cref/CondExp/$$ to work with $codei%AD<%Base%>%$$ arguments
+and a non-standard $icode Base$$ type.
 
 $subhead 08-04$$
 $list number$$
