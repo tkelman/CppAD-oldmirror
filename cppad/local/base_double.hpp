@@ -14,6 +14,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin base_double.hpp$$
 $spell
+	bool
 	Lt Le Eq Ge Gt
 	Rel
 	CppAD
@@ -61,6 +62,30 @@ uses $code CondExpOp$$ above to
 define $codei%CondExp%Rel%$$ for $code double$$ arguments
 and $icode%Rel%$$ equal to
 $code Lt$$, $code Le$$, $code Eq$$, $code Ge$$, and $code Gt$$.
+
+$head EqualOpSeq$$
+The type $code double$$ is simple (in this respect) and so we define
+$codep */
+namespace CppAD {
+	inline bool EqualOpSeq(const double& x, const double& y)
+	{	return x == y; }
+}
+/* $$
+
+$head Identical$$
+The type $code double$$ is simple (in this respect) and so we define
+$codep */
+namespace CppAD {
+	inline bool IdenticalPar(const double& x)
+	{	return true; }
+	inline bool IdenticalZero(const double& x)
+	{	return (x == 0.); }
+	inline bool IdenticalOne(const double& x)
+	{	return (x == 1.); }
+	inline bool IdenticalEqualPar(const double& x, const double& y)
+	{	return (x == y); }
+}
+/* $$
 
 $end
 */

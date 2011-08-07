@@ -35,7 +35,7 @@ $spell
 	inline
 $$
 
-$section base_cond_exp$$
+$section Base Type Requirements for Conditional Expressions$$
 $index CondExp, base require$$
 $index base, CondExp require$$
 $index require, base CondExp$$

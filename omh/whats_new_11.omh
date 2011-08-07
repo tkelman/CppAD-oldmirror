@@ -70,6 +70,11 @@ $href%
 %$$.
 These changes were done in the svn branch $code branches/base_require$$.
 
+$subhead 08-07$$
+Improve the $cref/base_require/$$ documentation for 
+$cref/EqualOpSeq/base_identical/EqualOpSeq/$$ and
+$cref/Identical/base_identical/Identical/$$ operations.
+
 $subhead 08-06$$
 Add the $cref/CondExpRel/base_cond_exp/CondExpRel/$$ paragraph to the 
 base requirements documentation. 
