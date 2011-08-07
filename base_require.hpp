@@ -89,109 +89,6 @@ you may have to override its definition in the CppAD namespace
 (to avoid a function ambiguity).
 For example, see the complex version of $cref/isnan/base_complex.hpp/isnan/$$.
 
-$head EqualOpSeq$$
-$index EqualOpSeq, Base require$$
-If function $cref/EqualOpSeq/$$ is used with 
-arguments of type $codei%AD<%Base%>%$$,
-the type $icode Base$$ must support the syntax
-$codei%
-	%b% = EqualOpSeq(%x%, %y%)
-%$$
-which returns true if and only if $icode x$$ is equal to $icode y$$
-(this is used by the $cref/EqualOpSeq/$$ function).
-The arguments $icode x$$ and $icode y$$ have prototype
-$codei%
-	const %Base%& %x%
-	const %Base%& %y%
-%$$
-The return value $icode b$$ has prototype
-$codei%
-	bool %b%
-%$$
-
-$subhead Suggestion$$
-If $icode Base$$ is a relatively simple type
-(does not record operations for future calculations),
-the $code EqualOpSeq$$ function can be defined by
-$codei%
-namespace CppAD {
-	inline %Base% EqualOpSeq(const %Base% &x, const %Base% &y)
-	{	return x == y; }
-}
-%$$
-
-$head Identical$$
-$index Identical, Base require$$
-If the type $icode Base$$ records what operations are preformed by
-$codei%AD<%Base%>%$$,
-CppAD must know if the $icode Base$$ value corresponding to an operation 
-will be the same. 
-For example, suppose the current operation is between two
-$codei%AD<%Base%>%$$ objects where $icode Base$$ is $code AD<double>$$;
-some optimizations depend on one of the objects being a
-$cref/parameter/glossary/Parameter/$$ as well as its
-corresponding $icode Base$$ value also being a parameter.
-In general, the type $icode Base$$ must support the following functions:
-
-$table
-$bold Syntax$$ $cnext $bold Result$$
-$rnext
-$icode%b% = IdenticalPar(%x%)%$$ $pre  $$
-	$cnext the $icode Base$$ value will always be the same 
-$rnext
-$icode%b% = IdenticalZero(%x%)%$$ $pre  $$
-	$cnext $icode x$$ equals zero and $codei%IdenticalPar(%x%)%$$
-$rnext
-$icode%b% = IdenticalOne(%x%)%$$ $pre  $$
-	$cnext $icode x$$ equals one and $codei%IdenticalPar(%x%)%$$
-$rnext
-$icode%b% = IdenticalEqualPar(%x%, %y%)%$$ $pre  $$
-	$cnext $icode x$$ equals $icode y$$,
- 	$codei%IdenticalPar(%x%)%$$ and
- 	$codei%IdenticalPar(%y%)%$$
-$tend
-
-The argument $icode x$$ has prototype
-$codei%
-	const %Base% %x%
-%$$
-If it is present, the argument $icode y$$ has prototype
-$codei%
-	const %Base% %y%
-%$$
-The result $icode b$$ has prototype
-$codei%
-	bool %b%
-%$$
-
-$subhead Suggestion$$
-Note that $code false$$ is a slow but safer option for all of these functions.
-If $icode Base$$ is a relatively simple type
-(does not record operations for future calculations),
-the $code IdenticalPar$$ function can be defined by
-$codei%
-namespace CppAD {
-	inline bool IdenticalPar(const %Base% &x)
-	{	return true; }
-}
-%$$
-and the $code IdenticalZero$$ function can be defined by
-$codei%
-namespace CppAD {
-	inline bool IdenticalZero(const %Base% &x)
-        {       return x == Base(0); }
-}
-%$$
-The other functions could be defined in a similar manner.
-$pre
-
-$$
-If the $icode Base$$ type records operations and may change 
-the value of $icode x$$ or $icode y$$ during some future calculation,
-these functions should return false.
-If you are not sure what should be returned, 
-false is a safer value (but makes some calculations slower).
-
 $head Integer$$
 $index Integer, Base require$$
 The type $icode Base$$ must support the syntax
@@ -327,6 +224,7 @@ $codei%
 
 $childtable%
 	cppad/local/base_cond_exp.hpp%
+	cppad/local/base_identical.hpp%
 	cppad/local/base_float.hpp%
 	cppad/local/base_double.hpp%
 	cppad/local/base_complex.hpp%
@@ -340,9 +238,12 @@ $end
 # include <cppad/error_handler.hpp>
 # include <cppad/local/define.hpp>
 # include <cppad/local/cppad_assert.hpp>
-# include <cppad/local/base_cond_exp.hpp>
 
-// base implementations that come with CppAD
+// grouping documentation by feature
+# include <cppad/local/base_cond_exp.hpp>
+# include <cppad/local/base_identical.hpp>
+
+// base cases that come with CppAD
 # include <cppad/local/base_float.hpp>
 # include <cppad/local/base_double.hpp>
 # include <cppad/local/base_complex.hpp>
