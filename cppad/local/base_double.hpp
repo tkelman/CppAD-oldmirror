@@ -87,6 +87,14 @@ namespace CppAD {
 }
 /* $$
 
+$head Integer$$
+$codep */
+namespace CppAD {
+	inline int Integer(const double& x)
+	{	return static_cast<int>(x); }
+}
+/* $$
+
 $end
 */
 

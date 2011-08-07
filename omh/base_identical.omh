@@ -1,7 +1,4 @@
-/* $Id$ */
-# ifndef CPPAD_BASE_IDENTICAL_INCLUDED
-# define CPPAD_BASE_IDENTICAL_INCLUDED
-
+// $Id$$
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-11 Bradley M. Bell
 
@@ -142,5 +139,3 @@ $cref/adolc identical/base_adolc.hpp/Identical/$$.
 
 $end
 */
-
-# endif

@@ -90,7 +90,9 @@ you may have to override its definition in the CppAD namespace
 For example, see the complex version of $cref/isnan/base_complex.hpp/isnan/$$.
 
 $head Integer$$
-$index Integer, Base require$$
+$index Integer, base require$$
+$index base, Integer require$$
+$index require, base Integer$$
 The type $icode Base$$ must support the syntax
 $codei%
 	%i% = Integer(%x%)
@@ -104,6 +106,10 @@ and the return value $icode i$$ has prototype
 $codei%
 	int %i%
 %$$
+For example, see
+$cref/float EqualOpSeq/base_float.hpp/EqualOpSeq/$$,
+$cref/double EqualOpSeq/base_double.hpp/EqualOpSeq/$$, and
+$cref/complex EqualOpSeq/base_complex.hpp/EqualOpSeq/$$.
 
 $subhead Suggestion$$
 The $icode Base$$ version of the $code Integer$$ function
@@ -224,7 +230,7 @@ $codei%
 
 $childtable%
 	cppad/local/base_cond_exp.hpp%
-	cppad/local/base_identical.hpp%
+	omh/base_identical.omh%
 	cppad/local/base_float.hpp%
 	cppad/local/base_double.hpp%
 	cppad/local/base_complex.hpp%
@@ -241,7 +247,6 @@ $end
 
 // grouping documentation by feature
 # include <cppad/local/base_cond_exp.hpp>
-# include <cppad/local/base_identical.hpp>
 
 // base cases that come with CppAD
 # include <cppad/local/base_float.hpp>
