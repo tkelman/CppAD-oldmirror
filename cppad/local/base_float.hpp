@@ -95,6 +95,21 @@ namespace CppAD {
 }
 /* $$
 
+$head Ordered$$
+The $code float$$ type supports ordered comparisons
+$codep */
+namespace CppAD {
+	inline bool GreaterThanZero(const float& x)
+	{	return x > 0.f; }
+	inline bool GreaterThanOrZero(const float& x)
+	{	return x >= 0.f; }
+	inline bool LessThanZero(const float& x)
+	{	return x < 0.f; }
+	inline bool LessThanOrZero(const float& x)
+	{	return x <= 0.f; }
+}
+/* $$
+
 $end
 */
 
