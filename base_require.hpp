@@ -121,67 +121,6 @@ namespace CppAD {
 }
 %$$
 
-
-$head Ordered$$
-$index GreaterThanZero, Base require$$
-$index GreaterThanZero, Base require$$
-$index LessThanOrZero, Base require$$
-$index LessThanOrZero, Base require$$
-
-So that CppAD can be used with a base type that does not support the 
-ordering operations $code >$$, $code >=$$, $code <$$, or $code <=$$,
-$icode Base$$ must support the following functions:
-$table
-$bold Syntax$$ $cnext $bold Result$$
-$rnext
-$icode%b% = GreaterThanZero(%x%)%$$   $pre  $$
-	$cnext $latex x > 0$$
-$rnext
-$icode%b% = GreaterThanOrZero(%x%)%$$ $pre  $$
-	$cnext $latex x \geq 0$$
-$rnext
-$icode%b% = LessThanZero(%x%)%$$      $pre  $$
-	$cnext $latex x < 0$$
-$rnext
-$icode%b% = LessThanOrZero(%x%)%$$    $pre  $$
-	$cnext $latex x \leq 0$$
-$tend
-The argument $icode x$$ has prototype
-$codei%
-	const %Base%& %x%
-%$$
-and the result $icode b$$ has prototype
-$codei%
-	bool %b%
-%$$
-
-$subhead Ordered Type$$
-If the type $icode Base$$ supports ordered operations,
-these functions should have their corresponding definitions.
-For example,
-$codei%
-namespace CppAD {
-	inline bool GreaterThanZero(const %Base% &x)
-	{	return (x > 0);
-	}
-}
-%$$
-The other functions would replace $code >$$ by the corresponding operator.
-
-$subhead Not Ordered$$
-If the type $icode Base$$ does not support ordering,
-one might (but need not) define $code GreaterThanZero$$ as follows:
-$codei%
-namespace CppAD {
-	inline bool GreaterThanZero(const %Base% &x)
-	{	// attempt to use GreaterThanZero with a %Base% argument
-		assert(0);
-		return x;
-	}
-}
-%$$
-The other functions would have the corresponding definition.
-
 $head pow$$
 $index pow, Base require$$
 The type $icode Base$$ must support the syntax
@@ -231,6 +170,7 @@ $codei%
 $childtable%
 	cppad/local/base_cond_exp.hpp%
 	omh/base_identical.omh%
+	omh/base_ordered.omh%
 	cppad/local/base_float.hpp%
 	cppad/local/base_double.hpp%
 	cppad/local/base_complex.hpp%

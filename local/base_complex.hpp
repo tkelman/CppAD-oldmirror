@@ -159,7 +159,7 @@ namespace CppAD {
 /* $$
 
 $head Ordered$$
-
+Complex types do not support comparison operators, 
 $codep */
 namespace CppAD {
 	inline bool GreaterThanZero(const std::complex<double> &x)
