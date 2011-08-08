@@ -78,24 +78,6 @@ $codep */
 
 /* $$
 
-$head Standard Math Functions Defined by Adolc Package$$
-The following $cref/required/base_require/$$ 
-functions are defined by the Adolc package:
-$pre
-$$
-$code acos$$,
-$code asin$$,
-$code atan$$,
-$code cos$$,
-$code cosh$$,
-$code exp$$,
-$code log$$,
-$code pow$$,
-$code sin$$,
-$code sinh$$,
-$code sqrt$$,
-$code tan$$.
-
 $head CondExpOp$$
 The type $code adouble$$ supports a conditional assignment function
 with the syntax
@@ -189,6 +171,12 @@ namespace CppAD {
 }
 /* $$
 
+$head Integer$$
+$codep */
+	inline int Integer(const adouble &x)
+	{    return static_cast<int>( x.getValue() ); }
+/* $$
+
 $head Ordered$$
 $codep */
 	inline bool GreaterThanZero(const adouble &x)
@@ -201,11 +189,29 @@ $codep */
 	{    return (x <= 0); }
 /* $$
 
-$head Integer$$
-$codep */
-	inline int Integer(const adouble &x)
-	{    return static_cast<int>( x.getValue() ); }
-/* $$
+$head Unary Standard Math$$
+The following $cref/required/base_require/$$ functions 
+are defined by the Adolc package for the $code adouble$$ base case:
+$pre
+$$
+$code abs$$,
+$code acos$$,
+$code asin$$,
+$code atan$$,
+$code cos$$,
+$code cosh$$,
+$code exp$$,
+$code log$$,
+$code sin$$,
+$code sinh$$,
+$code sqrt$$,
+$code tan$$.
+
+$head pow$$
+This $cref/required/base_require/$$ function 
+is defined by the Adolc package for the $code adouble$$ base case.
+
 $end
 */
 # endif
+

@@ -380,6 +380,7 @@ nobase_myinclude_HEADERS = \
 	cppad/local/base_cond_exp.hpp \
 	cppad/local/base_double.hpp \
 	cppad/local/base_float.hpp \
+	cppad/local/base_std_math.hpp \
 	cppad/local/bender_quad.hpp \
 	cppad/local/bool_fun.hpp \
 	cppad/local/bool_valued.hpp \
@@ -511,7 +512,6 @@ nobase_myinclude_HEADERS = \
 	cppad/speed/sparse_evaluate.hpp \
 	cppad/speed_test.hpp \
 	cppad/speed/uniform_01.hpp \
-	cppad/std_math_unary.hpp \
 	cppad/track_new_del.hpp \
 	cppad/vector.hpp
 

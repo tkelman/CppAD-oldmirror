@@ -70,11 +70,16 @@ $href%
 %$$.
 These changes were done in the svn branch $code branches/base_require$$.
 
+$subhead 08-8$$
+Improve the $cref/base_require/$$ documentation for
+$cref/standard math functions/base_std_math/$$.
+
 $subhead 08-07$$
 Improve the $cref/base_require/$$ documentation for 
 $cref/EqualOpSeq/base_identical/EqualOpSeq/$$,
-$cref/Identical/base_identical/Identical/$$ and
-$cref/Integer/base_require/Integer/$$
+$cref/Identical/base_identical/Identical/$$ 
+$cref/Integer/base_require/Integer/$$, and 
+$cref/Ordered/base_ordered/$$
 operations.
 
 $subhead 08-06$$

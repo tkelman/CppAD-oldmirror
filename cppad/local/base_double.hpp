@@ -14,6 +14,14 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin base_double.hpp$$
 $spell
+	acos
+	asin
+	atan
+	cos
+	sqrt
+	tanh
+	std
+	fabs
 	bool
 	Lt Le Eq Ge Gt
 	Rel
@@ -110,6 +118,44 @@ namespace CppAD {
 }
 /* $$
 
+$head Unary Standard Math$$
+The following macro invocations define the unary standard math functions
+required to use $code AD<double>$$:
+$codep */
+namespace CppAD {
+	CPPAD_STANDARD_MATH_UNARY(double, acos)
+	CPPAD_STANDARD_MATH_UNARY(double, asin)
+	CPPAD_STANDARD_MATH_UNARY(double, atan)
+	CPPAD_STANDARD_MATH_UNARY(double, cos)
+	CPPAD_STANDARD_MATH_UNARY(double, cosh)
+	CPPAD_STANDARD_MATH_UNARY(double, exp)
+	CPPAD_STANDARD_MATH_UNARY(double, log)
+	CPPAD_STANDARD_MATH_UNARY(double, log10)
+	CPPAD_STANDARD_MATH_UNARY(double, sin)
+	CPPAD_STANDARD_MATH_UNARY(double, sinh)
+	CPPAD_STANDARD_MATH_UNARY(double, sqrt)
+	CPPAD_STANDARD_MATH_UNARY(double, tan)
+	CPPAD_STANDARD_MATH_UNARY(double, tanh)
+}
+/* $$
+The absolute value function is special because its $code std$$ name is 
+$code fabs$$
+$codep */
+namespace CppAD {
+	inline double abs(const double& x)
+	{	return std::fabs(x); }
+}
+/* $$
+
+$head pow $$
+The following defines a $code CppAD::pow$$ function that
+is required to use $code AD<double>$$:
+$codep */
+namespace CppAD {
+	inline double pow(const double& x, const double& y)
+	{ return std::pow(x, y); }
+}
+/* $$
 $end
 */
 
