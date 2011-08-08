@@ -14,6 +14,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin base_complex.hpp$$
 $spell
+	abs_geq
 	Rel
 	Lt Le Eq Ge Gt
 	imag
@@ -161,39 +162,25 @@ namespace CppAD {
 $head Ordered$$
 Complex types do not support comparison operators, 
 $codep */
+# undef  CPPAD_USER_MACRO
+# define CPPAD_USER_MACRO(Fun)                                     \
+inline bool Fun(const std::complex<double>& x)                     \
+{      CppAD::ErrorHandler::Call(                                  \
+               true     , __LINE__ , __FILE__ ,                    \
+               "#Fun(x)",                                          \
+               "Error: cannot use " #Fun " with complex<double> "  \
+       );                                                          \
+       return false;                                               \
+}
 namespace CppAD {
-	inline bool GreaterThanZero(const std::complex<double> &x)
-	{	CppAD::ErrorHandler::Call(
-			true     , __LINE__ , __FILE__ ,
-			"GreaterThanZero(x)",
-			"Error: cannot use GreaterThanZero with complex"
-		);
-		return false;
-	}
-	inline bool GreaterThanOrZero(const std::complex<double> &x)
-	{	CppAD::ErrorHandler::Call(
-			true     , __LINE__ , __FILE__ ,
-			"GreaterThanZero(x)",
-			"Error: cannot use GreaterThanZero with complex"
-		);
-		return false;
-	}
-	inline bool LessThanZero(const std::complex<double> &x)
-	{	CppAD::ErrorHandler::Call(
-			true     , __LINE__ , __FILE__ ,
-			"LessThanZero(x)",
-			"Error: cannot use LessThanZero with complex"
-		);
-		return false;
-	}
-	inline bool LessThanOrZero(const std::complex<double> &x)
-	{	CppAD::ErrorHandler::Call(
-			true     , __LINE__ , __FILE__ ,
-			"LessThanZero(x)",
-			"Error: cannot use LessThanZero with complex"
-		);
-		return false;
-	}
+	CPPAD_USER_MACRO(LessThanZero)
+	CPPAD_USER_MACRO(LessThanOrZero)
+	CPPAD_USER_MACRO(GreaterThanOrZero)
+	CPPAD_USER_MACRO(GreaterThanZero)
+	inline bool abs_geq(
+		const std::complex<double>& x , 
+		const std::complex<double>& y )
+	{	return std::abs(x) >= std::abs(y); }
 }
 /* $$
 
@@ -259,8 +246,18 @@ namespace CppAD {
 /* $$
 $end
 */
-# undef  CPPAD_USER_MACRO
-# define CPPAD_USER_MACRO(Fun)                                     \
+# undef  CPPAD_USER_MACRO_ONE
+# define CPPAD_USER_MACRO_ONE(Fun)                                 \
+inline bool Fun(const std::complex<float>& x)                      \
+{      CppAD::ErrorHandler::Call(                                  \
+               true     , __LINE__ , __FILE__ ,                    \
+               "#Fun(x)",                                          \
+               "Error: cannot use " #Fun " with complex<float> "   \
+       );                                                          \
+       return false;                                               \
+}
+# undef  CPPAD_USER_MACRO_TWO
+# define CPPAD_USER_MACRO_TWO(Fun)                                 \
 inline std::complex<float> Fun(const std::complex<float>& x)       \
 {      CppAD::ErrorHandler::Call(                                  \
                true     , __LINE__ , __FILE__ ,                    \
@@ -303,38 +300,14 @@ namespace CppAD {
 		const std::complex<float> &x, const std::complex<float> &y)
 	{	return (x == y); }
 	// Ordered --------------------------------------------------------
-	inline bool GreaterThanZero(const std::complex<float> &x)
-	{	CppAD::ErrorHandler::Call(
-			true     , __LINE__ , __FILE__ ,
-			"GreaterThanZero(x)",
-			"Error: cannot use GreaterThanZero with complex"
-		);
-		return false;
-	}
-	inline bool GreaterThanOrZero(const std::complex<float> &x)
-	{	CppAD::ErrorHandler::Call(
-			true     , __LINE__ , __FILE__ ,
-			"GreaterThanOrZero(x)",
-			"Error: cannot use GreaterThanOrZero with complex"
-		);
-		return false;
-	}
-	inline bool LessThanZero(const std::complex<float> &x)
-	{	CppAD::ErrorHandler::Call(
-			true     , __LINE__ , __FILE__ ,
-			"LessThanZero(x)",
-			"Error: cannot use LessThanZero with complex"
-		);
-		return false;
-	}
-	inline bool LessThanOrZero(const std::complex<float> &x)
-	{	CppAD::ErrorHandler::Call(
-			true     , __LINE__ , __FILE__ ,
-			"LessThanOrZero(x)",
-			"Error: cannot use LessThanOrZero with complex"
-		);
-		return false;
-	}
+	CPPAD_USER_MACRO_ONE(LessThanZero)
+	CPPAD_USER_MACRO_ONE(LessThanOrZero)
+	CPPAD_USER_MACRO_ONE(GreaterThanOrZero)
+	CPPAD_USER_MACRO_ONE(GreaterThanZero)
+	inline bool abs_geq(
+		const std::complex<float>& x , 
+		const std::complex<float>& y )
+	{	return std::abs(x) >= std::abs(y); }
 	// Integer ------------------------------------------------------
 	inline int Integer(const std::complex<float> &x)
 	{	return static_cast<int>( x.real() ); }
@@ -347,11 +320,10 @@ namespace CppAD {
 	CPPAD_STANDARD_MATH_UNARY(std::complex<float>, sinh)
 	CPPAD_STANDARD_MATH_UNARY(std::complex<float>, sqrt)
 	// Invalid standrd math functions -------------------------------
-	CPPAD_USER_MACRO(abs)
-	CPPAD_USER_MACRO(acos)
-	CPPAD_USER_MACRO(asin)
-	CPPAD_USER_MACRO(atan)
-	CPPAD_USER_MACRO(erf)
+	CPPAD_USER_MACRO_TWO(abs)
+	CPPAD_USER_MACRO_TWO(acos)
+	CPPAD_USER_MACRO_TWO(asin)
+	CPPAD_USER_MACRO_TWO(atan)
 	// The pow function
 	inline std::complex<float> pow(
 		const std::complex<float> &x , 
