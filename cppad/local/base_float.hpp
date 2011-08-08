@@ -14,6 +14,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin base_float.hpp$$
 $spell
+	abs_geq
 	acos
 	asin
 	atan
@@ -115,6 +116,8 @@ namespace CppAD {
 	{	return x < 0.f; }
 	inline bool LessThanOrZero(const float& x)
 	{	return x <= 0.f; }
+	inline bool abs_geq(const float& x, const float& y)
+	{	return std::fabs(x) >= std::fabs(y); }
 }
 /* $$
 

@@ -12,6 +12,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 $begin whats_new_11$$
 $spell
+	abs_geq
 	CondExpRel
 	num
 	Taylor
@@ -70,9 +71,22 @@ $href%
 %$$.
 These changes were done in the svn branch $code branches/base_require$$.
 
-$subhead 08-8$$
+$subhead 08-08$$
+$list number$$
 Improve the $cref/base_require/$$ documentation for
 $cref/standard math functions/base_std_math/$$.
+$lnext 
+$bold Warning$$:
+Add $code abs_geq$$ to the $cref/requirements/base_require/$$
+for a user defined $icode Base$$ type. 
+$lnext
+Check that zero order forward mode results are approximately equal,
+instead of exactly equal,
+after an $cref optimize$$ operation.
+This fixes a bug in the optimize correctness check
+(The  order of operations can be changed by $code optimize$$
+and hence the zero order forward mode results may not be exactly the same.)
+$lend
 
 $subhead 08-07$$
 Improve the $cref/base_require/$$ documentation for 
@@ -91,8 +105,9 @@ and a non-standard $icode Base$$ type.
 
 $subhead 08-04$$
 $list number$$
-Change the $cref/include/base_require/Include/$$ file requirements
-in $cref/base_require/$$.
+$bold Warning$$:
+Change the $cref/include/base_require/Include/$$ file name to
+$cref/base_require.hpp/base_require/$$.
 $lnext
 Use $cref base_float.hpp$$ and $cref base_double.hpp$$ as additional examples
 in the $code/CondExp/base_require/CondExp/$$ $icode Base$$ requirements.

@@ -14,6 +14,8 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin base_adolc.hpp$$
 $spell
+	abs_geq
+	fabs
 	cppad.hpp
 	undef
 	Lt
@@ -70,10 +72,12 @@ The file $cref/ode_taylor_adolc.cpp/$$ contains a more realistic
 
 
 $head Include File$$
-This file $code base_adolc.hpp$$ is included before $code <cppad/cppad.hpp>$$,
+This file $code base_adolc.hpp$$ requires $code adouble$$ to be defined.
+In addition it is included before $code <cppad/cppad.hpp>$$,
 but it is to include parts of CppAD that are used by this file.
 This is done with the following include command:
 $codep */
+# include <adolc/adouble.h>
 # include <cppad/base_require.hpp>
 
 /* $$
@@ -187,6 +191,8 @@ $codep */
 	{    return (x < 0); }
 	inline bool LessThanOrZero(const adouble &x)
 	{    return (x <= 0); }
+	inline bool abs_geq(const adouble& x, const adouble& y)
+	{	return fabs(x) >= fabs(y); }
 /* $$
 
 $head Unary Standard Math$$

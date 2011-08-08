@@ -12,6 +12,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin base_ordered$$
 $spell
+	abs_geq
 	const
 	bool
 	namespace
@@ -22,8 +23,8 @@ $$
 $section Base Type Requirements for Ordered Comparisons$$
 
 $head Purpose$$
-The following operations must be supported by a 
-an AD $cref/base class/base_require/$$:
+The following operations are required to use the type
+$codei%AD<%Base%>%$$:
 
 $table
 $bold Syntax$$ $cnext $bold Result$$
@@ -39,14 +40,15 @@ $icode%b% = LessThanZero(%x%)%$$      $pre  $$
 $rnext
 $icode%b% = LessThanOrZero(%x%)%$$    $pre  $$
 	$cnext $latex x \leq 0$$
+$rnext
+$icode%b% = abs_geq(%x%, %y%)%$$      $pre  $$
+	$cnext $latex |x| \geq |y|$$.
 $tend
-The argument $icode x$$ has prototype
+where the arguments and return value have the prototypes
 $codei%
 	const %Base%& %x%
-%$$
-and the result $icode b$$ has prototype
-$codei%
-	bool %b%
+	const %Base%& %y%
+	bool  %%      %b%
 %$$
 
 $head Ordered Type$$
