@@ -208,80 +208,66 @@ namespace CppAD {
 }
 /* $$
 
-$head Standard Functions$$
-
-$subhead Valid Complex Functions$$
-The following standard math functions,
-that are required by $cref/base_require/$$,
-are defined by 
-$code std::complex$$:
-$code cos$$,
-$code cosh$$,
-$code exp$$,
-$code log$$,
-$code pow$$,
-$code sin$$,
-$code sinh$$,
-$code sqrt$$.
+$head Unary Standard Math$$
+The following macro invocations define unary standard math functions
+required to use $code AD< std::complex<double> >$$
+and that are valid with complex arguments:
 $codep */
-# define CPPAD_USER_MACRO(function)                                   \
-inline std::complex<double> function(const std::complex<double> &x)   \
-{	return std::function(x); }
-
 namespace CppAD {
-	CPPAD_USER_MACRO(cos)
-	CPPAD_USER_MACRO(cosh)
-	CPPAD_USER_MACRO(exp)
-	CPPAD_USER_MACRO(log)
-	inline std::complex<double> pow(
-		const std::complex<double> &x , 
-		const std::complex<double> &y )
-	{	return std::pow(x, y); }
-	CPPAD_USER_MACRO(sin)
-	CPPAD_USER_MACRO(sinh)
-	CPPAD_USER_MACRO(sqrt)
+	CPPAD_STANDARD_MATH_UNARY(std::complex<double>, cos)
+	CPPAD_STANDARD_MATH_UNARY(std::complex<double>, cosh)
+	CPPAD_STANDARD_MATH_UNARY(std::complex<double>, exp)
+	CPPAD_STANDARD_MATH_UNARY(std::complex<double>, log)
+	CPPAD_STANDARD_MATH_UNARY(std::complex<double>, sin)
+	CPPAD_STANDARD_MATH_UNARY(std::complex<double>, sinh)
+	CPPAD_STANDARD_MATH_UNARY(std::complex<double>, sqrt)
 }
 /* $$
-
-$subhead Invalid Complex Functions$$
-The other standard math functions,
-(and $code abs$$) required by $cref/base_require/$$
-are not defined for complex types
-(see $cref/abs/abs/Complex Types/$$).
-Hence we make it an error to use them.
-(Note that the standard math functions are not defined in the CppAD namespace.)
+The following macro definition and invocations 
+define unary standard math functions
+required to use $code AD< std::complex<double> >$$
+and that are invalid with complex arguments:
 $codep */
 # undef  CPPAD_USER_MACRO
-# define CPPAD_USER_MACRO(function)                                          \
-inline std::complex<double> function(const std::complex<double> &x)          \
-{      CppAD::ErrorHandler::Call(                                            \
-               true     , __LINE__ , __FILE__ ,                              \
-               "std::complex<double>",                                       \
-               "Error: cannot use " #function " with complex<double> "       \
-       );                                                                    \
-       return std::complex<double>(0);                                       \
+# define CPPAD_USER_MACRO(Fun)                                     \
+inline std::complex<double> Fun(const std::complex<double>& x)     \
+{      CppAD::ErrorHandler::Call(                                  \
+               true     , __LINE__ , __FILE__ ,                    \
+               "#Fun(x)",                                          \
+               "Error: cannot use " #Fun " with complex<double> "  \
+       );                                                          \
+       return std::complex<double>(0);                             \
 }
-
 namespace CppAD {
+	CPPAD_USER_MACRO(abs)
 	CPPAD_USER_MACRO(acos)
 	CPPAD_USER_MACRO(asin)
 	CPPAD_USER_MACRO(atan)
 }
 /* $$
+
+$head pow $$
+The following defines a $code CppAD::pow$$ function that
+is required to use $code AD< std::complex<double> >$$:
+$codep */
+namespace CppAD {
+	inline std::complex<double> pow(
+		const std::complex<double> &x , 
+		const std::complex<double> &y )
+	{	return std::pow(x, y); }
+}
+/* $$
 $end
 */
-# define CPPAD_VALID_COMPLEX_CASE(function)                           \
-inline std::complex<float> function(const std::complex<float> &x)     \
-{	return std::function(x); }
-
-# define CPPAD_INVALID_COMPLEX_CASE(function)                                 \
-inline std::complex<float> function(const std::complex<float> &x)             \
-{	CppAD::ErrorHandler::Call(                                            \
-		true     , __LINE__ , __FILE__ ,                              \
-		"std::complex<float>",                                        \
-		"Error: cannot use " #function " with a complex type"         \
-	);                                                                    \
-	return std::complex<float>(0);                                        \
+# undef  CPPAD_USER_MACRO
+# define CPPAD_USER_MACRO(Fun)                                     \
+inline std::complex<float> Fun(const std::complex<float>& x)       \
+{      CppAD::ErrorHandler::Call(                                  \
+               true     , __LINE__ , __FILE__ ,                    \
+               "#Fun(x)",                                          \
+               "Error: cannot use " #Fun " with complex<float> "   \
+       );                                                          \
+       return std::complex<float>(0);                              \
 }
 namespace CppAD {
 	// CondExpOp ------------------------------------------------------
@@ -353,28 +339,24 @@ namespace CppAD {
 	inline int Integer(const std::complex<float> &x)
 	{	return static_cast<int>( x.real() ); }
 	// Valid standard math functions --------------------------------
-	CPPAD_VALID_COMPLEX_CASE(cos)
-	CPPAD_VALID_COMPLEX_CASE(cosh)
-	CPPAD_VALID_COMPLEX_CASE(exp)
-	CPPAD_VALID_COMPLEX_CASE(log)
+	CPPAD_STANDARD_MATH_UNARY(std::complex<float>, cos)
+	CPPAD_STANDARD_MATH_UNARY(std::complex<float>, cosh)
+	CPPAD_STANDARD_MATH_UNARY(std::complex<float>, exp)
+	CPPAD_STANDARD_MATH_UNARY(std::complex<float>, log)
+	CPPAD_STANDARD_MATH_UNARY(std::complex<float>, sin)
+	CPPAD_STANDARD_MATH_UNARY(std::complex<float>, sinh)
+	CPPAD_STANDARD_MATH_UNARY(std::complex<float>, sqrt)
+	// Invalid standrd math functions -------------------------------
+	CPPAD_USER_MACRO(abs)
+	CPPAD_USER_MACRO(acos)
+	CPPAD_USER_MACRO(asin)
+	CPPAD_USER_MACRO(atan)
+	CPPAD_USER_MACRO(erf)
+	// The pow function
 	inline std::complex<float> pow(
 		const std::complex<float> &x , 
 		const std::complex<float> &y )
 	{	return std::pow(x, y); }
-	CPPAD_VALID_COMPLEX_CASE(sin)
-	CPPAD_VALID_COMPLEX_CASE(sinh)
-	CPPAD_VALID_COMPLEX_CASE(sqrt)
-	// Invalid standrd math functions -------------------------------
-	CPPAD_INVALID_COMPLEX_CASE(abs)
-	CPPAD_INVALID_COMPLEX_CASE(acos)
-	CPPAD_INVALID_COMPLEX_CASE(asin)
-	CPPAD_INVALID_COMPLEX_CASE(atan)
-	CPPAD_INVALID_COMPLEX_CASE(erf)
 }
-
-// preprocessor symbols that are local to this file
-# undef CPPAD_USER_MACRO
-# undef CPPAD_VALID_COMPLEX_CASE
-# undef CPPAD_INVALID_COMPLEX_CASE
 
 # endif

@@ -106,10 +106,6 @@ and the return value $icode i$$ has prototype
 $codei%
 	int %i%
 %$$
-For example, see
-$cref/float EqualOpSeq/base_float.hpp/EqualOpSeq/$$,
-$cref/double EqualOpSeq/base_double.hpp/EqualOpSeq/$$, and
-$cref/complex EqualOpSeq/base_complex.hpp/EqualOpSeq/$$.
 
 $subhead Suggestion$$
 The $icode Base$$ version of the $code Integer$$ function
@@ -120,57 +116,16 @@ namespace CppAD {
 	{	return static_cast<int>(x); }
 }
 %$$
-
-$head pow$$
-$index pow, Base require$$
-The type $icode Base$$ must support the syntax
-$codei%
-	%z% = pow(%x%, %y%)
-%$$
-which computes $latex z = x^y$$.
-The arguments $icode x$$ and $icode y$$ have prototypes
-$codei%
-	const %Base%& %x%
-	const %Base%& %y%
-%$$
-The return value $icode z$$ has prototype
-$codei%
-	%Base% %z%
-%$$
-
-$head Standard Math Unary$$
-$index math, Base require$$
-The type $icode Base$$ must support the following 
-$cref/standard math unary functions/std_math_ad/$$:
-$table
-$bold Syntax$$ $cnext $bold Result$$ 
-$rnext
-$icode%y% = acos(%x%)%$$ $cnext inverse cosine $rnext
-$icode%y% = asin(%x%)%$$ $cnext inverse sine   $rnext
-$icode%y% = atan(%x%)%$$ $cnext inverse tangent   $rnext
-$icode%y% = cos(%x%)%$$  $cnext cosine            $rnext
-$icode%y% = cosh(%x%)%$$ $cnext hyperbolic cosine $rnext
-$icode%y% = exp(%x%)%$$ $cnext exponential        $rnext
-$icode%y% = log(%x%)%$$ $cnext natural logarithm          $rnext
-$icode%y% = sin(%x%)%$$ $cnext sine               $rnext
-$icode%y% = sinh(%x%)%$$ $cnext hyperbolic sine   $rnext
-$icode%y% = sqrt(%x%)%$$ $cnext square root       $rnext
-$icode%y% = tan(%x%)%$$  $cnext tangent           
-$tend
-
-The argument $icode x$$ has prototype
-$codei%
-	const %Base%& %x%
-%$$
-and the result $icode y$$ has prototype
-$codei%
-	%Base% %y%
-%$$
+For example, see
+$cref/float/base_float.hpp/Integer/$$,
+$cref/double/base_double.hpp/Integer/$$, and
+$cref/complex/base_complex.hpp/Integer/$$.
 
 $childtable%
 	cppad/local/base_cond_exp.hpp%
 	omh/base_identical.omh%
 	omh/base_ordered.omh%
+	cppad/local/base_std_math.hpp%
 	cppad/local/base_float.hpp%
 	cppad/local/base_double.hpp%
 	cppad/local/base_complex.hpp%
@@ -187,6 +142,7 @@ $end
 
 // grouping documentation by feature
 # include <cppad/local/base_cond_exp.hpp>
+# include <cppad/local/base_std_math.hpp>
 
 // base cases that come with CppAD
 # include <cppad/local/base_float.hpp>

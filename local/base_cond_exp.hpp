@@ -42,7 +42,7 @@ $index require, base CondExp$$
 
 $head Purpose$$
 These definitions are required by the user's code to support the 
-$icode Base$$ type for $cref/CondExp/$$ operations:
+$codei%AD<%Base%>%$$ type for $cref/CondExp/$$ operations:
 
 $head CompareOp$$
 The following $code enum$$ type is used in the specifications below:
@@ -130,6 +130,7 @@ For example, see
 $cref/complex CondExpOp/base_complex.hpp/CondExpOp/$$.
  
 $head CondExpRel$$
+$index CPPAD_COND_EXP_REL$$
 The macro invocation
 $codei%
 	CPPAD_COND_EXP_REL(%Base%)
@@ -161,7 +162,7 @@ CondExp operations that aid in meeting Base type requirements.
 
 /*!
 \def CPPAD_COND_EXP_BASE_REL(Type, Rel, Op)
-The macro defines the operation
+This macro defines the operation
 \verbatim
 	CondExpRel(left, right, exp_if_true, exp_if_false)
 \endverbatim
