@@ -82,6 +82,7 @@ extern bool CppAD_vector(void);
 extern bool Default(void);
 extern bool Div(void);
 extern bool DivEq(void);
+extern bool epsilon(void);
 extern bool Eq(void);
 extern bool EqualOpSeq(void);
 extern bool Erf(void);
@@ -232,6 +233,8 @@ int main(void)
 	ok &= Run( Default,           "Default"          );
 	ok &= Run( Div,               "Div"              );
 	ok &= Run( DivEq,             "DivEq"            );
+	ok &= Run( epsilon,           "epsilon"          );
+	ok &= Run( Eq,                "Eq"               );
 	ok &= Run( EqualOpSeq,        "EqualOpSeq"       );
 	ok &= Run( Erf,               "Erf"              );
 	ok &= Run( ErrorHandler,      "ErrorHandler"     );
