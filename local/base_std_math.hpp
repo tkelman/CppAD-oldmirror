@@ -42,7 +42,7 @@ $index math, base unary$$
 $index base, unary math$$
 $index unary, base math$$
 The type $icode Base$$ must support the following functions
-unary standard math functions:
+unary standard math functions (in the CppAD namespace):
 $table
 $bold Syntax$$ $cnext $bold Result$$ 
 $rnext

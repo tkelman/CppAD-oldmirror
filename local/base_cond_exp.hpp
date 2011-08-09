@@ -64,7 +64,9 @@ namespace CppAD {
 $head CondExpTemplate$$
 The type $icode Base$$ must support the syntax
 $codei%
-	%result% = CondExpOp(%cop%, %left%, %right%, %exp_if_true%, %exp_if_false%)
+	%result% = CppAD::CondExpOp(
+		%cop%, %left%, %right%, %exp_if_true%, %exp_if_false%
+	)
 %$$
 which computes implements the corresponding $cref/CondExp/$$ 
 function when the result has prototype

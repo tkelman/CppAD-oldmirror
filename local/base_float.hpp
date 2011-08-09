@@ -11,6 +11,8 @@ the terms of the
 A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
+# include <limits>
+
 /*
 $begin base_float.hpp$$
 $spell
@@ -101,6 +103,15 @@ $codep */
 namespace CppAD {
 	inline int Integer(const float& x)
 	{	return static_cast<int>(x); }
+}
+/*$$
+
+$head epsilon$$
+$codep */
+namespace CppAD {
+	template <>
+	inline float epsilon<float>(void)
+	{	return std::numeric_limits<float>::epsilon(); }
 }
 /* $$
 
