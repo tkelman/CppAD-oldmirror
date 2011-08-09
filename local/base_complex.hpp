@@ -151,8 +151,8 @@ $codep */
 inline bool Fun(const std::complex<double>& x)                     \
 {      CppAD::ErrorHandler::Call(                                  \
                true     , __LINE__ , __FILE__ ,                    \
-               "#Fun(x)",                                          \
-               "Error: cannot use " #Fun " with complex<double> "  \
+               #Fun"(x)",                                          \
+               "Error: cannot use " #Fun " with x complex<double> " \
        );                                                          \
        return false;                                               \
 }
@@ -238,8 +238,8 @@ $codep */
 inline std::complex<double> Fun(const std::complex<double>& x)     \
 {      CppAD::ErrorHandler::Call(                                  \
                true     , __LINE__ , __FILE__ ,                    \
-               "#Fun(x)",                                          \
-               "Error: cannot use " #Fun " with complex<double> "  \
+               #Fun"(x)",                                          \
+               "Error: cannot use " #Fun " with x complex<double> " \
        );                                                          \
        return std::complex<double>(0);                             \
 }
@@ -269,8 +269,8 @@ $end
 inline bool Fun(const std::complex<float>& x)                      \
 {      CppAD::ErrorHandler::Call(                                  \
                true     , __LINE__ , __FILE__ ,                    \
-               "#Fun(x)",                                          \
-               "Error: cannot use " #Fun " with complex<float> "   \
+               #Fun"(x)",                                          \
+               "Error: cannot use " #Fun " with x complex<float> " \
        );                                                          \
        return false;                                               \
 }
@@ -279,8 +279,8 @@ inline bool Fun(const std::complex<float>& x)                      \
 inline std::complex<float> Fun(const std::complex<float>& x)       \
 {      CppAD::ErrorHandler::Call(                                  \
                true     , __LINE__ , __FILE__ ,                    \
-               "#Fun(x)",                                          \
-               "Error: cannot use " #Fun " with complex<float> "   \
+               #Fun"(x)",                                          \
+               "Error: cannot use " #Fun " with x complex<float> " \
        );                                                          \
        return std::complex<float>(0);                              \
 }

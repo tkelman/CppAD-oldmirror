@@ -161,17 +161,8 @@ $end
 # include <cppad/local/base_cond_exp.hpp>
 # include <cppad/local/base_std_math.hpp>
 
-// must define before the base cases
-namespace CppAD {
-	template <class Base>
-	inline Base epsilon(void)
-	{	CPPAD_ASSERT_KNOWN(
-			false,
-			"base_require: epsilon has not been specialized for this Base."
-		);
-		return Base(0);
-	}
-}
+// must define template AD version of epsilon before the base cases
+# include <cppad/local/epsilon.hpp>
 
 // base cases that come with CppAD
 # include <cppad/local/base_float.hpp>
