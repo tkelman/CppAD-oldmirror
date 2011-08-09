@@ -1719,8 +1719,9 @@ void ADFun<Base>::optimize(void)
 		check = Forward(0, x);
 
 		// check results
+		Base eps = 10. * epsilon<Base>();
 		for(i = 0; i < m; i++) CPPAD_ASSERT_KNOWN( 
-			abs_geq( Base(1e-10) * max_taylor , check[i] - y[i] ) ,
+			abs_geq( eps * max_taylor , check[i] - y[i] ) ,
 			"Error during check of f.optimize()."
 		);
 

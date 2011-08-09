@@ -11,9 +11,13 @@ the terms of the
 A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
+# include <limits>
+# include <complex>
+
 /*
 $begin base_complex.hpp$$
 $spell
+	eps
 	abs_geq
 	Rel
 	Lt Le Eq Ge Gt
@@ -60,36 +64,16 @@ $head See Also$$
 The file $cref/not_complex_ad.cpp/$$ contains an example using
 complex arithmetic where the function is not complex differentiable.
 
-$head Include File$$
+$head Include Order$$
 This file is included before $code <cppad/cppad.hpp>$$
 so it is necessary to define the error handler
 in addition to including
-$cref/base_require.hpp/base_require/Include/$$
+$cref/base_require.hpp/base_require/Include Order/$$
 $codep */
 # include <limits>
 # include <complex>
 # include <cppad/base_require.hpp>
 # include <cppad/local/cppad_assert.hpp>
-/* $$
-
-$head isnan$$
-The gcc 4.1.1 complier defines the function
-$codei%
-	int std::complex<double>::isnan( std::complex<double> %z% )
-%$$
-(which is not specified in the C++ 1998 standard ISO/IEC 14882).
-This causes an ambiguity between the function above and the CppAD
-$cref/isnan/nan/$$ template function.
-We avoid this ambiguity by defining a non-template version of
-this function in the CppAD namespace.
-$codep */
-namespace CppAD {
-	inline bool isnan(const std::complex<double>& z)
-	{	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;	
-		static const double nan = std::numeric_limits<double>::quiet_NaN();
-		return (z != z) | (z.real() == nan) | (z.imag() == nan);
-	}
-}
 
 /* $$
 
@@ -192,6 +176,40 @@ $codep */
 namespace CppAD {
 	inline int Integer(const std::complex<double> &x)
 	{	return static_cast<int>( x.real() ); }
+}
+/*$$
+
+$head epsilon$$
+The standard double complex machine epsilon in a double,
+hence we must convert it to a complex to meet the prototype
+for the CppAD machine epsilon function.
+$codep */
+namespace CppAD {
+	template <>
+	inline std::complex<double> epsilon< std::complex<double> >(void)
+	{	double eps = std::numeric_limits<double>::epsilon();
+		return std::complex<double>(eps, 0.);
+	}
+}
+/* $$
+
+$head isnan$$
+The gcc 4.1.1 complier defines the function
+$codei%
+	int std::complex<double>::isnan( std::complex<double> %z% )
+%$$
+(which is not specified in the C++ 1998 standard ISO/IEC 14882).
+This causes an ambiguity between the function above and the CppAD
+$cref/isnan/nan/$$ template function.
+We avoid this ambiguity by defining a non-template version of
+this function in the CppAD namespace.
+$codep */
+namespace CppAD {
+	inline bool isnan(const std::complex<double>& z)
+	{	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;	
+		static const double nan = std::numeric_limits<double>::quiet_NaN();
+		return (z != z) | (z.real() == nan) | (z.imag() == nan);
+	}
 }
 /* $$
 
@@ -311,6 +329,18 @@ namespace CppAD {
 	// Integer ------------------------------------------------------
 	inline int Integer(const std::complex<float> &x)
 	{	return static_cast<int>( x.real() ); }
+	// epsilon -------------------------------------------------------
+	template <>
+	inline std::complex<float> epsilon< std::complex<float> >(void)
+	{	float eps = std::numeric_limits<float>::epsilon();
+		return std::complex<float>(eps, 0.);
+	}
+	// isnan -------------------------------------------------------------
+	inline bool isnan(const std::complex<float>& z)
+	{	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;	
+		static const float nan = std::numeric_limits<float>::quiet_NaN();
+		return (z != z) | (z.real() == nan) | (z.imag() == nan);
+	}
 	// Valid standard math functions --------------------------------
 	CPPAD_STANDARD_MATH_UNARY(std::complex<float>, cos)
 	CPPAD_STANDARD_MATH_UNARY(std::complex<float>, cosh)

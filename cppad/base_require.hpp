@@ -16,6 +16,8 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin base_require$$
 $spell
+	eps
+	std
 	isnan
 	Lt
 	Le
@@ -60,7 +62,7 @@ This is a preliminary version of these specifications
 and it is subject to change in future versions of CppAD.
 
 $head Purpose$$
-This section lists the requirements for the type
+This section lists the requirements that the type
 $icode Base$$ so that the type $codei%AD<%Base%>%$$ can be used.
 
 $subhead Standard Base Types$$
@@ -70,10 +72,10 @@ $code double$$,
 $code std::complex<float>$$, 
 $code std::complex<double>$$,
 or $codei%AD<%Other%>%$$,
-these requirements are provided by including he file
+these requirements are provided by including the file
 $code cppad/cppad.hpp$$.
 
-$head Include$$
+$head Include Order$$
 If you are linking a non-standard base type to CppAD,
 you must first include the file $code cppad/base_require.hpp/$$,
 then provide the specifications below, 
@@ -83,19 +85,13 @@ $head Numeric Type$$
 The type $icode Base$$ must support all the operations for a 
 $cref/NumericType/$$.
 
-$head isnan$$
-If your base type defines the $code isnan$$ function,
-you may have to override its definition in the CppAD namespace
-(to avoid a function ambiguity).
-For example, see the complex version of $cref/isnan/base_complex.hpp/isnan/$$.
-
 $head Integer$$
 $index Integer, base require$$
 $index base, Integer require$$
 $index require, base Integer$$
 The type $icode Base$$ must support the syntax
 $codei%
-	%i% = Integer(%x%)
+	%i% = CppAD::Integer(%x%)
 %$$
 which converts $icode x$$ to an $code int$$.
 The argument $icode x$$ has prototype
@@ -108,11 +104,11 @@ $codei%
 %$$
 
 $subhead Suggestion$$
-The $icode Base$$ version of the $code Integer$$ function
-might be defined by
+In many cases, the $icode Base$$ version of the $code Integer$$ function
+can be defined by
 $codei%
 namespace CppAD {
-	inline int Integer(const %Base% &x)
+	inline int Integer(const %Base%& x)
 	{	return static_cast<int>(x); }
 }
 %$$
@@ -120,6 +116,27 @@ For example, see
 $cref/float/base_float.hpp/Integer/$$,
 $cref/double/base_double.hpp/Integer/$$, and
 $cref/complex/base_complex.hpp/Integer/$$.
+
+$head epsilon$$
+$index epsilon, machine base$$
+$index machine, epsilon base$$
+$index base, machine epsilon$$
+The template specialization
+$codei%
+	%Base% CppAD::epsilon<%Base%>()
+%$$
+must return machine epsilon for the type $icode Base$$.
+For example, see
+$cref/float/base_float.hpp/epsilon/$$,
+$cref/float/base_double.hpp/epsilon/$$, and
+$cref/float/base_complex.hpp/epsilon/$$,
+
+$head isnan$$
+If $icode Base$$ defines the $code isnan$$ function,
+you may also have to provide a definition in the CppAD namespace
+(to avoid a function ambiguity).
+For example, 
+$cref/complex isnan/base_complex.hpp/isnan/$$.
 
 $childtable%
 	cppad/local/base_cond_exp.hpp%
@@ -143,6 +160,18 @@ $end
 // grouping documentation by feature
 # include <cppad/local/base_cond_exp.hpp>
 # include <cppad/local/base_std_math.hpp>
+
+// must define before the base cases
+namespace CppAD {
+	template <class Base>
+	inline Base epsilon(void)
+	{	CPPAD_ASSERT_KNOWN(
+			false,
+			"base_require: epsilon has not been specialized for this Base."
+		);
+		return Base(0);
+	}
+}
 
 // base cases that come with CppAD
 # include <cppad/local/base_float.hpp>

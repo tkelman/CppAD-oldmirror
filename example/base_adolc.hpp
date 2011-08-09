@@ -14,6 +14,8 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin base_adolc.hpp$$
 $spell
+	eps
+	std
 	abs_geq
 	fabs
 	cppad.hpp
@@ -179,6 +181,17 @@ $head Integer$$
 $codep */
 	inline int Integer(const adouble &x)
 	{    return static_cast<int>( x.getValue() ); }
+/*$$
+
+$head epsilon$$
+$codep */
+namespace CppAD {
+	template <>
+	inline adouble epsilon<adouble>(void)
+	{	double eps = std::numeric_limits<double>::epsilon(); 
+		return adouble( eps );
+	}
+}
 /* $$
 
 $head Ordered$$

@@ -71,12 +71,17 @@ $href%
 %$$.
 These changes were done in the svn branch $code branches/base_require$$.
 
+$subhead 08-09$$
+$cref/Warning:/base_require/Warning/$$
+Add $cref/epsilon/base_require/epsilon/$$ to the
+$icode Base$$ type requirements.
+
 $subhead 08-08$$
 $list number$$
 Improve the $cref/base_require/$$ documentation for
 $cref/standard math functions/base_std_math/$$.
 $lnext 
-$bold Warning$$:
+$cref/Warning:/base_require/Warning/$$
 Add $code abs_geq$$ to the $cref/requirements/base_require/$$
 for a user defined $icode Base$$ type. 
 $lnext
@@ -105,8 +110,8 @@ and a non-standard $icode Base$$ type.
 
 $subhead 08-04$$
 $list number$$
-$bold Warning$$:
-Change the $cref/include/base_require/Include/$$ file name to
+$cref/Warning:/base_require/Warning/$$
+Change the $cref/include/base_require/Include Order/$$ file name to
 $cref/base_require.hpp/base_require/$$.
 $lnext
 Use $cref base_float.hpp$$ and $cref base_double.hpp$$ as additional examples

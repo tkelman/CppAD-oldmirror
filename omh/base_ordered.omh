@@ -23,7 +23,8 @@ $$
 $section Base Type Requirements for Ordered Comparisons$$
 
 $head Purpose$$
-The following operations are required to use the type
+The following operations 
+(in the CppAD namespace) are required to use the type
 $codei%AD<%Base%>%$$:
 
 $table

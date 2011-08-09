@@ -32,7 +32,7 @@ If function $cref/EqualOpSeq/$$ is used with
 arguments of type $codei%AD<%Base%>%$$,
 the type $icode Base$$ must support the syntax
 $codei%
-	%b% = EqualOpSeq(%u%, %v%)
+	%b% = CppAD::EqualOpSeq(%u%, %v%)
 %$$
 This should return true if and only if 
 $icode u$$ is identically equal to $icode v$$
@@ -111,7 +111,8 @@ $codei%
 %$$
 
 $subhead Identical Functions$$
-The type $icode Base$$ must support the following functions:
+The type $icode Base$$ must support the following functions
+(in the CppAD namespace):
 $table
 $bold Syntax$$ $cnext $bold Result$$
 $rnext
