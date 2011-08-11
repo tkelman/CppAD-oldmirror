@@ -71,6 +71,18 @@ $href%
 %$$.
 These changes were done in the svn branch $code branches/base_require$$.
 
+$subhead 08-10$$
+$list number$$
+Add the output stream optional argument $icode s$$ in
+$codei%
+	%f%.Forward(0, %x%, %s%)
+%$$
+See $cref/zero order forward mode/ForwardZero/$$ and $cref PrintFor$$.
+$lnext
+Improve $cref/omp_alloc.cpp/$$ example.
+$lend
+
+
 $subhead 08-09$$
 $list number$$
 $cref/Warning:/base_require/Warning/$$
@@ -133,7 +145,7 @@ Change $cref/PrintFor/$$ so it no longer aborts execution when
 there is no operation sequence being recording; see
 $cref/start recording/Independent/Start Recording/$$.
 $lnext
-Improve the $cref print_for.cpp$$ example.
+Improve the $cref print_for_cout.cpp$$ example.
 $lend
 
 $head 07-31$$

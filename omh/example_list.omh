@@ -180,7 +180,8 @@ $rref ParVar.cpp$$
 $rref Poly.cpp$$
 $rref Pow.cpp$$
 $rref pow_int.cpp$$
-$rref print_for.cpp$$
+$rref print_for_cout.cpp$$
+$rref print_for_string.cpp$$
 $rref RevOne.cpp$$
 $rref RevSparseHes.cpp$$
 $rref RevSparseJac.cpp$$
