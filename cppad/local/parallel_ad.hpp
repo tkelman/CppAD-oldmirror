@@ -49,8 +49,8 @@ $icode%Base%$$, $codei%AD<%Base%>%$$, and
 $codei%std::complex<double>%$$.
 
 $head Example$$
-The file $cref/parallel_ad.cpp/$$
-contains an example and test of this function.   
+The files $cref/parallel_ad.cpp/$$ and $cref/openmp_ad.cpp/$$
+contain an examples and tests of this function.   
 
 $end
 -----------------------------------------------------------------------------

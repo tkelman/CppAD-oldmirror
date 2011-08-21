@@ -253,14 +253,18 @@ then
 #_build_test_only:	tape_addr_type="TAPE_ADDR_TYPE=int"
 	#
 	dir_list=`echo $dir_list | sed -e 's|\t\t*| |g'`
-	echo "../configure \\"
-	echo "$dir_list" | sed -e 's| | \\\n\t|g' -e 's|$| \\|' -e 's|^|\t|'
-	echo "	CXX_FLAGS=\"-Wall -ansi -pedantic-errors -std=c++98 -Wshadow\"\\"
-	echo "	$tape_addr_type --with-Documentation"
+	cxx_flags="-Wall -ansi -pedantic-errors -std=c++98 -Wshadow"
+	cxx_flags="$cxxflags -fopenmp -lpthread"
+cat << EOF
+../configure \\
+$dir_list \\
+CXX_FLAGS=\"$cxx_flags\" \\
+$tape_addr_type --with-Documentation --with-openmp --with-pthread
+EOF
 	#
 	../configure $dir_list \
-		CXX_FLAGS="-Wall -ansi -pedantic-errors -std=c++98 -Wshadow" \
-		$tape_addr_type --with-Documentation
+		CXX_FLAGS="$cxx_flags" \
+		$tape_addr_type --with-Documentation --with-openmp --with-pthread
 	#
 	for file in $configure_file_list
 	do

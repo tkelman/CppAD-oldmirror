@@ -12,6 +12,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 $begin whats_new_11$$
 $spell
+	pthread
 	https
 	abs_geq
 	CondExpRel
@@ -62,6 +63,17 @@ This section contains a list of the changes to CppAD during 2011
 (in reverse order by date).
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
+
+$head branches/pthread$$
+The following changes have been made to the $code pthread$$ branch:
+
+$head 08-21$$
+Create the OpenMP and pthread examples
+$cref/openmp_a11c.cpp/$$,
+$cref/pthread_a11c.cpp/$$, and
+$cref/openmp_ad.cpp/$$.
+Note that the OpenMP examples were originally in the $code openmp$$ directory,
+and have been moved, and modified to conform, to the normal example directory.
 
 $head 08-11$$
 Modify the CppAD trunk using the
