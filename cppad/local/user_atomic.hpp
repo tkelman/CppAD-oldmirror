@@ -672,6 +672,9 @@ $end
 # include <set>
 # include <cppad/local/cppad_assert.hpp>
 
+// needed before one can use CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL
+# include <cppad/thread_alloc.hpp>
+
 CPPAD_BEGIN_NAMESPACE
 /*!
 \file user_atomic.hpp

@@ -119,14 +119,14 @@ private:
 	{ }
 	// ---------------------------------------------------------------------
 	static const omp_alloc_capacity* capacity_info(void)
-	{	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
+	{	// CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
 		static const omp_alloc_capacity capacity;
 		return &capacity;
 	}
 	// ---------------------------------------------------------------------
 	/// number of bytes of memory that are currently in use for each thread
 	static size_t* inuse_vector(void)
-	{	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
+	{	// CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
 		static size_t inuse[CPPAD_MAX_NUM_THREADS];
 		return inuse;
 	}
@@ -134,7 +134,7 @@ private:
 	/// number of bytes that are currrently available for each thread; i.e.,
 	/// have been obtained for each thread and not yet returned to the system.
 	static size_t* available_vector(void)
-	{	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
+	{	// CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
 		static size_t available[CPPAD_MAX_NUM_THREADS];
 		return available;
 	}
@@ -235,7 +235,7 @@ private:
 	/// Vector of length CPPAD_MAX_NUM_THREADS times CPPAD_MAX_NUM_CAPACITIES 
 	/// for use as root nodes of inuse lists.
 	static omp_alloc* root_inuse(void)
-	{	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
+	{	// CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
 		static omp_alloc  
 			root[CPPAD_MAX_NUM_THREADS * CPPAD_MAX_NUM_CAPACITY];
 		return root;
@@ -245,7 +245,7 @@ private:
 	/// Vector of length CPPAD_MAX_NUM_THREADS times CPPAD_MAX_NUM_CAPACITIES 
 	/// for use as root nodes of available lists.
 	static omp_alloc* root_available(void)
-	{	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
+	{	// CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
 		static omp_alloc  
 			root[CPPAD_MAX_NUM_THREADS * CPPAD_MAX_NUM_CAPACITY];
 		return root;
@@ -575,7 +575,7 @@ $end
  	*/
 	static void* get_memory(size_t min_bytes, size_t& cap_bytes)
 	{	// see first_trace below	
-		CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
+		// CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
 
 		size_t num_cap = capacity_info()->number;
 		using std::cout;

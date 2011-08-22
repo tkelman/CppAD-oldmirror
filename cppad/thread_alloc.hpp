@@ -404,12 +404,15 @@ $end
 	/*!
 	Set thread_alloc up for parallel mode usage.
 
-	\param num_threads
+	\param num_threads [in]
 	Is the number of thread that may be executing at the same time.
 
-	\param in_parallel
+	\param in_parallel [in]
 	Is the routine that determines if we are in parallel mode or not.
 
+	\param thread_num [in]
+	Is the routine that determines the current thread number
+	(between zero and num_threads minus one).
 	*/
 	static void parallel_setup(
 		size_t num_threads         ,
