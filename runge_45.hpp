@@ -251,6 +251,9 @@ $end
 # include <cppad/check_numeric_type.hpp>
 # include <cppad/nan.hpp>
 
+// needed before one can use CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL
+# include <cppad/thread_alloc.hpp>
+
 namespace CppAD { // BEGIN CppAD namespace
 
 template <typename Scalar, typename Vector, typename Fun>
