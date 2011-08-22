@@ -42,7 +42,10 @@ This file is included by
 $code cppad/cppad.hpp$$, but it can also be included separately with out
 the rest of the $code CppAD$$.
 
+$comment this file only partially converted from  omp_alloc to thread_alloc$$
 $childtable%
+	example/thread_alloc.cpp%
+
 	cppad/omp_alloc.hpp%
 	example/omp_alloc.cpp%
 	example/openmp_a11c.cpp%

@@ -169,6 +169,7 @@ extern bool SubEq(void);
 extern bool Tan(void);
 extern bool Tanh(void);
 extern bool TapeIndex(void);
+extern bool thread_alloc(void);
 extern bool UnaryMinus(void);
 extern bool UnaryPlus(void);
 extern bool user_tan(void);
@@ -320,6 +321,7 @@ int main(void)
 	ok &= Run( Tan,               "Tan"              );
 	ok &= Run( Tanh,              "Tanh"             );
 	ok &= Run( TapeIndex,         "TapeIndex"        );
+	ok &= Run( thread_alloc,      "thread_alloc"     );
 	ok &= Run( UnaryMinus,        "UnaryMinus"       );
 	ok &= Run( UnaryPlus,         "UnaryPlus"        );
 	ok &= Run( user_tan,           "user_tan"        );

@@ -215,6 +215,7 @@ $rref sum_i_inv.cpp$$
 $rref Tan.cpp$$
 $rref Tanh.cpp$$
 $rref TapeIndex.cpp$$
+$rref thread_alloc.cpp$$
 $rref UnaryMinus.cpp$$
 $rref UnaryPlus.cpp$$
 $rref user_tan.cpp$$

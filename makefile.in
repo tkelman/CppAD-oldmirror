@@ -513,6 +513,7 @@ nobase_myinclude_HEADERS = \
 	cppad/speed/sparse_evaluate.hpp \
 	cppad/speed_test.hpp \
 	cppad/speed/uniform_01.hpp \
+	cppad/thread_alloc.hpp \
 	cppad/track_new_del.hpp \
 	cppad/vector.hpp
 
