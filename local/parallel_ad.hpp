@@ -29,15 +29,15 @@ By default, for each $codei%AD<%Base%>%$$ class there is only one
 tape that records $cref/AD of Base/glossary/AD of Base/$$ operations.
 This tape is a global variable and hence it cannot be used
 by multiple OpenMP threads at the same time. 
-The $cref/set_max_num_threads/max_num_threads/$$ function is used to set the 
+The $cref/set_max_num_threads/omp_max_num_threads/$$ function is used to set the 
 maximum number of OpenMP threads that can be active in parallel mode.
 It is still necessary to inform each $codei%AD<%Base%>%$$ type 
-before using it in using $cref/parallel/in_parallel/$$ execution mode
+before using it in using $cref/parallel/omp_in_parallel/$$ execution mode
 (and $code parallel_ad$$ does this).
 
 $head Restriction$$
 This function must be called before any $codei%AD<%Base%.%$$ objects are used
-in $cref/parallel/in_parallel/$$ execution mode.
+in $cref/parallel/omp_in_parallel/$$ execution mode.
 
 $head isnan$$
 This routine has the side effect of calling

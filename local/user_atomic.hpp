@@ -271,7 +271,7 @@ The first call to
 $codei%
 	%afun%(%id%, %ax%, %ay%)
 %$$
-must not be in $cref/in_parallel/$$ execution mode.
+must not be in $cref omp_in_parallel$$ execution mode.
 
 $head forward$$
 The macro argument $icode forward$$ is a

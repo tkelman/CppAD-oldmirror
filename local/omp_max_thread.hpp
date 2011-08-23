@@ -27,7 +27,7 @@ $head Deprecated$$
 $index depreciated, omp_max_thread$$
 $index omp_max_thread, depreciated$$
 This routine has been deprecated.
-You should instead use the $cref/set_max_num_threads/max_num_threads/$$ 
+You should instead use the $cref/set_max_num_threads/omp_max_num_threads/$$ 
 function.
 
 $head Syntax$$

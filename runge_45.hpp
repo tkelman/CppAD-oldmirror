@@ -218,7 +218,7 @@ $cref/Scalar/Runge45/Scalar/$$,
 $cref/Vector/Runge45/Vector/$$, and
 $cref/Fun/Runge45/Fun/$$, 
 the first call to $code Runge45$$
-must not be $cref/in_parallel/$$ execution mode.
+must not be $cref omp_in_parallel$$ execution mode.
 
 
 $head Example$$

@@ -42,7 +42,7 @@ When the object is destructed, the previous CppAD error handler is restored.
 
 $subhead OpenMP$$
 The $code ErrorHandler$$ constructor and destructor cannot be called
-$cref/in_parallel/$$ execution mode.
+$cref omp_in_parallel$$ execution mode.
 Furthermore, this rule is not abided by, a raw C++ $code assert$$,
 instead of one that uses this error handler, will be generated.
 
