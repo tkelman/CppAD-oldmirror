@@ -108,6 +108,8 @@ Allocator class that works well with an multi-threading environment.
 class thread_alloc{
 // ============================================================================
 private:
+	/// extra information (currently only used by create and delete array)
+	size_t             extra_;
 	/// an index that uniquely idenfifies both thread and capacity
 	size_t             tc_index_;
 	/// pointer to the next memory allocation with the the same tc_index_
@@ -115,7 +117,7 @@ private:
 	// ---------------------------------------------------------------------
 	/// make default constructor private. It is only used by the constructor
 	/// for \c root arrays below.
-	thread_alloc(void) : tc_index_(0), next_(0) 
+	thread_alloc(void) : extra_(0), tc_index_(0), next_(0) 
 	{ }
 	// ---------------------------------------------------------------------
 	static const thread_alloc_capacity* capacity_info(void)
@@ -1073,6 +1075,201 @@ $end
 			thread == thread_num() || (! in_parallel()) 
 		);
 		return available_vector()[thread];
+	}
+/* -----------------------------------------------------------------------
+$begin create_array$$
+$spell
+	thread_alloc
+	sizeof
+$$
+
+$section Allocate An Array and Call Default Constructor for its Elements$$
+
+$index create_array, thread_alloc$$
+$index thread_alloc, create_array$$
+$index array, allocate$$
+$index allocate, array$$
+
+$head Syntax$$
+$icode%array% = thread_alloc::create_array<%Type%>(%size_min%, %size_out%)%$$.
+
+$head Purpose$$
+Create a new raw array using $cref/thread_alloc/$$ memory allocator 
+(works well in a multi-threading environment)
+and call default constructor for each element.
+
+$head Type$$
+The type of the elements of the array.
+
+$head size_min$$
+This argument has prototype
+$codei%
+	size_t %size_min%
+%$$
+This is the minimum number of elements that there can be
+in the resulting $icode array$$.
+
+$head size_out$$
+This argument has prototype
+$codei%
+	size_t& %size_out%
+%$$
+The input value of this argument does not matter.
+Upon return, it is the actual number of elements 
+in $icode array$$ 
+($icode% size_min %<=% size_out%$$).
+
+$head array$$
+The return value $icode array$$ has prototype
+$codei%
+	%Type%* %array%
+%$$
+It is array with $icode size_out$$ elements.
+The default constructor for $icode Type$$ is used to initialize the 
+elements of $icode array$$.
+Note that $cref/delete_array/$$
+should be used to destroy the array when it is no longer needed.
+
+$head Delta$$
+The amount of memory $cref inuse$$ by the current thread, 
+will increase $icode delta$$ where
+$codei%
+	sizeof(%Type%) * (%size_out% + 1) > %delta% >= sizeof(%Type%) * %size_out%
+%$$
+The $cref available$$ memory will decrease by $icode delta$$,
+(and the allocation will be faster)
+if a previous allocation with $icode size_min$$ between its current value
+and $icode size_out$$ is available. 
+
+$head Example$$
+$cref/thread_alloc.cpp/$$
+
+$end 
+*/
+	/*!
+	Use thread_alloc to allocate an array, then call default construtor
+	for each element.
+
+	\tparam Type
+	The type of the elements of the array.
+
+	\param size_min [in]
+	The minimum number of elements in the array.
+
+	\param size_out [out]
+	The actual number of elements in the array.
+
+	\return
+	pointer to the first element of the array.
+	The default constructor is used to initialize 
+	all the elements of the array.
+
+	\par
+	The \c extra_ field, in the \c thread_alloc node before the return value,
+	is set to size_out.
+	*/
+	template <class Type>
+	static Type* create_array(size_t size_min, size_t& size_out)
+	{	// minimum number of bytes to allocate
+		size_t min_bytes = size_min * sizeof(Type);
+		// do the allocation 
+		size_t num_bytes;
+		void*  v_ptr     = get_memory(min_bytes, num_bytes);
+		// This is where the array starts
+		Type*  array     = reinterpret_cast<Type*>(v_ptr);
+		// number of Type values in the allocation
+		size_out         = num_bytes / sizeof(Type);
+		// store this number in the extra field
+		thread_alloc* node  = reinterpret_cast<thread_alloc*>(v_ptr) - 1;
+		node->extra_     = size_out;
+
+		// call default constructor for each element
+		size_t i;
+		for(i = 0; i < size_out; i++)
+			new(array + i) Type();
+
+		return array;
+	}
+/* -----------------------------------------------------------------------
+$begin delete_array$$
+$spell
+	thread_alloc
+	sizeof
+$$
+
+$section Deallocagte An Array and Call Destructor for its Elemsnts$$
+
+$index delete_array, thread_alloc$$
+$index thread_alloc, delete_array$$
+$index array, allocate$$
+$index allocate, array$$
+
+$head Syntax$$
+$codei%thread_alloc::delete_array(%array%)%$$.
+
+$head Purpose$$
+Returns memory corresponding to an array created by 
+(create by $cref/create_array/$$) to the 
+$cref/available/$$ memory pool for the current thread.
+
+$head Type$$
+The type of the elements of the array.
+
+$head array$$
+The argument $icode array$$ has prototype
+$codei%
+	%Type%* %array%
+%$$
+It is a value returned by $cref/create_array/$$ and not yet deleted.
+The $icode Type$$ destructor is called for each element in the array.
+
+$head Thread$$
+The $cref/current thread/get_thread_num/$$ must be the
+same as when $cref/create_array/$$ returned the value $icode array$$.
+There is an exception to this rule:
+when the current execution mode is sequential
+(not $cref/parallel/in_parallel/$$) the current thread number does not matter.
+
+$head Delta$$
+The amount of memory $cref inuse$$ will decrease by $icode delta$$,
+and the $cref available$$ memory will increase by $icode delta$$,
+where $cref/delta/create_array/Delta/$$ 
+is the same as for the corresponding call to $code create_array$$.
+
+$head Example$$
+$cref/thread_alloc.cpp/$$
+
+$end 
+*/
+	/*!
+	Return Memory Used for an Array to the Available Pool
+	(include destructor call for each element).
+
+	\tparam Type
+	The type of the elements of the array.
+
+	\param array [in]
+	A value returned by \c create_array that has not yet been deleted.
+	The \c Type destructor is used to destroy each of the elements 
+	of the array.
+
+	\par
+	Durring parallel execution, the current thread must be the same
+	as during the corresponding call to \c create_array.
+	*/
+	template <class Type>
+	static void delete_array(Type* array)
+	{	// determine the number of values in the array
+		thread_alloc* node = reinterpret_cast<thread_alloc*>(array) - 1;
+		size_t size     = node->extra_;
+
+		// call destructor for each element
+		size_t i;
+		for(i = 0; i < size; i++)
+			(array + i)->~Type();
+
+		// return the memory to the available pool for this thread
+		thread_alloc::return_memory( reinterpret_cast<void*>(array) );
 	}
 };
 
