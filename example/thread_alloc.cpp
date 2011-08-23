@@ -33,6 +33,8 @@ $end
 # include <cppad/thread_alloc.hpp>
 # include <vector>
 
+# define NUMBER_THREADS 2
+
 namespace {
 	// Setup for one thread in sequential execution mode
 	bool in_parallel_false(void)
@@ -41,23 +43,15 @@ namespace {
 	{	return 0; }
 }
 
-bool thread_alloc(void)
-{	bool ok  = true;
+namespace { // Begin empty namespace
+
+bool raw_allocate(void)
+{	bool ok = true;
 	using CppAD::thread_alloc;
-
-	// check initial state of allocator
-	ok  &= thread_alloc::num_threads() == 1;
-
-	// Tell thread_alloc that there are two threads so it starts holding
-	// onto memory (but actuall the there is only on thread with id zero).
-	thread_alloc::parallel_setup(2, in_parallel_false, thread_num_zero);
-	ok  &= thread_alloc::num_threads() == 2;
-	ok  &= thread_alloc::thread_num() == 0;
-	ok  &= thread_alloc::in_parallel() == false;
 
 	// check that no memory is initilaly inuse or available
 	size_t thread;
-	for(thread = 0; thread < 2; thread++)
+	for(thread = 0; thread < NUMBER_THREADS; thread++)
 	{	ok &= thread_alloc::inuse(thread) == 0;
 		ok &= thread_alloc::available(thread) == 0;
 	}
@@ -101,15 +95,100 @@ bool thread_alloc(void)
 	thread_alloc::free_available(thread);
 	
 	// check that the tests have not held onto memory
-	for(thread = 0; thread < 2; thread++)
+	for(thread = 0; thread < NUMBER_THREADS; thread++)
 	{	ok &= thread_alloc::inuse(thread) == 0;
 		ok &= thread_alloc::available(thread) == 0;
 	}
+	return ok;
+}
 
-	// set the maximum number of threads back to one 
-	// so that thread_alloc no longer holds onto memory
-	thread_alloc::parallel_setup(1, in_parallel_false, thread_num_zero);
+class my_char {
+public:
+	char ch_ ;
+	my_char(void) : ch_(' ')
+	{ }
+	my_char(const my_char& my_ch) : ch_(my_ch.ch_)
+	{ }
+};
 
+bool type_allocate(void)
+{	bool ok = true;
+	using CppAD::thread_alloc;
+	size_t i; 
+
+	// check initial memory values
+	size_t thread = thread_alloc::thread_num();
+	ok &= thread_alloc::inuse(thread) == 0;
+	ok &= thread_alloc::available(thread) == 0;
+
+	// initial allocation of an array
+	size_t  size_min  = 3;
+	size_t  size_one;
+	my_char *array_one  = 
+		thread_alloc::create_array<my_char>(size_min, size_one);
+
+	// check the values and change them to null 'x'
+	for(i = 0; i < size_one; i++)
+	{	ok &= array_one[i].ch_ == ' ';
+		array_one[i].ch_ = 'x';
+	}
+
+	// now create a longer array
+	size_t size_two;
+	my_char *array_two = 
+		thread_alloc::create_array<my_char>(2 * size_min, size_two);
+
+	// check the values in array one
+	for(i = 0; i < size_one; i++)
+		ok &= array_one[i].ch_ == 'x';
+
+	// check the values in array two
+	for(i = 0; i < size_two; i++)
+		ok &= array_two[i].ch_ == ' ';
+
+	// check the amount of inuse and available memory
+	// (an extra size_t value is used for each memory block).
+	size_t check = sizeof(my_char)*(size_one + size_two);
+	ok   &= thread_alloc::inuse(thread) - check < sizeof(my_char);
+	ok   &= thread_alloc::available(thread) == 0;
+
+	// delete the arrays 
+	thread_alloc::delete_array(array_one);
+	thread_alloc::delete_array(array_two);
+	ok   &= thread_alloc::inuse(thread) == 0;
+	ok   &= thread_alloc::available(thread) - check < sizeof(my_char);
+
+	// free the memory for use by this thread
+	thread_alloc::free_available(thread);
+	ok &= thread_alloc::inuse(thread) == 0;
+	ok &= thread_alloc::available(thread) == 0;
+
+	return ok;
+}
+
+} // End empty namespace
+
+
+bool thread_alloc(void)
+{	bool ok  = true;
+	using CppAD::thread_alloc;
+
+	// check initial state of allocator
+	ok  &= thread_alloc::num_threads() == 1;
+
+	// Tell thread_alloc that there are two threads so it starts holding
+	// onto memory (but actuall the there is only on thread with id zero).
+	thread_alloc::parallel_setup(2, in_parallel_false, thread_num_zero);
+	ok  &= thread_alloc::num_threads() == 2;
+	ok  &= thread_alloc::thread_num() == 0;
+	ok  &= thread_alloc::in_parallel() == false;
+
+	// run raw allocation tests
+	ok &= raw_allocate();
+
+	// run typed allocation tests
+	ok &= type_allocate();
+	
 	return ok;
 }
 

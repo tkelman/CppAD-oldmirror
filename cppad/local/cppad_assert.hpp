@@ -184,7 +184,7 @@ execution is terminated and the source code line number is reported.
 # define CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL                           \
 	static bool assert_first_call = true;                              \
 	CPPAD_ASSERT_KNOWN(                                                \
-		! (thread_alloc::in_parallel() && assert_first_call ),        \
+		! (CppAD::thread_alloc::in_parallel() && assert_first_call ), \
 		"In parallel mode and parallel_setup has not been called."    \
 	);                                                                 \
 	assert_first_call = false;
