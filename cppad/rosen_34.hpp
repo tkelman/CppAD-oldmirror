@@ -267,7 +267,7 @@ $cref/Scalar/Rosen34/Scalar/$$,
 $cref/Vector/Rosen34/Vector/$$, and
 $cref/Fun/Rosen34/Fun/$$, 
 the first call to $code Rosen34$$
-must not be $cref/in_parallel/$$ execution mode.
+must not be $cref omp_in_parallel$$ execution mode.
 
 $head Example$$
 $children%

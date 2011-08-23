@@ -252,7 +252,7 @@ not be used.
 $head OpenMP$$
 $index OpenMP, TrackCount$$
 $index TrackCount, OpenMP$$
-These routines cannot be used $cref/in_parallel/$$
+These routines cannot be used $cref new_in_parallel$$
 execution mode.
 Use the $cref/omp_alloc/$$ routines instead.
 

@@ -22,7 +22,7 @@ $index OpenMP$$
 
 $head Purpose$$
 Extra steps and care must be taken to use CppAD 
-$cref/in_parallel/$$ execution mode. 
+$cref omp_in_parallel$$ execution mode. 
 This section collects this information in one place.
 
 $children%
@@ -31,7 +31,7 @@ $children%
 %$$
 
 $table
-$rref max_num_threads$$
+$rref omp_max_num_threads$$
 $rref parallel_ad$$
 $cref/OpenMP/Independent/OpenMP/$$  $cnext
 	$title Independent$$ $rnext

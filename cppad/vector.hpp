@@ -214,12 +214,12 @@ $head Memory$$
 $index omp_alloc, vector$$
 $index vector, omp_alloc$$
 These vectors use the OpenMP fast memory allocator $cref/omp_alloc/$$,
-thus using them affects the amount of memory $cref/inuse/$$ and 
-$cref/available/$$.
+thus using them affects the amount of memory $cref omp_inuse$$ and 
+$cref omp_available$$.
 Calling $cref/resize/CppAD_vector/resize/$$ with a zero argument,
 makes the corresponding memory available (though $code omp_alloc$$)
 to the current thread.
-It can then be completely freed using $cref/free_available/$$.
+It can then be completely freed using $cref omp_free_available$$.
 
 $lend
 

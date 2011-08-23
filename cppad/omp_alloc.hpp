@@ -149,7 +149,7 @@ private:
 
 	\param thread [in]
 	Thread for which we are increasing the number of bytes in use
-	(must be less than the $cref max_num_threads$$ setting).
+	(must be less than the $cref omp_max_num_threads$$ setting).
 	Durring parallel execution, this must be the thread 
 	that is currently executing.
 	*/
@@ -197,7 +197,7 @@ private:
 
 	\param thread [in]
 	Thread for which we are decreasing the number of bytes in use
-	(must be less than the $cref max_num_threads$$ setting).
+	(must be less than the $cref omp_max_num_threads$$ setting).
 	Durring parallel execution, this must be the thread 
 	that is currently executing.
 	*/
@@ -296,7 +296,7 @@ private:
 // ============================================================================
 public:
 /*
-$begin max_num_threads$$
+$begin omp_max_num_threads$$
 $spell
 	inv
 	CppAD
@@ -328,7 +328,7 @@ $icode%number% = omp_alloc::get_max_num_threads()
 
 $head Purpose$$
 By default there is only one thread and all execution is in sequential mode
-(not $cref/parallel/in_parallel/$$).
+(not $cref/parallel/omp_in_parallel/$$).
 
 $head number$$
 The argument and return value $icode number$$ has prototype
@@ -347,7 +347,7 @@ If there was no such previous call, the value one is returned
 
 $head Restrictions$$
 The function $code set_max_num_threads$$ must be called before 
-the program enters $cref/parallel/in_parallel/$$ execution mode.
+the program enters $cref/parallel/omp_in_parallel/$$ execution mode.
 In addition, this function cannot be called while in parallel mode.
 
 $head Example$$
@@ -394,7 +394,7 @@ $end
 	{	return max_num_threads(0); }
 
 /* -----------------------------------------------------------------------
-$begin in_parallel$$
+$begin omp_in_parallel$$
 
 $section Is The Current Execution in OpenMP Parallel Mode$$
 $spell
@@ -442,7 +442,7 @@ $end
 	}
 
 /* -----------------------------------------------------------------------
-$begin get_thread_num$$
+$begin omp_get_thread_num$$
 $spell
 	CppAD
 	num
@@ -492,7 +492,7 @@ $end
 # endif
 	}
 /* -----------------------------------------------------------------------
-$begin get_memory$$
+$begin omp_get_memory$$
 $spell
 	num
 	ptr
@@ -511,7 +511,7 @@ $icode%v_ptr% = omp_alloc::get_memory(%min_bytes%, %cap_bytes%)%$$
 
 $head Purpose$$
 Use $cref/omp_alloc/$$ to obtain a minimum number of bytes of memory
-(for use by the $cref/current thread/get_thread_num/$$).
+(for use by the $cref/current thread/omp_get_thread_num/$$).
 
 $head min_bytes$$
 This argument has prototype
@@ -668,7 +668,7 @@ $end
 	}
 
 /* -----------------------------------------------------------------------
-$begin return_memory$$
+$begin omp_return_memory$$
 $spell
 	ptr
 	omp_alloc
@@ -686,7 +686,7 @@ $head Syntax$$
 $codei%omp_alloc::return_memory(%v_ptr%)%$$
 
 $head Purpose$$
-If $cref max_num_threads$$ is one,
+If $cref omp_max_num_threads$$ is one,
 the memory is returned to the system.
 Otherwise, the memory is retained by $cref omp_alloc$$ for quick future use
 by the thread that allocated to memory.
@@ -697,13 +697,13 @@ $codei%
 	void* %v_ptr%
 %$$.
 It must be a pointer to memory that is currently in use; i.e.
-obtained by a previous call to $cref/get_memory/$$ and not yet returned.
+obtained by a previous call to $cref omp_get_memory$$ and not yet returned.
 
 $head Thread$$
-Either the $cref/current thread/get_thread_num/$$ must be the same as during
-the corresponding call to $cref/get_memory/$$,
+Either the $cref/current thread/omp_get_thread_num/$$ must be the same as during
+the corresponding call to $cref omp_get_memory$$,
 or the current execution mode must be sequential 
-(not $cref/parallel/in_parallel/$$).
+(not $cref/parallel/omp_in_parallel/$$).
 
 $head NDEBUG$$
 If $code NDEBUG$$ is defined, $icode v_ptr$$ is not checked (this is faster).
@@ -794,7 +794,7 @@ $end
 		inc_available(capacity, thread);
 	}
 /* -----------------------------------------------------------------------
-$begin free_available$$
+$begin omp_free_available$$
 $spell
 	omp_alloc
 $$
@@ -819,9 +819,9 @@ This argument has prototype
 $codei%
 	size_t %thread%
 %$$
-Either $cref/get_thread_num/$$ must be the same as $icode thread$$,
+Either $cref omp_get_thread_num$$ must be the same as $icode thread$$,
 or the current execution mode must be sequential 
-(not $cref/parallel/in_parallel/$$).
+(not $cref/parallel/omp_in_parallel/$$).
 
 $head Example$$
 $cref/omp_alloc.cpp/$$
@@ -870,7 +870,7 @@ $end
 		CPPAD_ASSERT_UNKNOWN( available(thread) == 0 );
 	}
 /* -----------------------------------------------------------------------
-$begin inuse$$
+$begin omp_inuse$$
 $spell
 	num
 	inuse
@@ -898,9 +898,9 @@ This argument has prototype
 $codei%
 	size_t %thread%
 %$$
-Either $cref/get_thread_num/$$ must be the same as $icode thread$$,
+Either $cref omp_get_thread_num$$ must be the same as $icode thread$$,
 or the current execution mode must be sequential 
-(not $cref/parallel/in_parallel/$$).
+(not $cref/parallel/omp_in_parallel/$$).
 
 $head num_bytes$$
 The return value has prototype
@@ -935,7 +935,7 @@ $end
 		return inuse_vector()[thread];
 	}
 /* -----------------------------------------------------------------------
-$begin available$$
+$begin omp_available$$
 $spell
 	num
 	omp_alloc
@@ -962,9 +962,9 @@ This argument has prototype
 $codei%
 	size_t %thread%
 %$$
-Either $cref/get_thread_num/$$ must be the same as $icode thread$$,
+Either $cref omp_get_thread_num$$ must be the same as $icode thread$$,
 or the current execution mode must be sequential 
-(not $cref/parallel/in_parallel/$$).
+(not $cref/parallel/omp_in_parallel/$$).
 
 $head num_bytes$$
 The return value has prototype
@@ -992,7 +992,7 @@ $end
 		return available_vector()[thread];
 	}
 /* -----------------------------------------------------------------------
-$begin create_array$$
+$begin omp_create_array$$
 $spell
 	omp_alloc
 	sizeof
@@ -1041,16 +1041,16 @@ $codei%
 It is array with $icode size_out$$ elements.
 The default constructor for $icode Type$$ is used to initialize the 
 elements of $icode array$$.
-Note that $cref/delete_array/$$
+Note that $cref omp_delete_array$$
 should be used to destroy the array when it is no longer needed.
 
 $head Delta$$
-The amount of memory $cref inuse$$ by the current thread, 
+The amount of memory $cref omp_inuse$$ by the current thread, 
 will increase $icode delta$$ where
 $codei%
 	sizeof(%Type%) * (%size_out% + 1) > %delta% >= sizeof(%Type%) * %size_out%
 %$$
-The $cref available$$ memory will decrease by $icode delta$$,
+The $cref omp_available$$ memory will decrease by $icode delta$$,
 (and the allocation will be faster)
 if a previous allocation with $icode size_min$$ between its current value
 and $icode size_out$$ is available. 
@@ -1104,7 +1104,7 @@ $end
 		return array;
 	}
 /* -----------------------------------------------------------------------
-$begin delete_array$$
+$begin omp_delete_array$$
 $spell
 	omp_alloc
 	sizeof
@@ -1122,8 +1122,8 @@ $codei%omp_alloc::delete_array(%array%)%$$.
 
 $head Purpose$$
 Returns memory corresponding to a raw array 
-(create by $cref/create_array/$$) to the 
-$cref/available/$$ memory pool for the current thread.
+(create by $cref omp_create_array$$) to the 
+$cref omp_available$$ memory pool for the current thread.
 
 $head Type$$
 The type of the elements of the array.
@@ -1133,20 +1133,20 @@ The argument $icode array$$ has prototype
 $codei%
 	%Type%* %array%
 %$$
-It is a value returned by $cref/create_array/$$ and not yet deleted.
+It is a value returned by $cref omp_create_array$$ and not yet deleted.
 The $icode Type$$ destructor is called for each element in the array.
 
 $head Thread$$
-The $cref/current thread/get_thread_num/$$ must be the
-same as when $cref/create_array/$$ returned the value $icode array$$.
+The $cref/current thread/omp_get_thread_num/$$ must be the
+same as when $cref omp_create_array$$ returned the value $icode array$$.
 There is an exception to this rule:
 when the current execution mode is sequential
-(not $cref/parallel/in_parallel/$$) the current thread number does not matter.
+(not $cref/parallel/omp_in_parallel/$$) the current thread number does not matter.
 
 $head Delta$$
-The amount of memory $cref inuse$$ will decrease by $icode delta$$,
-and the $cref available$$ memory will increase by $icode delta$$,
-where $cref/delta/create_array/Delta/$$ 
+The amount of memory $cref omp_inuse$$ will decrease by $icode delta$$,
+and the $cref omp_available$$ memory will increase by $icode delta$$,
+where $cref/delta/omp_create_array/Delta/$$ 
 is the same as for the corresponding call to $code create_array$$.
 
 $head Example$$
@@ -1183,11 +1183,75 @@ $end
 		// return the memory to the available pool for this thread
 		omp_alloc::return_memory( reinterpret_cast<void*>(array) );
 	}
-// ----------------------------------------------------------------------------
-// Deprecated members of the user API; see omh/omp_alloc_dep.omh	
-// ----------------------------------------------------------------------------
+/* --------------------------------------------------------------------------
+$begin omp_efficient$$
+$spell
+	omp_alloc
+	ptr
+	num
+	bool
+	const
+$$
+
+$section Check If A Memory Allocation is Efficient for Another Use$$
+$index efficient, omp_alloc$$
+$index omp_alloc, efficient$$
+$index memory, reuse$$
+$index reuse, memory$$
+
+
+$head Syntax$$
+$codei%flag% = omp_alloc::efficient(%v_ptr%, %num_bytes%)%$$
+
+$head Purpose$$
+Check if memory that is currently in use is an efficient 
+allocation for a specified number of bytes.
+
+$head v_ptr$$
+This argument has prototype
+$codei%
+	const void* %v_ptr%
+%$$.
+It must be a pointer to memory that is currently in use; i.e.
+obtained by a previous call to $cref omp_get_memory$$ and not yet returned.
+
+$head num_bytes$$
+This argument has prototype
+$codei%
+	size_t %num_bytes%
+%$$
+It specifies the number of bytes of the memory allocated by $icode v_ptr$$ 
+that we want to use.
+
+$head flag$$
+The return value has prototype
+$codei%
+	bool %flag%
+%$$
+It is true, 
+a call to $code get_memory$$ with 
+$cref/min_bytes/omp_get_memory/min_bytes/$$
+equal to $icode num_bytes$$ would result in a value for
+$cref/cap_bytes/omp_get_memory/cap_bytes/$$ that is the same as when $code v_ptr$$
+was returned by $code get_memory$$; i.e.,
+$icode v_ptr$$ is an efficient memory block for $icode num_bytes$$
+bytes of information.
+
+$head Thread$$
+Either the $cref/current thread/omp_get_thread_num/$$ must be the same as during
+the corresponding call to $cref omp_get_memory$$,
+or the current execution mode must be sequential 
+(not $cref/parallel/omp_in_parallel/$$).
+
+$head NDEBUG$$
+If $code NDEBUG$$ is defined, $icode v_ptr$$ is not checked (this is faster).
+Otherwise, a list of in use pointers is searched to make sure
+that $icode v_ptr$$ is in the list. 
+
+$end
+*/
 	/*!
-	\b Deprecated: Check if memory that is currently in use is an efficient 
+	Check if memory that is currently in use is an efficient 
 	allocation for a specified number of bytes.
 	
 
@@ -1257,7 +1321,52 @@ $end
 		return flag;
 	}
 };
+/* ---------------------------------------------------------------------------
+$begin old_max_num_threads$$
+$spell
+	inv
+	CppAD
+	num
+	omp_alloc
+$$
+$section Set Maximum Number of Threads for omp_alloc Allocator$$
 
+$index max_num_threads, omp_alloc$$
+$index omp_alloc, max_num_threads$$
+$index parallel, max_num_threads$$
+$index threads, number of$$
+
+$index OpenMP, initialize memory$$
+$index memory, initialize OpenMP$$
+$index initialize, OpenMP memory$$
+
+$head Removed$$
+This function has been removed from the CppAD API.
+Use the function $cref/set_max_num_threads/omp_max_num_threads/$$
+in its place.
+
+$head Syntax$$
+$codei%omp_alloc::max_num_threads(%number%)%$$
+
+$head Purpose$$
+By default there is only one thread and all execution is in sequential mode
+(not $cref/parallel/omp_in_parallel/$$).
+
+$head number$$
+The argument $icode number$$ has prototype
+$icode%
+	size_t %number%
+%$$ 
+It must be greater than zero and specifies the maximum number of 
+OpenMP threads that will be active at one time.
+
+$head Restrictions$$
+This function must be called before the program enters 
+$cref/parallel/omp_in_parallel/$$ execution mode.
+
+$end
+-------------------------------------------------------------------------------
+*/
 CPPAD_END_NAMESPACE
 
 // preprocessor symbols local to this file

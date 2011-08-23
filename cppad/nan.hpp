@@ -145,7 +145,7 @@ the first call to
 $codei%
 	%b% = isnan(%s%)
 %$$
-must not be $cref/in_parallel/$$ execution mode; 
+must not be $cref omp_in_parallel$$ execution mode; 
 see $code isnan$$ in $cref/parallel_ad/parallel_ad/isnan/$$.
 
 $children%

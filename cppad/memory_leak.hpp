@@ -45,12 +45,12 @@ Otherwise it returns true unless one of the conditions below occurs.
 
 $head inuse$$
 When this routine is called, it is assumed that no memory
-should be $cref/inuse/$$ for any thread.
+should be $cref omp_inuse$$ for any thread.
 If it is, a message is printed and this routine returns false.
 
 $head available$$
-This routine calls $cref/free_available/$$ for all the threads
-and then checks that no memory is left $cref/available/$$ for any thread;
+This routine calls $cref omp_free_available$$ for all the threads
+and then checks that no memory is left $cref omp_available$$ for any thread;
 i.e., it all has been returned to the system.
 If there is memory still available for this thread,
 this routine returns false. 
@@ -64,7 +64,7 @@ If this routine returns false, it prints a message
 to standard output describing the condition before returning false.
 
 $head OpenMP$$
-This routine cannot be used $cref/in_parallel/$$
+This routine cannot be used $cref omp_in_parallel$$
 execution mode.
 
 $end
