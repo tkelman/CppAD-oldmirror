@@ -16,7 +16,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin CppAD_vector$$
 $spell
-	omp_alloc
+	thread_alloc
 	cppad.hpp
 	Bool
 	resize
@@ -211,15 +211,15 @@ $codei%
 is valid.
 
 $head Memory$$
-$index omp_alloc, vector$$
-$index vector, omp_alloc$$
-These vectors use the OpenMP fast memory allocator $cref/omp_alloc/$$,
-thus using them affects the amount of memory $cref omp_inuse$$ and 
-$cref omp_available$$.
+$index thread_alloc, vector$$
+$index vector, thread_alloc$$
+These vectors use the OpenMP fast memory allocator $cref/thread_alloc/$$,
+thus using them affects the amount of memory $cref new_inuse$$ and 
+$cref new_available$$.
 Calling $cref/resize/CppAD_vector/resize/$$ with a zero argument,
-makes the corresponding memory available (though $code omp_alloc$$)
+makes the corresponding memory available (though $code thread_alloc$$)
 to the current thread.
-It can then be completely freed using $cref omp_free_available$$.
+It can then be completely freed using $cref new_free_available$$.
 
 $lend
 
@@ -258,7 +258,7 @@ $end
 # include <limits>
 # include <cppad/local/cppad_assert.hpp>
 # include <cppad/check_simple_vector.hpp>
-# include <cppad/omp_alloc.hpp>
+# include <cppad/thread_alloc.hpp>
 
 CPPAD_BEGIN_NAMESPACE
 /*!
@@ -295,7 +295,7 @@ public:
 	) : capacity_(0), length_(n), data_(0)
 	{	if( length_ > 0 )
 		{	// set capacity and data
-			data_ = omp_alloc::create_array<Type>(length_, capacity_); 
+			data_ = thread_alloc::create_array<Type>(length_, capacity_); 
 		}
 	}
 	/// copy constructor
@@ -305,7 +305,7 @@ public:
 	) : capacity_(0), length_(x.length_), data_(0)
 	{	if( length_ > 0 )
 		{	// set capacity and data	
-			data_ = omp_alloc::create_array<Type>(length_, capacity_); 
+			data_ = thread_alloc::create_array<Type>(length_, capacity_); 
 
 			// copy values using assignment operator
 			size_t i;
@@ -316,7 +316,7 @@ public:
 	/// destructor
 	~vector(void)
 	{	if( capacity_ > 0 )
-			omp_alloc::delete_array(data_); 
+			thread_alloc::delete_array(data_); 
 	}
 
 	/// maximum number of elements current allocation can store
@@ -330,7 +330,7 @@ public:
 	/// change the number of elements in this vector.
 	inline void resize(
 		/// new number of elements for this vector, if zero
-		/// make sure the memory is returned to omp_alloc.
+		/// make sure the memory is returned to thread_alloc.
 		size_t n
 	)
 	{	length_ = n;
@@ -339,13 +339,13 @@ public:
 			return;
 		// check if there is old memory to be freed
 		if( capacity_ > 0 )
-			omp_alloc::delete_array(data_);
+			thread_alloc::delete_array(data_);
 		// check if we need new memory 
 		if( length_ == 0 )
 			capacity_ = 0;
 		else
 		{	// get new memory and set capacity
-			data_ = omp_alloc::create_array<Type>(length_, capacity_);
+			data_ = thread_alloc::create_array<Type>(length_, capacity_);
 		}
 	}
 	/// vector assignment operator
@@ -395,14 +395,14 @@ public:
 			size_t old_capacity = capacity_;
 			Type*  old_data     = data_;
 			// set new capacity and data values
-			data_ = omp_alloc::create_array<Type>(length_ + 1, capacity_);
+			data_ = thread_alloc::create_array<Type>(length_ + 1, capacity_);
 			// copy old data values
 			size_t i;
 			for(i = 0; i < length_; i++)
 				data_[i] = old_data[i];
 			// free old data
 			if( old_capacity > 0 )
-				omp_alloc::delete_array(old_data);
+				thread_alloc::delete_array(old_data);
 		}
 		data_[length_++] = s;
 		CPPAD_ASSERT_UNKNOWN( length_ <= capacity_ );
@@ -426,13 +426,13 @@ public:
 			size_t old_capacity = capacity_;
 			Type*  old_data     = data_;
 			// set new capacity and data values
-			data_ = omp_alloc::create_array<Type>(length_ + m, capacity_);
+			data_ = thread_alloc::create_array<Type>(length_ + m, capacity_);
 			// copy old data values
 			for(i = 0; i < length_; i++)
 				data_[i] = old_data[i];
 			// free old data
 			if( old_capacity > 0 )
-				omp_alloc::delete_array(old_data);
+				thread_alloc::delete_array(old_data);
 		}
 		for(i = 0; i < m; i++)
 			data_[length_++] = v[i];
@@ -547,7 +547,7 @@ public:
 	{	if( length_ > 0 )
 		{	// set n_unit and data
 			size_t min_unit = unit_min();
-			data_ = omp_alloc::create_array<UnitType>(min_unit, n_unit_);
+			data_ = thread_alloc::create_array<UnitType>(min_unit, n_unit_);
 		}
 	}
 	/// copy constructor
@@ -558,7 +558,7 @@ public:
 	{	if( length_ > 0 )
 		{	// set n_unit and data
 			size_t min_unit = unit_min();
-			data_ = omp_alloc::create_array<UnitType>(min_unit, n_unit_);
+			data_ = thread_alloc::create_array<UnitType>(min_unit, n_unit_);
 
 			// copy values using UnitType assignment operator
 			CPPAD_ASSERT_UNKNOWN( min_unit <= v.n_unit_ ); 
@@ -570,7 +570,7 @@ public:
 	/// destructor
 	~vectorBool(void)
 	{	if( n_unit_ > 0 )
-			omp_alloc::delete_array(data_);
+			thread_alloc::delete_array(data_);
 	}
 
 	/// number of elements in this vector
@@ -585,7 +585,7 @@ public:
 	/// change number of elements in this vector
 	inline void resize(
 		/// new number of elements for this vector, if zero
-		/// make sure the memory is returned to omp_alloc.
+		/// make sure the memory is returned to thread_alloc.
 		size_t n
 	)
 	{	length_ = n;
@@ -595,13 +595,13 @@ public:
 			return;
 		// check if there is old memory to be freed
 		if( n_unit_ > 0 )
-			omp_alloc::delete_array(data_);
+			thread_alloc::delete_array(data_);
 		// check if we need new memory
 		if( length_ == 0 )
 			n_unit_ = 0;
 		else
 		{	// get new memory and set n_unit
-			data_ = omp_alloc::create_array<UnitType>(min_unit, n_unit_);
+			data_ = thread_alloc::create_array<UnitType>(min_unit, n_unit_);
 		}
 	}
 	/// vector assignment operator
@@ -663,13 +663,13 @@ public:
 			size_t    old_n_unit = n_unit_;
 			UnitType* old_data   = data_;
 			// set new n_unit and data values
-			data_ = omp_alloc::create_array<UnitType>(n_unit_+1, n_unit_);
+			data_ = thread_alloc::create_array<UnitType>(n_unit_+1, n_unit_);
 			// copy old data values
 			for(i = 0; i < old_n_unit; i++)
 				data_[i] = old_data[i]; 
 			// free old data
 			if( old_n_unit > 0 )
-				omp_alloc::delete_array(old_data);
+				thread_alloc::delete_array(old_data);
 		}
 		i    = length_ / bit_per_unit_;
 		j    = length_ - i * bit_per_unit_;
@@ -702,13 +702,13 @@ public:
 			size_t  old_n_unit = n_unit_;
 			UnitType* old_data = data_;
 			// set new n_unit and data values
-			data_ = omp_alloc::create_array<UnitType>(min_unit, n_unit_);
+			data_ = thread_alloc::create_array<UnitType>(min_unit, n_unit_);
 			// copy old data values
 			for(i = 0; i < old_n_unit; i++)
 				data_[i] = old_data[i]; 
 			// free old data
 			if( old_n_unit > 0 )
-				omp_alloc::delete_array(old_data);
+				thread_alloc::delete_array(old_data);
 		}
 		ell = old_length;
 		for(k = 0; k < v.size(); k++)

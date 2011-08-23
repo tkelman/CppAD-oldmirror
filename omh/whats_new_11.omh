@@ -78,6 +78,12 @@ documentation.
 $lnext
 Change all $cref omp_alloc$$ section names to begin with $code omp_$$,
 and change all $cref thread_alloc$$ section names to begin with $code new_$$.
+$lnext
+Convert $cref CppAD_vector$$ from using $cref omp_alloc$$ to using
+$cref thread_alloc$$ for memory allocation.
+$lnext
+Extend the $cref memory_leak$$ routine to also check the
+$cref thread_alloc$$ allocator.
 $lend
 
 $head 08-21$$
@@ -316,7 +322,7 @@ Add link to $tref Discrete$$ in $cref/omp_parallel/$$.
 $lnext
 Make use of the $cref/TrackNewDel/$$ routines
 $cref omp_in_parallel$$ execution mode an error (it never worked properly); 
-see $cref/TrackNewDel OpenMP/TrackNewDel/OpenMP/$$.
+see $cref/TrackNewDel multi-threading/TrackNewDel/Multi-Threading/$$.
 $lnext
 Change $cref/memory_leak/$$ so that it checks for a leak in all threads.
 This is what $cref/multi_newton.cpp/$$ and $cref/sum_i_inv.cpp/$$
