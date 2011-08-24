@@ -647,7 +647,7 @@ increase speed by avoiding system memory allocation calls.
 The function call $codei%
 	user_atomic<%Base%>::clear()
 %$$ 
-makes to work space available to $cref/omp_alloc/$$
+makes to work space $cref/available/new_available/$$ to
 for other uses by the same thread.
 This should be called when you are done using the 
 user atomic functions for a specific value of $icode Base$$.
@@ -878,10 +878,9 @@ public:
 	, rjs_(rjs)
 	, rhs_(rhs)
 	, index_( List().size() )
-	{
-		CPPAD_ASSERT_KNOWN(
-			! omp_alloc::in_parallel() ,
-			"First call to this user atomic function is in parallel mode."
+	{	CPPAD_ASSERT_KNOWN(
+			! thread_alloc::in_parallel() ,
+			"First call to the function *afun is in parallel mode."
 		);
 		List().push_back(this);
 	}

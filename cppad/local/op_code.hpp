@@ -401,7 +401,7 @@ void printOp(
 {	size_t i;
 	
 	CPPAD_ASSERT_KNOWN(
-		! omp_alloc::in_parallel() ,
+		! thread_alloc::in_parallel() ,
 		"cannot print trace of AD operations in parallel mode"
 	);
 	static const char *CompareOpName[] = 

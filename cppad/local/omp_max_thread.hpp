@@ -27,12 +27,8 @@ $section OpenMP Parallel Setup$$
 $head Deprecated$$
 $index depreciated, omp_max_thread$$
 $index omp_max_thread, depreciated$$
-This routine has been deprecated. Use the following 
-instead of the syntax below:
-$icode%
-thread_alloc::parallel_setup(%number%, omp_in_parallel, omp_get_thread_num);
-parallel_ad<%Base%>();
-%$$
+Use $cref/thread_alloc::parallel_setup/new_parallel_setup/$$ 
+to set the number of threads.
 
 $head Syntax$$
 $codei%AD<%Base%>::omp_max_thread(%number%)
@@ -83,14 +79,15 @@ template <class Base>
 void AD<Base>::omp_max_thread(size_t number)
 {
 # ifdef _OPENMP
-	thread_alloc::parallel_setup(number, omp_in_parallel, omp_get_thread_num);
+	thread_alloc::parallel_setup(
+		number, omp_alloc::in_parallel, omp_alloc::get_thread_num
+	);
 # else
 	CPPAD_ASSERT_KNOWN(
 		number == 1,
 		"omp_max_thread: number > 1 and _OPENMP is not defined"
 	);
 # endif
-
 	parallel_ad<Base>();
 }
 
