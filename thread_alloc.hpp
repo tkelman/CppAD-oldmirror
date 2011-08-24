@@ -466,7 +466,7 @@ $spell
 	inv
 	CppAD
 	num
-	omp_alloc
+	alloc
 $$
 $section Get Number of Threads$$
 
