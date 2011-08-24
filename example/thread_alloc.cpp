@@ -95,7 +95,7 @@ bool raw_allocate(void)
 	thread_alloc::free_available(thread);
 	
 	// check that the tests have not held onto memory
-	for(thread = 0; thread < NUMBER_THREADS; thread++)
+	for(thread = 0; thread < thread_alloc::num_threads(); thread++)
 	{	ok &= thread_alloc::inuse(thread) == 0;
 		ok &= thread_alloc::available(thread) == 0;
 	}
@@ -160,9 +160,12 @@ bool type_allocate(void)
 
 	// free the memory for use by this thread
 	thread_alloc::free_available(thread);
-	ok &= thread_alloc::inuse(thread) == 0;
-	ok &= thread_alloc::available(thread) == 0;
-
+	
+	// check that the tests have not held onto memory
+	for(thread = 0; thread < thread_alloc::num_threads(); thread++)
+	{	ok &= thread_alloc::inuse(thread) == 0;
+		ok &= thread_alloc::available(thread) == 0;
+	}
 	return ok;
 }
 
@@ -189,6 +192,8 @@ bool thread_alloc(void)
 	// run typed allocation tests
 	ok &= type_allocate();
 	
+	// return allocator to single thread mode
+	thread_alloc::parallel_setup(1, in_parallel_false, thread_num_zero);
 	return ok;
 }
 

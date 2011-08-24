@@ -9,39 +9,40 @@ the terms of the
 A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
-$begin omp_parallel$$
+$begin multi_thread$$
 $spell
 	CppAD
 $$
 
-$section CppAD Parallel Execution Using OpenMP$$
+$section Using CppAD in a Multi-Threading Environment$$
 $index parallel, mode$$
 $index execution, parallel$$
 $index mode, parallel$$
-$index OpenMP$$
+$index multi-threading$$
 
 $head Purpose$$
 Extra steps and care must be taken to use CppAD 
-$cref omp_in_parallel$$ execution mode. 
+in $cref/parallel/new_in_parallel/$$ execution mode. 
 This section collects this information in one place.
 
+$children%
+	cppad/local/parallel_ad.hpp%
+	openmp/run.sh%
+	omh/omp_parallel.omh
+%$$
+
+$head parallel_setup$$
+Using any of the following routines in a multi-threading environment
+requires that $cref new_parallel_setup$$ has been completed.
+$cref/CheckSimpleVector/CheckSimpleVector/Multi-Threading/$$,
+$cref/CheckNumericType/CheckNumericType/Multi-Threading/$$.
+
+$head Parallel AD$$
+The following sections describe the steps necessary to do AD in 
+parallel mode:
 $table
-$cref/OpenMP/Independent/OpenMP/$$  $cnext
-	$title Independent$$ $rnext
-$cref/OpenMP/FunConstruct/OpenMP/$$  $cnext
-	$title FunConstruct$$ $rnext
-$cref/OpenMP/Discrete/OpenMP/$$  $cnext
-	$title Discrete$$ $rnext
-$cref/OpenMP/user_atomic/afun/OpenMP/$$  $cnext
-	$title user_atomic$$ $rnext
-$cref/OpenMP/ErrorHandler/Constructor/OpenMP/$$ $cnext
-	$title ErrorHandler$$ $rnext
-$cref/OpenMP/nan/OpenMP/$$ $cnext
-	$title nan$$ $rnext
-$cref/OpenMP/Rosen34/OpenMP/$$ $cnext
-	$title Rosen34$$ $rnext
-$cref/OpenMP/Runge45/OpenMP/$$ $cnext
-	$title Runge45$$ $rnext
+$rref new_num_threads$$
+$rref parallel_ad$$
 $tend
 
 $head Example and Tests$$
