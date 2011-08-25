@@ -266,12 +266,14 @@ The dimension of the range space for $latex y = f (x)$$
 is specified by $cref/m/user_atomic/m/$$ $codei%= %ay%.size()%$$,
 which must be greater than zero.
 
-$subhead OpenMP$$
+$subhead Parallel Mode$$
+$index parallel, user_atomic$$
+$index user_atomic, parallel$$
 The first call to 
 $codei%
 	%afun%(%id%, %ax%, %ay%)
 %$$
-must not be in $cref omp_in_parallel$$ execution mode.
+must not be in $cref/parallel/new_in_parallel/$$ mode.
 
 $head forward$$
 The macro argument $icode forward$$ is a
