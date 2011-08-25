@@ -119,12 +119,14 @@ an $cref/ADFun/$$ object will compute the value of $icode name$$
 using the user provided $icode Base$$ version of this routine.
 All the derivatives of $icode name$$ will be evaluated as zero.
 
-$head OpenMP$$
+$head Parallel Mode$$
+$index discrete, parallel$$
+$index parallel, discrete$$
 The first call to 
 $codei%
 	%ay% = %name%(%ax%)
 %$$
-must not be in $cref omp_in_parallel$$ execution mode.
+must not be in $cref/parallel/new_in_parallel/$$ execution mode.
 	
 
 $head Example$$

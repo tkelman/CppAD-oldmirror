@@ -15,6 +15,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin CheckSimpleVector$$
 $spell
+	alloc
 	const
 	cppad.hpp
 	CppAD
@@ -81,9 +82,12 @@ The file $code cppad/check_simple_vector.hpp$$ is included by $code cppad/cppad.
 but it can also be included separately with out the rest
 if the CppAD include files.
 
-$head Multi-Threading$$
-The routine $cref new_parallel_setup$$ must be called before this
-routine can be used in $cref/parallel/new_in_parallel/$$ mode.
+$head Parallel Mode$$
+$index parallel, CheckSimpleVector$$
+$index CheckSimpleVector, parallel$$
+The routine $cref/thread_alloc::parallel_setup/new_parallel_setup/$$
+must be called before it
+can be used in $cref/parallel/new_in_parallel/$$ mode.
 
 $head Example$$
 $children%

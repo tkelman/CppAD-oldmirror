@@ -11,7 +11,10 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 $begin multi_thread$$
 $spell
+	alloc
 	CppAD
+	Rosen
+	Runge
 $$
 
 $section Using CppAD in a Multi-Threading Environment$$
@@ -27,26 +30,42 @@ This section collects this information in one place.
 
 $children%
 	cppad/local/parallel_ad.hpp%
-	openmp/run.sh%
-	omh/omp_parallel.omh
+	openmp/run.sh
 %$$
 
 $head parallel_setup$$
 Using any of the following routines in a multi-threading environment
-requires that $cref new_parallel_setup$$ has been completed.
-$cref/CheckSimpleVector/CheckSimpleVector/Multi-Threading/$$,
-$cref/CheckNumericType/CheckNumericType/Multi-Threading/$$.
+requires that $cref/thread_alloc::parallel_setup/new_parallel_setup/$$ 
+has been completed:
+$cref/CheckSimpleVector/CheckSimpleVector/Parallel Mode/$$,
+$cref/CheckNumericType/CheckNumericType/Parallel Mode/$$,
+$cref/parallel_ad/$$.
 
 $head Parallel AD$$
-The following sections describe the steps necessary to do AD in 
-parallel mode:
-$table
-$rref new_num_threads$$
-$rref parallel_ad$$
-$tend
+One must first call
+$cref/thread_alloc::parallel_setup/new_parallel_setup/$$ 
+and then call $cref/parallel_ad/$$ before using $code AD$$ types
+in $cref/parallel/new_in_parallel/$$ execution mode.
 
-$head Example and Tests$$
-The shell script $cref/openmp_run.sh/$$ can be used to 
-compile and run the OpenMP examples and tests.
+$head Initialization$$
+The following routines must be called at least once before begin used
+in parallel mode:
+$cref/CheckSimpleVector/CheckSimpleVector/Parallel Mode/$$,
+$cref/CheckNumericType/CheckNumericType/Parallel Mode/$$,
+$cref/discrete functions/Discrete/Parallel Mode/$$,
+$cref/nan/nan/Parallel Mode/$$,
+$cref/Rosen34/Rosen34/Parallel Mode/$$,
+$cref/Runge45/Runge45/Parallel Mode/$$.
+
+$head Same Thread$$
+Some operations must be preformed by the same thread:
+$cref/ADFun/FunConstruct/Parallel Mode/$$,
+$cref Independent$$, $cref Dependent$$.
+
+
+$head Parallel Prohibited$$
+The following routine cannot be called in parallel mode:
+$cref/ErrorHandler constructor/ErrorHandler/Constructor/Parallel Mode/$$.
+
 
 $end

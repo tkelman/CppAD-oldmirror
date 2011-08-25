@@ -283,13 +283,13 @@ $list number$$
 Change the upper limit for 
 $cref omp_max_num_threads$$ from 32 to 48.
 $lnext
-Add $cref/OpenMP/omp_parallel/$$ documentation for,
-$cref/nan/nan/OpenMP/$$,
-$cref/Rosen34/Rosen34/OpenMP/$$, and
-$cref/Runge45/Runge45/OpenMP/$$.
+Add $cref/parallel/new_in_parallel/$$ documentation for,
+$cref/nan/nan/Parallel Mode/$$,
+$cref/Rosen34/Rosen34/Parallel Mode/$$, and
+$cref/Runge45/Runge45/Parallel Mode/$$.
 $lnext
 Fix $cref CheckNumericType$$ and $cref CheckSimpleVector$$
-so they work properly when used $cref omp_in_parallel$$ execution mode.
+so they work properly when used in parallel mode.
 $lend
 
 
@@ -312,13 +312,13 @@ Fix automatic removal of executables from $code openmp$$ directory
 (was commented out).
 $lnext
 The documentation for $code openmp/run.sh$$ was moved to the
-$cref/omp_parallel/$$ section.
+$code multi_thread$$ section.
 $lend
  
 
 $head 07-10$$
 $list number$$
-Add link to $tref Discrete$$ in $cref/omp_parallel/$$.
+Add link to $tref Discrete$$ in $cref multi_thread$$.
 $lnext
 Make use of the $cref/TrackNewDel/$$ routines
 $cref omp_in_parallel$$ execution mode an error (it never worked properly); 
@@ -331,7 +331,7 @@ $lend
 
 $head 07-09$$
 All the OpenMP parallel execution requirements
-have been grouped in the section $cref/omp_parallel/$$.
+have been grouped in the section $cref multi_thread$$.
 
 $head 07-07$$
 Add the routine $cref/parallel_ad/$$ to fix bug when using
