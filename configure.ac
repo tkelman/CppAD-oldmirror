@@ -12,7 +12,7 @@ dnl ---------------------------------------------------------------------------
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl   package   version              bug-report
-AC_INIT(CppAD, 20110821, cppad@list.coin-or.org)
+AC_INIT(CppAD, 20110826, cppad@list.coin-or.org)
 AC_SUBST(PACKAGE_URL, "http://www.coin-or.org/CppAD")
 AC_SUBST(PACKAGE_DESCRIPTION, "Differentiation of C++ Algorithms")
 
@@ -124,18 +124,6 @@ AC_ARG_WITH(openmp,
 )
 AM_CONDITIONAL(CppAD_OPENMP, test "$openmp" = "yes")
 AC_MSG_RESULT([$openmp])
-
-
-dnl Are we testing pthreads -----------------------------------------------
-dnl cygwin begin delete:
-AC_MSG_CHECKING([--with-pthread])
-AC_ARG_WITH(pthread, 
-	AC_HELP_STRING([--with-pthread], [default is no]),
-	[pthread="yes"],
-	[pthread="no"]
-)
-AM_CONDITIONAL(CppAD_PTHREAD, test "$pthread" = "yes")
-AC_MSG_RESULT([$pthread])
 
 dnl Are we installing the documentation -----------------------------------
 dnl cygwin begin delete:
@@ -371,13 +359,18 @@ dnl --------------------------------------------------------------------------
 dnl Check for C libraries
 
 dnl check for pthread library
-AC_SUBST(PTHREAD_LIB, "")
 AC_CHECK_LIB(
 	[pthread],
 	[pthread_create],
-	[PTHREAD_LIB="-lpthread"],
-	[PTHREAD_LIB=""]
+	[pthread="yes"],
+	[pthread="no"]
 )
+AM_CONDITIONAL(CppAD_PTHREAD, test "$pthread" = "yes")
+if test "$pthread" == "yes" ; then
+	AC_SUBST(PTHREAD_LIB,"-lpthread")
+else
+	AC_SUBST(PTHREAD_LIB,"")
+fi
 
 dnl check for dl library
 AC_SUBST(DL_LIB, "")

@@ -84,7 +84,7 @@ AM_CPPFLAGS       = -I. \
                     $(ADOLC_INCLUDE)
                     
 #
-LDADD             = $(ADOLC_LIB) 
+LDADD             = $(ADOLC_LIB) $(PTHREAD_LIB)
 AM_LDFLAGS        = $(ADOLC_LIB_DIRS) 
 #
 example_SOURCES   = \

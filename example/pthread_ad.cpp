@@ -56,13 +56,15 @@ namespace {
 	// general purpose code for linking CppAD to pthreads
 	size_t num_threads = NUMBER_THREADS; 
 	typedef struct {
-		// mutex used to synchronize access to this record
+		// Mutex used to synchronize access to this struct.
 		pthread_mutex_t mutex;
-		// Pthread unique identifier for one thread.
+		// Pthread unique identifier for thread that uses this struct
+		// in thread_work.
 		pthread_t       thread_id;
 		// Angle for this thread_work calculation.
 		double          theta;
-		// Has no error occurred.
+		// False if error related to thread corresponding to this struct
+		// occurred, true otherwise.
 		bool            ok;
 	} thread_info;
 	// vector with information for each thread
@@ -74,47 +76,65 @@ namespace {
 	bool in_parallel(void)
 	{	return multiple_threads_active; }
 
-	// This function gets a number less than num_threads that is 
-	// unique for each thread. CppAD uses this information.
+	// This function determines the unique index for each thread where
+	// 	0 <= index < num_threads
+	// Note that, if multiple_threads_active is true, info_vector will be 
+	// initialized by the master before this routine gets called 
+	// (either by master or another thread).
 	size_t thread_num(void)
-	{	static bool wait = true;
+	{	// Flag so once we determine that thread_id is set for all threads
+		// we do not have to lock info_vector[index] any more.
+		static bool wait = true;
 
 		// Check for case where we know it this is the master thread
 		if( ! multiple_threads_active )
 			return 0;
 
-		// The first time this routine is called in parallel mode
-		// wait until all the thread_id values have been set (only done once).
+		// The first time this routine is called in parallel mode,
+		// wait until all the thread_id values have been set.
+		// This is done only once, but possibly for multiple threads.
 		size_t index;
 		int rc;
 		while( wait )
-		{	wait = false;
+		{	bool all_set = true;
 			pthread_t thread_zero;
 			for(index = 0; index < num_threads; index++)
-			{	// get a lock on the info_vector[index]	
+			{	// get lock on info_vector[index]	
 				rc    = pthread_mutex_lock( &(info_vector[index].mutex) );
 				info_vector[index].ok &= (rc == 0);
+
 				if( index == 0 )
 				{	// store the identifies corresponding to the master
 					thread_zero = info_vector[index].thread_id;
 				}
 				else
-				{	// If this thread has not yet set its thread_id,
-					// try again later.
-					wait |= info_vector[index].thread_id == thread_zero;
+				{	// Check if this thread_id has been set yet.
+					all_set &= info_vector[index].thread_id == thread_zero;
 				}
+
+				// free lock on info_vector[index]
 				rc    = pthread_mutex_unlock( &(info_vector[index].mutex));
 				info_vector[index].ok &= (rc == 0);
+			}
+			if( all_set )
+			{	// Note that multiple threads may drop to this point
+				// and both be setting this wait to false at the same time.
+				// It does not matter if this setting fails. Neither does
+				// it matter if another thread reads the value while it 
+				// is changing and gets ture or false.
+				wait = false;
 			}
 		}
 		
 		// pthread system unique identifier for this thread
 		pthread_t thread_this = pthread_self();
+
 		// convert it to the thread index
 		index = 0;
 		for(index = 0; index < num_threads; index++)
 		{	// pthread system unique identifier for this index
 			pthread_t thread_compare = info_vector[index].thread_id;
+
 			// check for a match
 			if( pthread_equal(thread_this, thread_compare) )
 				return index;
@@ -147,19 +167,26 @@ namespace {
 		return theta;
 	}
 	void* thread_work(void* info_vptr)
-	{	// more code for linking CppAD to pthread ------------------------
+	{	bool ok = true;
+
+		// More general purpose code for linking CppAD to pthread ---------
+
+		// Things would be much simplier if we could set the thread_id
+		// in the master thread; e.g. pthread_getunique_np, but that routine 
+		// is not supported by all pthread systems.
 		thread_info* info = static_cast<thread_info*>(info_vptr);
 
 		// Wait here until master is done initializing info_vector.
 		int rc = pthread_mutex_lock( &(info->mutex) );
-		info->ok &= (rc == 0);
+		ok &= (rc == 0);
 
 		// Now set the thread_id for this thread index
 		info->thread_id = pthread_self();
 
-		// Unlock this info record so that thread_num can read it.
+		// Unlock this info record so that thread_num() can read it
+		// (and stop waiting).
 		rc = pthread_mutex_unlock( &(info->mutex) );
-		info->ok &= (rc == 0);
+		ok &= (rc == 0);
 		// ----------------------------------------------------------------
 
 		// CppAD::vector uses the CppAD fast multi-threading allocator
@@ -174,19 +201,19 @@ namespace {
 		// Check function value corresponds to the identity 
 		// (must get a lock before changing info).
 		double eps = 10. * CppAD::epsilon<double>();
-		rc         = pthread_mutex_lock( &(info->mutex) );
-		info->ok  &= (rc == 0);
-		info->ok  &= NearEqual(Z[0], Theta[0], eps, eps);
-		rc         = pthread_mutex_unlock( &(info->mutex) );
-		info->ok  &= (rc == 0);
+		ok        &= NearEqual(Z[0], Theta[0], eps, eps);
 
 		// Check derivative value corresponds to the identity.
 		CppAD::vector<double> d_theta(1), d_z(1);
 		d_theta[0] = 1.;
 		d_z        = f.Forward(1, d_theta);
+		ok        &= NearEqual(d_z[0], 1., eps, eps);
+
+		// Now we lock info[index] so we can change its ok information
+		// (locking avoids a possible race condition with thread_num()).
 		rc         = pthread_mutex_lock( &(info->mutex) );
 		info->ok  &= (rc == 0);
-		info->ok  &= NearEqual(d_z[0], 1., eps, eps);
+		info->ok  &= ok;
 		rc         = pthread_mutex_unlock( &(info->mutex) );
 		info->ok  &= (rc == 0);
 
@@ -201,12 +228,12 @@ namespace {
 	}
 }
 
+// This test routine is only called by the master thread (index = 0).
 bool pthread_ad(void)
 {	bool all_ok = true;
 	using CppAD::AD;
 	using CppAD::vector;
 
-		
 	// Check that no memory is in use or avialable at start
 	// (using thread_alloc in sequential mode)
 	size_t index;
@@ -219,10 +246,10 @@ bool pthread_ad(void)
 	CppAD::thread_alloc::parallel_setup(num_threads, in_parallel, thread_num);
 	CppAD::parallel_ad<double>();
 
-	// now go into parallel execution mode
+	// Now change in_parallel() to return true.
 	multiple_threads_active = true;
 	
-	// create and run the other threads (this thread is alread running)
+	// Data structure used by pthreads library.
 	pthread_t      thread[NUMBER_THREADS];
 	int            rc;
 	pthread_attr_t attr;
@@ -231,16 +258,19 @@ bool pthread_ad(void)
 	all_ok &= (rc == 0);
 	rc      = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 	all_ok &= (rc == 0);
-	// this master thread is already running, we need num_thread - 1 more
+
+	// This master thread is already running, we need to create
+	// num_threads - 1 more threads
 	for(index = 1; index < num_threads; index++)
-	{	// initialize and lock the mutex for this thread
+	{	// Set a lock by the master on info_vector[index]
 		pthread_mutexattr_t* no_mutexattr = 0;
 		rc = pthread_mutex_init(&(info_vector[index].mutex), no_mutexattr);
-		info_vector[index].ok &= (rc == 0);
+		all_ok &= (rc == 0);
 		rc = pthread_mutex_lock(&(info_vector[index].mutex));
-		info_vector[index].ok &= (rc == 0);
+		all_ok &= (rc == 0);
 
-		// create and put this thread to sleep (mutex is locked)
+		// Create a thread and put it to sleep (it will wait for the master
+		// to relase its lock on info_vector[index]).
 		info_vptr = static_cast<void*> ( &(info_vector[index]) );
 		rc = pthread_create(
 				&thread[index] , 	
@@ -250,7 +280,7 @@ bool pthread_ad(void)
 		);
 		all_ok &= (rc == 0);
 	}
-	// now initialize the info vector
+	// now initialize the and unlock info_vector
  	double pi = 4. * atan(1.);
 	for(index = 0; index < num_threads; index++)
 	{	// theta is const and will not change
@@ -259,14 +289,14 @@ bool pthread_ad(void)
 		info_vector[index].ok        = true;
 		// set all threads to have identifier corresponding to master
 		info_vector[index].thread_id = pthread_self();
-		// now unlock this thread (if it is not the master)
+		// If locked, unlock this info_vector[index].
 		if( 0 < index )
 		{	rc = pthread_mutex_unlock( &(info_vector[index].mutex) );
 			info_vector[index].ok &= (rc == 0);
 		}
 	}
 
-	// now, while other threads are working, do work in master
+	// Now, while other threads are working, do work in master thread also
 	info_vptr = static_cast<void*> ( &(info_vector[0]) );
 	thread_work(info_vptr);
 
@@ -277,14 +307,14 @@ bool pthread_ad(void)
 		all_ok &= (rc == 0);
 	}
 
-	// now return to sequential execution mode
+	// Now we are back in sequential execution mode.
 	multiple_threads_active = false;
 
-	// summarize results
+	// Summarize results.
 	for(index = 0; index < num_threads; index++)
 		all_ok &= info_vector[index].ok;
 
-	// free up the pthread resources that are no longer in use
+	// Free up the pthread resources that are no longer in use.
 	rc      = pthread_attr_destroy(&attr);
 	all_ok &= (rc == 0);
 	for(index = 0; index < num_threads; index++)
@@ -292,7 +322,7 @@ bool pthread_ad(void)
 		all_ok &= (rc == 0);
 	}
 
-	// Check that no memory currently in use, free avialable
+	// Check that no memory currently in use, and free avialable memory.
 	for(index = 0; index < num_threads; index++)
 	{	all_ok &= CppAD::omp_alloc::inuse(index) == 0; 
 		CppAD::omp_alloc::free_available(index); 
