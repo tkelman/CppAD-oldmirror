@@ -28,10 +28,6 @@ Extra steps and care must be taken to use CppAD
 in $cref/parallel/new_in_parallel/$$ execution mode. 
 This section collects this information in one place.
 
-$children%
-	cppad/local/parallel_ad.hpp%
-	openmp/run.sh
-%$$
 
 $head parallel_setup$$
 Using any of the following routines in a multi-threading environment
@@ -67,5 +63,13 @@ $head Parallel Prohibited$$
 The following routine cannot be called in parallel mode:
 $cref/ErrorHandler constructor/ErrorHandler/Constructor/Parallel Mode/$$.
 
+$contents%
+	cppad/local/parallel_ad.hpp%
+	example/openmp_a11c.cpp%
+	example/pthread_a11c.cpp%
+	example/openmp_ad.cpp%
+	example/pthread_ad.cpp%
+	openmp/run.sh
+%$$
 
 $end

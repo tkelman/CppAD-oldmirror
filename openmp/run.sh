@@ -42,13 +42,11 @@
 #
 # @head Purpose@@
 # This script file, @code openmp/run.sh@@, compiles and runs the specified
-# example, and correctness test for using OpenMP.
+# OpenMP example, correctness and speed test.
 # In addition, some of the tests are also speed tests.
 # @table
-# @icode test_name@@                      @cnext @icode speed_test@@  @rnext
-# @cref/example_a11c/example_a11c.cpp/@@  @cnext no                   @rnext
-# @cref/parallel_ad/parallel_ad.cpp/@@    @cnext no                   @rnext
-# @cref/sum_i_inv/sum_i_inv.cpp/@@,       @cnext yes                  @rnext
+# @icode test_name@@                      @cnext @icode Uses CppAD@@  @rnext
+# @cref/sum_i_inv/sum_i_inv.cpp/@@,       @cnext no                   @rnext
 # @cref/multi_newton/multi_newton.cpp/@@  @cnext yes
 # @tend
 #
@@ -74,19 +72,15 @@ openmp_flag="-fopenmp"
 # @@
 #
 # @head Other Flag@@
-# The variable @code speed_flags@@ specifies the other compiler flags
-# for the tests @code sum_i_inv@@ and @code multi_newton@@.
-# The variable @code correct_flags@@ specifies the other compiler flags
-# for the tests @code example_a11c@@ and @code parallel_ad@@.
+# The variable @code flags@@ specifies the other compiler flags
+# for the tests.
 # @codep
-speed_flags="-DNDEBUG -O2 -Wall -ansi -pedantic-errors -std=c++98 -Wshadow"
-correct_flags="-g -Wall -ansi -pedantic-errors -std=c++98 -Wshadow"
+flags="-DNDEBUG -O2 -Wall -ansi -pedantic-errors -std=c++98 -Wshadow"
 # @@
 #
 # @head Number of Repeats@@
 # The variable @code n_repeat@@ specifies the number of times to repeat
-# the test (only used for the speed tests).
-# It must be a non-negative integer.
+# the test.  It must be a non-negative integer.
 # If it is 0, the number of repeats is determined automatically.
 # @codep
 n_repeat="0"
@@ -124,8 +118,6 @@ let multi_newton_n_grid="$max_num_threads*15"
 # run in an MSDOS box.
 #
 # @childtable%
-#	openmp/example_a11c.cpp%
-#	openmp/parallel_ad.cpp%
 #	openmp/sum_i_inv.cpp%
 #	openmp/multi_newton.cpp
 # %@@
@@ -138,27 +130,18 @@ then
 	exit 1
 fi
 case "$1" in
-	example_a11c)
-	other_flags="$correct_flags"
-	args=""
-	;;
-	parallel_ad)
-	other_flags="-I.. $correct_flags"
-	args=""
-	;;
 	sum_i_inv)
-	other_flags="-I.. $speed_flags"
+	other_flags="-I.. $flags"
 	args="$n_repeat $sum_i_inv_mega_sum"
 	;;
 	multi_newton)
-	other_flags="-I.. $speed_flags"
+	other_flags="-I.. $flags"
 	args="$n_repeat $multi_newton_n_zero $multi_newton_n_grid"
 	args="$args $multi_newton_n_sum $multi_newton_use_ad"
 	;;
 	*)
 	echo "usage: openmp/run.sh test_name"
-	echo "where test_name is one of the following:"
-	echo "	example_a11c, parallel_ad, sum_i_inv, or multi_newton"
+	echo "where test_name is sum_i_inv, or multi_newton"
 	exit 1
 	;;
 esac
@@ -189,10 +172,9 @@ cat temp.$$
 no_openmp=`cat temp.$$ | grep 'repeats_per_sec' | sed -e 's|.*=||'`
 #
 # clean up (this is a source directory)
-# echo "rm ${test_name}_no_openmp"
 rm ${test_name}_no_openmp
-# echo "rm temp.$$"
 rm temp.$$
+#
 if [ "$error_occurred" = "yes" ]
 then
 	exit 1
@@ -220,20 +202,13 @@ cat temp.$$
 dynamic_openmp=`cat temp.$$ | grep 'repeats_per_sec' | sed -e 's|.*=||'`
 dynamic_n_thread=`cat temp.$$ | grep 'n_thread' | sed -e 's|.*=||'`
 #
-if [ "$test_name" == "parallel_ad" ]  || \
-   [ "$test_name" == "example_a11c" ] || \
-   [ "$error_occurred" == "yes" ]
+if [ "$error_occurred" == "yes" ]
 then
 	# clean up (this is a source directory)
-	# echo "rm ${test_name}_yes_openmp"
 	rm ${test_name}_yes_openmp
-	# echo "rm temp.$$"
 	rm temp.$$
-	if [ "$error_occurred" = "yes" ]
-	then
-		exit 1
-	fi
-	exit 0
+	#
+	exit 1
 fi
 # ---------------------------------------------------------------------------
 # Specify number of threads
@@ -262,11 +237,8 @@ do
 	cat temp.$$
 	if [ "$error_occurred" = "yes" ]
 	then
-		#
 		# clean up (this is source directory)
-		# echo "rm ${test_name}_yes_openmp"
 		rm ${test_name}_yes_openmp
-		# echo "rm temp.$$"
 		rm temp.$$
 		exit 1
 	fi
@@ -280,9 +252,7 @@ do
 done
 #
 # clean up (this is source directory)
-# echo "rm ${test_name}_yes_openmp"
 rm ${test_name}_yes_openmp
-# echo "rm temp.$$"
 rm temp.$$
 # ---------------------------------------------------------------------------
 # Summary

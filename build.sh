@@ -513,7 +513,7 @@ then
 	      ./build.sh doxygen   >> $log_dir/$log_file
 	#
 	# openmp test script
-	for name in example_a11c parallel_ad sum_i_inv multi_newton
+	for name in sum_i_inv multi_newton
 	do
 		echo "openmp/run.sh $name >> $log_file"
 		      openmp/run.sh $name >> $log_dir/$log_file

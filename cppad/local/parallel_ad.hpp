@@ -49,8 +49,8 @@ where $icode s$$ has type $icode%Base%$$, $codei%AD<%Base%>%$$, and
 $codei%std::complex<double>%$$.
 
 $head Example$$
-The files $cref/parallel_ad.cpp/$$ and $cref/openmp_ad.cpp/$$
-contain an examples and tests of this function.   
+The files $cref openmp_ad.cpp$$ and $cref pthread_ad.cpp$$
+contain examples and tests that use this function.   
 
 $end
 -----------------------------------------------------------------------------

@@ -67,6 +67,25 @@ assist you in learning about changes between various versions of CppAD.
 $head branches/pthread$$
 The following changes have been made to the $code pthread$$ branch:
 
+$head 08-25$$
+$list number$$
+Replace $cref omp_alloc$$ by $cref thread_alloc$$ in 
+$cref multi_thread$$, the section on how to use CppAD in parallel.
+$lnext
+Implement $cref omp_alloc$$ as links to corresponding $cref thread_alloc$$
+sections.
+$lnext
+Create the $cref pthread_ad.cpp$$ example that does AD using the
+pthread library.
+In addition, fix some problems in $cref openmp_ad.cpp$$
+$lnext
+Move $code openmp/example_a11c.cpp$$ to 
+$cref|example/openmp_a11c.cpp|openmp_a11c.cpp|$$.
+$lnext
+Move $code openmp/parallel_ad.cpp$$ to 
+$cref|example/openmp_ad.cpp|openmp_ad.cpp|$$.
+$lend
+
 $head 08-23$$
 Beginning steps in replacing $cref omp_alloc$$ by $cref thread_alloc$$:
 $list number$$
@@ -254,10 +273,10 @@ correctness and speed tests were out of date.
 This has been fixed; see 
 $cref/example and tests/InstallUnix/make/Examples and Tests/$$.
 $lnext
-Move $cref/parallel_ad.cpp/$$ from $code example$$ directory
+Move $code parallel_ad.cpp$$ from $code example$$ directory
 to $code openmp$$ directory (and convert it from a function to a program).
 $lnext
-Simplify $cref/example_a11c.cpp/$$ by making it just a correctness test.
+Simplify $code example_a11c.cpp$$ by making it just a correctness test.
 $lnext
 Change $cref/openmp_run.sh/$$ so that it runs correctness tests with
 the compiler debugging flags.
@@ -272,9 +291,9 @@ $lnext
 Make the $cref/sparsity/Sparse/$$ calculations safe
 for use during $cref omp_in_parallel$$ execution mode.
 $lnext
-Add the $cref/parallel_ad.cpp/$$ example.
+Add the $code parallel_ad.cpp$$ example.
 $lnext
-Change $cref/example_a11c.cpp/$$ example so that is just a correctness
+Change $code example_a11c.cpp$$ example so that is just a correctness
 (not speed) test.
 $lend
 

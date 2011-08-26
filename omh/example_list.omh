@@ -113,7 +113,6 @@ $rref Eq.cpp$$
 $rref EqualOpSeq.cpp$$
 $rref Erf.cpp$$
 $rref ErrorHandler.cpp$$
-$rref example_a11c.cpp$$
 $rref example.cpp$$
 $rref Exp.cpp$$
 $rref ForOne.cpp$$
@@ -177,7 +176,6 @@ $rref openmp_ad.cpp$$
 $rref opt_val_hes.cpp$$
 $rref optimize.cpp$$
 $rref Output.cpp$$
-$rref parallel_ad.cpp$$
 $rref ParVar.cpp$$
 $rref Poly.cpp$$
 $rref Pow.cpp$$
@@ -185,6 +183,7 @@ $rref pow_int.cpp$$
 $rref print_for_cout.cpp$$
 $rref print_for_string.cpp$$
 $rref pthread_a11c.cpp$$
+$rref pthread_ad.cpp$$
 $rref RevOne.cpp$$
 $rref RevSparseHes.cpp$$
 $rref RevSparseJac.cpp$$

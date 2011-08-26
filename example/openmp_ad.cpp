@@ -19,10 +19,9 @@ $$
 
 $section Simple OpenMP Parallel AD: Example and Test$$
 
-$index OpenMP, AD example$$
 $index openmp_ad, example$$
-$index AD, parallel$$
-$index parallel, AD$$
+$index AD, parallel OpenMP$$
+$index parallel, AD OpenMP$$
 
 $head Purpose$$
 This example demonstrates how CppAD can be used with multiple OpenMP threads.
@@ -71,6 +70,10 @@ namespace {
 
 		return theta;
 	}
+	bool in_parallel(void)
+	{	return static_cast<bool> ( omp_in_parallel() ); }
+	size_t thread_num(void)
+	{	return static_cast<size_t>( omp_get_thread_num() ); } 
 }
 
 bool openmp_ad(void)
@@ -78,21 +81,23 @@ bool openmp_ad(void)
 	using CppAD::AD;
 	using CppAD::NearEqual;
 
-	int n_thread = NUMBER_THREADS;   // number of threads in parallel regions
-	omp_set_dynamic(0);              // off dynamic thread adjust
-	omp_set_num_threads(n_thread);   // set the number of threads 
+	// number of threads
+	size_t num_threads = NUMBER_THREADS; 
 
-	// Inform the CppAD of the maximum number of threads that will be used
-	CppAD::omp_alloc::set_max_num_threads(n_thread);
+	// Set the number of OpenMP threads
+	omp_set_dynamic(0); // turn off dynamic thread adjustment
+	omp_set_num_threads( size_t( num_threads ) );
 
-	// check that no memory is in use or avialable at start
+	// Check that no memory is in use or avialable at start
+	// (using thread_alloc in sequential mode)
 	size_t thread;
-	for(thread = 0; thread < size_t(n_thread); thread++)
-	{	all_ok &= CppAD::omp_alloc::inuse(thread) == 0; 
-		all_ok &= CppAD::omp_alloc::available(thread) == 0; 
+	for(thread = 0; thread < num_threads; thread++)
+	{	all_ok &= CppAD::thread_alloc::inuse(thread) == 0; 
+		all_ok &= CppAD::thread_alloc::available(thread) == 0; 
 	}
 
-	// enable use of AD<double> in parallel mode
+	// Setup for using AD<double> in parallel mode
+	CppAD::thread_alloc::parallel_setup(num_threads, in_parallel, thread_num);
 	CppAD::parallel_ad<double>();
 
 	// Because maximum number of threads is greater than zero, CppAD::vector 
@@ -104,7 +109,7 @@ bool openmp_ad(void)
 
 # pragma omp parallel for
 		for(k = 0; k < n_k; k++)
-		{	// CppAD::vector uses the omp_alloc fast OpenMP memory allocator
+		{	// CppAD::vector uses the CppAD fast multi-threading allocator
 			CppAD::vector< AD<double> > Theta(1), Z(1);
 
 			Theta[0] = k * pi / double(n_k);
@@ -120,22 +125,23 @@ bool openmp_ad(void)
 
 			// check derivative values
 			CppAD::vector<double> d_theta(1), d_z(1);
-			d_z = f.Forward(1, d_theta);
-			ok[k]  = NearEqual(d_z[0], 0., eps, eps);
+			d_theta[0] = 1.;
+			d_z        = f.Forward(1, d_theta);
+			ok[k]      = NearEqual(d_z[0], 1., eps, eps);
 		}
 		// summarize results
 		for(k = 0; k < n_k; k++)
 			all_ok &= ok[k];
 	}
-	// Check that no memory currently in use, free avialable, and go back to
-	// single thread memory mode.
-	for(thread = 0; thread < size_t(n_thread); thread++)
+	// Check that no memory currently in use, free avialable
+	for(thread = 0; thread < num_threads; thread++)
 	{	all_ok &= CppAD::omp_alloc::inuse(thread) == 0; 
 		CppAD::omp_alloc::free_available(thread); 
 	}
 
 	// return memory allocator to single threading mode
-	CppAD::omp_alloc::set_max_num_threads(1);
+	num_threads = 1;
+	CppAD::thread_alloc::parallel_setup(num_threads, in_parallel, thread_num);
 
 	return all_ok;
 }

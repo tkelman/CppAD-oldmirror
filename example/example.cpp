@@ -143,6 +143,7 @@ extern bool Pow(void);
 extern bool pow_int(void);
 extern bool print_for(void);
 extern bool pthread_a11c(void);
+extern bool pthread_ad(void);
 extern bool reverse_any(void);
 extern bool reverse_one(void);
 extern bool reverse_three(void);
@@ -335,7 +336,10 @@ int main(void)
 # ifdef CPPAD_OPENMP_EXAMPLES
 	ok &= Run( openmp_a11c,       "openmp_a11c"      );
 	ok &= Run( openmp_ad,         "openmp_ad"        );
+# endif
+# ifdef CPPAD_PTHREAD_EXAMPLES
 	ok &= Run( pthread_a11c,      "pthread_a11c"     );
+	ok &= Run( pthread_ad,        "pthread_ad"     );
 # endif
 	
 

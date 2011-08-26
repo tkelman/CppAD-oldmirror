@@ -44,10 +44,7 @@ the rest of the $code CppAD$$.
 
 $childtable%
 	cppad/omp_alloc.hpp%
-	example/omp_alloc.cpp%
-	example/openmp_a11c.cpp%
-	example/pthread_a11c.cpp%
-	example/openmp_ad.cpp
+	example/omp_alloc.cpp
 %$$
 
 $end

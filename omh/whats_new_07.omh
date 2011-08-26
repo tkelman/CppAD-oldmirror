@@ -796,7 +796,7 @@ $cref/Tracing/WishList/Tracing/$$ entry to the wish list.
 (The Introduction item was completed on $cref/03-31/whats_new_07/03-31/$$.)
 
 $head 03-20$$
-$cref/Example A.1.1c/example_a11c.cpp/$$,
+Example A.1.1c, $code example_a11c.cpp$$,
 from the OpenMP 2.5 standards document,
 was added to the tests that can be run using $cref/openmp_run.sh/$$.
 
