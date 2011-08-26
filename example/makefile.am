@@ -25,12 +25,12 @@ OPENMP_FLAGS       =
 endif
 #
 if CppAD_PTHREAD
-PTHREAD_SRC_FILES   = pthread_a11c.cpp 
+PTHREAD_SRC_FILES   = pthread_a11c.cpp  pthread_ad.cpp
 PTHREAD_EXTRA_FILES = 
 PTHREAD_FLAGS       = -DCPPAD_PTHREAD_EXAMPLES
 else
 PTHREAD_SRC_FILES   =
-PTHREAD_EXTRA_FILES = pthread_a11c.cpp
+PTHREAD_EXTRA_FILES = pthread_a11c.cpp pthread_ad.cpp
 PTHREAD_FLAGS       = 
 endif
 #
@@ -182,8 +182,6 @@ example_SOURCES   = \
 	pow.cpp \
 	pow_int.cpp \
 	print_for.cpp \
-	pthread_a11c.cpp \
-	pthread_ad.cpp \
 	reverse_any.cpp \
 	reverse_one.cpp \
 	reverse_three.cpp \

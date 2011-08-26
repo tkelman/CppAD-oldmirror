@@ -43,9 +43,9 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES = test_one.sh
 CONFIG_CLEAN_VPATH_FILES =
 am__example_SOURCES_DIST = mul_level_adolc.cpp ode_taylor_adolc.cpp \
-	openmp_a11c.cpp openmp_ad.cpp pthread_a11c.cpp example.cpp \
-	abort_recording.cpp abs.cpp acos.cpp add.cpp add_eq.cpp \
-	ad_fun.cpp ad_in_c.cpp asin.cpp atan.cpp atan_2.cpp \
+	openmp_a11c.cpp openmp_ad.cpp pthread_a11c.cpp pthread_ad.cpp \
+	example.cpp abort_recording.cpp abs.cpp acos.cpp add.cpp \
+	add_eq.cpp ad_fun.cpp ad_in_c.cpp asin.cpp atan.cpp atan_2.cpp \
 	base_adolc.hpp bender_quad.cpp bool_fun.cpp vector_bool.cpp \
 	check_numeric_type.cpp check_simple_vector.cpp checkpoint.cpp \
 	compare.cpp compare_change.cpp complex_poly.cpp cond_exp.cpp \
@@ -66,20 +66,21 @@ am__example_SOURCES_DIST = mul_level_adolc.cpp ode_taylor_adolc.cpp \
 	ode_gear.cpp ode_gear_control.cpp ode_stiff.cpp ode_taylor.cpp \
 	omp_alloc.cpp opt_val_hes.cpp optimize.cpp output.cpp \
 	par_var.cpp poly.cpp pow.cpp pow_int.cpp print_for.cpp \
-	pthread_ad.cpp reverse_any.cpp reverse_one.cpp \
-	reverse_three.cpp reverse_two.cpp rev_one.cpp \
-	rev_sparse_hes.cpp rev_sparse_jac.cpp rev_two.cpp \
-	romberg_mul.cpp romberg_one.cpp rosen_34.cpp runge_45_1.cpp \
-	runge_45_2.cpp seq_property.cpp simple_vector.cpp sin.cpp \
-	sinh.cpp sparse_hessian.cpp sparse_jacobian.cpp sqrt.cpp \
-	stack_machine.cpp sub.cpp sub_eq.cpp tan.cpp tanh.cpp \
-	tape_index.cpp thread_alloc.cpp unary_minus.cpp unary_plus.cpp \
-	user_tan.cpp value.cpp var_2par.cpp vec_ad.cpp
+	reverse_any.cpp reverse_one.cpp reverse_three.cpp \
+	reverse_two.cpp rev_one.cpp rev_sparse_hes.cpp \
+	rev_sparse_jac.cpp rev_two.cpp romberg_mul.cpp romberg_one.cpp \
+	rosen_34.cpp runge_45_1.cpp runge_45_2.cpp seq_property.cpp \
+	simple_vector.cpp sin.cpp sinh.cpp sparse_hessian.cpp \
+	sparse_jacobian.cpp sqrt.cpp stack_machine.cpp sub.cpp \
+	sub_eq.cpp tan.cpp tanh.cpp tape_index.cpp thread_alloc.cpp \
+	unary_minus.cpp unary_plus.cpp user_tan.cpp value.cpp \
+	var_2par.cpp vec_ad.cpp
 @CppAD_ADOLC_TRUE@am__objects_1 = mul_level_adolc.$(OBJEXT) \
 @CppAD_ADOLC_TRUE@	ode_taylor_adolc.$(OBJEXT)
 @CppAD_OPENMP_TRUE@am__objects_2 = openmp_a11c.$(OBJEXT) \
 @CppAD_OPENMP_TRUE@	openmp_ad.$(OBJEXT)
-@CppAD_PTHREAD_TRUE@am__objects_3 = pthread_a11c.$(OBJEXT)
+@CppAD_PTHREAD_TRUE@am__objects_3 = pthread_a11c.$(OBJEXT) \
+@CppAD_PTHREAD_TRUE@	pthread_ad.$(OBJEXT)
 am_example_OBJECTS = $(am__objects_1) $(am__objects_2) \
 	$(am__objects_3) example.$(OBJEXT) abort_recording.$(OBJEXT) \
 	abs.$(OBJEXT) acos.$(OBJEXT) add.$(OBJEXT) add_eq.$(OBJEXT) \
@@ -115,8 +116,7 @@ am_example_OBJECTS = $(am__objects_1) $(am__objects_2) \
 	ode_taylor.$(OBJEXT) omp_alloc.$(OBJEXT) opt_val_hes.$(OBJEXT) \
 	optimize.$(OBJEXT) output.$(OBJEXT) par_var.$(OBJEXT) \
 	poly.$(OBJEXT) pow.$(OBJEXT) pow_int.$(OBJEXT) \
-	print_for.$(OBJEXT) pthread_a11c.$(OBJEXT) \
-	pthread_ad.$(OBJEXT) reverse_any.$(OBJEXT) \
+	print_for.$(OBJEXT) reverse_any.$(OBJEXT) \
 	reverse_one.$(OBJEXT) reverse_three.$(OBJEXT) \
 	reverse_two.$(OBJEXT) rev_one.$(OBJEXT) \
 	rev_sparse_hes.$(OBJEXT) rev_sparse_jac.$(OBJEXT) \
@@ -296,8 +296,8 @@ top_srcdir = @top_srcdir@
 @CppAD_OPENMP_TRUE@OPENMP_FLAGS = -DCPPAD_OPENMP_EXAMPLES
 @CppAD_PTHREAD_FALSE@PTHREAD_SRC_FILES = 
 #
-@CppAD_PTHREAD_TRUE@PTHREAD_SRC_FILES = pthread_a11c.cpp 
-@CppAD_PTHREAD_FALSE@PTHREAD_EXTRA_FILES = pthread_a11c.cpp
+@CppAD_PTHREAD_TRUE@PTHREAD_SRC_FILES = pthread_a11c.cpp  pthread_ad.cpp
+@CppAD_PTHREAD_FALSE@PTHREAD_EXTRA_FILES = pthread_a11c.cpp pthread_ad.cpp
 @CppAD_PTHREAD_TRUE@PTHREAD_EXTRA_FILES = 
 @CppAD_PTHREAD_FALSE@PTHREAD_FLAGS = 
 @CppAD_PTHREAD_TRUE@PTHREAD_FLAGS = -DCPPAD_PTHREAD_EXAMPLES
@@ -443,8 +443,6 @@ example_SOURCES = \
 	pow.cpp \
 	pow_int.cpp \
 	print_for.cpp \
-	pthread_a11c.cpp \
-	pthread_ad.cpp \
 	reverse_any.cpp \
 	reverse_one.cpp \
 	reverse_three.cpp \
