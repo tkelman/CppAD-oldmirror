@@ -561,6 +561,7 @@ case "\$1" in
 	echo "usage: ../temp.sh option"
 	echo "where option is one of following: OK, All, tail, follow, file."
 	exit 1
+esac
 EOF
 	chmod +x $log_dir/../temp.sh
 	#
