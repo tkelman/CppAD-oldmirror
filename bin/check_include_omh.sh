@@ -10,7 +10,7 @@
 # A copy of this license is included in the COPYING file of this distribution.
 # Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 # -----------------------------------------------------------------------------
-if [ $0 != "bin/check_include_omh.sh" ]
+if [ ! -e "bin/check_include_omh.sh" ]
 then
 	echo "bin/check_include_omh.sh: must be executed from its parent directory"
 	exit 1
