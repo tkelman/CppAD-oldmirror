@@ -33,7 +33,7 @@ $section Multi-Threaded Newton's Method Routine$$
 
 $head Syntax$$
 $codei%multi_newton(
-	%xout%, %fun%, %n_grid%, %xlow%, %xup%, %epsilon%, %max_itr%)%$$
+	%xout%, %fun%, %n_interval%, %xlow%, %xup%, %epsilon%, %max_itr%)%$$
 
 
 $head Purpose$$
@@ -42,14 +42,14 @@ such that $latex f(x) = 0$$.
 
 $head Method$$
 For $latex i = 0 , \ldots , n$$,  
-we define the $th i$$ grid point $latex g_i$$ 
-and the $th i$$ interval $latex I_i$$ by
+we define the $th i$$ grid point $latex g_i$$ by
 $latex \[
-\begin{array}{rcl}
-	g_i & = & a \frac{n - i}{n} +  b \frac{i}{n}
-	\\
-	I_i & = & [ g_i , g_{i+1} ]
-\end{array}
+	g_i = a \frac{n - i}{n} +  b \frac{i}{n}
+\] $$
+For $latex i = 0 , \ldots , n-1$$,  
+we define the $th i$$ interval $latex I_i$$ by
+$latex \[
+	I_i = [ g_i , g_{i+1} ]
 \] $$
 Newton's method is applied starting
 at the center of each of the intervals $latex I_i$$ for
@@ -64,7 +64,7 @@ $codei%
 %$$
 The input size and value of the elements of $icode xout$$ do not matter.
 Upon return from $code multi_newton$$,
-the size of $icode xout$$ is less than $latex n$$ and
+the size of $icode xout$$ is less than or equal $latex n$$ and
 $latex \[
 	| f( xout[i] ) | \leq epsilon
 \] $$ 
@@ -93,12 +93,12 @@ $codei%
 The input values of $icode f$$ and $icode df$$ do not matter.
 Upon return they are $latex f(x)$$ and $latex f^{(1)} (x)$$ respectively.
 
-$head n_grid$$
-The argument $icode n_grid$$ has prototype
+$head n_interval$$
+The argument $icode n_interval$$ has prototype
 $codei%
-	size_t %n_grid%
+	size_t %n_interval%
 %$$
-It specifies the number of grid points; i.e., $latex n$$ 
+It specifies the number of intervals; i.e., $latex n$$ 
 in the $cref/method/multi_newton/Method/$$ above.
 
 $head xlow$$
@@ -198,7 +198,7 @@ template <class Fun>
 void multi_newton(
 	CppAD::vector<double> &xout , 
 	Fun &fun                    , 
-	size_t n_grid               , 
+	size_t n_interval           , 
 	double xlow                 , 
 	double xup                  , 
 	double epsilon              , 
@@ -209,20 +209,20 @@ void multi_newton(
 
 	// check argument values
 	assert( xlow < xup );
-	assert( n_grid > 0 );
+	assert( n_interval > 0 );
 
 	// OpenMP uses integers in place of size_t
-	int i, n = int(n_grid);
+	int i, n = int(n_interval);
 
 	// set up grid
-	vector<double> grid(n_grid + 1);
-	vector<double> fcur(n_grid), xcur(n_grid), xmid(n_grid);
-	double dx = (xup - xlow) / double(n_grid);
-	for(i = 0; size_t(i) < n_grid; i++)
+	vector<double> grid(n_interval + 1);
+	vector<double> fcur(n), xcur(n), xmid(n);
+	double dx = (xup - xlow) / double(n);
+	for(i = 0; i < n; i++)
 	{	grid[i] = xlow + i * dx;
 		xmid[i] = xlow + (i + .5) * dx;
 	}
-	grid[n_grid] = xup;
+	grid[n] = xup;
 
 # ifdef _OPENMP
 # pragma omp parallel for 
@@ -245,7 +245,7 @@ void multi_newton(
 	double xlast  = xlow;
 	size_t ilast  = 0;
 	size_t n_zero = 0;
-	for(i = 0; size_t(i) < n_grid; i++)
+	for(i = 0; i < n; i++)
 	{	if( abs( fcur[i] ) <= epsilon )
 		{	if( n_zero == 0 )
 			{	xcur[n_zero++] = xlast = xcur[i];

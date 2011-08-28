@@ -24,7 +24,7 @@ $index program, OpenMP example$$
 $section Multi-Threaded Newton's Method Main Program$$
 
 $head Syntax$$
-$codei%multi_newton %n_thread% %repeat% %n_zero% %n_grid% %n_sum% %use_ad%$$ 
+$codei%multi_newton %n_thread% %repeat% %n_zero% %n_interval% %n_sum% %use_ad%$$ 
 
 $head Purpose$$
 Runs a timing test of the $cref/multi_newton/$$ routine.
@@ -61,8 +61,8 @@ It must be an integer greater than one.
 The total interval searched  for zeros is 
 $latex [ 0 , (n\_zero - 1) \pi ]$$.
 
-$head n_grid$$
-The argument $icode n_grid$$
+$head n_interval$$
+The argument $icode n_interval$$
 specifies the number of sub-intervals to divide the total interval into.
 It must an integer greater than zero
 (should probably be greater than two times $icode n_zero$$).
@@ -169,7 +169,7 @@ namespace { // empty namespace
 
 
 	// run the multi-newton test once
-	void test_once(CppAD::vector<double> &xout, size_t n_grid)
+	void test_once(CppAD::vector<double> &xout, size_t n_interval)
 	{	assert( n_zero > 1 );
 		double pi      = 4. * std::atan(1.); 
 		double xlow    = 0.;
@@ -178,12 +178,12 @@ namespace { // empty namespace
 		size_t max_itr = 20;
 	
 		multi_newton(
-			xout    ,
-			fun     ,
-			n_grid  ,
-			xlow    ,
-			xup     ,
-			epsilon ,
+			xout        ,
+			fun         ,
+			n_interval  ,
+			xlow        ,
+			xup         ,
+			epsilon     ,
 			max_itr
 		);
 		return;
@@ -218,7 +218,7 @@ int main(int argc, char *argv[])
 	using CppAD::vector;
 
 	const char *usage = 
-	"usage: multi_newton n_thread repeat n_zero n_grid n_sum use_ad";
+	"usage: multi_newton n_thread repeat n_zero n_interval n_sum use_ad";
 	if( argc != 7 )
 	{	std::cerr << "argc = " << argc << endl;	
 		std::cerr << usage << endl;
@@ -241,9 +241,9 @@ int main(int argc, char *argv[])
 		"multi_newton: n_zero is less than two"
 	);
 
-	// n_grid command line argument
-	size_t n_grid = arg2size_t( *argv++, 1,
-		"multi_newton: n_grid is less than one"
+	// n_interval command line argument
+	size_t n_interval = arg2size_t( *argv++, 1,
+		"multi_newton: n_interval is less than one"
 	);
        
 	// n_sum command line argument 
@@ -275,11 +275,11 @@ int main(int argc, char *argv[])
 	cout << "_OPENMP  = ''" << endl;;
 	n_thread = 1;
 # endif
-	cout << "n_thread = " << n_thread << endl;
-	cout << "n_zero   = " << n_zero   << endl;
-	cout << "n_grid   = " << n_grid   << endl;
-	cout << "n_sum    = " << n_sum    << endl;
-	cout << "use_ad   = " << use_ad   << endl;
+	cout << "n_thread   = " << n_thread << endl;
+	cout << "n_zero     = " << n_zero   << endl;
+	cout << "n_interval = " << n_interval   << endl;
+	cout << "n_sum      = " << n_sum    << endl;
+	cout << "use_ad     = " << use_ad   << endl;
 
 	// Inform the CppAD of the maximum number of threads that will be used
 	CppAD::omp_alloc::set_max_num_threads(n_thread);
@@ -295,14 +295,14 @@ int main(int argc, char *argv[])
 
 	if( repeat > 0 )
 	{	// run the calculation the requested number of times
-		test_repeat(n_grid, repeat);
+		test_repeat(n_interval, repeat);
 	}
 	else
 	{	// determine number of times to the calculation runs per second
 
 		// size of the one test case
 		vector<size_t> size_vec(1);
-		size_vec[0] = n_grid;
+		size_vec[0] = n_interval;
 
 		// minimum time for test (repeat until this much time)
 		double time_min = 1.;
@@ -326,7 +326,7 @@ int main(int argc, char *argv[])
 	// sub-block so xout is not in use when memory_leak is called.
 	{	// Correctness test
 		vector<double> xout;
-		test_once(xout, n_grid);
+		test_once(xout, n_interval);
 		double epsilon = 1e-6;
 		double pi      = 4. * std::atan(1.);
 		ok            &= (xout.size() == n_zero);

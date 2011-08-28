@@ -110,7 +110,7 @@ sum_i_inv_mega_sum="1"
 multi_newton_n_zero="20"
 multi_newton_n_sum="500"
 multi_newton_use_ad="true"
-let multi_newton_n_grid="$max_num_threads*15"
+let multi_newton_n_interval="$max_num_threads*15"
 # @@
 #
 # @head Restrictions@@
@@ -136,7 +136,7 @@ case "$1" in
 	;;
 	multi_newton)
 	other_flags="-I.. $flags"
-	args="$n_repeat $multi_newton_n_zero $multi_newton_n_grid"
+	args="$n_repeat $multi_newton_n_zero $multi_newton_n_interval"
 	args="$args $multi_newton_n_sum $multi_newton_use_ad"
 	;;
 	*)
