@@ -302,7 +302,6 @@ EXTRA_DIST = \
 	doxyfile.in \
 	omh \
 	openmp/sum_i_inv.cpp \
-	openmp/run.sh \
 	uw_copy_040507.html
 
 test_directory_list = \

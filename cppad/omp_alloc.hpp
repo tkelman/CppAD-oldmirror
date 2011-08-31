@@ -67,15 +67,6 @@ The function $code set_max_num_threads$$ must be called before
 the program enters $cref/parallel/omp_in_parallel/$$ execution mode.
 In addition, this function cannot be called while in parallel mode.
 
-$head Example$$
-The routine $cref sum_i_inv.cpp$$
-is an example, speed test, and correctness test.
-If the preprocessor symbol $code _OPENMP$$ is defined,
-it uses parallel execution mode.
-As per the restriction above,
-$code sum_i_inv.cpp$$ calls $code set_max_num_threads$$
-before using parallel mode.
-
 $end
 */
 	/*!

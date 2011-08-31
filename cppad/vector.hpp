@@ -170,7 +170,7 @@ If the $code resize$$ member function is called with argument
 value zero, all memory allocated for the vector will be freed.
 The can be useful when using very large vectors
 and when checking for memory leaks (and there are global vectors)
-see the $cref/memory/CppAD_vector/Memory/$$ discussion.
+see the $cref/memory/CppAD_vector/Memory and Parallel Mode/$$ discussion.
 
 $head vectorBool$$
 $index vectorBool$$
@@ -179,7 +179,7 @@ $code CppAD::vectorBool$$.
 This has the same specifications as $code CppAD::vector<bool>$$ 
 with the following exceptions
 
-$list number $$
+$list number$$
 The class $code vectorBool$$ conserves on memory
 (on the other hand, $code CppAD::vector<bool>$$ is expected to be faster
 than $code vectorBool$$).
@@ -209,18 +209,27 @@ $codei%
 	%z% = %x%[%i%] = %y%
 %$$
 is valid.
+$lend
 
-$head Memory$$
+$head Memory and Parallel Mode$$
 $index thread_alloc, vector$$
 $index vector, thread_alloc$$
-These vectors use the OpenMP fast memory allocator $cref/thread_alloc/$$,
-thus using them affects the amount of memory $cref new_inuse$$ and 
-$cref new_available$$.
+These vectors use the OpenMP fast memory allocator $cref/thread_alloc/$$:
+
+$list number$$
+The routine $cref/parallel_setup/new_parallel_setup/$$ must
+be called before these vectors can be used 
+$cref/in parallel/new_in_parallel/$$.
+$lnext
+Using these vectors affects the amount of memory 
+$cref/in_use/new_inuse/$$ and $cref/available/new_available/$$.
+$lnext
 Calling $cref/resize/CppAD_vector/resize/$$ with a zero argument,
 makes the corresponding memory available (though $code thread_alloc$$)
 to the current thread.
-It can then be completely freed using $cref new_free_available$$.
-
+$lnext
+Available memory
+can then be completely freed using $cref new_free_available$$.
 $lend
 
 $head Example$$

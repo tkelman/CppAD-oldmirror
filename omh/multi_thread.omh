@@ -33,6 +33,7 @@ $head parallel_setup$$
 Using any of the following routines in a multi-threading environment
 requires that $cref/thread_alloc::parallel_setup/new_parallel_setup/$$ 
 has been completed:
+$cref/CppAD::vector/CppAD_vector/Memory and Parallel Mode/$$,
 $cref/CheckSimpleVector/CheckSimpleVector/Parallel Mode/$$,
 $cref/CheckNumericType/CheckNumericType/Parallel Mode/$$,
 $cref/parallel_ad/$$.
@@ -44,7 +45,7 @@ and then call $cref/parallel_ad/$$ before using $code AD$$ types
 in $cref/parallel/new_in_parallel/$$ execution mode.
 
 $head Initialization$$
-The following routines must be called at least once before begin used
+The following routines must be called at least once before being used
 in parallel mode:
 $cref/CheckSimpleVector/CheckSimpleVector/Parallel Mode/$$,
 $cref/CheckNumericType/CheckNumericType/Parallel Mode/$$,
@@ -69,7 +70,6 @@ $contents%
 	example/pthread_a11c.cpp%
 	example/openmp_ad.cpp%
 	example/pthread_ad.cpp%
-	openmp/run.sh%
 	openmp/run.cpp
 %$$
 

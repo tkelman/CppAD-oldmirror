@@ -173,10 +173,7 @@ $end
 
 # include <cppad/cppad.hpp>
 # include <cassert>
-
-# ifdef _OPENMP
 # include <omp.h>
-# endif
 
 namespace { // BEGIN CppAD namespace
 
@@ -243,9 +240,7 @@ void newton_method(
 
 	if( use_openmp )
 	{
-# ifdef _OPENMP
 # pragma omp parallel for 
-# endif
 		for(i = 0; i < n; i++) 
 		{	one_newton(
 				fun       , 
@@ -258,7 +253,7 @@ void newton_method(
 				max_itr
 			);
 		}
-// end omp parallel for
+// end omp parallel for 
  	}
  	else
 	{

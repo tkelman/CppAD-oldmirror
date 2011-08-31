@@ -67,6 +67,10 @@ assist you in learning about changes between various versions of CppAD.
 $head branches/pthread$$
 The following changes have been made to the $code pthread$$ branch:
 
+$head 08-31$$
+Move the $cref openmp_sum_i_inv.cpp$$ test from
+$code openmp/run.sh$$ to $code openmp/run.cpp$$.
+
 $head 08-30$$
 $list number$$
 Create the $cref%openmp/run.cpp%openmp_run.cpp%$$ program 
@@ -295,7 +299,7 @@ to $code openmp$$ directory (and convert it from a function to a program).
 $lnext
 Simplify $code example_a11c.cpp$$ by making it just a correctness test.
 $lnext
-Change $cref/openmp_run.sh/$$ so that it runs correctness tests with
+Change $code openmp/run.sh$$ so that it runs correctness tests with
 the compiler debugging flags.
 $lend
 
@@ -333,8 +337,8 @@ $subhead openmp/run.sh$$
 The following changes were made to $code openmp/run.sh$$:
 $list number$$
 $lnext
-Change the 
-$cref/maximum number of threads/openmp_run.sh/Maximum Number of Threads/$$
+Change to $code openmp/run.sh$$
+maximum number of threads
 instead of specifying the entire set of values to be tested.
 $lnext
 Change settings for 
@@ -361,7 +365,8 @@ $cref omp_in_parallel$$ execution mode an error (it never worked properly);
 see $cref/TrackNewDel multi-threading/TrackNewDel/Multi-Threading/$$.
 $lnext
 Change $cref/memory_leak/$$ so that it checks for a leak in all threads.
-This is what $cref/openmp_newton_example.cpp/$$ and $cref/sum_i_inv.cpp/$$
+This is what $cref/openmp_newton_example.cpp/$$ and 
+$cref/openmp_sum_i_inv.cpp/$$
 assumed was being done.
 $lend
 
@@ -395,9 +400,10 @@ $head 06-21$$
 $list number$$
 The $code openmp/run.sh$$ routine was changed to use zero,
 instead of $code automatic$$, for automatic choice of
-$cref/number of repeats/openmp_run.sh/Number of Repeats/$$,
+$code openmp/run.sh$$
+number of repeats
 and 
-$cref/maximum number of threads/openmp_run.sh/Maximum Number of Threads/$$.
+maximum number of threads.
 
 $lnext
 The output of each of the OpenMP examples / speed tests
@@ -467,7 +473,7 @@ $lnext
 The CppAD vector template class
 and the $cref/vectorBool/CppAD_vector/vectorBool/$$ class
 were modified to use the $code omp_alloc$$
-$cref/memory/CppAD_vector/Memory/$$ manager.
+$cref/memory/CppAD_vector/Memory and Parallel Mode/$$ manager.
 This should improves its speed of memory allocation
 $cref omp_in_parallel$$ sections of a program.
 $lnext
@@ -541,7 +547,7 @@ The old speed tests have not been used for years and so have been deleted.
 $lend
 
 $head 04-20$$
-The $cref/openmp run.sh/openmp_run.sh/$$ script what changed
+The $code openmp/run.sh$$ script what changed
 to take an argument that specifies which tests is run
 (it no longer runs all the tests).
 Also improve the openmp test program output formatting.
@@ -585,7 +591,8 @@ This has been fixed.
 $head 02-17$$
 There was a mistake in $code openmp/run.sh$$ where it attempted
 to remove a non-existent file in the case where 
-$cref/openmp_flag/openmp_run.sh/OpenMP Flag/$$ was not $code ""$$.
+$code openmp/run.sh$$
+openmp_flag was not $code ""$$.
 This has been fixed.
 
 $head 02-15$$

@@ -13,6 +13,9 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin openmp_run.cpp$$
 $spell
+	inv
+	mega
+	cpp
 	num
 	openmp
 $$
@@ -21,51 +24,68 @@ $index run, OpenMP speed$$
 $index speed, OpenMP run$$
 
 
-$section Run Speed Test of OpenMP Newton Example$$
+$section Run OpenMP Speed Tests$$
 
 $head Syntax$$
-$codei%run% newton_example %max_threads% %n_zero% %n_sub% %n_sum% %use_ad%$$ 
+$codei%./run sum_i_inv %max_threads% %mega_sum%
+%$$ 
+$codei%./run newton_example %max_threads% %n_zero% %n_sub% %n_sum% %use_ad%$$ 
 
 $head Purpose$$
-Runs a timing tests of the $cref openmp_newton_example.cpp$$ routine.
+Runs either the 
+$cref openmp_newton_example.cpp$$ or
+$cref openmp_sum_i_inv.cpp$$ timing test.
 
 $head max_threads$$
 If the argument $icode max_threads$$ is a non-negative integer specifying
 the maximum number of OpenMP threads to use for the test.
-The routine $code newton_example$$ will be run for each value of
-$cref/num_threads/openmp_newton_example.cpp/num_threads/$$ from
-zero to $icode max_threads$$.
+The specified test be run with the number of threads
+$codei%
+	%num_threads% = 0 , %...% , %max_threads%
+%$$
 The value of zero corresponds to not using OpenMP
 (OpenMP is used for all other values).
 
-$head n_zero$$
+$comment -----------------------------------------------------------------$$
+
+$head sum_i_inv$$
+The following command line arguments only apply to $code sum_i_inv$$:
+
+$subhead mega_sum$$
+The command line argument $icode mega_sum$$ 
+is an integer greater than or equal one and has the same meaning as in
+$cref/openmp_sum_i_inv.cpp/openmp_sum_i_inv.cpp/mega_sum/$$.
+
+$comment -----------------------------------------------------------------$$
+
+$head newton_example$$
+The following command line arguments only apply to $code newton_example$$:
+
+$subhead n_zero$$
 The command line argument $icode n_zero$$ 
-is a integer greater than or equal two and has the same meaning as
-$cref/n_zero/openmp_newton_example.cpp/n_zero/$$.
+is an integer greater than or equal two and has the same meaning as in
+$cref/openmp_newton_example.cpp/openmp_newton_example.cpp/n_zero/$$.
 
-$head n_sub$$
+$subhead n_sub$$
 The command line argument $icode n_sub$$ 
-is an integer greater than or equal one and has the same meaning as
-$cref/n_sub/openmp_newton_example.cpp/n_sub/$$.
+is an integer greater than or equal one and has the same meaning as in
+$cref/openmp_newton_example.cpp/openmp_newton_example.cpp/n_sub/$$.
 
-
-$head n_sum$$
+$subhead n_sum$$
 The command line argument $icode n_sum$$ 
-is an integer greater than or equal one and has the same meaning as
-$cref/n_sum/openmp_newton_example.cpp/n_sum/$$.
+is an integer greater than or equal one and has the same meaning as in
+$cref/openmp_newton_example.cpp/openmp_newton_example.cpp/n_sum/$$.
 
-$head use_ad$$
+$subhead use_ad$$
 The command line argument $icode use_ad$$ is either 
-$code true$$ or $code false$$ and has the same meaning as
-$cref/use_ad/openmp_newton_example.cpp/use_ad/$$.
+$code true$$ or $code false$$ and has the same meaning as in
+$cref/openmp_newton_example.cpp/openmp_newton_example.cpp/use_ad/$$.
 
 $head Subroutines$$
-$children%
+$childtable%
+	openmp/sum_i_inv.cpp%
 	openmp/newton_example.cpp
 %$$
-$table
-$rref openmp_newton_example.cpp$$
-$tend
 
 $head Source$$
 $code
@@ -80,6 +100,7 @@ $end
 # include <cmath>
 # include <cstring>
 # include "newton_example.hpp"
+# include "sum_i_inv.hpp"
 
 namespace {
 	size_t arg2size_t(
@@ -97,71 +118,114 @@ namespace {
 
 int main(int argc, char *argv[])
 {	size_t num_fail = 0;
+	bool ok         = true;
 	using std::cout;
 
+	// commnd line usage message
 	const char *usage = 
-	"usage: ./run max_threads n_zero n_sub n_sum use_ad";
-	if( argc != 6 )
+	"usage: ./run sum_i_inv      max_threads mega_sum\n"
+	"       ./run newton_example max_threads n_zero n_sub n_sum use_ad";
+
+	// command line argument values
+	size_t max_threads, mega_sum, n_zero, n_sub, n_sum;
+	bool use_ad;
+
+	if( argc < 4 )
 	{	std::cerr << "argc = " << argc << std::endl;	
 		std::cerr << usage << std::endl;
 		exit(1);
 	}
 	argv++;
 
+	const char* test_name = *argv++;
+	bool run_sum_i_inv = std::strcmp(test_name, "sum_i_inv") == 0;
+	bool run_newton_example = std::strcmp(test_name, "newton_example") == 0;
+	if( run_sum_i_inv )
+		ok = (argc == 4);  
+	else if( run_newton_example )
+		ok = (argc == 7);
+	else	ok = false;
+	if( ! ok )
+	{	std::cerr << "argc = " << argc << std::endl;	
+		std::cerr << usage << std::endl;
+		exit(1);
+	}
+
 	// max_threads 
-	size_t max_threads = arg2size_t( *argv++, 0, 
+	max_threads = arg2size_t( *argv++, 0, 
 		"run: max_threads is less than zero"
 	);
 
-	// n_zero
-	size_t n_zero = arg2size_t( *argv++, 2,
-		"run: n_zero is less than two"
-	);
-
-	// n_sub
-	size_t n_sub = arg2size_t( *argv++, 1,
-		"run: n_sub is less than one"
-	);
-       
-	// n_sum 
-	size_t n_sum = arg2size_t( *argv++, 1,
-		"run: n_sum is less than one"
-	);
-
-	bool use_ad;
-	if( strcmp(*argv, "true") == 0 )
-		use_ad = true;
-	else if( strcmp(*argv, "false") == 0 )
-		use_ad = false;
+	if( run_sum_i_inv )
+	{	// mega_sum
+		mega_sum = arg2size_t( *argv++, 1, 
+			"run: mega_sum is less than one"
+		);
+	}
 	else
-	{	std::cerr << "run: use_ad is not true or false" << std::endl;
-		exit(1);
+	{	assert( run_newton_example );
+
+		// n_zero
+		n_zero = arg2size_t( *argv++, 2,
+			"run: n_zero is less than two"
+		);
+
+		// n_sub
+		n_sub = arg2size_t( *argv++, 1,
+			"run: n_sub is less than one"
+		);
+       
+		// n_sum 
+		n_sum = arg2size_t( *argv++, 1,
+			"run: n_sum is less than one"
+		);
+
+		// use_ad
+		if( std::strcmp(*argv, "true") == 0 )
+			use_ad = true;
+		else if( std::strcmp(*argv, "false") == 0 )
+			use_ad = false;
+		else
+		{	std::cerr << "run: use_ad is not true or false" << std::endl;
+			exit(1);
+		}
 	}
 
 	// run the test for each number of threads
 	CppAD::vector<size_t> rate_all(max_threads + 1);
 	size_t num_threads;
 	for(num_threads = 0; num_threads <= max_threads; num_threads++)
-	{	bool ok = newton_example(
-			rate_all[num_threads] ,
-			num_threads           ,
-			n_zero                ,
-			n_sub                 ,
-			n_sum                 ,
-			use_ad
-		);
-		if( ok )
-			cout << "OK:    num_threads = " << num_threads;
+	{	if( run_sum_i_inv )
+			ok = sum_i_inv(rate_all[num_threads], num_threads, mega_sum);
 		else
-		{	cout << "Error: num_threads = " << num_threads;
+		{	assert( run_newton_example );
+			ok = newton_example(
+				rate_all[num_threads] ,
+				num_threads           ,
+				n_zero                ,
+				n_sub                 ,
+				n_sum                 ,
+				use_ad
+			);
+		}
+		if( ok )
+			cout << "OK:    " << test_name << ": ";
+		else
+		{	cout << "Error: " << test_name << ": ";
 			num_fail++;
 		}
+		cout << "num_threads = " << num_threads;
 		cout << ", rate = " << rate_all[num_threads] << std::endl;
 	}
 	cout << "rate_all = " << rate_all << std::endl;
 	if( num_fail == 0 )
-		cout << "All " << max_threads + 1 << " tests passed." << std::endl;
-	else	cout << num_fail << " tests failed." << std::endl;
+	{	cout << "All " << max_threads + 1 << " " << test_name;
+		cout  << " tests passed." << std::endl;
+	}
+	else
+	{	cout << num_fail << " " << test_name;
+		cout << " tests failed." << std::endl;
+	}
  
 	return num_fail;
 }

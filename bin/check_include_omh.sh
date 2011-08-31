@@ -24,14 +24,13 @@ find . \( -name '*.cpp' \) -or \
        \( -name '*.hpp' \) -or \
        \( -name '*.omh' \) -or \
        \( -name '*.am' \) |
-	sed -e 's|./||' > bin/check_include_omh.1.$$
+	sed -e '/.\/work\//d' -e 's|./||' > bin/check_include_omh.1.$$
 list="
 	cpl1.0.txt
 	cppad/PowInt.h
 	cppad_ipopt/example/example_windows.bat
 	doc.omh
 	gpl2.txt
-	openmp/run.sh
 "
 for file in $list
 do

@@ -512,12 +512,6 @@ then
 	echo "./build.sh doxygen   >> $log_file"
 	      ./build.sh doxygen   >> $log_dir/$log_file
 	#
-	# openmp test script run.sh cases
-	for name in sum_i_inv 
-	do
-		echo "openmp/run.sh $name >> $log_file"
-		      openmp/run.sh $name >> $log_dir/$log_file
-	done
 	# ----------------------------------------------------------------------
 	# Things to do in the work/disribution/work directory
 	# ----------------------------------------------------------------------

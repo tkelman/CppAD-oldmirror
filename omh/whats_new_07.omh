@@ -477,7 +477,7 @@ $head 07-22$$
 Minor improvements to the $cref/ode_taylor_adolc.cpp/$$ example.
 
 $head 07-21$$
-The $cref/openmp_run.sh/$$ example programs
+The $code openmp/run.sh$$ example programs
 $code example_a11c.cpp$$, 
 $code openmp_newton_example.cpp$$, and 
 $code sum_i_inv.cpp$$
@@ -679,7 +679,7 @@ $pre
 
 $$
 The word mega was added to the spelling exception list for
-$cref/openmp_run.sh/$$.
+$code openmp/run.sh$$.
 
 $head 04-19$$
 Improve connection from $cref/reverse_identity/$$ theorem
@@ -687,13 +687,13 @@ to $cref/reverse_any/$$ calculations.
 $pre
 
 $$
-Improve the $cref/openmp_run.sh/$$ script. 
+Improve the $code openmp/run.sh$$ script. 
 It now runs all the test cases at once in addition
 to including multiple number of thread cases for each test. 
 $pre
 
 $$
-Add the $cref/sum_i_inv.cpp/$$ OpenMP example case.
+Add the $cref/openmp_sum_i_inv.cpp/$$ OpenMP example case.
 $pre
 
 $$
@@ -798,7 +798,7 @@ $cref/Tracing/WishList/Tracing/$$ entry to the wish list.
 $head 03-20$$
 Example A.1.1c, $code example_a11c.cpp$$,
 from the OpenMP 2.5 standards document,
-was added to the tests that can be run using $cref/openmp_run.sh/$$.
+was added to the tests that can be run using $code openmp/run.sh$$.
 
 $head 03-15$$
 Included the changes from openmp branch
@@ -807,7 +807,7 @@ so that so CppAD does not use the OpenMP $code threadprivate$$ command
 
 $subhead 03-15$$
 Add command line arguments to $cref/openmp_newton_example.cpp/$$, and
-modified $cref/openmp_run.sh/$$ to allow for more flexible testing. 
+modified $code openmp/run.sh$$ to allow for more flexible testing. 
 
 $subhead 03-14$$
 Fixed some Microsoft compiler warnings by explicitly converting from 

@@ -156,8 +156,6 @@ $rref Mul.cpp$$
 $rref MulEq.cpp$$
 $rref mul_level.cpp$$
 $rref mul_level_adolc.cpp$$
-$rref openmp_newton_example.cpp$$
-$rref openmp_run.cpp$$
 $rref nan.cpp$$
 $rref NearEqualExt.cpp$$
 $rref Near_Equal.cpp$$
@@ -174,6 +172,9 @@ $rref ode_taylor_adolc.cpp$$
 $rref omp_alloc.cpp$$
 $rref openmp_a11c.cpp$$
 $rref openmp_ad.cpp$$
+$rref openmp_newton_example.cpp$$
+$rref openmp_run.cpp$$
+$rref openmp_sum_i_inv.cpp$$
 $rref opt_val_hes.cpp$$
 $rref optimize.cpp$$
 $rref Output.cpp$$
@@ -211,7 +212,6 @@ $rref Sqrt.cpp$$
 $rref StackMachine.cpp$$
 $rref Sub.cpp$$
 $rref SubEq.cpp$$
-$rref sum_i_inv.cpp$$
 $rref Tan.cpp$$
 $rref Tanh.cpp$$
 $rref TapeIndex.cpp$$

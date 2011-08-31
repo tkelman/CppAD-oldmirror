@@ -23,7 +23,7 @@ $index OpenMP, speed AD$$
 $index speed, OpenMP AD$$
 $index AD, OpenMP speed$$
 
-$section Multi-Threaded Newton's Method Main Program$$
+$section OpenMP Newton's Method Example$$
 
 $head Syntax$$
 $icode%ok_out% = newton_example(%rate_out%, 
@@ -138,7 +138,7 @@ $end
 # include <omp.h>
 
 
-namespace { // empty namespace
+namespace { // begin empty namespace
 
 	// values of corresponding arguments in previous call to newton_example
 	bool   use_openmp_; // use CppAD to compute derivatives of f(x)
@@ -233,7 +233,7 @@ namespace { // empty namespace
 	{	return static_cast<bool> ( omp_in_parallel() ); }
 	size_t thread_num(void)
 	{	return static_cast<size_t>( omp_get_thread_num() ); } 
-}
+} // end empty namespace
 
 bool newton_example(
 	size_t& rate_out    ,
@@ -268,11 +268,11 @@ bool newton_example(
 		CppAD::parallel_ad<double>();
 	}
 
-	// size of the one test case (not used)
-	vector<size_t> no_size_vec(1);
-
 	// minimum time for test (repeat until this much time)
 	double time_min = 1.;
+
+	// size of the one test case (not used)
+	vector<size_t> no_size_vec(1);
 
 	// run the test case
 	vector<size_t> rate_vec = CppAD::speed_test(

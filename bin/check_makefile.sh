@@ -54,7 +54,7 @@ ok="yes"
 for file in $list
 do
 	case $file in
-		( makefile.am | speed_cppad/makefile.am | work/* | svn_dist/* ) 
+		( makefile.am | openmp/makefile.am | work/* | svn_dist/* ) 
 		;;
 
 		(speed/example/makefile.am)
