@@ -68,8 +68,14 @@ $head branches/pthread$$
 The following changes have been made to the $code pthread$$ branch:
 
 $head 08-31$$
+$list number$$
 Move the $cref openmp_sum_i_inv.cpp$$ test from
 $code openmp/run.sh$$ to $code openmp/run.cpp$$.
+$lnext
+Change $code --with-openmp$$ to
+$cref/OPENMP_FLAGS=OpenmpFlags/InstallUnix/OpenmpFlags/$$ configure
+command line argument.
+$lend
 
 $head 08-30$$
 $list number$$
@@ -79,7 +85,7 @@ $code openmp/run.sh$$ to $code openmp/run.cpp$$.
 This uses $cref/configure/InstallUnix/Configure/$$
 information for building the tests.
 $lnext
-Document the $cref/--with-openmp/InstallUnix/--with-openmp/$$ configure
+Document the $code --with-openmp$$ configure
 command line argument.
 $lnext
 Move $code openmp/multi_newton.hpp$$ to 

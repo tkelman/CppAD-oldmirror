@@ -194,6 +194,7 @@ MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 OBJEXT = @OBJEXT@
+OPENMP_FLAGS = @OPENMP_FLAGS@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_DESCRIPTION = @PACKAGE_DESCRIPTION@
@@ -549,7 +550,6 @@ EXTRA_DIST = \
 	doxyfile.in \
 	omh \
 	openmp/sum_i_inv.cpp \
-	openmp/run.sh \
 	uw_copy_040507.html
 
 test_directory_list = \

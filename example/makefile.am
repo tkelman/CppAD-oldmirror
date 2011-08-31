@@ -17,11 +17,11 @@ DEFS          =
 if CppAD_OPENMP
 OPENMP_SRC_FILES   = openmp_a11c.cpp openmp_ad.cpp
 OPENMP_EXTRA_FILES = 
-OPENMP_FLAGS       = -DCPPAD_OPENMP_EXAMPLES
+OMP_FLAGS          = -DCPPAD_OPENMP_EXAMPLES $(OPENMP_FLAGS)
 else
 OPENMP_SRC_FILES   =
 OPENMP_EXTRA_FILES = openmp_a11c.cpp openmp_ad.cpp
-OPENMP_FLAGS       = 
+OMP_FLAGS          = 
 endif
 #
 if CppAD_PTHREAD
@@ -67,13 +67,13 @@ check_PROGRAMS    = example
 if CppAD_MS_COMPILER
 AM_CXXFLAGS       = -EHsc -g \
 	$(ADOLC_FLAGS) \
-	$(OPENMP_FLAGS) \
+	$(OMP_FLAGS) \
 	$(PTHREAD_FLAGS) \
 	$(CXX_FLAGS)
 else
 AM_CXXFLAGS       = -g \
 	$(ADOLC_FLAGS) \
-	$(OPENMP_FLAGS) \
+	$(OMP_FLAGS) \
 	$(PTHREAD_FLAGS) \
 	$(CXX_FLAGS)
 endif

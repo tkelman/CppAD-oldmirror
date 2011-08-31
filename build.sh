@@ -254,17 +254,16 @@ then
 	#
 	dir_list=`echo $dir_list | sed -e 's|\t\t*| |g'`
 	cxx_flags="-Wall -ansi -pedantic-errors -std=c++98 -Wshadow"
-	cxx_flags="$cxxflags -fopenmp"
 cat << EOF
 ../configure \\
 $dir_list \\
 CXX_FLAGS=\"$cxx_flags\" \\
-$tape_addr_type --with-Documentation --with-openmp
+$tape_addr_type --with-Documentation OPENMP_FLAGS=-fopenmp
 EOF
 	#
 	../configure $dir_list \
 		CXX_FLAGS="$cxx_flags" \
-		$tape_addr_type --with-Documentation --with-openmp
+		$tape_addr_type --with-Documentation OPENMP_FLAGS=-fopenmp
 	#
 	for file in $configure_file_list
 	do

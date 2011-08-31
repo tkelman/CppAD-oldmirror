@@ -12,7 +12,7 @@ dnl ---------------------------------------------------------------------------
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl   package   version              bug-report
-AC_INIT(CppAD, 20110830, cppad@list.coin-or.org)
+AC_INIT(CppAD, 20110831, cppad@list.coin-or.org)
 AC_SUBST(PACKAGE_URL, "http://www.coin-or.org/CppAD")
 AC_SUBST(PACKAGE_DESCRIPTION, "Differentiation of C++ Algorithms")
 
@@ -113,17 +113,6 @@ if test "$prefix" = "NONE" ; then
 else
 	AC_MSG_RESULT([$prefix])
 fi
-
-dnl Are we testing OpenMP -------------------------------------------------
-dnl cygwin begin delete:
-AC_MSG_CHECKING([--with-openmp])
-AC_ARG_WITH(openmp, 
-	AC_HELP_STRING([--with-openmp], [default is no]),
-	[openmp="yes"],
-	[openmp="no"]
-)
-AM_CONDITIONAL(CppAD_OPENMP, test "$openmp" = "yes")
-AC_MSG_RESULT([$openmp])
 
 dnl Are we installing the documentation -----------------------------------
 dnl cygwin begin delete:
@@ -253,6 +242,18 @@ else
 	cxx_flags_fadbad=""
 fi 
 AC_SUBST(CXX_FLAGS_FADBAD, "$cxx_flags_fadbad")
+
+dnl The compiler OpenMP flags OPENMP_FLAGS ----------------------------------
+AC_MSG_CHECKING([OPENMP_FLAGS])
+AC_ARG_VAR(OPENMP_FLAGS,
+	[ flags that instruct compiler to interpret OpenMP directrives ]
+)
+if test "$OPENMP_FLAGS" != "" ; then
+	AC_MSG_RESULT([$OPENMP_FLAGS]) 
+else
+	AC_MSG_RESULT([no])
+fi 
+AM_CONDITIONAL(CppAD_OPENMP, test "$OPENMP_FLAGS" != "")
 
 dnl The type used for addresses in AD tapes [ default = unsigned int ] ---
 AC_MSG_CHECKING([TAPE_ADDR_TYPE])

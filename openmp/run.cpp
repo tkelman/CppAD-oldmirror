@@ -126,9 +126,9 @@ int main(int argc, char *argv[])
 	"usage: ./run sum_i_inv      max_threads mega_sum\n"
 	"       ./run newton_example max_threads n_zero n_sub n_sum use_ad";
 
-	// command line argument values
-	size_t max_threads, mega_sum, n_zero, n_sub, n_sum;
-	bool use_ad;
+	// command line argument values (assign values to avoid compiler warnings)
+	size_t max_threads=0, mega_sum=0, n_zero=0, n_sub=0, n_sum=0;
+	bool use_ad=true;
 
 	if( argc < 4 )
 	{	std::cerr << "argc = " << argc << std::endl;	
