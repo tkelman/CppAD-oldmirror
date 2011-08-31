@@ -47,7 +47,6 @@
 # @table
 # @icode test_name@@                      @cnext @icode Uses CppAD@@  @rnext
 # @cref/sum_i_inv/sum_i_inv.cpp/@@,       @cnext no                   @rnext
-# @cref/multi_newton/multi_newton.cpp/@@  @cnext yes
 # @tend
 #
 # @head Parameters@@
@@ -103,23 +102,12 @@ max_num_threads="2"
 sum_i_inv_mega_sum="1"
 # @@
 #
-# @head multi_newton@@
-# The following variables determine the corresponding command line
-# arguments for the @cref/multi_newton/@@ program:
-# @codep
-multi_newton_n_zero="20"
-multi_newton_n_sum="500"
-multi_newton_use_ad="true"
-let multi_newton_n_interval="$max_num_threads*15"
-# @@
-#
 # @head Restrictions@@
 # Current this script only runs under the bash shell; e.g., it will not
 # run in an MSDOS box.
 #
 # @childtable%
-#	openmp/sum_i_inv.cpp%
-#	openmp/multi_newton.cpp
+#	openmp/sum_i_inv.cpp
 # %@@
 #
 # @end
@@ -134,14 +122,9 @@ case "$1" in
 	other_flags="-I.. $flags"
 	args="$n_repeat $sum_i_inv_mega_sum"
 	;;
-	multi_newton)
-	other_flags="-I.. $flags"
-	args="$n_repeat $multi_newton_n_zero $multi_newton_n_interval"
-	args="$args $multi_newton_n_sum $multi_newton_use_ad"
-	;;
 	*)
 	echo "usage: openmp/run.sh test_name"
-	echo "where test_name is sum_i_inv, or multi_newton"
+	echo "where test_name is sum_i_inv"
 	exit 1
 	;;
 esac

@@ -14,6 +14,7 @@ $begin InstallUnix$$
 $escape $$
 $dollar ^$$
 $spell
+	openmp
 	cout
 	Addr
 	sizeof
@@ -158,6 +159,7 @@ $codei%
 	--prefix=%PrefixDir%                     \
 	--with-Documentation                   \
 	--with-stdvector                       \  
+	--with-openmp                          \
 	POSTFIX_DIR=%PostfixDir%                 \
 	ADOLC_DIR=%AdolcDir%                     \
 	FADBAD_DIR=%FadbadDir%                   \
@@ -327,6 +329,13 @@ $codep
 	std::vector
 $$
 (In this case $icode BoostDir$$ must not also be specified.)
+
+$head --with-openmp$$
+$index OpenMP, configure$$
+$index configure, OpenMP$$
+If the command line argument $code --with-openmp$$ is included,
+the CppAD OpenMP correctness and speed tests will be built; e.g.,
+see $cref openmp_run.cpp$$ and $cref openmp_ad.cpp$$.
 
 $head PostfixDir$$
 $index configure, postfix directory$$

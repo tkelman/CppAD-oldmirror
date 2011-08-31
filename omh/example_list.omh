@@ -156,7 +156,8 @@ $rref Mul.cpp$$
 $rref MulEq.cpp$$
 $rref mul_level.cpp$$
 $rref mul_level_adolc.cpp$$
-$rref multi_newton.cpp$$
+$rref openmp_newton_example.cpp$$
+$rref openmp_run.cpp$$
 $rref nan.cpp$$
 $rref NearEqualExt.cpp$$
 $rref Near_Equal.cpp$$

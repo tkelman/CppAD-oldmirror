@@ -479,7 +479,7 @@ Minor improvements to the $cref/ode_taylor_adolc.cpp/$$ example.
 $head 07-21$$
 The $cref/openmp_run.sh/$$ example programs
 $code example_a11c.cpp$$, 
-$code multi_newton.cpp$$, and 
+$code openmp_newton_example.cpp$$, and 
 $code sum_i_inv.cpp$$
 have been changed so that they run on more systems
 (are C++ standard compliant).
@@ -806,7 +806,7 @@ so that so CppAD does not use the OpenMP $code threadprivate$$ command
 (some systems do not support this command).
 
 $subhead 03-15$$
-Add command line arguments to $cref/multi_newton.cpp/$$, and
+Add command line arguments to $cref/openmp_newton_example.cpp/$$, and
 modified $cref/openmp_run.sh/$$ to allow for more flexible testing. 
 
 $subhead 03-14$$

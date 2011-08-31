@@ -59,6 +59,15 @@ IPOPT_DIRS   =
 IPOPT_HEADER =
 endif
 #
+# Did user specify with OpenMP
+if CppAD_OPENMP
+OPENMP_TESTS   = openmp
+OPENMP_DIRS    = openmp
+else
+OPENMP_TESTS   =
+OPENMP_DIRS    =
+endif
+#
 # Is the library archiving program present
 if CppAD_HAVE_AR
 SPEED_TESTS = \
@@ -278,6 +287,7 @@ SUBDIRS =  \
 	example \
 	introduction/get_started \
 	introduction/exp_apx \
+	$(OPENMP_DIRS) \
 	print_for \
 	$(SPEED_DIRS) \
 	test_more 
@@ -291,8 +301,6 @@ EXTRA_DIST = \
 	doc.omh.in \
 	doxyfile.in \
 	omh \
-	openmp/multi_newton.cpp \
-	openmp/multi_newton.hpp \
 	openmp/sum_i_inv.cpp \
 	openmp/run.sh \
 	uw_copy_040507.html
@@ -302,6 +310,7 @@ test_directory_list = \
 	introduction/get_started \
 	introduction/exp_apx \
 	$(IPOPT_TESTS) \
+	$(OPENMP_TESTS) \
 	print_for \
 	$(SPEED_TESTS) \
 	test_more 

@@ -69,7 +69,8 @@ $contents%
 	example/pthread_a11c.cpp%
 	example/openmp_ad.cpp%
 	example/pthread_ad.cpp%
-	openmp/run.sh
+	openmp/run.sh%
+	openmp/run.cpp
 %$$
 
 $end
