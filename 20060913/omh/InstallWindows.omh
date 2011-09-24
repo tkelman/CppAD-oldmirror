@@ -1,0 +1,193 @@
+/* -----------------------------------------------------------------------
+CppAD: C++ Algorithm Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+------------------------------------------------------------------------ */
+
+$begin InstallWindows$$
+$dollar @$$
+$spell
+	Dev
+	cppad
+	stdvector
+	std
+	ublas
+	hpp
+	adouble
+	badiff
+	usr
+	cygdrive
+	htm
+	xml
+	Dir
+	xvzf
+	gz
+	GetStarted
+	workspace
+	Makefile
+	exe
+	Cygwin
+	Microsoft
+	sln
+	CppAD
+	Adolc
+	Fadbad
+$$
+$index free, install CppAD$$
+$index install, windows CppAD$$
+$index windows, CppAD install$$
+$index CppAD, install windows$$
+
+$section Windows Installation and Testing$$
+
+$head Download Current Version$$
+$index download, windows$$
+If you are using 
+$href%
+	http://www.cygwin.com%
+	Cygwin
+%$$
+or,
+$href%
+	http://www.mingw.org%
+	MinGW with MSYS
+%$$,
+with Unix formatted files,
+just follow all of the $xref/InstallUnix//Unix installation/$$ steps.
+Otherwise,
+download the file
+$href%
+	http://www.coin-or.org/Tarballs/CppAD/cppad-20060913.zip%
+	cppad-20060913.zip
+%$$
+
+$head Extraction$$
+Use 
+$href%
+	http://www.winzip.com%
+	WinZip
+%$$
+or some other program to decompress the archive
+$code cppad-20060913.zip$$.
+This will create the distribution directory 
+$syntax%
+	cppad-06-06-16
+%$$
+All the command sequences below assume that you start in this
+distribution directory.
+If you are using Cygwin, or MinGW with MSYS, (with dos file formats)
+you should follow the $xref/InstallUnix//Unix installation/$$ steps
+for the rest of the install.
+Otherwise, continue with the steps below:
+
+$head User Documentation$$
+The $code Doc$$ sub-directory of the distribution directory
+contains user documentation for CppAD.
+The files $syntax%Doc/%*%.htm%$$ are in HTML format.
+If your browser supports XHTML+MATHML format,
+an easier to read copy is available in the files
+$syntax%Doc/%*%.xml%$$.
+
+$head Developer Documentation$$
+The $code Dev$$ sub-directory of the distribution directory
+contains developer documentation for CppAD. 
+
+$head Getting Started$$
+$index GetStarted, windows$$
+The following steps will build the $xref/GetStarted.cpp/$$ example.
+Using Microsoft Visual C++,
+open the workspace $code GetStarted/GetStarted.sln$$
+in Visual Studio and then select $code Build | Build GetStarted.exe$$.
+Then in a Dos box, execute the following commands
+$codep
+	cd GetStarted\Debug
+	GetStarted
+$$
+
+$head Introduction$$
+$index introduction, windows$$
+The following steps will build the routines that verify the calculations
+in the $xref/Introduction/$$ section.
+Using Microsoft Visual C++,
+open the workspace $code Introduction/Introduction.sln$$ in Visual Studio.
+Then select $code Build | Build Introduction.exe$$.
+Then in a Dos box, execute the following commands
+$codep
+	cd Introduction\Debug
+	Introduction
+$$
+
+$head Examples and Testing$$
+$index example, windows$$
+$index test, windows$$
+The following steps will build an extensive set of examples
+and correctness tests.
+Using Microsoft Visual C++,
+open the workspace $code Example/Example.sln$$ in Visual Studio.
+Then select $code Build | Build Example.exe$$.
+Then in a Dos box, execute the following commands
+$codep
+	cd Example\Debug
+	Example
+$$
+
+$head More Correctness Testing$$
+$index test more, windows$$
+Using Microsoft Visual C++,
+open the workspace $code TestMore/TestMore.sln$$
+in Visual Studio and then select $code Build | Build TestMore.exe$$.
+Then in a Dos box, execute the following commands
+$codep
+	cd TestMore\Debug
+	TestMore
+$$
+
+$head Speed Testing$$
+$index speed, windows test$$
+$index test, windows speed$$
+Using Microsoft Visual C++,
+open the workspace $code Speed/Speed.sln$$
+in Visual Studio and then select $code Build | Build Speed.exe$$.
+Then in a Dos box, execute the following commands
+$codep
+	cd Speed\Release
+	Speed
+$$
+
+$head Printing During Forward Mode$$
+$index print, forward mode$$
+$index forward, print$$
+Using Microsoft Visual C++,
+open the workspace $code PrintFor/PrintFor.sln$$ in Visual Studio.
+Then select $code Build | Build PrintFor.exe$$.
+Then in a Dos box, execute the following commands
+$codep
+	cd PrintFor\Debug
+	PrintFor
+$$
+
+$head Speed Test Example$$
+$index SpeedTest, windows example$$
+$index example, windows SpeedTest$$
+Using Microsoft Visual C++,
+open the workspace $code SpeedExample/SpeedExample.sln$$ in Visual Studio.
+Then select $code Build | Build SpeedExample.exe$$.
+Then in a Dos box, execute the following commands
+$codep
+	cd SpeedExample\Debug
+	SpeedExample
+$$
+
+$end

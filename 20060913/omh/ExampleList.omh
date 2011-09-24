@@ -1,0 +1,182 @@
+/* -----------------------------------------------------------------------
+CppAD: C++ Algorithm Differentiation: Copyright (C) 2003-06 Bradley M. Bell
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+------------------------------------------------------------------------ */
+
+
+
+$begin General$$
+$spell
+	Cpp
+$$
+
+$index example, general$$
+$index general, example$$
+$index realistic, example$$
+
+$section General Examples$$ 
+
+$head Description$$
+Most of the examples in CppAD are part of the documentation
+for a specific feature; for example, $xref/Add.cpp/$$ is an 
+example using the $xref/Add//addition operator/$$.
+The examples list in this section are of a more general nature.
+
+$childtable%
+	Example/Interface2C.cpp%
+	Example/JacMinorDet.cpp%
+	Example/JacLuDet.cpp%
+	Example/HesMinorDet.cpp%
+	Example/HesLuDet.cpp%
+	Example/OdeStiff.cpp%
+	Example/OdeTaylor.cpp%
+	Example/ComplexPoly.cpp%
+	omh/MulTape.omh
+%$$
+
+$end
+
+-----------------------------------------------------------------------------
+$begin ExampleUtility$$
+$spell
+	CppAD
+$$
+
+$section Utility Routines used by CppAD Examples$$
+
+$childtable%
+	Example/Example.cpp%
+	Example/DetOfMinor.h%
+	Example/DetByMinor.h%
+	Example/DetByLu.h%
+	Example/LuVecAD.cpp
+%$$ 
+
+$end
+-----------------------------------------------------------------------------
+$begin ListAllExamples$$
+$spell 
+	CppAD
+$$
+
+$section List of All the CppAD Examples$$
+
+$comment 
+	omit:   TestOne.cpp OneCase.cpp LuVecAD.cpp
+$$
+
+$table
+$rref Abs.cpp$$
+$rref Acos.cpp$$
+$rref Add.cpp$$
+$rref AddEq.cpp$$
+$rref Asin.cpp$$
+$rref Atan.cpp$$
+$rref Atan2.cpp$$
+$rref BenderQuad.cpp$$
+$rref BoolFun.cpp$$
+$rref CheckNumericType.cpp$$
+$rref CheckSimpleVector.cpp$$
+$rref Compare.cpp$$
+$rref CompareChange.cpp$$
+$rref ComplexPoly.cpp$$
+$rref CondExp.cpp$$
+$rref CopyAD.cpp$$
+$rref CopyBase.cpp$$
+$rref Cos.cpp$$
+$rref Cosh.cpp$$
+$rref CppAD_vector.cpp$$
+$rref Default.cpp$$
+$rref DetByLu.cpp$$
+$rref DetByMinor.cpp$$
+$rref DetOfMinor.cpp$$
+$rref Discrete.cpp$$
+$rref Div.cpp$$
+$rref DivEq.cpp$$
+$rref Eq.cpp$$
+$rref Erf.cpp$$
+$rref ErrorHandler.cpp$$
+$rref Example.cpp$$
+$rref Exp.cpp$$
+$rref ForOne.cpp$$
+$rref ForTwo.cpp$$
+$rref Forward.cpp$$
+$rref ForSparseJac.cpp$$
+$rref FunCheck.cpp$$
+$rref GetStarted.cpp$$
+$rref HesLuDet.cpp$$
+$rref HesMinorDet.cpp$$
+$rref HesTimesDir.cpp$$
+$rref Hessian.cpp$$
+$rref Independent.cpp$$
+$rref Integer.cpp$$
+$rref Interface2C.cpp$$
+$rref JacLuDet.cpp$$
+$rref JacMinorDet.cpp$$
+$rref Jacobian.cpp$$
+$rref Log.cpp$$
+$rref Log10.cpp$$
+$rref LuFactor.cpp$$
+$rref LuInvert.cpp$$
+$rref LuRatio.cpp$$
+$rref LuSolve.cpp$$
+$rref LuVecADOk.cpp$$
+$rref Mul.cpp$$
+$rref MulEq.cpp$$
+$rref Multape.cpp$$
+$rref NearEqualExt.cpp$$
+$rref Near_Equal.cpp$$
+$rref NumericType.cpp$$
+$rref OdeErrControl.cpp$$
+$rref OdeErrMaxabs.cpp$$
+$rref OdeGear.cpp$$
+$rref OdeGearControl.cpp$$
+$rref OdeStiff.cpp$$
+$rref OdeTaylor.cpp$$
+$rref Output.cpp$$
+$rref ParVar.cpp$$
+$rref Piecewise.cpp$$
+$rref Poly.cpp$$
+$rref Pow.cpp$$
+$rref PowInt.cpp$$
+$rref RevOne.cpp$$
+$rref RevSparseHes.cpp$$
+$rref RevSparseJac.cpp$$
+$rref RevTwo.cpp$$
+$rref ReverseAny.cpp$$
+$rref ReverseOne.cpp$$
+$rref RombergMul.cpp$$
+$rref RombergOne.cpp$$
+$rref Rosen34.cpp$$
+$rref Runge45.cpp$$
+$rref SeqProperty.cpp$$
+$rref SimpleVector.cpp$$
+$rref Sin.cpp$$
+$rref Sinh.cpp$$
+$rref Sqrt.cpp$$
+$rref Sub.cpp$$
+$rref SubEq.cpp$$
+$rref Tan.cpp$$
+$rref TrackNewDel.cpp$$
+$rref UnaryMinus.cpp$$
+$rref UnaryPlus.cpp$$
+$rref Value.cpp$$
+$rref VecAD.cpp$$
+$rref vectorBool.cpp$$
+$tend
+
+$end
+
