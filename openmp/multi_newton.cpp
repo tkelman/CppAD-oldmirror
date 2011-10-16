@@ -1,6 +1,6 @@
 /* $Id$ */
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-09 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-11 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -160,11 +160,13 @@ int main(int argc, char *argv[])
 	}
 	argv++;
 
+# ifdef _OPENMP
 	// n_thread command line argument
 	int n_thread;
 	if( std::strcmp(*argv, "automatic") == 0 )
 		n_thread = 0;
 	else	n_thread = std::atoi(*argv);
+# endif
 	argv++;
 
 	// repeat command line argument
@@ -211,7 +213,6 @@ int main(int argc, char *argv[])
 # else
 	cout << "_OPENMP is not defined, ";
 	cout << "running in single tread mode" << endl;
-	n_thread = 1;
 # endif
 	// initialize flag
 	bool ok = true;
