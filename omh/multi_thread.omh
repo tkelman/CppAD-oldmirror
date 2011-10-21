@@ -86,7 +86,7 @@ $childtable%
 	example/openmp_ad.cpp%
 	example/bthread_ad.cpp%
 	example/pthread_ad.cpp%
-	openmp/run.cpp
+	multi_thread/openmp/run.cpp
 %$$
 
 $end

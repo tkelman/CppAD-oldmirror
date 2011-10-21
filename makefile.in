@@ -99,9 +99,9 @@ ETAGS = etags
 CTAGS = ctags
 DIST_SUBDIRS = cppad_ipopt/src cppad_ipopt/example cppad_ipopt/speed \
 	cppad_ipopt/test example introduction/get_started \
-	introduction/exp_apx openmp print_for speed/src speed/adolc \
-	speed/cppad speed/double speed/example speed/fadbad \
-	speed/profile speed/sacado test_more
+	introduction/exp_apx multi_thread/openmp print_for speed/src \
+	speed/adolc speed/cppad speed/double speed/example \
+	speed/fadbad speed/profile speed/sacado test_more
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -312,9 +312,9 @@ top_srcdir = @top_srcdir@
 @CppAD_OPENMP_FALSE@OPENMP_TESTS = 
 #
 # Did user specify with OpenMP
-@CppAD_OPENMP_TRUE@OPENMP_TESTS = openmp
+@CppAD_OPENMP_TRUE@OPENMP_TESTS = multi_thread/openmp
 @CppAD_OPENMP_FALSE@OPENMP_DIRS = 
-@CppAD_OPENMP_TRUE@OPENMP_DIRS = openmp
+@CppAD_OPENMP_TRUE@OPENMP_DIRS = multi_thread/openmp
 #
 # Is the library archiving program present
 @CppAD_HAVE_AR_TRUE@SPEED_TESTS = \
@@ -550,7 +550,6 @@ EXTRA_DIST = \
 	doc.omh.in \
 	doxyfile.in \
 	omh \
-	openmp/sum_i_inv.cpp \
 	uw_copy_040507.html
 
 test_directory_list = \

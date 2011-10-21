@@ -92,13 +92,13 @@ $cref/openmp_newton_example.cpp/openmp_newton_example.cpp/use_ad/$$.
 
 $head Subroutines$$
 $childtable%
-	openmp/sum_i_inv.cpp%
-	openmp/newton_example.cpp
+	multi_thread/openmp/sum_i_inv.cpp%
+	multi_thread/openmp/newton_example.cpp
 %$$
 
 $head Source$$
 $code
-$verbatim%openmp/run.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
+$verbatim%multi_thread/openmp/run.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
 $$
 
 $end

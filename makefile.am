@@ -61,8 +61,8 @@ endif
 #
 # Did user specify with OpenMP
 if CppAD_OPENMP
-OPENMP_TESTS   = openmp
-OPENMP_DIRS    = openmp
+OPENMP_TESTS   = multi_thread/openmp
+OPENMP_DIRS    = multi_thread/openmp
 else
 OPENMP_TESTS   =
 OPENMP_DIRS    =
@@ -301,7 +301,6 @@ EXTRA_DIST = \
 	doc.omh.in \
 	doxyfile.in \
 	omh \
-	openmp/sum_i_inv.cpp \
 	uw_copy_040507.html
 
 test_directory_list = \
