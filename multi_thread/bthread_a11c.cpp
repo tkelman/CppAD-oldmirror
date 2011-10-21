@@ -30,7 +30,7 @@ This example just demonstrates Boost threads and does not use CppAD at all.
 
 $head Source Code$$
 $code
-$verbatim%example/bthread_a11c.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
+$verbatim%multi_thread/bthread_a11c.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
 $$
 $end
 ----------------------------------------------------------------------------

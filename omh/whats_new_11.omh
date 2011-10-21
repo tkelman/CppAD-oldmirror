@@ -12,6 +12,8 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 $begin whats_new_11$$
 $spell
+	pthreads
+	pthread
 	Std
 	retape
 	cygwin
@@ -67,6 +69,23 @@ This section contains a list of the changes to CppAD during 2011
 (in reverse order by date).
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
+
+$head branches/multi_thread$$
+The following changes are being done in $code branches/multi_thread$$:
+
+$subhead 10-21$$
+$list number$$
+Move $code openmp$$ to $code multi_thread/openmp$$.
+This prepares for speed testing boost threads and pthreads in a manner
+similar to $cref openmp_run.cpp$$ tests OpenMP.
+$lnext
+Update the README file.
+$lnext
+Remove the $code bug/optimize.sh$$ file (no longer a bug).
+$lnext
+Move multi-threading examples to $code multi_thread$$ directory
+and create the program $cref multi_thread.cpp$$ program for running them.
+$lend
 
 $head 10-14$$
 Fix some compiler warnings about shadowed variables that were

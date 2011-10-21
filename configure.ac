@@ -478,6 +478,7 @@ AC_CONFIG_FILES([
 	cppad_ipopt/test/makefile
 	introduction/get_started/makefile 
 	introduction/exp_apx/makefile
+	multi_thread/makefile
 	multi_thread/openmp/makefile
 	print_for/makefile
 	speed/adolc/makefile

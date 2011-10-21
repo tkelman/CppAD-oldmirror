@@ -28,7 +28,7 @@ This example just demonstrates OpenMP and does not use CppAD at all.
 
 $head Source Code$$
 $code
-$verbatim%example/openmp_a11c.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
+$verbatim%multi_thread/openmp_a11c.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
 $$
 $end
 ----------------------------------------------------------------------------

@@ -39,7 +39,7 @@ to avoid the need to re-tape.
 
 $head Source Code$$
 $code
-$verbatim%example/openmp_ad.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
+$verbatim%multi_thread/openmp_ad.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
 $$
 
 $end
