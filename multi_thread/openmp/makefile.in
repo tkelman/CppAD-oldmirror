@@ -31,7 +31,7 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-check_PROGRAMS = run$(EXEEXT)
+check_PROGRAMS = openmp$(EXEEXT)
 subdir = multi_thread/openmp
 DIST_COMMON = $(srcdir)/makefile.am $(srcdir)/makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -41,11 +41,12 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am_run_OBJECTS = run.$(OBJEXT) newton_example.$(OBJEXT) \
+am_openmp_OBJECTS = openmp.$(OBJEXT) a11c.$(OBJEXT) \
+	simple_ad.$(OBJEXT) newton_example.$(OBJEXT) \
 	sum_i_inv.$(OBJEXT)
-run_OBJECTS = $(am_run_OBJECTS)
-run_LDADD = $(LDADD)
-run_DEPENDENCIES =
+openmp_OBJECTS = $(am_openmp_OBJECTS)
+openmp_LDADD = $(LDADD)
+openmp_DEPENDENCIES =
 DEFAULT_INCLUDES = 
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -59,8 +60,8 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(run_SOURCES)
-DIST_SOURCES = $(run_SOURCES)
+SOURCES = $(openmp_SOURCES)
+DIST_SOURCES = $(openmp_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -201,10 +202,10 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-# AM_CXXFLAGS     = -g $(CXX_FLAGS)
+# AM_CXXFLAGS     = -g $(CXX_FLAGS) $(OPENMP_FLAGS)
 @CppAD_MS_COMPILER_FALSE@AM_CXXFLAGS = -DNDEBUG -O2 $(CXX_FLAGS) $(OPENMP_FLAGS)
 #
-# AM_CXXFLAGS     = -EHsc -g $(CXX_FLAGS)
+# AM_CXXFLAGS     = -EHsc -g $(CXX_FLAGS) $(OPENMP_FLAGS)
 @CppAD_MS_COMPILER_TRUE@AM_CXXFLAGS = -EHsc -DNDEBUG -O2 $(CXX_FLAGS) $(OPENMP_FLAGS)
 #
 AM_CPPFLAGS = -I. -I$(top_srcdir) 
@@ -212,8 +213,12 @@ AM_CPPFLAGS = -I. -I$(top_srcdir)
 LDADD = 
 AM_LDFLAGS = 
 #
-run_SOURCES = \
-	run.cpp \
+openmp_SOURCES = \
+	openmp.cpp \
+\
+	a11c.cpp \
+	simple_ad.cpp \
+\
 	newton_example.cpp \
 	newton_example.hpp \
 	newton_method.hpp  \
@@ -257,9 +262,9 @@ $(am__aclocal_m4_deps):
 
 clean-checkPROGRAMS:
 	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
-run$(EXEEXT): $(run_OBJECTS) $(run_DEPENDENCIES) 
-	@rm -f run$(EXEEXT)
-	$(CXXLINK) $(run_OBJECTS) $(run_LDADD) $(LIBS)
+openmp$(EXEEXT): $(openmp_OBJECTS) $(openmp_DEPENDENCIES) 
+	@rm -f openmp$(EXEEXT)
+	$(CXXLINK) $(openmp_OBJECTS) $(openmp_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -267,8 +272,10 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/a11c.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/newton_example.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/run.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/openmp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/simple_ad.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sum_i_inv.Po@am__quote@
 
 .cpp.o:
@@ -482,13 +489,20 @@ uninstall-am:
 	uninstall-am
 
 
-test.sh: run$(EXEEXT)
-	echo "#! /bin/sh -e"  > test.sh
-	echo "# sum_i_inv max_threads mega_sum" >> test.sh
-	echo "./run sum_i_inv       2        1" >> test.sh 
-	echo "# newton_example  max_threads n_zero n_sub n_sum use_ad" >> test.sh
-	echo "./run newton_example        2     20    30   500   true" >> test.sh 
+test.sh: openmp$(EXEEXT) 
+	echo "#! /bin/sh -e"      >  test.sh
+	echo "./openmp a11c"      >> test.sh
+	echo "./openmp simple_ad" >> test.sh
+	echo "#"                  >> test.sh
+	echo "#              max_threads mega_sum" >> test.sh
+	echo "./openmp sum_i_inv       2        1" >> test.sh 
+	echo "#"                                   >> test.sh
+	echo "#              max_threads n_zero n_sub n_sum use_ad" >> test.sh
+	echo "./openmp newton_example  2     20    30   500   true" >> test.sh 
 	chmod +x test.sh
+
+test:: test.sh
+	./test.sh
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

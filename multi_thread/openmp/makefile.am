@@ -14,14 +14,14 @@
 # CppAD puts all it's preprocessor definitions in the cppad/configure.hpp
 DEFS          =
 #
-check_PROGRAMS    = run 
+check_PROGRAMS    = openmp 
 #
 if CppAD_MS_COMPILER
-# AM_CXXFLAGS     = -EHsc -g $(CXX_FLAGS)
+# AM_CXXFLAGS     = -EHsc -g $(CXX_FLAGS) $(OPENMP_FLAGS)
 AM_CXXFLAGS       = -EHsc -DNDEBUG -O2 $(CXX_FLAGS) $(OPENMP_FLAGS)
 else
-# AM_CXXFLAGS     = -g $(CXX_FLAGS)
-AM_CXXFLAGS       =  -DNDEBUG -O2 $(CXX_FLAGS) $(OPENMP_FLAGS)
+# AM_CXXFLAGS     = -g $(CXX_FLAGS) $(OPENMP_FLAGS)
+AM_CXXFLAGS       = -DNDEBUG -O2 $(CXX_FLAGS) $(OPENMP_FLAGS)
 endif
 #
 AM_CPPFLAGS       = -I. -I$(top_srcdir) 
@@ -29,18 +29,29 @@ AM_CPPFLAGS       = -I. -I$(top_srcdir)
 LDADD             = 
 AM_LDFLAGS        = 
 #
-run_SOURCES   = \
-	run.cpp \
+openmp_SOURCES   = \
+	openmp.cpp \
+\
+	a11c.cpp \
+	simple_ad.cpp \
+\
 	newton_example.cpp \
 	newton_example.hpp \
 	newton_method.hpp  \
 	sum_i_inv.cpp      \
 	sum_i_inv.hpp
 	
-test.sh: run$(EXEEXT)
-	echo "#! /bin/sh -e"  > test.sh
-	echo "# sum_i_inv max_threads mega_sum" >> test.sh
-	echo "./run sum_i_inv       2        1" >> test.sh 
-	echo "# newton_example  max_threads n_zero n_sub n_sum use_ad" >> test.sh
-	echo "./run newton_example        2     20    30   500   true" >> test.sh 
+test.sh: openmp$(EXEEXT) 
+	echo "#! /bin/sh -e"      >  test.sh
+	echo "./openmp a11c"      >> test.sh
+	echo "./openmp simple_ad" >> test.sh
+	echo "#"                  >> test.sh
+	echo "#              max_threads mega_sum" >> test.sh
+	echo "./openmp sum_i_inv       2        1" >> test.sh 
+	echo "#"                                   >> test.sh
+	echo "#              max_threads n_zero n_sub n_sum use_ad" >> test.sh
+	echo "./openmp newton_example  2     20    30   500   true" >> test.sh 
 	chmod +x test.sh
+
+test:: test.sh
+	./test.sh

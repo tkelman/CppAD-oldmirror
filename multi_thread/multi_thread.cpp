@@ -30,13 +30,13 @@ $codei%
 %$$
 
 $childtable%
-	multi_thread/openmp_a11c.cpp%
+	multi_thread/openmp/openmp.cpp%
+
 	multi_thread/bthread_a11c.cpp%
-	multi_thread/pthread_a11c.cpp%
-	multi_thread/openmp_ad.cpp%
 	multi_thread/bthread_ad.cpp%
-	multi_thread/pthread_ad.cpp%
-	multi_thread/openmp/run.cpp
+
+	multi_thread/pthread_a11c.cpp%
+	multi_thread/pthread_ad.cpp
 %$$
 
 
@@ -65,8 +65,6 @@ extern bool bthread_a11c(void);
 extern bool bthread_ad(void);
 extern bool pthread_a11c(void);
 extern bool pthread_ad(void);
-extern bool openmp_a11c(void);
-extern bool openmp_ad(void);
 
 namespace {
 	// function that runs one test
@@ -101,10 +99,6 @@ int main(void)
 # ifdef CPPAD_BTHREAD_EXAMPLES
 	ok &= Run( bthread_a11c,      "bthread_a11c"     );
 	ok &= Run( bthread_ad,        "bthread_ad"       );
-# endif
-# ifdef CPPAD_OPENMP_EXAMPLES
-	ok &= Run( openmp_a11c,       "openmp_a11c"      );
-	ok &= Run( openmp_ad,         "openmp_ad"        );
 # endif
 # ifdef CPPAD_PTHREAD_EXAMPLES
 	ok &= Run( pthread_a11c,      "pthread_a11c"     );

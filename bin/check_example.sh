@@ -23,7 +23,8 @@ file_list="
 	example/*.hpp 
 	cppad_ipopt/*/*.cpp 
 	cppad_ipopt/*/*.hpp
-	openmp/*.cpp
+	multi_thread/*.cpp
+	multi_thread/openmp/*.cpp
 "
 sed < omh/example_list.omh > bin/check_example.$$ \
 	-n -e '/\$begin ListAllExamples\$\$/,/\$end/p' 

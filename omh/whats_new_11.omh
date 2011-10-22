@@ -77,7 +77,7 @@ $subhead 10-21$$
 $list number$$
 Move $code openmp$$ to $code multi_thread/openmp$$.
 This prepares for speed testing boost threads and pthreads in a manner
-similar to $cref openmp_run.cpp$$ tests OpenMP.
+similar to $code openmp/run.cpp$$ tests OpenMP.
 $lnext
 Update the README file.
 $lnext
@@ -128,7 +128,7 @@ $cref/pthread_exit Bug in Cygwin/pthread_ad.cpp/pthread_exit Bug in Cygwin/$$).
 
 $head 09-02$$
 $list number$$
-The OpenMP speed test program $cref/run.cpp/openmp_run.cpp/$$ was not setting 
+The OpenMP speed test program $code openmp/run.cpp$$ was not setting 
 the number of threads for the one thread case (so dynamic thread adjustment was
 used). This has been fixed.
 $lnext
@@ -147,7 +147,7 @@ $cref/CPPAD_MAX_NUM_THREADS/multi_thread/CPPAD_MAX_NUM_THREADS/$$
 has been documented and is now part of the CppAD API.
 $lnext
 The $cref/pthread_ad.cpp/$$ test failed under cygwin. 
-This was because the previous test $cref/openmp_ad.cpp/$$ was
+This was because the previous test $code openmp_ad.cpp$$ was
 set up calls to OpenMP routines that were still in effect
 when $code pthread_ad$$ ran.
 This has been fixed by making
@@ -187,7 +187,7 @@ $lend
 
 $subhead 08-30$$
 $list number$$
-Create the $cref%openmp/run.cpp%openmp_run.cpp%$$ program 
+Create the $code openmp/run.cpp$$ program 
 and move the $cref openmp_newton_example.cpp$$ test from
 $code openmp/run.sh$$ to $code openmp/run.cpp$$.
 This uses $cref/configure/InstallUnix/Configure/$$
@@ -212,13 +212,13 @@ sections.
 $lnext
 Create the $cref pthread_ad.cpp$$ example that does AD using the
 pthread library.
-In addition, fix some problems in $cref openmp_ad.cpp$$
+In addition, fix some problems in $cref openmp_simple_ad.cpp$$
 $lnext
 Move $code openmp/example_a11c.cpp$$ to 
 $cref|example/openmp_a11c.cpp|openmp_a11c.cpp|$$.
 $lnext
 Move $code openmp/parallel_ad.cpp$$ to 
-$cref|example/openmp_ad.cpp|openmp_ad.cpp|$$.
+$cref openmp_simple_ad.cpp$$.
 $lend
 
 $subhead 08-23$$
@@ -244,7 +244,7 @@ $subhead 08-21$$
 Create the OpenMP and pthread examples
 $cref/openmp_a11c.cpp/$$,
 $cref/pthread_a11c.cpp/$$, and
-$cref/openmp_ad.cpp/$$.
+$cref openmp_simple_ad.cpp$$.
 These OpenMP examples were originally in the $code openmp$$ directory,
 and have been moved, and modified to conform, to the normal example directory.
 

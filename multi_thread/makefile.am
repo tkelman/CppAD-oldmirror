@@ -25,16 +25,6 @@ BTHREAD_EXTRA_FILES = bthread_a11c.cpp  bthread_ad.cpp
 BTHREAD_FLAGS       = 
 endif
 #
-if CppAD_OPENMP
-OPENMP_SRC_FILES   = openmp_a11c.cpp openmp_ad.cpp
-OPENMP_EXTRA_FILES = 
-OMP_FLAGS          = -DCPPAD_OPENMP_EXAMPLES $(OPENMP_FLAGS)
-else
-OPENMP_SRC_FILES   =
-OPENMP_EXTRA_FILES = openmp_a11c.cpp openmp_ad.cpp
-OMP_FLAGS          = 
-endif
-#
 if CppAD_PTHREAD
 PTHREAD_SRC_FILES   = pthread_a11c.cpp  pthread_ad.cpp
 PTHREAD_EXTRA_FILES = 
@@ -48,7 +38,6 @@ endif
 # Microsoft project files an script to run a single test
 EXTRA_DIST        = \
 	$(BTHREAD_EXTRA_FILES) \
-	$(OPENMP_EXTRA_FILES) \
 	$(PTHREAD_EXTRA_FILES) 
 #
 check_PROGRAMS    = multi_thread 
@@ -62,7 +51,6 @@ AM_LDFLAGS        = $(ADOLC_LIB_DIRS)
 #
 multi_thread_SOURCES   = \
 	$(BTHREAD_SRC_FILES) \
-	$(OPENMP_SRC_FILES) \
 	$(PTHREAD_SRC_FILES) \
 	\
 	multi_thread.cpp 

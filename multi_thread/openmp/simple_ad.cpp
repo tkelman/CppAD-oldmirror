@@ -11,17 +11,17 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
 /*
-$begin openmp_ad.cpp$$
+$begin openmp_simple_ad.cpp$$
 $spell
 	openmp
 	CppAD
 $$
 
-$section Parallel OpenMP AD: Example and Test$$
+$section Simple OpenMP AD: Example and Test$$
 
-$index openmp_ad, example$$
-$index AD, parallel OpenMP$$
-$index parallel, AD OpenMP$$
+$index openmp, AD example$$
+$index AD, OpenMP example$$
+$index example, OpenMP AD$$
 $index thread, openmp AD$$
 
 $head Purpose$$
@@ -39,7 +39,7 @@ to avoid the need to re-tape.
 
 $head Source Code$$
 $code
-$verbatim%multi_thread/openmp_ad.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
+$verbatim%multi_thread/openmp/simple_ad.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
 $$
 
 $end
@@ -77,7 +77,7 @@ namespace {
 	{	return static_cast<size_t>( omp_get_thread_num() ); } 
 }
 
-bool openmp_ad(void)
+bool simple_ad(void)
 {	bool all_ok = true;
 	using CppAD::AD;
 	using CppAD::NearEqual;

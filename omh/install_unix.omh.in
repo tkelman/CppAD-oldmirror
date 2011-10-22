@@ -368,28 +368,8 @@ $codei%
 	OPENMP_FLAGS=-fopenmp
 %$$
 If you specify configure command,
-the CppAD OpenMP correctness and speed tests will be built; i.e.,
-$table
-$bold Driver$$  $cnext 
-	$bold Test$$ $cnext 
-	$bold Description$$
-$rnext
-$cref/example.cpp/example.cpp/Running Tests/$$ $cnext
-	$cref openmp_a11c.cpp$$ $cnext
-	$title openmp_a11c.cpp$$
-$rnext
-$cref/example.cpp/example.cpp/Running Tests/$$ $cnext
-	$cref openmp_ad.cpp$$ $cnext
-	$title openmp_ad.cpp$$
-$rnext
-$cref/run.cpp/openmp_run.cpp/Running Tests/$$ $cnext
-	$cref/sum_i_inv.cpp/openmp_sum_i_inv.cpp/$$ $cnext
-	$title openmp_sum_i_inv.cpp$$
-$rnext
-$cref/run.cpp/openmp_run.cpp/Running Tests/$$ $cnext
-	$cref/newton_example.cpp/openmp_newton_example.cpp/$$ $cnext
-	$title openmp_newton_example.cpp$$
-$tend
+the CppAD OpenMP correctness and speed tests will be built; see
+$cref openmp.cpp$$.
 
 $head PostfixDir$$
 $index configure, postfix directory$$
