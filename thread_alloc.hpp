@@ -436,8 +436,11 @@ the program enters $cref/parallel/ta_in_parallel/$$ execution mode.
 In addition, this function cannot be called while in parallel mode.
 
 $head Example$$
-The routine $cref openmp_ad.cpp$$
-is an example, that uses this routine.
+The routines
+$cref openmp_simple_ad.cpp$$,
+$cref pthread_ad.cpp$$, and
+$cref bthread_ad.cpp$$,
+are examples, that uses this routine.
 
 $end
 */
