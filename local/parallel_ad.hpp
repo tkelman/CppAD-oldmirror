@@ -51,7 +51,7 @@ $codei%std::complex<double>%$$.
 $head Example$$
 The files $cref openmp_simple_ad.cpp$$, 
 $cref pthread_ad.cpp$$ and
-$cref bthread_ad.cpp$$
+$cref bthread_simple_ad.cpp$$
 contain examples and tests that use this function.   
 
 $end
