@@ -63,6 +63,7 @@ $end
 // BEGIN PROGRAM
 # include <pthread.h>
 # include <cppad/cppad.hpp>
+# include "../arc_tan.hpp"
 
 # define NUMBER_THREADS            4
 # define DEMONSTRATE_BUG_IN_CYGWIN 0
@@ -130,27 +131,6 @@ namespace {
 		bool            ok;
 	} work_info_t;
 	work_info_t work_vector[NUMBER_THREADS];
-	// --------------------------------------------------------------------
-	// function that we are computing the derivative of
-	AD<double> arc_tan(const AD<double>& x, const AD<double>& y)
-	{	double pi  = 4. * atan(1.);
-		AD<double> theta;
-
-		// valid for first quadrant 
-		if( abs(x) > abs(y) )
-			theta = atan(abs(y) / abs(x));
-		else	theta = pi / 2. - atan(abs(x) / abs(y) ) ;
-
-		// valid for first or second quadrant
-		if( x < 0. )
-			theta = pi - theta;
-
-		// valid for any quadrant
-		if( y < 0. )
-			theta = - theta;
-
-		return theta;
-	}
 	// --------------------------------------------------------------------
 	// function that does the work for each thread
 	void* thread_work(void* thread_info_vptr)

@@ -32,6 +32,7 @@ AM_LDFLAGS        =
 openmp_SOURCES   = \
 	openmp.cpp \
 \
+	../arc_tan.cpp \
 	a11c.cpp \
 	simple_ad.cpp \
 \

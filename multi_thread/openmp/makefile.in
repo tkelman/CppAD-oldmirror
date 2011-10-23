@@ -41,7 +41,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am_openmp_OBJECTS = openmp.$(OBJEXT) a11c.$(OBJEXT) \
+am_openmp_OBJECTS = openmp.$(OBJEXT) arc_tan.$(OBJEXT) a11c.$(OBJEXT) \
 	simple_ad.$(OBJEXT) newton_example.$(OBJEXT) \
 	sum_i_inv.$(OBJEXT)
 openmp_OBJECTS = $(am_openmp_OBJECTS)
@@ -216,6 +216,7 @@ AM_LDFLAGS =
 openmp_SOURCES = \
 	openmp.cpp \
 \
+	../arc_tan.cpp \
 	a11c.cpp \
 	simple_ad.cpp \
 \
@@ -273,6 +274,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/a11c.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/arc_tan.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/newton_example.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/openmp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/simple_ad.Po@am__quote@
@@ -291,6 +293,20 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+arc_tan.o: ../arc_tan.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT arc_tan.o -MD -MP -MF $(DEPDIR)/arc_tan.Tpo -c -o arc_tan.o `test -f '../arc_tan.cpp' || echo '$(srcdir)/'`../arc_tan.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/arc_tan.Tpo $(DEPDIR)/arc_tan.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../arc_tan.cpp' object='arc_tan.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o arc_tan.o `test -f '../arc_tan.cpp' || echo '$(srcdir)/'`../arc_tan.cpp
+
+arc_tan.obj: ../arc_tan.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT arc_tan.obj -MD -MP -MF $(DEPDIR)/arc_tan.Tpo -c -o arc_tan.obj `if test -f '../arc_tan.cpp'; then $(CYGPATH_W) '../arc_tan.cpp'; else $(CYGPATH_W) '$(srcdir)/../arc_tan.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/arc_tan.Tpo $(DEPDIR)/arc_tan.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../arc_tan.cpp' object='arc_tan.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o arc_tan.obj `if test -f '../arc_tan.cpp'; then $(CYGPATH_W) '../arc_tan.cpp'; else $(CYGPATH_W) '$(srcdir)/../arc_tan.cpp'; fi`
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \

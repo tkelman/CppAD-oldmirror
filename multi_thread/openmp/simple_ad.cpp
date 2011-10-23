@@ -48,29 +48,11 @@ $end
 // BEGIN PROGRAM
 # include <omp.h>
 # include <cppad/cppad.hpp>
+# include "../arc_tan.hpp"
 
 # define NUMBER_THREADS 4
 namespace {
 	using CppAD::AD;
-	AD<double> arc_tan(const AD<double>& x, const AD<double>& y)
-	{	double pi  = 4. * atan(1.);
-		AD<double> theta;
-
-		// valid for first quadrant 
-		if( abs(x) > abs(y) )
-			theta = atan(abs(y) / abs(x));
-		else	theta = pi / 2. - atan(abs(x) / abs(y) ) ;
-
-		// valid for first or second quadrant
-		if( x < 0. )
-			theta = pi - theta;
-
-		// valid for any quadrant
-		if( y < 0. )
-			theta = - theta;
-
-		return theta;
-	}
 	bool in_parallel(void)
 	{	return static_cast<bool> ( omp_in_parallel() ); }
 	size_t thread_num(void)

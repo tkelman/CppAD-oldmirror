@@ -51,6 +51,7 @@ $end
 // BEGIN PROGRAM
 # include <boost/thread.hpp>
 # include <cppad/cppad.hpp>
+# include "../arc_tan.hpp"
 
 # define NUMBER_THREADS            4
 
@@ -108,27 +109,6 @@ namespace {
 	// --------------------------------------------------------------------
 	using CppAD::AD;
 
-	// function that we are computing the derivative of
-	AD<double> arc_tan(const AD<double>& x, const AD<double>& y)
-	{	double pi  = 4. * atan(1.);
-		AD<double> theta;
-
-		// valid for first quadrant 
-		if( abs(x) > abs(y) )
-			theta = atan(abs(y) / abs(x));
-		else	theta = pi / 2. - atan(abs(x) / abs(y) ) ;
-
-		// valid for first or second quadrant
-		if( x < 0. )
-			theta = pi - theta;
-
-		// valid for any quadrant
-		if( y < 0. )
-			theta = - theta;
-
-		return theta;
-	}
-	//
 	class worker_t {
 	private:
 		// thread index corresponding to this work

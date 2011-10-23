@@ -82,7 +82,8 @@ $childtable%
 	cppad/local/parallel_ad.hpp%
 	multi_thread/openmp/openmp.cpp%
 	multi_thread/bthread/bthread.cpp%
-	multi_thread/pthread/pthread.cpp
+	multi_thread/pthread/pthread.cpp%
+	omh/thread_utility.omh
 %$$
 
 $end
