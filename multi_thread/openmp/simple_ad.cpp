@@ -19,10 +19,10 @@ $$
 
 $section Simple OpenMP AD: Example and Test$$
 
-$index openmp, AD example$$
-$index AD, OpenMP example$$
-$index example, OpenMP AD$$
-$index thread, openmp AD$$
+$index openmp, simple AD$$
+$index AD, simple OpenMP$$
+$index simple, OpenMP AD$$
+$index thread, simple OpenMP AD$$
 
 $head Purpose$$
 This example demonstrates how CppAD can be used with multiple OpenMP threads.

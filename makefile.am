@@ -77,6 +77,15 @@ BTHREAD_TESTS   =
 BTHREAD_DIRS    =
 endif
 #
+# Are we building the pthread thread examples and tests
+if CppAD_PTHREAD
+PTHREAD_TESTS   = multi_thread/pthread
+PTHREAD_DIRS    = multi_thread/pthread
+else
+PTHREAD_TESTS   =
+PTHREAD_DIRS    =
+endif
+#
 # Is the library archiving program present
 if CppAD_HAVE_AR
 SPEED_TESTS = \
@@ -295,11 +304,11 @@ SUBDIRS =  \
 	$(BTHREAD_DIRS) \
 	$(IPOPT_DIRS) \
 	$(OPENMP_DIRS) \
+	$(PTHREAD_DIRS) \
 	$(SPEED_DIRS) \
 	example \
 	introduction/get_started \
 	introduction/exp_apx \
-	multi_thread \
 	print_for \
 	test_more 
 #
@@ -318,6 +327,7 @@ test_directory_list = \
 	$(BTHREAD_TESTS) \
 	$(IPOPT_TESTS) \
 	$(OPENMP_TESTS) \
+	$(PTHREAD_TESTS) \
 	$(SPEED_TESTS) \
 	example \
 	introduction/get_started \

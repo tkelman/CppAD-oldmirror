@@ -479,8 +479,8 @@ AC_CONFIG_FILES([
 	introduction/get_started/makefile 
 	introduction/exp_apx/makefile
 	multi_thread/bthread/makefile
-	multi_thread/makefile
 	multi_thread/openmp/makefile
+	multi_thread/pthread/makefile
 	print_for/makefile
 	speed/adolc/makefile
 	speed/cppad/makefile 

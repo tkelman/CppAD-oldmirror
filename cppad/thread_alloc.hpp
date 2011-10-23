@@ -438,7 +438,7 @@ In addition, this function cannot be called while in parallel mode.
 $head Example$$
 The routines
 $cref openmp_simple_ad.cpp$$,
-$cref pthread_ad.cpp$$, and
+$cref pthread_simple_ad.cpp$$, and
 $cref bthread_simple_ad.cpp$$,
 are examples, that uses this routine.
 

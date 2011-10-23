@@ -21,10 +21,10 @@ $$
 
 $section Simple Boost Thread AD: Example and Test$$
 
-$index boost, thread AD example$$
-$index AD, boost thread$$
-$index parallel, boost thread AD$$
-$index thread, boost AD$$
+$index boost, thread simple AD$$
+$index AD, simple boost thread$$
+$index simple, boost thread AD$$
+$index thread, boost simple AD$$
 
 $head Purpose$$
 This example demonstrates how CppAD can be used with multiple 

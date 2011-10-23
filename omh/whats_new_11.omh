@@ -12,7 +12,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 $begin whats_new_11$$
 $spell
-	pthreads
+	bthread
 	pthread
 	Std
 	retape
@@ -73,18 +73,22 @@ assist you in learning about changes between various versions of CppAD.
 $head branches/multi_thread$$
 The following changes are being done in $code branches/multi_thread$$:
 
-$subhead 10-21$$
 $list number$$
 Move $code openmp$$ to $code multi_thread/openmp$$.
-This prepares for speed testing boost threads and pthreads in a manner
-similar to $code openmp/run.cpp$$ tests OpenMP.
 $lnext
 Update the README file.
 $lnext
 Remove the $code bug/optimize.sh$$ file (no longer a bug).
 $lnext
-Move multi-threading examples to $code multi_thread$$ directory
-and create the program $cref multi_thread.cpp$$ program for running them.
+For $icode thread_type$$ equal to 
+$code openmp$$, $code bthread$$, and $code pthread$$,
+move $codei%example/%thread_type%_a11c.cpp%$$ 
+to   $codei%multi_thread/%thread_type%/a11c.cpp%$$. 
+$lnext
+For $icode thread_type$$ equal to 
+$code openmp$$, $code bthread$$, and $code pthread$$,
+move $codei%example/%thread_type%_ad.cpp%$$ 
+to   $codei%multi_thread/%thread_type%/simple_ad.cpp%$$. 
 $lend
 
 $head 10-14$$
@@ -96,7 +100,7 @@ $list number$$
 The MAC version of the $code pthread$$ library does not include the
 $code pthread_barrier_wait$$ function; i.e., is not compliant with
 the IEEE Std 1003.1, 2004 Edition for $code pthread$$.
-This caused the $cref pthread_ad.cpp$$ to fail to compile on the MAC.
+This caused the $cref pthread_simple_ad.cpp$$ to fail to compile on the MAC.
 This has been fixed by not compiling the $code pthread$$ examples
 unless $code pthread_barrier_wait$$ is present.
 $lnext
@@ -122,9 +126,13 @@ More simplification of $cref bthread_simple_ad.cpp$$ example.
 $lend
 
 $head 09-05$$
-Simply and fix some problems with $cref pthread_ad.cpp$$,
+Simply and fix some problems with $cref pthread_simple_ad.cpp$$,
 (including avoiding a 
-$cref/pthread_exit Bug in Cygwin/pthread_ad.cpp/pthread_exit Bug in Cygwin/$$).
+$cref/
+	pthread_exit Bug in Cygwin/
+	pthread_simple_ad.cpp/
+	pthread_exit Bug in Cygwin
+/$$).
 
 $head 09-02$$
 $list number$$
@@ -146,10 +154,10 @@ This has been fixed and
 $cref/CPPAD_MAX_NUM_THREADS/multi_thread/CPPAD_MAX_NUM_THREADS/$$ 
 has been documented and is now part of the CppAD API.
 $lnext
-The $cref/pthread_ad.cpp/$$ test failed under cygwin. 
+The $cref pthread_simple_ad.cpp$$ test failed under cygwin. 
 This was because the previous test $code openmp_ad.cpp$$ was
 set up calls to OpenMP routines that were still in effect
-when $code pthread_ad$$ ran.
+when $code pthread/simple_ad$$ ran.
 This has been fixed by making
 $icode%num_threads% == 1%$$ a special case in
 $cref/parallel_setup/ta_parallel_setup/$$.
@@ -210,7 +218,7 @@ $lnext
 Implement $cref omp_alloc$$ as links to corresponding $cref thread_alloc$$
 sections.
 $lnext
-Create the $cref pthread_ad.cpp$$ example that does AD using the
+Create the $cref pthread_simple_ad.cpp$$ example that does AD using the
 pthread library.
 In addition, fix some problems in $cref openmp_simple_ad.cpp$$
 $lnext

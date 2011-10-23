@@ -89,6 +89,7 @@ $rref base_adolc.hpp$$
 $rref base_complex.hpp$$
 $rref BenderQuad.cpp$$
 $rref BoolFun.cpp$$
+$rref bthread.cpp$$
 $rref bthread_a11c.cpp$$
 $rref bthread_simple_ad.cpp$$
 $rref CheckNumericType.cpp$$
@@ -158,7 +159,6 @@ $rref Mul.cpp$$
 $rref MulEq.cpp$$
 $rref mul_level.cpp$$
 $rref mul_level_adolc.cpp$$
-$rref multi_thread.cpp$$
 $rref nan.cpp$$
 $rref NearEqualExt.cpp$$
 $rref Near_Equal.cpp$$
@@ -187,8 +187,9 @@ $rref Pow.cpp$$
 $rref pow_int.cpp$$
 $rref print_for_cout.cpp$$
 $rref print_for_string.cpp$$
+$rref pthread.cpp$$
 $rref pthread_a11c.cpp$$
-$rref pthread_ad.cpp$$
+$rref pthread_simple_ad.cpp$$
 $rref RevOne.cpp$$
 $rref RevSparseHes.cpp$$
 $rref RevSparseJac.cpp$$

@@ -31,8 +31,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-check_PROGRAMS = multi_thread$(EXEEXT)
-subdir = multi_thread
+check_PROGRAMS = pthread$(EXEEXT)
+subdir = multi_thread/pthread
 DIST_COMMON = $(srcdir)/makefile.am $(srcdir)/makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -41,15 +41,10 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am__multi_thread_SOURCES_DIST = pthread_a11c.cpp pthread_ad.cpp \
-	multi_thread.cpp
-@CppAD_PTHREAD_TRUE@am__objects_1 = pthread_a11c.$(OBJEXT) \
-@CppAD_PTHREAD_TRUE@	pthread_ad.$(OBJEXT)
-am_multi_thread_OBJECTS = $(am__objects_1) multi_thread.$(OBJEXT)
-multi_thread_OBJECTS = $(am_multi_thread_OBJECTS)
-multi_thread_LDADD = $(LDADD)
-am__DEPENDENCIES_1 =
-multi_thread_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_pthread_OBJECTS = pthread.$(OBJEXT) a11c.$(OBJEXT) \
+	simple_ad.$(OBJEXT)
+pthread_OBJECTS = $(am_pthread_OBJECTS)
+pthread_LDADD = $(LDADD)
 DEFAULT_INCLUDES = 
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -59,8 +54,8 @@ CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
-SOURCES = $(multi_thread_SOURCES)
-DIST_SOURCES = $(am__multi_thread_SOURCES_DIST)
+SOURCES = $(pthread_SOURCES)
+DIST_SOURCES = $(pthread_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -201,31 +196,21 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-@CppAD_PTHREAD_FALSE@PTHREAD_SRC_FILES = 
+# AM_CXXFLAGS     = -g $(CXX_FLAGS) $(BTHREAD_FLAGS)
+@CppAD_MS_COMPILER_FALSE@AM_CXXFLAGS = -DNDEBUG -O2 $(CXX_FLAGS) $(BTHREAD_FLAGS)
 #
-#
-@CppAD_PTHREAD_TRUE@PTHREAD_SRC_FILES = pthread_a11c.cpp  pthread_ad.cpp
-@CppAD_PTHREAD_FALSE@PTHREAD_EXTRA_FILES = pthread_a11c.cpp pthread_ad.cpp
-@CppAD_PTHREAD_TRUE@PTHREAD_EXTRA_FILES = 
-@CppAD_PTHREAD_FALSE@PTHREAD_FLAGS = 
-@CppAD_PTHREAD_TRUE@PTHREAD_FLAGS = -DCPPAD_PTHREAD_EXAMPLES
-# 
-# Microsoft project files an script to run a single test
-EXTRA_DIST = \
-	$(PTHREAD_EXTRA_FILES) 
-
+# AM_CXXFLAGS     = -EHsc -g $(CXX_FLAGS) $(BTHREAD_FLAGS)
+@CppAD_MS_COMPILER_TRUE@AM_CXXFLAGS = -EHsc -DNDEBUG -O2 $(CXX_FLAGS) $(BTHREAD_FLAGS)
 #
 AM_CPPFLAGS = -I. -I$(top_srcdir) 
 #
-AM_CXXFLAGS = -g $(PTHREAD_FLAGS) $(OMP_FLAGS)
+AM_LDFLAGS = $(BTHREAD_LIB) $(PTHREAD_LIB)
 #
-LDADD = $(ADOLC_LIB)  $(PTHREAD_LIB)
-AM_LDFLAGS = $(ADOLC_LIB_DIRS) 
-#
-multi_thread_SOURCES = \
-	$(PTHREAD_SRC_FILES) \
-	\
-	multi_thread.cpp 
+pthread_SOURCES = \
+	pthread.cpp \
+\
+	a11c.cpp \
+	simple_ad.cpp 
 
 all: all-am
 
@@ -240,9 +225,9 @@ $(srcdir)/makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/makefile.am  $(am__confi
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu multi_thread/makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu multi_thread/pthread/makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu multi_thread/makefile
+	  $(AUTOMAKE) --gnu multi_thread/pthread/makefile
 .PRECIOUS: makefile
 makefile: $(srcdir)/makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -264,9 +249,9 @@ $(am__aclocal_m4_deps):
 
 clean-checkPROGRAMS:
 	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
-multi_thread$(EXEEXT): $(multi_thread_OBJECTS) $(multi_thread_DEPENDENCIES) 
-	@rm -f multi_thread$(EXEEXT)
-	$(CXXLINK) $(multi_thread_OBJECTS) $(multi_thread_LDADD) $(LIBS)
+pthread$(EXEEXT): $(pthread_OBJECTS) $(pthread_DEPENDENCIES) 
+	@rm -f pthread$(EXEEXT)
+	$(CXXLINK) $(pthread_OBJECTS) $(pthread_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -274,9 +259,9 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/multi_thread.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pthread_a11c.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pthread_ad.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/a11c.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pthread.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/simple_ad.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -488,13 +473,14 @@ uninstall-am:
 	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
 	uninstall-am
 
-#
-test.sh: multi_thread$(EXEEXT)
-	echo "#! /bin/sh -e"    > test.sh
-	echo "./multi_thread " >> test.sh 
+
+test.sh: pthread$(EXEEXT) 
+	echo "#! /bin/sh -e"      >  test.sh
+	echo "./pthread a11c"      >> test.sh
+	echo "./pthread simple_ad" >> test.sh
 	chmod +x test.sh
-#
-test: test.sh
+
+test:: test.sh
 	./test.sh
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

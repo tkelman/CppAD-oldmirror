@@ -11,7 +11,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
 /*
-$begin pthread_ad.cpp$$
+$begin pthread_simple_ad.cpp$$
 $spell
 	Cygwin
 	pthread
@@ -19,12 +19,12 @@ $spell
 	CppAD
 $$
 
-$section Parallel Pthread AD: Example and Test$$
+$section Simple Pthread AD: Example and Test$$
 
-$index pthread_ad, example$$
-$index AD, parallel pthread$$
-$index parallel, AD pthread$$
-$index thread, pthread AD$$
+$index pthread, simple AD$$
+$index AD, simple pthread$$
+$index simple, AD pthread$$
+$index thread, pthread simple AD$$
 
 $head Purpose$$
 This example demonstrates how CppAD can be used with multiple pthreads.
@@ -54,7 +54,7 @@ see how to demonstrate this bug.
 
 $head Source Code$$
 $code
-$verbatim%multi_thread/pthread_ad.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
+$verbatim%multi_thread/pthread/simple_ad.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
 $$
 
 $end
@@ -216,7 +216,7 @@ namespace {
 }
 
 // This test routine is only called by the master thread (index = 0).
-bool pthread_ad(void)
+bool simple_ad(void)
 {	bool all_ok = true;
 	using CppAD::thread_alloc;
 
