@@ -32,6 +32,7 @@ bthread_SOURCES   = \
 	bthread.cpp \
 \
 	../arc_tan.cpp \
+	../arc_tan.hpp \
 	a11c.cpp \
 	simple_ad.cpp 
 	

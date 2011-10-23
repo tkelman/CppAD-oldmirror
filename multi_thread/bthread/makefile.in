@@ -54,6 +54,10 @@ CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+CCLD = $(CC)
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 SOURCES = $(bthread_SOURCES)
 DIST_SOURCES = $(bthread_SOURCES)
 ETAGS = etags
@@ -210,6 +214,7 @@ bthread_SOURCES = \
 	bthread.cpp \
 \
 	../arc_tan.cpp \
+	../arc_tan.hpp \
 	a11c.cpp \
 	simple_ad.cpp 
 
