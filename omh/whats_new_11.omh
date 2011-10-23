@@ -112,13 +112,13 @@ $href%
 	http://www.boost.org/doc/libs/1_47_0/doc/html/thread.html%
 	boost multi-threading
 %$$ 
-examples $cref bthread_a11c.cpp$$ and $cref bthread_ad.cpp$$.
+examples $cref bthread_a11c.cpp$$ and $cref bthread_simple_ad.cpp$$.
 $lnext
 Improve documentation for
 $cref/thread_num/ta_parallel_setup/thread_num/$$ argument
 to $code parallel_setup$$.
 $lnext
-More simplification of $cref bthread_ad.cpp$$ example.
+More simplification of $cref bthread_simple_ad.cpp$$ example.
 $lend
 
 $head 09-05$$

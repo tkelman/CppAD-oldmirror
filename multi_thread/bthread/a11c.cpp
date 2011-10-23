@@ -23,14 +23,14 @@ $index example, boost thread A.1.1c$$
 $index A.1.1c, boost thread example$$
 $index thread, boost example$$
 
-$section A Simple Parallel Boost Thread Example and Test$$
+$section A Simple Boost Thread Example and Test$$
 
 $head Purpose$$
 This example just demonstrates Boost threads and does not use CppAD at all.
 
 $head Source Code$$
 $code
-$verbatim%multi_thread/bthread_a11c.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
+$verbatim%multi_thread/bthread/a11c.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
 $$
 $end
 ----------------------------------------------------------------------------
@@ -71,7 +71,7 @@ namespace { // Begin empty namespace
 	};
 }
 
-bool bthread_a11c(void)
+bool a11c(void)
 {	bool ok = true;
 
 	// Test setup

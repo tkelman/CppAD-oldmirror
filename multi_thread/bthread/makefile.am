@@ -14,39 +14,31 @@
 # CppAD puts all it's preprocessor definitions in the cppad/configure.hpp
 DEFS          =
 #
+check_PROGRAMS    = bthread 
 #
-if CppAD_PTHREAD
-PTHREAD_SRC_FILES   = pthread_a11c.cpp  pthread_ad.cpp
-PTHREAD_EXTRA_FILES = 
-PTHREAD_FLAGS       = -DCPPAD_PTHREAD_EXAMPLES
+if CppAD_MS_COMPILER
+# AM_CXXFLAGS     = -EHsc -g $(CXX_FLAGS) $(BTHREAD_FLAGS)
+AM_CXXFLAGS       = -EHsc -DNDEBUG -O2 $(CXX_FLAGS) $(BTHREAD_FLAGS)
 else
-PTHREAD_SRC_FILES   =
-PTHREAD_EXTRA_FILES = pthread_a11c.cpp pthread_ad.cpp
-PTHREAD_FLAGS       = 
+# AM_CXXFLAGS     = -g $(CXX_FLAGS) $(BTHREAD_FLAGS)
+AM_CXXFLAGS       = -DNDEBUG -O2 $(CXX_FLAGS) $(BTHREAD_FLAGS)
 endif
-# 
-# Microsoft project files an script to run a single test
-EXTRA_DIST        = \
-	$(PTHREAD_EXTRA_FILES) 
-#
-check_PROGRAMS    = multi_thread 
 #
 AM_CPPFLAGS       = -I. -I$(top_srcdir) 
 #
-AM_CXXFLAGS       = -g $(PTHREAD_FLAGS) $(OMP_FLAGS)
+AM_LDFLAGS        = $(BTHREAD_LIB) 
 #
-LDADD             = $(ADOLC_LIB)  $(PTHREAD_LIB)
-AM_LDFLAGS        = $(ADOLC_LIB_DIRS) 
-#
-multi_thread_SOURCES   = \
-	$(PTHREAD_SRC_FILES) \
-	\
-	multi_thread.cpp 
-#
-test.sh: multi_thread$(EXEEXT)
-	echo "#! /bin/sh -e"    > test.sh
-	echo "./multi_thread " >> test.sh 
+bthread_SOURCES   = \
+	bthread.cpp \
+\
+	a11c.cpp \
+	simple_ad.cpp 
+	
+test.sh: bthread$(EXEEXT) 
+	echo "#! /bin/sh -e"      >  test.sh
+	echo "./bthread a11c"      >> test.sh
+	echo "./bthread simple_ad" >> test.sh
 	chmod +x test.sh
-#
-test: test.sh
+
+test:: test.sh
 	./test.sh

@@ -11,7 +11,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
 /*
-$begin bthread_ad.cpp$$
+$begin bthread_simple_ad.cpp$$
 $spell
 	Cygwin
 	bthread
@@ -19,7 +19,7 @@ $spell
 	CppAD
 $$
 
-$section Parallel Boost Thread AD: Example and Test$$
+$section Simple Boost Thread AD: Example and Test$$
 
 $index boost, thread AD example$$
 $index AD, boost thread$$
@@ -42,7 +42,7 @@ to avoid the need to re-tape.
 
 $head Source Code$$
 $code
-$verbatim%multi_thread/bthread_ad.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
+$verbatim%multi_thread/bthread/simple_ad.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
 $$
 
 $end
@@ -184,7 +184,7 @@ namespace {
 }
 
 // This test routine is only called by the master thread (index = 0).
-bool bthread_ad(void)
+bool simple_ad(void)
 {	bool all_ok = true;
 	using CppAD::thread_alloc;
 

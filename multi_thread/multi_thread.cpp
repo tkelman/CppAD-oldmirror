@@ -31,9 +31,7 @@ $codei%
 
 $childtable%
 	multi_thread/openmp/openmp.cpp%
-
-	multi_thread/bthread_a11c.cpp%
-	multi_thread/bthread_ad.cpp%
+	multi_thread/bthread/bthread.cpp%
 
 	multi_thread/pthread_a11c.cpp%
 	multi_thread/pthread_ad.cpp
