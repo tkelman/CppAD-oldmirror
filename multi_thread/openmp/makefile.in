@@ -41,9 +41,9 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am_openmp_OBJECTS = openmp.$(OBJEXT) arc_tan.$(OBJEXT) a11c.$(OBJEXT) \
-	simple_ad.$(OBJEXT) newton_example.$(OBJEXT) \
-	sum_i_inv.$(OBJEXT)
+am_openmp_OBJECTS = openmp.$(OBJEXT) arc_tan.$(OBJEXT) \
+	setup_ad.$(OBJEXT) a11c.$(OBJEXT) simple_ad.$(OBJEXT) \
+	newton_example.$(OBJEXT) sum_i_inv.$(OBJEXT)
 openmp_OBJECTS = $(am_openmp_OBJECTS)
 openmp_LDADD = $(LDADD)
 openmp_DEPENDENCIES =
@@ -218,6 +218,9 @@ openmp_SOURCES = \
 \
 	../arc_tan.cpp \
 	../arc_tan.hpp \
+	setup_ad.cpp \
+	setup_ad.hpp \
+\
 	a11c.cpp \
 	simple_ad.cpp \
 \
@@ -278,6 +281,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/arc_tan.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/newton_example.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/openmp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/setup_ad.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/simple_ad.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sum_i_inv.Po@am__quote@
 

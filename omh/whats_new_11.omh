@@ -89,6 +89,9 @@ For $icode thread_type$$ equal to
 $code openmp$$, $code bthread$$, and $code pthread$$,
 move $codei%example/%thread_type%_ad.cpp%$$ 
 to   $codei%multi_thread/%thread_type%/simple_ad.cpp%$$. 
+$lnext
+Make $cref arc_tan.cpp$$ and $cref openmp_setup_ad.cpp$$
+utilities that can be used by multiple multi-threading tests.
 $lend
 
 $head 10-14$$

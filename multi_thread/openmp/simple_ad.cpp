@@ -49,15 +49,9 @@ $end
 # include <omp.h>
 # include <cppad/cppad.hpp>
 # include "../arc_tan.hpp"
+# include "setup_ad.hpp"
 
 # define NUMBER_THREADS 4
-namespace {
-	using CppAD::AD;
-	bool in_parallel(void)
-	{	return static_cast<bool> ( omp_in_parallel() ); }
-	size_t thread_num(void)
-	{	return static_cast<size_t>( omp_get_thread_num() ); } 
-}
 
 bool simple_ad(void)
 {	bool all_ok = true;
@@ -67,10 +61,6 @@ bool simple_ad(void)
 	// number of threads
 	size_t num_threads = NUMBER_THREADS; 
 
-	// Set the number of OpenMP threads
-	omp_set_dynamic(0); // turn off dynamic thread adjustment
-	omp_set_num_threads( size_t( num_threads ) );
-
 	// Check that no memory is in use or avialable at start
 	// (using thread_alloc in sequential mode)
 	size_t thread;
@@ -79,9 +69,8 @@ bool simple_ad(void)
 		all_ok &= CppAD::thread_alloc::available(thread) == 0; 
 	}
 
-	// Setup for using AD<double> in parallel mode
-	CppAD::thread_alloc::parallel_setup(num_threads, in_parallel, thread_num);
-	CppAD::parallel_ad<double>();
+	// Set the number of OpenMP threads
+	setup_ad(num_threads);
 
 	// Because maximum number of threads is greater than zero, CppAD::vector 
 	// uses fast multi-threading memory allocation.  Allocate this vector 
@@ -124,7 +113,7 @@ bool simple_ad(void)
 
 	// return memory allocator to single threading mode
 	num_threads = 1;
-	CppAD::thread_alloc::parallel_setup(num_threads, in_parallel, thread_num);
+	setup_ad(num_threads);
 
 	return all_ok;
 }

@@ -34,6 +34,9 @@ openmp_SOURCES   = \
 \
 	../arc_tan.cpp \
 	../arc_tan.hpp \
+	setup_ad.cpp \
+	setup_ad.hpp \
+\
 	a11c.cpp \
 	simple_ad.cpp \
 \

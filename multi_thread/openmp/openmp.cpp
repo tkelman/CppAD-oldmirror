@@ -104,7 +104,8 @@ $childtable%
 	multi_thread/openmp/a11c.cpp%
 	multi_thread/openmp/simple_ad.cpp%
 	multi_thread/openmp/sum_i_inv.cpp%
-	multi_thread/openmp/newton_example.cpp
+	multi_thread/openmp/newton_example.cpp%
+	multi_thread/openmp/setup_ad.cpp
 %$$
 
 $head Source$$
@@ -122,6 +123,7 @@ $end
 # include <cstring>
 # include "newton_example.hpp"
 # include "sum_i_inv.hpp"
+# include "setup_ad.hpp"
 
 extern bool a11c(void);
 extern bool simple_ad(void);
@@ -138,10 +140,6 @@ namespace {
 		std::cerr << error_msg << std::endl;
 		exit(1);
 	}
-	bool in_parallel(void)
-	{	return static_cast<bool> ( omp_in_parallel() ); }
-	size_t thread_num(void)
-	{	return static_cast<size_t>( omp_get_thread_num() ); } 
 }
 
 int main(int argc, char *argv[])
@@ -242,18 +240,8 @@ int main(int argc, char *argv[])
 	for(num_threads = 0; num_threads <= max_threads; num_threads++)
 	{	// set the number of threads
 		if( num_threads > 0 )
-		{	// off dynamic thread adjust
-			omp_set_dynamic(0);
-			// set the number of threads 
-			omp_set_num_threads(int(num_threads));
+			setup_ad(num_threads);
 
-			// setup CppAD memory allocation for parallel mode execution
-			thread_alloc::parallel_setup(
-				num_threads, in_parallel, thread_num)
-			;
-			// enable use of AD<double> in parallel mode
-			CppAD::parallel_ad<double>();
-		}
 		// ammount of memory initialy inuse by thread zero
 		ok &= 0 == thread_alloc::thread_num();
 		inuse_this_thread = thread_alloc::inuse(0);
@@ -272,8 +260,9 @@ int main(int argc, char *argv[])
 				use_ad
 			);
 		}
+
 		// set back to one thread and fee all avaialable memory
-		thread_alloc::parallel_setup(1, in_parallel, thread_num);
+		setup_ad(1);
 		size_t thread;
 		for(thread = 0; thread < num_threads; thread++)
 		{	thread_alloc::free_available(thread);
