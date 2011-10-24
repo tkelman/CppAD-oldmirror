@@ -72,22 +72,18 @@ namespace {
 	// ===================================================================
 	// General purpose code for linking CppAD to pthreads
 	// -------------------------------------------------------------------
-	// alternative name for NUMBER_THREADS
-	size_t number_threads = NUMBER_THREADS; 
-
-	// The master thread switches the value of this variable
-	static bool multiple_threads_may_be_active = false;
+	size_t num_threads_ = 1; 
 
 	// Barrier used to wait for all thread identifiers to be set
-	pthread_barrier_t wait_for_thread_id;
+	pthread_barrier_t wait_for_pthread_id;
 
 	// general purpose vector with information for each thread
 	typedef struct {
 		// pthread unique identifier for thread that uses this struct
-		pthread_t       thread_id;
+		pthread_t       pthread_id;
 		// cppad unique identifier for thread that uses this struct
-		size_t          thread_index;
-		// true if no error for this thread, false otherwise.
+		size_t          thread_num;
+		// have any operations on this thread failed
 		bool            ok;
 	} thread_info_t;
 	thread_info_t thread_vector[NUMBER_THREADS];
@@ -95,28 +91,28 @@ namespace {
 	// ---------------------------------------------------------------------
 	// in_parallel()
 	bool in_parallel(void)
-	{	return multiple_threads_may_be_active; }
+	{	return num_threads_ > 1; }
 
 	// ---------------------------------------------------------------------
-	// thread_num()
-	size_t thread_num(void)
+	// thread_number()
+	size_t thread_number(void)
 	{
 		// pthread unique identifier for this thread
 		pthread_t thread_this = pthread_self();
 
-		// convert thread_this to the corresponding thread index
-		size_t index = 0;
-		for(index = 0; index < number_threads; index++)
-		{	// pthread unique identifier for this index
-			pthread_t thread_compare = thread_vector[index].thread_id;
+		// convert thread_this to the corresponding thread_num
+		size_t thread_num = 0;
+		for(thread_num = 0; thread_num < num_threads_; thread_num++)
+		{	// pthread unique identifier for this thread_num
+			pthread_t thread_compare = thread_vector[thread_num].pthread_id;
 
 			// check for a match
 			if( pthread_equal(thread_this, thread_compare) )
-				return index;
+				return thread_num;
 		}
 		// no match error (thread_this is not in thread_vector).
 		assert(false);
-		return number_threads;
+		return num_threads_;
 	}
 	// ====================================================================
 	// code for specific problem we are solving
@@ -145,22 +141,23 @@ namespace {
 		thread_info_t* thread_info = 
 			static_cast<thread_info_t*>(thread_info_vptr);
 
-		// index to problem specific information for this thread
-		size_t index = thread_info->thread_index;
+		// thread_num for this thread
+		size_t thread_num = thread_info->thread_num;
 
 		// Set pthread unique identifier for this thread
-		thread_vector[index].thread_id = pthread_self();
+		thread_vector[thread_num].pthread_id = pthread_self();
 
 		// Wait for other threads to do the same.
-		int rc = pthread_barrier_wait(&wait_for_thread_id);
-		ok    &= (rc == 0 || rc == PTHREAD_BARRIER_SERIAL_THREAD);
+		int rc = pthread_barrier_wait(&wait_for_pthread_id);
+		thread_vector[thread_num].ok 
+			&= (rc == 0 || rc == PTHREAD_BARRIER_SERIAL_THREAD);
 		// ----------------------------------------------------------------
 		// Work for this thread
-		// (note that work[index] is only used by this thread)
+		// (note that work[thread_num] is only used by this thread)
 
 		// CppAD::vector uses the CppAD fast multi-threading allocator
 		CppAD::vector< AD<double> > Theta(1), Z(1);
-		Theta[0] = work_vector[index].theta;
+		Theta[0] = work_vector[thread_num].theta;
 		Independent(Theta);
 		AD<double> x = cos(Theta[0]);
 		AD<double> y = sin(Theta[0]);
@@ -179,12 +176,12 @@ namespace {
 		ok        &= NearEqual(d_z[0], 1., eps, eps);
 
 		// pass back ok information for this thread
-		work_vector[index].ok = ok;
+		work_vector[thread_num].ok = ok;
 
 		// It this is not the master thread, then terminate it.
 # if DEMONSTRATE_BUG_IN_CYGWIN
 		if( ! pthread_equal(
-			thread_info->thread_id, thread_vector[0].thread_id) )
+			thread_info->pthread_id, thread_vector[0].pthread_id) )
 		{	void* no_status = 0;
 			pthread_exit(no_status);
 		}
@@ -195,45 +192,45 @@ namespace {
 	}
 }
 
-// This test routine is only called by the master thread (index = 0).
+// This test routine is only called by the master thread (thread_num = 0).
 bool simple_ad(void)
 {	bool all_ok = true;
 	using CppAD::thread_alloc;
+	size_t num_threads = NUMBER_THREADS;
 
 	// Check that no memory is in use or avialable at start
 	// (using thread_alloc in sequential mode)
-	size_t index;
-	for(index = 0; index < number_threads; index++)
-	{	all_ok &= thread_alloc::inuse(index) == 0; 
-		all_ok &= thread_alloc::available(index) == 0; 
+	size_t thread_num;
+	for(thread_num = 0; thread_num < num_threads; thread_num++)
+	{	all_ok &= thread_alloc::inuse(thread_num) == 0; 
+		all_ok &= thread_alloc::available(thread_num) == 0; 
 	}
 
 	// initialize the thread_vector and work_vector
 	int    rc;
  	double pi = 4. * atan(1.);
-	for(index = 0; index < number_threads; index++)
-	{	// thread_id (initialze all as same as master thread)
-		thread_vector[index].thread_id    = pthread_self();
-		// thread_index
-		thread_vector[index].thread_index = index;
-		// ok
-		thread_vector[index].ok           = true;
-		work_vector[index].ok             = false;
+	for(thread_num = 0; thread_num < num_threads; thread_num++)
+	{	// pthread_id (initialze all as same as master thread)
+		thread_vector[thread_num].pthread_id = pthread_self();
+		// thread_num
+		thread_vector[thread_num].thread_num = thread_num;
+		thread_vector[thread_num].ok         = true;
+		work_vector[thread_num].ok           = false;
 		// theta 
-		work_vector[index].theta          = index * pi / number_threads;
+		work_vector[thread_num].theta        = thread_num * pi / num_threads;
 	}
 
 	// Setup for using AD<double> in parallel mode
-	thread_alloc::parallel_setup(number_threads, in_parallel, thread_num);
+	thread_alloc::parallel_setup(num_threads, in_parallel, thread_number);
 	CppAD::parallel_ad<double>();
 
 	// Now change in_parallel() to return true.
-	multiple_threads_may_be_active = true;
+	num_threads_ = 1;
 
-	// initialize barrier as waiting for number_threads
+	// initialize barrier as waiting for num_threads
 	pthread_barrierattr_t *no_barrierattr = 0;
 	rc = pthread_barrier_init(
-		&wait_for_thread_id, no_barrierattr, number_threads); 
+		&wait_for_pthread_id, no_barrierattr, num_threads); 
 	all_ok &= (rc == 0);
 	
 	// structure used to cread the threads
@@ -247,13 +244,13 @@ bool simple_ad(void)
 	all_ok &= (rc == 0);
 
 	// This master thread is already running, we need to create
-	// number_threads - 1 more threads
-	for(index = 1; index < number_threads; index++)
+	// num_threads - 1 more threads
+	for(thread_num = 1; thread_num < num_threads; thread_num++)
 	{
-		// Create the thread with thread_num equal to index
-		thread_info_vptr = static_cast<void*> ( &(thread_vector[index]) );
+		// Create the thread with thread_num equal to thread_num
+		thread_info_vptr = static_cast<void*> (&(thread_vector[thread_num]));
 		rc = pthread_create(
-				&thread[index] , 	
+				&thread[thread_num] , 	
 				&attr              ,
 				thread_work        ,
 				thread_info_vptr
@@ -266,36 +263,36 @@ bool simple_ad(void)
 	thread_work(thread_info_vptr);
 
 	// now wait for the other threads to finish
-	for(index = 1; index < number_threads; index++)
+	for(thread_num = 1; thread_num < num_threads; thread_num++)
 	{	void* no_status = 0;
-		rc      = pthread_join(thread[index], &no_status);
+		rc      = pthread_join(thread[thread_num], &no_status);
 		all_ok &= (rc == 0);
 	}
 
 	// Tell thread_alloc that we are in sequential execution mode.
-	multiple_threads_may_be_active = false;
+	num_threads_ = 1;
 
 	// Summarize results.
-	for(index = 0; index < number_threads; index++)
-	{	all_ok &= thread_vector[index].ok;
-		all_ok &= work_vector[index].ok;
+	for(thread_num = 0; thread_num < num_threads; thread_num++)
+	{ 	all_ok &= thread_vector[thread_num].ok;
+	 	all_ok &= work_vector[thread_num].ok;
 	}
 
 	// Free up the pthread resources that are no longer in use.
 	rc      = pthread_attr_destroy(&attr);
 	all_ok &= (rc == 0);
-	rc      = pthread_barrier_destroy(&wait_for_thread_id);
+	rc      = pthread_barrier_destroy(&wait_for_pthread_id);
 	all_ok &= (rc == 0);
 
 	// Check that no memory currently in use, and free avialable memory.
-	for(index = 0; index < number_threads; index++)
-	{	all_ok &= thread_alloc::inuse(index) == 0; 
-		thread_alloc::free_available(index); 
+	for(thread_num = 0; thread_num < num_threads; thread_num++)
+	{	all_ok &= thread_alloc::inuse(thread_num) == 0; 
+		thread_alloc::free_available(thread_num); 
 	}
 
 	// return memory allocator to single threading mode
-	number_threads = 1;
-	thread_alloc::parallel_setup(number_threads, in_parallel, thread_num);
+	num_threads = 1;
+	thread_alloc::parallel_setup(num_threads, in_parallel, thread_number);
 
 	return all_ok;
 }
