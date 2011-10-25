@@ -120,7 +120,6 @@ namespace {
 	// ====================================================================
 	// code for specific problem we are solving
 	// --------------------------------------------------------------------
-	using CppAD::AD;
 
 	// vector with specific information for each thread
 	typedef struct {
@@ -134,6 +133,7 @@ namespace {
 	// function that does the work for each thread
 	void worker(void)
 	{	using CppAD::NearEqual;
+		using CppAD::AD;
 		bool ok = true;
 		size_t thread_num = CppAD::thread_alloc::thread_num();
 
@@ -192,58 +192,26 @@ namespace {
 	}
 }
 
-// This test routine is only called by the master thread (thread_num = 0).
-bool simple_ad(void)
-{	bool all_ok = true;
-	using CppAD::thread_alloc;
-
-	// Check that no memory is in use or avialable at start
-	// (using thread_alloc in sequential mode)
+bool setup_ad(size_t num_threads)
+{	using CppAD::thread_alloc;
+	bool ok = true;;
 	size_t thread_num;
-	for(thread_num = 0; thread_num < num_threads; thread_num++)
-	{	all_ok &= thread_alloc::inuse(thread_num) == 0; 
-		all_ok &= thread_alloc::available(thread_num) == 0; 
-	}
-
-	// initialize the thread_all and work_all
-	int    rc;
- 	double pi = 4. * atan(1.);
-# if 0
-	for(thread_num = 0; thread_num < num_threads; thread_num++)
-	{	// pthread_id (initialze all as same as master thread)
-		thread_all[thread_num].pthread_id = pthread_self();
-		// thread_num
-		thread_all[thread_num].thread_num = thread_num;
-		// ok
-		thread_all[thread_num].ok         = true;
-		work_all[thread_num].ok           = false;
-		// theta 
-		work_all[thread_num].theta        = thread_num * pi / num_threads;
-	}
-# else
-	for(thread_num = 0; thread_num < num_threads; thread_num++)
-	{	// set to value by worker for this thread
-		work_all[thread_num].ok           = false;
-		// theta 
-		work_all[thread_num].theta        = thread_num * pi / num_threads;
-	}
-# endif
 
 	// initialize barrier as waiting for num_threads
 	pthread_barrierattr_t *no_barrierattr = 0;
-	rc = pthread_barrier_init(
+	int rc = pthread_barrier_init(
 		&wait_for_other_threads, no_barrierattr, num_threads); 
-	all_ok &= (rc == 0);
+	ok &= (rc == 0);
 	
-	// structure used to cread the threads
+	// structure used to create the threads
 	pthread_t      pthread_id;
 	pthread_attr_t attr;
 	void*          thread_one_vptr;
 	//
-	rc      = pthread_attr_init(&attr);
-	all_ok &= (rc == 0);
-	rc      = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-	all_ok &= (rc == 0);
+	rc  = pthread_attr_init(&attr);
+	ok &= (rc == 0);
+	rc  = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+	ok &= (rc == 0);
 
 	// This master thread is already running, we need to create
 	// num_threads - 1 more threads
@@ -262,7 +230,7 @@ bool simple_ad(void)
 				thread_one_vptr
 		);
 		thread_all[thread_num].pthread_id = pthread_id;
-		all_ok &= (rc == 0);
+		ok &= (rc == 0);
 	}
 
 	// Now that thread_number can work, call setup for using AD<double> 
@@ -280,20 +248,48 @@ bool simple_ad(void)
 		rc      = pthread_join(
 			thread_all[thread_num].pthread_id, &no_status
 		);
-		all_ok &= (rc == 0);
+		ok &= (rc == 0);
 	}
+
+	// Free up the pthread resources that are no longer in use.
+	rc  = pthread_attr_destroy(&attr);
+	ok &= (rc == 0);
+	rc  = pthread_barrier_destroy(&wait_for_other_threads);
+	ok &= (rc == 0);
+
+	// done
+	return ok;
+}
+
+// This test routine is only called by the master thread (thread_num = 0).
+bool simple_ad(void)
+{	bool all_ok = true;
+	using CppAD::thread_alloc;
+
+	// Check that no memory is in use or avialable at start
+	// (using thread_alloc in sequential mode)
+	size_t thread_num;
+	for(thread_num = 0; thread_num < num_threads; thread_num++)
+	{	all_ok &= thread_alloc::inuse(thread_num) == 0; 
+		all_ok &= thread_alloc::available(thread_num) == 0; 
+	}
+
+	// initialize work_all
+ 	double pi = 4. * atan(1.);
+	for(thread_num = 0; thread_num < num_threads; thread_num++)
+	{	// set to value by worker for this thread
+		work_all[thread_num].ok           = false;
+		// theta 
+		work_all[thread_num].theta        = thread_num * pi / num_threads;
+	}
+
+	all_ok &= setup_ad(num_threads);
 
 	// Summarize results.
 	for(thread_num = 0; thread_num < num_threads; thread_num++)
 	{	all_ok &= thread_all[thread_num].ok;
 		all_ok &= work_all[thread_num].ok;
 	}
-
-	// Free up the pthread resources that are no longer in use.
-	rc      = pthread_attr_destroy(&attr);
-	all_ok &= (rc == 0);
-	rc      = pthread_barrier_destroy(&wait_for_other_threads);
-	all_ok &= (rc == 0);
 
 	// Check that no memory currently in use, and free avialable memory.
 	for(thread_num = 0; thread_num < num_threads; thread_num++)
