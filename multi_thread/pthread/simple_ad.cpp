@@ -76,7 +76,7 @@ namespace {
 	size_t num_threads = NUMBER_THREADS; 
 
 	// Barrier used to wait for all thread identifiers to be set
-	pthread_barrier_t wait_for_pthread_id;
+	pthread_barrier_t wait_for_other_threads;
 
 	// general purpose vector with information for each thread
 	typedef struct {
@@ -171,11 +171,8 @@ namespace {
 		// thread_num to problem specific information for this thread
 		size_t thread_num = thread_one->thread_num;
 
-		// Set pthread unique identifier for this thread
-		thread_all[thread_num].pthread_id = pthread_self();
-
 		// Wait for other threads to do the same.
-		int rc = pthread_barrier_wait(&wait_for_pthread_id);
+		int rc = pthread_barrier_wait(&wait_for_other_threads);
 		thread_all[thread_num].ok &= 
 			(rc == 0 || rc == PTHREAD_BARRIER_SERIAL_THREAD);
 		// ----------------------------------------------------------------
@@ -231,7 +228,7 @@ bool simple_ad(void)
 	// initialize barrier as waiting for num_threads
 	pthread_barrierattr_t *no_barrierattr = 0;
 	rc = pthread_barrier_init(
-		&wait_for_pthread_id, no_barrierattr, num_threads-1); 
+		&wait_for_other_threads, no_barrierattr, num_threads); 
 	all_ok &= (rc == 0);
 	
 	// structure used to cread the threads
@@ -256,11 +253,13 @@ bool simple_ad(void)
 				thread_work ,
 				thread_one_vptr
 		);
+		thread_all[thread_num].pthread_id = pthread_id;
 		all_ok &= (rc == 0);
 	}
 
 	// Now, while other threads are working, do work in master thread also
-	worker();
+	thread_one_vptr = static_cast<void*> (&(thread_all[0]));
+	thread_work(thread_one_vptr);
 
 	// now wait for the other threads to finish
 	for(thread_num = 1; thread_num < num_threads; thread_num++)
@@ -280,7 +279,7 @@ bool simple_ad(void)
 	// Free up the pthread resources that are no longer in use.
 	rc      = pthread_attr_destroy(&attr);
 	all_ok &= (rc == 0);
-	rc      = pthread_barrier_destroy(&wait_for_pthread_id);
+	rc      = pthread_barrier_destroy(&wait_for_other_threads);
 	all_ok &= (rc == 0);
 
 	// Check that no memory currently in use, and free avialable memory.
