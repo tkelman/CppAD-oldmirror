@@ -91,6 +91,9 @@ namespace {
 	} thread_one_t;
 	thread_one_t thread_all_[NUMBER_THREADS];
 
+	// pointer to function that does the work
+	void (* worker_)(void) = 0;
+
 	// ---------------------------------------------------------------------
 	// in_parallel()
 	bool in_parallel(void)
@@ -119,50 +122,8 @@ namespace {
 
 		return 0;
 	}
-	// ====================================================================
-	// code for specific problem we are solving
 	// --------------------------------------------------------------------
-
-	// vector with specific information for each thread
-	typedef struct {
-		// angle for this work 
-		double          theta;
-		// False if error related to this work, true otherwise.
-		bool            ok;
-	} work_one_t;
-	work_one_t work_all_[NUMBER_THREADS];
-	// --------------------------------------------------------------------
-	// function that does the work for each thread
-	void worker(void)
-	{	using CppAD::NearEqual;
-		using CppAD::AD;
-		bool ok = true;
-		size_t thread_num = CppAD::thread_alloc::thread_num();
-
-		// CppAD::vector uses the CppAD fast multi-threading allocator
-		CppAD::vector< AD<double> > Theta(1), Z(1);
-		Theta[0] = work_all_[thread_num].theta;
-		Independent(Theta);
-		AD<double> x = cos(Theta[0]);
-		AD<double> y = sin(Theta[0]);
-		Z[0]  = arc_tan( x, y );
-		CppAD::ADFun<double> f(Theta, Z); 
-
-		// Check function value corresponds to the identity 
-		double eps = 10. * CppAD::epsilon<double>();
-		ok        &= NearEqual(Z[0], Theta[0], eps, eps);
-
-		// Check derivative value corresponds to the identity.
-		CppAD::vector<double> d_theta(1), d_z(1);
-		d_theta[0] = 1.;
-		d_z        = f.Forward(1, d_theta);
-		ok        &= NearEqual(d_z[0], 1., eps, eps);
-
-		// pass back ok information for this thread
-		work_all_[thread_num].ok = ok;
-	}
-	// --------------------------------------------------------------------
-	// function that does the work for each thread
+	// function that gets called by pthread_create
 	void* thread_work(void* thread_one_vptr)
 	{
 		// thread management information for this thread
@@ -179,7 +140,7 @@ namespace {
 				break;
 
 				case work_enum:
-				worker();
+				worker_();
 				break;
 
 				default:
@@ -213,13 +174,14 @@ namespace {
 	}
 }
 
-bool start_team(size_t num_threads)
+bool start_team(size_t num_threads, void worker(void))
 {	using CppAD::thread_alloc;
 	bool ok = true;;
 	size_t thread_num;
 
-	// set number global version of this value
+	// set number global version of arguments to start_team
 	num_threads_ = num_threads;
+	worker_      = worker;
 
 	// initialize two barriers, one for work done, one for new job ready
 	pthread_barrierattr_t *no_barrierattr = 0;
@@ -358,6 +320,47 @@ bool stop_team(void)
 	return ok;
 }
 
+namespace {
+	// vector with specific information for each thread
+	typedef struct {
+		// angle for this work 
+		double          theta;
+		// False if error related to this work, true otherwise.
+		bool            ok;
+	} work_one_t;
+	work_one_t work_all_[NUMBER_THREADS];
+	// --------------------------------------------------------------------
+	// function that does the work for each thread
+	void worker(void)
+	{	using CppAD::NearEqual;
+		using CppAD::AD;
+		bool ok = true;
+		size_t thread_num = CppAD::thread_alloc::thread_num();
+
+		// CppAD::vector uses the CppAD fast multi-threading allocator
+		CppAD::vector< AD<double> > Theta(1), Z(1);
+		Theta[0] = work_all_[thread_num].theta;
+		Independent(Theta);
+		AD<double> x = cos(Theta[0]);
+		AD<double> y = sin(Theta[0]);
+		Z[0]  = arc_tan( x, y );
+		CppAD::ADFun<double> f(Theta, Z); 
+
+		// Check function value corresponds to the identity 
+		double eps = 10. * CppAD::epsilon<double>();
+		ok        &= NearEqual(Z[0], Theta[0], eps, eps);
+
+		// Check derivative value corresponds to the identity.
+		CppAD::vector<double> d_theta(1), d_z(1);
+		d_theta[0] = 1.;
+		d_z        = f.Forward(1, d_theta);
+		ok        &= NearEqual(d_z[0], 1., eps, eps);
+
+		// pass back ok information for this thread
+		work_all_[thread_num].ok = ok;
+	}
+}
+
 // This test routine is only called by the master thread (thread_num = 0).
 bool simple_ad(void)
 {	bool all_ok = true;
@@ -382,7 +385,7 @@ bool simple_ad(void)
 		work_all_[thread_num].theta        = thread_num * pi / num_threads;
 	}
 
-	all_ok &= start_team(num_threads);
+	all_ok &= start_team(num_threads, worker);
 	all_ok &= work_team();
 	all_ok &= stop_team();
 
