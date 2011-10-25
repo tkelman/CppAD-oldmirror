@@ -73,12 +73,12 @@ namespace {
 	// General purpose code for linking CppAD to pthreads
 	// -------------------------------------------------------------------
 	// alternative name for NUMBER_THREADS
-	size_t num_threads = NUMBER_THREADS; 
+	size_t num_threads_ = 1; 
 
 	// Barrier used to wait for all thread identifiers to be set
-	enum thread_job_t { init_enum, work_enum, join_enum } thread_job;
-	pthread_barrier_t wait_for_work;
-	pthread_barrier_t wait_for_job;
+	enum thread_job_t { init_enum, work_enum, join_enum } thread_job_;
+	pthread_barrier_t wait_for_work_;
+	pthread_barrier_t wait_for_job_;
 
 	// general purpose vector with information for each thread
 	typedef struct {
@@ -89,12 +89,12 @@ namespace {
 		// true if no error for this thread, false otherwise.
 		bool            ok;
 	} thread_one_t;
-	thread_one_t thread_all[NUMBER_THREADS];
+	thread_one_t thread_all_[NUMBER_THREADS];
 
 	// ---------------------------------------------------------------------
 	// in_parallel()
 	bool in_parallel(void)
-	{	return num_threads > 1; }
+	{	return num_threads_ > 1; }
 
 	// ---------------------------------------------------------------------
 	// thread_number()
@@ -105,15 +105,15 @@ namespace {
 
 		// convert thread_this to the corresponding thread_num
 		size_t thread_num = 0;
-		for(thread_num = 0; thread_num < num_threads; thread_num++)
+		for(thread_num = 0; thread_num < num_threads_; thread_num++)
 		{	// pthread unique identifier for this thread_num
-			pthread_t thread_compare = thread_all[thread_num].pthread_id;
+			pthread_t thread_compare = thread_all_[thread_num].pthread_id;
 
 			// check for a match
 			if( pthread_equal(thread_this, thread_compare) )
 				return thread_num;
 		}
-		// no match error (thread_this is not in thread_all).
+		// no match error (thread_this is not in thread_all_).
 		std::cerr << "thread_number: unknown pthread id" << std::endl;
 		exit(1);
 
@@ -130,7 +130,7 @@ namespace {
 		// False if error related to this work, true otherwise.
 		bool            ok;
 	} work_one_t;
-	work_one_t work_all[NUMBER_THREADS];
+	work_one_t work_all_[NUMBER_THREADS];
 	// --------------------------------------------------------------------
 	// function that does the work for each thread
 	void worker(void)
@@ -141,7 +141,7 @@ namespace {
 
 		// CppAD::vector uses the CppAD fast multi-threading allocator
 		CppAD::vector< AD<double> > Theta(1), Z(1);
-		Theta[0] = work_all[thread_num].theta;
+		Theta[0] = work_all_[thread_num].theta;
 		Independent(Theta);
 		AD<double> x = cos(Theta[0]);
 		AD<double> y = sin(Theta[0]);
@@ -159,7 +159,7 @@ namespace {
 		ok        &= NearEqual(d_z[0], 1., eps, eps);
 
 		// pass back ok information for this thread
-		work_all[thread_num].ok = ok;
+		work_all_[thread_num].ok = ok;
 	}
 	// --------------------------------------------------------------------
 	// function that does the work for each thread
@@ -172,8 +172,8 @@ namespace {
 		// thread_num to problem specific information for this thread
 		size_t thread_num = thread_one->thread_num;
 
-		while( thread_job != join_enum )
-		{	switch( thread_job )
+		while( thread_job_ != join_enum )
+		{	switch( thread_job_ )
 			{
 				case init_enum:
 				break;
@@ -187,8 +187,8 @@ namespace {
 				exit(1);
 			}
 			// Wait for other threads to do thier work.
-			int rc = pthread_barrier_wait(&wait_for_work);
-			thread_all[thread_num].ok &= 
+			int rc = pthread_barrier_wait(&wait_for_work_);
+			thread_all_[thread_num].ok &= 
 				(rc == 0 || rc == PTHREAD_BARRIER_SERIAL_THREAD);
 
 			// if this is the master, exit the loop
@@ -196,14 +196,14 @@ namespace {
 				return 0;
 
 			// Wait for master to specify a new job
-			rc = pthread_barrier_wait(&wait_for_job);
-			thread_all[thread_num].ok &= 
+			rc = pthread_barrier_wait(&wait_for_job_);
+			thread_all_[thread_num].ok &= 
 				(rc == 0 || rc == PTHREAD_BARRIER_SERIAL_THREAD);
 		}
 		// It this is not the master thread, then terminate it.
 # if DEMONSTRATE_BUG_IN_CYGWIN
 		if( ! pthread_equal(
-			thread_one->pthread_id, thread_all[0].pthread_id) )
+			thread_one->pthread_id, thread_all_[0].pthread_id) )
 		{	void* no_status = 0;
 			pthread_exit(no_status);
 		}
@@ -218,19 +218,22 @@ bool setup_ad(size_t num_threads)
 	bool ok = true;;
 	size_t thread_num;
 
+	// set number global version of this value
+	num_threads_ = num_threads;
+
 	// initialize two barriers, one for work done, one for new job ready
 	pthread_barrierattr_t *no_barrierattr = 0;
 	int rc = pthread_barrier_init(
-		&wait_for_work, no_barrierattr, num_threads
+		&wait_for_work_, no_barrierattr, num_threads
 	); 
 	ok &= (rc == 0);
 	rc  = pthread_barrier_init(
-		&wait_for_job, no_barrierattr, num_threads
+		&wait_for_job_, no_barrierattr, num_threads
 	); 
 	ok &= (rc == 0);
 
 	// initial job for the threads
-	thread_job = init_enum;
+	thread_job_ = init_enum;
 	
 	// structure used to create the threads
 	pthread_t      pthread_id;
@@ -244,21 +247,21 @@ bool setup_ad(size_t num_threads)
 
 	// This master thread is already running, we need to create
 	// num_threads - 1 more threads
-	thread_all[0].pthread_id = pthread_self();
-	thread_all[0].thread_num = 0;
-	thread_all[0].ok         = true;
+	thread_all_[0].pthread_id = pthread_self();
+	thread_all_[0].thread_num = 0;
+	thread_all_[0].ok         = true;
 	for(thread_num = 1; thread_num < num_threads; thread_num++)
-	{	thread_all[thread_num].ok         = true;
-		thread_all[thread_num].thread_num = thread_num;
+	{	thread_all_[thread_num].ok         = true;
+		thread_all_[thread_num].thread_num = thread_num;
 		// Create the thread with thread number equal to thread_num
-		thread_one_vptr = static_cast<void*> (&(thread_all[thread_num]));
+		thread_one_vptr = static_cast<void*> (&(thread_all_[thread_num]));
 		rc = pthread_create(
 				&pthread_id ,
 				&attr       ,
 				thread_work ,
 				thread_one_vptr
 		);
-		thread_all[thread_num].pthread_id = pthread_id;
+		thread_all_[thread_num].pthread_id = pthread_id;
 		ok &= (rc == 0);
 	}
 
@@ -272,58 +275,58 @@ bool setup_ad(size_t num_threads)
 	CppAD::parallel_ad<double>();
 
 	// --------------------------------------------------------------------
-	//  wait until all threads have completed wait_for_work
-	thread_one_vptr = static_cast<void*> (&(thread_all[0]));
+	//  wait until all threads have completed wait_for_work_
+	thread_one_vptr = static_cast<void*> (&(thread_all_[0]));
 	thread_work(thread_one_vptr);
 
 	// Now we can set the new job that other threads are waiting for
-	thread_job = work_enum;
+	thread_job_ = work_enum;
 
-	// reset wait_for_work
-	rc  = pthread_barrier_destroy(&wait_for_work);
+	// reset wait_for_work_
+	rc  = pthread_barrier_destroy(&wait_for_work_);
 	ok &= (rc == 0);
 	rc  = pthread_barrier_init(
-		&wait_for_work, no_barrierattr, num_threads
+		&wait_for_work_, no_barrierattr, num_threads
 	); 
 	ok &= (rc == 0);
 
-	// wait until all threads have completed wait_for_job
-	rc  = pthread_barrier_wait(&wait_for_job);
+	// wait until all threads have completed wait_for_job_
+	rc  = pthread_barrier_wait(&wait_for_job_);
 	ok &= (rc == 0 || rc == PTHREAD_BARRIER_SERIAL_THREAD);
 
-	// reset wait_for_job
-	rc  = pthread_barrier_destroy(&wait_for_job);
+	// reset wait_for_job_
+	rc  = pthread_barrier_destroy(&wait_for_job_);
 	ok &= (rc == 0);
 	rc  = pthread_barrier_init(
-		&wait_for_job, no_barrierattr, num_threads
+		&wait_for_job_, no_barrierattr, num_threads
 	); 
 	ok &= (rc == 0);
 
 	// --------------------------------------------------------------------
-	//  wait until all threads have completed wait_for_work
-	thread_one_vptr = static_cast<void*> (&(thread_all[0]));
+	//  wait until all threads have completed wait_for_work_
+	thread_one_vptr = static_cast<void*> (&(thread_all_[0]));
 	thread_work(thread_one_vptr);
 
 	// Now we can set the new job that other threads are waiting for
-	thread_job = join_enum;
+	thread_job_ = join_enum;
 
-	// destroy wait_for_work
-	rc  = pthread_barrier_destroy(&wait_for_work);
+	// destroy wait_for_work_
+	rc  = pthread_barrier_destroy(&wait_for_work_);
 	ok &= (rc == 0);
 
-	// wait until all threads have completed wait_for_job
-	rc  = pthread_barrier_wait(&wait_for_job);
+	// wait until all threads have completed wait_for_job_
+	rc  = pthread_barrier_wait(&wait_for_job_);
 	ok &= (rc == 0 || rc == PTHREAD_BARRIER_SERIAL_THREAD);
 
-	// destroy wait_for_job
-	rc  = pthread_barrier_destroy(&wait_for_job);
+	// destroy wait_for_job_
+	rc  = pthread_barrier_destroy(&wait_for_job_);
 	ok &= (rc == 0);
 
 	// now wait for the other threads to finish
 	for(thread_num = 1; thread_num < num_threads; thread_num++)
 	{	void* no_status = 0;
 		rc      = pthread_join(
-			thread_all[thread_num].pthread_id, &no_status
+			thread_all_[thread_num].pthread_id, &no_status
 		);
 		ok &= (rc == 0);
 	}
@@ -337,6 +340,8 @@ bool simple_ad(void)
 {	bool all_ok = true;
 	using CppAD::thread_alloc;
 
+	size_t num_threads = NUMBER_THREADS;
+
 	// Check that no memory is in use or avialable at start
 	// (using thread_alloc in sequential mode)
 	size_t thread_num;
@@ -345,21 +350,21 @@ bool simple_ad(void)
 		all_ok &= thread_alloc::available(thread_num) == 0; 
 	}
 
-	// initialize work_all
+	// initialize work_all_
  	double pi = 4. * atan(1.);
 	for(thread_num = 0; thread_num < num_threads; thread_num++)
 	{	// set to value by worker for this thread
-		work_all[thread_num].ok           = false;
+		work_all_[thread_num].ok           = false;
 		// theta 
-		work_all[thread_num].theta        = thread_num * pi / num_threads;
+		work_all_[thread_num].theta        = thread_num * pi / num_threads;
 	}
 
 	all_ok &= setup_ad(num_threads);
 
 	// Summarize results.
 	for(thread_num = 0; thread_num < num_threads; thread_num++)
-	{	all_ok &= thread_all[thread_num].ok;
-		all_ok &= work_all[thread_num].ok;
+	{	all_ok &= thread_all_[thread_num].ok;
+		all_ok &= work_all_[thread_num].ok;
 	}
 
 	// Check that no memory currently in use, and free avialable memory.
