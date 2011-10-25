@@ -213,7 +213,7 @@ namespace {
 	}
 }
 
-bool setup_ad(size_t num_threads)
+bool start_team(size_t num_threads)
 {	using CppAD::thread_alloc;
 	bool ok = true;;
 	size_t thread_num;
@@ -274,19 +274,31 @@ bool setup_ad(size_t num_threads)
 	thread_alloc::parallel_setup(num_threads, in_parallel, thread_number);
 	CppAD::parallel_ad<double>();
 
-	// --------------------------------------------------------------------
 	//  wait until all threads have completed wait_for_work_
 	thread_one_vptr = static_cast<void*> (&(thread_all_[0]));
 	thread_work(thread_one_vptr);
 
-	// Now we can set the new job that other threads are waiting for
+	// Current state is all threads have completed wait_for_work_
+	// Thread zero has not completed wait_for_job_
+	return ok;
+}
+
+bool work_team(void)
+{	using CppAD::thread_alloc;
+	bool ok = true;;
+
+	// Current state is all threads have completed wait_for_work_
+	// Thread zero has not completed wait_for_job_
+
+	// set the new job that other threads are waiting for
 	thread_job_ = work_enum;
 
 	// reset wait_for_work_
-	rc  = pthread_barrier_destroy(&wait_for_work_);
-	ok &= (rc == 0);
-	rc  = pthread_barrier_init(
-		&wait_for_work_, no_barrierattr, num_threads
+	int rc = pthread_barrier_destroy(&wait_for_work_);
+	ok    &= (rc == 0);
+	pthread_barrierattr_t *no_barrierattr = 0;
+	rc     = pthread_barrier_init(
+		&wait_for_work_, no_barrierattr, num_threads_
 	); 
 	ok &= (rc == 0);
 
@@ -298,21 +310,32 @@ bool setup_ad(size_t num_threads)
 	rc  = pthread_barrier_destroy(&wait_for_job_);
 	ok &= (rc == 0);
 	rc  = pthread_barrier_init(
-		&wait_for_job_, no_barrierattr, num_threads
+		&wait_for_job_, no_barrierattr, num_threads_
 	); 
 	ok &= (rc == 0);
 
-	// --------------------------------------------------------------------
 	//  wait until all threads have completed wait_for_work_
-	thread_one_vptr = static_cast<void*> (&(thread_all_[0]));
+	void* thread_one_vptr = static_cast<void*> (&(thread_all_[0]));
 	thread_work(thread_one_vptr);
 
-	// Now we can set the new job that other threads are waiting for
+	// Current state is all threads have completed wait_for_work_
+	// Thread zero has not completed wait_for_job_
+	return ok;
+}
+
+bool stop_team(void)
+{	bool ok = true;
+	size_t thread_num;
+
+	// Current state is all threads have completed wait_for_work_
+	// Thread zero has not completed wait_for_job_
+
+	// set the new job that other threads are waiting for
 	thread_job_ = join_enum;
 
 	// destroy wait_for_work_
-	rc  = pthread_barrier_destroy(&wait_for_work_);
-	ok &= (rc == 0);
+	int rc  = pthread_barrier_destroy(&wait_for_work_);
+	ok     &= (rc == 0);
 
 	// wait until all threads have completed wait_for_job_
 	rc  = pthread_barrier_wait(&wait_for_job_);
@@ -323,7 +346,7 @@ bool setup_ad(size_t num_threads)
 	ok &= (rc == 0);
 
 	// now wait for the other threads to finish
-	for(thread_num = 1; thread_num < num_threads; thread_num++)
+	for(thread_num = 1; thread_num < num_threads_; thread_num++)
 	{	void* no_status = 0;
 		rc      = pthread_join(
 			thread_all_[thread_num].pthread_id, &no_status
@@ -359,7 +382,9 @@ bool simple_ad(void)
 		work_all_[thread_num].theta        = thread_num * pi / num_threads;
 	}
 
-	all_ok &= setup_ad(num_threads);
+	all_ok &= start_team(num_threads);
+	all_ok &= work_team();
+	all_ok &= stop_team();
 
 	// Summarize results.
 	for(thread_num = 0; thread_num < num_threads; thread_num++)
