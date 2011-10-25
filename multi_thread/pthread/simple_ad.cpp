@@ -162,9 +162,8 @@ namespace {
 	// --------------------------------------------------------------------
 	// function that does the work for each thread
 	void* thread_work(void* thread_one_vptr)
-	{	using CppAD::NearEqual;
-
-		// general purpose information for this thread
+	{
+		// thread management information for this thread
 		thread_one_t* thread_one = 
 			static_cast<thread_one_t*>(thread_one_vptr);
 
@@ -209,6 +208,7 @@ bool simple_ad(void)
 	// initialize the thread_all and work_all
 	int    rc;
  	double pi = 4. * atan(1.);
+# if 0
 	for(thread_num = 0; thread_num < num_threads; thread_num++)
 	{	// pthread_id (initialze all as same as master thread)
 		thread_all[thread_num].pthread_id = pthread_self();
@@ -220,10 +220,14 @@ bool simple_ad(void)
 		// theta 
 		work_all[thread_num].theta        = thread_num * pi / num_threads;
 	}
-
-	// Setup for using AD<double> in parallel mode
-	thread_alloc::parallel_setup(num_threads, in_parallel, thread_number);
-	CppAD::parallel_ad<double>();
+# else
+	for(thread_num = 0; thread_num < num_threads; thread_num++)
+	{	// set to value by worker for this thread
+		work_all[thread_num].ok           = false;
+		// theta 
+		work_all[thread_num].theta        = thread_num * pi / num_threads;
+	}
+# endif
 
 	// initialize barrier as waiting for num_threads
 	pthread_barrierattr_t *no_barrierattr = 0;
@@ -243,8 +247,12 @@ bool simple_ad(void)
 
 	// This master thread is already running, we need to create
 	// num_threads - 1 more threads
+	thread_all[0].pthread_id = pthread_self();
+	thread_all[0].thread_num = 0;
+	thread_all[0].ok         = true;
 	for(thread_num = 1; thread_num < num_threads; thread_num++)
-	{
+	{	thread_all[thread_num].ok         = true;
+		thread_all[thread_num].thread_num = thread_num;
 		// Create the thread with thread number equal to thread_num
 		thread_one_vptr = static_cast<void*> (&(thread_all[thread_num]));
 		rc = pthread_create(
@@ -257,7 +265,12 @@ bool simple_ad(void)
 		all_ok &= (rc == 0);
 	}
 
-	// Now, while other threads are working, do work in master thread also
+	// Now that thread_number can work, call setup for using AD<double> 
+	// in parallel mode
+	thread_alloc::parallel_setup(num_threads, in_parallel, thread_number);
+	CppAD::parallel_ad<double>();
+
+	// Now, launch all the workers
 	thread_one_vptr = static_cast<void*> (&(thread_all[0]));
 	thread_work(thread_one_vptr);
 
