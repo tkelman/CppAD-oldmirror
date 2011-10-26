@@ -32,6 +32,8 @@ AM_LDFLAGS        =
 openmp_SOURCES   = \
 	openmp.cpp \
 \
+	../sum_i_inv_work.cpp \
+	../sum_i_inv_work.hpp \
 	../arc_tan.cpp \
 	../arc_tan.hpp \
 	setup_ad.cpp \

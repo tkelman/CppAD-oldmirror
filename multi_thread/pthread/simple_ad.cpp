@@ -69,16 +69,17 @@ $end
 # define NUMBER_THREADS            4
 
 namespace {
-	// vector with specific information for each thread
+	// structure with information for one thread
 	typedef struct {
-		// angle for this work 
+		// angle for this work (worker input)
 		double          theta;
-		// False if error related to this work, true otherwise.
+		// false if an error occurs, true otherwise (worker output)
 		bool            ok;
 	} work_one_t;
+	// vector with information for all threads
 	work_one_t work_all_[NUMBER_THREADS];
 	// --------------------------------------------------------------------
-	// function that does the work for each thread
+	// function that does the work for one thread
 	void worker(void)
 	{	using CppAD::NearEqual;
 		using CppAD::AD;

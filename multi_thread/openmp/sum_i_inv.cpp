@@ -97,6 +97,9 @@ $end
 // speed_test (so it is safe to use without special consideration).
 # include <cppad/speed_test.hpp>
 
+// special utilities for the sum_i_inv problem
+# include "../sum_i_inv_work.hpp"
+
 namespace { // empty namespace
 
 	// True if num_threads is greater that zero in previous call to sum_i_inv
@@ -106,51 +109,29 @@ namespace { // empty namespace
 	// except that if that value is zero, this value is one.
 	size_t num_threads_;
 
-	double sum_using_one_thread(size_t start, size_t stop)
-	{	// sum =  1/(stop-1) + 1/(stop-2) + ... + 1/start
-		assert( stop > start );
+	double sum_using_multiple_threads(size_t num_sum)
+	{	// sum = 1/num_sum + 1/(num_sum-1) + ... + 1
+		bool ok = true;
 
-		double sum = 0.;
-		size_t i = stop;
-		while( i > start )
-		{	i--;
-			sum += 1. / double(i);	
-		}
-		return sum;
-	}
-	double sum_using_multiple_threads(size_t n_sum)
-	{	// sum = 1/n_sum + 1/(n_sum-1) + ... + 1
-		assert( n_sum >= num_threads_ );
+		// split the work for num_threads_ threads
+		ok &= sum_i_inv_split(num_sum, num_threads_);
 
-		// Limit holds start and stop values for each thread
-		std::vector<size_t> limit(num_threads_ + 1);
-		size_t i;
-		for(i = 1; i < num_threads_; i++)
-			limit[i] = (n_sum * i ) / num_threads_;
-		limit[0]         = 1;
-		limit[num_threads_]  = n_sum + 1;
-
-		// sum_one[i] = 1/(limit[i+1]-1) + ... + 1/limit[i]
-		std::vector<double> sum_one(num_threads_);
-		if( use_openmp_ )
-		{	int j;
+		// now do the work for each thread
+		size_t thread_num;
 # pragma omp parallel for 
-			for(j = 0; j < int(num_threads_); j++)
-				sum_one[j] = sum_using_one_thread(limit[j], limit[j+1]);
+		for(thread_num = 0; thread_num < int(num_threads_); thread_num++)
+			sum_i_inv_worker();
 // end omp parallel for
-		}
-		else
-		{	for(i = 0; i < num_threads_; i++)
-				sum_one[i] = sum_using_one_thread(limit[i], limit[i+1]);
-		}
 
-		// sum_all = sum_one[num_threads-1] + ... + sum_one[0]
-		double sum_all = 0.;
-		i = num_threads_;
-		while(i--)
-			sum_all += sum_one[i];
+		// now combine the result for all the threads
+		double combined_sum;
+		ok &= sum_i_inv_combine(combined_sum);
 
-		return sum_all;
+		if( ! ok )
+		{	std::cerr << "sum_using_multiple_threads: error" << std::endl;
+			exit(1);
+		}
+		return combined_sum;
 	}
 
 	void test_once(double &sum, size_t mega_sum)

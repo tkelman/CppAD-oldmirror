@@ -95,12 +95,14 @@ $end
 namespace {
 	size_t num_threads_ = 1; 
 
-	// Barrier used to wait for all thread identifiers to be set
+	// type of the job currently being done by each thread
 	enum thread_job_t { init_enum, work_enum, join_enum } thread_job_;
+	// barrier used to wait for other threads to finish work
 	pthread_barrier_t wait_for_work_;
+	// barriel use to wat for master thread to set next job
 	pthread_barrier_t wait_for_job_;
 
-	// general purpose vector with information for each thread
+	// structure with information for one thread
 	typedef struct {
 		// pthread unique identifier for thread that uses this struct
 		pthread_t       pthread_id;
@@ -109,9 +111,10 @@ namespace {
 		// true if no error for this thread, false otherwise.
 		bool            ok;
 	} thread_one_t;
+	// vector with information for all threads
 	thread_one_t thread_all_[MAX_NUMBER_THREADS];
 
-	// pointer to function that does the work
+	// pointer to function that does the work for one thread
 	void (* worker_)(void) = 0;
 
 	// ---------------------------------------------------------------------
@@ -199,6 +202,11 @@ bool start_team(size_t num_threads)
 	bool ok = true;;
 
 	// set number global version of number of threads
+	if( num_threads > MAX_NUMBER_THREADS )
+	{	std::cerr << "start_team: num_threads greater than "
+		std::cerr << MAX_NUMBER_THREADS << std::endl;
+		exit(1);
+	}
 	num_threads_ = num_threads;
 
 	// initialize two barriers, one for work done, one for new job ready

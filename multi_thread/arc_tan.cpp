@@ -76,6 +76,7 @@ $end
 */
 
 # include <cppad/cppad.hpp>
+# include "arc_tan.hpp"
 
 // BEGIN PROGRAM
 CppAD::AD<double> 
