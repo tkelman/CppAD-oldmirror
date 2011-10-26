@@ -102,11 +102,7 @@ $end
 
 namespace { // empty namespace
 
-	// True if num_threads is greater that zero in previous call to sum_i_inv
-	bool use_openmp_;
-
-	// Same as num_threads in previous call to sum_i_inv,
-	// except that if that value is zero, this value is one.
+	// value of num_threads in previous call to sum_i_inv.
 	size_t num_threads_;
 
 	double sum_all(size_t num_sum)
@@ -118,17 +114,14 @@ namespace { // empty namespace
 
 		// now do the work for each thread
 		int thread_num;
-		if( use_openmp_ )
+		if( num_threads_ > 0 )
 		{	int num_threads = int(num_threads_);
 # pragma omp parallel for 
 			for(thread_num = 0; thread_num < num_threads; thread_num++)
 				sum_i_inv_worker();
 // end omp parallel for
 		}
-		else
-		{	ok &= (num_threads_ == 1);
-			sum_i_inv_worker();
-		}
+		else	sum_i_inv_worker();
 
 		// now combine the result for all the threads
 		double combined_sum;
@@ -158,18 +151,13 @@ namespace { // empty namespace
 } // end empty namespace
 
 bool sum_i_inv(size_t& rate_out, size_t num_threads, size_t mega_sum)
-{	bool ok = true;
+{	bool ok  = true;
 	using std::vector;
-
-	// Set local namespace environment variables
-	use_openmp_   = (num_threads > 0);
-	if( num_threads == 0 )
-		num_threads_  = 1;
-	else	num_threads_  = num_threads;
+	num_threads_ = num_threads;
+	num_threads  = std::max(num_threads_, size_t(1));
 
 	// expect number of threads to already be set up
-	if( use_openmp_ )
-		ok &= num_threads == CppAD::thread_alloc::num_threads();
+	ok &= num_threads == CppAD::thread_alloc::num_threads();
 
 	// minimum time for test (repeat until this much time)
 	double time_min = 1.;

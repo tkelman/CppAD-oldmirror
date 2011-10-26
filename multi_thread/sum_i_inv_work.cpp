@@ -53,6 +53,9 @@ $codei%
 	size_t %num_threads%
 %$$
 It specifies the number of threads that will be used for the summation.
+In the special case where $icode num_thread$$ is zero,
+the summation should be done by one thread, but without the overhead
+of the multi_threading system.
 
 $head sum_i_inv_worker$$
 Calling this function does the computation for one thread.
@@ -70,6 +73,9 @@ $end
 namespace {
 	// number of threads for previous call to sum_i_inv_setup
 	size_t num_threads_ = 0;
+	size_t num_sum_     = 0;
+	bool (*sum_all_)(size_t num_sum, size_t num_threads, double& sum) = 0;
+
 	// structure with information for one thread
 	typedef struct {
 		// index to start summation at (worker input)
@@ -89,7 +95,8 @@ namespace {
 void sum_i_inv_worker(void)
 {	// sum =  1/(stop-1) + 1/(stop-2) + ... + 1/start
 	size_t thread_num = CppAD::thread_alloc::thread_num();
-	bool   ok         = thread_num < num_threads_;
+	size_t num_threads = std::max(num_threads_, size_t(1));
+	bool   ok         = thread_num < num_threads;
 	size_t start      = work_all_[thread_num].start;
 	size_t stop       = work_all_[thread_num].stop;
 	double sum        = 0.;
@@ -109,6 +116,7 @@ void sum_i_inv_worker(void)
 bool sum_i_inv_setup(size_t num_sum, size_t num_threads)
 {	// sum = 1/num_sum + 1/(num_sum-1) + ... + 1
 	num_threads_ = num_threads;
+	num_threads  = std::max(num_threads_, size_t(1));
 
 	bool ok = num_sum >= num_threads;
 	work_all_[0].start = 1;
@@ -126,10 +134,11 @@ bool sum_i_inv_setup(size_t num_sum, size_t num_threads)
 // get the result of the work 
 bool sum_i_inv_combine(double& sum)
 {	// sum = 1/num_sum + 1/(num_sum-1) + ... + 1
-	bool ok = true;
+	bool ok            = true;
+	size_t num_threads = std::max(num_threads_, size_t(1));
 	sum     = 0.;
 	size_t thread_num;
-	for(thread_num = 0; thread_num < num_threads_; thread_num++)
+	for(thread_num = 0; thread_num < num_threads; thread_num++)
 	{	sum += work_all_[thread_num].sum;
 		ok  &= work_all_[thread_num].ok;
 	}
