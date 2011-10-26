@@ -15,7 +15,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 # include <cppad/cppad.hpp>
 
 extern void sum_i_inv_worker(void);
-extern bool sum_i_inv_split(size_t num_sum, size_t num_threads);
+extern bool sum_i_inv_setup(size_t num_sum, size_t num_threads);
 extern bool sum_i_inv_combine(double& sum);
 
 # endif
