@@ -15,8 +15,60 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 # define MAX_NUMBER_THREADS 48
 
+/*
+$begin sum_i_inv_work.cpp$$
+$spell
+	inv
+	num
+$$
+
+$index sum_i_inv_work$$
+
+$section Multi-threading Sum of 1/i Utility Routines$$ 
+
+$head Syntax$$
+$icode%ok% = sum_i_inv_setup(%num_sum%, %num_threads%)
+%$$
+$codei%sum_i_inv_worker()
+%$$
+$icode%ok% = sum_i_inv_combine(%sum%)
+%$$
+
+$head Purpose$$
+These routines aid in the multi-threading computation of
+$latex \[
+	1 + 1/2 + 1/3 + ... + 1/n
+\] $$
+
+$head sum_i_inv_setup$$
+Calling this function setups up the computation of the summation
+into different parts for each thread.
+The argument $icode num_sum$$ has prototype
+$codei%
+	size_t %num_sum%
+%$$
+It specifies the value of $latex n$$ in the summation.
+The argument $icode num_threads$$ has prototype
+$codei%
+	size_t %num_threads%
+%$$
+It specifies the number of threads that will be used for the summation.
+
+$head sum_i_inv_worker$$
+Calling this function does the computation for one thread.
+Following a call to $code sum_i_inv_setup$$,
+this function should be called by each of the $icode num_threads$$ threads. 
+
+$head sum_i_inv_combine$$
+After the $icode num_threads$$ threads have completed their
+calls to $code sum_i_inv_worker$$,
+this function call will combine the results and return the final summation.
+
+$end
+*/
+
 namespace {
-	// number of threads for previous call to sum_i_inv_split
+	// number of threads for previous call to sum_i_inv_setup
 	size_t num_threads_ = 0;
 	// structure with information for one thread
 	typedef struct {
@@ -53,8 +105,8 @@ void sum_i_inv_worker(void)
 	work_all_[thread_num].ok  = ok;
 }
 // -----------------------------------------------------------------------
-// split the work up for multiple threads
-bool sum_i_inv_split(size_t num_sum, size_t num_threads)
+// setup the work up for multiple threads
+bool sum_i_inv_setup(size_t num_sum, size_t num_threads)
 {	// sum = 1/num_sum + 1/(num_sum-1) + ... + 1
 	num_threads_ = num_threads;
 
@@ -65,6 +117,7 @@ bool sum_i_inv_split(size_t num_sum, size_t num_threads)
 	{	size_t index        = (num_sum * thread_num) / num_threads;
 		work_all_[thread_num-1].stop = index; 
 		work_all_[thread_num].start  = index;
+		work_all_[thread_num].ok     = false; // in case this thread not used
 	}
 	work_all_[num_threads-1].stop = num_sum + 1;
 	return ok;

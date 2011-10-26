@@ -24,7 +24,7 @@ $index OpenMP, speed$$
 $index speed, OpenMP$$
 
 
-$section OpenMP Sum of 1/i Example$$
+$section OpenMP Sum of 1/i Speed Test$$
 
 $head Syntax$$
 $icode%ok_out% = sum_i_inv(%rate_out%, %num_threads%, %mega_sum%)%$$
@@ -109,26 +109,33 @@ namespace { // empty namespace
 	// except that if that value is zero, this value is one.
 	size_t num_threads_;
 
-	double sum_using_multiple_threads(size_t num_sum)
+	double sum_all(size_t num_sum)
 	{	// sum = 1/num_sum + 1/(num_sum-1) + ... + 1
 		bool ok = true;
 
-		// split the work for num_threads_ threads
-		ok &= sum_i_inv_split(num_sum, num_threads_);
+		// setup the work for num_threads_ threads
+		ok &= sum_i_inv_setup(num_sum, num_threads_);
 
 		// now do the work for each thread
-		size_t thread_num;
+		int thread_num;
+		if( use_openmp_ )
+		{	int num_threads = int(num_threads_);
 # pragma omp parallel for 
-		for(thread_num = 0; thread_num < int(num_threads_); thread_num++)
-			sum_i_inv_worker();
+			for(thread_num = 0; thread_num < num_threads; thread_num++)
+				sum_i_inv_worker();
 // end omp parallel for
+		}
+		else
+		{	ok &= (num_threads_ == 1);
+			sum_i_inv_worker();
+		}
 
 		// now combine the result for all the threads
 		double combined_sum;
 		ok &= sum_i_inv_combine(combined_sum);
 
 		if( ! ok )
-		{	std::cerr << "sum_using_multiple_threads: error" << std::endl;
+		{	std::cerr << "sum_all: error" << std::endl;
 			exit(1);
 		}
 		return combined_sum;
@@ -137,7 +144,7 @@ namespace { // empty namespace
 	void test_once(double &sum, size_t mega_sum)
 	{	assert( mega_sum >= 1 );
 		size_t n_sum = mega_sum * 1000000;
-		sum = sum_using_multiple_threads(n_sum); 
+		sum = sum_all(n_sum); 
 		return;
 	}
 

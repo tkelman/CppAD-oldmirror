@@ -20,7 +20,8 @@ $index thread, multi example utility$$
 $index example, multi_thread utility$$
 
 $childtable%
-	multi_thread/arc_tan.cpp
+	multi_thread/arc_tan.cpp%
+	multi_thread/sum_i_inv_work.cpp
 %$$
 
 $end
