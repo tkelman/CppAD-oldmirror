@@ -42,7 +42,7 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am_pthread_OBJECTS = pthread.$(OBJEXT) arc_tan.$(OBJEXT) \
-	a11c.$(OBJEXT) simple_ad.$(OBJEXT)
+	pthread_team.$(OBJEXT) a11c.$(OBJEXT) simple_ad.$(OBJEXT)
 pthread_OBJECTS = $(am_pthread_OBJECTS)
 pthread_LDADD = $(LDADD)
 DEFAULT_INCLUDES = 
@@ -215,6 +215,8 @@ pthread_SOURCES = \
 \
 	../arc_tan.cpp \
 	../arc_tan.hpp \
+	pthread_team.cpp \
+	pthread_team.hpp \
 	a11c.cpp \
 	simple_ad.cpp 
 
@@ -268,6 +270,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/a11c.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/arc_tan.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pthread.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pthread_team.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/simple_ad.Po@am__quote@
 
 .cpp.o:

@@ -191,6 +191,7 @@ $rref print_for_string.cpp$$
 $rref pthread.cpp$$
 $rref pthread_a11c.cpp$$
 $rref pthread_simple_ad.cpp$$
+$rref pthread_team.cpp$$
 $rref RevOne.cpp$$
 $rref RevSparseHes.cpp$$
 $rref RevSparseJac.cpp$$

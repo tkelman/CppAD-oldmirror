@@ -51,7 +51,8 @@ $cref pthread_simple_ad.cpp$$.
 $head Subroutines$$
 $childtable%
 	multi_thread/pthread/a11c.cpp%
-	multi_thread/pthread/simple_ad.cpp
+	multi_thread/pthread/simple_ad.cpp%
+	multi_thread/pthread/pthread_team.cpp
 %$$
 
 $head Source$$

@@ -33,6 +33,8 @@ pthread_SOURCES   = \
 \
 	../arc_tan.cpp \
 	../arc_tan.hpp \
+	pthread_team.cpp \
+	pthread_team.hpp \
 	a11c.cpp \
 	simple_ad.cpp 
 	

@@ -92,6 +92,9 @@ to   $codei%multi_thread/%thread_type%/simple_ad.cpp%$$.
 $lnext
 Make $cref arc_tan.cpp$$ and $cref openmp_setup_ad.cpp$$
 utilities that can be used by multiple multi-threading tests.
+$lnext
+Move pthread management to $cref pthread_team.cpp$$ so it can
+be used by multiple examples.
 $lend
 
 $head 10-14$$
