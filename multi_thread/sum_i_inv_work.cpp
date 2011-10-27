@@ -67,9 +67,15 @@ After the $icode num_threads$$ threads have completed their
 calls to $code sum_i_inv_worker$$,
 this function call will combine the results and return the final summation.
 
+$head Source$$
+$code
+$verbatim%multi_thread/sum_i_inv_work.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
+$$
+
+
 $end
 */
-
+// BEGIN PROGRAM
 namespace {
 	// number of threads for previous call to sum_i_inv_setup
 	size_t num_threads_ = 0;
@@ -142,3 +148,4 @@ bool sum_i_inv_combine(double& sum)
 	}
 	return ok;
 }
+// END PROGRAM

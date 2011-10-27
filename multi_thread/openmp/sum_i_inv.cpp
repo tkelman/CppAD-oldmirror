@@ -67,9 +67,10 @@ $codei%
 It specifies the number of OpenMP threads that are available for this test.
 If it is zero, the test is run without the OpenMP environment.
 
-$head Method$$
-This routine starts all its summations with the
-smallest terms to reduce the effects of round off error.
+$head Subroutines$$
+See $cref sum_i_inv_work.cpp$$ for the specifications of
+$code sum_i_inv_setup$$, $code sum_i_inv_worker$$, 
+and $code sum_i_inv_combine$$.
 
 $head Source$$
 $code

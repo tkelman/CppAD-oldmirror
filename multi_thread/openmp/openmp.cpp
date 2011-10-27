@@ -47,12 +47,16 @@ $codep
 $$
 
 $head Purpose$$
-Runs either the examples
-$cref openmp_a11c.cpp$$, 
-$cref openmp_simple_ad.cpp$$,
-or the speed tests 
-$cref openmp_newton_example.cpp$$ 
-$cref sum_i_inv_time.cpp$$.
+Runs one of the following examples:
+$table
+$rref openmp_a11c.cpp$$
+$rref openmp_simple_ad.cpp$$
+$tend
+or one of the following speed tests:
+$table
+$rref sum_i_inv_time.cpp$$
+$rref openmp_newton_example.cpp$$ 
+$tend
 
 $head max_threads$$
 If the argument $icode max_threads$$ is a non-negative integer specifying

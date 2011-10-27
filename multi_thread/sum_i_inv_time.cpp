@@ -13,6 +13,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin sum_i_inv_time.cpp$$
 $spell
+	alloc
 	num
 	bool
 	mega
@@ -31,12 +32,13 @@ $section Timing Test of Multi-Threaded Summation of 1/i$$
 $head Syntax$$
 $icode%ok% = sum_i_inv_time(%rate_out%, %num_threads%, %mega_sum%)%$$
 
-$head Summation$$
-Runs an example and test of 
-OpenMP multi-threaded computation of the sum
+$head Purpose$$
+Runs an example and test of multi-threaded computation of the summation
 $latex \[
 	1 + 1/2 + 1/3 + ... + 1/n
 \] $$
+This routine must be called in sequential execution mode,
+even though $cref/in_parallel/ta_in_parallel/$$ may return true.
 
 $head ok$$
 This return value has prototype
@@ -55,16 +57,22 @@ $codei%
 The input value of the argument does not matter.
 Upon return it is the number of times per second that
 $code sum_i_inv_time$$ can compute the 
-$cref/summation/sum_i_inv_time.cpp/Summation/$$.
+$cref/summation/sum_i_inv_time.cpp/Purpose/$$.
 
 $head num_threads$$
 This argument has prototype
 $codei%
 	size_t %num_threads%
 %$$
-It specifies the number of OpenMP threads that are available for this test.
-If it is zero, the test is run without the OpenMP environment; 
-i.e. as a normal routine.
+It specifies the number of threads that are available for this test.
+If it is zero, the test is run without the multi-threading environment and
+$codei%
+	1 = CppAD::thread_alloc::num_threads()
+%$$ 
+If it is non-zero, the test is with the multi-threading environment and
+$codei%
+	%num_threads% = CppAD::thread_alloc::num_threads()
+%$$ 
 
 $head mega_sum$$
 This argument has prototype
@@ -73,7 +81,7 @@ $codei%
 %$$
 and is greater than zero.
 The value $latex n$$ in the 
-$cref/summation/sum_i_inv_time.cpp/Summation/$$.
+$cref/summation/sum_i_inv_time.cpp/Purpose/$$.
 is equal to $latex 10^6$$ times $icode mega_sum$$. 
 
 $head Source$$
