@@ -73,8 +73,6 @@ $end
 namespace {
 	// number of threads for previous call to sum_i_inv_setup
 	size_t num_threads_ = 0;
-	size_t num_sum_     = 0;
-	bool (*sum_all_)(size_t num_sum, size_t num_threads, double& sum) = 0;
 
 	// structure with information for one thread
 	typedef struct {
