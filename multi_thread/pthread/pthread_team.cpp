@@ -9,7 +9,7 @@ the terms of the
 A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------
+/* 
 $begin pthread_team.cpp$$
 $spell
 	hpp
@@ -203,7 +203,7 @@ bool start_team(size_t num_threads)
 
 	// set number global version of number of threads
 	if( num_threads > MAX_NUMBER_THREADS )
-	{	std::cerr << "start_team: num_threads greater than "
+	{	std::cerr << "start_team: num_threads greater than ";
 		std::cerr << MAX_NUMBER_THREADS << std::endl;
 		exit(1);
 	}

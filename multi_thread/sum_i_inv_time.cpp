@@ -20,11 +20,13 @@ $spell
 	CppAD
 	parallelize
 $$
-$index OpenMP, speed$$
-$index speed, OpenMP$$
+$index summation, multi_thread speed$$
+$index multi_thread, summation speed$$
+$index speed, multi_thread summation$$
+$index time, multi_thread summation$$
 
 
-$section OpenMP Sum of 1/i Speed Test$$
+$section Timing Test of Multi-Threaded Summation of 1/i$$
 
 $head Syntax$$
 $icode%ok% = sum_i_inv_time(%rate_out%, %num_threads%, %mega_sum%)%$$
@@ -74,10 +76,6 @@ The value $latex n$$ in the
 $cref/summation/sum_i_inv_time.cpp/Summation/$$.
 is equal to $latex 10^6$$ times $icode mega_sum$$. 
 
-$head Method$$
-Note that this routine starts all its summations with the
-smallest terms to reduce the effects of round off error.
-
 $head Source$$
 $code
 $verbatim%multi_thread/sum_i_inv_time.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
@@ -88,7 +86,6 @@ $end
 // BEGIN PROGRAM
 
 # include <omp.h>
-# include <cassert>
 # include <cstring>
 # include <limits>
 # include <vector>
@@ -97,47 +94,26 @@ $end
 // speed_test (so it is safe to use without special consideration).
 # include <cppad/speed_test.hpp>
 
-// special utilities for the sum_i_inv problem
-# include "sum_i_inv_work.hpp"
+// required interface implemented by <system>/sum_i_inv.cpp where <system> is 
+// openmp, pthread, or bthread.
+extern bool sum_i_inv(double& sum, size_t num_sum, size_t num_threads);
 
 namespace { // empty namespace
 
 	// value of num_threads in previous call to sum_i_inv_time.
 	size_t num_threads_;
 
-	double sum_all(size_t num_sum)
-	{	// sum = 1/num_sum + 1/(num_sum-1) + ... + 1
-		bool ok = true;
-
-		// setup the work for num_threads_ threads
-		ok &= sum_i_inv_setup(num_sum, num_threads_);
-
-		// now do the work for each thread
-		int thread_num;
-		if( num_threads_ > 0 )
-		{	int num_threads = int(num_threads_);
-# pragma omp parallel for 
-			for(thread_num = 0; thread_num < num_threads; thread_num++)
-				sum_i_inv_worker();
-// end omp parallel for
-		}
-		else	sum_i_inv_worker();
-
-		// now combine the result for all the threads
-		double combined_sum;
-		ok &= sum_i_inv_combine(combined_sum);
-
-		if( ! ok )
-		{	std::cerr << "sum_all: error" << std::endl;
+	void test_once(double &sum, size_t mega_sum)
+	{	if( mega_sum < 1 )
+		{	std::cerr << "sum_i_inv_time: mega_sum < 1" << std::endl;
 			exit(1);
 		}
-		return combined_sum;
-	}
-
-	void test_once(double &sum, size_t mega_sum)
-	{	assert( mega_sum >= 1 );
-		size_t n_sum = mega_sum * 1000000;
-		sum = sum_all(n_sum); 
+		size_t num_sum = mega_sum * 1000000;
+		bool ok = sum_i_inv(sum, num_sum, num_threads_); 
+		if( ! ok )
+		{	std::cerr << "sum_i_inv: error" << std::endl;
+			exit(1);
+		}
 		return;
 	}
 

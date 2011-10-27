@@ -44,7 +44,7 @@ CONFIG_CLEAN_VPATH_FILES =
 am_openmp_OBJECTS = openmp.$(OBJEXT) arc_tan.$(OBJEXT) \
 	sum_i_inv_time.$(OBJEXT) sum_i_inv_work.$(OBJEXT) \
 	a11c.$(OBJEXT) simple_ad.$(OBJEXT) newton_example.$(OBJEXT) \
-	setup_ad.$(OBJEXT)
+	setup_ad.$(OBJEXT) sum_i_inv.$(OBJEXT)
 openmp_OBJECTS = $(am_openmp_OBJECTS)
 openmp_LDADD = $(LDADD)
 openmp_DEPENDENCIES =
@@ -231,7 +231,8 @@ openmp_SOURCES = \
 	newton_example.hpp \
 	newton_method.hpp  \
 	setup_ad.cpp \
-	setup_ad.hpp
+	setup_ad.hpp \
+	sum_i_inv.cpp
 
 all: all-am
 
@@ -286,6 +287,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/openmp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/setup_ad.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/simple_ad.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sum_i_inv.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sum_i_inv_time.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sum_i_inv_work.Po@am__quote@
 

@@ -103,6 +103,7 @@ $head Subroutines$$
 $childtable%
 	multi_thread/openmp/a11c.cpp%
 	multi_thread/openmp/simple_ad.cpp%
+	multi_thread/openmp/sum_i_inv.cpp%
 	multi_thread/openmp/newton_example.cpp%
 	multi_thread/openmp/setup_ad.cpp
 %$$
