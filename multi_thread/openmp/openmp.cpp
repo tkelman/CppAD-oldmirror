@@ -61,7 +61,7 @@ $tend
 $head max_threads$$
 If the argument $icode max_threads$$ is a non-negative integer specifying
 the maximum number of OpenMP threads to use for the test.
-The specified test be run with the number of threads
+The specified test is run with the following number of threads:
 $codei%
 	%num_threads% = 0 , %...% , %max_threads%
 %$$
@@ -125,9 +125,9 @@ $end
 # include <cppad/cppad.hpp>
 # include <cmath>
 # include <cstring>
-# include "newton_example.hpp"
-# include "../sum_i_inv_time.hpp"
 # include "setup_ad.hpp"
+# include "../sum_i_inv_time.hpp"
+# include "newton_example.hpp"
 
 extern bool a11c(void);
 extern bool simple_ad(void);
@@ -160,22 +160,24 @@ int main(int argc, char *argv[])
 	"       ./openmp newton_example max_threads n_zero n_sub n_sum use_ad";
 
 	// command line argument values (assign values to avoid compiler warnings)
-	size_t max_threads=0, mega_sum=0, n_zero=0, n_sub=0, n_sum=0;
+	size_t n_zero=0, n_sub=0, n_sum=0;
 	bool use_ad=true;
 
-	const char* test_name = *++argv;
-	bool run_a11c      = std::strcmp(test_name, "a11c") == 0;
+	ok = false;
+	const char* test_name = "";
+	if( argc > 1 )
+		test_name = *++argv;
+	bool run_a11c      = std::strcmp(test_name, "a11c")      == 0;
 	bool run_simple_ad = std::strcmp(test_name, "simple_ad") == 0;
 	bool run_sum_i_inv = std::strcmp(test_name, "sum_i_inv") == 0;
-	bool run_newton_example = std::strcmp(test_name, "newton_example") == 0;
-	ok = false;
+	bool run_newton_example = 
+		std::strcmp(test_name, "newton_example") == 0;
 	if( run_a11c || run_simple_ad )
 		ok = (argc == 2);
 	else if( run_sum_i_inv )
 		ok = (argc == 4);  
 	else if( run_newton_example )
 		ok = (argc == 7);
-	//
 	if( ! ok )
 	{	std::cerr << "test_name = " << test_name << std::endl;	
 		std::cerr << "argc      = " << argc      << std::endl;	
@@ -197,10 +199,11 @@ int main(int argc, char *argv[])
 	}
 
 	// max_threads 
-	max_threads = arg2size_t( *++argv, 0, 
+	size_t max_threads = arg2size_t( *++argv, 0, 
 		"run: max_threads is less than zero"
 	);
 
+	size_t mega_sum = 0; // assignment to avoid compiler warning
 	if( run_sum_i_inv )
 	{	// mega_sum
 		mega_sum = arg2size_t( *++argv, 1, 

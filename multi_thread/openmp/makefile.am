@@ -40,13 +40,12 @@ openmp_SOURCES   = \
 	../sum_i_inv_work.hpp \
 \
 	a11c.cpp \
-	simple_ad.cpp \
-\
 	newton_example.cpp \
 	newton_example.hpp \
 	newton_method.hpp  \
 	setup_ad.cpp \
 	setup_ad.hpp \
+	simple_ad.cpp \
 	sum_i_inv.cpp
 	
 test.sh: openmp$(EXEEXT) 

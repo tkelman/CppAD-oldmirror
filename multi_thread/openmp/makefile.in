@@ -43,8 +43,8 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am_openmp_OBJECTS = openmp.$(OBJEXT) arc_tan.$(OBJEXT) \
 	sum_i_inv_time.$(OBJEXT) sum_i_inv_work.$(OBJEXT) \
-	a11c.$(OBJEXT) simple_ad.$(OBJEXT) newton_example.$(OBJEXT) \
-	setup_ad.$(OBJEXT) sum_i_inv.$(OBJEXT)
+	a11c.$(OBJEXT) newton_example.$(OBJEXT) setup_ad.$(OBJEXT) \
+	simple_ad.$(OBJEXT) sum_i_inv.$(OBJEXT)
 openmp_OBJECTS = $(am_openmp_OBJECTS)
 openmp_LDADD = $(LDADD)
 openmp_DEPENDENCIES =
@@ -225,13 +225,12 @@ openmp_SOURCES = \
 	../sum_i_inv_work.hpp \
 \
 	a11c.cpp \
-	simple_ad.cpp \
-\
 	newton_example.cpp \
 	newton_example.hpp \
 	newton_method.hpp  \
 	setup_ad.cpp \
 	setup_ad.hpp \
+	simple_ad.cpp \
 	sum_i_inv.cpp
 
 all: all-am

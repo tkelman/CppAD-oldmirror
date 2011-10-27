@@ -207,6 +207,20 @@ bool start_team(size_t num_threads)
 		std::cerr << MAX_NUMBER_THREADS << std::endl;
 		exit(1);
 	}
+	// check that we currently do not have multiple threads activated
+	ok = num_threads_ == 1;
+
+	// set the information for this thread so thread_number will work
+	// for call to parallel_setup
+	thread_all_[0].pthread_id = pthread_self();
+	thread_all_[0].thread_num = 0;
+	thread_all_[0].ok         = true;
+	// Now that thread_number() has necessary information, 
+	// call setup for using CppAD::AD<double> in parallel mode
+	thread_alloc::parallel_setup(num_threads, in_parallel, thread_number);
+	CppAD::parallel_ad<double>();
+
+	// now change num_threads_ to its final value.
 	num_threads_ = num_threads;
 
 	// initialize two barriers, one for work done, one for new job ready
@@ -235,9 +249,6 @@ bool start_team(size_t num_threads)
 
 	// This master thread is already running, we need to create
 	// num_threads - 1 more threads
-	thread_all_[0].pthread_id = pthread_self();
-	thread_all_[0].thread_num = 0;
-	thread_all_[0].ok         = true;
 	size_t thread_num;
 	for(thread_num = 1; thread_num < num_threads; thread_num++)
 	{	thread_all_[thread_num].ok         = true;
@@ -257,11 +268,6 @@ bool start_team(size_t num_threads)
 	// Done creating threads and hence no longer need this attribute object
 	rc  = pthread_attr_destroy(&attr);
 	ok &= (rc == 0);
-
-	// Now that thread_number() has necessary information, 
-	// call setup for using CppAD::AD<double> in parallel mode
-	thread_alloc::parallel_setup(num_threads, in_parallel, thread_number);
-	CppAD::parallel_ad<double>();
 
 	//  wait until all threads have completed wait_for_work_
 	thread_one_vptr = static_cast<void*> (&(thread_all_[0]));

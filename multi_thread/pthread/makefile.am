@@ -33,15 +33,23 @@ pthread_SOURCES   = \
 \
 	../arc_tan.cpp \
 	../arc_tan.hpp \
+	../sum_i_inv_time.cpp \
+	../sum_i_inv_time.hpp \
+	../sum_i_inv_work.cpp \
+	../sum_i_inv_work.hpp \
+\
+	a11c.cpp \
 	pthread_team.cpp \
 	pthread_team.hpp \
-	a11c.cpp \
-	simple_ad.cpp 
+	simple_ad.cpp  \
+	sum_i_inv.cpp
 	
 test.sh: pthread$(EXEEXT) 
 	echo "#! /bin/sh -e"      >  test.sh
 	echo "./pthread a11c"      >> test.sh
 	echo "./pthread simple_ad" >> test.sh
+	echo "#              max_threads mega_sum" >> test.sh
+	echo "./pthread sum_i_inv       2        1" >> test.sh 
 	chmod +x test.sh
 
 test:: test.sh
