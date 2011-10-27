@@ -18,6 +18,7 @@ $spell
 	cpp
 	num
 	pthread
+	pthreads
 $$
 $index pthread, example$$
 $index pthread, speed$$

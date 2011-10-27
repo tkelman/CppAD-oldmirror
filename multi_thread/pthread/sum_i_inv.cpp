@@ -13,6 +13,8 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin pthread_sum_i_inv.cpp$$
 $spell
+	pthreads
+	pthread
 	num
 	bool
 	mega
