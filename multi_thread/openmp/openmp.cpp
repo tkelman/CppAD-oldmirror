@@ -52,7 +52,7 @@ $cref openmp_a11c.cpp$$,
 $cref openmp_simple_ad.cpp$$,
 or the speed tests 
 $cref openmp_newton_example.cpp$$ 
-$cref openmp_sum_i_inv.cpp$$.
+$cref sum_i_inv_time.cpp$$.
 
 $head max_threads$$
 If the argument $icode max_threads$$ is a non-negative integer specifying
@@ -72,7 +72,7 @@ The following command line arguments only apply to $code sum_i_inv$$:
 $subhead mega_sum$$
 The command line argument $icode mega_sum$$ 
 is an integer greater than or equal one and has the same meaning as in
-$cref/openmp_sum_i_inv.cpp/openmp_sum_i_inv.cpp/mega_sum/$$.
+$cref/sum_i_inv_time.cpp/sum_i_inv_time.cpp/mega_sum/$$.
 
 $comment -----------------------------------------------------------------$$
 
@@ -103,7 +103,6 @@ $head Subroutines$$
 $childtable%
 	multi_thread/openmp/a11c.cpp%
 	multi_thread/openmp/simple_ad.cpp%
-	multi_thread/openmp/sum_i_inv.cpp%
 	multi_thread/openmp/newton_example.cpp%
 	multi_thread/openmp/setup_ad.cpp
 %$$
@@ -122,7 +121,7 @@ $end
 # include <cmath>
 # include <cstring>
 # include "newton_example.hpp"
-# include "sum_i_inv.hpp"
+# include "../sum_i_inv_time.hpp"
 # include "setup_ad.hpp"
 
 extern bool a11c(void);
@@ -247,8 +246,8 @@ int main(int argc, char *argv[])
 		inuse_this_thread = thread_alloc::inuse(0);
 
 		// run the requested test
-		if( run_sum_i_inv )
-			ok &= sum_i_inv(rate_all[num_threads], num_threads, mega_sum);
+		if( run_sum_i_inv ) ok &= 
+			sum_i_inv_time(rate_all[num_threads], num_threads, mega_sum);
 		else
 		{	assert( run_newton_example );
 			ok &= newton_example(

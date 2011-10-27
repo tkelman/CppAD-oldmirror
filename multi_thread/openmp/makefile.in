@@ -41,10 +41,10 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am_openmp_OBJECTS = openmp.$(OBJEXT) sum_i_inv_work.$(OBJEXT) \
-	arc_tan.$(OBJEXT) setup_ad.$(OBJEXT) a11c.$(OBJEXT) \
-	simple_ad.$(OBJEXT) newton_example.$(OBJEXT) \
-	sum_i_inv.$(OBJEXT)
+am_openmp_OBJECTS = openmp.$(OBJEXT) arc_tan.$(OBJEXT) \
+	sum_i_inv_time.$(OBJEXT) sum_i_inv_work.$(OBJEXT) \
+	a11c.$(OBJEXT) simple_ad.$(OBJEXT) newton_example.$(OBJEXT) \
+	setup_ad.$(OBJEXT)
 openmp_OBJECTS = $(am_openmp_OBJECTS)
 openmp_LDADD = $(LDADD)
 openmp_DEPENDENCIES =
@@ -217,12 +217,12 @@ AM_LDFLAGS =
 openmp_SOURCES = \
 	openmp.cpp \
 \
-	../sum_i_inv_work.cpp \
-	../sum_i_inv_work.hpp \
 	../arc_tan.cpp \
 	../arc_tan.hpp \
-	setup_ad.cpp \
-	setup_ad.hpp \
+	../sum_i_inv_time.cpp \
+	../sum_i_inv_time.hpp \
+	../sum_i_inv_work.cpp \
+	../sum_i_inv_work.hpp \
 \
 	a11c.cpp \
 	simple_ad.cpp \
@@ -230,8 +230,8 @@ openmp_SOURCES = \
 	newton_example.cpp \
 	newton_example.hpp \
 	newton_method.hpp  \
-	sum_i_inv.cpp      \
-	sum_i_inv.hpp
+	setup_ad.cpp \
+	setup_ad.hpp
 
 all: all-am
 
@@ -286,7 +286,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/openmp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/setup_ad.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/simple_ad.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sum_i_inv.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sum_i_inv_time.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sum_i_inv_work.Po@am__quote@
 
 .cpp.o:
@@ -303,20 +303,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
-sum_i_inv_work.o: ../sum_i_inv_work.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT sum_i_inv_work.o -MD -MP -MF $(DEPDIR)/sum_i_inv_work.Tpo -c -o sum_i_inv_work.o `test -f '../sum_i_inv_work.cpp' || echo '$(srcdir)/'`../sum_i_inv_work.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/sum_i_inv_work.Tpo $(DEPDIR)/sum_i_inv_work.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../sum_i_inv_work.cpp' object='sum_i_inv_work.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o sum_i_inv_work.o `test -f '../sum_i_inv_work.cpp' || echo '$(srcdir)/'`../sum_i_inv_work.cpp
-
-sum_i_inv_work.obj: ../sum_i_inv_work.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT sum_i_inv_work.obj -MD -MP -MF $(DEPDIR)/sum_i_inv_work.Tpo -c -o sum_i_inv_work.obj `if test -f '../sum_i_inv_work.cpp'; then $(CYGPATH_W) '../sum_i_inv_work.cpp'; else $(CYGPATH_W) '$(srcdir)/../sum_i_inv_work.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/sum_i_inv_work.Tpo $(DEPDIR)/sum_i_inv_work.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../sum_i_inv_work.cpp' object='sum_i_inv_work.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o sum_i_inv_work.obj `if test -f '../sum_i_inv_work.cpp'; then $(CYGPATH_W) '../sum_i_inv_work.cpp'; else $(CYGPATH_W) '$(srcdir)/../sum_i_inv_work.cpp'; fi`
-
 arc_tan.o: ../arc_tan.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT arc_tan.o -MD -MP -MF $(DEPDIR)/arc_tan.Tpo -c -o arc_tan.o `test -f '../arc_tan.cpp' || echo '$(srcdir)/'`../arc_tan.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/arc_tan.Tpo $(DEPDIR)/arc_tan.Po
@@ -330,6 +316,34 @@ arc_tan.obj: ../arc_tan.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../arc_tan.cpp' object='arc_tan.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o arc_tan.obj `if test -f '../arc_tan.cpp'; then $(CYGPATH_W) '../arc_tan.cpp'; else $(CYGPATH_W) '$(srcdir)/../arc_tan.cpp'; fi`
+
+sum_i_inv_time.o: ../sum_i_inv_time.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT sum_i_inv_time.o -MD -MP -MF $(DEPDIR)/sum_i_inv_time.Tpo -c -o sum_i_inv_time.o `test -f '../sum_i_inv_time.cpp' || echo '$(srcdir)/'`../sum_i_inv_time.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/sum_i_inv_time.Tpo $(DEPDIR)/sum_i_inv_time.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../sum_i_inv_time.cpp' object='sum_i_inv_time.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o sum_i_inv_time.o `test -f '../sum_i_inv_time.cpp' || echo '$(srcdir)/'`../sum_i_inv_time.cpp
+
+sum_i_inv_time.obj: ../sum_i_inv_time.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT sum_i_inv_time.obj -MD -MP -MF $(DEPDIR)/sum_i_inv_time.Tpo -c -o sum_i_inv_time.obj `if test -f '../sum_i_inv_time.cpp'; then $(CYGPATH_W) '../sum_i_inv_time.cpp'; else $(CYGPATH_W) '$(srcdir)/../sum_i_inv_time.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/sum_i_inv_time.Tpo $(DEPDIR)/sum_i_inv_time.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../sum_i_inv_time.cpp' object='sum_i_inv_time.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o sum_i_inv_time.obj `if test -f '../sum_i_inv_time.cpp'; then $(CYGPATH_W) '../sum_i_inv_time.cpp'; else $(CYGPATH_W) '$(srcdir)/../sum_i_inv_time.cpp'; fi`
+
+sum_i_inv_work.o: ../sum_i_inv_work.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT sum_i_inv_work.o -MD -MP -MF $(DEPDIR)/sum_i_inv_work.Tpo -c -o sum_i_inv_work.o `test -f '../sum_i_inv_work.cpp' || echo '$(srcdir)/'`../sum_i_inv_work.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/sum_i_inv_work.Tpo $(DEPDIR)/sum_i_inv_work.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../sum_i_inv_work.cpp' object='sum_i_inv_work.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o sum_i_inv_work.o `test -f '../sum_i_inv_work.cpp' || echo '$(srcdir)/'`../sum_i_inv_work.cpp
+
+sum_i_inv_work.obj: ../sum_i_inv_work.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT sum_i_inv_work.obj -MD -MP -MF $(DEPDIR)/sum_i_inv_work.Tpo -c -o sum_i_inv_work.obj `if test -f '../sum_i_inv_work.cpp'; then $(CYGPATH_W) '../sum_i_inv_work.cpp'; else $(CYGPATH_W) '$(srcdir)/../sum_i_inv_work.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/sum_i_inv_work.Tpo $(DEPDIR)/sum_i_inv_work.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../sum_i_inv_work.cpp' object='sum_i_inv_work.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o sum_i_inv_work.obj `if test -f '../sum_i_inv_work.cpp'; then $(CYGPATH_W) '../sum_i_inv_work.cpp'; else $(CYGPATH_W) '$(srcdir)/../sum_i_inv_work.cpp'; fi`
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \

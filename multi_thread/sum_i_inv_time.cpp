@@ -11,7 +11,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
 /*
-$begin openmp_sum_i_inv.cpp$$
+$begin sum_i_inv_time.cpp$$
 $spell
 	num
 	bool
@@ -27,7 +27,7 @@ $index speed, OpenMP$$
 $section OpenMP Sum of 1/i Speed Test$$
 
 $head Syntax$$
-$icode%ok_out% = sum_i_inv(%rate_out%, %num_threads%, %mega_sum%)%$$
+$icode%ok% = sum_i_inv_time(%rate_out%, %num_threads%, %mega_sum%)%$$
 
 $head Summation$$
 Runs an example and test of 
@@ -36,13 +36,13 @@ $latex \[
 	1 + 1/2 + 1/3 + ... + 1/n
 \] $$
 
-$head ok_out$$
+$head ok$$
 This return value has prototype
 $codei%
-	bool %ok_out%
+	bool %ok%
 %$$
 If it is true,
-$code sum_i_inv$$ passed the correctness test.
+$code sum_i_inv_time$$ passed the correctness test.
 Otherwise it is false.
 
 $head rate_out$$
@@ -52,8 +52,8 @@ $codei%
 %$$
 The input value of the argument does not matter.
 Upon return it is the number of times per second that
-$code sum_i_inv$$ can compute the 
-$cref/summation/openmp_sum_i_inv.cpp/Summation/$$.
+$code sum_i_inv_time$$ can compute the 
+$cref/summation/sum_i_inv_time.cpp/Summation/$$.
 
 $head num_threads$$
 This argument has prototype
@@ -71,7 +71,7 @@ $codei%
 %$$
 and is greater than zero.
 The value $latex n$$ in the 
-$cref/summation/openmp_sum_i_inv.cpp/Summation/$$.
+$cref/summation/sum_i_inv_time.cpp/Summation/$$.
 is equal to $latex 10^6$$ times $icode mega_sum$$. 
 
 $head Method$$
@@ -80,7 +80,7 @@ smallest terms to reduce the effects of round off error.
 
 $head Source$$
 $code
-$verbatim%multi_thread/openmp/sum_i_inv.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
+$verbatim%multi_thread/sum_i_inv_time.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
 $$
 
 $end
@@ -98,11 +98,11 @@ $end
 # include <cppad/speed_test.hpp>
 
 // special utilities for the sum_i_inv problem
-# include "../sum_i_inv_work.hpp"
+# include "sum_i_inv_work.hpp"
 
 namespace { // empty namespace
 
-	// value of num_threads in previous call to sum_i_inv.
+	// value of num_threads in previous call to sum_i_inv_time.
 	size_t num_threads_;
 
 	double sum_all(size_t num_sum)
@@ -150,7 +150,7 @@ namespace { // empty namespace
 	}
 } // end empty namespace
 
-bool sum_i_inv(size_t& rate_out, size_t num_threads, size_t mega_sum)
+bool sum_i_inv_time(size_t& rate_out, size_t num_threads, size_t mega_sum)
 {	bool ok  = true;
 	using std::vector;
 	num_threads_ = num_threads;
