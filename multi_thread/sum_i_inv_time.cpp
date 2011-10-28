@@ -13,6 +13,8 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin sum_i_inv_time.cpp$$
 $spell
+	openmp
+	pthreads
 	alloc
 	num
 	bool
@@ -33,7 +35,8 @@ $head Syntax$$
 $icode%ok% = sum_i_inv_time(%rate_out%, %num_threads%, %mega_sum%)%$$
 
 $head Purpose$$
-Runs an example and test of multi-threaded computation of the summation
+Runs a correctness and timing test for a multi-threaded 
+computation of the summation
 $latex \[
 	1 + 1/2 + 1/3 + ... + 1/n
 \] $$
@@ -67,12 +70,14 @@ $codei%
 It specifies the number of threads that are available for this test.
 If it is zero, the test is run without the multi-threading environment and
 $codei%
-	1 = CppAD::thread_alloc::num_threads()
+	1 == CppAD::thread_alloc::num_threads()
 %$$ 
-If it is non-zero, the test is with the multi-threading environment and
+when $code sum_i_inv_time$$ is called.
+If it is non-zero, the test is run with the multi-threading and
 $codei%
 	%num_threads% = CppAD::thread_alloc::num_threads()
 %$$ 
+when $code sum_i_inv_time$$ is called.
 
 $head mega_sum$$
 This argument has prototype
@@ -84,6 +89,13 @@ The value $latex n$$ in the
 $cref/summation/sum_i_inv_time.cpp/Purpose/$$.
 is equal to $latex 10^6$$ times $icode mega_sum$$. 
 
+$head sum_i_inv$$
+The subroutine $code sum_i_inv$$ is multi-threading system dependent.
+A different version of this routine is implemented for
+$cref/openmp/openmp_sum_i_inv.cpp/$$, and
+$cref/pthreads/pthread_sum_i_inv.cpp/$$.
+
+
 $head Source$$
 $code
 $verbatim%multi_thread/sum_i_inv_time.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
@@ -92,7 +104,6 @@ $$
 $end
 */
 // BEGIN PROGRAM
-
 # include <omp.h>
 # include <cstring>
 # include <limits>

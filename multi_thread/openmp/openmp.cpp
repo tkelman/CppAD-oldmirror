@@ -36,7 +36,7 @@ $codei%./openmp simple_ad
 %$$
 $codei%./openmp sum_i_inv %max_threads% %mega_sum%
 %$$ 
-$codei%./openmp newton_example %max_threads% %n_zero% %n_sub% %n_sum% %use_ad%$$ 
+$codei%./openmp multi_newton %max_threads% %num_zero% %num_sub% %num_sum% %use_ad%$$ 
 
 $head Running Tests$$
 You can build this program and run the default version of its test
@@ -55,7 +55,7 @@ $tend
 or one of the following speed tests:
 $table
 $rref sum_i_inv_time.cpp$$
-$rref openmp_newton_example.cpp$$ 
+$rref multi_newton_time.cpp$$ 
 $tend
 
 $head max_threads$$
@@ -80,35 +80,35 @@ $cref/sum_i_inv_time.cpp/sum_i_inv_time.cpp/mega_sum/$$.
 
 $comment -----------------------------------------------------------------$$
 
-$head newton_example$$
-The following command line arguments only apply to $code newton_example$$:
+$head multi_newton$$
+The following command line arguments only apply to $code multi_newton$$:
 
-$subhead n_zero$$
-The command line argument $icode n_zero$$ 
+$subhead num_zero$$
+The command line argument $icode num_zero$$ 
 is an integer greater than or equal two and has the same meaning as in
-$cref/openmp_newton_example.cpp/openmp_newton_example.cpp/n_zero/$$.
+$cref/multi_newton_time.cpp/multi_newton_time.cpp/num_zero/$$.
 
-$subhead n_sub$$
-The command line argument $icode n_sub$$ 
+$subhead num_sub$$
+The command line argument $icode num_sub$$ 
 is an integer greater than or equal one and has the same meaning as in
-$cref/openmp_newton_example.cpp/openmp_newton_example.cpp/n_sub/$$.
+$cref/multi_newton_time.cpp/multi_newton_time.cpp/num_sub/$$.
 
-$subhead n_sum$$
-The command line argument $icode n_sum$$ 
+$subhead num_sum$$
+The command line argument $icode num_sum$$ 
 is an integer greater than or equal one and has the same meaning as in
-$cref/openmp_newton_example.cpp/openmp_newton_example.cpp/n_sum/$$.
+$cref/multi_newton_time.cpp/multi_newton_time.cpp/num_sum/$$.
 
 $subhead use_ad$$
 The command line argument $icode use_ad$$ is either 
 $code true$$ or $code false$$ and has the same meaning as in
-$cref/openmp_newton_example.cpp/openmp_newton_example.cpp/use_ad/$$.
+$cref/multi_newton_time.cpp/multi_newton_time.cpp/use_ad/$$.
 
 $head Subroutines$$
 $childtable%
 	multi_thread/openmp/a11c.cpp%
 	multi_thread/openmp/simple_ad.cpp%
 	multi_thread/openmp/sum_i_inv.cpp%
-	multi_thread/openmp/newton_example.cpp%
+	multi_thread/openmp/multi_newton.hpp%
 	multi_thread/openmp/setup_ad.cpp
 %$$
 
@@ -127,7 +127,7 @@ $end
 # include <cstring>
 # include "setup_ad.hpp"
 # include "../sum_i_inv_time.hpp"
-# include "newton_example.hpp"
+# include "../multi_newton_time.hpp"
 
 extern bool a11c(void);
 extern bool simple_ad(void);
@@ -156,27 +156,26 @@ int main(int argc, char *argv[])
 	const char *usage = 
 	"usage: ./openmp a11c\n"
 	"       ./openmp simple_ad\n"
-	"       ./openmp sum_i_inv      max_threads mega_sum\n"
-	"       ./openmp newton_example max_threads n_zero n_sub n_sum use_ad";
+	"       ./openmp sum_i_inv    max_threads mega_sum\n"
+	"       ./openmp multi_newton max_threads num_zero num_sub num_sum use_ad";
 
 	// command line argument values (assign values to avoid compiler warnings)
-	size_t n_zero=0, n_sub=0, n_sum=0;
+	size_t num_zero=0, num_sub=0, num_sum=0;
 	bool use_ad=true;
 
 	ok = false;
 	const char* test_name = "";
 	if( argc > 1 )
 		test_name = *++argv;
-	bool run_a11c      = std::strcmp(test_name, "a11c")      == 0;
-	bool run_simple_ad = std::strcmp(test_name, "simple_ad") == 0;
-	bool run_sum_i_inv = std::strcmp(test_name, "sum_i_inv") == 0;
-	bool run_newton_example = 
-		std::strcmp(test_name, "newton_example") == 0;
+	bool run_a11c         = std::strcmp(test_name, "a11c")         == 0;
+	bool run_simple_ad    = std::strcmp(test_name, "simple_ad")    == 0;
+	bool run_sum_i_inv    = std::strcmp(test_name, "sum_i_inv")    == 0;
+	bool run_multi_newton = std::strcmp(test_name, "multi_newton") == 0;
 	if( run_a11c || run_simple_ad )
 		ok = (argc == 2);
 	else if( run_sum_i_inv )
 		ok = (argc == 4);  
-	else if( run_newton_example )
+	else if( run_multi_newton )
 		ok = (argc == 7);
 	if( ! ok )
 	{	std::cerr << "test_name = " << test_name << std::endl;	
@@ -211,21 +210,21 @@ int main(int argc, char *argv[])
 		);
 	}
 	else
-	{	assert( run_newton_example );
+	{	ok &= run_multi_newton;
 
-		// n_zero
-		n_zero = arg2size_t( *++argv, 2,
-			"run: n_zero is less than two"
+		// num_zero
+		num_zero = arg2size_t( *++argv, 2,
+			"run: num_zero is less than two"
 		);
 
-		// n_sub
-		n_sub = arg2size_t( *++argv, 1,
-			"run: n_sub is less than one"
+		// num_sub
+		num_sub = arg2size_t( *++argv, 1,
+			"run: num_sub is less than one"
 		);
        
-		// n_sum 
-		n_sum = arg2size_t( *++argv, 1,
-			"run: n_sum is less than one"
+		// num_sum 
+		num_sum = arg2size_t( *++argv, 1,
+			"run: num_sum is less than one"
 		);
 
 		// use_ad
@@ -257,13 +256,13 @@ int main(int argc, char *argv[])
 		if( run_sum_i_inv ) ok &= 
 			sum_i_inv_time(rate_all[num_threads], num_threads, mega_sum);
 		else
-		{	assert( run_newton_example );
-			ok &= newton_example(
+		{	ok &= run_multi_newton;
+			ok &= multi_newton_time(
 				rate_all[num_threads] ,
 				num_threads           ,
-				n_zero                ,
-				n_sub                 ,
-				n_sum                 ,
+				num_zero                ,
+				num_sub                 ,
+				num_sum                 ,
 				use_ad
 			);
 		}

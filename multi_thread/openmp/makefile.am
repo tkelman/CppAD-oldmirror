@@ -34,15 +34,15 @@ openmp_SOURCES   = \
 \
 	../arc_tan.cpp \
 	../arc_tan.hpp \
+	../multi_newton_time.cpp \
+	../multi_newton_time.hpp \
 	../sum_i_inv_time.cpp \
 	../sum_i_inv_time.hpp \
 	../sum_i_inv_work.cpp \
 	../sum_i_inv_work.hpp \
 \
 	a11c.cpp \
-	newton_example.cpp \
-	newton_example.hpp \
-	newton_method.hpp  \
+	multi_newton.hpp  \
 	setup_ad.cpp \
 	setup_ad.hpp \
 	simple_ad.cpp \
@@ -53,11 +53,11 @@ test.sh: openmp$(EXEEXT)
 	echo "./openmp a11c"      >> test.sh
 	echo "./openmp simple_ad" >> test.sh
 	echo "#"                  >> test.sh
-	echo "#              max_threads mega_sum" >> test.sh
-	echo "./openmp sum_i_inv       2        1" >> test.sh 
+	echo "#           max_threads mega_sum" >> test.sh
+	echo "./openmp sum_i_inv    2        1" >> test.sh 
 	echo "#"                                   >> test.sh
-	echo "#              max_threads n_zero n_sub n_sum use_ad" >> test.sh
-	echo "./openmp newton_example  2     20    30   500   true" >> test.sh 
+	echo "#           max_threads num_zero num_sub num_sum use_ad" >> test.sh
+	echo "./openmp multi_newton 2       20      30     500   true" >> test.sh 
 	chmod +x test.sh
 
 test:: test.sh

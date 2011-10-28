@@ -12,6 +12,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 $begin whats_new_11$$
 $spell
+	inv
 	bthread
 	pthread
 	Std
@@ -95,6 +96,10 @@ utilities that can be used by multiple multi-threading tests.
 $lnext
 Move pthread management to $cref pthread_team.cpp$$ so it can
 be used by multiple examples.
+$lnext
+For the non-AD timing test $code sum_i_inv$$,
+extract code that can be the same for different threading systems
+and put it in $cref sum_i_inv_time.cpp$$ and $cref sum_i_inv_work.cpp$$.
 $lend
 
 $head 10-14$$
@@ -202,7 +207,7 @@ $lend
 $subhead 08-30$$
 $list number$$
 Create the $code openmp/run.cpp$$ program 
-and move the $cref openmp_newton_example.cpp$$ test from
+and move the $cref openmp_multi_newton.hpp$$ test from
 $code openmp/run.sh$$ to $code openmp/run.cpp$$.
 This uses $cref/configure/InstallUnix/Configure/$$
 information for building the tests.
@@ -211,9 +216,9 @@ Document the $code --with-openmp$$ configure
 command line argument.
 $lnext
 Move $code openmp/multi_newton.hpp$$ to 
-$cref%openmp/newton_method.hpp%openmp_newton_method.hpp%$$ and
+$code openmp/newton_method.hpp$$ and
 $code openmp/multi_newton.cpp$$ to 
-$cref%openmp/newton_example.cpp%openmp_newton_example.cpp%$$.
+$code openmp/newton_example.cpp$$.
 $lend
 
 $subhead 08-25$$
@@ -493,7 +498,7 @@ $cref omp_in_parallel$$ execution mode an error (it never worked properly);
 see $cref/TrackNewDel multi-threading/TrackNewDel/Multi-Threading/$$.
 $lnext
 Change $cref/memory_leak/$$ so that it checks for a leak in all threads.
-This is what $cref/openmp_newton_example.cpp/$$ and 
+This is what $code openmp_newton_example.cpp$$ and 
 $cref sum_i_inv_time.cpp$$
 assumed was being done.
 $lend
@@ -682,7 +687,7 @@ Also improve the openmp test program output formatting.
 
 $head 04-19$$
 The $icode use_ad$$ option was added to the 
-$cref/openmp_newton_example.cpp/$$ test case.
+$code openmp_newton_example.cpp$$ test case.
 
 $head 03-19$$
 The subversion write protected directory 

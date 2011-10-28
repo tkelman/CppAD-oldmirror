@@ -14,8 +14,9 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
 /*
-$begin openmp_newton_method$$
+$begin openmp_multi_newton.hpp$$
 $spell
+	num
 	openmp
 	df
 	xout
@@ -27,15 +28,16 @@ $spell
 	bool
 $$
 
-$index OpenMP, Newton's method$$
-$index multi-thread, Newton's method$$
-$index example, OpenMP Newton's method$$
+$index OpenMP, multi_thread Newton$$
+$index multi_thread, OpenMP Newton method$$
+$index example, OpenMP multi_thread Newton$$
+$index newton, multi_thread OpenMP$$
 
-$section Multi-Threaded Newton's Method Routine$$
+$section An OpenMP Multi-Threaded Newton's Method$$
 
 $head Syntax$$
-$codei%newton_method(%xout%, 
-	%fun%, %n_sub%, %xlow%, %xup%, %epsilon%, %max_itr%, %use_openmp%
+$codei%multi_newton(%xout%, 
+	%fun%, %num_sub%, %xlow%, %xup%, %epsilon%, %max_itr%, %use_openmp%
 )%$$
 
 
@@ -66,7 +68,7 @@ $codei%
 	CppAD::vector<double> &%xout%
 %$$
 The input size and value of the elements of $icode xout$$ do not matter.
-Upon return from $code openmp_newton_method$$,
+Upon return from $code openmp_multi_newton$$,
 the size of $icode xout$$ is less than or equal $latex n$$ and
 $latex \[
 	| f( xout[i] ) | \leq epsilon
@@ -96,13 +98,13 @@ $codei%
 The input values of $icode f$$ and $icode df$$ do not matter.
 Upon return they are $latex f(x)$$ and $latex f^{(1)} (x)$$ respectively.
 
-$head n_sub$$
-The argument $icode n_sub$$ has prototype
+$head num_sub$$
+The argument $icode num_sub$$ has prototype
 $codei%
-	size_t %n_sub%
+	size_t %num_sub%
 %$$
 It specifies the number of sub-intervals; i.e., $latex n$$ 
-in the $cref/method/openmp_newton_method/Method/$$ above.
+in the $cref/method/openmp_multi_newton.hpp/Method/$$ above.
 
 $head xlow$$
 The argument $icode xlow$$ has prototype
@@ -110,7 +112,7 @@ $codei%
 	double %xlow%
 %$$
 It specifies the lower limit for the entire search; i.e., $latex a$$
-in the $cref/method/openmp_newton_method/Method/$$ above.
+in the $cref/method/openmp_multi_newton.hpp/Method/$$ above.
 
 $head xup$$
 The argument $icode xup$$ has prototype
@@ -118,7 +120,7 @@ $codei%
 	double %xup%
 %$$
 It specifies the upper limit for the entire search; i.e., $latex b$$
-in the $cref/method/openmp_newton_method/Method/$$ above.
+in the $cref/method/openmp_multi_newton.hpp/Method/$$ above.
 
 $head epsilon$$
 The argument $icode epsilon$$ has prototype
@@ -146,31 +148,14 @@ If it is true, OpenMP is used for the calculations,
 Otherwise, the calculation is done without multi-threading.
 
 
-$end
----------------------------------------------------------------------------
-$begin openmp_newton_method.hpp$$
-$spell
-	openmp
-$$
-
-$index openmp_newton_method, source$$
-$index source, openmp_newton_method$$
-$index example, OpenMP$$
-$index example, multi-thread$$
-$index OpenMP, example$$
-$index multi-thread, example$$
-
-
-$section OpenMP Multi-Threading Newton's Method Source Code$$
-
+$head Source$$
 $code
-$verbatim%multi_thread/openmp/newton_method.hpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
+$verbatim%multi_thread/openmp/multi_newton.hpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
 $$
 $end
 ---------------------------------------------------------------------------
 */
 // BEGIN PROGRAM
-
 # include <cppad/cppad.hpp>
 # include <cassert>
 # include <omp.h>
@@ -208,10 +193,10 @@ void one_newton(Fun& fun, double &fcur, double &xcur,
 }
 
 template <class Fun>
-void newton_method(
+void multi_newton(
 	CppAD::vector<double> &xout , 
 	Fun &fun                    , 
-	size_t n_sub                , 
+	size_t num_sub                , 
 	double xlow                 , 
 	double xup                  , 
 	double epsilon              , 
@@ -223,13 +208,13 @@ void newton_method(
 
 	// check argument values
 	assert( xlow < xup );
-	assert( n_sub > 0 );
+	assert( num_sub > 0 );
 
 	// OpenMP uses integers in place of size_t
-	int i, n = int(n_sub);
+	int i, n = int(num_sub);
 
 	// set up grid
-	vector<double> grid(n_sub + 1);
+	vector<double> grid(num_sub + 1);
 	vector<double> fcur(n), xcur(n), xmid(n);
 	double dx = (xup - xlow) / double(n);
 	for(i = 0; i < n; i++)
@@ -273,27 +258,27 @@ void newton_method(
 	// remove duplicates and points that are not solutions
 	double xlast  = xlow;
 	size_t ilast  = 0;
-	size_t n_zero = 0;
+	size_t num_zero = 0;
 	for(i = 0; i < n; i++)
 	{	if( abs( fcur[i] ) <= epsilon )
-		{	if( n_zero == 0 )
-			{	xcur[n_zero++] = xlast = xcur[i];
+		{	if( num_zero == 0 )
+			{	xcur[num_zero++] = xlast = xcur[i];
 				ilast = i;
 			}
 			else if( fabs( xcur[i] - xlast ) > dx ) 
-			{	xcur[n_zero++] = xlast = xcur[i];
+			{	xcur[num_zero++] = xlast = xcur[i];
 				ilast = i;
 			}
 			else if( fabs( fcur[i] ) < fabs( fcur[ilast] ) )
-			{	xcur[n_zero - 1] = xlast = xcur[i]; 
+			{	xcur[num_zero - 1] = xlast = xcur[i]; 
 				ilast = i;
 			}
 		}
 	}
 
 	// resize output vector and set its values
-	xout.resize(n_zero);
-	for(i = 0; size_t(i) < n_zero; i++)
+	xout.resize(num_zero);
+	for(i = 0; size_t(i) < num_zero; i++)
 		xout[i] = xcur[i];
 
 	return;

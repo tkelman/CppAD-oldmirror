@@ -19,12 +19,10 @@ fi
 echo "Checking that all examples are in omh/example_list.omh"
 echo "-------------------------------------------------------" 
 file_list="
-	example/*.cpp 
-	example/*.hpp 
-	cppad_ipopt/*/*.cpp 
-	cppad_ipopt/*/*.hpp
-	multi_thread/*.cpp
-	multi_thread/*/*.cpp
+	example/*.[ch]pp 
+	cppad_ipopt/*/*.[ch]pp 
+	multi_thread/*.[ch]pp
+	multi_thread/*/*.[ch]pp
 "
 sed < omh/example_list.omh > bin/check_example.$$ \
 	-n -e '/\$begin ListAllExamples\$\$/,/\$end/p' 

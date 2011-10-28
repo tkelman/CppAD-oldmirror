@@ -11,41 +11,42 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
 /*
-$begin openmp_newton_example.cpp$$
+$begin multi_newton_time.cpp$$
 $spell
-	CppAD
-	parallelize
 	num
+	Cpp
 	bool
+	alloc
 	openmp
 $$
-$index OpenMP, speed AD$$
-$index speed, OpenMP AD$$
-$index AD, OpenMP speed$$
+$index multi_thread, Newton AD speed$$
+$index thread, multi_newton AD speed$$
+$index AD, speed multi_thread Newton$$
+$index newton, multi_thread AD speed$$
 
-$section OpenMP Newton's Method Example$$
+$section Timing Test of Multi-Threaded Newton Method$$
 
 $head Syntax$$
-$icode%ok_out% = newton_example(%rate_out%, 
-	%num_threads%, %n_zero%, %n_sub%, %n_sum%, %use_ad%
+$icode%ok% = multi_newton_time(%rate_out%, %num_threads%, 
+	%num_zero%, %num_sub%, %num_sum%, %use_ad%
 )%$$ 
 
 $head Purpose$$
-Runs an example and test of the 
-multi-threaded Newton method $cref/openmp_newton_method/$$.
-This example uses Newton's method to determine all the zeros of the sine
+Runs correctness and timing test for a multi-threaded Newton method.
+This test uses Newton's method to determine all the zeros of the sine
 function on an interval.
-CppAD can be used to calculate the derivatives required by Newton's method.
-OpenMP is used to parallelize the calculation on the different sub-intervals.
-In addition, the calculation is done without OpenMP.
+CppAD, or hand coded derivatives,
+can be used to calculate the derivatives used by Newton's method.
+The calculation can be done in parallel on the different sub-intervals.
+In addition, the calculation can be done without multi-threading.
 
-$head ok_out$$
+$head ok$$
 This return value has prototype
 $codei%
-	bool %ok_out%
+	bool %ok%
 %$$
 If it is true,
-$code openmp_newton_method$$ passed the correctness test.
+$code multi_newton_time$$ passed the correctness test.
 Otherwise it is false.
 
 $head rate_out$$
@@ -55,101 +56,107 @@ $codei%
 %$$
 The input value of the argument does not matter.
 Upon return it is the number of times per second that
-$cref/openmp_newton_method/$$ can compute all the zeros.
+the multi-threaded Newton method can compute all the zeros.
 
 $head num_threads$$
 This argument has prototype
 $codei%
 	size_t %num_threads%
 %$$
-It specifies the number of OpenMP threads that 
+It specifies the number of threads that 
 are available for this test.
-In addition, it is assumed that 
-$cref/parallel_setup/ta_parallel_setup/$$ has been informed of the
-number of threads and $cref parallel_ad$$ has enabled 
-$code AD<double>$$ for this number of threads.
-If $icode num_threads$$ is zero, 
-the test is run without the OpenMP environment; i.e. as a normal routine.
+If it is zero, the test is run without multi-threading and 
+$codei%
+	1 == CppAD::thread_alloc::num_threads()
+%$$
+when $code multi_newton_time$$ is called.
+If it is non-zero, the test is run with multi-threading and
+$codei%
+	%num_threads% == CppAD::thread_alloc::num_threads()
+%$$
+when $code multi_newton_time$$ is called.
 
-$head n_zero$$
+$head num_zero$$
 This argument has prototype
 $codei%
-	size_t %n_zero%
+	size_t %num_zero%
 %$$
 and it must be greater than one.
 It specifies the actual number of zeros in the test function
 $latex \sin(x)$$. 
-To be specific all of the zeros in the interval
+To be specific, $code multi_newton_time$$ will attempt to determine
+all of the values of $latex x$$ for which $latex \sin(x) = 0 $$ and
+$latex x$$ is in the interval
 $codei%
-	[ 0 , (%n_zero% - 1) * %pi% ]
+	[ 0 , (%num_zero% - 1) * %pi% ]
 %$$.
-will be determined.
 
-$head n_sub$$
+$head num_sub$$
 This argument has prototype
 $codei%
-	size_t %n_sub%
+	size_t %num_sub%
 %$$
 It specifies the number of sub-intervals to divide the total interval into.
-It must an than zero and
-should probably be greater than two times $icode n_zero$$.
+It must be greater than zero and
+should probably be greater than two times $icode num_zero$$.
 
-$head n_sum$$
+$head num_sum$$
 This argument has prototype
 $codei%
-	size_t %n_sum%
+	size_t %num_sum%
 %$$
 and must be greater than zero.
-The actual function used by $cref openmp_newton_method$$ is 
+The actual function used by the Newton method is
 $latex \[
 	f(x) = \frac{1}{n} \sum_{i=1}^{n} \sin (x)
 \] $$
-where $latex n$$ is equal to $icode n_sum$$.
+where $latex n$$ is equal to $icode num_sum$$.
+Larger values of $icode num_sum$$ simulate a case where the
+evaluation of the function $latex f(x)$$ takes more time.
 
 $head use_ad$$
 This argument has prototype
 $codei%
 	bool %user_ad%
 %$$
-If it is $code true$$,
-then derivatives will be computed using algorithmic differentiation.
+If $icode use_ad$$ is $code true$$,
+then derivatives will be computed using CppAD.
+Note that this derivative computation includes 
+re-taping the function for each
+value of $latex x$$ (even though re-taping is not necessary).
+$pre
+
+$$
 If $icode use_ad$$ is $code false$$, 
 derivatives will be computed using a hand coded routine.
-Note that this derivative computation includes re-taping the function for each
-value of $latex x$$ (even re-taping is not necessary).
 
-$head Subroutines$$
-$children%
-	multi_thread/openmp/newton_method.hpp
-%$$
-$table
-$rref openmp_newton_method$$
-$rref openmp_newton_method.hpp$$
-$tend
+$head multi_newton$$
+The subroutine $code multi_newton$$ is multi-threading system dependent.
+A different version of this routine is implemented for
+$cref/openmp/openmp_multi_newton.hpp/$$.
 
 $head Source$$
 $code
-$verbatim%multi_thread/openmp/newton_example.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
+$verbatim%multi_thread/multi_newton_time.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
 $$
 
 $end
 */
 // BEGIN PROGRAM
-
 # include <cppad/cppad.hpp>
 # include <cmath>
 # include <cstring>
-# include "newton_method.hpp"
+# include "openmp/multi_newton.hpp"
 # include <omp.h>
 
 
-namespace { // begin empty namespace
+namespace { // empty namespace 
 
-	// values of corresponding arguments in previous call to newton_example
+	// values correspond to arguments in previous call to multi_newton_time
 	bool   use_openmp_; // use CppAD to compute derivatives of f(x)
-	size_t n_zero_;     // number of zeros of f(x) in the total interval
-	size_t n_sub_;      // number of sub-intervals to split calculation into
-	size_t n_sum_;      // larger values make f(x) take longer to calculate
+	size_t num_zero_;   // number of zeros of f(x) in the total interval
+	size_t num_sub_;    // number of sub-intervals to split calculation into
+	size_t num_sum_;    // larger values make f(x) take longer to calculate
 	bool   use_ad_;     // use CppAD to compute derivatives of f(x)
 
 	// A version of the sine function that can be made as slow as we like
@@ -157,10 +164,10 @@ namespace { // begin empty namespace
 	Float f_eval(Float x)
 	{	Float sum = 0.;
 		size_t i;
-		for(i = 0; i < n_sum_; i++)
+		for(i = 0; i < num_sum_; i++)
 			sum += sin(x);
 
-		return sum / Float(n_sum_);
+		return sum / Float(num_sum_);
 	}
 
 	// Direct calculation of derivative with same number of floating point
@@ -168,10 +175,10 @@ namespace { // begin empty namespace
 	double df_direct(double x)
 	{	double sum = 0.;
 		size_t i;
-		for(i = 0; i < n_sum_; i++)
+		for(i = 0; i < num_sum_; i++)
 			sum += cos(x);
 
-		return sum / double(n_sum_);
+		return sum / double(num_sum_);
 	}
 
 	// AD calculation of detivative
@@ -206,17 +213,17 @@ namespace { // begin empty namespace
 
 	// Run computation of all the zeros once
 	void test_once(CppAD::vector<double> &xout, size_t no_size)
-	{	assert( n_zero_ > 1 );
+	{	assert( num_zero_ > 1 );
 		double pi      = 4. * std::atan(1.); 
 		double xlow    = 0.;
-		double xup     = (n_zero_ - 1) * pi;
+		double xup     = (num_zero_ - 1) * pi;
 		double eps     = 100. * CppAD::epsilon<double>();
 		size_t max_itr = 20;
 	
-		newton_method(
+		multi_newton(
 			xout        ,
 			fun         ,
-			n_sub_      ,
+			num_sub_      ,
 			xlow        ,
 			xup         ,
 			eps         ,
@@ -236,12 +243,12 @@ namespace { // begin empty namespace
 	}
 } // end empty namespace
 
-bool newton_example(
-	size_t& rate_out    ,
-	size_t  num_threads ,
-	size_t  n_zero      ,
-	size_t  n_sub       , 
-	size_t  n_sum       ,
+bool multi_newton_time(
+	size_t& rate_out      ,
+	size_t  num_threads   ,
+	size_t  num_zero      ,
+	size_t  num_sub       , 
+	size_t  num_sum       ,
 	bool    use_ad
 ) 
 {	bool ok = true;
@@ -249,15 +256,16 @@ bool newton_example(
 	using CppAD::thread_alloc;
 
 	// Set local namespace environment variables
-	n_zero_     = n_zero;
-	n_sub_      = n_sub;
-	n_sum_      = n_sum;
+	num_zero_     = num_zero;
+	num_sub_      = num_sub;
+	num_sum_      = num_sum;
 	use_ad_     = use_ad;
 	use_openmp_ = num_threads > 0;
 
 	// expect number of threads to already be set up
 	if( use_openmp_ )
 		ok &= num_threads == CppAD::thread_alloc::num_threads();
+	else	ok &= 1           == CppAD::thread_alloc::num_threads();
 
 	// minimum time for test (repeat until this much time)
 	double time_min = 1.;
@@ -279,13 +287,12 @@ bool newton_example(
 	test_once(xout, no_size);
 	double eps = 100. * CppAD::epsilon<double>();
 	double pi  = 4. * std::atan(1.);
-	ok        &= (xout.size() == n_zero);
+	ok        &= (xout.size() == num_zero);
 	size_t i   = 0;
-	for(i = 0; i < n_zero; i++)
+	for(i = 0; i < num_zero; i++)
 		ok &= std::fabs( xout[i] - pi * i) <= 2 * eps;
 
 	// return correctness check result
 	return  ok;
 }
-
 // END PROGRAM
