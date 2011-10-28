@@ -36,13 +36,15 @@ openmp_SOURCES   = \
 	../arc_tan.hpp \
 	../multi_newton_time.cpp \
 	../multi_newton_time.hpp \
+	../multi_newton_work.cpp \
+	../multi_newton_work.hpp \
 	../sum_i_inv_time.cpp \
 	../sum_i_inv_time.hpp \
 	../sum_i_inv_work.cpp \
 	../sum_i_inv_work.hpp \
 \
 	a11c.cpp \
-	multi_newton.hpp  \
+	multi_newton.cpp \
 	setup_ad.cpp \
 	setup_ad.hpp \
 	simple_ad.cpp \

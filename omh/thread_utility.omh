@@ -22,6 +22,7 @@ $index example, multi_thread utility$$
 $childtable%
 	multi_thread/arc_tan.cpp%
 	multi_thread/multi_newton_time.cpp%
+	multi_thread/multi_newton_work.cpp%
 	multi_thread/sum_i_inv_time.cpp%
 	multi_thread/sum_i_inv_work.cpp
 %$$

@@ -133,7 +133,7 @@ derivatives will be computed using a hand coded routine.
 $head multi_newton$$
 The subroutine $code multi_newton$$ is multi-threading system dependent.
 A different version of this routine is implemented for
-$cref/openmp/openmp_multi_newton.hpp/$$.
+$cref/openmp/openmp_multi_newton.cpp/$$.
 
 $head Source$$
 $code
@@ -146,18 +146,32 @@ $end
 # include <cppad/cppad.hpp>
 # include <cmath>
 # include <cstring>
-# include "openmp/multi_newton.hpp"
 # include <omp.h>
+
+// required interface implemented by <system>/sum_i_inv.cpp where <system> is 
+// openmp, pthread, or bthread.
+extern bool multi_newton(
+	CppAD::vector<double> &xout                , 
+	void fun(double x, double& f, double& df)  , 
+	size_t num_sub                             , 
+	double xlow                                , 
+	double xup                                 , 
+	double epsilon                             , 
+	size_t max_itr                             ,
+	size_t num_threads
+);
 
 
 namespace { // empty namespace 
 
 	// values correspond to arguments in previous call to multi_newton_time
-	bool   use_openmp_; // use CppAD to compute derivatives of f(x)
+	size_t num_threads_;// value passed to multi_newton_time 
 	size_t num_zero_;   // number of zeros of f(x) in the total interval
 	size_t num_sub_;    // number of sub-intervals to split calculation into
 	size_t num_sum_;    // larger values make f(x) take longer to calculate
-	bool   use_ad_;     // use CppAD to compute derivatives of f(x)
+
+	// either fun_ad or fun_no depending on value of use_ad
+	void (*fun_)(double x, double& f, double& df) = 0;
 
 	// A version of the sine function that can be made as slow as we like
 	template <class Float>
@@ -200,36 +214,39 @@ namespace { // empty namespace
 	} 
 
 	// evaulate the function and its derivative
-	void fun(double x, double& f, double& df) 
-	{	if( use_ad_ )
-			fun_ad(x, f, df);
-		else
-		{	f  = f_eval(x);
-			df = df_direct(x);
-		}
+	void fun_no(double x, double& f, double& df) 
+	{	f  = f_eval(x);
+		df = df_direct(x);
 		return;
 	}
 
 
 	// Run computation of all the zeros once
 	void test_once(CppAD::vector<double> &xout, size_t no_size)
-	{	assert( num_zero_ > 1 );
+	{	if(  num_zero_ == 0 )
+		{	std::cerr << "multi_newton_time: num_zero == 0" << std::endl;
+			exit(1);
+		}
 		double pi      = 4. * std::atan(1.); 
 		double xlow    = 0.;
 		double xup     = (num_zero_ - 1) * pi;
 		double eps     = 100. * CppAD::epsilon<double>();
 		size_t max_itr = 20;
 	
-		multi_newton(
+		bool ok = multi_newton(
 			xout        ,
-			fun         ,
+			fun_        ,
 			num_sub_      ,
 			xlow        ,
 			xup         ,
 			eps         ,
 			max_itr     ,
-			use_openmp_ 
+			num_threads_ 
 		);
+		if( ! ok )
+		{	std::cerr << "multi_newton: error" << std::endl;
+			exit(1);
+		}
 		return;
 	}
 
@@ -256,14 +273,16 @@ bool multi_newton_time(
 	using CppAD::thread_alloc;
 
 	// Set local namespace environment variables
+	num_threads_  = num_threads;
 	num_zero_     = num_zero;
 	num_sub_      = num_sub;
 	num_sum_      = num_sum;
-	use_ad_     = use_ad;
-	use_openmp_ = num_threads > 0;
+	if( use_ad )
+		fun_ = fun_ad;
+	else	fun_ = fun_no;
 
 	// expect number of threads to already be set up
-	if( use_openmp_ )
+	if( num_threads > 0 )
 		ok &= num_threads == CppAD::thread_alloc::num_threads();
 	else	ok &= 1           == CppAD::thread_alloc::num_threads();
 

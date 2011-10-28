@@ -1,7 +1,4 @@
 /* $Id$ */
-# ifndef CPPAD_NEWTON_METHOD_INCLUDED
-# define CPPAD_NEWTON_METHOD_INCLUDED
-
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-11 Bradley M. Bell
 
@@ -14,7 +11,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
 /*
-$begin openmp_multi_newton.hpp$$
+$begin openmp_multi_newton.cpp$$
 $spell
 	num
 	openmp
@@ -36,10 +33,9 @@ $index newton, multi_thread OpenMP$$
 $section An OpenMP Multi-Threaded Newton's Method$$
 
 $head Syntax$$
-$codei%multi_newton(%xout%, 
-	%fun%, %num_sub%, %xlow%, %xup%, %epsilon%, %max_itr%, %use_openmp%
+$icode%ok% = %multi_newton(%xout%, 
+	%fun%, %num_sub%, %xlow%, %xup%, %epsilon%, %max_itr%, %num_threads%
 )%$$
-
 
 $head Purpose$$
 Determine the argument values $latex x \in [a, b]$$ (where $latex a < b$$)
@@ -61,11 +57,17 @@ at the center of each of the intervals $latex I_i$$ for
 $latex i = 0 , \ldots , n-1$$
 and at most one zero is found for each interval.
 
+$head ok$$
+The return value $icode ok$$ has prototype
+$codei%
+	bool %ok%
+%$$
+If an error occurs, it is false, otherwise it is true.
 
 $head xout$$
 The argument $icode xout$$ has the prototype
 $codei%
-	CppAD::vector<double> &%xout%
+	CppAD::vector<double>& %xout%
 %$$
 The input size and value of the elements of $icode xout$$ do not matter.
 Upon return from $code openmp_multi_newton$$,
@@ -81,7 +83,7 @@ $latex (b - a) / n$$.
 $head fun$$
 The argument $icode fun$$ has prototype
 $codei%
-	%Fun% &%fun%
+	void %fun% (double %x%, double& %f%, double& %df%)
 %$$
 This argument must evaluate the function $latex f(x)$$,
 and its derivative $latex f^{(1)} (x)$$, 
@@ -104,7 +106,7 @@ $codei%
 	size_t %num_sub%
 %$$
 It specifies the number of sub-intervals; i.e., $latex n$$ 
-in the $cref/method/openmp_multi_newton.hpp/Method/$$ above.
+in the $cref/method/openmp_multi_newton.cpp/Method/$$ above.
 
 $head xlow$$
 The argument $icode xlow$$ has prototype
@@ -112,7 +114,7 @@ $codei%
 	double %xlow%
 %$$
 It specifies the lower limit for the entire search; i.e., $latex a$$
-in the $cref/method/openmp_multi_newton.hpp/Method/$$ above.
+in the $cref/method/openmp_multi_newton.cpp/Method/$$ above.
 
 $head xup$$
 The argument $icode xup$$ has prototype
@@ -120,7 +122,7 @@ $codei%
 	double %xup%
 %$$
 It specifies the upper limit for the entire search; i.e., $latex b$$
-in the $cref/method/openmp_multi_newton.hpp/Method/$$ above.
+in the $cref/method/openmp_multi_newton.cpp/Method/$$ above.
 
 $head epsilon$$
 The argument $icode epsilon$$ has prototype
@@ -138,154 +140,63 @@ $codei%
 It specifies the maximum number of iterations of Newton's method to try
 before giving up on convergence.
 
-$head use_openmp$$
-The argument $icode use_openmp$$ has prototype
+$head num_threads$$
+This argument has prototype
 $codei%
-	bool %use_openmp%
+	size_t %num_threads%
 %$$
-If it is true, OpenMP is used for the calculations,
-(and the number of threads is not changed).
-Otherwise, the calculation is done without multi-threading.
-
+It specifies the number of OpenMP threads that are available for this test.
+If it is zero, the test is run without the OpenMP environment.
 
 $head Source$$
 $code
-$verbatim%multi_thread/openmp/multi_newton.hpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
+$verbatim%multi_thread/openmp/multi_newton.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
 $$
 $end
 ---------------------------------------------------------------------------
 */
 // BEGIN PROGRAM
 # include <cppad/cppad.hpp>
-# include <cassert>
 # include <omp.h>
 
-namespace { // BEGIN CppAD namespace
+// special utilities for the multi_newton problem
+# include "../multi_newton_work.hpp"
 
-template <class Fun>
-void one_newton(Fun& fun, double &fcur, double &xcur,
-	double xlow, double xin, double xup, double epsilon, size_t max_itr)
-{	using CppAD::AD;
+bool multi_newton(
+	CppAD::vector<double> &xout                , 
+	void fun(double x, double& f, double& df)  , 
+	size_t num_sub                             , 
+	double xlow                                , 
+	double xup                                 , 
+	double epsilon                             , 
+	size_t max_itr                             ,
+	size_t num_threads                         )
+{	
+	bool ok = true;
+	using CppAD::AD;
 	using CppAD::vector;
 	using CppAD::abs;
 
-	size_t itr;
-	xcur = xin;
-	double dfcur = 0.;
-	for(itr = 0; itr < max_itr; itr++)
-	{	fun(xcur, fcur, dfcur);
-		// check end of iterations
-		if( abs(fcur) <= epsilon )
-			return;
-		if( (xcur == xlow) & (fcur * dfcur > 0.) )
-			return; 
-		if( (xcur == xup)  & (fcur * dfcur < 0.) )
-			return; 
-		if( dfcur == 0. )
-			return;
-		// next Newton iterate
-		xcur = xcur - fcur / dfcur;
-		// keep in bounds
-		xcur = std::max(xcur, xlow);
-		xcur = std::min(xcur, xup);
-	}
-	return;
-}
+	// setup the work for num_threads threads
+	ok &= multi_newton_setup(
+		fun, num_sub, xlow, xup, epsilon, max_itr, num_threads
+	);
 
-template <class Fun>
-void multi_newton(
-	CppAD::vector<double> &xout , 
-	Fun &fun                    , 
-	size_t num_sub                , 
-	double xlow                 , 
-	double xup                  , 
-	double epsilon              , 
-	size_t max_itr              ,
-	bool   use_openmp           )
-{	using CppAD::AD;
-	using CppAD::vector;
-	using CppAD::abs;
-
-	// check argument values
-	assert( xlow < xup );
-	assert( num_sub > 0 );
-
-	// OpenMP uses integers in place of size_t
-	int i, n = int(num_sub);
-
-	// set up grid
-	vector<double> grid(num_sub + 1);
-	vector<double> fcur(n), xcur(n), xmid(n);
-	double dx = (xup - xlow) / double(n);
-	for(i = 0; i < n; i++)
-	{	grid[i] = xlow + i * dx;
-		xmid[i] = xlow + (i + .5) * dx;
-	}
-	grid[n] = xup;
-
-	if( use_openmp )
-	{
+	// now do the work for each thread
+	int thread_num;
+	if( num_threads > 0 )
+	{	int number_threads = int(num_threads);
 # pragma omp parallel for 
-		for(i = 0; i < n; i++) 
-		{	one_newton(
-				fun       , 
-				fcur[i]   ,
-				xcur[i]   ,
-				grid[i]   , 
-				xmid[i]   , 
-				grid[i+1] , 
-				epsilon   , 
-				max_itr
-			);
-		}
-// end omp parallel for 
- 	}
- 	else
-	{
-		for(i = 0; i < n; i++) 
-		{	one_newton(
-				fun       , 
-				fcur[i]   ,
-				xcur[i]   ,
-				grid[i]   , 
-				xmid[i]   , 
-				grid[i+1] , 
-				epsilon   , 
-				max_itr
-			);
-		}
+		for(thread_num = 0; thread_num < number_threads; thread_num++)
+			multi_newton_worker();
+// end omp parallel for
 	}
-	// remove duplicates and points that are not solutions
-	double xlast  = xlow;
-	size_t ilast  = 0;
-	size_t num_zero = 0;
-	for(i = 0; i < n; i++)
-	{	if( abs( fcur[i] ) <= epsilon )
-		{	if( num_zero == 0 )
-			{	xcur[num_zero++] = xlast = xcur[i];
-				ilast = i;
-			}
-			else if( fabs( xcur[i] - xlast ) > dx ) 
-			{	xcur[num_zero++] = xlast = xcur[i];
-				ilast = i;
-			}
-			else if( fabs( fcur[i] ) < fabs( fcur[ilast] ) )
-			{	xcur[num_zero - 1] = xlast = xcur[i]; 
-				ilast = i;
-			}
-		}
-	}
+	else	multi_newton_worker();
 
-	// resize output vector and set its values
-	xout.resize(num_zero);
-	for(i = 0; size_t(i) < num_zero; i++)
-		xout[i] = xcur[i];
+	// now combine the result for all the threads
+	ok &= multi_newton_combine(xout);
 
-	return;
+	return ok;
 }
-
-} // END CppAD namespace
-
 // END PROGRAM
 
-# endif

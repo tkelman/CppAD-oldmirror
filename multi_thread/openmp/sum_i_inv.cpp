@@ -90,7 +90,7 @@ bool sum_i_inv(double& sum, size_t num_sum, size_t num_threads)
 {	// sum = 1/num_sum + 1/(num_sum-1) + ... + 1
 	bool ok = true;
 
-	// setup the work for num_threads_ threads
+	// setup the work for num_threads threads
 	ok &= sum_i_inv_setup(num_sum, num_threads);
 
 	// now do the work for each thread
