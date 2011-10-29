@@ -91,11 +91,13 @@ $code openmp$$, $code bthread$$, and $code pthread$$,
 move $codei%example/%thread_type%_ad.cpp%$$ 
 to   $codei%multi_thread/%thread_type%/simple_ad.cpp%$$. 
 $lnext
-Make $cref arc_tan.cpp$$ and $cref openmp_setup_ad.cpp$$
-utilities that can be used by multiple multi-threading tests.
+Make $cref arc_tan.cpp$$ 
+utility that can be used by multiple multi-threading tests.
 $lnext
-Move pthread management to $cref pthread_team.cpp$$ so it can
-be used by multiple examples.
+Create $cref thread_team$$ specifications,
+move pthread management to $cref pthread_team.cpp$$, and
+move OpenMP management to $cref openmp_team.cpp$$,
+so same code can be used by multiple threading systems.
 $lnext
 The non-AD multi-threading speed test $code sum_i_inv$$
 was converted so that the common code could be by all multi-threading systems;

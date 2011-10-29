@@ -14,17 +14,19 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 $begin openmp_sum_i_inv.cpp$$
 $spell
 	inv
+	openmp
 $$
-$index OpenMP, sum_i_inv$$
-$index sum_i_inv, OpenMP$$
+$index openmp, sum_i_inv$$
+$index sum_i_inv, openmp$$
 
 
-$section OpenMP Implementation of Multi-Threaded Summation of 1/i$$
+$section OpenMP Implementation of Summation of 1/i$$
 
 See $cref sum_i_inv$$ for this routines specifications.
 See $cref sum_i_inv_work.cpp$$ for the specifications of
 $code sum_i_inv_setup$$, $code sum_i_inv_worker$$, 
 and $code sum_i_inv_combine$$.
+
 
 $head Source$$
 $code
@@ -34,9 +36,8 @@ $$
 $end
 */
 // BEGIN PROGRAM
-
-# include <omp.h>
-
+// general purpose multi-threading interface
+# include "../thread_team.hpp"
 // special utilities for the sum_i_inv problem
 # include "../sum_i_inv_work.hpp"
 
@@ -44,18 +45,12 @@ bool sum_i_inv(double& sum, size_t num_sum, size_t num_threads)
 {	// sum = 1/num_sum + 1/(num_sum-1) + ... + 1
 	bool ok = true;
 
-	// setup the work for num_threads threads
+	// setup the work for num_threads_ threads
 	ok &= sum_i_inv_setup(num_sum, num_threads);
 
 	// now do the work for each thread
-	int thread_num;
 	if( num_threads > 0 )
-	{	int number_threads = int(num_threads);
-# pragma omp parallel for 
-		for(thread_num = 0; thread_num < number_threads; thread_num++)
-			sum_i_inv_worker();
-// end omp parallel for
-	}
+		work_team( sum_i_inv_worker );
 	else	sum_i_inv_worker();
 
 	// now combine the result for all the threads

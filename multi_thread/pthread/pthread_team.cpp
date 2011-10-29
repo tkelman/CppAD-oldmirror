@@ -12,6 +12,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /* 
 $begin pthread_team.cpp$$
 $spell
+	Cygwin
 	pthread
 $$
 
@@ -35,7 +36,7 @@ and a memory leaks result.
 Set the following preprocessor symbol to 1 to demonstrate this bug:
 $codep */
 # define DEMONSTRATE_BUG_IN_CYGWIN 0
-/*
+/* $$
 $code
 $verbatim%multi_thread/pthread/pthread_team.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
 $$

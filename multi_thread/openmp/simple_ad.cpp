@@ -19,7 +19,7 @@ $spell
 	CppAD
 $$
 
-$section Simple Pthread AD: Example and Test$$
+$section Simple OpenMP AD: Example and Test$$
 
 $index openmp, simple AD$$
 $index AD, simple openmp$$

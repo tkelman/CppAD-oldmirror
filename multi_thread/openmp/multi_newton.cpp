@@ -13,11 +13,12 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin openmp_multi_newton.cpp$$
 $spell
+	openmp
 $$
 
-$index multi_newton, OpenMP$$
-$index OpenMP, multi_newton$$
-$index newton, OpenMP$$
+$index multi_newton, openmp$$
+$index openmp, multi_newton$$
+$index newton, openmp$$
 
 $section OpenMP Implementation of Multi-Threaded Newton's Method$$
 
@@ -25,7 +26,6 @@ See $cref multi_newton$$ for this routines specifications.
 See $cref multi_newton_work.cpp$$ for the specifications of
 $code multi_newton_setup$$, $code multi_newton_worker$$, 
 and $code multi_newton_combine$$.
-
 
 $code
 $verbatim%multi_thread/openmp/multi_newton.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
@@ -35,9 +35,8 @@ $end
 ---------------------------------------------------------------------------
 */
 // BEGIN PROGRAM
-# include <cppad/cppad.hpp>
-# include <omp.h>
-
+// general purpose multi-threading interface 
+# include "../thread_team.hpp"
 // special utilities for the multi_newton problem
 # include "../multi_newton_work.hpp"
 
@@ -62,14 +61,8 @@ bool multi_newton(
 	);
 
 	// now do the work for each thread
-	int thread_num;
 	if( num_threads > 0 )
-	{	int number_threads = int(num_threads);
-# pragma omp parallel for 
-		for(thread_num = 0; thread_num < number_threads; thread_num++)
-			multi_newton_worker();
-// end omp parallel for
-	}
+		work_team( multi_newton_worker );
 	else	multi_newton_worker();
 
 	// now combine the result for all the threads
@@ -78,4 +71,3 @@ bool multi_newton(
 	return ok;
 }
 // END PROGRAM
-
