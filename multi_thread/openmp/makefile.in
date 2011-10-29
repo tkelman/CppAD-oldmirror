@@ -44,7 +44,7 @@ CONFIG_CLEAN_VPATH_FILES =
 am_openmp_OBJECTS = openmp.$(OBJEXT) arc_tan.$(OBJEXT) \
 	multi_newton_time.$(OBJEXT) multi_newton_work.$(OBJEXT) \
 	sum_i_inv_time.$(OBJEXT) sum_i_inv_work.$(OBJEXT) \
-	a11c.$(OBJEXT) multi_newton.$(OBJEXT) setup_ad.$(OBJEXT) \
+	setup_ad.$(OBJEXT) a11c.$(OBJEXT) multi_newton.$(OBJEXT) \
 	simple_ad.$(OBJEXT) sum_i_inv.$(OBJEXT)
 openmp_OBJECTS = $(am_openmp_OBJECTS)
 openmp_LDADD = $(LDADD)
@@ -218,21 +218,15 @@ AM_LDFLAGS =
 openmp_SOURCES = \
 	openmp.cpp \
 \
-	../arc_tan.cpp \
-	../arc_tan.hpp \
-	../multi_newton_time.cpp \
-	../multi_newton_time.hpp \
-	../multi_newton_work.cpp \
-	../multi_newton_work.hpp \
-	../sum_i_inv_time.cpp \
-	../sum_i_inv_time.hpp \
-	../sum_i_inv_work.cpp \
-	../sum_i_inv_work.hpp \
+	../arc_tan.cpp             ../arc_tan.hpp \
+	../multi_newton_time.cpp   ../multi_newton_time.hpp \
+	../multi_newton_work.cpp   ../multi_newton_work.hpp \
+	../sum_i_inv_time.cpp      ../sum_i_inv_time.hpp \
+	../sum_i_inv_work.cpp      ../sum_i_inv_work.hpp \
 \
+	setup_ad.cpp                setup_ad.hpp \
 	a11c.cpp \
 	multi_newton.cpp \
-	setup_ad.cpp \
-	setup_ad.hpp \
 	simple_ad.cpp \
 	sum_i_inv.cpp
 

@@ -12,6 +12,8 @@ A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
+# include <cstddef> // for size_t
+
 extern bool start_team(size_t num_threads);
 extern bool work_team(void worker(void));
 extern bool stop_team(void);

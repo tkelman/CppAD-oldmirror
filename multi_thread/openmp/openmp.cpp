@@ -121,7 +121,6 @@ $end
 */
 // BEGIN PROGRAM
 
-# include <omp.h>
 # include <cppad/cppad.hpp>
 # include <cmath>
 # include <cstring>
@@ -268,7 +267,8 @@ int main(int argc, char *argv[])
 		}
 
 		// set back to one thread and fee all avaialable memory
-		setup_ad(1);
+		if( num_threads > 0 )
+			setup_ad(1);
 		size_t thread;
 		for(thread = 0; thread < num_threads; thread++)
 		{	thread_alloc::free_available(thread);

@@ -32,21 +32,15 @@ AM_LDFLAGS        =
 openmp_SOURCES   = \
 	openmp.cpp \
 \
-	../arc_tan.cpp \
-	../arc_tan.hpp \
-	../multi_newton_time.cpp \
-	../multi_newton_time.hpp \
-	../multi_newton_work.cpp \
-	../multi_newton_work.hpp \
-	../sum_i_inv_time.cpp \
-	../sum_i_inv_time.hpp \
-	../sum_i_inv_work.cpp \
-	../sum_i_inv_work.hpp \
+	../arc_tan.cpp             ../arc_tan.hpp \
+	../multi_newton_time.cpp   ../multi_newton_time.hpp \
+	../multi_newton_work.cpp   ../multi_newton_work.hpp \
+	../sum_i_inv_time.cpp      ../sum_i_inv_time.hpp \
+	../sum_i_inv_work.cpp      ../sum_i_inv_work.hpp \
 \
+	setup_ad.cpp                setup_ad.hpp \
 	a11c.cpp \
 	multi_newton.cpp \
-	setup_ad.cpp \
-	setup_ad.hpp \
 	simple_ad.cpp \
 	sum_i_inv.cpp
 	

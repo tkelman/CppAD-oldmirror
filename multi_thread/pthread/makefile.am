@@ -17,30 +17,29 @@ DEFS          =
 check_PROGRAMS    = pthread 
 #
 if CppAD_MS_COMPILER
-# AM_CXXFLAGS     = -EHsc -g $(CXX_FLAGS) $(BTHREAD_FLAGS)
-AM_CXXFLAGS       = -EHsc -DNDEBUG -O2 $(CXX_FLAGS) $(BTHREAD_FLAGS)
+# AM_CXXFLAGS     = -EHsc -g $(CXX_FLAGS) 
+AM_CXXFLAGS       = -EHsc -DNDEBUG -O2 $(CXX_FLAGS) 
 else
-# AM_CXXFLAGS     = -g $(CXX_FLAGS) $(BTHREAD_FLAGS)
-AM_CXXFLAGS       = -DNDEBUG -O2 $(CXX_FLAGS) $(BTHREAD_FLAGS)
+# AM_CXXFLAGS     = -g $(CXX_FLAGS) 
+AM_CXXFLAGS       = -DNDEBUG -O2 $(CXX_FLAGS) 
 endif
 #
 AM_CPPFLAGS       = -I. -I$(top_srcdir) 
 #
-AM_LDFLAGS        = $(BTHREAD_LIB) $(PTHREAD_LIB)
+AM_LDFLAGS        = $(PTHREAD_LIB)
 #
 pthread_SOURCES   = \
 	pthread.cpp \
 \
-	../arc_tan.cpp \
-	../arc_tan.hpp \
-	../sum_i_inv_time.cpp \
-	../sum_i_inv_time.hpp \
-	../sum_i_inv_work.cpp \
-	../sum_i_inv_work.hpp \
+	../arc_tan.cpp           ../arc_tan.hpp \
+	../multi_newton_time.cpp ../multi_newton_time.hpp \
+	../multi_newton_work.cpp ../multi_newton_work.hpp \
+	../sum_i_inv_time.cpp    ../sum_i_inv_time.hpp \
+	../sum_i_inv_work.cpp    ../sum_i_inv_work.hpp \
 \
+	pthread_team.cpp         pthread_team.hpp \
 	a11c.cpp \
-	pthread_team.cpp \
-	pthread_team.hpp \
+	multi_newton.cpp \
 	simple_ad.cpp  \
 	sum_i_inv.cpp
 	
@@ -50,6 +49,9 @@ test.sh: pthread$(EXEEXT)
 	echo "./pthread simple_ad" >> test.sh
 	echo "#              max_threads mega_sum" >> test.sh
 	echo "./pthread sum_i_inv       2        1" >> test.sh 
+	echo "#"                                   >> test.sh
+	echo "#           max_threads num_zero num_sub num_sum use_ad" >> test.sh
+	echo "./pthread multi_newton 2       20      30     500   true" >> test.sh 
 	chmod +x test.sh
 
 test:: test.sh

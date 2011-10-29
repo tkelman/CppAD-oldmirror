@@ -36,8 +36,6 @@ $$
 $end
 */
 // BEGIN PROGRAM
-
-# include "../sum_i_inv_work.hpp"
 # include "pthread_team.hpp"
 
 // special utilities for the sum_i_inv problem

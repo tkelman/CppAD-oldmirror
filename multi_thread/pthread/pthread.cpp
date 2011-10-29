@@ -28,13 +28,16 @@ $index speed, pthread$$
 $index test, pthread$$
 
 
-$section Run pthread Examples and Speed Tests$$
+$section Run Pthread Examples and Speed Tests$$
 
 $head Syntax$$
 $codei%./pthread a11c
 %$$
 $codei%./pthread simple_ad
 %$$
+$codei%./pthread sum_i_inv %max_threads% %mega_sum%
+%$$ 
+$codei%./pthread multi_newton %max_threads% %num_zero% %num_sub% %num_sum% %use_ad%$$ 
 
 $head Running Tests$$
 You can build this program and run the default version of its test
@@ -47,8 +50,13 @@ $$
 $head Purpose$$
 Runs one of the following examples:
 $table
-$rref pthread_a11c.cpp$$
+$rref pthread.cpp$$
 $rref pthread_simple_ad.cpp$$
+$tend
+or one of the following speed tests:
+$table
+$rref sum_i_inv_time.cpp$$
+$rref multi_newton_time.cpp$$ 
 $tend
 
 $head max_threads$$
@@ -58,8 +66,8 @@ The specified test is run with the following number of threads:
 $codei%
 	%num_threads% = 0 , %...% , %max_threads%
 %$$
-The value of zero corresponds to not using the pthread system
-(pthreads are used for all other values).
+The value of zero corresponds to not using pthreads
+(pthreads is used for all other values).
 
 $comment -----------------------------------------------------------------$$
 
@@ -73,11 +81,35 @@ $cref/sum_i_inv_time.cpp/sum_i_inv_time.cpp/mega_sum/$$.
 
 $comment -----------------------------------------------------------------$$
 
+$head multi_newton$$
+The following command line arguments only apply to $code multi_newton$$:
+
+$subhead num_zero$$
+The command line argument $icode num_zero$$ 
+is an integer greater than or equal two and has the same meaning as in
+$cref/multi_newton_time.cpp/multi_newton_time.cpp/num_zero/$$.
+
+$subhead num_sub$$
+The command line argument $icode num_sub$$ 
+is an integer greater than or equal one and has the same meaning as in
+$cref/multi_newton_time.cpp/multi_newton_time.cpp/num_sub/$$.
+
+$subhead num_sum$$
+The command line argument $icode num_sum$$ 
+is an integer greater than or equal one and has the same meaning as in
+$cref/multi_newton_time.cpp/multi_newton_time.cpp/num_sum/$$.
+
+$subhead use_ad$$
+The command line argument $icode use_ad$$ is either 
+$code true$$ or $code false$$ and has the same meaning as in
+$cref/multi_newton_time.cpp/multi_newton_time.cpp/use_ad/$$.
+
 $head Subroutines$$
 $childtable%
 	multi_thread/pthread/a11c.cpp%
 	multi_thread/pthread/simple_ad.cpp%
 	multi_thread/pthread/sum_i_inv.cpp%
+	multi_thread/pthread/multi_newton.cpp%
 	multi_thread/pthread/pthread_team.cpp
 %$$
 
@@ -95,6 +127,7 @@ $end
 # include <cstring>
 # include "pthread_team.hpp"
 # include "../sum_i_inv_time.hpp"
+# include "../multi_newton_time.hpp"
 
 extern bool a11c(void);
 extern bool simple_ad(void);
@@ -123,20 +156,27 @@ int main(int argc, char *argv[])
 	const char *usage = 
 	"usage: ./pthread a11c\n"
 	"       ./pthread simple_ad\n"
-	"       ./pthread sum_i_inv      max_threads mega_sum\n";
+	"       ./pthread sum_i_inv    max_threads mega_sum\n"
+	"       ./pthread multi_newton max_threads num_zero num_sub num_sum use_ad";
 
+	// command line argument values (assign values to avoid compiler warnings)
+	size_t num_zero=0, num_sub=0, num_sum=0;
+	bool use_ad=true;
+
+	ok = false;
 	const char* test_name = "";
 	if( argc > 1 )
-			test_name = *++argv;
-	bool run_a11c      = std::strcmp(test_name, "a11c") == 0;
-	bool run_simple_ad = std::strcmp(test_name, "simple_ad") == 0;
-	bool run_sum_i_inv = std::strcmp(test_name, "sum_i_inv") == 0;
-	ok = false;
+		test_name = *++argv;
+	bool run_a11c         = std::strcmp(test_name, "a11c")         == 0;
+	bool run_simple_ad    = std::strcmp(test_name, "simple_ad")    == 0;
+	bool run_sum_i_inv    = std::strcmp(test_name, "sum_i_inv")    == 0;
+	bool run_multi_newton = std::strcmp(test_name, "multi_newton") == 0;
 	if( run_a11c || run_simple_ad )
 		ok = (argc == 2);
 	else if( run_sum_i_inv )
-		ok = (argc == 4);
-	//
+		ok = (argc == 4);  
+	else if( run_multi_newton )
+		ok = (argc == 7);
 	if( ! ok )
 	{	std::cerr << "test_name = " << test_name << std::endl;	
 		std::cerr << "argc      = " << argc      << std::endl;	
@@ -169,6 +209,36 @@ int main(int argc, char *argv[])
 			"run: mega_sum is less than one"
 		);
 	}
+	else
+	{	ok &= run_multi_newton;
+
+		// num_zero
+		num_zero = arg2size_t( *++argv, 2,
+			"run: num_zero is less than two"
+		);
+
+		// num_sub
+		num_sub = arg2size_t( *++argv, 1,
+			"run: num_sub is less than one"
+		);
+       
+		// num_sum 
+		num_sum = arg2size_t( *++argv, 1,
+			"run: num_sum is less than one"
+		);
+
+		// use_ad
+		++argv;
+		if( std::strcmp(*argv, "true") == 0 )
+			use_ad = true;
+		else if( std::strcmp(*argv, "false") == 0 )
+			use_ad = false;
+		else
+		{	std::cerr << "run: use_ad = '" << *argv;
+			std::cerr << "' is not true or false" << std::endl;
+			exit(1);
+		}
+	}
 
 	// run the test for each number of threads
 	CppAD::vector<size_t> rate_all(max_threads + 1);
@@ -176,7 +246,7 @@ int main(int argc, char *argv[])
 	for(num_threads = 0; num_threads <= max_threads; num_threads++)
 	{	// set the number of threads
 		if( num_threads > 0 )
-			start_team(num_threads);
+			ok &= start_team(num_threads);
 
 		// ammount of memory initialy inuse by thread zero
 		ok &= 0 == thread_alloc::thread_num();
@@ -185,10 +255,21 @@ int main(int argc, char *argv[])
 		// run the requested test
 		if( run_sum_i_inv ) ok &= 
 			sum_i_inv_time(rate_all[num_threads], num_threads, mega_sum);
+		else
+		{	ok &= run_multi_newton;
+			ok &= multi_newton_time(
+				rate_all[num_threads] ,
+				num_threads           ,
+				num_zero                ,
+				num_sub                 ,
+				num_sum                 ,
+				use_ad
+			);
+		}
 
 		// set back to one thread and fee all avaialable memory
 		if( num_threads > 0 )
-			stop_team();
+			ok &= stop_team();
 		size_t thread;
 		for(thread = 0; thread < num_threads; thread++)
 		{	thread_alloc::free_available(thread);
@@ -214,6 +295,7 @@ int main(int argc, char *argv[])
 	{	cout << num_fail << " " << test_name;
 		cout << " tests failed." << std::endl;
 	}
+ 
 	return num_fail;
 }
 
