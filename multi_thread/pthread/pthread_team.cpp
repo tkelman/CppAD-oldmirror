@@ -12,72 +12,17 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /* 
 $begin pthread_team.cpp$$
 $spell
-	hpp
 	pthread
-	pthreads
-	num
-	ta
-	Cpp
 $$
-$section Using AD with a Team of Pthreads$$
+$section Pthread Implementation of a Team of AD Threads$$
 
 $index pthread, AD team$$
 $index AD, pthread team$$
 $index team, AD pthread$$
 
 $head Syntax$$
-$codei%include "pthread_team.hpp"
-%$$
-$icode%ok% = start_team(%num_threads%)
-%$$
-$icode%ok% = work_team(%worker%)
-%$$
-$icode%ok% = stop_team()
-%$$
+See $cref thread_team$$ for this routines specifications.
 
-$head Purpose$$
-These routines start, use, and stop a team of $code pthreads$$.
-In addition, these thread can be used with the type $code AD<double>$$.
-
-$head thread_num$$
-The thread that calls 
-$code start_team$$,
-$code work_team$$, and
-$code stop_team$$, has 
-$icode/thread_num/ta_thread_num/$$ equal to zero.
-
-$head start_team$$
-Execution must be in sequential mode when this routine is called.
-The argument $icode num_threads$$ specifies the number of pthreads
-in this team.
-If $codei%num_threads% > 1%$$,
-the value returned by the $cref/in_parallel/ta_in_parallel/$$ after
-$code start_team$$ will be true (because parallel mode is enabled).
-This will continue until $code stop_team$$ is called.
-(unless $cref/parallel_setup/ta_parallel_setup/$$ is called by
-a routine other than $code stop_team$$ which should not happen).
-
-$head work_team$$
-This routine may be called one or more times
-between the call to $code start_team$$ and $code stop_team$$.
-Although $cref/in_parallel/ta_in_parallel/$$ returns true,
-actual execution between calls to $code team_work$$ is sequential; i.e.,
-there is only one thread.
-Each call to $code team_work$$ runs $icode num_threads$$ versions
-of $icode worker$$ with the corresponding value of
-$icode/thread_num/ta_thread_num/$$ different for each thread.
-
-$head stop_team$$
-Execution must be in sequential mode when this routine is called.
-This routine terminates all the other threads except for
-thread number zero and calls
-$cref/parallel_setup/ta_parallel_setup/$$ to inform CppAD
-that we are back to the single thread execution mode.
-
-$head Example$$
-See $cref pthread_simple_ad.cpp$$.
-
-$head Source$$
 $code
 $verbatim%multi_thread/pthread/pthread_team.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
 $$

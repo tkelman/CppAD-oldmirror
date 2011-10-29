@@ -125,7 +125,7 @@ $end
 # include <cppad/cppad.hpp>
 # include <cmath>
 # include <cstring>
-# include "pthread_team.hpp"
+# include "../thread_team.hpp"
 # include "../sum_i_inv_time.hpp"
 # include "../multi_newton_time.hpp"
 

@@ -36,8 +36,8 @@ $$
 $end
 */
 // BEGIN PROGRAM
-# include "pthread_team.hpp"
-
+// general purpose multi-threading interface
+# include "../thread_team.hpp"
 // special utilities for the sum_i_inv problem
 # include "../sum_i_inv_work.hpp"
 

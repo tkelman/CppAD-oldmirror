@@ -21,8 +21,9 @@ $index example, multi_thread utility$$
 
 $childtable%
 	multi_thread/arc_tan.cpp%
-	omh/multi_newton.omh%
-	omh/sum_i_inv.omh
+	omh/thread_team.omh%
+	omh/sum_i_inv.omh%
+	omh/multi_newton.omh
 %$$
 
 $end

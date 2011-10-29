@@ -1,6 +1,6 @@
 /* $Id$ */
-# ifndef CPPAD_PTHREAD_TEAM_INCLUDED
-# define CPPAD_PTHREAD_TEAM_INCLUDED
+# ifndef CPPAD_THREAD_TEAM_INCLUDED
+# define CPPAD_THREAD_TEAM_INCLUDED
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-11 Bradley M. Bell
 

@@ -63,7 +63,7 @@ $end
 // BEGIN PROGRAM
 # include <pthread.h>
 # include <cppad/cppad.hpp>
-# include "pthread_team.hpp"
+# include "../thread_team.hpp"
 # include "../arc_tan.hpp"
 
 # define NUMBER_THREADS            4

@@ -27,7 +27,6 @@ See $cref multi_newton_work.cpp$$ for the specifications of
 $code multi_newton_setup$$, $code multi_newton_worker$$, 
 and $code multi_newton_combine$$.
 
-
 $code
 $verbatim%multi_thread/pthread/multi_newton.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
 $$
@@ -36,8 +35,8 @@ $end
 ---------------------------------------------------------------------------
 */
 // BEGIN PROGRAM
-# include "pthread_team.hpp"
-
+// general purpose multi-threading interface 
+# include "../thread_team.hpp"
 // special utilities for the multi_newton problem
 # include "../multi_newton_work.hpp"
 

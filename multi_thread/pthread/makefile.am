@@ -37,7 +37,7 @@ pthread_SOURCES   = \
 	../sum_i_inv_time.cpp    ../sum_i_inv_time.hpp \
 	../sum_i_inv_work.cpp    ../sum_i_inv_work.hpp \
 \
-	pthread_team.cpp         pthread_team.hpp \
+	pthread_team.cpp         ../thread_team.hpp \
 	a11c.cpp \
 	multi_newton.cpp \
 	simple_ad.cpp  \

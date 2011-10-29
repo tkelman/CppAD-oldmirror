@@ -193,6 +193,7 @@ $rref print_for_cout.cpp$$
 $rref print_for_string.cpp$$
 $rref pthread.cpp$$
 $rref pthread_a11c.cpp$$
+$rref pthread_multi_newton.cpp$$
 $rref pthread_simple_ad.cpp$$
 $rref pthread_sum_i_inv.cpp$$
 $rref pthread_team.cpp$$
