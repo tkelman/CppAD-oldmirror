@@ -44,7 +44,7 @@ CONFIG_CLEAN_VPATH_FILES =
 am_openmp_OBJECTS = openmp.$(OBJEXT) arc_tan.$(OBJEXT) \
 	multi_newton_time.$(OBJEXT) multi_newton_work.$(OBJEXT) \
 	sum_i_inv_time.$(OBJEXT) sum_i_inv_work.$(OBJEXT) \
-	setup_ad.$(OBJEXT) a11c.$(OBJEXT) multi_newton.$(OBJEXT) \
+	openmp_team.$(OBJEXT) a11c.$(OBJEXT) multi_newton.$(OBJEXT) \
 	simple_ad.$(OBJEXT) sum_i_inv.$(OBJEXT)
 openmp_OBJECTS = $(am_openmp_OBJECTS)
 openmp_LDADD = $(LDADD)
@@ -224,7 +224,7 @@ openmp_SOURCES = \
 	../sum_i_inv_time.cpp      ../sum_i_inv_time.hpp \
 	../sum_i_inv_work.cpp      ../sum_i_inv_work.hpp \
 \
-	setup_ad.cpp                setup_ad.hpp \
+	openmp_team.cpp            ../thread_team.hpp \
 	a11c.cpp \
 	multi_newton.cpp \
 	simple_ad.cpp \
@@ -283,7 +283,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/multi_newton_time.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/multi_newton_work.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/openmp.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/setup_ad.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/openmp_team.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/simple_ad.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sum_i_inv.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sum_i_inv_time.Po@am__quote@

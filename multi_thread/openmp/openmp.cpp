@@ -109,7 +109,7 @@ $childtable%
 	multi_thread/openmp/simple_ad.cpp%
 	multi_thread/openmp/sum_i_inv.cpp%
 	multi_thread/openmp/multi_newton.cpp%
-	multi_thread/openmp/setup_ad.cpp
+	multi_thread/openmp/openmp_team.cpp
 %$$
 
 $head Source$$
@@ -124,7 +124,7 @@ $end
 # include <cppad/cppad.hpp>
 # include <cmath>
 # include <cstring>
-# include "setup_ad.hpp"
+# include "../thread_team.hpp"
 # include "../sum_i_inv_time.hpp"
 # include "../multi_newton_time.hpp"
 
@@ -245,7 +245,7 @@ int main(int argc, char *argv[])
 	for(num_threads = 0; num_threads <= max_threads; num_threads++)
 	{	// set the number of threads
 		if( num_threads > 0 )
-			setup_ad(num_threads);
+			ok &= start_team(num_threads);
 
 		// ammount of memory initialy inuse by thread zero
 		ok &= 0 == thread_alloc::thread_num();
@@ -268,7 +268,7 @@ int main(int argc, char *argv[])
 
 		// set back to one thread and fee all avaialable memory
 		if( num_threads > 0 )
-			setup_ad(1);
+			ok &= stop_team();
 		size_t thread;
 		for(thread = 0; thread < num_threads; thread++)
 		{	thread_alloc::free_available(thread);

@@ -148,12 +148,7 @@ $lend
 
 $head 09-05$$
 Simply and fix some problems with $cref pthread_simple_ad.cpp$$,
-(including avoiding a 
-$cref/
-	pthread_exit Bug in Cygwin/
-	pthread_simple_ad.cpp/
-	pthread_exit Bug in Cygwin
-/$$).
+including avoiding a $cref/Bug in Cygwin/pthread_team.cpp/Bug in Cygwin/$$.
 
 $head 09-02$$
 $list number$$

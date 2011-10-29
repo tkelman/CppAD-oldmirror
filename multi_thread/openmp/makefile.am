@@ -38,7 +38,7 @@ openmp_SOURCES   = \
 	../sum_i_inv_time.cpp      ../sum_i_inv_time.hpp \
 	../sum_i_inv_work.cpp      ../sum_i_inv_work.hpp \
 \
-	setup_ad.cpp                setup_ad.hpp \
+	openmp_team.cpp            ../thread_team.hpp \
 	a11c.cpp \
 	multi_newton.cpp \
 	simple_ad.cpp \

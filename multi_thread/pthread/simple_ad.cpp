@@ -13,7 +13,6 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin pthread_simple_ad.cpp$$
 $spell
-	Cygwin
 	pthread
 	pthreads
 	CppAD
@@ -39,19 +38,6 @@ for different argument values.
 The $cref/atan2/$$ function uses $cref/CondExp/$$ operations
 to avoid the need to re-tape.
 
-$head pthread_exit Bug in Cygwin$$
-$index bug, cygwin pthread_exit$$
-$index cygwin, bug in pthread_exit$$
-$index pthread_exit, bug in cygwin$$ 
-There is a bug in $code pthread_exit$$,
-using cygwin 5.1 and g++ version 4.3.4,
-whereby calling $code pthread_exit$$ is not the same as returning from
-the corresponding routine.
-To be specific, destructors for the vectors are not called
-and a memory leaks result.
-Search for $code pthread_exit$$ in the source code below to
-see how to demonstrate this bug.
-
 $head Source Code$$
 $code
 $verbatim%multi_thread/pthread/simple_ad.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
@@ -61,7 +47,6 @@ $end
 ------------------------------------------------------------------------------
 */
 // BEGIN PROGRAM
-# include <pthread.h>
 # include <cppad/cppad.hpp>
 # include "../thread_team.hpp"
 # include "../arc_tan.hpp"

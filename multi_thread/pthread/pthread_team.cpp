@@ -14,15 +14,28 @@ $begin pthread_team.cpp$$
 $spell
 	pthread
 $$
-$section Pthread Implementation of a Team of AD Threads$$
 
 $index pthread, AD team$$
 $index AD, pthread team$$
 $index team, AD pthread$$
 
-$head Syntax$$
+$section Pthread Implementation of a Team of AD Threads$$
 See $cref thread_team$$ for this routines specifications.
 
+$head Bug in Cygwin$$
+$index bug, cygwin pthread_exit$$
+$index cygwin, bug in pthread_exit$$
+$index pthread_exit, bug in cygwin$$ 
+There is a bug in $code pthread_exit$$,
+using cygwin 5.1 and g++ version 4.3.4,
+whereby calling $code pthread_exit$$ is not the same as returning from
+the corresponding routine.
+To be specific, destructors for the vectors are not called
+and a memory leaks result.
+Set the following preprocessor symbol to 1 to demonstrate this bug:
+$codep */
+# define DEMONSTRATE_BUG_IN_CYGWIN 0
+/*
 $code
 $verbatim%multi_thread/pthread/pthread_team.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
 $$
@@ -35,7 +48,6 @@ $end
 # include <cppad/cppad.hpp>
 
 # define MAX_NUMBER_THREADS        48
-# define DEMONSTRATE_BUG_IN_CYGWIN 0
 
 namespace {
 	// number of threads in the team
@@ -241,8 +253,7 @@ bool start_team(size_t num_threads)
 }
 
 bool work_team(void worker(void))
-{	using CppAD::thread_alloc;
-
+{
 	// Current state is all threads have completed wait_for_work_,
 	// and are at wait_for_job_.
 	// This master thread (thread zero) has not completed wait_for_job_
