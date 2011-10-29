@@ -93,14 +93,21 @@ $end
 # define DEMONSTRATE_BUG_IN_CYGWIN 0
 
 namespace {
+	// number of threads in the team
 	size_t num_threads_ = 1; 
 
 	// type of the job currently being done by each thread
 	enum thread_job_t { init_enum, work_enum, join_enum } thread_job_;
+
 	// barrier used to wait for other threads to finish work
 	pthread_barrier_t wait_for_work_;
-	// barriel use to wat for master thread to set next job
+
+	// barrier used to wait for master thread to set next job
 	pthread_barrier_t wait_for_job_;
+
+	// Are we in sequential mode; i.e., other threads are waiting for
+	// master thread to set up next job ?
+	bool sequential_execution_ = true;
 
 	// structure with information for one thread
 	typedef struct {
@@ -111,6 +118,7 @@ namespace {
 		// true if no error for this thread, false otherwise.
 		bool            ok;
 	} thread_one_t;
+
 	// vector with information for all threads
 	thread_one_t thread_all_[MAX_NUMBER_THREADS];
 
@@ -120,7 +128,7 @@ namespace {
 	// ---------------------------------------------------------------------
 	// in_parallel()
 	bool in_parallel(void)
-	{	return num_threads_ > 1; }
+	{	return ! sequential_execution_; }
 
 	// ---------------------------------------------------------------------
 	// thread_number()
@@ -207,16 +215,19 @@ bool start_team(size_t num_threads)
 		std::cerr << MAX_NUMBER_THREADS << std::endl;
 		exit(1);
 	}
-	// check that we currently do not have multiple threads activated
-	ok = num_threads_ == 1;
+	// check that we currently do not have multiple threads running
+	ok  = num_threads_ == 1;
+	ok &= sequential_execution_;
 
-	// set the information for this thread so thread_number will work
+	// Set the information for this thread so thread_number will work
 	// for call to parallel_setup
 	thread_all_[0].pthread_id = pthread_self();
 	thread_all_[0].thread_num = 0;
 	thread_all_[0].ok         = true;
-	// Now that thread_number() has necessary information, 
-	// call setup for using CppAD::AD<double> in parallel mode
+
+	// Now that thread_number() has necessary information for the case
+	// num_threads_ == 1, and while still in sequential mode,
+	// call setup for using CppAD::AD<double> in parallel mode.
 	thread_alloc::parallel_setup(num_threads, in_parallel, thread_number);
 	CppAD::parallel_ad<double>();
 
@@ -233,9 +244,6 @@ bool start_team(size_t num_threads)
 		&wait_for_job_, no_barrierattr, num_threads
 	); 
 	ok &= (rc == 0);
-
-	// initial job for the threads
-	thread_job_ = init_enum;
 	
 	// structure used to create the threads
 	pthread_t      pthread_id;
@@ -246,6 +254,11 @@ bool start_team(size_t num_threads)
 	ok &= (rc == 0);
 	rc  = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 	ok &= (rc == 0);
+
+	// initial job for the threads
+	thread_job_           = init_enum;
+	if( num_threads > 1 )
+		sequential_execution_ = false;
 
 	// This master thread is already running, we need to create
 	// num_threads - 1 more threads
@@ -273,8 +286,10 @@ bool start_team(size_t num_threads)
 	thread_one_vptr = static_cast<void*> (&(thread_all_[0]));
 	thread_work(thread_one_vptr);
 
-	// Current state is all threads have completed wait_for_work_
-	// Thread zero has not completed wait_for_job_
+	// Current state is all threads have completed wait_for_work_,
+	// and are at wait_for_job_.
+	// This master thread (thread zero) has not completed wait_for_job_
+	sequential_execution_ = true;
 	for(thread_num = 0; thread_num < num_threads; thread_num++)
 		ok &= thread_all_[thread_num].ok;
 	return ok;
@@ -282,18 +297,17 @@ bool start_team(size_t num_threads)
 
 bool work_team(void worker(void))
 {	using CppAD::thread_alloc;
-	bool ok = true;;
 
-	// Current state is all threads have completed wait_for_work_
-	// Thread zero has not completed wait_for_job_
+	// Current state is all threads have completed wait_for_work_,
+	// and are at wait_for_job_.
+	// This master thread (thread zero) has not completed wait_for_job_
+	bool ok = sequential_execution_;
+	ok     &= thread_number() == 0;
 
-	// set global version of work routine
+	// set global version of this work routine
 	worker_ = worker;
 
-	// set the new job that other threads are waiting for
-	thread_job_ = work_enum;
-
-	// reset wait_for_work_
+	// reset wait_for_work_ barrier
 	int rc = pthread_barrier_destroy(&wait_for_work_);
 	ok    &= (rc == 0);
 	pthread_barrierattr_t *no_barrierattr = 0;
@@ -301,6 +315,13 @@ bool work_team(void worker(void))
 		&wait_for_work_, no_barrierattr, num_threads_
 	); 
 	ok &= (rc == 0);
+
+	// set the new job that other threads are waiting for
+	thread_job_ = work_enum;
+
+	// enter parallel exectuion soon as master thread completes wait_for_job_ 
+	if( num_threads_ > 1 )
+		sequential_execution_ = false;
 
 	// wait until all threads have completed wait_for_job_
 	rc  = pthread_barrier_wait(&wait_for_job_);
@@ -318,6 +339,11 @@ bool work_team(void worker(void))
 	void* thread_one_vptr = static_cast<void*> (&(thread_all_[0]));
 	thread_work(thread_one_vptr);
 
+	// Current state is all threads have completed wait_for_work_,
+	// and are at wait_for_job_.
+	// This master thread (thread zero) has not completed wait_for_job_
+	sequential_execution_ = true;
+
 	// Current state is all threads have completed wait_for_work_
 	// Thread zero has not completed wait_for_job_
 	size_t thread_num;
@@ -327,17 +353,22 @@ bool work_team(void worker(void))
 }
 
 bool stop_team(void)
-{	bool ok = true;
-
-	// Current state is all threads have completed wait_for_work_
-	// Thread zero has not completed wait_for_job_
-
-	// set the new job that other threads are waiting for
-	thread_job_ = join_enum;
+{	// Current state is all threads have completed wait_for_work_,
+	// and are at wait_for_job_.
+	// This master thread (thread zero) has not completed wait_for_job_
+	bool ok = sequential_execution_;
+	ok     &= thread_number() == 0;
 
 	// destroy wait_for_work_
 	int rc  = pthread_barrier_destroy(&wait_for_work_);
 	ok     &= (rc == 0);
+
+	// set the new job that other threads are waiting for
+	thread_job_ = join_enum;
+
+	// enter parallel exectuion soon as master thread completes wait_for_job_ 
+	if( num_threads_ > 1 )
+			sequential_execution_ = false;
 
 	// wait until all threads have completed wait_for_job_
 	rc  = pthread_barrier_wait(&wait_for_job_);
@@ -357,11 +388,14 @@ bool stop_team(void)
 		ok &= (rc == 0);
 	}
 
+	// now we are down to just the master thread (thread zero) 
+	sequential_execution_ = true;
+
 	// check ok before changing num_threads_
 	for(thread_num = 0; thread_num < num_threads_; thread_num++)
 		ok &= thread_all_[thread_num].ok;
 
-	// now return the CppAD system to one thread mode
+	// now inform CppAD that there is only one thread
 	num_threads_ = 1;
 	using CppAD::thread_alloc;
 	thread_alloc::parallel_setup(num_threads_, in_parallel, thread_number);

@@ -97,9 +97,19 @@ $lnext
 Move pthread management to $cref pthread_team.cpp$$ so it can
 be used by multiple examples.
 $lnext
-For the non-AD timing test $code sum_i_inv$$,
-extract code that can be the same for different threading systems
-and put it in $cref sum_i_inv_time.cpp$$ and $cref sum_i_inv_work.cpp$$.
+The non-AD multi-threading speed test $code sum_i_inv$$
+was converted so that the common code could be by all multi-threading systems;
+see $cref sum_i_inv_time.cpp$$ and $cref sum_i_inv_work.cpp$$.
+$lnext
+The AD multi-threading speed test $code multi_newton$$
+was converted so that the common code could be by all multi-threading systems;
+see $cref multi_newton_time.cpp$$ and $cref multi_newton_work.cpp$$.
+$lnext
+All of the make files were modified so that the command
+$codep
+	make test
+$$
+would run the tests for the current directory.
 $lend
 
 $head 10-14$$
