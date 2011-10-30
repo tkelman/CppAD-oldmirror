@@ -15,6 +15,7 @@ $spell
 	inv
 	bthread
 	pthread
+	pthreads
 	Std
 	retape
 	cygwin
@@ -76,42 +77,35 @@ The following changes are being done in $code branches/multi_thread$$:
 
 $list number$$
 Move $code openmp$$ to $code multi_thread/openmp$$.
+and create $code multi_thread/bthread$$, $code multi_thread/pthread$$
+with similar tests.
+$lnext
+Put multi-threading common code in $code multi_thread$$ directory
+and threading system specific code in $codei%multi_thread/%threading%$$
+for $icode threading$$ equal to $code openmp$$, $code bthread$$,
+and $code pthread$$.
 $lnext
 Update the README file.
 $lnext
 Remove the $code bug/optimize.sh$$ file (no longer a bug).
 $lnext
-For $icode thread_type$$ equal to 
-$code openmp$$, $code bthread$$, and $code pthread$$,
-move $codei%example/%thread_type%_a11c.cpp%$$ 
-to   $codei%multi_thread/%thread_type%/a11c.cpp%$$. 
-$lnext
-For $icode thread_type$$ equal to 
-$code openmp$$, $code bthread$$, and $code pthread$$,
-combine $codei%example/%thread_type%_ad.cpp%$$ 
-in the single example $cref simple_ad.cpp$$. 
-$lnext
 Make $cref arc_tan.cpp$$ 
 utility that can be used by multiple multi-threading tests.
 $lnext
 Create $cref thread_team$$ specifications,
-move pthread management to $cref pthread_team.cpp$$, and
 move OpenMP management to $cref openmp_team.cpp$$,
-so same code can be used by multiple threading systems.
-$lnext
-The non-AD multi-threading speed test $code sum_i_inv$$
-was converted so that the common code could be by all multi-threading systems;
-see $cref sum_i_inv_time.cpp$$ and $cref sum_i_inv_work.cpp$$.
-$lnext
-The AD multi-threading speed test $code multi_newton$$
-was converted so that the common code could be by all multi-threading systems;
-see $cref multi_newton_time.cpp$$ and $cref multi_newton_work.cpp$$.
+Boost thread management to $cref bthread_team.cpp$$,
+and pthread management to $cref pthread_team.cpp$$.
 $lnext
 All of the make files were modified so that the command
 $codep
 	make test
 $$
 would run the tests for the current directory.
+$lnext
+Extend the multi-threading speed tests
+$cref sum_i_inv$$ and $cref multi_newton$$ so they run
+using Boost threads and pthreads (as well as OpenMP threads).
 $lend
 
 $head 10-14$$
