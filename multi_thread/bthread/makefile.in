@@ -42,7 +42,10 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am_bthread_OBJECTS = bthread.$(OBJEXT) arc_tan.$(OBJEXT) \
-	bthread_team.$(OBJEXT) a11c.$(OBJEXT) simple_ad.$(OBJEXT)
+	multi_newton_time.$(OBJEXT) multi_newton_work.$(OBJEXT) \
+	sum_i_inv_time.$(OBJEXT) sum_i_inv_work.$(OBJEXT) \
+	bthread_team.$(OBJEXT) a11c.$(OBJEXT) multi_newton.$(OBJEXT) \
+	simple_ad.$(OBJEXT) sum_i_inv.$(OBJEXT)
 bthread_OBJECTS = $(am_bthread_OBJECTS)
 bthread_LDADD = $(LDADD)
 DEFAULT_INCLUDES = 
@@ -213,12 +216,17 @@ AM_LDFLAGS = $(BTHREAD_LIB)
 bthread_SOURCES = \
 	bthread.cpp \
 \
-	../arc_tan.cpp \
-	../arc_tan.hpp \
+	../arc_tan.cpp           ../arc_tan.hpp \
+	../multi_newton_time.cpp ../multi_newton_time.hpp \
+	../multi_newton_work.cpp ../multi_newton_work.hpp \
+	../sum_i_inv_time.cpp    ../sum_i_inv_time.hpp \
+	../sum_i_inv_work.cpp    ../sum_i_inv_work.hpp \
 \
-	bthread_team.cpp      ../thread_team.hpp \
+	bthread_team.cpp         ../thread_team.hpp \
 	a11c.cpp \
-	simple_ad.cpp
+	multi_newton.cpp \
+	simple_ad.cpp  \
+	sum_i_inv.cpp
 
 all: all-am
 
@@ -271,7 +279,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/arc_tan.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bthread.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bthread_team.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/multi_newton.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/multi_newton_time.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/multi_newton_work.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/simple_ad.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sum_i_inv.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sum_i_inv_time.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sum_i_inv_work.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -300,6 +314,62 @@ arc_tan.obj: ../arc_tan.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../arc_tan.cpp' object='arc_tan.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o arc_tan.obj `if test -f '../arc_tan.cpp'; then $(CYGPATH_W) '../arc_tan.cpp'; else $(CYGPATH_W) '$(srcdir)/../arc_tan.cpp'; fi`
+
+multi_newton_time.o: ../multi_newton_time.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT multi_newton_time.o -MD -MP -MF $(DEPDIR)/multi_newton_time.Tpo -c -o multi_newton_time.o `test -f '../multi_newton_time.cpp' || echo '$(srcdir)/'`../multi_newton_time.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/multi_newton_time.Tpo $(DEPDIR)/multi_newton_time.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../multi_newton_time.cpp' object='multi_newton_time.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o multi_newton_time.o `test -f '../multi_newton_time.cpp' || echo '$(srcdir)/'`../multi_newton_time.cpp
+
+multi_newton_time.obj: ../multi_newton_time.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT multi_newton_time.obj -MD -MP -MF $(DEPDIR)/multi_newton_time.Tpo -c -o multi_newton_time.obj `if test -f '../multi_newton_time.cpp'; then $(CYGPATH_W) '../multi_newton_time.cpp'; else $(CYGPATH_W) '$(srcdir)/../multi_newton_time.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/multi_newton_time.Tpo $(DEPDIR)/multi_newton_time.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../multi_newton_time.cpp' object='multi_newton_time.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o multi_newton_time.obj `if test -f '../multi_newton_time.cpp'; then $(CYGPATH_W) '../multi_newton_time.cpp'; else $(CYGPATH_W) '$(srcdir)/../multi_newton_time.cpp'; fi`
+
+multi_newton_work.o: ../multi_newton_work.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT multi_newton_work.o -MD -MP -MF $(DEPDIR)/multi_newton_work.Tpo -c -o multi_newton_work.o `test -f '../multi_newton_work.cpp' || echo '$(srcdir)/'`../multi_newton_work.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/multi_newton_work.Tpo $(DEPDIR)/multi_newton_work.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../multi_newton_work.cpp' object='multi_newton_work.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o multi_newton_work.o `test -f '../multi_newton_work.cpp' || echo '$(srcdir)/'`../multi_newton_work.cpp
+
+multi_newton_work.obj: ../multi_newton_work.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT multi_newton_work.obj -MD -MP -MF $(DEPDIR)/multi_newton_work.Tpo -c -o multi_newton_work.obj `if test -f '../multi_newton_work.cpp'; then $(CYGPATH_W) '../multi_newton_work.cpp'; else $(CYGPATH_W) '$(srcdir)/../multi_newton_work.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/multi_newton_work.Tpo $(DEPDIR)/multi_newton_work.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../multi_newton_work.cpp' object='multi_newton_work.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o multi_newton_work.obj `if test -f '../multi_newton_work.cpp'; then $(CYGPATH_W) '../multi_newton_work.cpp'; else $(CYGPATH_W) '$(srcdir)/../multi_newton_work.cpp'; fi`
+
+sum_i_inv_time.o: ../sum_i_inv_time.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT sum_i_inv_time.o -MD -MP -MF $(DEPDIR)/sum_i_inv_time.Tpo -c -o sum_i_inv_time.o `test -f '../sum_i_inv_time.cpp' || echo '$(srcdir)/'`../sum_i_inv_time.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/sum_i_inv_time.Tpo $(DEPDIR)/sum_i_inv_time.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../sum_i_inv_time.cpp' object='sum_i_inv_time.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o sum_i_inv_time.o `test -f '../sum_i_inv_time.cpp' || echo '$(srcdir)/'`../sum_i_inv_time.cpp
+
+sum_i_inv_time.obj: ../sum_i_inv_time.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT sum_i_inv_time.obj -MD -MP -MF $(DEPDIR)/sum_i_inv_time.Tpo -c -o sum_i_inv_time.obj `if test -f '../sum_i_inv_time.cpp'; then $(CYGPATH_W) '../sum_i_inv_time.cpp'; else $(CYGPATH_W) '$(srcdir)/../sum_i_inv_time.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/sum_i_inv_time.Tpo $(DEPDIR)/sum_i_inv_time.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../sum_i_inv_time.cpp' object='sum_i_inv_time.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o sum_i_inv_time.obj `if test -f '../sum_i_inv_time.cpp'; then $(CYGPATH_W) '../sum_i_inv_time.cpp'; else $(CYGPATH_W) '$(srcdir)/../sum_i_inv_time.cpp'; fi`
+
+sum_i_inv_work.o: ../sum_i_inv_work.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT sum_i_inv_work.o -MD -MP -MF $(DEPDIR)/sum_i_inv_work.Tpo -c -o sum_i_inv_work.o `test -f '../sum_i_inv_work.cpp' || echo '$(srcdir)/'`../sum_i_inv_work.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/sum_i_inv_work.Tpo $(DEPDIR)/sum_i_inv_work.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../sum_i_inv_work.cpp' object='sum_i_inv_work.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o sum_i_inv_work.o `test -f '../sum_i_inv_work.cpp' || echo '$(srcdir)/'`../sum_i_inv_work.cpp
+
+sum_i_inv_work.obj: ../sum_i_inv_work.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT sum_i_inv_work.obj -MD -MP -MF $(DEPDIR)/sum_i_inv_work.Tpo -c -o sum_i_inv_work.obj `if test -f '../sum_i_inv_work.cpp'; then $(CYGPATH_W) '../sum_i_inv_work.cpp'; else $(CYGPATH_W) '$(srcdir)/../sum_i_inv_work.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/sum_i_inv_work.Tpo $(DEPDIR)/sum_i_inv_work.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../sum_i_inv_work.cpp' object='sum_i_inv_work.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o sum_i_inv_work.obj `if test -f '../sum_i_inv_work.cpp'; then $(CYGPATH_W) '../sum_i_inv_work.cpp'; else $(CYGPATH_W) '$(srcdir)/../sum_i_inv_work.cpp'; fi`
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
@@ -502,6 +572,11 @@ test.sh: bthread$(EXEEXT)
 	echo "#! /bin/sh -e"      >  test.sh
 	echo "./bthread a11c"      >> test.sh
 	echo "./bthread simple_ad" >> test.sh
+	echo "#              max_threads mega_sum" >> test.sh
+	echo "./bthread sum_i_inv       2        1" >> test.sh 
+	echo "#"                                   >> test.sh
+	echo "#           max_threads num_zero num_sub num_sum use_ad" >> test.sh
+	echo "./bthread multi_newton 2       20      30     500   true" >> test.sh 
 	chmod +x test.sh
 
 test:: test.sh

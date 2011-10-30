@@ -60,7 +60,7 @@ namespace { // Begin empty namespace
 		void a1(int n, float *a, float *b)
 		{	int i;
 			// for some reason this function is missing on some systems
-			// assert( pthread_is_multithreaded_np() > 0 );
+			// assert( bthread_is_multithreaded_np() > 0 );
 			for(i = 1; i < n; i++) 
 				b[i] = (a[i] + a[i-1]) / 2.0;
 			return;

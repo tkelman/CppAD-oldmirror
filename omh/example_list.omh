@@ -92,7 +92,10 @@ $rref BenderQuad.cpp$$
 $rref BoolFun.cpp$$
 $rref bthread.cpp$$
 $rref bthread_a11c.cpp$$
+$rref bthread_multi_newton.cpp$$
 $rref bthread_simple_ad.cpp$$
+$rref bthread_sum_i_inv.cpp$$
+$rref bthread_team.cpp$$
 $rref CheckNumericType.cpp$$
 $rref checkpoint.cpp$$
 $rref CheckSimpleVector.cpp$$
