@@ -13,7 +13,6 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin bthread_simple_ad.cpp$$
 $spell
-	Cygwin
 	bthread
 	bthreads
 	CppAD
@@ -21,14 +20,13 @@ $$
 
 $section Simple Boost Thread AD: Example and Test$$
 
-$index boost, thread simple AD$$
-$index AD, simple boost thread$$
-$index simple, boost thread AD$$
-$index thread, boost simple AD$$
+$index bthread, simple AD$$
+$index AD, simple bthread$$
+$index simple, AD bthread$$
+$index thread, bthread simple AD$$
 
 $head Purpose$$
-This example demonstrates how CppAD can be used with multiple 
-boost threads.
+This example demonstrates how CppAD can be used with multiple Boost threads.
 
 $head Discussion$$
 The function $code arc_tan$$ below
@@ -49,191 +47,89 @@ $end
 ------------------------------------------------------------------------------
 */
 // BEGIN PROGRAM
-# include <boost/thread.hpp>
 # include <cppad/cppad.hpp>
+# include "../thread_team.hpp"
 # include "../arc_tan.hpp"
 
 # define NUMBER_THREADS            4
 
 namespace {
-	// ===================================================================
-	// General purpose code for linking CppAD to boost threads
-	// -------------------------------------------------------------------
-	// alternative name for NUMBER_THREADS
-	size_t number_threads = NUMBER_THREADS; 
-
-	// The master thread switches the value of this variable
-	static bool boost_threads_active = false;
-
-	// Barrrier used to wait for all thread identifiers to be set
-	boost::barrier wait_for_thread_id(number_threads);
-
-	// general purpose vector with information for each thread
+	// structure with information for one thread
 	typedef struct {
-		// boost unique identifier for thread
-		boost::thread::id thread_id;
-		// true if no error for this thread, false otherwise.
-		bool ok;
-	} thread_info_t;
-	thread_info_t thread_vector[NUMBER_THREADS];
-
-	// ---------------------------------------------------------------------
-	// in_parallel()
-	bool in_parallel(void)
-	{	return boost_threads_active; }
-
-	// ---------------------------------------------------------------------
-	// thread_num()
-	size_t thread_num(void)
-	{	using boost::thread;
-
-		// boost unique identifier for this thread
-		thread::id thread_this = boost::this_thread::get_id();
-
-		// convert thread_this to the corresponding thread index
-		size_t index = 0;
-		for(index = 0; index < number_threads; index++)
-		{	// boost unique identifier for this index
-			thread::id thread_compare = thread_vector[index].thread_id;
-
-			// check for a match
-			if( thread_this == thread_compare )
-				return index;
-		}
-		// no match error (thread_this is not in thread_id).
-		assert(false);
-		return number_threads;
-	}
-	// ====================================================================
-	// code for specific problem we are solving
+		// angle for this work (worker input)
+		double          theta;
+		// false if an error occurs, true otherwise (worker output)
+		bool            ok;
+	} work_one_t;
+	// vector with information for all threads
+	work_one_t work_all_[NUMBER_THREADS];
 	// --------------------------------------------------------------------
-	using CppAD::AD;
+	// function that does the work for one thread
+	void worker(void)
+	{	using CppAD::NearEqual;
+		using CppAD::AD;
+		bool ok = true;
+		size_t thread_num = CppAD::thread_alloc::thread_num();
 
-	class worker_t {
-	private:
-		// thread index corresponding to this work
-		size_t index_; 
-		// angle for this work
-		double theta_;
-	public:
-		void setup(size_t index, double theta)
-		{	index_ = index; // index of thread for this worker
-			theta_ = theta; // angle for this thread / worker
-		}
-		// the routine that does the actual work
-		void operator()()
-		{	using CppAD::NearEqual;
+		// CppAD::vector uses the CppAD fast multi-threading allocator
+		CppAD::vector< AD<double> > Theta(1), Z(1);
+		Theta[0] = work_all_[thread_num].theta;
+		Independent(Theta);
+		AD<double> x = cos(Theta[0]);
+		AD<double> y = sin(Theta[0]);
+		Z[0]  = arc_tan( x, y );
+		CppAD::ADFun<double> f(Theta, Z); 
 
-			// initialze check for this work
-			bool* ok = &thread_vector[index_].ok;
-			*ok = true;
+		// Check function value corresponds to the identity 
+		double eps = 10. * CppAD::epsilon<double>();
+		ok        &= NearEqual(Z[0], Theta[0], eps, eps);
 
-			// -------------------------------------------------------------
-			// Setup for this thread
+		// Check derivative value corresponds to the identity.
+		CppAD::vector<double> d_theta(1), d_z(1);
+		d_theta[0] = 1.;
+		d_z        = f.Forward(1, d_theta);
+		ok        &= NearEqual(d_z[0], 1., eps, eps);
 
-			// Set boost unique identifier for this thread 
-			thread_vector[index_].thread_id = boost::this_thread::get_id();
-
-			// Wait for other threads to do the same.
-			wait_for_thread_id.wait();
-			// -------------------------------------------------------------
-			// Work for this thread
-
-			// CppAD::vector uses the CppAD fast multi-threading allocator
-			CppAD::vector< AD<double> > Theta(1), Z(1);
-			Theta[0] = theta_;
-			Independent(Theta);
-			AD<double> x = cos(Theta[0]);
-			AD<double> y = sin(Theta[0]);
-			Z[0]  = arc_tan( x, y );
-			CppAD::ADFun<double> f(Theta, Z); 
-
-			// Check function value corresponds to the identity 
-			// (must get a lock before changing thread_info).
-			double eps = 10. * CppAD::epsilon<double>();
-			*ok       &= NearEqual(Z[0], Theta[0], eps, eps);
-
-			// Check derivative value corresponds to the identity.
-			CppAD::vector<double> d_theta(1), d_z(1);
-			d_theta[0] = 1.;
-			d_z        = f.Forward(1, d_theta);
-			*ok       &= NearEqual(d_z[0], 1., eps, eps);
-
-		}
-	};
+		// pass back ok information for this thread
+		work_all_[thread_num].ok = ok;
+	}
 }
 
-// This test routine is only called by the master thread (index = 0).
+// This test routine is only called by the master thread (thread_num = 0).
 bool simple_ad(void)
-{	bool all_ok = true;
+{	bool ok = true;
 	using CppAD::thread_alloc;
+
+	size_t num_threads = NUMBER_THREADS;
 
 	// Check that no memory is in use or avialable at start
 	// (using thread_alloc in sequential mode)
-	size_t index;
-	for(index = 0; index < number_threads; index++)
-	{	all_ok &= thread_alloc::inuse(index) == 0; 
-		all_ok &= thread_alloc::available(index) == 0; 
+	size_t thread_num;
+	for(thread_num = 0; thread_num < num_threads; thread_num++)
+	{	ok &= thread_alloc::inuse(thread_num) == 0; 
+		ok &= thread_alloc::available(thread_num) == 0; 
 	}
 
-	// initialize set of workers
-	worker_t worker[NUMBER_THREADS];
-	double pi = 4. * atan(1.);
-	for(index = 0; index < number_threads; index++)
-	{	double theta = index * pi / number_threads;
-		worker[index].setup(index, theta);
-
-		// initialize all thread identifiers as correspoinding to master
-		// (that way thread_num() will work for the master).
-		thread_vector[index].thread_id = boost::this_thread::get_id();
-
-		// initialize ok as false, incase work does not get called
-		thread_vector[index].ok = false;
+	// initialize work_all_
+ 	double pi = 4. * atan(1.);
+	for(thread_num = 0; thread_num < num_threads; thread_num++)
+	{	// set to value by worker for this thread
+		work_all_[thread_num].ok           = false;
+		// theta 
+		work_all_[thread_num].theta        = thread_num * pi / num_threads;
 	}
 
-	// Setup for using AD<double> in parallel mode
-	// (note that thread_num will work for the master thread).
-	thread_alloc::parallel_setup(number_threads, in_parallel, thread_num);
-	CppAD::parallel_ad<double>();
+	ok &= start_team(num_threads);
+	ok &= work_team(worker);
+	ok &= stop_team();
 
-	// Now change in_parallel() to return true.
-	boost_threads_active = true;
-
-	// This master thread is already running, we need to create
-	// number_threads - 1 more threads
-	boost::thread* bthread[NUMBER_THREADS];
-	bthread[0]   = static_cast<boost::thread*>(0);
-	for(index = 1; index < number_threads; index++)
-	{	// create this thread
-		bthread[index] = new boost::thread(worker[index]);
-	} 
-
-	// Now, while other threads are working, do work in master thread also
-	worker[0]();
-
-	// now wait for the other threads to finish
-	for(index = 1; index < number_threads; index++)
-	{	bthread[index]->join();
-		delete bthread[index];
-	}
-
-	// Tell thread_alloc that we are in sequential execution mode.
-	boost_threads_active = false;
-
-	// Summarize results.
-	for(index = 0; index < number_threads; index++)
-		all_ok &= thread_vector[index].ok;
 
 	// Check that no memory currently in use, and free avialable memory.
-	for(index = 0; index < number_threads; index++)
-	{	all_ok &= thread_alloc::inuse(index) == 0; 
-		thread_alloc::free_available(index); 
+	for(thread_num = 0; thread_num < num_threads; thread_num++)
+	{	ok &= thread_alloc::inuse(thread_num) == 0; 
+		thread_alloc::free_available(thread_num); 
 	}
 
-	// return memory allocator to single threading mode
-	number_threads = 1;
-	thread_alloc::parallel_setup(number_threads, in_parallel, thread_num);
-
-	return all_ok;
+	return ok;
 }
 // END PROGRAM

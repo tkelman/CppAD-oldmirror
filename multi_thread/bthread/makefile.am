@@ -33,8 +33,10 @@ bthread_SOURCES   = \
 \
 	../arc_tan.cpp \
 	../arc_tan.hpp \
+\
+	bthread_team.cpp      ../thread_team.hpp \
 	a11c.cpp \
-	simple_ad.cpp 
+	simple_ad.cpp
 	
 test.sh: bthread$(EXEEXT) 
 	echo "#! /bin/sh -e"      >  test.sh
