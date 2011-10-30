@@ -324,7 +324,7 @@ bool stop_team(void)
 	// Enter parallel exectuion soon as master thread completes wait_for_job_ 
 	if( num_threads_ > 1 )
 			sequential_execution_ = false;
-	rc  = pthread_barrier_wait(&wait_for_job_);
+	int rc  = pthread_barrier_wait(&wait_for_job_);
 	ok &= (rc == 0 || rc == PTHREAD_BARRIER_SERIAL_THREAD);
 
 	// now wait for the other threads to be destroyed
@@ -341,8 +341,8 @@ bool stop_team(void)
 	sequential_execution_ = true;
 
 	// destroy wait_for_work_
-	int rc  = pthread_barrier_destroy(&wait_for_work_);
-	ok     &= (rc == 0);
+	rc  = pthread_barrier_destroy(&wait_for_work_);
+	ok &= (rc == 0);
 
 	// destroy wait_for_job_
 	rc  = pthread_barrier_destroy(&wait_for_job_);

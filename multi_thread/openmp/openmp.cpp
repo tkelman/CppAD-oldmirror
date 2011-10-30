@@ -50,7 +50,7 @@ $head Purpose$$
 Runs one of the following examples:
 $table
 $rref openmp_a11c.cpp$$
-$rref openmp_simple_ad.cpp$$
+$rref simple_ad.cpp$$
 $tend
 or one of the following speed tests:
 $table
@@ -106,7 +106,6 @@ $cref/multi_newton_time.cpp/multi_newton_time.cpp/use_ad/$$.
 $head Subroutines$$
 $childtable%
 	multi_thread/openmp/a11c.cpp%
-	multi_thread/openmp/simple_ad.cpp%
 	multi_thread/openmp/sum_i_inv.cpp%
 	multi_thread/openmp/multi_newton.cpp%
 	multi_thread/openmp/openmp_team.cpp
@@ -125,11 +124,11 @@ $end
 # include <cmath>
 # include <cstring>
 # include "../thread_team.hpp"
+# include "../simple_ad.hpp"
 # include "../sum_i_inv_time.hpp"
 # include "../multi_newton_time.hpp"
 
 extern bool a11c(void);
-extern bool simple_ad(void);
 
 namespace {
 	size_t arg2size_t(

@@ -74,12 +74,14 @@ thread number zero ($icode%num_threads% - 1%$$ threads).
 $head Example Use$$
 Example use of these specifications can be found in the files:
 $table
-$rref pthread_simple_ad.cpp$$
+$rref simple_ad.cpp$$
 $tend
 
 $head Example Implementation$$
 Example implementations of these specifications can be found in the files:
 $table
+$rref openmp_team.cpp$$
+$rref bthread_team.cpp$$
 $rref pthread_team.cpp$$
 $tend
 

@@ -88,8 +88,8 @@ to   $codei%multi_thread/%thread_type%/a11c.cpp%$$.
 $lnext
 For $icode thread_type$$ equal to 
 $code openmp$$, $code bthread$$, and $code pthread$$,
-move $codei%example/%thread_type%_ad.cpp%$$ 
-to   $codei%multi_thread/%thread_type%/simple_ad.cpp%$$. 
+combine $codei%example/%thread_type%_ad.cpp%$$ 
+in the single example $cref simple_ad.cpp$$. 
 $lnext
 Make $cref arc_tan.cpp$$ 
 utility that can be used by multiple multi-threading tests.
@@ -123,7 +123,7 @@ $list number$$
 The MAC version of the $code pthread$$ library does not include the
 $code pthread_barrier_wait$$ function; i.e., is not compliant with
 the IEEE Std 1003.1, 2004 Edition for $code pthread$$.
-This caused the $cref pthread_simple_ad.cpp$$ to fail to compile on the MAC.
+This caused the $code pthread_simple_ad.cpp$$ to fail to compile on the MAC.
 This has been fixed by not compiling the $code pthread$$ examples
 unless $code pthread_barrier_wait$$ is present.
 $lnext
@@ -139,17 +139,17 @@ $href%
 	http://www.boost.org/doc/libs/1_47_0/doc/html/thread.html%
 	boost multi-threading
 %$$ 
-examples $cref bthread_a11c.cpp$$ and $cref bthread_simple_ad.cpp$$.
+examples $cref bthread_a11c.cpp$$ and $code bthread_simple_ad.cpp$$.
 $lnext
 Improve documentation for
 $cref/thread_num/ta_parallel_setup/thread_num/$$ argument
 to $code parallel_setup$$.
 $lnext
-More simplification of $cref bthread_simple_ad.cpp$$ example.
+More simplification of $code bthread_simple_ad.cpp$$ example.
 $lend
 
 $head 09-05$$
-Simply and fix some problems with $cref pthread_simple_ad.cpp$$,
+Simply and fix some problems with $code pthread_simple_ad.cpp$$,
 including avoiding a $cref/Bug in Cygwin/pthread_team.cpp/Bug in Cygwin/$$.
 
 $head 09-02$$
@@ -172,7 +172,7 @@ This has been fixed and
 $cref/CPPAD_MAX_NUM_THREADS/multi_thread/CPPAD_MAX_NUM_THREADS/$$ 
 has been documented and is now part of the CppAD API.
 $lnext
-The $cref pthread_simple_ad.cpp$$ test failed under cygwin. 
+The $code pthread_simple_ad.cpp$$ test failed under cygwin. 
 This was because the previous test $code openmp_ad.cpp$$ was
 set up calls to OpenMP routines that were still in effect
 when $code pthread/simple_ad$$ ran.
@@ -236,15 +236,15 @@ $lnext
 Implement $cref omp_alloc$$ as links to corresponding $cref thread_alloc$$
 sections.
 $lnext
-Create the $cref pthread_simple_ad.cpp$$ example that does AD using the
+Create the $code pthread_simple_ad.cpp$$ example that does AD using the
 pthread library.
-In addition, fix some problems in $cref openmp_simple_ad.cpp$$
+In addition, fix some problems in $code openmp_simple_ad.cpp$$
 $lnext
 Move $code openmp/example_a11c.cpp$$ to 
 $cref|example/openmp_a11c.cpp|openmp_a11c.cpp|$$.
 $lnext
 Move $code openmp/parallel_ad.cpp$$ to 
-$cref openmp_simple_ad.cpp$$.
+$code openmp_simple_ad.cpp$$.
 $lend
 
 $subhead 08-23$$
@@ -270,7 +270,7 @@ $subhead 08-21$$
 Create the OpenMP and pthread examples
 $cref/openmp_a11c.cpp/$$,
 $cref/pthread_a11c.cpp/$$, and
-$cref openmp_simple_ad.cpp$$.
+$code openmp_simple_ad.cpp$$.
 These OpenMP examples were originally in the $code openmp$$ directory,
 and have been moved, and modified to conform, to the normal example directory.
 

@@ -61,10 +61,7 @@ For a version of this function where the operation sequence does
 not depend on $icode x$$ or $icode y$$; see $cref atan2$$.
 
 $head Example$$
-This function is used by the following examples
-$cref openmp_simple_ad.cpp$$,
-$cref bthread_simple_ad.cpp$$, and
-$cref pthread_simple_ad.cpp$$.
+This function is used by the $cref simple_ad.cpp$$ example.
 
 $head Source Code$$
 $code

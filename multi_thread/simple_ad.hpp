@@ -1,4 +1,6 @@
-$Id$
+/* $Id$ */
+# ifndef CPPAD_SIMPLE_AD_INCLUDED
+# define CPPAD_SIMPLE_AD_INCLUDED
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-11 Bradley M. Bell
 
@@ -10,20 +12,6 @@ A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
-$begin thread_utility$$
+extern bool simple_ad(void);
 
-$section Utilities Used by Multi-Threading Examples$$
-
-$index multi, thread example utility$$
-$index utility, example multi_thread$$
-$index thread, multi example utility$$
-$index example, multi_thread utility$$
-
-$childtable%
-	multi_thread/simple_ad.cpp%
-	omh/thread_team.omh%
-	omh/sum_i_inv.omh%
-	omh/multi_newton.omh
-%$$
-
-$end
+# endif

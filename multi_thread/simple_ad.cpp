@@ -11,22 +11,20 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
 /*
-$begin pthread_simple_ad.cpp$$
+$begin simple_ad.cpp$$
 $spell
-	pthread
-	pthreads
 	CppAD
 $$
 
-$section Simple Pthread AD: Example and Test$$
+$section Simple Multi-Threading AD: Example and Test$$
 
-$index pthread, simple AD$$
-$index AD, simple pthread$$
-$index simple, AD pthread$$
-$index thread, pthread simple AD$$
+$index thread, multiple simple AD$$
+$index AD, simple multi_thread$$
+$index simple, multi_thread AD$$
 
 $head Purpose$$
-This example demonstrates how CppAD can be used with multiple pthreads.
+This example demonstrates how CppAD can be used in a 
+multi-threading environment.
 
 $head Discussion$$
 The function $code arc_tan$$ below
@@ -38,9 +36,26 @@ for different argument values.
 The $cref/atan2/$$ function uses $cref/CondExp/$$ operations
 to avoid the need to re-tape.
 
+$head thread_team$$
+The following three implementations of the $cref thread_team$$ specifications
+are included:
+$table
+$rref openmp_team.cpp$$
+$rref bthread_team.cpp$$
+$rref pthread_team.cpp$$
+$tend
+
+$children%
+	multi_thread/arc_tan.cpp
+%$$
+$head arc_tan$$
+$table
+$rref arc_tan.cpp$$
+$tend
+
 $head Source Code$$
 $code
-$verbatim%multi_thread/pthread/simple_ad.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
+$verbatim%multi_thread/simple_ad.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
 $$
 
 $end
@@ -48,8 +63,8 @@ $end
 */
 // BEGIN PROGRAM
 # include <cppad/cppad.hpp>
-# include "../thread_team.hpp"
-# include "../arc_tan.hpp"
+# include "thread_team.hpp"
+# include "arc_tan.hpp"
 
 # define NUMBER_THREADS            4
 
