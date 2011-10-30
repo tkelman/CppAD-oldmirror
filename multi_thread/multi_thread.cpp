@@ -11,7 +11,8 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
 /*
-$begin pthread.cpp$$
+$begin multi_thread.cpp$$
+$escape $$
 $spell
 	inv
 	mega
@@ -19,70 +20,86 @@ $spell
 	num
 	pthread
 	pthreads
+	openmp
+	bthread
 $$
-$index pthread, example$$
-$index pthread, speed$$
-$index pthread, test$$
-$index example, pthread$$
-$index speed, pthread$$
-$index test, pthread$$
+$index multi_thread, example$$
+$index multi_thread, speed$$
+$index speed, multi_thread$$
+$index example, multi_thread$$
+$index thread, multi example$$
 
 
-$section Run Pthread Examples and Speed Tests$$
+$section Run Multi-Threading Examples and Speed Tests$$
 
 $head Syntax$$
-$codei%./pthread a11c
+$codei%./multi_thread a11c
 %$$
-$codei%./pthread simple_ad
+$codei%./multi_thread simple_ad
 %$$
-$codei%./pthread sum_i_inv %max_threads% %mega_sum%
+$codei%./multi_thread sum_i_inv %max_threads% %mega_sum%
 %$$ 
-$codei%./pthread multi_newton %max_threads% %num_zero% %num_sub% %num_sum% %use_ad%$$ 
+$codei%./multi_thread multi_newton \
+	%max_threads% %num_zero% %num_sub% %num_sum% %use_ad%$$ 
 
 $head Running Tests$$
 You can build this program and run the default version of its test
 parameters by executing the following commands:
 $codep
-	cd pthread
+	cd multi_thread/%threading%
 	make test
 $$
+where $icode threading$$ is $code openmp$$, $code bthread$$, or
+$code pthread$$.
 
 $head Purpose$$
-Runs one of the following examples:
-$table
-$rref pthread.cpp$$
-$rref simple_ad.cpp$$
-$tend
-or one of the following speed tests:
-$table
-$rref sum_i_inv_time.cpp$$
-$rref multi_newton_time.cpp$$ 
-$tend
+Runs the CppAD multi-threading examples and speed tests:
 
-$head max_threads$$
+$head a11c$$
+The examples 
+$cref openmp_a11c.cpp$$,
+$cref bthread_a11c.cpp$$, and
+$cref pthread_a11c.cpp$$
+demonstrate simple multi-threading using
+OpenMP, Boost threads, and pthreads respectively
+(without algorithmic differentiation).
+
+$head simple_ad$$
+The $cref simple_ad.cpp$$ routine
+demonstrates simple multi-threading with algorithmic differentiation. 
+
+$head sum_i_inv$$
+The $cref sum_i_inv_time.cpp$$ routine
+preforms a timing test for a multi-threading 
+example without algorithmic differentiation.
+
+$subhead max_threads$$
 If the argument $icode max_threads$$ is a non-negative integer specifying
-the maximum number of pthreads to use for the test.
+the maximum number of threads to use for the test.
 The specified test is run with the following number of threads:
 $codei%
 	%num_threads% = 0 , %...% , %max_threads%
 %$$
-The value of zero corresponds to not using pthreads
-(pthreads is used for all other values).
-
-$comment -----------------------------------------------------------------$$
-
-$head sum_i_inv$$
-The following command line arguments only apply to $code sum_i_inv$$:
+The value of zero corresponds to not using the multi-threading system.
 
 $subhead mega_sum$$
 The command line argument $icode mega_sum$$ 
 is an integer greater than or equal one and has the same meaning as in
 $cref/sum_i_inv_time.cpp/sum_i_inv_time.cpp/mega_sum/$$.
 
-$comment -----------------------------------------------------------------$$
-
 $head multi_newton$$
-The following command line arguments only apply to $code multi_newton$$:
+The $cref multi_newton_time.cpp$$ routine
+preforms a timing test for a multi-threading 
+example with algorithmic differentiation.
+
+$subhead max_threads$$
+If the argument $icode max_threads$$ is a non-negative integer specifying
+the maximum number of threads to use for the test.
+The specified test is run with the following number of threads:
+$codei%
+	%num_threads% = 0 , %...% , %max_threads%
+%$$
+The value of zero corresponds to not using the multi-threading system.
 
 $subhead num_zero$$
 The command line argument $icode num_zero$$ 
@@ -104,15 +121,26 @@ The command line argument $icode use_ad$$ is either
 $code true$$ or $code false$$ and has the same meaning as in
 $cref/multi_newton_time.cpp/multi_newton_time.cpp/use_ad/$$.
 
-$head Subroutines$$
-$childtable%
+$children%
+	multi_thread/openmp/a11c.cpp%
+	multi_thread/bthread/a11c.cpp%
 	multi_thread/pthread/a11c.cpp%
-	multi_thread/pthread/pthread_team.cpp
+	multi_thread/openmp/openmp_team.cpp%
+	multi_thread/pthread/pthread_team.cpp%
+	multi_thread/bthread/bthread_team.cpp
 %$$
+$head Threading System Specific Routines$$
+The following routines are used to link specific threading
+systems through the common interface $cref thread_team$$:
+$table
+$rref openmp_team.cpp$$
+$rref bthread_team.cpp$$
+$rref pthread_team.cpp$$
+$tend
 
 $head Source$$
 $code
-$verbatim%multi_thread/pthread/pthread.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
+$verbatim%multi_thread/multi_thread.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
 $$
 
 $end
@@ -122,10 +150,10 @@ $end
 # include <cppad/cppad.hpp>
 # include <cmath>
 # include <cstring>
-# include "../thread_team.hpp"
-# include "../simple_ad.hpp"
-# include "../sum_i_inv_time.hpp"
-# include "../multi_newton_time.hpp"
+# include "thread_team.hpp"
+# include "simple_ad.hpp"
+# include "sum_i_inv_time.hpp"
+# include "multi_newton_time.hpp"
 
 extern bool a11c(void);
 
@@ -151,10 +179,10 @@ int main(int argc, char *argv[])
 
 	// commnd line usage message
 	const char *usage = 
-	"usage: ./pthread a11c\n"
-	"       ./pthread simple_ad\n"
-	"       ./pthread sum_i_inv    max_threads mega_sum\n"
-	"       ./pthread multi_newton max_threads num_zero num_sub num_sum use_ad";
+	"./multi_thread a11c\n"
+	"./multi_thread simple_ad\n"
+	"./multi_thread sum_i_inv    max_threads mega_sum\n"
+	"./multi_thread multi_newton max_threads num_zero num_sub num_sum use_ad";
 
 	// command line argument values (assign values to avoid compiler warnings)
 	size_t num_zero=0, num_sub=0, num_sum=0;
