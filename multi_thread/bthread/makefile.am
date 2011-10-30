@@ -36,12 +36,12 @@ bthread_SOURCES   = \
 	../multi_newton_work.cpp ../multi_newton_work.hpp \
 	../simple_ad.cpp         ../simple_ad.hpp \
 	../sum_i_inv_time.cpp    ../sum_i_inv_time.hpp \
+	../sum_i_inv.cpp         ../sum_i_inv.hpp \
 	../sum_i_inv_work.cpp    ../sum_i_inv_work.hpp \
 \
 	bthread_team.cpp         ../thread_team.hpp \
 	a11c.cpp \
-	multi_newton.cpp \
-	sum_i_inv.cpp
+	multi_newton.cpp 
 	
 test.sh: bthread$(EXEEXT) 
 	echo "#! /bin/sh -e"      >  test.sh

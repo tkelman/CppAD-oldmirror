@@ -106,7 +106,6 @@ $cref/multi_newton_time.cpp/multi_newton_time.cpp/use_ad/$$.
 $head Subroutines$$
 $childtable%
 	multi_thread/openmp/a11c.cpp%
-	multi_thread/openmp/sum_i_inv.cpp%
 	multi_thread/openmp/multi_newton.cpp%
 	multi_thread/openmp/openmp_team.cpp
 %$$

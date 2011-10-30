@@ -1,4 +1,6 @@
 /* $Id$ */
+# ifndef CPPAD_SUM_I_INV_INCLUDED
+# define CPPAD_SUM_I_INV_INCLUDED
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-11 Bradley M. Bell
 
@@ -10,22 +12,6 @@ A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
-$begin sum_i_inv$$
-$spell
-	inv
-	bool
-	num
-$$
+extern bool sum_i_inv(double& sum, size_t num_sum, size_t num_threads);
 
-$index sum_i_inv, specification$$
-$index threading, sum_i_inv specification$$
-
-$section Multi-Threading Summation of 1/i Routines$$
-
-$childtable%
-	multi_thread/sum_i_inv_time.cpp%
-	multi_thread/sum_i_inv.cpp%
-	multi_thread/sum_i_inv_work.cpp
-%$$
-
-$end
+# endif

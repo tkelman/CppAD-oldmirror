@@ -23,6 +23,7 @@ $spell
 	CppAD
 	parallelize
 $$
+$index sum_i_inv_time$$
 $index summation, multi_thread speed$$
 $index multi_thread, summation speed$$
 $index speed, multi_thread summation$$
@@ -89,13 +90,6 @@ The value $latex n$$ in the
 $cref/summation/sum_i_inv_time.cpp/Purpose/$$.
 is equal to $latex 10^6$$ times $icode mega_sum$$. 
 
-$head sum_i_inv$$
-The subroutine $code sum_i_inv$$ is multi-threading system dependent.
-A different version of this routine is implemented for
-$cref/openmp/openmp_sum_i_inv.cpp/$$, and
-$cref/pthreads/pthread_sum_i_inv.cpp/$$.
-
-
 $head Source$$
 $code
 $verbatim%multi_thread/sum_i_inv_time.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
@@ -112,10 +106,7 @@ $end
 // Note there is no mention of parallel mode in the documentation for
 // speed_test (so it is safe to use without special consideration).
 # include <cppad/speed_test.hpp>
-
-// required interface implemented by <system>/sum_i_inv.cpp where <system> is 
-// openmp, pthread, or bthread.
-extern bool sum_i_inv(double& sum, size_t num_sum, size_t num_threads);
+# include "sum_i_inv.hpp"
 
 namespace { // empty namespace
 

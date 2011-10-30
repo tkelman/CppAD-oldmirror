@@ -107,7 +107,6 @@ $cref/multi_newton_time.cpp/multi_newton_time.cpp/use_ad/$$.
 $head Subroutines$$
 $childtable%
 	multi_thread/bthread/a11c.cpp%
-	multi_thread/bthread/sum_i_inv.cpp%
 	multi_thread/bthread/multi_newton.cpp%
 	multi_thread/bthread/bthread_team.cpp
 %$$
