@@ -214,7 +214,7 @@ $lend
 $subhead 08-30$$
 $list number$$
 Create the $code openmp/run.cpp$$ program 
-and move the $cref openmp_multi_newton.cpp$$ test from
+and move the $code openmp_multi_newton.cpp$$ test from
 $code openmp/run.sh$$ to $code openmp/run.cpp$$.
 This uses $cref/configure/InstallUnix/Configure/$$
 information for building the tests.

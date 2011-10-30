@@ -34,6 +34,7 @@ openmp_SOURCES   = \
 \
 	../arc_tan.cpp             ../arc_tan.hpp \
 	../multi_newton_time.cpp   ../multi_newton_time.hpp \
+	../multi_newton.cpp        ../multi_newton.hpp \
 	../multi_newton_work.cpp   ../multi_newton_work.hpp \
 	../simple_ad.cpp           ../simple_ad.hpp \
 	../sum_i_inv_time.cpp      ../sum_i_inv_time.hpp \
@@ -41,8 +42,7 @@ openmp_SOURCES   = \
 	../sum_i_inv_work.cpp      ../sum_i_inv_work.hpp \
 \
 	openmp_team.cpp            ../thread_team.hpp \
-	a11c.cpp \
-	multi_newton.cpp 
+	a11c.cpp 
 	
 test.sh: openmp$(EXEEXT) 
 	echo "#! /bin/sh -e"      >  test.sh

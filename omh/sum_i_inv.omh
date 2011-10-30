@@ -13,12 +13,9 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 $begin sum_i_inv$$
 $spell
 	inv
-	bool
-	num
 $$
 
-$index sum_i_inv, specification$$
-$index threading, sum_i_inv specification$$
+$index sum_i_inv$$
 
 $section Multi-Threading Summation of 1/i Routines$$
 

@@ -19,6 +19,7 @@ $spell
 	alloc
 	openmp
 $$
+$index multi_newton_time$$.
 $index multi_thread, Newton AD speed$$
 $index thread, multi_newton AD speed$$
 $index AD, speed multi_thread Newton$$
@@ -130,11 +131,6 @@ $$
 If $icode use_ad$$ is $code false$$, 
 derivatives will be computed using a hand coded routine.
 
-$head multi_newton$$
-The subroutine $code multi_newton$$ is multi-threading system dependent.
-A different version of this routine is implemented for
-$cref/openmp/openmp_multi_newton.cpp/$$.
-
 $head Source$$
 $code
 $verbatim%multi_thread/multi_newton_time.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
@@ -146,21 +142,7 @@ $end
 # include <cppad/cppad.hpp>
 # include <cmath>
 # include <cstring>
-# include <omp.h>
-
-// required interface implemented by <system>/sum_i_inv.cpp where <system> is 
-// openmp, pthread, or bthread.
-extern bool multi_newton(
-	CppAD::vector<double> &xout                , 
-	void fun(double x, double& f, double& df)  , 
-	size_t num_sub                             , 
-	double xlow                                , 
-	double xup                                 , 
-	double epsilon                             , 
-	size_t max_itr                             ,
-	size_t num_threads
-);
-
+# include "multi_newton.hpp"
 
 namespace { // empty namespace 
 

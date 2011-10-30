@@ -65,6 +65,7 @@ $end
 # include <cppad/cppad.hpp>
 # include "thread_team.hpp"
 # include "arc_tan.hpp"
+# include "simple_ad.hpp"
 
 # define NUMBER_THREADS            4
 

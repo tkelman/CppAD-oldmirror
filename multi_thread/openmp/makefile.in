@@ -42,10 +42,10 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am_openmp_OBJECTS = openmp.$(OBJEXT) arc_tan.$(OBJEXT) \
-	multi_newton_time.$(OBJEXT) multi_newton_work.$(OBJEXT) \
-	simple_ad.$(OBJEXT) sum_i_inv_time.$(OBJEXT) \
-	sum_i_inv.$(OBJEXT) sum_i_inv_work.$(OBJEXT) \
-	openmp_team.$(OBJEXT) a11c.$(OBJEXT) multi_newton.$(OBJEXT)
+	multi_newton_time.$(OBJEXT) multi_newton.$(OBJEXT) \
+	multi_newton_work.$(OBJEXT) simple_ad.$(OBJEXT) \
+	sum_i_inv_time.$(OBJEXT) sum_i_inv.$(OBJEXT) \
+	sum_i_inv_work.$(OBJEXT) openmp_team.$(OBJEXT) a11c.$(OBJEXT)
 openmp_OBJECTS = $(am_openmp_OBJECTS)
 openmp_LDADD = $(LDADD)
 openmp_DEPENDENCIES =
@@ -220,6 +220,7 @@ openmp_SOURCES = \
 \
 	../arc_tan.cpp             ../arc_tan.hpp \
 	../multi_newton_time.cpp   ../multi_newton_time.hpp \
+	../multi_newton.cpp        ../multi_newton.hpp \
 	../multi_newton_work.cpp   ../multi_newton_work.hpp \
 	../simple_ad.cpp           ../simple_ad.hpp \
 	../sum_i_inv_time.cpp      ../sum_i_inv_time.hpp \
@@ -227,8 +228,7 @@ openmp_SOURCES = \
 	../sum_i_inv_work.cpp      ../sum_i_inv_work.hpp \
 \
 	openmp_team.cpp            ../thread_team.hpp \
-	a11c.cpp \
-	multi_newton.cpp 
+	a11c.cpp 
 
 all: all-am
 
@@ -330,6 +330,20 @@ multi_newton_time.obj: ../multi_newton_time.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../multi_newton_time.cpp' object='multi_newton_time.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o multi_newton_time.obj `if test -f '../multi_newton_time.cpp'; then $(CYGPATH_W) '../multi_newton_time.cpp'; else $(CYGPATH_W) '$(srcdir)/../multi_newton_time.cpp'; fi`
+
+multi_newton.o: ../multi_newton.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT multi_newton.o -MD -MP -MF $(DEPDIR)/multi_newton.Tpo -c -o multi_newton.o `test -f '../multi_newton.cpp' || echo '$(srcdir)/'`../multi_newton.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/multi_newton.Tpo $(DEPDIR)/multi_newton.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../multi_newton.cpp' object='multi_newton.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o multi_newton.o `test -f '../multi_newton.cpp' || echo '$(srcdir)/'`../multi_newton.cpp
+
+multi_newton.obj: ../multi_newton.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT multi_newton.obj -MD -MP -MF $(DEPDIR)/multi_newton.Tpo -c -o multi_newton.obj `if test -f '../multi_newton.cpp'; then $(CYGPATH_W) '../multi_newton.cpp'; else $(CYGPATH_W) '$(srcdir)/../multi_newton.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/multi_newton.Tpo $(DEPDIR)/multi_newton.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../multi_newton.cpp' object='multi_newton.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o multi_newton.obj `if test -f '../multi_newton.cpp'; then $(CYGPATH_W) '../multi_newton.cpp'; else $(CYGPATH_W) '$(srcdir)/../multi_newton.cpp'; fi`
 
 multi_newton_work.o: ../multi_newton_work.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT multi_newton_work.o -MD -MP -MF $(DEPDIR)/multi_newton_work.Tpo -c -o multi_newton_work.o `test -f '../multi_newton_work.cpp' || echo '$(srcdir)/'`../multi_newton_work.cpp

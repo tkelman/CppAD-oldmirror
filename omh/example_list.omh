@@ -92,7 +92,6 @@ $rref BenderQuad.cpp$$
 $rref BoolFun.cpp$$
 $rref bthread.cpp$$
 $rref bthread_a11c.cpp$$
-$rref bthread_multi_newton.cpp$$
 $rref bthread_team.cpp$$
 $rref CheckNumericType.cpp$$
 $rref checkpoint.cpp$$
@@ -161,6 +160,7 @@ $rref Mul.cpp$$
 $rref MulEq.cpp$$
 $rref mul_level.cpp$$
 $rref mul_level_adolc.cpp$$
+$rref multi_newton.cpp$$
 $rref multi_newton_time.cpp$$
 $rref multi_newton_work.cpp$$
 $rref nan.cpp$$
@@ -178,7 +178,6 @@ $rref ode_taylor.cpp$$
 $rref ode_taylor_adolc.cpp$$
 $rref omp_alloc.cpp$$
 $rref openmp_a11c.cpp$$
-$rref openmp_multi_newton.cpp$$
 $rref openmp_team.cpp$$
 $rref openmp.cpp$$
 $rref opt_val_hes.cpp$$
@@ -192,7 +191,6 @@ $rref print_for_cout.cpp$$
 $rref print_for_string.cpp$$
 $rref pthread.cpp$$
 $rref pthread_a11c.cpp$$
-$rref pthread_multi_newton.cpp$$
 $rref pthread_team.cpp$$
 $rref RevOne.cpp$$
 $rref RevSparseHes.cpp$$
