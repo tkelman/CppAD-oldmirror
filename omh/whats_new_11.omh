@@ -72,8 +72,8 @@ This section contains a list of the changes to CppAD during 2011
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
 
-$head branches/multi_thread$$
-The following changes are being done in $code branches/multi_thread$$:
+$head 10-29$$
+The following changes were merged in from $code branches/thread$$:
 
 $list number$$
 Move $code openmp$$ to $code multi_thread/openmp$$.
