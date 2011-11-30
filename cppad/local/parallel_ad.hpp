@@ -32,12 +32,9 @@ This tape is a global variable and hence it cannot be used
 by multiple threads at the same time. 
 The $cref/parallel_setup/ta_parallel_setup/$$ function informs CppAD of the
 maximum number of threads that can be active in parallel mode.
-It is still necessary to inform each $codei%AD<%Base%>%$$ type 
-before using it in using $cref/parallel/omp_in_parallel/$$ execution mode
-(and $code parallel_ad$$ does this).
-
-$head Restriction$$
-This function must be called before any $codei%AD<%Base>%$$ objects are used
+The function
+$codei%parallel_ad<%Base%>()%$$
+must be called before any $codei%AD<%Base>%$$ objects are used
 in $cref/parallel/ta_in_parallel/$$ mode.
 
 $head isnan$$
@@ -50,9 +47,9 @@ $codei%std::complex<double>%$$.
 
 $head Example$$
 The files 
-$cref openmp_team.cpp$$, 
-$cref bthread_team.cpp$$, and
-$cref pthread_team.cpp$$, 
+$cref team_openmp.cpp$$, 
+$cref team_bthread.cpp$$, and
+$cref team_pthread.cpp$$, 
 contain examples and tests that implement this function.   
 
 $end

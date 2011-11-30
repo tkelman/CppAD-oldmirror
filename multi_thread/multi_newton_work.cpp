@@ -99,7 +99,7 @@ $codei%
 	double %epsilon%
 %$$
 It specifies the convergence criteria for Newton's method in terms
-of how small the function value must be.
+of how small the function value $latex | f(x) | \leq \varepsilon$$.
 
 $head max_itr$$
 The argument $icode max_itr$$ has prototype
@@ -173,19 +173,16 @@ namespace {
 	// structure with information for one thread
 	typedef struct {
 		// number of sub intervals (worker input)
-		size_t num_out;
+		size_t num_sub;
 		// beginning of interval (worker input)
 		double xlow;
 		// end of interval (worker input)
 		double xup; 
 		// vector of zero candidates (worker output)
-		// after call to multi_newton_setup:   xout.size() == num_out
-		// after call to multi_newton_combine: xout.size() == 0
-		vector<double> xout;  
-		// vector of function values for xout (worker output)
-		// after call to multi_newton_setup:   fout.size() == num_out
-		// after call to multi_newton_combine: fout.size() == 0
-		vector<double> fout;  
+		// after call to multi_newton_setup:   x.size() == 0
+		// after call to multi_newton_work:    x.size() is number of zeros
+		// after call to multi_newton_combine: x.size() == 0
+		vector<double> x;  
 		// false if an error occurs, true otherwise (worker output)
 		bool   ok;
 	} work_one_t;
@@ -199,39 +196,38 @@ namespace {
 void multi_newton_worker(void)
 {	using CppAD::vector;
 
-	// Split [xlow, xup] into num_out sub intervales and
-	// look for one zero in each subinterval.
+	// Split [xlow, xup] into num_sub intervales and
+	// look for one zero in each sub-interval.
 	size_t thread_num    = CppAD::thread_alloc::thread_num();
 	size_t num_threads   = std::max(num_threads_, size_t(1));
 	bool   ok            = thread_num < num_threads;
-	size_t num_out       = work_all_[thread_num].num_out;
+	size_t num_sub       = work_all_[thread_num].num_sub;
 	double xlow          = work_all_[thread_num].xlow;
 	double xup           = work_all_[thread_num].xup;
-	vector<double>& xout = work_all_[thread_num].xout;
-	vector<double>& fout = work_all_[thread_num].fout;
+	vector<double>& x    = work_all_[thread_num].x;
 
 	// check arguments
 	ok &= max_itr_ > 0;
-	ok &= num_out > 0;
+	ok &= num_sub > 0;
 	ok &= xlow < xup;
-	ok &= xout.size() == num_out;
-	ok &= fout.size() == num_out;
+	ok &= x.size() == 0;
 
 	// check for special case where there is nothing for this thread to do
-	if( num_out == 0 )
+	if( num_sub == 0 )
 	{	work_all_[thread_num].ok = ok;
 		return;
 	}
 
 	// check for a zero on each sub-interval
 	size_t i;
-	for(i = 0; i < num_out; i++)
+	double xlast = CppAD::nan(0.);
+	for(i = 0; i < num_sub; i++)
 	{
 		// note that when i == 0, xlow_i == xlow (exactly)
 		double xlow_i = xlow + i * sub_length_;
 
-		// note that when i == num_out - 1, xup_i = xup (exactly)
-		double xup_i  = xup  - (num_out - i - 1) * sub_length_;
+		// note that when i == num_sub - 1, xup_i = xup (exactly)
+		double xup_i  = xup  - (num_sub - i - 1) * sub_length_;
 
 		// initial point for Newton iterations
 		double xcur = (xup_i + xlow_i) / 2.;
@@ -261,8 +257,14 @@ void multi_newton_worker(void)
 				more_itr = ++itr < max_itr_;
 			}
 		}
-		xout[i] = xcur;
-		fout[i] = fcur;
+		if( CppAD::abs( fcur ) <= epsilon_ )
+		{	// check for case where xcur is lower bound for this 
+			// sub-interval and upper bound for previous sub-interval
+			if( xcur != xlast )
+			{	x.push_back( xcur );
+				xlast = xcur;
+			} 
+		}
 	}
 	work_all_[thread_num].ok = ok;
 }
@@ -281,7 +283,7 @@ bool multi_newton_setup(
 	num_threads  = std::max(num_threads_, size_t(1));
 	bool ok      = num_threads == CppAD::thread_alloc::num_threads();
 
-	// other inputs that are same for all threads
+	// inputs that are same for all threads
 	epsilon_ = epsilon;
 	max_itr_ = max_itr;
 	fun_     = fun;
@@ -293,33 +295,33 @@ bool multi_newton_setup(
 	// length of each sub interval
 	sub_length_ = (xup - xlow) / double(num_sub);
 
-	// determine the number of sub-intervals for each thread
-	size_t num_min   = num_sub / num_threads;
-	size_t num_more  = num_sub % num_threads;
-	size_t sum_num   = 0;
-	size_t thread_num, num_out;
+	// determine values that are specific to each thread
+	size_t num_min   = num_sub / num_threads; // minimum num_sub 
+	size_t num_more  = num_sub % num_threads; // number that have one more
+	size_t sum_num   = 0;  // sum with respect to thread of num_sub
+	size_t thread_num, num_sub_thread;
 	for(thread_num = 0; thread_num < num_threads; thread_num++)
-	{	if( thread_num < num_more  )
-			num_out = num_more;
-		else	num_out = num_min;
+	{	// number of sub-intervalse for this thread
+		if( thread_num < num_more  )
+			num_sub_thread = num_min + 1;
+		else	num_sub_thread = num_min;
 
 		// when thread_num == 0, xlow_thread == xlow
 		double xlow_thread = xlow + sum_num * sub_length_;
 
 		// when thread_num == num_threads - 1, xup_thread = xup 
-		double xup_thread = xlow + (sum_num + num_out) * sub_length_;
+		double xup_thread = xlow + (sum_num + num_sub_thread) * sub_length_;
 		if( thread_num == num_threads - 1 )
 			xup_thread = xup;
 
 		// update sum_num for next time through loop
-		sum_num += num_out;
+		sum_num += num_sub_thread;
 
 		// input information specific to this thread
-		work_all_[thread_num].num_out = num_out;
+		work_all_[thread_num].num_sub = num_sub_thread;
 		work_all_[thread_num].xlow    = xlow_thread;
 		work_all_[thread_num].xup     = xup_thread;
-		work_all_[thread_num].xout.resize(num_out);
-		work_all_[thread_num].fout.resize(num_out);
+		ok &= work_all_[thread_num].x.size() == 0;
 
 		// in case this thread does not get called
 		work_all_[thread_num].ok = false;
@@ -336,34 +338,23 @@ bool multi_newton_combine(CppAD::vector<double>& xout)
 	// remove duplicates and points that are not solutions
 	xout.resize(0);
 	bool   ok = true;
-	double xlast = 0., flast = 0.;
+	double xlast = CppAD::nan(0.);
 	size_t thread_num;
 	for(thread_num = 0; thread_num < num_threads; thread_num++)
-	{	size_t i, num_out = work_all_[thread_num].num_out;
-		for(i = 0; i < num_out; i++)
-		{	double fcur = work_all_[thread_num].fout[i];
-			double xcur = work_all_[thread_num].xout[i];
-			if( CppAD::abs( fcur ) <= epsilon_ )
-			{	if( xout.size() == 0 )
-				{	xout.push_back( xcur );
-					xlast = xcur;
-					flast = fcur;
-				}
-				else if( CppAD::abs( xcur - xlast ) > sub_length_ ) 
-				{	xout.push_back( xcur );
-					xlast = xcur;
-					flast = fcur;
-				}
-				else if( CppAD::abs( fcur ) < CppAD::abs( flast ) )
-				{	xout[ xout.size() - 1 ] = xcur;
-					xlast = xcur;
-					flast = fcur;
-				}
+	{	vector<double>& x = work_all_[thread_num].x;
+
+		size_t i;
+		for(i = 0; i < x.size(); i++)
+		{	// check for case where this point is lower limit for this
+			// thread and upper limit for previous thread
+			 if( x[i] != xlast ) 
+			{	xout.push_back( x[i] );
+				xlast = x[i];
 			}
 		}
 		ok &= work_all_[thread_num].ok;
 	}
-	// should call destruction for all the xout and fout vectors
+	// should call destruction for all the x and f vectors
 	work_all_.resize(0);
 	return ok;
 }

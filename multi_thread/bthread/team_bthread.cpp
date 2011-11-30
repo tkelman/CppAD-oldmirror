@@ -10,7 +10,7 @@ A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 /* 
-$begin bthread_team.cpp$$
+$begin team_bthread.cpp$$
 $spell
 	bthread
 $$
@@ -20,33 +20,39 @@ $index AD, bthread team$$
 $index team, AD bthread$$
 
 $section Boost Thread Implementation of a Team of AD Threads$$
-See $cref thread_team$$ for this routines specifications.
+See $cref team_thread.hpp$$ for this routines specifications.
 
 $code
-$verbatim%multi_thread/bthread/bthread_team.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
+$verbatim%multi_thread/bthread/team_bthread.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
 $$
 
 $end
 */
 // BEGIN PROGRAM
-
 # include <boost/thread.hpp>
 # include <cppad/cppad.hpp>
-
-# define MAX_NUMBER_THREADS        48
+# include "../team_thread.hpp"
+# define MAX_NUMBER_THREADS 48
 
 namespace {
 	// number of threads in the team
 	size_t num_threads_ = 1; 
 
+	// no need to cleanup up thread specific data 
+	void cleanup(size_t*)
+	{	return; }
+
+	// thread specific pointer the thread number (initialize as null)
+	boost::thread_specific_ptr<size_t> thread_num_ptr_(cleanup);
+
 	// type of the job currently being done by each thread
 	enum thread_job_t { init_enum, work_enum, join_enum } thread_job_;
 
 	// barrier used to wait for other threads to finish work
-	boost::barrier* wait_for_work_ = 0;
+	boost::barrier* wait_for_work_ = CPPAD_NULL;
 
 	// barrier used to wait for master thread to set next job
-	boost::barrier* wait_for_job_ = 0;
+	boost::barrier* wait_for_job_ = CPPAD_NULL;
 
 	// Are we in sequential mode; i.e., other threads are waiting for
 	// master thread to set up next job ?
@@ -54,9 +60,10 @@ namespace {
 
 	// structure with information for one thread
 	typedef struct {
+		// The thread
 		boost::thread*       bthread;
-		// Boost unique identifier for thread that uses this struct
-		boost::thread::id    bthread_id;
+		// CppAD thread number as global (pointed to by thread_num_ptr_)
+		size_t               thread_num;
 		// true if no error for this thread, false otherwise.
 		bool                 ok;
 	} thread_one_t;
@@ -65,7 +72,7 @@ namespace {
 	thread_one_t thread_all_[MAX_NUMBER_THREADS];
 
 	// pointer to function that does the work for one thread
-	void (* worker_)(void) = 0;
+	void (* worker_)(void) = CPPAD_NULL;
 
 	// ---------------------------------------------------------------------
 	// in_parallel()
@@ -75,85 +82,71 @@ namespace {
 	// ---------------------------------------------------------------------
 	// thread_number()
 	size_t thread_number(void)
-	{	using boost::thread;
-
-		// bthread unique identifier for this thread
-		thread::id thread_this = boost::this_thread::get_id();
-
-		// convert thread_this to the corresponding thread_num
-		size_t thread_num = 0;
-		for(thread_num = 0; thread_num < num_threads_; thread_num++)
-		{	// Boost unique identifier for this thread_num
-			thread::id thread_compare = thread_all_[thread_num].bthread_id;
-
-			// check for a match
-			if( thread_this == thread_compare )
-				return thread_num;
-		}
-		// no match error (thread_this is not in thread_all_).
-		std::cerr << "thread_number: unknown boost::thread::id" << std::endl;
-		exit(1);
-
-		return 0;
+	{	// return thread_all_[thread_num].thread_num
+		return *thread_num_ptr_.get();
 	}
 	// --------------------------------------------------------------------
 	// function that gets called by boost thread constructor
 	void thread_work(size_t thread_num)
-	{	bool ok = wait_for_work_ != 0;
-		ok     &= wait_for_job_  != 0;
-		thread_all_[thread_num].ok &= ok;
+	{	bool ok = wait_for_work_ != CPPAD_NULL;
+		ok     &= wait_for_job_  != CPPAD_NULL;
+		ok     &= thread_num     != CPPAD_NULL;
 
-		// In the special case where thread_job_ is join_enum,
-		// there are no more calls to wait_for_work_ or wait_for_job_.
-		while( thread_job_ != join_enum )
-		{	switch( thread_job_ )
-			{
-				case init_enum:
+		// thread specific storage of thread number for this thread
+		thread_num_ptr_.reset(& thread_all_[thread_num].thread_num );
+
+		while( true )
+		{
+			// Use wait_for_jog_ to give master time in sequential mode
+			// (so it can change global information like thread_job_)
+			wait_for_job_->wait();
+
+			// case where we are terminating this thread (no more work)
+			if( thread_job_ == join_enum)
 				break;
 
-				case work_enum:
-				worker_();
-				break;
+			// only other case once wait_for_job_ has been completed (so far)
+			ok &= thread_job_ == work_enum;
+			worker_();
 
-				default:
-				std::cerr << "thread_work: default case" << std::endl;
-				exit(1);
-			}
-			// All threads make a call to wait_for_work_
+			// Use wait_for_work_ to inform master that our work is done and
+			// that this thread will not use global infromation until
+			// passing its barrier wait_for_job_ above.
 			wait_for_work_->wait();
 
-			// If this is the master, exit the loop.
-			// Master thread must make a call to wait_for_job_ elsewhere.
-			if( thread_num == 0 )
-				return;
-
-			// All but the master thread make a call to wait_for_job_
-			wait_for_job_->wait();
 		}
+		thread_all_[thread_num].ok &= ok;
 		return;
 	}
 }
 
-bool start_team(size_t num_threads)
+bool team_start(size_t num_threads)
 {	using CppAD::thread_alloc;
 	bool ok = true;;
 
 	if( num_threads > MAX_NUMBER_THREADS )
-	{	std::cerr << "start_team: num_threads greater than ";
+	{	std::cerr << "team_start: num_threads greater than ";
 		std::cerr << MAX_NUMBER_THREADS << std::endl;
 		exit(1);
 	}
 	// check that we currently do not have multiple threads running
 	ok  = num_threads_ == 1;
-	ok &= wait_for_work_ == 0;
-	ok &= wait_for_job_  == 0;
+	ok &= wait_for_work_ == CPPAD_NULL;
+	ok &= wait_for_job_  == CPPAD_NULL;
 	ok &= sequential_execution_;
 
-	// Set the information for this thread so thread_number will work
-	// for call to parallel_setup
-	thread_all_[0].bthread_id = boost::this_thread::get_id();
-	thread_all_[0].bthread    = 0; // not used
-	thread_all_[0].ok         = true;
+	size_t thread_num;
+	for(thread_num = 0; thread_num < num_threads; thread_num++)
+	{	// Each thread gets a pointer to its version of this thread_num
+		// so it knows which section of thread_all it is working with
+		thread_all_[thread_num].thread_num = thread_num;
+
+		// initialize
+		thread_all_[thread_num].ok = true;
+		thread_all_[0].bthread     = CPPAD_NULL;
+	}
+	// Finish setup of thread_all_ for this thread
+	thread_num_ptr_.reset(& thread_all_[0].thread_num);
 
 	// Now that thread_number() has necessary information for the case
 	// num_threads_ == 1, and while still in sequential mode,
@@ -175,38 +168,26 @@ bool start_team(size_t num_threads)
 
 	// This master thread is already running, we need to create
 	// num_threads - 1 more threads
-	size_t thread_num;
 	for(thread_num = 1; thread_num < num_threads; thread_num++)
-	{	thread_all_[thread_num].ok         = true;
-		// Create the thread with thread number equal to thread_num
+	{	// Create the thread with thread number equal to thread_num
 		thread_all_[thread_num].bthread = 
 			new boost::thread(thread_work, thread_num);
-		thread_all_[thread_num].bthread_id = 
-			thread_all_[thread_num].bthread->get_id();
 	}
 
-	// do work using this thread and then wait 
-	//  until all threads have completed wait_for_work_
-	thread_work(0); // this thread is number zero (master)
-
-	// Current state is all threads have completed wait_for_work_,
-	// and are at wait_for_job_.
+	// Current state is other threads are at wait_for_job_.
 	// This master thread (thread zero) has not completed wait_for_job_
 	sequential_execution_ = true;
-	for(thread_num = 0; thread_num < num_threads; thread_num++)
-		ok &= thread_all_[thread_num].ok;
 	return ok;
 }
 
-bool work_team(void worker(void))
+bool team_work(void worker(void))
 {
-	// Current state is all threads have completed wait_for_work_,
-	// and are at wait_for_job_.
+	// Current state is other threads are at wait_for_job_.
 	// This master thread (thread zero) has not completed wait_for_job_
 	bool ok = sequential_execution_;
 	ok     &= thread_number() == 0;
-	ok     &= wait_for_work_ != 0;
-	ok     &= wait_for_job_  != 0;
+	ok     &= wait_for_work_  != CPPAD_NULL;
+	ok     &= wait_for_job_   != CPPAD_NULL;
 
 	// set global version of this work routine
 	worker_ = worker;
@@ -221,10 +202,10 @@ bool work_team(void worker(void))
 
 	// Now do the work in this thread and then wait
 	// until all threads have completed wait_for_work_
-	thread_work(0); // this thread is number zero (master)
+	worker();
+	wait_for_work_->wait();
 
-	// Current state is all threads have completed wait_for_work_,
-	// and are at wait_for_job_.
+	// Current state is other threads are at wait_for_job_.
 	// This master thread (thread zero) has not completed wait_for_job_
 	sequential_execution_ = true;
 
@@ -234,14 +215,13 @@ bool work_team(void worker(void))
 	return ok;
 }
 
-bool stop_team(void)
-{	// Current state is all threads have completed wait_for_work_,
-	// and are at wait_for_job_.
+bool team_stop(void)
+{	// Current state is other threads are at wait_for_job_.
 	// This master thread (thread zero) has not completed wait_for_job_
 	bool ok = sequential_execution_;
 	ok     &= thread_number() == 0;
-	ok     &= wait_for_work_ != 0;
-	ok     &= wait_for_job_  != 0;
+	ok     &= wait_for_work_ != CPPAD_NULL;
+	ok     &= wait_for_job_  != CPPAD_NULL;
 
 	// set the new job that other threads are waiting for
 	thread_job_ = join_enum;
@@ -253,20 +233,22 @@ bool stop_team(void)
 
 	// now wait for the other threads to be destroyed
 	size_t thread_num;
+	ok &= thread_all_[0].bthread == CPPAD_NULL;
 	for(thread_num = 1; thread_num < num_threads_; thread_num++)
 	{	thread_all_[thread_num].bthread->join();
 		delete thread_all_[thread_num].bthread;
+		thread_all_[thread_num].bthread = CPPAD_NULL;
 	}
 	// now we are down to just the master thread (thread zero) 
 	sequential_execution_ = true;
 
 	// destroy wait_for_work_
 	delete wait_for_work_;
-	wait_for_work_ = 0;
+	wait_for_work_ = CPPAD_NULL;
 
 	// destroy wait_for_job_
 	delete wait_for_job_;
-	wait_for_job_ = 0;
+	wait_for_job_ = CPPAD_NULL;
 
 	// check ok before changing num_threads_
 	for(thread_num = 0; thread_num < num_threads_; thread_num++)
@@ -279,4 +261,7 @@ bool stop_team(void)
 
 	return ok;
 }
+
+const char* team_name(void)
+{	return "bthread"; }
 // END PROGRAM

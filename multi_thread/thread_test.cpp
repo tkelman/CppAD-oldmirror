@@ -11,7 +11,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
 /*
-$begin multi_thread.cpp$$
+$begin thread_test.cpp$$
 $escape $$
 $spell
 	inv
@@ -23,55 +23,81 @@ $spell
 	openmp
 	bthread
 $$
-$index multi_thread, example$$
-$index multi_thread, speed$$
-$index speed, multi_thread$$
-$index example, multi_thread$$
+$index thread_test, example$$
+$index thread_test, speed$$
+$index speed, thread_test$$
+$index example, thread_test$$
 $index thread, multi example$$
 
 
 $section Run Multi-Threading Examples and Speed Tests$$
 
 $head Syntax$$
-$codei%./multi_thread a11c
-%$$
-$codei%./multi_thread simple_ad
-%$$
-$codei%./multi_thread sum_i_inv %max_threads% %mega_sum%
+$codei%./%threading%_test a11c
+./%threading%_test simple_ad
+./%threading%_test harmonic %test_time% %max_threads% %mega_sum%
+./%threading%_test multi_newton %test_time% %max_threads% \
+	%num_zero% %num_sub% %num_sum% %use_ad%
 %$$ 
-$codei%./multi_thread multi_newton \
-	%max_threads% %num_zero% %num_sub% %num_sum% %use_ad%$$ 
+where $icode threading$$ is either
+$code bthread$$, $code openmp$$, or $code pthread$$. 
 
 $head Running Tests$$
 You can build this program and run the default version of its test
 parameters by executing the following commands:
-$codep
-	cd multi_thread/%threading%
+$codei%
+	cd multi_thread
 	make test
-$$
-where $icode threading$$ is $code openmp$$, $code bthread$$, or
-$code pthread$$.
+%$$
+After this operation you can run the syntax above
+for the different valid values of $icode threading$$:
+
+$subhead threading$$
+$index openmp, run tests$$
+$index pthread, run tests$$
+$index bthread, run tests$$
+If $cref/OpenmpFlags/InstallUnix/OpenmpFlags/$$ 
+are specified during configuration,
+you can execute the syntax above with
+$icode threading$$ equal to $code openmp$$.
+If pthreads with barriers are supported by your system,
+you can use $icode threading$$ equal to $code pthread$$.
+If boost threads have been installed,
+you can use $icode threading$$ equal to $code bthread$$.
 
 $head Purpose$$
-Runs the CppAD multi-threading examples and speed tests:
+Runs the CppAD multi-threading examples and timing tests:
+
+$children%
+	multi_thread/openmp/a11c_openmp.cpp%
+	multi_thread/bthread/a11c_bthread.cpp%
+	multi_thread/pthread/a11c_pthread.cpp
+%$$
 
 $head a11c$$
 The examples 
-$cref openmp_a11c.cpp$$,
-$cref bthread_a11c.cpp$$, and
-$cref pthread_a11c.cpp$$
-demonstrate simple multi-threading using
+$cref a11c_openmp.cpp$$,
+$cref a11c_bthread.cpp$$, and
+$cref a11c_pthread.cpp$$
+demonstrate simple multi-threading, 
+without algorithmic differentiation, using
 OpenMP, Boost threads, and pthreads respectively
-(without algorithmic differentiation).
 
 $head simple_ad$$
 The $cref simple_ad.cpp$$ routine
 demonstrates simple multi-threading with algorithmic differentiation. 
 
-$head sum_i_inv$$
-The $cref sum_i_inv_time.cpp$$ routine
+$head harmonic$$
+The $cref harmonic_time.cpp$$ routine
 preforms a timing test for a multi-threading 
 example without algorithmic differentiation.
+
+$subhead test_time$$
+Is the minimum amount of wall clock time that the test should take.
+The number of repeats for the test will be increased until this time
+is reached. 
+The reported time is the total wall clock time divided by the
+number of repeats.
 
 $subhead max_threads$$
 If the argument $icode max_threads$$ is a non-negative integer specifying
@@ -85,12 +111,19 @@ The value of zero corresponds to not using the multi-threading system.
 $subhead mega_sum$$
 The command line argument $icode mega_sum$$ 
 is an integer greater than or equal one and has the same meaning as in
-$cref/sum_i_inv_time.cpp/sum_i_inv_time.cpp/mega_sum/$$.
+$cref/harmonic_time.cpp/harmonic_time.cpp/mega_sum/$$.
 
 $head multi_newton$$
 The $cref multi_newton_time.cpp$$ routine
 preforms a timing test for a multi-threading 
 example with algorithmic differentiation.
+
+$subhead test_time$$
+Is the minimum amount of wall clock time that the test should take.
+The number of repeats for the test will be increased until this time
+is reached. 
+The reported time is the total wall clock time divided by the
+number of repeats.
 
 $subhead max_threads$$
 If the argument $icode max_threads$$ is a non-negative integer specifying
@@ -121,26 +154,18 @@ The command line argument $icode use_ad$$ is either
 $code true$$ or $code false$$ and has the same meaning as in
 $cref/multi_newton_time.cpp/multi_newton_time.cpp/use_ad/$$.
 
-$children%
-	multi_thread/openmp/a11c.cpp%
-	multi_thread/bthread/a11c.cpp%
-	multi_thread/pthread/a11c.cpp%
-	multi_thread/openmp/openmp_team.cpp%
-	multi_thread/pthread/pthread_team.cpp%
-	multi_thread/bthread/bthread_team.cpp
-%$$
 $head Threading System Specific Routines$$
 The following routines are used to link specific threading
-systems through the common interface $cref thread_team$$:
+systems through the common interface $cref team_thread.hpp$$:
 $table
-$rref openmp_team.cpp$$
-$rref bthread_team.cpp$$
-$rref pthread_team.cpp$$
+$rref team_openmp.cpp$$
+$rref team_bthread.cpp$$
+$rref team_pthread.cpp$$
 $tend
 
 $head Source$$
 $code
-$verbatim%multi_thread/multi_thread.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
+$verbatim%multi_thread/thread_test.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
 $$
 
 $end
@@ -150,9 +175,10 @@ $end
 # include <cppad/cppad.hpp>
 # include <cmath>
 # include <cstring>
-# include "thread_team.hpp"
+# include <ctime>
+# include "team_thread.hpp"
 # include "simple_ad.hpp"
-# include "sum_i_inv_time.hpp"
+# include "harmonic_time.hpp"
 # include "multi_newton_time.hpp"
 
 extern bool a11c(void);
@@ -169,24 +195,59 @@ namespace {
 		std::cerr << error_msg << std::endl;
 		exit(1);
 	}
+	double arg2double(
+		const char* arg       , 
+		double limit          , 
+		const char* error_msg )
+	{	double d = std::atof(arg);
+		if( d >= limit )
+			return d;
+		std::cerr << "value = " << d << std::endl;
+		std::cerr << error_msg << std::endl;
+		exit(1);
+	}
 }
 
 int main(int argc, char *argv[])
 {	using CppAD::thread_alloc;
-	size_t num_fail = 0;
 	bool ok         = true;
 	using std::cout;
+	using std::endl;
 
 	// commnd line usage message
-	const char *usage = 
-	"./multi_thread a11c\n"
-	"./multi_thread simple_ad\n"
-	"./multi_thread sum_i_inv    max_threads mega_sum\n"
-	"./multi_thread multi_newton max_threads num_zero num_sub num_sum use_ad";
+	const char* usage = 
+	"./<thread>_test a11c\n"
+	"./<thread>_test simple_ad\n"
+	"./<thread>_test harmonic    test_time max_threads mega_sum\n"
+	"./<thread>_test multi_newton test_time max_threads\\\n"
+	"	num_zero num_sub num_sum use_ad\\\n"
+	"where <thread> is bthread, openmp, or pthread";
 
 	// command line argument values (assign values to avoid compiler warnings)
 	size_t num_zero=0, num_sub=0, num_sum=0;
 	bool use_ad=true;
+
+	// put the date and time in the output file
+	std::time_t rawtime;
+	std::time( &rawtime );
+	const char* gmt = std::asctime( std::gmtime( &rawtime ) );
+	size_t len = size_t( std::strlen(gmt) );
+	cout << "gmtime        = '";
+	for(size_t i = 0; i < len; i++) 
+		if( gmt[i] != '\n' ) cout << gmt[i];
+	cout << "';" << endl;
+
+	// CppAD version number
+	cout << "cppad_version = '" << CPPAD_PACKAGE_STRING << "';" << endl; 
+
+	// put the team name in the output file
+	cout << "team_name     = '" << team_name() << "';" << endl;
+
+	// print command line as valid matlab/octave
+	cout << "command       = '" << argv[0];
+	for(int i = 1; i < argc; i++)
+		cout << " " << argv[i];
+	cout << "';" << endl;
 
 	ok = false;
 	const char* test_name = "";
@@ -194,18 +255,18 @@ int main(int argc, char *argv[])
 		test_name = *++argv;
 	bool run_a11c         = std::strcmp(test_name, "a11c")         == 0;
 	bool run_simple_ad    = std::strcmp(test_name, "simple_ad")    == 0;
-	bool run_sum_i_inv    = std::strcmp(test_name, "sum_i_inv")    == 0;
+	bool run_harmonic    = std::strcmp(test_name, "harmonic")    == 0;
 	bool run_multi_newton = std::strcmp(test_name, "multi_newton") == 0;
 	if( run_a11c || run_simple_ad )
 		ok = (argc == 2);
-	else if( run_sum_i_inv )
-		ok = (argc == 4);  
+	else if( run_harmonic )
+		ok = (argc == 5);  
 	else if( run_multi_newton )
-		ok = (argc == 7);
+		ok = (argc == 8);
 	if( ! ok )
-	{	std::cerr << "test_name = " << test_name << std::endl;	
-		std::cerr << "argc      = " << argc      << std::endl;	
-		std::cerr << usage << std::endl;
+	{	std::cerr << "test_name     = " << test_name << endl;	
+		std::cerr << "argc          = " << argc      << endl;	
+		std::cerr << usage << endl;
 		exit(1);
 	}
 	if( run_a11c || run_simple_ad )
@@ -213,14 +274,19 @@ int main(int argc, char *argv[])
 			ok        = a11c();
 		else ok        = simple_ad();
 		if( ok )
-		{	cout << "OK:    " << test_name << std::endl;
+		{	cout << "OK            = true;"  << endl;
 			exit(0);
 		}
 		else
-		{	 cout << "Error: " << test_name << std::endl;
+		{	cout << "OK            = false;" << endl;
 			exit(1);
 		}
 	}
+
+	// test_time 
+	double test_time = arg2double( *++argv, 0., 
+		"run: test_time is less than zero"
+	);
 
 	// max_threads 
 	size_t max_threads = arg2size_t( *++argv, 0, 
@@ -228,7 +294,7 @@ int main(int argc, char *argv[])
 	);
 
 	size_t mega_sum = 0; // assignment to avoid compiler warning
-	if( run_sum_i_inv )
+	if( run_harmonic )
 	{	// mega_sum
 		mega_sum = arg2size_t( *++argv, 1, 
 			"run: mega_sum is less than one"
@@ -260,31 +326,34 @@ int main(int argc, char *argv[])
 			use_ad = false;
 		else
 		{	std::cerr << "run: use_ad = '" << *argv;
-			std::cerr << "' is not true or false" << std::endl;
+			std::cerr << "' is not true or false" << endl;
 			exit(1);
 		}
 	}
 
 	// run the test for each number of threads
-	CppAD::vector<size_t> rate_all(max_threads + 1);
 	size_t num_threads, inuse_this_thread = 0;
+	cout << "time_all  = [" << endl;
 	for(num_threads = 0; num_threads <= max_threads; num_threads++)
-	{	// set the number of threads
+	{	double time_out;
+
+		// set the number of threads
 		if( num_threads > 0 )
-			ok &= start_team(num_threads);
+			ok &= team_start(num_threads);
 
 		// ammount of memory initialy inuse by thread zero
 		ok &= 0 == thread_alloc::thread_num();
 		inuse_this_thread = thread_alloc::inuse(0);
 
 		// run the requested test
-		if( run_sum_i_inv ) ok &= 
-			sum_i_inv_time(rate_all[num_threads], num_threads, mega_sum);
+		if( run_harmonic ) ok &= 
+			harmonic_time(time_out, test_time, num_threads, mega_sum);
 		else
 		{	ok &= run_multi_newton;
 			ok &= multi_newton_time(
-				rate_all[num_threads] ,
-				num_threads           ,
+				time_out                ,
+				test_time               ,
+				num_threads             ,
 				num_zero                ,
 				num_sub                 ,
 				num_sum                 ,
@@ -294,7 +363,7 @@ int main(int argc, char *argv[])
 
 		// set back to one thread and fee all avaialable memory
 		if( num_threads > 0 )
-			ok &= stop_team();
+			ok &= team_stop();
 		size_t thread;
 		for(thread = 0; thread < num_threads; thread++)
 		{	thread_alloc::free_available(thread);
@@ -302,26 +371,17 @@ int main(int argc, char *argv[])
 				ok &= thread_alloc::inuse(thread) == inuse_this_thread;
 			else	ok &= thread_alloc::inuse(thread) == 0;
 		}
-		if( ok )
-			cout << "OK:    " << test_name << ": ";
-		else
-		{	cout << "Error: " << test_name << ": ";
-			num_fail++;
-		}
-		cout << "num_threads = " << num_threads;
-		cout << ", rate = " << rate_all[num_threads] << std::endl;
+		cout << "\t" << time_out << " % ";
+		if( num_threads == 0 )
+			cout << "no threading" << endl;
+		else	cout << num_threads << " threads" << endl;
 	}
-	cout << "rate_all = " << rate_all << std::endl;
-	if( num_fail == 0 )
-	{	cout << "All " << max_threads + 1 << " " << test_name;
-		cout  << " tests passed." << std::endl;
-	}
-	else
-	{	cout << num_fail << " " << test_name;
-		cout << " tests failed." << std::endl;
-	}
- 
-	return num_fail;
+	cout << "];" << endl;
+	if( ok )
+		cout << "OK            = true;"  << endl;
+	else cout << "OK            = false;" << endl;
+
+	return  ! ok;
 }
 
 // END PROGRAM

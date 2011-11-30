@@ -1,4 +1,6 @@
 /* $Id$ */
+# ifndef CPPAD_HARMONIC_INCLUDED
+# define CPPAD_HARMONIC_INCLUDED
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-11 Bradley M. Bell
 
@@ -10,19 +12,6 @@ A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
-/*
-$begin multi_newton$$
-$spell
-$$
+extern bool harmonic(double& sum, size_t num_sum, size_t num_threads);
 
-$index multi_newton$$
-
-$section Multi-Threaded Newton's Method Routines$$
-
-$childtable%
-	multi_thread/multi_newton_time.cpp%
-	multi_thread/multi_newton.cpp%
-	multi_thread/multi_newton_work.cpp
-%$$
-
-$end
+# endif

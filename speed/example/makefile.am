@@ -14,7 +14,7 @@
 # CppAD pusts all it's preprocessor definitions in the cppad/configure.hpp
 DEFS          =
 #
-if CppAD_BOOSTVECTOR
+if CppAD_BOOST_DIR
 BOOST_INCLUDE = -I$(BOOST_DIR)
 else
 BOOST_INCLUDE =
@@ -39,7 +39,8 @@ example_SOURCES   = \
 	mat_sum_sq.cpp \
 	ode_evaluate.cpp \
 	sparse_evaluate.cpp \
-	speed_test.cpp
+	speed_test.cpp \
+	time_test.cpp
 
 test.sh: example$(EXEEXT)
 	echo "#! /bin/sh -e"  > test.sh

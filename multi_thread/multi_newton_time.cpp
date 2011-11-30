@@ -28,7 +28,7 @@ $index newton, multi_thread AD speed$$
 $section Timing Test of Multi-Threaded Newton Method$$
 
 $head Syntax$$
-$icode%ok% = multi_newton_time(%rate_out%, %num_threads%, 
+$icode%ok% = multi_newton_time(%time_out%, %num_threads%, 
 	%num_zero%, %num_sub%, %num_sum%, %use_ad%
 )%$$ 
 
@@ -50,14 +50,21 @@ If it is true,
 $code multi_newton_time$$ passed the correctness test.
 Otherwise it is false.
 
-$head rate_out$$
+$head time_out$$
 This argument has prototype
 $codei%
-	size_t& %rate_out%
+	double& %time_out%
 %$$
 The input value of the argument does not matter.
-Upon return it is the number of times per second that
+Upon return it is the number of wall clock seconds required for 
 the multi-threaded Newton method can compute all the zeros.
+
+$head test_time$$
+Is the minimum amount of wall clock time that the test should take.
+The number of repeats for the test will be increased until this time
+is reached. 
+The reported $icode time_out$$ is the total wall clock time divided by the
+number of repeats.
 
 $head num_threads$$
 This argument has prototype
@@ -140,6 +147,7 @@ $end
 */
 // BEGIN PROGRAM
 # include <cppad/cppad.hpp>
+# include <cppad/time_test.hpp>
 # include <cmath>
 # include <cstring>
 # include "multi_newton.hpp"
@@ -151,6 +159,9 @@ namespace { // empty namespace
 	size_t num_zero_;   // number of zeros of f(x) in the total interval
 	size_t num_sub_;    // number of sub-intervals to split calculation into
 	size_t num_sum_;    // larger values make f(x) take longer to calculate
+
+	// value of xout corresponding to most recent call to test_once
+	CppAD::vector<double> xout_;
 
 	// either fun_ad or fun_no depending on value of use_ad
 	void (*fun_)(double x, double& f, double& df) = 0;
@@ -204,7 +215,7 @@ namespace { // empty namespace
 
 
 	// Run computation of all the zeros once
-	void test_once(CppAD::vector<double> &xout, size_t no_size)
+	void test_once(void)
 	{	if(  num_zero_ == 0 )
 		{	std::cerr << "multi_newton_time: num_zero == 0" << std::endl;
 			exit(1);
@@ -216,9 +227,9 @@ namespace { // empty namespace
 		size_t max_itr = 20;
 	
 		bool ok = multi_newton(
-			xout        ,
+			xout_       ,
 			fun_        ,
-			num_sub_      ,
+			num_sub_    ,
 			xlow        ,
 			xup         ,
 			eps         ,
@@ -233,17 +244,17 @@ namespace { // empty namespace
 	}
 
 	// Repeat computation of all the zeros a specied number of times
-	void test_repeat(size_t size, size_t repeat)
+	void test_repeat(size_t repeat)
 	{	size_t i;
-		CppAD::vector<double> xout;
 		for(i = 0; i < repeat; i++)
-			test_once(xout, size);
+			test_once();
 		return;
 	}
 } // end empty namespace
 
 bool multi_newton_time(
-	size_t& rate_out      ,
+	double& time_out      ,
+	double  test_time     ,
 	size_t  num_threads   ,
 	size_t  num_zero      ,
 	size_t  num_sub       , 
@@ -268,30 +279,16 @@ bool multi_newton_time(
 		ok &= num_threads == CppAD::thread_alloc::num_threads();
 	else	ok &= 1           == CppAD::thread_alloc::num_threads();
 
-	// minimum time for test (repeat until this much time)
-	double time_min = 1.;
-
-	// size of the one test case (not used)
-	vector<size_t> no_size_vec(1);
-
-	// run the test case
-	vector<size_t> rate_vec = CppAD::speed_test(
-		test_repeat, no_size_vec, time_min
-	);
-
-	// return the rate (times per second) at which test_once runs
-	rate_out = rate_vec[0];
+	// run the test case and set time return value
+	time_out = CppAD::time_test(test_repeat, test_time);
 
 	// Call test_once for a correctness check
-	vector<double> xout;
-	size_t no_size = 0;
-	test_once(xout, no_size);
 	double eps = 100. * CppAD::epsilon<double>();
 	double pi  = 4. * std::atan(1.);
-	ok        &= (xout.size() == num_zero);
+	ok        &= (xout_.size() == num_zero);
 	size_t i   = 0;
 	for(i = 0; i < num_zero; i++)
-		ok &= std::fabs( xout[i] - pi * i) <= 2 * eps;
+		ok &= std::fabs( xout_[i] - pi * i) <= 2 * eps;
 
 	// return correctness check result
 	return  ok;

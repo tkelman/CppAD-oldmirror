@@ -97,12 +97,11 @@ AM_RECURSIVE_TARGETS = $(RECURSIVE_TARGETS:-recursive=) \
 	distdir dist dist-all distcheck
 ETAGS = etags
 CTAGS = ctags
-DIST_SUBDIRS = multi_thread/bthread cppad_ipopt/src \
-	cppad_ipopt/example cppad_ipopt/speed cppad_ipopt/test \
-	multi_thread/openmp multi_thread/pthread speed/src speed/adolc \
-	speed/cppad speed/double speed/example speed/fadbad \
-	speed/profile speed/sacado example introduction/get_started \
-	introduction/exp_apx print_for test_more
+DIST_SUBDIRS = cppad_ipopt/src cppad_ipopt/example cppad_ipopt/speed \
+	cppad_ipopt/test speed/src speed/adolc speed/cppad \
+	speed/double speed/example speed/fadbad speed/profile \
+	speed/sacado example introduction/get_started \
+	introduction/exp_apx print_for multi_thread test_more
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -261,7 +260,6 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-@CppAD_POSTFIX_FALSE@postfix_dir = .
 
 # $Id$
 # -----------------------------------------------------------------------------
@@ -275,8 +273,8 @@ top_srcdir = @top_srcdir@
 # Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 # -----------------------------------------------------------------------------
 #
-# Note that configure.hpp is needed by VC++; i.e., for users that do not run
-# the configure script but rather use the project files 
+BUILT_SOURCES = $(top_srcdir)/cppad/configure.hpp
+@CppAD_POSTFIX_FALSE@postfix_dir = .
 #
 @CppAD_POSTFIX_TRUE@postfix_dir = $(POSTFIX_DIR)
 @CppAD_ADOLC_FALSE@SPEED_ADOLC_TESTS = 
@@ -310,24 +308,6 @@ top_srcdir = @top_srcdir@
 @CppAD_IPOPT_CPPAD_TRUE@IPOPT_HEADER = \
 @CppAD_IPOPT_CPPAD_TRUE@	cppad_ipopt/src/cppad_ipopt_nlp.hpp
 
-@CppAD_OPENMP_FALSE@OPENMP_TESTS = 
-#
-# Are we building the OpenMP examples and tests
-@CppAD_OPENMP_TRUE@OPENMP_TESTS = multi_thread/openmp
-@CppAD_OPENMP_FALSE@OPENMP_DIRS = 
-@CppAD_OPENMP_TRUE@OPENMP_DIRS = multi_thread/openmp
-@CppAD_BTHREAD_FALSE@BTHREAD_TESTS = 
-#
-# Are we building the boost thread examples and tests
-@CppAD_BTHREAD_TRUE@BTHREAD_TESTS = multi_thread/bthread
-@CppAD_BTHREAD_FALSE@BTHREAD_DIRS = 
-@CppAD_BTHREAD_TRUE@BTHREAD_DIRS = multi_thread/bthread
-@CppAD_PTHREAD_FALSE@PTHREAD_TESTS = 
-#
-# Are we building the pthread thread examples and tests
-@CppAD_PTHREAD_TRUE@PTHREAD_TESTS = multi_thread/pthread
-@CppAD_PTHREAD_FALSE@PTHREAD_DIRS = 
-@CppAD_PTHREAD_TRUE@PTHREAD_DIRS = multi_thread/pthread
 #
 # Is the library archiving program present
 @CppAD_HAVE_AR_TRUE@SPEED_TESTS = \
@@ -535,6 +515,7 @@ nobase_myinclude_HEADERS = \
 	cppad/speed_test.hpp \
 	cppad/speed/uniform_01.hpp \
 	cppad/thread_alloc.hpp \
+	cppad/time_test.hpp \
 	cppad/track_new_del.hpp \
 	cppad/vector.hpp
 
@@ -544,15 +525,13 @@ nobase_myinclude_HEADERS = \
 # No objects or executables are required to install CppAD.
 # See 'make test' below for building the tests.
 SUBDIRS = \
-	$(BTHREAD_DIRS) \
 	$(IPOPT_DIRS) \
-	$(OPENMP_DIRS) \
-	$(PTHREAD_DIRS) \
 	$(SPEED_DIRS) \
 	example \
 	introduction/get_started \
 	introduction/exp_apx \
 	print_for \
+	multi_thread \
 	test_more 
 
 #
@@ -568,14 +547,12 @@ EXTRA_DIST = \
 	uw_copy_040507.html
 
 test_directory_list = \
-	$(BTHREAD_TESTS) \
 	$(IPOPT_TESTS) \
-	$(OPENMP_TESTS) \
-	$(PTHREAD_TESTS) \
 	$(SPEED_TESTS) \
 	example \
 	introduction/get_started \
 	introduction/exp_apx \
+	multi_thread \
 	print_for \
 	test_more 
 
@@ -585,7 +562,8 @@ test_directory_list = \
 #
 pkgconfigdir = $(datadir)/pkgconfig
 pkgconfig_DATA = pkgconfig/cppad.pc
-all: all-recursive
+all: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
 .SUFFIXES:
 am--refresh:
@@ -1014,14 +992,16 @@ distcleancheck: distclean
 	       $(distcleancheck_listfiles) ; \
 	       exit 1; } >&2
 check-am: all-am
-check: check-recursive
+check: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) check-recursive
 all-am: makefile $(DATA) $(HEADERS)
 installdirs: installdirs-recursive
 installdirs-am:
 	for dir in "$(DESTDIR)$(pkgconfigdir)" "$(DESTDIR)$(myincludedir)" "$(DESTDIR)$(myincludedir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
-install: install-recursive
+install: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) install-recursive
 install-exec: install-exec-recursive
 install-data: install-data-recursive
 uninstall: uninstall-recursive
@@ -1046,6 +1026,7 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
+	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 @CppAD_DOCUMENTATION_FALSE@install-data-hook:
 clean: clean-recursive
 
@@ -1119,8 +1100,9 @@ ps-am:
 uninstall-am: uninstall-myincludeHEADERS \
 	uninstall-nobase_myincludeHEADERS uninstall-pkgconfigDATA
 
-.MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) ctags-recursive \
-	install-am install-data-am install-strip tags-recursive
+.MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) all check \
+	ctags-recursive install install-am install-data-am \
+	install-strip tags-recursive
 
 .PHONY: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) CTAGS GTAGS \
 	all all-am am--refresh check check-am clean clean-generic \
@@ -1141,6 +1123,8 @@ uninstall-am: uninstall-myincludeHEADERS \
 	uninstall-myincludeHEADERS uninstall-nobase_myincludeHEADERS \
 	uninstall-pkgconfigDATA
 
+$(top_srcdir)/cppad/configure.hpp: cppad/configure.hpp
+	cp cppad/configure.hpp $(top_srcdir)/cppad/configure.hpp 
 @CppAD_HAVE_AR_FALSE@	SPEED_DIRS =
 
 test: all 

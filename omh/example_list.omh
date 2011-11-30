@@ -75,6 +75,9 @@ $comment
 $$
 
 $table
+$rref a11c_bthread.cpp$$
+$rref a11c_openmp.cpp$$
+$rref a11c_pthread.cpp$$
 $rref abort_recording.cpp$$
 $rref Abs.cpp$$
 $rref Acos.cpp$$
@@ -90,8 +93,7 @@ $rref base_adolc.hpp$$
 $rref base_complex.hpp$$
 $rref BenderQuad.cpp$$
 $rref BoolFun.cpp$$
-$rref bthread_a11c.cpp$$
-$rref bthread_team.cpp$$
+$rref team_bthread.cpp$$
 $rref CheckNumericType.cpp$$
 $rref checkpoint.cpp$$
 $rref CheckSimpleVector.cpp$$
@@ -162,7 +164,6 @@ $rref mul_level_adolc.cpp$$
 $rref multi_newton.cpp$$
 $rref multi_newton_time.cpp$$
 $rref multi_newton_work.cpp$$
-$rref multi_thread.cpp$$
 $rref nan.cpp$$
 $rref NearEqualExt.cpp$$
 $rref Near_Equal.cpp$$
@@ -177,8 +178,8 @@ $rref ode_evaluate.cpp$$
 $rref ode_taylor.cpp$$
 $rref ode_taylor_adolc.cpp$$
 $rref omp_alloc.cpp$$
-$rref openmp_a11c.cpp$$
-$rref openmp_team.cpp$$
+$rref team_openmp.cpp$$
+$rref thread_test.cpp$$
 $rref opt_val_hes.cpp$$
 $rref optimize.cpp$$
 $rref Output.cpp$$
@@ -188,8 +189,7 @@ $rref Pow.cpp$$
 $rref pow_int.cpp$$
 $rref print_for_cout.cpp$$
 $rref print_for_string.cpp$$
-$rref pthread_a11c.cpp$$
-$rref pthread_team.cpp$$
+$rref team_pthread.cpp$$
 $rref RevOne.cpp$$
 $rref RevSparseHes.cpp$$
 $rref RevSparseJac.cpp$$
@@ -217,13 +217,14 @@ $rref Sqrt.cpp$$
 $rref StackMachine.cpp$$
 $rref Sub.cpp$$
 $rref SubEq.cpp$$
-$rref sum_i_inv.cpp$$
-$rref sum_i_inv_time.cpp$$
-$rref sum_i_inv_work.cpp$$
+$rref harmonic.cpp$$
+$rref harmonic_time.cpp$$
+$rref harmonic_work.cpp$$
 $rref Tan.cpp$$
 $rref Tanh.cpp$$
 $rref TapeIndex.cpp$$
 $rref thread_alloc.cpp$$
+$rref team_thread.hpp$$
 $rref UnaryMinus.cpp$$
 $rref UnaryPlus.cpp$$
 $rref user_tan.cpp$$
