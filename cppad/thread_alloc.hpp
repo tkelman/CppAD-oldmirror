@@ -111,7 +111,7 @@ private:
 	/// an index that uniquely idenfifies both thread and capacity
 	size_t             tc_index_;
 	/// pointer to the next memory allocation with the the same tc_index_
-	void*              next_;
+	thread_alloc*       next_;
 	/// size information (currently used by create and delete array)
 	size_t             size_;
 	// ---------------------------------------------------------------------
@@ -764,8 +764,7 @@ $end
 		thread_alloc* available_root = root_available() + tc_index;
 
 		// check if we already have a node we can use
-		void* v_node              = available_root->next_;
-		thread_alloc* node           = reinterpret_cast<thread_alloc*>(v_node);
+		thread_alloc* node = available_root->next_;
 		if( node != CPPAD_NULL )
 		{	CPPAD_ASSERT_UNKNOWN( node->tc_index_ == tc_index );
 
@@ -777,7 +776,7 @@ $end
 # ifndef NDEBUG
 			// add node to inuse list
 			node->next_           = inuse_root->next_;
-			inuse_root->next_     = v_node;
+			inuse_root->next_     = node;
 
 			// trace allocation
 			if(	cap_bytes == CPPAD_TRACE_CAPACITY && 
@@ -796,7 +795,7 @@ $end
 		// Create a new node with thread_alloc information at front.
 		// This uses the system allocator, which is thread safe, but slower,
 		// because the thread might wait for a lock on the allocator.
-		v_node          = ::operator new(sizeof(thread_alloc) + cap_bytes);
+		void* v_node    = ::operator new(sizeof(thread_alloc) + cap_bytes);
 		node            = reinterpret_cast<thread_alloc*>(v_node);
 		node->tc_index_ = tc_index;
 		void* v_ptr     = reinterpret_cast<void*>(node + 1);
@@ -804,7 +803,7 @@ $end
 # ifndef NDEBUG
 		// add node to inuse list
 		node->next_       = inuse_root->next_;
-		inuse_root->next_ = v_node;
+		inuse_root->next_ = node;
 
 		// trace allocation
 		if( cap_bytes == CPPAD_TRACE_CAPACITY && 
@@ -901,14 +900,13 @@ $end
 
 # ifndef NDEBUG
 		// remove node from inuse list
-		void* v_node              = reinterpret_cast<void*>(node);
 		thread_alloc* inuse_root     = root_inuse() + tc_index;
 		thread_alloc* previous       = inuse_root;
-		while((previous->next_ != CPPAD_NULL) & (previous->next_ != v_node))
-			previous = reinterpret_cast<thread_alloc*>(previous->next_);	
+		while((previous->next_ != CPPAD_NULL) & (previous->next_ != node))
+			previous = previous->next_;	
 
 		// check that v_ptr is valid
-		if( previous->next_ != v_node )
+		if( previous->next_ != node )
 		{	using std::endl;
 			std::ostringstream oss;
 			oss << "return_memory: attempt to return memory not in use";
@@ -940,7 +938,7 @@ $end
 		// add this node to available list for this thread and capacity
 		thread_alloc* available_root = root_available() + tc_index;
 		node->next_               = available_root->next_;
-		available_root->next_     = reinterpret_cast<void*>(node);
+		available_root->next_     = node;
 
 		// capacity bytes are added to the available pool
 		inc_available(capacity, thread);
@@ -1009,12 +1007,11 @@ $end
 		{	size_t capacity = capacity_vec[c_index];
 			tc_index                  = thread * num_cap + c_index;
 			thread_alloc* available_root = root_available() + tc_index;
-			void* v_ptr               = available_root->next_;
-			while( v_ptr != CPPAD_NULL )
-			{	thread_alloc* node = reinterpret_cast<thread_alloc*>(v_ptr); 
-				void* next      = node->next_;
-				::operator delete(v_ptr);
-				v_ptr           = next;
+			thread_alloc* node           = available_root->next_;
+			while( node != CPPAD_NULL )
+			{	thread_alloc* next = node->next_;
+				::operator delete( reinterpret_cast<void*>(node) );
+				node               = next;
 
 				dec_available(capacity, thread);
 			}
