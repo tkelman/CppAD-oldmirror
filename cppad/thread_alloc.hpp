@@ -111,14 +111,21 @@ private:
 	/// an index that uniquely idenfifies both thread and capacity
 	size_t             tc_index_;
 	/// pointer to the next memory allocation with the the same tc_index_
-	thread_alloc*       next_;
-	/// size information (currently used by create and delete array)
-	size_t             size_;
+	thread_alloc*      next_;
+	/// pointer to the system allocated memory chunck list for this entry
+	thread_alloc*      chunk_;
+	/// extra information for this entry
+	union {
+		size_t size;    // used by create and delete array functions
+		size_t n_inuse; // used by chunk list for number thread_allocs inuse
+	} extra_;
 	// ---------------------------------------------------------------------
 	/// make default constructor private. It is only used by the constructor
 	/// for \c root arrays below.
-	thread_alloc(void) : tc_index_(0), next_(CPPAD_NULL), size_(0)
-	{ }
+	thread_alloc(void) : tc_index_(0), next_(CPPAD_NULL)
+	{	extra_.size    = 0;
+		extra_.n_inuse = 0;
+	}
 	// ---------------------------------------------------------------------
 	static const thread_alloc_capacity* capacity_info(void)
 	{	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
@@ -788,17 +795,22 @@ $end
 			inc_inuse(cap_bytes, thread);
 			dec_available(cap_bytes, thread);
 
+			// add 1 thread_alloc unit to corresponding chunk inuse counter
+			(node->chunk_->extra_.n_inuse)++;
+
 			// return pointer to memory, do not inclue thread_alloc information
 			return v_ptr;
 		}
 
-		// Create a new node with thread_alloc information at front.
-		// This uses the system allocator, which is thread safe, but slower,
-		// because the thread might wait for a lock on the allocator.
-		void* v_node    = ::operator new(sizeof(thread_alloc) + cap_bytes);
-		node            = reinterpret_cast<thread_alloc*>(v_node);
-		node->tc_index_ = tc_index;
-		void* v_ptr     = reinterpret_cast<void*>(node + 1);
+		// Create a new chunk of memory with thread_alloc information at 
+		// front. This uses the system allocator, which is thread safe, 
+		// but slower (might wait for a lock on the allocator).
+		void* v_chunk   = ::operator new(2*sizeof(thread_alloc) + cap_bytes);
+		thread_alloc* chunk  = reinterpret_cast<thread_alloc*>(v_chunk);
+		node                 = chunk + 1;
+		node->chunk_         = chunk;
+		node->tc_index_      = tc_index;
+		void* v_ptr          = reinterpret_cast<void*>(node + 1);
 
 # ifndef NDEBUG
 		// add node to inuse list
@@ -813,6 +825,9 @@ $end
 
 		// adjust counts
 		inc_inuse(cap_bytes, thread);
+
+		// set number of thread_alloc units inuse for this chunk to one
+		chunk->extra_.n_inuse = 1;
 
 		return v_ptr;
 	}
@@ -929,9 +944,13 @@ $end
 		// capacity bytes are removed from the inuse pool
 		dec_inuse(capacity, thread);
 
+		// remove 1 thread_alloc unit from corresponding chunk inuse counter
+		CPPAD_ASSERT_UNKNOWN(node->chunk_->extra_.n_inuse > 0 );
+		(node->chunk_->extra_.n_inuse)--;
+
 		// check for case where we just return the memory to the system
 		if( num_threads() == 1 )
-		{	::operator delete( reinterpret_cast<void*>(node) );
+		{	::operator delete( reinterpret_cast<void*>(node->chunk_) );
 			return;
 		}
 
@@ -1010,7 +1029,7 @@ $end
 			thread_alloc* node           = available_root->next_;
 			while( node != CPPAD_NULL )
 			{	thread_alloc* next = node->next_;
-				::operator delete( reinterpret_cast<void*>(node) );
+				::operator delete( reinterpret_cast<void*>(node->chunk_) );
 				node               = next;
 
 				dec_available(capacity, thread);
@@ -1247,7 +1266,7 @@ $end
 		size_out         = num_bytes / sizeof(Type);
 		// store this number in the size field
 		thread_alloc* node  = reinterpret_cast<thread_alloc*>(v_ptr) - 1;
-		node->size_         = size_out;
+		node->extra_.size   = size_out;
 
 		// call default constructor for each element
 		size_t i;
@@ -1329,7 +1348,7 @@ $end
 	static void delete_array(Type* array)
 	{	// determine the number of values in the array
 		thread_alloc* node = reinterpret_cast<thread_alloc*>(array) - 1;
-		size_t size     = node->size_;
+		size_t size     = node->extra_.size;
 
 		// call destructor for each element
 		size_t i;
