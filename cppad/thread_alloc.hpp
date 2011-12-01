@@ -1060,26 +1060,35 @@ $end
 		size_t c_index, tc_index;
 		for(c_index = 0; c_index < num_cap; c_index++)
 		{	size_t capacity = capacity_vec[c_index];
-			tc_index                  = thread * num_cap + c_index;
-			thread_alloc* available_root = root_available() + tc_index;
-			thread_alloc* node           = available_root->next_;
+			tc_index           = thread * num_cap + c_index;
+
+			// remove entire available linked list
+			thread_alloc* root = root_available() + tc_index;
+			thread_alloc* node = root->next_;
 			while( node != CPPAD_NULL )
 			{	thread_alloc* next  = node->next_;
-				thread_alloc* chunk = node->ptr_.chunk;
-				CPPAD_ASSERT_UNKNOWN( chunk->size_.n_inuse == 0 );
-				if( chunk->ptr_.previous != CPPAD_NULL )
-					chunk->ptr_.previous->next_ = chunk->next_;
-				if( chunk->next_ != CPPAD_NULL )
-					chunk->next_->ptr_.previous = chunk->ptr_.previous;
-				CPPAD_ASSERT_UNKNOWN(chunk->size_.n_inuse == 0);
-				::operator delete( reinterpret_cast<void*>(chunk) );
-
+				CPPAD_ASSERT_UNKNOWN(node->ptr_.chunk->size_.n_inuse == 0);
 				node  = next;
 				dec_available(capacity, thread);
 			}
-			available_root->next_ = CPPAD_NULL;
+			root->next_ = CPPAD_NULL;
+
+			// delete all chunks that are no longer in use
+			thread_alloc* previous = root_chunk() + tc_index;
+			thread_alloc* chunk    = previous->next_;
+			while( node != CPPAD_NULL )
+			{	thread_alloc* next = chunk->next_;
+				if( chunk->size_.n_inuse == 0 )
+				{	// return this chunk to system memory
+					previous->next_ = next;
+					if( next != CPPAD_NULL )
+						next->ptr_.previous = previous;
+					::operator delete( reinterpret_cast<void*>(chunk) );
+				}
+				chunk = next;
+			}
 		}
-		CPPAD_ASSERT_UNKNOWN( available(thread) == CPPAD_NULL );
+		CPPAD_ASSERT_UNKNOWN( available(thread) == 0 );
 	}
 /* -----------------------------------------------------------------------
 $begin ta_inuse$$
