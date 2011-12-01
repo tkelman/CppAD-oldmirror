@@ -41,10 +41,16 @@ This must be larger than the log base two of numeric_limit<size_t>::max().
 # define CPPAD_MAX_NUM_CAPACITY 100
 
 /*!
-\def CPPAD_MIN_DOUBLE_CAPACITY
-Minimum number of double values that will fit in an allocation.
+\def CPPAD_MIN_CAPACITY
+Minimum number of bytes that will fit in a thread_alloc memory allocation.
 */
-# define CPPAD_MIN_DOUBLE_CAPACITY 16
+# define CPPAD_MIN_CAPACITY 128
+
+/*!
+\def CPPAD_MIN_CHUNK
+Minimum number of bytes that will fit in a system memory allocation.
+*/
+# define CPPAD_MIN_CHUNK 4096
 
 /*!
 \def CPPAD_TRACE_CAPACITY
@@ -90,7 +96,7 @@ public:
 		// "thread_alloc: in parallel mode and parallel_setup not yet called."
 		// );
 		number           = 0;
-		size_t capacity  = CPPAD_MIN_DOUBLE_CAPACITY * sizeof(double);
+		size_t capacity  = CPPAD_MIN_CAPACITY;
 		while( capacity < std::numeric_limits<size_t>::max() / 2 )
 		{	CPPAD_ASSERT_UNKNOWN( number < CPPAD_MAX_NUM_CAPACITY );
 			value[number++] = capacity;
@@ -113,18 +119,22 @@ private:
 	/// pointer to the next memory allocation with the the same tc_index_
 	thread_alloc*      next_;
 	/// pointer to the system allocated memory chunck list for this entry
-	thread_alloc*      chunk_;
+	/// (in the case of chunk list, this is previous chunk)
+	union {
+		thread_alloc*  chunk;    // used by inuse and free lists
+		thread_alloc*  previous; // used by chunk list
+	} ptr_;
 	/// extra information for this entry
 	union {
-		size_t size;    // used by create and delete array functions
-		size_t n_inuse; // used by chunk list for number thread_allocs inuse
-	} extra_;
+		size_t n_element;// used by create and delete array functions
+		size_t n_inuse;  // used by chunk list for number thread_allocs inuse
+	} size_;
 	// ---------------------------------------------------------------------
 	/// make default constructor private. It is only used by the constructor
 	/// for \c root arrays below.
 	thread_alloc(void) : tc_index_(0), next_(CPPAD_NULL)
-	{	extra_.size    = 0;
-		extra_.n_inuse = 0;
+	{	size_.n_element  = 0;
+		size_.n_inuse    = 0;
 	}
 	// ---------------------------------------------------------------------
 	static const thread_alloc_capacity* capacity_info(void)
@@ -238,6 +248,16 @@ private:
 		// do the subtraction
 		CPPAD_ASSERT_UNKNOWN( available_vec[thread] >= dec );
 		available_vec[thread] =  available_vec[thread] - dec;
+	}
+
+	// ----------------------------------------------------------------------
+	/// Vector of length CPPAD_MAX_NUM_THREADS times CPPAD_MAX_NUM_CAPACITIES 
+	/// for use as root of list of chunks.
+	static thread_alloc* root_chunk(void)
+	{	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
+		static thread_alloc  
+			root[CPPAD_MAX_NUM_THREADS * CPPAD_MAX_NUM_CAPACITY];
+		return root;
 	}
 
 	// ----------------------------------------------------------------------
@@ -796,7 +816,7 @@ $end
 			dec_available(cap_bytes, thread);
 
 			// add 1 thread_alloc unit to corresponding chunk inuse counter
-			(node->chunk_->extra_.n_inuse)++;
+			(node->ptr_.chunk->size_.n_inuse)++;
 
 			// return pointer to memory, do not inclue thread_alloc information
 			return v_ptr;
@@ -806,9 +826,18 @@ $end
 		// front. This uses the system allocator, which is thread safe, 
 		// but slower (might wait for a lock on the allocator).
 		void* v_chunk   = ::operator new(2*sizeof(thread_alloc) + cap_bytes);
-		thread_alloc* chunk  = reinterpret_cast<thread_alloc*>(v_chunk);
+		thread_alloc* chunk      = reinterpret_cast<thread_alloc*>(v_chunk);
+		thread_alloc* chunk_root = root_chunk() + tc_index;
+		//
+		chunk->next_  = chunk_root->next_;
+		if( chunk->next_ != CPPAD_NULL  )
+			chunk->next_->ptr_.previous = chunk;
+		//
+		chunk_root->next_        = chunk;
+		chunk->ptr_.previous     = chunk_root;
+		//
 		node                 = chunk + 1;
-		node->chunk_         = chunk;
+		node->ptr_.chunk     = chunk;
 		node->tc_index_      = tc_index;
 		void* v_ptr          = reinterpret_cast<void*>(node + 1);
 
@@ -827,7 +856,7 @@ $end
 		inc_inuse(cap_bytes, thread);
 
 		// set number of thread_alloc units inuse for this chunk to one
-		chunk->extra_.n_inuse = 1;
+		chunk->size_.n_inuse = 1;
 
 		return v_ptr;
 	}
@@ -945,12 +974,19 @@ $end
 		dec_inuse(capacity, thread);
 
 		// remove 1 thread_alloc unit from corresponding chunk inuse counter
-		CPPAD_ASSERT_UNKNOWN(node->chunk_->extra_.n_inuse > 0 );
-		(node->chunk_->extra_.n_inuse)--;
+		CPPAD_ASSERT_UNKNOWN(node->ptr_.chunk->size_.n_inuse > 0 );
+		(node->ptr_.chunk->size_.n_inuse)--;
 
 		// check for case where we just return the memory to the system
 		if( num_threads() == 1 )
-		{	::operator delete( reinterpret_cast<void*>(node->chunk_) );
+		{	thread_alloc* chunk = node->ptr_.chunk;
+			CPPAD_ASSERT_UNKNOWN( chunk->size_.n_inuse == 0 );
+			if( chunk->ptr_.previous != CPPAD_NULL )
+				chunk->ptr_.previous->next_ = chunk->next_;
+			if( chunk->next_ != CPPAD_NULL )
+				chunk->next_->ptr_.previous = chunk->ptr_.previous;
+
+			::operator delete( reinterpret_cast<void*>(chunk) );
 			return;
 		}
 
@@ -1028,10 +1064,17 @@ $end
 			thread_alloc* available_root = root_available() + tc_index;
 			thread_alloc* node           = available_root->next_;
 			while( node != CPPAD_NULL )
-			{	thread_alloc* next = node->next_;
-				::operator delete( reinterpret_cast<void*>(node->chunk_) );
-				node               = next;
+			{	thread_alloc* next  = node->next_;
+				thread_alloc* chunk = node->ptr_.chunk;
+				CPPAD_ASSERT_UNKNOWN( chunk->size_.n_inuse == 0 );
+				if( chunk->ptr_.previous != CPPAD_NULL )
+					chunk->ptr_.previous->next_ = chunk->next_;
+				if( chunk->next_ != CPPAD_NULL )
+					chunk->next_->ptr_.previous = chunk->ptr_.previous;
+				CPPAD_ASSERT_UNKNOWN(chunk->size_.n_inuse == 0);
+				::operator delete( reinterpret_cast<void*>(chunk) );
 
+				node  = next;
 				dec_available(capacity, thread);
 			}
 			available_root->next_ = CPPAD_NULL;
@@ -1259,14 +1302,14 @@ $end
 		size_t min_bytes = size_min * sizeof(Type);
 		// do the allocation 
 		size_t num_bytes;
-		void*  v_ptr     = get_memory(min_bytes, num_bytes);
+		void*  v_ptr          = get_memory(min_bytes, num_bytes);
 		// This is where the array starts
-		Type*  array     = reinterpret_cast<Type*>(v_ptr);
+		Type*  array          = reinterpret_cast<Type*>(v_ptr);
 		// number of Type values in the allocation
-		size_out         = num_bytes / sizeof(Type);
+		size_out              = num_bytes / sizeof(Type);
 		// store this number in the size field
-		thread_alloc* node  = reinterpret_cast<thread_alloc*>(v_ptr) - 1;
-		node->extra_.size   = size_out;
+		thread_alloc* node    = reinterpret_cast<thread_alloc*>(v_ptr) - 1;
+		node->size_.n_element = size_out;
 
 		// call default constructor for each element
 		size_t i;
@@ -1348,7 +1391,7 @@ $end
 	static void delete_array(Type* array)
 	{	// determine the number of values in the array
 		thread_alloc* node = reinterpret_cast<thread_alloc*>(array) - 1;
-		size_t size     = node->extra_.size;
+		size_t size     = node->size_.n_element;
 
 		// call destructor for each element
 		size_t i;
@@ -1365,7 +1408,7 @@ CPPAD_END_NAMESPACE
 
 // preprocessor symbols local to this file
 # undef CPPAD_MAX_NUM_CAPACITY
-# undef CPPAD_MIN_DOUBLE_CAPACITY
+# undef CPPAD_MIN_CAPACITY
 # undef CPPAD_TRACE_CAPACITY
 # undef CPPAD_TRACE_THREAD
 # endif
