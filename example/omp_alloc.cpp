@@ -78,14 +78,15 @@ bool omp_alloc_bytes(void)
 		}
 		// check that n_inner * cap_bytes are inuse and none are available
 		ok &= omp_alloc::inuse(thread) == n_inner * cap_bytes;
-		ok &= omp_alloc::available(thread) == 0;
+		size_t extra = omp_alloc::available(thread);
+		ok &= (extra % cap_bytes) == 0;
 		// return the memrory to omp_alloc
 		for(j = 0; j < n_inner; j++)
 			omp_alloc::return_memory(v_ptr[j]);
 		// check that now n_inner * cap_bytes are now available
 		// and none are in use
 		ok &= omp_alloc::inuse(thread) == 0;
-		ok &= omp_alloc::available(thread) == n_inner * cap_bytes;
+		ok &= omp_alloc::available(thread) == extra + n_inner * cap_bytes;
 	}
 	// return all the available memory to the system
 	omp_alloc::free_available(thread);
@@ -142,13 +143,15 @@ bool omp_alloc_array(void)
 	// (an extra size_t value is used for each memory block).
 	size_t check = sizeof(my_char)*(size_one + size_two);
 	ok   &= omp_alloc::inuse(thread) - check < sizeof(my_char);
-	ok   &= omp_alloc::available(thread) == 0;
+	ok   &= omp_alloc::inuse(thread) == 2 * CPPAD_MIN_CAPACITY;
+	ok   &= omp_alloc::available(thread) == 
+		CPPAD_MIN_CHUNK - 2 * CPPAD_MIN_CAPACITY;
 
 	// delete the arrays 
 	omp_alloc::delete_array(array_one);
 	omp_alloc::delete_array(array_two);
 	ok   &= omp_alloc::inuse(thread) == 0;
-	ok   &= omp_alloc::available(thread) - check < sizeof(my_char);
+	ok   &= omp_alloc::available(thread) == CPPAD_MIN_CHUNK;
 
 	// free the memory for use by this thread
 	omp_alloc::free_available(thread);
