@@ -41,7 +41,7 @@ cmd="g++ test_one.cpp $*
 "
 if [ -e @ADOLC_DIR@/include/adolc/adouble.h ]
 then
-	cmd="$cmd -I@ADOLC_DIR@/include -L@ADOLC_DIR@/lib -ladolc"
+	cmd="$cmd @OPENMP_FLAGS@ -I@ADOLC_DIR@/include -L@ADOLC_DIR@/lib -ladolc"
 fi
 if [ -e @IPOPT_DIR@/lib/libipopt.a ]
 then

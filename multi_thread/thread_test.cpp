@@ -273,6 +273,11 @@ int main(int argc, char *argv[])
 	{	if( run_a11c )
 			ok        = a11c();
 		else ok        = simple_ad();
+		if( CppAD::memory_leak() )
+		{	ok = false;
+			cout << "memory_leak   = true;"  << endl;
+		}
+		else cout << "memory_leak   = false;" << endl;
 		if( ok )
 		{	cout << "OK            = true;"  << endl;
 			exit(0);
@@ -377,6 +382,13 @@ int main(int argc, char *argv[])
 		else	cout << num_threads << " threads" << endl;
 	}
 	cout << "];" << endl;
+	//
+	if( CppAD::memory_leak() )
+	{	ok = false;
+		cout << "memory_leak   = true;"  << endl;
+	}
+	else cout << "memory_leak   = false;" << endl;
+	//
 	if( ok )
 		cout << "OK            = true;"  << endl;
 	else cout << "OK            = false;" << endl;

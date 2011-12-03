@@ -56,6 +56,7 @@ extern bool ndebug(void);
 extern bool NearEqualExt(void);
 extern bool Neg(void);
 extern bool ode_err_control(void);
+extern bool openmp_alloc(void);
 extern bool optimize(void);
 extern bool parameter(void);
 extern bool Poly(void);
@@ -190,8 +191,11 @@ int main(void)
 	ok &= Run( VecADPar,        "VecADPar"       );
 	ok &= Run( VecUnary,        "VecUnary"       );
 
-# ifdef CPPAD_ADOLC_TEST
+# if CPPAD_ADOLC_TEST
 	ok &= Run( base_adolc,      "base_adolc"     );
+# endif
+# if CPPAD_OPENMP_TEST
+	ok &= Run( openmp_alloc,    "openmp_alloc"   );
 # endif
 
 	// check for errors

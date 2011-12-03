@@ -42,7 +42,8 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 # undef CPPAD_MAX_NUM_CAPACITIES
 # undef CPPAD_MAX_NUM_CAPACITY
 //      CPPAD_MAX_NUM_THREADS in user api
-# undef CPPAD_MIN_DOUBLE_CAPACITY
+// # undef CPPAD_MIN_CAPACITY used by test_more/openmp_alloc.cpp
+// # undef CPPAD_MIN_CHUNK    used by test_more/openmp_alloc.cpp
 # undef CPPAD_NUL
 //      CPPAD_NULL is in user api
 # undef CPPAD_OP_CODE_TYPE

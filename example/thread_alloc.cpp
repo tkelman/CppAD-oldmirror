@@ -36,8 +36,6 @@ $end
 # include <cppad/thread_alloc.hpp>
 # include <vector>
 
-# define NUMBER_THREADS 2
-
 namespace {
 	// Setup for one thread in sequential execution mode
 	bool in_parallel_false(void)
@@ -54,7 +52,7 @@ bool raw_allocate(void)
 
 	// check that no memory is initilaly inuse or available
 	size_t thread;
-	for(thread = 0; thread < NUMBER_THREADS; thread++)
+	for(thread = 0; thread < CPPAD_MAX_NUM_THREADS; thread++)
 	{	ok &= thread_alloc::inuse(thread) == 0;
 		ok &= thread_alloc::available(thread) == 0;
 	}
@@ -83,17 +81,19 @@ bool raw_allocate(void)
 			for(k = 0; k < cap_size_t; k++)
 				ok &= ptr[k] == (i + j + k);
 		}
-		// check that n_inner * cap_bytes are inuse and none are available
+		// check that n_inner * cap_bytes are inuse and some multiple
+		// of cap_bytes is available
 		thread = thread_alloc::thread_num();
 		ok    &= thread_alloc::inuse(thread) == n_inner * cap_bytes;
-		ok    &= thread_alloc::available(thread) == 0;
+		size_t extra = thread_alloc::available(thread);
+		ok    &= (extra % cap_bytes) == 0;
 		// return the memrory to thread_alloc
 		for(j = 0; j < n_inner; j++)
 			thread_alloc::return_memory(v_ptr[j]);
 		// check that now n_inner * cap_bytes are now available
 		// and none are in use
 		ok &= thread_alloc::inuse(thread) == 0;
-		ok &= thread_alloc::available(thread) == n_inner * cap_bytes;
+		ok &= thread_alloc::available(thread) == extra + n_inner * cap_bytes;
 	}
 	thread_alloc::free_available(thread);
 	
@@ -153,22 +153,22 @@ bool type_allocate(void)
 	// (an extra size_t value is used for each memory block).
 	size_t check = sizeof(my_char)*(size_one + size_two);
 	ok   &= thread_alloc::inuse(thread) - check < sizeof(my_char);
-	ok   &= thread_alloc::available(thread) == 0;
+	ok   &= thread_alloc::inuse(thread) == 2 * CPPAD_MIN_CAPACITY;
+	ok   &= thread_alloc::available(thread) == 
+		CPPAD_MIN_CHUNK - 2 * CPPAD_MIN_CAPACITY;
 
 	// delete the arrays 
 	thread_alloc::delete_array(array_one);
 	thread_alloc::delete_array(array_two);
 	ok   &= thread_alloc::inuse(thread) == 0;
-	ok   &= thread_alloc::available(thread) - check < sizeof(my_char);
+	ok   &= thread_alloc::available(thread) == CPPAD_MIN_CHUNK;
 
 	// free the memory for use by this thread
 	thread_alloc::free_available(thread);
 	
-	// check that the tests have not held onto memory
-	for(thread = 0; thread < thread_alloc::num_threads(); thread++)
-	{	ok &= thread_alloc::inuse(thread) == 0;
-		ok &= thread_alloc::available(thread) == 0;
-	}
+	ok &= thread_alloc::inuse(thread) == 0;
+	ok &= thread_alloc::available(thread) == 0;
+
 	return ok;
 }
 

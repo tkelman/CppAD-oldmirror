@@ -114,283 +114,282 @@ Allocator class that works well with an multi-threading environment.
 class thread_alloc{
 // ============================================================================
 private:
-	/// an index that uniquely idenfifies both thread and capacity
-	size_t             tc_index_;
-	/// pointer to the next memory allocation with the the same tc_index_
-	thread_alloc*      next_;
-	/// pointer to the system allocated memory chunck list for this entry
-	/// (in the case of chunk list, this is previous chunk)
-	union {
-		thread_alloc*  chunk;    // used by inuse and free lists
-		thread_alloc*  previous; // used by chunk list
-	} ptr_;
-	/// extra information for this entry
-	union {
-		size_t n_element;// used by create and delete array functions
-		size_t n_inuse;  // used by chunk list for number thread_allocs inuse
-	} size_;
-	// ---------------------------------------------------------------------
-	/// make default constructor private. It is only used by the constructor
-	/// for \c root arrays below.
-	thread_alloc(void) : tc_index_(0), next_(CPPAD_NULL)
-	{	size_.n_element  = 0;
-		size_.n_inuse    = 0;
+/// index that uniquely identifies both thread and capacity
+size_t             tc_index_;
+/// pointer to the next entry with same tc_index_
+thread_alloc*      next_;
+/// pointer to the previous entry with same tc_index_
+thread_alloc*      previous_;
+/// pointer to the chunk corresponding to this entry
+thread_alloc*      chunk_;
+/// number of elements (used by create and delete array functions)
+size_t             n_element_;
+/// number of thread_alloc units, in this chunk, and currently in use.
+size_t             n_inuse_;
+// ---------------------------------------------------------------------
+/// make default constructor private. It is only used by the constructor
+/// for \c root arrays below.
+thread_alloc(void) : 
+tc_index_(0), 
+next_(CPPAD_NULL), 
+n_element_(0), 
+n_inuse_(0)
+{ }
+// ---------------------------------------------------------------------
+static const thread_alloc_capacity* capacity_info(void)
+{	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
+	static const thread_alloc_capacity capacity;
+	return &capacity;
+}
+// ---------------------------------------------------------------------
+/// number of bytes of memory that are currently in use for each thread
+static size_t* inuse_vector(void)
+{	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
+	static size_t inuse[CPPAD_MAX_NUM_THREADS];
+	return inuse;
+}
+// ---------------------------------------------------------------------
+/// number of bytes that are currrently available for each thread; i.e.,
+/// have been obtained for each thread and not yet returned to the system.
+static size_t* available_vector(void)
+{	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
+	static size_t available[CPPAD_MAX_NUM_THREADS];
+	return available;
+}
+
+// -----------------------------------------------------------------------
+/*!
+Increase the number of bytes of memory that are currently in use; i.e.,
+that been obtained with \c get_memory and not yet returned. 
+
+\param inc [in]
+amount to increase memory in use.
+
+\param thread [in]
+Thread for which we are increasing the number of bytes in use
+(must be less than \c num_threads).
+Durring parallel execution, this must be the thread 
+that is currently executing.
+*/
+static void inc_inuse(size_t inc, size_t thread)
+{	
+	CPPAD_ASSERT_UNKNOWN( thread < num_threads() );
+	CPPAD_ASSERT_UNKNOWN( 
+		thread == thread_num() || (! in_parallel()) 
+	);
+	size_t* inuse_vec = inuse_vector();
+	
+	// do the addition
+	size_t result = inuse_vec[thread] + inc;
+	CPPAD_ASSERT_UNKNOWN( result >= inuse_vec[thread] );
+
+	inuse_vec[thread] = result;
+}
+// -----------------------------------------------------------------------
+/*!
+Increase the number of bytes of memory that are currently avaialble; i.e.,
+have been obtained obtained from the system and are being held future use.
+
+\copydetails inc_inuse
+*/
+static void inc_available(size_t inc, size_t thread)
+{	
+	CPPAD_ASSERT_UNKNOWN( thread < CPPAD_MAX_NUM_THREADS);
+	CPPAD_ASSERT_UNKNOWN( 
+		thread == thread_num() || (! in_parallel()) 
+	);
+	size_t* available_vec = available_vector();
+	// do the addition
+	size_t result = available_vec[thread] + inc;
+	CPPAD_ASSERT_UNKNOWN( result >= available_vec[thread] );
+
+	available_vec[thread] = result;
+}
+// -----------------------------------------------------------------------
+/*!
+Decrease the number of bytes of memory that are currently in use; i.e.,
+that been obtained with \c get_memory and not yet returned. 
+
+\param dec [in]
+amount to decrease number of bytes in use.
+
+\param thread [in]
+Thread for which we are decreasing the number of bytes in use
+(must be less than \c num_threads).
+Durring parallel execution, this must be the thread 
+that is currently executing.
+*/
+static void dec_inuse(size_t dec, size_t thread)
+{	
+	CPPAD_ASSERT_UNKNOWN( thread < num_threads() );
+	CPPAD_ASSERT_UNKNOWN( 
+		thread == thread_num() || (! in_parallel()) 
+	);
+	size_t* inuse_vec = inuse_vector();
+	// do the subtraction
+	CPPAD_ASSERT_UNKNOWN( inuse_vec[thread] >= dec );
+	inuse_vec[thread] = inuse_vec[thread] - dec;
+}
+// -----------------------------------------------------------------------
+/*!
+Decrease the number of bytes of memory that are currently avaialble; i.e.,
+have been obtained obtained from the system and are being held future use.
+
+\copydetails dec_inuse
+*/
+static void dec_available(size_t dec, size_t thread)
+{	
+	CPPAD_ASSERT_UNKNOWN( thread < CPPAD_MAX_NUM_THREADS);
+	CPPAD_ASSERT_UNKNOWN( 
+		thread == thread_num() || (! in_parallel()) 
+	);
+	size_t* available_vec = available_vector();
+	// do the subtraction
+	CPPAD_ASSERT_UNKNOWN( available_vec[thread] >= dec );
+	available_vec[thread] =  available_vec[thread] - dec;
+}
+
+// ----------------------------------------------------------------------
+/// Vector of length CPPAD_MAX_NUM_THREADS times CPPAD_MAX_NUM_CAPACITIES 
+/// for use as root of list of chunks.
+static thread_alloc* root_chunk(void)
+{	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
+	static thread_alloc  
+		root[CPPAD_MAX_NUM_THREADS * CPPAD_MAX_NUM_CAPACITY];
+	return root;
+}
+
+// ----------------------------------------------------------------------
+/// Vector of length CPPAD_MAX_NUM_THREADS times CPPAD_MAX_NUM_CAPACITIES 
+/// for use as root nodes of inuse lists.
+static thread_alloc* root_inuse(void)
+{	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
+	static thread_alloc  
+		root[CPPAD_MAX_NUM_THREADS * CPPAD_MAX_NUM_CAPACITY];
+	return root;
+}
+
+// ----------------------------------------------------------------------
+/// Vector of length CPPAD_MAX_NUM_THREADS times CPPAD_MAX_NUM_CAPACITIES 
+/// for use as root nodes of available lists.
+static thread_alloc* root_available(void)
+{	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
+	static thread_alloc  
+		root[CPPAD_MAX_NUM_THREADS * CPPAD_MAX_NUM_CAPACITY];
+	return root;
+}
+
+// ----------------------------------------------------------------------
+/// Vector of length CPPAD_MAX_NUM_THREADS times CPPAD_MAX_NUM_CAPACITIES 
+/// for use as root nodes of chunck lists (chuncks of memory allocated
+/// for thread_alloc by system allocator).
+static thread_alloc* root_chunck(void)
+{	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
+	static thread_alloc  
+		root[CPPAD_MAX_NUM_THREADS * CPPAD_MAX_NUM_CAPACITY];
+	return root;
+}
+/*!
+Set and get the number of threads that are sharing memory.
+
+\param number_new 
+If \c number is zero, we are only retreiving the current maximum
+number of threads. Otherwise, we are setting and retreiving
+maximum number of threads.
+
+\return
+the number of threads that are sharing memory.
+If \c number_new is non-zero, the return value is equal to 
+\c number_new.
+*/
+static size_t set_get_num_threads(size_t number_new)
+{	static size_t number_user = 1;
+
+	CPPAD_ASSERT_UNKNOWN( number_new <= CPPAD_MAX_NUM_THREADS );
+	CPPAD_ASSERT_UNKNOWN( ! in_parallel() || (number_new == 0) );
+
+	// case where we are changing the number of threads
+	if( number_new != 0 )
+		number_user = number_new;
+
+	return number_user;
+}
+/*!
+Set and call the routine that determine if we are in parallel 
+execution mode.
+
+\return 
+value retuned by most recent setting for \a parallel_new.
+If \a set is true,
+or the most recent setting is \c CPPAD_NULL (its initial value),
+the return value is false.
+Otherwise the function corresponding to the most recent setting
+is called and its value returned by \c set_get_in_parallel.
+
+\param parallel_new [in]
+If \a set is false, \a parallel_new it is not used.
+Otherwise, the current value of \c parallel_new becomes the
+most recent setting for in_parallel.
+
+\param set
+If \a set is true, then \a parallel_new is becomes the most
+recent setting for this \c set_get_in_parallel.
+*/
+static bool set_get_in_parallel(
+	bool (*parallel_new)(void) ,
+	bool set = false           )
+{	static bool (*parallel_user)(void) = CPPAD_NULL;
+
+	if( set )
+	{	parallel_user = parallel_new;
+		return false;
 	}
-	// ---------------------------------------------------------------------
-	static const thread_alloc_capacity* capacity_info(void)
-	{	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
-		static const thread_alloc_capacity capacity;
-		return &capacity;
-	}
-	// ---------------------------------------------------------------------
-	/// number of bytes of memory that are currently in use for each thread
-	static size_t* inuse_vector(void)
-	{	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
-		static size_t inuse[CPPAD_MAX_NUM_THREADS];
-		return inuse;
-	}
-	// ---------------------------------------------------------------------
-	/// number of bytes that are currrently available for each thread; i.e.,
-	/// have been obtained for each thread and not yet returned to the system.
-	static size_t* available_vector(void)
-	{	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
-		static size_t available[CPPAD_MAX_NUM_THREADS];
-		return available;
-	}
 
-	// -----------------------------------------------------------------------
-	/*!
- 	Increase the number of bytes of memory that are currently in use; i.e.,
-	that been obtained with \c get_memory and not yet returned. 
+	if( parallel_user == CPPAD_NULL )
+		return false;
 
-	\param inc [in]
-	amount to increase memory in use.
+	return parallel_user();
+}
+/*!
+Set and call the routine that determine the current thread number.
 
-	\param thread [in]
-	Thread for which we are increasing the number of bytes in use
-	(must be less than \c num_threads).
-	Durring parallel execution, this must be the thread 
-	that is currently executing.
-	*/
-	static void inc_inuse(size_t inc, size_t thread)
-	{	
-		CPPAD_ASSERT_UNKNOWN( thread < num_threads() );
-		CPPAD_ASSERT_UNKNOWN( 
-			thread == thread_num() || (! in_parallel()) 
-		);
-		size_t* inuse_vec = inuse_vector();
-		
-		// do the addition
-		size_t result = inuse_vec[thread] + inc;
-		CPPAD_ASSERT_UNKNOWN( result >= inuse_vec[thread] );
+\return 
+returns value for the most recent setting for \a thread_num_new.
+If \a set is true,
+or the most recent setting is \c CPPAD_NULL (its initial value),
+the return value is zero.
+Otherwise the routine corresponding to the most recent setting
+is called and its value returned by \c set_get_thread_num.
 
-		inuse_vec[thread] = result;
-	}
-	// -----------------------------------------------------------------------
-	/*!
- 	Increase the number of bytes of memory that are currently avaialble; i.e.,
-	have been obtained obtained from the system and are being held future use.
+\param thread_num_new [in]
+If \a set is false, \a thread_num_new it is not used.
+Otherwise, the current value of \c thread_num_new becomes the
+most recent setting for thread_num.
 
-	\copydetails inc_inuse
-	*/
-	static void inc_available(size_t inc, size_t thread)
-	{	
-		CPPAD_ASSERT_UNKNOWN( thread < CPPAD_MAX_NUM_THREADS);
-		CPPAD_ASSERT_UNKNOWN( 
-			thread == thread_num() || (! in_parallel()) 
-		);
-		size_t* available_vec = available_vector();
-		// do the addition
-		size_t result = available_vec[thread] + inc;
-		CPPAD_ASSERT_UNKNOWN( result >= available_vec[thread] );
+\param set
+If \a set is true, then \a thread_num_new is becomes the most
+recent setting for this \c set_get_thread_num.
+*/
+static size_t set_get_thread_num(
+	size_t (*thread_num_new)(void)  ,
+	bool set = false                )
+{	static size_t (*thread_num_user)(void) = CPPAD_NULL;
 
-		available_vec[thread] = result;
-	}
-	// -----------------------------------------------------------------------
-	/*!
- 	Decrease the number of bytes of memory that are currently in use; i.e.,
-	that been obtained with \c get_memory and not yet returned. 
-
-	\param dec [in]
-	amount to decrease number of bytes in use.
-
-	\param thread [in]
-	Thread for which we are decreasing the number of bytes in use
-	(must be less than \c num_threads).
-	Durring parallel execution, this must be the thread 
-	that is currently executing.
-	*/
-	static void dec_inuse(size_t dec, size_t thread)
-	{	
-		CPPAD_ASSERT_UNKNOWN( thread < num_threads() );
-		CPPAD_ASSERT_UNKNOWN( 
-			thread == thread_num() || (! in_parallel()) 
-		);
-		size_t* inuse_vec = inuse_vector();
-		// do the subtraction
-		CPPAD_ASSERT_UNKNOWN( inuse_vec[thread] >= dec );
-		inuse_vec[thread] = inuse_vec[thread] - dec;
-	}
-	// -----------------------------------------------------------------------
-	/*!
- 	Decrease the number of bytes of memory that are currently avaialble; i.e.,
-	have been obtained obtained from the system and are being held future use.
-
-	\copydetails dec_inuse
-	*/
-	static void dec_available(size_t dec, size_t thread)
-	{	
-		CPPAD_ASSERT_UNKNOWN( thread < CPPAD_MAX_NUM_THREADS);
-		CPPAD_ASSERT_UNKNOWN( 
-			thread == thread_num() || (! in_parallel()) 
-		);
-		size_t* available_vec = available_vector();
-		// do the subtraction
-		CPPAD_ASSERT_UNKNOWN( available_vec[thread] >= dec );
-		available_vec[thread] =  available_vec[thread] - dec;
+	if( set )
+	{	thread_num_user = thread_num_new;
+		return 0;
 	}
 
-	// ----------------------------------------------------------------------
-	/// Vector of length CPPAD_MAX_NUM_THREADS times CPPAD_MAX_NUM_CAPACITIES 
-	/// for use as root of list of chunks.
-	static thread_alloc* root_chunk(void)
-	{	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
-		static thread_alloc  
-			root[CPPAD_MAX_NUM_THREADS * CPPAD_MAX_NUM_CAPACITY];
-		return root;
-	}
+	if( thread_num_user == CPPAD_NULL )
+		return 0;
 
-	// ----------------------------------------------------------------------
-	/// Vector of length CPPAD_MAX_NUM_THREADS times CPPAD_MAX_NUM_CAPACITIES 
-	/// for use as root nodes of inuse lists.
-	static thread_alloc* root_inuse(void)
-	{	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
-		static thread_alloc  
-			root[CPPAD_MAX_NUM_THREADS * CPPAD_MAX_NUM_CAPACITY];
-		return root;
-	}
-
-	// ----------------------------------------------------------------------
-	/// Vector of length CPPAD_MAX_NUM_THREADS times CPPAD_MAX_NUM_CAPACITIES 
-	/// for use as root nodes of available lists.
-	static thread_alloc* root_available(void)
-	{	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
-		static thread_alloc  
-			root[CPPAD_MAX_NUM_THREADS * CPPAD_MAX_NUM_CAPACITY];
-		return root;
-	}
-
-	// ----------------------------------------------------------------------
-	/// Vector of length CPPAD_MAX_NUM_THREADS times CPPAD_MAX_NUM_CAPACITIES 
-	/// for use as root nodes of chunck lists (chuncks of memory allocated
-	/// for thread_alloc by system allocator).
-	static thread_alloc* root_chunck(void)
-	{	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
-		static thread_alloc  
-			root[CPPAD_MAX_NUM_THREADS * CPPAD_MAX_NUM_CAPACITY];
-		return root;
-	}
-	/*!
-	Set and get the number of threads that are sharing memory.
-
-	\param number_new 
-	If \c number is zero, we are only retreiving the current maximum
-	number of threads. Otherwise, we are setting and retreiving
-	maximum number of threads.
-
-	\return
-	the number of threads that are sharing memory.
-	If \c number_new is non-zero, the return value is equal to 
-	\c number_new.
-	*/
-	static size_t set_get_num_threads(size_t number_new)
-	{	static size_t number_user = 1;
-
-		CPPAD_ASSERT_UNKNOWN( number_new <= CPPAD_MAX_NUM_THREADS );
-		CPPAD_ASSERT_UNKNOWN( ! in_parallel() || (number_new == 0) );
-
-		// case where we are changing the number of threads
-		if( number_new != 0 )
-			number_user = number_new;
-
-		return number_user;
-	}
-	/*!
-	Set and call the routine that determine if we are in parallel 
-	execution mode.
-
-	\return 
-	value retuned by most recent setting for \a parallel_new.
-	If \a set is true,
-	or the most recent setting is \c CPPAD_NULL (its initial value),
-	the return value is false.
-	Otherwise the function corresponding to the most recent setting
-	is called and its value returned by \c set_get_in_parallel.
-
-	\param parallel_new [in]
-	If \a set is false, \a parallel_new it is not used.
-	Otherwise, the current value of \c parallel_new becomes the
-	most recent setting for in_parallel.
-
-	\param set
-	If \a set is true, then \a parallel_new is becomes the most
-	recent setting for this \c set_get_in_parallel.
-	*/
-	static bool set_get_in_parallel(
-		bool (*parallel_new)(void) ,
-		bool set = false           )
-	{	static bool (*parallel_user)(void) = CPPAD_NULL;
-
-		if( set )
-		{	parallel_user = parallel_new;
-			return false;
-		}
-
-		if( parallel_user == CPPAD_NULL )
-			return false;
-
-		return parallel_user();
-	}
-	/*!
-	Set and call the routine that determine the current thread number.
-
-	\return 
-	returns value for the most recent setting for \a thread_num_new.
-	If \a set is true,
-	or the most recent setting is \c CPPAD_NULL (its initial value),
-	the return value is zero.
-	Otherwise the routine corresponding to the most recent setting
-	is called and its value returned by \c set_get_thread_num.
-
-	\param thread_num_new [in]
-	If \a set is false, \a thread_num_new it is not used.
-	Otherwise, the current value of \c thread_num_new becomes the
-	most recent setting for thread_num.
-
-	\param set
-	If \a set is true, then \a thread_num_new is becomes the most
-	recent setting for this \c set_get_thread_num.
-	*/
-	static size_t set_get_thread_num(
-		size_t (*thread_num_new)(void)  ,
-		bool set = false                )
-	{	static size_t (*thread_num_user)(void) = CPPAD_NULL;
-
-		if( set )
-		{	thread_num_user = thread_num_new;
-			return 0;
-		}
-
-		if( thread_num_user == CPPAD_NULL )
-			return 0;
-
-		size_t thread = thread_num_user();
-		CPPAD_ASSERT_KNOWN(
-			thread < set_get_num_threads(0) ,
-			"parallel_setup: thread_num() >= num_threads"
-		);
-		return thread;
-	}
+	size_t thread = thread_num_user();
+	CPPAD_ASSERT_KNOWN(
+		thread < set_get_num_threads(0) ,
+		"parallel_setup: thread_num() >= num_threads"
+	);
+	return thread;
+}
 // ============================================================================
 public:
 /*
@@ -482,73 +481,76 @@ contain examples and tests that use this function.
 
 $end
 */
-	/*!
-	Set thread_alloc up for parallel mode usage.
+/*!
+Set thread_alloc up for parallel mode usage.
 
-	\param num_threads [in]
-	Is the number of thread that may be executing at the same time.
+\param num_threads [in]
+Is the number of thread that may be executing at the same time.
 
-	\param in_parallel [in]
-	Is the routine that determines if we are in parallel mode or not.
+\param in_parallel [in]
+Is the routine that determines if we are in parallel mode or not.
 
-	\param thread_num [in]
-	Is the routine that determines the current thread number
-	(between zero and num_threads minus one).
-	*/
-	static void parallel_setup(
-		size_t num_threads         ,
-		bool (*in_parallel)(void)  ,
-		size_t (*thread_num)(void) )
-	{
-		CPPAD_ASSERT_KNOWN( 
-			num_threads <= CPPAD_MAX_NUM_THREADS ,
-			"parallel_setup: num_threads is too large"
-		);
-		CPPAD_ASSERT_KNOWN( 
-			num_threads != 0 ,
-			"parallel_setup: num_threads == zero"
-		);
-		CPPAD_ASSERT_KNOWN( 
-			in_parallel != CPPAD_NULL ,
-			"parallel_setup: the function pointer in_parallel == zero"
-		);
-		CPPAD_ASSERT_KNOWN( 
-			thread_num != CPPAD_NULL ,
-			"parallel_setup: the function pointer thread_num == zero"
-		);
+\param thread_num [in]
+Is the routine that determines the current thread number
+(between zero and num_threads minus one).
+*/
 
-		// go back to single thread mode right away
-		// (previous settings may no longer be valid)
-		if( num_threads == 1 )
-		{	bool set = true;
-			set_get_num_threads(num_threads);
-			set_get_in_parallel(CPPAD_NULL, set);
-			set_get_thread_num(CPPAD_NULL, set);
-		}
+static void parallel_setup(
+	size_t num_threads         ,
+	bool (*in_parallel)(void)  ,
+	size_t (*thread_num)(void) )
+{
 
-		// Make sure that constructors for all static variables in this file 
-		// are called in sequential mode.	
-		capacity_info();
-		inuse_vector();
-		available_vector();
-		root_inuse();
-		root_available();
-		size_t cap_bytes;
-		void* v_ptr = get_memory(0, cap_bytes);
-
-		// free memory allocated by call to get_memory above
-		return_memory(v_ptr);
-		free_available( set_get_thread_num(CPPAD_NULL) );
-
-		// delay this so thread_num() call above is in previous mode
-		// (current setings may not yet be valid)
-		if( num_threads > 1 )
-		{	bool set = true;
-			set_get_num_threads(num_threads);
-			set_get_in_parallel(in_parallel, set);
-			set_get_thread_num(thread_num, set);
-		}
+	// go back to single thread mode right away
+	// (previous settings may no longer be valid)
+	if( num_threads == 1 )
+	{	bool set = true;
+		set_get_num_threads(num_threads);
+		set_get_in_parallel(CPPAD_NULL, set);
+		set_get_thread_num(CPPAD_NULL, set);
+		return;
 	}
+
+	CPPAD_ASSERT_KNOWN( 
+		num_threads <= CPPAD_MAX_NUM_THREADS ,
+		"parallel_setup: num_threads is too large"
+	);
+	CPPAD_ASSERT_KNOWN( 
+		num_threads != 0 ,
+		"parallel_setup: num_threads == zero"
+	);
+	CPPAD_ASSERT_KNOWN( 
+		in_parallel != CPPAD_NULL ,
+		"parallel_setup: the function pointer in_parallel == zero"
+	);
+	CPPAD_ASSERT_KNOWN( 
+		thread_num != CPPAD_NULL ,
+		"parallel_setup: the function pointer thread_num == zero"
+	);
+
+	// Make sure that constructors for all static variables in this file 
+	// are called in sequential mode.	
+	capacity_info();
+	inuse_vector();
+	available_vector();
+	root_inuse();
+	root_available();
+	size_t cap_bytes;
+	void* v_ptr = get_memory(0, cap_bytes);
+
+	// free memory allocated by call to get_memory above
+	return_memory(v_ptr);
+	free_available( set_get_thread_num(CPPAD_NULL) );
+
+	// delay this so thread_num() call above is in previous mode
+	// (current setings may not yet be valid)
+	if( num_threads > 1 )
+	{	bool set = true;
+		set_get_num_threads(num_threads);
+		set_get_in_parallel(in_parallel, set);
+		set_get_thread_num(thread_num, set);
+	}
+}
 /*
 $begin ta_num_threads$$
 $spell
@@ -584,11 +586,11 @@ The example and test $cref thread_alloc.cpp$$ uses this routine.
 
 $end
 */
-	/*!
-	Get the current number of threads that thread_alloc can use.
-	*/
-	static size_t num_threads(void)
-	{	return set_get_num_threads(CPPAD_NULL); }
+/*!
+Get the current number of threads that thread_alloc can use.
+*/
+static size_t num_threads(void)
+{	return set_get_num_threads(CPPAD_NULL); }
 /* -----------------------------------------------------------------------
 $begin ta_in_parallel$$
 
@@ -626,10 +628,10 @@ $cref/thread_alloc.cpp/$$
 
 $end
 */
-	/// Are we in a parallel execution state; i.e., is it possible that
-	/// other threads are currently executing. 
-	static bool in_parallel(void)
-	{	return set_get_in_parallel(CPPAD_NULL); }
+/// Are we in a parallel execution state; i.e., is it possible that
+/// other threads are currently executing. 
+static bool in_parallel(void)
+{	return set_get_in_parallel(CPPAD_NULL); }
 /* -----------------------------------------------------------------------
 $begin ta_thread_num$$
 $spell
@@ -666,9 +668,9 @@ $cref/thread_alloc.cpp/$$
 
 $end
 */
-	/// Get current thread number 
-	static size_t thread_num(void)
-	{	return set_get_thread_num(CPPAD_NULL); }
+/// Get current thread number 
+static size_t thread_num(void)
+{	return set_get_thread_num(CPPAD_NULL); }
 /* -----------------------------------------------------------------------
 $begin ta_get_memory$$
 $spell
@@ -733,134 +735,153 @@ $cref/thread_alloc.cpp/$$
 
 $end
 */
-	/*!
+/*!
  	Use thread_alloc to get a specified amount of memory.
 
-	If the memory allocated by a previous call to \c get_memory is now 
-	avaialable, and \c min_bytes is between its previous value
-	and the previous \c cap_bytes, this memory allocation will have
-	optimal speed. Otherwise, the memory allocation is more complicated and
-	may have to wait for other threads to complete an allocation.
+If the memory allocated by a previous call to \c get_memory is now 
+avaialable, and \c min_bytes is between its previous value
+and the previous \c cap_bytes, this memory allocation will have
+optimal speed. Otherwise, the memory allocation is more complicated and
+may have to wait for other threads to complete an allocation.
 
-	\param min_bytes [in]
-	The minimum number of bytes of memory to be obtained for use.
+\param min_bytes [in]
+The minimum number of bytes of memory to be obtained for use.
 
-	\param cap_bytes [out]
-	The actual number of bytes of memory obtained for use.
+\param cap_bytes [out]
+The actual number of bytes of memory obtained for use.
 
-	\return
-	pointer to the beginning of the memory allocted for use.
+\return
+pointer to the beginning of the memory allocted for use.
  	*/
-	static void* get_memory(size_t min_bytes, size_t& cap_bytes)
-	{	// see first_trace below	
-		CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
+static void* get_memory(size_t min_bytes, size_t& cap_bytes)
+{	// see first_trace below	
+	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
 
-		size_t num_cap = capacity_info()->number;
-		using std::cout;
-		using std::endl;
+	size_t num_cap = capacity_info()->number;
+	using std::cout;
+	using std::endl;
 
-		// determine the capacity for this request
-		size_t c_index   = 0;
-		const size_t* capacity_vec = capacity_info()->value;
-		while( capacity_vec[c_index] < min_bytes )
-		{	++c_index;	
-			CPPAD_ASSERT_UNKNOWN(c_index < num_cap );
-		}
-		cap_bytes = capacity_vec[c_index];
+	// determine the capacity for this request
+	size_t c_index   = 0;
+	const size_t* capacity_vec = capacity_info()->value;
+	while( capacity_vec[c_index] < min_bytes )
+	{	++c_index;	
+		CPPAD_ASSERT_UNKNOWN(c_index < num_cap );
+	}
+	cap_bytes = capacity_vec[c_index];
 
-		// determine the thread and capacity index
-		size_t thread    = thread_num();
-		size_t tc_index  = thread * num_cap + c_index;
-
-# ifndef NDEBUG
-		// trace allocation
-		static bool first_trace = true;
-		if(	cap_bytes == CPPAD_TRACE_CAPACITY && 
-		     thread    ==  CPPAD_TRACE_THREAD  && first_trace )
-		{	cout << endl;	
-			cout << "thread_alloc: Trace for Thread = " << thread;
-			cout << " and capacity = " << cap_bytes << endl;
-			if( first_trace )
-				first_trace = false;
-		}
-
-		// Root nodes for both lists. Note these are different for different 
-		// threads because tc_index is different for different threads.
-		thread_alloc* inuse_root     = root_inuse() + tc_index;
-# endif
-		thread_alloc* available_root = root_available() + tc_index;
-
-		// check if we already have a node we can use
-		thread_alloc* node = available_root->next_;
-		if( node != CPPAD_NULL )
-		{	CPPAD_ASSERT_UNKNOWN( node->tc_index_ == tc_index );
-
-			// remove node from available list
-			available_root->next_ = node->next_;
-
-			// return value for get_memory
-			void* v_ptr = reinterpret_cast<void*>(node + 1);
-# ifndef NDEBUG
-			// add node to inuse list
-			node->next_           = inuse_root->next_;
-			inuse_root->next_     = node;
-
-			// trace allocation
-			if(	cap_bytes == CPPAD_TRACE_CAPACITY && 
-			     thread    ==  CPPAD_TRACE_THREAD   )
-			{	cout << "get_memory:    v_ptr = " << v_ptr << endl; } 
-# endif
-
-			// adjust counts
-			inc_inuse(cap_bytes, thread);
-			dec_available(cap_bytes, thread);
-
-			// add 1 thread_alloc unit to corresponding chunk inuse counter
-			(node->ptr_.chunk->size_.n_inuse)++;
-
-			// return pointer to memory, do not inclue thread_alloc information
-			return v_ptr;
-		}
-
-		// Create a new chunk of memory with thread_alloc information at 
-		// front. This uses the system allocator, which is thread safe, 
-		// but slower (might wait for a lock on the allocator).
-		void* v_chunk   = ::operator new(2*sizeof(thread_alloc) + cap_bytes);
-		thread_alloc* chunk      = reinterpret_cast<thread_alloc*>(v_chunk);
-		thread_alloc* chunk_root = root_chunk() + tc_index;
-		//
-		chunk->next_  = chunk_root->next_;
-		if( chunk->next_ != CPPAD_NULL  )
-			chunk->next_->ptr_.previous = chunk;
-		//
-		chunk_root->next_        = chunk;
-		chunk->ptr_.previous     = chunk_root;
-		//
-		node                 = chunk + 1;
-		node->ptr_.chunk     = chunk;
-		node->tc_index_      = tc_index;
-		void* v_ptr          = reinterpret_cast<void*>(node + 1);
+	// determine the thread and capacity index
+	size_t thread    = thread_num();
+	size_t tc_index  = thread * num_cap + c_index;
 
 # ifndef NDEBUG
-		// add node to inuse list
-		node->next_       = inuse_root->next_;
-		inuse_root->next_ = node;
-
-		// trace allocation
-		if( cap_bytes == CPPAD_TRACE_CAPACITY && 
-		    thread    == CPPAD_TRACE_THREAD    )
-		{	cout << "get_memory:    v_ptr = " << v_ptr << endl; }
-# endif
-
-		// adjust counts
-		inc_inuse(cap_bytes, thread);
-
-		// set number of thread_alloc units inuse for this chunk to one
-		chunk->size_.n_inuse = 1;
-
-		return v_ptr;
+	// trace allocation
+	static bool first_trace = true;
+	if(	cap_bytes == CPPAD_TRACE_CAPACITY && 
+	     thread    ==  CPPAD_TRACE_THREAD  && first_trace )
+	{	cout << endl;	
+		cout << "thread_alloc: Trace for Thread = " << thread;
+		cout << " and capacity = " << cap_bytes << endl;
+		if( first_trace )
+			first_trace = false;
 	}
 
+	// Root nodes for both lists. Note these are different for different 
+	// threads because tc_index is different for different threads.
+	thread_alloc* inuse_root     = root_inuse() + tc_index;
+# endif
+	thread_alloc* available_root = root_available() + tc_index;
+
+	// check if any memory is avialble for allocation
+	thread_alloc* node;
+	if( available_root->next_ == CPPAD_NULL )
+	{
+		if( num_threads() == 1 )
+		{	// create one block of memory
+			void* v_block = ::operator new( 
+				sizeof(thread_alloc) + cap_bytes 
+			);
+			node              = reinterpret_cast<thread_alloc*>(v_block);
+			node->chunk_      = CPPAD_NULL; // no corresponding chunk
+			node->tc_index_   = tc_index;
+			node->next_       = available_root->next_;
+			available_root->next_ = node;
+			inc_available(cap_bytes, thread);
+		}
+		else
+		{	size_t n_block = 1 + (CPPAD_MIN_CHUNK - 1)/cap_bytes; 
+			// Create a new chunk of contigious memory with multiple blocks.
+			void* v_chunk  = ::operator new(
+				(1 + n_block) * sizeof(thread_alloc) + n_block * cap_bytes
+			);
+# ifndef NDEBUG
+			// trace allocation
+			if(	cap_bytes == CPPAD_TRACE_CAPACITY && 
+	     		thread    ==  CPPAD_TRACE_THREAD   )
+			{	cout << "get_memory:    v_chunk = " << v_chunk << endl; } 
+# endif
+			thread_alloc* chunk = reinterpret_cast<thread_alloc*>(v_chunk);
+			thread_alloc* chunk_root = root_chunk() + tc_index;
+			//
+			chunk->n_inuse_ = 0;
+			//
+			chunk->next_  = chunk_root->next_;
+			if( chunk->next_ != CPPAD_NULL  )
+				chunk->next_->previous_ = chunk;
+			//
+			chunk_root->next_    = chunk;
+			chunk->previous_ = chunk_root;
+			//
+			CPPAD_ASSERT_UNKNOWN( sizeof(char) == 1 );
+			char* c_chunk = reinterpret_cast<char*>(v_chunk);
+			c_chunk      += sizeof(thread_alloc);
+			size_t i_block;
+			for(i_block = 0; i_block < n_block; i_block++)
+			{	node = reinterpret_cast<thread_alloc*>(c_chunk);
+				node->chunk_          = chunk;
+				node->tc_index_       = tc_index;
+				node->next_           = available_root->next_;
+				available_root->next_ = node;
+				inc_available(cap_bytes, thread);
+				//
+				c_chunk += sizeof(thread_alloc) + cap_bytes;
+			}
+		}
+	}
+	node = available_root->next_;
+	CPPAD_ASSERT_UNKNOWN( node != CPPAD_NULL );
+	CPPAD_ASSERT_UNKNOWN( node->tc_index_ == tc_index );
+
+	// remove node from available list
+	available_root->next_ = node->next_;
+
+	// return value for get_memory
+	void* v_ptr = reinterpret_cast<void*>(node + 1);
+# ifndef NDEBUG
+	// add node to inuse list
+	node->next_           = inuse_root->next_;
+	inuse_root->next_     = node;
+
+	// trace allocation
+	if(	cap_bytes == CPPAD_TRACE_CAPACITY && 
+	     thread    ==  CPPAD_TRACE_THREAD   )
+	{	cout << "get_memory:    v_ptr = " << v_ptr;
+		cout << ", num_threads = " << num_threads() << endl; 
+	} 
+# endif
+
+	// adjust counts
+	inc_inuse(cap_bytes, thread);
+	dec_available(cap_bytes, thread);
+
+	// add 1 thread_alloc unit to corresponding chunk inuse counter
+	thread_alloc* chunk = node->chunk_;
+	if( chunk != CPPAD_NULL )
+		(chunk->n_inuse_)++;
+
+	// return pointer to memory, do not inclue thread_alloc information
+	return v_ptr;
+}
 /* -----------------------------------------------------------------------
 $begin ta_return_memory$$
 $spell
@@ -910,94 +931,92 @@ $cref/thread_alloc.cpp/$$
 
 $end
 */
-	/*!
+/*!
  	Return memory that was obtained by \c get_memory.
-	If  <code>num_threads() == 1</code>,
-	the memory is returned to the system.
-	Otherwise, it is retained by \c thread_alloc and available for use by 
-	\c get_memory for this thread.
+If  <code>num_threads() == 1</code>,
+the memory is returned to the system.
+Otherwise, it is retained by \c thread_alloc and available for use by 
+\c get_memory for this thread.
 
-	\param v_ptr [in]
-	Value of the pointer returned by \c get_memory and still in use.
-	After this call, this pointer will available (and not in use).
+\param v_ptr [in]
+Value of the pointer returned by \c get_memory and still in use.
+After this call, this pointer will available (and not in use).
 
-	\par
-	We must either be in sequential (not parallel) execution mode,
-	or the current thread must be the same as for the corresponding call
-	to \c get_memory.
+\par
+We must either be in sequential (not parallel) execution mode,
+or the current thread must be the same as for the corresponding call
+to \c get_memory.
  	*/
-	static void return_memory(void* v_ptr)
-	{	size_t num_cap   = capacity_info()->number;
+static void return_memory(void* v_ptr)
+{	size_t num_cap   = capacity_info()->number;
 
-		thread_alloc* node  = reinterpret_cast<thread_alloc*>(v_ptr) - 1;
-		size_t tc_index  = node->tc_index_;
-		size_t thread    = tc_index / num_cap;
-		size_t c_index   = tc_index % num_cap;
-		size_t capacity  = capacity_info()->value[c_index];
+	thread_alloc* node  = reinterpret_cast<thread_alloc*>(v_ptr) - 1;
+	size_t tc_index  = node->tc_index_;
+	size_t thread    = tc_index / num_cap;
+	size_t c_index   = tc_index % num_cap;
+	size_t capacity  = capacity_info()->value[c_index];
 
-		CPPAD_ASSERT_UNKNOWN( thread < CPPAD_MAX_NUM_THREADS );
-		CPPAD_ASSERT_KNOWN( 
-			thread == thread_num() || (! in_parallel()),
-			"Attempt to return memory for a different thread "
-			"while in parallel mode"
-		);
+	CPPAD_ASSERT_UNKNOWN( thread < CPPAD_MAX_NUM_THREADS );
+	CPPAD_ASSERT_KNOWN( 
+		thread == thread_num() || (! in_parallel()),
+		"Attempt to return memory for a different thread "
+		"while in parallel mode"
+	);
 
 # ifndef NDEBUG
-		// remove node from inuse list
-		thread_alloc* inuse_root     = root_inuse() + tc_index;
-		thread_alloc* previous       = inuse_root;
-		while((previous->next_ != CPPAD_NULL) & (previous->next_ != node))
-			previous = previous->next_;	
+	// remove node from inuse list
+	thread_alloc* inuse_root     = root_inuse() + tc_index;
+	thread_alloc* previous       = inuse_root;
+	while((previous->next_ != CPPAD_NULL) & (previous->next_ != node))
+		previous = previous->next_;	
 
-		// check that v_ptr is valid
-		if( previous->next_ != node )
-		{	using std::endl;
-			std::ostringstream oss;
-			oss << "return_memory: attempt to return memory not in use";
-			oss << endl;
-			oss << "v_ptr    = " << v_ptr    << endl;   
-			oss << "thread   = " << thread   << endl;   
-			oss << "capacity = " << capacity << endl;   
-			oss << "See CPPAD_TRACE_THREAD & CPPAD_TRACE_CAPACITY in";
-			oss << endl << "# include <cppad/thread_alloc.hpp>" << endl;
-			CPPAD_ASSERT_KNOWN(false, oss.str().c_str()	); 
-		}
-
-		// trace option
-		if( capacity==CPPAD_TRACE_CAPACITY && thread==CPPAD_TRACE_THREAD )
-		{	std::cout << "return_memory: v_ptr = " << v_ptr << std::endl; }
-
-		// remove v_ptr from inuse list
-		previous->next_  = node->next_;
-# endif
-		// capacity bytes are removed from the inuse pool
-		dec_inuse(capacity, thread);
-
-		// remove 1 thread_alloc unit from corresponding chunk inuse counter
-		CPPAD_ASSERT_UNKNOWN(node->ptr_.chunk->size_.n_inuse > 0 );
-		(node->ptr_.chunk->size_.n_inuse)--;
-
-		// check for case where we just return the memory to the system
-		if( num_threads() == 1 )
-		{	thread_alloc* chunk = node->ptr_.chunk;
-			CPPAD_ASSERT_UNKNOWN( chunk->size_.n_inuse == 0 );
-			if( chunk->ptr_.previous != CPPAD_NULL )
-				chunk->ptr_.previous->next_ = chunk->next_;
-			if( chunk->next_ != CPPAD_NULL )
-				chunk->next_->ptr_.previous = chunk->ptr_.previous;
-
-			::operator delete( reinterpret_cast<void*>(chunk) );
-			return;
-		}
-
-		// add this node to available list for this thread and capacity
-		thread_alloc* available_root = root_available() + tc_index;
-		node->next_               = available_root->next_;
-		available_root->next_     = node;
-
-		// capacity bytes are added to the available pool
-		inc_available(capacity, thread);
+	// check that v_ptr is valid
+	if( previous->next_ != node )
+	{	using std::endl;
+		std::ostringstream oss;
+		oss << "return_memory: attempt to return memory not in use";
+		oss << endl;
+		oss << "v_ptr    = " << v_ptr    << endl;   
+		oss << "thread   = " << thread   << endl;   
+		oss << "capacity = " << capacity << endl;   
+		oss << "See CPPAD_TRACE_THREAD & CPPAD_TRACE_CAPACITY in";
+		oss << endl << "# include <cppad/thread_alloc.hpp>" << endl;
+		CPPAD_ASSERT_KNOWN(false, oss.str().c_str()	); 
 	}
+
+	// trace option
+	if( capacity==CPPAD_TRACE_CAPACITY && thread==CPPAD_TRACE_THREAD )
+	{	std::cout << "return_memory: v_ptr = " << v_ptr;
+		std::cout << ", num_threads = " << num_threads() << std::endl; 
+	}
+
+	// remove v_ptr from inuse list
+	previous->next_  = node->next_;
+# endif
+	// capacity bytes are removed from the inuse pool
+	dec_inuse(capacity, thread);
+
+	// check for case where we just return the memory to the system
+	thread_alloc* chunk = node->chunk_;
+	if( (num_threads() == 1) & (chunk == CPPAD_NULL) )
+	{	::operator delete( reinterpret_cast<void*>(node) );
+		return;
+	}
+
+	// remove 1 thread_alloc unit from corresponding chunk inuse counter
+	if( chunk != CPPAD_NULL )
+	{	CPPAD_ASSERT_UNKNOWN(chunk->n_inuse_ > 0 );
+		(chunk->n_inuse_)--;
+	}
+
+	// add this node to available list for this thread and capacity
+	thread_alloc* available_root = root_available() + tc_index;
+	node->next_                  = available_root->next_;
+	available_root->next_        = node;
+
+	// capacity bytes are added to the available pool
+	inc_available(capacity, thread);
+}
 /* -----------------------------------------------------------------------
 $begin ta_free_available$$
 $spell
@@ -1034,62 +1053,72 @@ $cref/thread_alloc.cpp/$$
 
 $end
 */
-	/*!
-	Return all the memory being held as available for a thread to the system.
+/*!
+Return all the memory being held as available for a thread to the system.
 
-	\param thread [in]
-	this thread that will no longer have any available memory after this call.
-	This must either be the thread currently executing, or we must be 
-	in sequential (not parallel) execution mode.
-	*/
-	static void free_available(size_t thread)
-	{	CPPAD_ASSERT_KNOWN(
-			thread < CPPAD_MAX_NUM_THREADS,
-			"Attempt to free memory for a thread >= CPPAD_MAX_NUM_THREADS"
-		);
-		CPPAD_ASSERT_KNOWN( 
-			thread == thread_num() || (! in_parallel()),
-			"Attempt to free memory for a different thread "
-			"while in parallel mode"
-		);
-	
-		size_t num_cap = capacity_info()->number;
-		if( num_cap == 0 )
-			return;
-		const size_t*     capacity_vec  = capacity_info()->value;
-		size_t c_index, tc_index;
-		for(c_index = 0; c_index < num_cap; c_index++)
-		{	size_t capacity = capacity_vec[c_index];
-			tc_index           = thread * num_cap + c_index;
+\param thread [in]
+this thread that will no longer have any available memory after this call.
+This must either be the thread currently executing, or we must be 
+in sequential (not parallel) execution mode.
+*/
+static void free_available(size_t thread)
+{	CPPAD_ASSERT_KNOWN(
+		thread < CPPAD_MAX_NUM_THREADS,
+		"Attempt to free memory for a thread >= CPPAD_MAX_NUM_THREADS"
+	);
+	CPPAD_ASSERT_KNOWN( 
+		thread == thread_num() || (! in_parallel()),
+		"Attempt to free memory for a different thread "
+		"while in parallel mode"
+	);
 
-			// remove entire available linked list
-			thread_alloc* root = root_available() + tc_index;
-			thread_alloc* node = root->next_;
-			while( node != CPPAD_NULL )
-			{	thread_alloc* next  = node->next_;
-				CPPAD_ASSERT_UNKNOWN(node->ptr_.chunk->size_.n_inuse == 0);
-				node  = next;
-				dec_available(capacity, thread);
-			}
-			root->next_ = CPPAD_NULL;
+	size_t num_cap = capacity_info()->number;
+	if( num_cap == 0 )
+		return;
+	const size_t*     capacity_vec  = capacity_info()->value;
+	size_t c_index, tc_index;
+	for(c_index = 0; c_index < num_cap; c_index++)
+	{	size_t capacity = capacity_vec[c_index];
+		tc_index           = thread * num_cap + c_index;
 
-			// delete all chunks that are no longer in use
-			thread_alloc* previous = root_chunk() + tc_index;
-			thread_alloc* chunk    = previous->next_;
-			while( node != CPPAD_NULL )
-			{	thread_alloc* next = chunk->next_;
-				if( chunk->size_.n_inuse == 0 )
-				{	// return this chunk to system memory
-					previous->next_ = next;
-					if( next != CPPAD_NULL )
-						next->ptr_.previous = previous;
-					::operator delete( reinterpret_cast<void*>(chunk) );
-				}
-				chunk = next;
-			}
+		// remove entire available linked list
+		thread_alloc* root = root_available() + tc_index;
+		thread_alloc* node = root->next_;
+		while( node != CPPAD_NULL )
+		{	thread_alloc* next  = node->next_;
+			if( node->chunk_ == CPPAD_NULL )
+				::operator delete( reinterpret_cast<void*>(node) );
+			node  = next;
+			dec_available(capacity, thread);
 		}
-		CPPAD_ASSERT_UNKNOWN( available(thread) == 0 );
+		root->next_ = CPPAD_NULL;
+
+		// delete all chunks that are no longer in use
+		thread_alloc* previous = root_chunk() + tc_index;
+		thread_alloc* chunk    = previous->next_;
+		while( chunk != CPPAD_NULL )
+		{	thread_alloc* next = chunk->next_;
+			if( chunk->n_inuse_ == 0 )
+			{	// return this chunk to system memory
+# ifndef NDEBUG
+				// trace allocation
+				void* v_chunk = reinterpret_cast<void*>(chunk);
+				if(	capacity  == CPPAD_TRACE_CAPACITY && 
+	     			thread    ==  CPPAD_TRACE_THREAD   )
+				{	std::cout << "free_available:    v_chunk = ";
+					std::cout << v_chunk << std::endl; 
+				} 
+# endif
+				previous->next_ = next;
+				if( next != CPPAD_NULL )
+					next->previous_ = previous;
+				::operator delete( reinterpret_cast<void*>(chunk) );
+			}
+			chunk = next;
+		}
 	}
+	CPPAD_ASSERT_UNKNOWN( available(thread) == 0 );
+}
 /* -----------------------------------------------------------------------
 $begin ta_inuse$$
 $spell
@@ -1135,26 +1164,26 @@ $cref/thread_alloc.cpp/$$
 
 $end
 */
-	/*!
-	Determine the amount of memory that is currently inuse.
+/*!
+Determine the amount of memory that is currently inuse.
 
-	\param thread [in]
-	Thread for which we are determining the amount of memory
-	(must be < CPPAD_MAX_NUM_THREADS).
-	Durring parallel execution, this must be the thread 
-	that is currently executing.
+\param thread [in]
+Thread for which we are determining the amount of memory
+(must be < CPPAD_MAX_NUM_THREADS).
+Durring parallel execution, this must be the thread 
+that is currently executing.
 
-	\return
-	The amount of memory in bytes.
-	*/
-	static size_t inuse(size_t thread)
-	{ 
-		CPPAD_ASSERT_UNKNOWN( thread < CPPAD_MAX_NUM_THREADS);
-		CPPAD_ASSERT_UNKNOWN( 
-			thread == thread_num() || (! in_parallel()) 
-		);
-		return inuse_vector()[thread];
-	}
+\return
+The amount of memory in bytes.
+*/
+static size_t inuse(size_t thread)
+{ 
+	CPPAD_ASSERT_UNKNOWN( thread < CPPAD_MAX_NUM_THREADS);
+	CPPAD_ASSERT_UNKNOWN( 
+		thread == thread_num() || (! in_parallel()) 
+	);
+	return inuse_vector()[thread];
+}
 /* -----------------------------------------------------------------------
 $begin ta_available$$
 $spell
@@ -1193,25 +1222,31 @@ $codei%
 	size_t %num_bytes%
 %$$
 It is the number of bytes currently available for use by the specified thread.
+One way that bytes become available is after a call to
+$cref/return_memory/ta_return_memory/$$.
+There is another way that bytes become available:
+for small memory allocations multiple memory units with the same 
+$cref/cap_bytes/ta_get_memory/cap_bytes/$$ are reserved for the current 
+$icode thread$$.
 
 $head Example$$
 $cref/thread_alloc.cpp/$$
 
 $end
 */
-	/*!
-	Determine the amount of memory that is currently available for use.
+/*!
+Determine the amount of memory that is currently available for use.
 
-	\copydetails inuse
-	*/
-	static size_t available(size_t thread)
-	{
-		CPPAD_ASSERT_UNKNOWN( thread < CPPAD_MAX_NUM_THREADS);
-		CPPAD_ASSERT_UNKNOWN( 
-			thread == thread_num() || (! in_parallel()) 
-		);
-		return available_vector()[thread];
-	}
+\copydetails inuse
+*/
+static size_t available(size_t thread)
+{
+	CPPAD_ASSERT_UNKNOWN( thread < CPPAD_MAX_NUM_THREADS);
+	CPPAD_ASSERT_UNKNOWN( 
+		thread == thread_num() || (! in_parallel()) 
+	);
+	return available_vector()[thread];
+}
 /* -----------------------------------------------------------------------
 $begin ta_create_array$$
 $spell
@@ -1283,50 +1318,50 @@ $cref/thread_alloc.cpp/$$
 
 $end 
 */
-	/*!
-	Use thread_alloc to allocate an array, then call default construtor
-	for each element.
+/*!
+Use thread_alloc to allocate an array, then call default construtor
+for each element.
 
-	\tparam Type
-	The type of the elements of the array.
+\tparam Type
+The type of the elements of the array.
 
-	\param size_min [in]
-	The minimum number of elements in the array.
+\param size_min [in]
+The minimum number of elements in the array.
 
-	\param size_out [out]
-	The actual number of elements in the array.
+\param size_out [out]
+The actual number of elements in the array.
 
-	\return
-	pointer to the first element of the array.
-	The default constructor is used to initialize 
-	all the elements of the array.
+\return
+pointer to the first element of the array.
+The default constructor is used to initialize 
+all the elements of the array.
 
-	\par
-	The \c size_ field, in the \c thread_alloc node before the return value,
-	is set to size_out.
-	*/
-	template <class Type>
-	static Type* create_array(size_t size_min, size_t& size_out)
-	{	// minimum number of bytes to allocate
-		size_t min_bytes = size_min * sizeof(Type);
-		// do the allocation 
-		size_t num_bytes;
-		void*  v_ptr          = get_memory(min_bytes, num_bytes);
-		// This is where the array starts
-		Type*  array          = reinterpret_cast<Type*>(v_ptr);
-		// number of Type values in the allocation
-		size_out              = num_bytes / sizeof(Type);
-		// store this number in the size field
-		thread_alloc* node    = reinterpret_cast<thread_alloc*>(v_ptr) - 1;
-		node->size_.n_element = size_out;
+\par
+The \c size_ field, in the \c thread_alloc node before the return value,
+is set to size_out.
+*/
+template <class Type>
+static Type* create_array(size_t size_min, size_t& size_out)
+{	// minimum number of bytes to allocate
+	size_t min_bytes = size_min * sizeof(Type);
+	// do the allocation 
+	size_t num_bytes;
+	void*  v_ptr          = get_memory(min_bytes, num_bytes);
+	// This is where the array starts
+	Type*  array          = reinterpret_cast<Type*>(v_ptr);
+	// number of Type values in the allocation
+	size_out              = num_bytes / sizeof(Type);
+	// store this number in the size field
+	thread_alloc* node    = reinterpret_cast<thread_alloc*>(v_ptr) - 1;
+	node->n_element_ = size_out;
 
-		// call default constructor for each element
-		size_t i;
-		for(i = 0; i < size_out; i++)
-			new(array + i) Type();
+	// call default constructor for each element
+	size_t i;
+	for(i = 0; i < size_out; i++)
+		new(array + i) Type();
 
-		return array;
-	}
+	return array;
+}
 /* -----------------------------------------------------------------------
 $begin ta_delete_array$$
 $spell
@@ -1380,44 +1415,44 @@ $cref/thread_alloc.cpp/$$
 
 $end 
 */
-	/*!
-	Return Memory Used for an Array to the Available Pool
-	(include destructor call for each element).
+/*!
+Return Memory Used for an Array to the Available Pool
+(include destructor call for each element).
 
-	\tparam Type
-	The type of the elements of the array.
+\tparam Type
+The type of the elements of the array.
 
-	\param array [in]
-	A value returned by \c create_array that has not yet been deleted.
-	The \c Type destructor is used to destroy each of the elements 
-	of the array.
+\param array [in]
+A value returned by \c create_array that has not yet been deleted.
+The \c Type destructor is used to destroy each of the elements 
+of the array.
 
-	\par
-	Durring parallel execution, the current thread must be the same
-	as during the corresponding call to \c create_array.
-	*/
-	template <class Type>
-	static void delete_array(Type* array)
-	{	// determine the number of values in the array
-		thread_alloc* node = reinterpret_cast<thread_alloc*>(array) - 1;
-		size_t size     = node->size_.n_element;
+\par
+Durring parallel execution, the current thread must be the same
+as during the corresponding call to \c create_array.
+*/
+template <class Type>
+static void delete_array(Type* array)
+{	// determine the number of values in the array
+	thread_alloc* node = reinterpret_cast<thread_alloc*>(array) - 1;
+	size_t size     = node->n_element_;
 
-		// call destructor for each element
-		size_t i;
-		for(i = 0; i < size; i++)
-			(array + i)->~Type();
+	// call destructor for each element
+	size_t i;
+	for(i = 0; i < size; i++)
+		(array + i)->~Type();
 
-		// return the memory to the available pool for this thread
-		thread_alloc::return_memory( reinterpret_cast<void*>(array) );
-	}
-};
+	// return the memory to the available pool for this thread
+	thread_alloc::return_memory( reinterpret_cast<void*>(array) );
+}
+
+}; // end class thread_alloc
 
 
 CPPAD_END_NAMESPACE
 
 // preprocessor symbols local to this file
 # undef CPPAD_MAX_NUM_CAPACITY
-# undef CPPAD_MIN_CAPACITY
 # undef CPPAD_TRACE_CAPACITY
 # undef CPPAD_TRACE_THREAD
 # endif
