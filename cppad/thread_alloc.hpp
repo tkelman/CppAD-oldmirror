@@ -256,33 +256,30 @@ static void dec_available(size_t dec, size_t thread)
 }
 
 // ----------------------------------------------------------------------
-/// Vector of length CPPAD_MAX_NUM_THREADS times CPPAD_MAX_NUM_CAPACITIES 
-/// for use as root of list of chunks.
-static thread_alloc_chunk* root_chunk(void)
+/// root of chunk list for a specified thread and capacity.
+static thread_alloc_chunk* root_chunk(size_t tc_index)
 {	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
 	static thread_alloc_chunk  
 		root[CPPAD_MAX_NUM_THREADS * CPPAD_MAX_NUM_CAPACITY];
-	return root;
+	return root + tc_index;
 }
 
 // ----------------------------------------------------------------------
-/// Vector of length CPPAD_MAX_NUM_THREADS times CPPAD_MAX_NUM_CAPACITIES 
-/// for use as root of inuse lists.
-static thread_alloc* root_inuse(void)
+/// root of inuse list for a specified thread and capacity.
+static thread_alloc* root_inuse(size_t tc_index)
 {	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
 	static thread_alloc  
 		root[CPPAD_MAX_NUM_THREADS * CPPAD_MAX_NUM_CAPACITY];
-	return root;
+	return root + tc_index;
 }
 
 // ----------------------------------------------------------------------
-/// Vector of length CPPAD_MAX_NUM_THREADS times CPPAD_MAX_NUM_CAPACITIES 
-/// for use as root of available lists.
-static thread_alloc* root_available(void)
+/// root of available list for a specifies thread and capacity.
+static thread_alloc* root_available(size_t tc_index)
 {	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
 	static thread_alloc  
 		root[CPPAD_MAX_NUM_THREADS * CPPAD_MAX_NUM_CAPACITY];
-	return root;
+	return root + tc_index;
 }
 
 // ----------------------------------------------------------------------
@@ -539,8 +536,8 @@ static void parallel_setup(
 	capacity_info();
 	inuse_vector();
 	available_vector();
-	root_inuse();
-	root_available();
+	root_inuse(size_t(0));
+	root_available(size_t(0));
 	size_t cap_bytes;
 	void* v_ptr = get_memory(0, cap_bytes);
 
@@ -794,9 +791,9 @@ static void* get_memory(size_t min_bytes, size_t& cap_bytes)
 
 	// Root blocks for both lists. Note these are different for different 
 	// threads because tc_index is different for different threads.
-	thread_alloc* inuse_root     = root_inuse() + tc_index;
+	thread_alloc* inuse_root     = root_inuse(tc_index);
 # endif
-	thread_alloc* available_root = root_available() + tc_index;
+	thread_alloc* available_root = root_available(tc_index);
 
 	// check if any memory is avialble for allocation
 	thread_alloc* block;
@@ -826,7 +823,7 @@ static void* get_memory(size_t min_bytes, size_t& cap_bytes)
 	     		thread    ==  CPPAD_TRACE_THREAD   )
 			{	cout << "get_memory:    v_chunk = " << v_chunk << endl; } 
 # endif
-			thread_alloc_chunk* chunk_root = root_chunk() + tc_index;
+			thread_alloc_chunk* chunk_root = root_chunk(tc_index);
 			thread_alloc_chunk* chunk      = 
 				reinterpret_cast<thread_alloc_chunk*>(v_chunk);
 			//
@@ -967,7 +964,7 @@ static void return_memory(void* v_ptr)
 
 # ifndef NDEBUG
 	// remove block from inuse list
-	thread_alloc* inuse_root     = root_inuse() + tc_index;
+	thread_alloc* inuse_root     = root_inuse(tc_index);
 	thread_alloc* previous       = inuse_root;
 	while((previous->next_ != CPPAD_NULL) & (previous->next_ != block))
 		previous = previous->next_;	
@@ -1012,7 +1009,7 @@ static void return_memory(void* v_ptr)
 	}
 
 	// add this block to available list for this thread and capacity
-	thread_alloc* available_root = root_available() + tc_index;
+	thread_alloc* available_root = root_available(tc_index);
 	block->next_                 = available_root->next_;
 	available_root->next_        = block;
 
@@ -1084,7 +1081,7 @@ static void free_available(size_t thread)
 		tc_index           = thread * num_cap + c_index;
 
 		// remove entire available linked list
-		thread_alloc* root  = root_available() + tc_index;
+		thread_alloc* root  = root_available(tc_index);
 		thread_alloc* block = root->next_;
 		while( block != CPPAD_NULL )
 		{	thread_alloc* next  = block->next_;
@@ -1096,7 +1093,7 @@ static void free_available(size_t thread)
 		root->next_ = CPPAD_NULL;
 
 		// delete all chunks that are no longer in use
-		thread_alloc_chunk* previous = root_chunk() + tc_index;
+		thread_alloc_chunk* previous = root_chunk(tc_index);
 		thread_alloc_chunk* chunk    = previous->next_;
 		while( chunk != CPPAD_NULL )
 		{	thread_alloc_chunk* next = chunk->next_;
