@@ -789,30 +789,29 @@ static void* get_memory(size_t min_bytes, size_t& cap_bytes)
 			first_trace = false;
 	}
 
-	// Root blocks for both lists. Note these are different for different 
-	// threads because tc_index is different for different threads.
+	// Root for list of inuse blocks. 
 	thread_alloc* inuse_root     = root_inuse(tc_index);
 # endif
-	thread_alloc* available_root = root_available(tc_index);
-
-	// check if any memory is avialble for allocation
 	thread_alloc* block;
-	if( available_root->next_ == CPPAD_NULL )
-	{
-		if( num_threads() == 1 )
-		{	// create one block of memory
-			void* v_block = ::operator new( 
-				sizeof(thread_alloc) + cap_bytes 
-			);
-			block              = reinterpret_cast<thread_alloc*>(v_block);
-			block->chunk_      = CPPAD_NULL; // no corresponding chunk
-			block->tc_index_   = tc_index;
-			block->next_       = available_root->next_;
-			available_root->next_ = block;
-			inc_available(cap_bytes, thread);
-		}
-		else
-		{	size_t n_block = 1 + (CPPAD_MIN_CHUNK - 1)/cap_bytes; 
+	if( num_threads() == 1 )
+	{	// special case which just uses system allocator and this block
+		// is never in the available list
+		void* v_block = ::operator new( 
+			sizeof(thread_alloc) + cap_bytes 
+		);
+		block         = reinterpret_cast<thread_alloc*>(v_block);
+		block->tc_index_ = tc_index;
+		block->next_     = CPPAD_NULL; 
+		block->chunk_    = CPPAD_NULL; // flag for this special case
+	}
+	else
+	{	// multi-threading case
+		thread_alloc* available_root = root_available(tc_index);
+
+		// check if no memory is avialble for allocation
+		if( available_root->next_ == CPPAD_NULL )
+		{	// number of blocks to get from the system
+			size_t n_block = 1 + (CPPAD_MIN_CHUNK - 1)/cap_bytes; 
 			// Create a new chunk of contigious memory with multiple blocks.
 			void* v_chunk  = ::operator new( sizeof(thread_alloc_chunk)
 				+ n_block * ( sizeof(thread_alloc) + cap_bytes)
@@ -846,13 +845,22 @@ static void* get_memory(size_t min_bytes, size_t& cap_bytes)
 				c_chunk += sizeof(thread_alloc) + cap_bytes;
 			}
 		}
-	}
-	block = available_root->next_;
-	CPPAD_ASSERT_UNKNOWN( block != CPPAD_NULL );
-	CPPAD_ASSERT_UNKNOWN( block->tc_index_ == tc_index );
+		block = available_root->next_;
+		CPPAD_ASSERT_UNKNOWN( block           != CPPAD_NULL );
+		CPPAD_ASSERT_UNKNOWN( block->chunk_   != CPPAD_NULL );
+		CPPAD_ASSERT_UNKNOWN( block->tc_index_ == tc_index );
 
-	// remove block from available list
-	available_root->next_ = block->next_;
+		// remove block from available list
+		available_root->next_ = block->next_;
+
+		// adjust count for number of available bytes
+		dec_available(cap_bytes, thread);
+
+		// add 1 thread_alloc unit to corresponding chunk inuse counter
+		thread_alloc_chunk* chunk = block->chunk_;
+		if( chunk != CPPAD_NULL )
+			(chunk->n_inuse_)++;
+	}
 
 	// return value for get_memory
 	void* v_ptr = reinterpret_cast<void*>(block + 1);
@@ -868,17 +876,10 @@ static void* get_memory(size_t min_bytes, size_t& cap_bytes)
 		cout << ", num_threads = " << num_threads() << endl; 
 	} 
 # endif
-
-	// adjust counts
+	// adjust count for number of bytes inuse.
 	inc_inuse(cap_bytes, thread);
-	dec_available(cap_bytes, thread);
 
-	// add 1 thread_alloc unit to corresponding chunk inuse counter
-	thread_alloc_chunk* chunk = block->chunk_;
-	if( chunk != CPPAD_NULL )
-		(chunk->n_inuse_)++;
-
-	// return pointer to memory, do not inclue thread_alloc information
+	// return pointer to memory, do not include thread_alloc information
 	return v_ptr;
 }
 /* -----------------------------------------------------------------------
@@ -997,7 +998,7 @@ static void return_memory(void* v_ptr)
 
 	// check for case where we just return the memory to the system
 	thread_alloc_chunk* chunk = block->chunk_;
-	if( (num_threads() == 1) & (chunk == CPPAD_NULL) )
+	if( chunk == CPPAD_NULL )
 	{	::operator delete( reinterpret_cast<void*>(block) );
 		return;
 	}
