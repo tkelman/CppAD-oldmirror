@@ -18,6 +18,10 @@ $$
 
 $section OpenMP Memory Allocator: Example and Test$$
 
+$head Deprecated$$
+This example is only intended to help convert calls to $cref omp_alloc$$
+to calls to $cref thread_alloc$$.
+
 $index openmp, memory allocation$$
 $index multi-thread, memory allocation$$
 $index example, memory allocation$$
@@ -144,14 +148,16 @@ bool omp_alloc_array(void)
 	size_t check = sizeof(my_char)*(size_one + size_two);
 	ok   &= omp_alloc::inuse(thread) - check < sizeof(my_char);
 	ok   &= omp_alloc::inuse(thread) == 2 * CPPAD_MIN_CAPACITY;
-	ok   &= omp_alloc::available(thread) == 
-		CPPAD_MIN_CHUNK - 2 * CPPAD_MIN_CAPACITY;
+	if( CPPAD_MIN_CHUNK >= 2 * CPPAD_MIN_CAPACITY )
+		check = CPPAD_MIN_CHUNK - 2 * CPPAD_MIN_CAPACITY;
+	else	check = 0; 
+	ok   &= omp_alloc::available(thread) ==  check;
 
 	// delete the arrays 
 	omp_alloc::delete_array(array_one);
 	omp_alloc::delete_array(array_two);
 	ok   &= omp_alloc::inuse(thread) == 0;
-	ok   &= omp_alloc::available(thread) == CPPAD_MIN_CHUNK;
+	ok   &= omp_alloc::available(thread) == 2 * CPPAD_MIN_CAPACITY + check;
 
 	// free the memory for use by this thread
 	omp_alloc::free_available(thread);

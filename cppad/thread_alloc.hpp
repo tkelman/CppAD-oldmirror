@@ -49,8 +49,13 @@ Minimum number of bytes that will fit in a thread_alloc memory allocation.
 /*!
 \def CPPAD_MIN_CHUNK
 Minimum number of bytes that will fit in a system memory allocation.
+If 
+\code
+	CPPAD_MIN_CHUNK <= CPPAD_MIN_CAPACITY
+\endcode
+then each block will correspond to a separate memory allocation.
 */
-# define CPPAD_MIN_CHUNK 4096
+# define CPPAD_MIN_CHUNK 128
 
 /*!
 \def CPPAD_TRACE_CAPACITY

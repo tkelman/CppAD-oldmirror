@@ -154,14 +154,16 @@ bool type_allocate(void)
 	size_t check = sizeof(my_char)*(size_one + size_two);
 	ok   &= thread_alloc::inuse(thread) - check < sizeof(my_char);
 	ok   &= thread_alloc::inuse(thread) == 2 * CPPAD_MIN_CAPACITY;
-	ok   &= thread_alloc::available(thread) == 
-		CPPAD_MIN_CHUNK - 2 * CPPAD_MIN_CAPACITY;
+	if( CPPAD_MIN_CHUNK >= 2 * CPPAD_MIN_CAPACITY )
+		check = CPPAD_MIN_CHUNK - 2 * CPPAD_MIN_CAPACITY;
+	else	check = 0; 
+	ok   &= thread_alloc::available(thread) ==  check;
 
 	// delete the arrays 
 	thread_alloc::delete_array(array_one);
 	thread_alloc::delete_array(array_two);
 	ok   &= thread_alloc::inuse(thread) == 0;
-	ok   &= thread_alloc::available(thread) == CPPAD_MIN_CHUNK;
+	ok   &= thread_alloc::available(thread) == 2 * CPPAD_MIN_CAPACITY + check;
 
 	// free the memory for use by this thread
 	thread_alloc::free_available(thread);

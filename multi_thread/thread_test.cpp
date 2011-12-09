@@ -344,7 +344,7 @@ int main(int argc, char *argv[])
 
 		// set the number of threads
 		if( num_threads > 0 )
-			ok &= team_start(num_threads);
+			ok &= team_create(num_threads);
 
 		// ammount of memory initialy inuse by thread zero
 		ok &= 0 == thread_alloc::thread_num();
@@ -368,7 +368,7 @@ int main(int argc, char *argv[])
 
 		// set back to one thread and fee all avaialable memory
 		if( num_threads > 0 )
-			ok &= team_stop();
+			ok &= team_destroy();
 		size_t thread;
 		for(thread = 0; thread < num_threads; thread++)
 		{	thread_alloc::free_available(thread);
