@@ -927,7 +927,9 @@ or the current execution mode must be sequential
 (not $cref/parallel/ta_in_parallel/$$).
 
 $head NDEBUG$$
-If $code NDEBUG$$ is defined, $icode v_ptr$$ is not checked (this is faster).
+$index NDEBUG$$
+If $cref/NDEBUG/Faq/Speed/NDEBUG/$$ is defined, 
+$icode v_ptr$$ is not checked (this is faster).
 Otherwise, a list of in use pointers is searched to make sure
 that $icode v_ptr$$ is in the list. 
 
