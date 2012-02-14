@@ -18,7 +18,7 @@ fi
 # -----------------------------------------------------------------------------
 repository="https://projects.coin-or.org/svn/CppAD"
 stable_version="20120101"
-release="2"
+release="3"
 release_version="$stable_version.$release"
 msg="Creating releases/$release_version"
 # -----------------------------------------------------------------------------

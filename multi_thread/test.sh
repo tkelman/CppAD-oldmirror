@@ -11,16 +11,12 @@
 # Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 # -----------------------------------------------------------------------------
 # script used by */makefile.am to run a default case for all the the tests
-# 
-# cases that have failed in the past
-./openmp_test multi_newton 1 1 100 700 1 true
-./openmp_test multi_newton 1 2 3 12 1 true
 #
-# standard test cases
 for program in openmp_test pthread_test bthread_test
 do
 	if [ -e "$program" ]
 	then
+		# standard test cases
 		./$program a11c
 		echo
 		./$program simple_ad
@@ -31,5 +27,9 @@ do
 		# test_time= 2 max_thread=4, 
 		# num_zero=20, num_sub=30, num_sum=500, use_ad=true
 		./$program multi_newton 2 4 20 30 500 true
+		#
+		# cases that have failed in the past
+		./$program multi_newton 1 1 100 700 1 true
+		./$program multi_newton 1 2 3 12 1 true
 	fi
 done
