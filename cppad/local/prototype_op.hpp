@@ -3,7 +3,7 @@
 # define CPPAD_PROTOTYPE_OP_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-11 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -207,24 +207,25 @@ inline void reverse_unary1_op(
 Prototype for forward mode unary operator with two results (not used).
 
 \tparam Base
-base type for the operator; i.e., this operation was recorded
-using AD< \a Base > and computations by this routine are done using type 
+is the base type for the operator; i.e., this operation was recorded
+using AD< \a Base > and computations by this routine are done using the type 
 \a Base.
 
 \param j
-order of the Taylor coefficients that we are computing.
+is the order of the Taylor coefficients that we are computing
+for the primary variable (called z below).
+The order for the secondary variable (called y below) is \a j - 1.
 
 \param i_z
-variable index corresponding to the last (primary) result for this operation; 
-i.e. the row index in \a taylor corresponding to z. 
-The auxillary result is called y has index \a i_z - 1.
+is the row index in \a taylor corresponding the primary result z; 
+The row index for the auxillary result y is \a i_z - 1.
 
 \param i_x
-variable index corresponding to the argument for this operator;
-i.e. the row index in \a taylor corresponding to x.
+is the row index in \a taylor for the argument variable for this operator
+(called x below).
 
 \param nc_taylor
-number of colums in the matrix containing all the Taylor coefficients.
+is the number of colums in the matrix containing all the Taylor coefficients.
 
 \param taylor
 \b Input: \a taylor [ \a i_x * \a nc_taylor + k ] 
@@ -236,13 +237,13 @@ for k = 0 , ... , \a j - 1
 is the k-th order Taylor coefficient corresponding to z.
 \n
 \b Input: \a taylor [ ( \a i_z - 1) * \a nc_taylor + k ] 
-for k = 0 , ... , \a j - 1
+for k = 0 , ... , \a j - 2
 is the k-th order Taylor coefficient corresponding to the auxillary result y.
 \n
 \b Output: \a taylor [ \a i_z * \a nc_taylor + j ] 
 is the j-th order Taylor coefficient corresponding to z. 
 \n
-\b Output: \a taylor [ ( \a i_z - 1 ) * \a nc_taylor + j ] 
+\b Output: \a taylor [ ( \a i_z - 1 ) * \a nc_taylor + j-1 ] 
 is the j-th order Taylor coefficient corresponding to 
 the autillary result y.
 
@@ -322,17 +323,17 @@ and it uses them to compute the partial derivatives of
 \endverbatim
 
 \tparam Base
-base type for the operator; i.e., this operation was recorded
-using AD< \a Base > and computations by this routine are done using type 
+is the base type for the operator; i.e., this operation was recorded
+using AD< \a Base > and computations by this routine are done using the type 
 \a Base .
 
 \param d
-highest order Taylor coefficient that
+is the highest order Taylor coefficient that
 we are computing the partial derivatives with respect to.
 
 \param i_z
-variable index corresponding to the last (primary) result for this operation; 
-i.e. the row index in \a taylor to z. 
+is the variable index corresponding to the last (primary) result for this 
+operation; i.e. the row index in \a taylor to z. 
 The auxillary result is called y and has index \a i_z - 1.
 
 \param i_x
@@ -352,12 +353,12 @@ for k = 0 , ... , \a d
 is the k-th order Taylor coefficient corresponding to z.
 \n
 \a taylor [ ( \a i_z - 1) * \a nc_taylor + k ] 
-for k = 0 , ... , \a d
+for k = 0 , ... , \a d-1
 is the k-th order Taylor coefficient corresponding to 
 the auxillary variable y.
 
 \param nc_partial
-number of colums in the matrix containing all the partial derivatives.
+is the number of colums in the matrix containing all the partial derivatives.
 
 \param partial
 \b Input: \a partial [ \a i_x * \a nc_partial + k ] 
@@ -373,8 +374,9 @@ the k-th order Taylor coefficient for z.
 \n
 \b Input: \a partial [ ( \a i_z - 1) * \a nc_partial + k ] 
 for k = 0 , ... , \a d
-is the partial derivative of G( z , x , w , u , ... ) with respect to 
-the k-th order Taylor coefficient for the auxillary variable y.
+is the partial derivative of G( z , y, x , w , u , ... ) with respect to 
+the k-th order Taylor coefficient for the auxillary variable y
+(should all be zero).
 \n
 \b Output: \a partial [ \a i_x * \a nc_partial + k ]
 for k = 0 , ... , \a d
@@ -392,6 +394,7 @@ may be used as work space; i.e., may change in an unspecified manner.
 \li \a i_x + 1 < \a i_z 
 \li \a d < \a nc_taylor
 \li \a d < \a nc_partial
+\li \a partial [ ( \a i_z - 1) * \a nc_partial + k ] 
 */
 template <class Base>
 inline void reverse_unary2_op(

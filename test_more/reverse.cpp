@@ -1,6 +1,6 @@
 /* $Id$ */
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-11 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -17,7 +17,52 @@ Old Reverse example now used just for valiadation testing
 # include <cppad/cppad.hpp>
 namespace { // ----------------------------------------------------------
 
-bool Reverse(void)
+bool case_one()
+{	bool ok = true;
+	using CppAD::exp;
+	using CppAD::sin;
+	using CppAD::vector;
+	using CppAD::AD;
+	using CppAD::NearEqual;
+
+	// domain space vector
+	size_t n = 2;
+	vector<double>         x(n);
+	vector< AD<double> >  ax(n);
+	ax[0] = x[0] = 1.;
+	ax[1] = x[1] = 2.;
+
+	// declare independent variables and starting recording
+	CppAD::Independent(ax);
+
+	// range space vector
+	size_t m = 1;
+	vector< AD<double> >  ay(m);
+	ay[0] = ax[0] * ax[0] * sin( ax[1] );
+
+	// create f: X -> Y and stop tape recording
+	CppAD::ADFun<double> f(ax, ay);
+
+	// forward mode calculation of partial w.r.t. ax[1]
+	vector<double> dx(n);
+	dx[0] = 0.;
+	dx[1] = 1.;
+	f.Forward(1, dx);
+
+	// reverse mode calculation of derivaitve w.r.t x of paritial w.r.t x[1]
+	// compute the second partials
+	vector<double> w(1), dw(2 * n);
+	w[0] = 1.;
+	dw  = f.Reverse(2, w);
+
+	// check calculation
+	ok &=  NearEqual(    2.*x[0]*cos(x[1]), dw[2*0+1], 1e-10, 1e-10 );
+	ok &=  NearEqual( -x[0]*x[0]*sin(x[1]), dw[2*1+1], 1e-10, 1e-10 );
+
+	return ok;
+}
+
+bool case_two(void)
 {	bool ok = true;
 
 	using namespace CppAD;
@@ -209,10 +254,12 @@ bool reverse_any_cases(void)
 # include <valarray>
 bool reverse(void)
 {	bool ok = true;
-	ok &= Reverse();
+	ok &= case_one();
+	ok &= case_two();
 
 	ok &= reverse_any_cases< CppAD::vector  <double> >();
 	ok &= reverse_any_cases< std::vector    <double> >();
 	ok &= reverse_any_cases< std::valarray  <double> >();
+
 	return ok;
 }

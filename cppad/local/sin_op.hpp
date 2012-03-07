@@ -3,7 +3,7 @@
 # define CPPAD_SIN_OP_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-10 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -28,12 +28,13 @@ The C++ source code corresponding to this operation is
 \verbatim
 	z = sin(x)
 \endverbatim
-The auxillary result is
+The value of z, and its derivatives, are computed to the specfied order.
+The auxillary variable for this operation is
 \verbatim
 	y = cos(x)
 \endverbatim
-The value of y, and its derivatives, are computed along with the value
-and derivatives of z.
+The value of y, and its derivatives, are computed to one lower order
+than then the order specified for z.
 
 \copydetails forward_unary2_op
 */
@@ -56,24 +57,29 @@ inline void forward_sin_op(
 	Base* s = taylor + i_z * nc_taylor;
 	Base* c = s      -       nc_taylor;
 
-	// rest of this routine is identical for the following cases:
-	// forward_sin_op, forward_cos_op, forward_sinh_op, forward_cosh_op.
+	// zero order case
 	size_t k;
 	if( j == 0 )
-	{	s[j] = sin( x[0] );
-		c[j] = cos( x[0] );
+	{	s[0] = sin( x[0] );
+		return;
 	}
+
+	// compute auxillary result to order j-1
+	size_t j1 = j-1;
+	if( j1 == 0 )
+		c[0] = cos( x[0] );
 	else
-	{
-		s[j] = Base(0);
-		c[j] = Base(0);
-		for(k = 1; k <= j; k++)
-		{	s[j] += Base(k) * x[k] * c[j-k];
-			c[j] -= Base(k) * x[k] * s[j-k];
-		}
-		s[j] /= Base(j);
-		c[j] /= Base(j);
+	{	c[j1] = Base(0);
+		for(k = 1; k <= j1; k++)
+			c[j1] -= Base(k) * x[k] * s[j1-k];
+		c[j1] /= Base(j1);
 	}
+
+	// compute primary result to order j
+	s[j] = Base(0);
+	for(k = 1; k <= j; k++)
+		s[j] += Base(k) * x[k] * c[j-k];
+	s[j] /= Base(j);
 }
 
 
@@ -88,7 +94,7 @@ The auxillary result is
 \verbatim
 	y = cos(x)
 \endverbatim
-The value of y is computed along with the value of z.
+The value of y is not computed (because it is only needed to one lower order).
 
 \copydetails forward_unary2_op_0
 */
@@ -108,10 +114,8 @@ inline void forward_sin_op_0(
 	// Taylor coefficients corresponding to argument and result
 	Base* x = taylor + i_x * nc_taylor;
 	Base* s = taylor + i_z * nc_taylor;  // called z in documentation
-	Base* c = s      -       nc_taylor;  // called y in documentation
 
 	s[0] = sin( x[0] );
-	c[0] = cos( x[0] );
 }
 
 /*!
@@ -159,27 +163,44 @@ inline void reverse_sin_op(
 	const Base* c  = s  - nc_taylor; // called y in documentation
 	Base* pc       = ps - nc_partial;
 
-	// rest of this routine is identical for the following cases:
-	// reverse_sin_op, reverse_cos_op, reverse_sinh_op, reverse_cosh_op.
-	size_t j = d;
-	size_t k;
-	while(j)
-	{
-		ps[j]   /= Base(j);
-		pc[j]   /= Base(j);
-		for(k = 1; k <= j; k++)
-		{
-			px[k]   += ps[j] * Base(k) * c[j-k];
-			px[k]   -= pc[j] * Base(k) * s[j-k];
-	
-			ps[j-k] -= pc[j] * Base(k) * x[k];
-			pc[j-k] += ps[j] * Base(k) * x[k];
+	size_t j, j1, k;
+# ifndef NDEBUG
+	// check that auxillary varaible is not used except by this operation
+	for(j = 0; j <= d; j++)
+		CPPAD_ASSERT_UNKNOWN( pc[j] == Base(0) );
+# endif
 
+	// run forward_sin_op in reverse
+	j = d;
+	while(j)
+	{	// reverse calculation of s[j] in forward_sin_op
+		ps[j]   /= Base(j);
+		for(k = 1; k <= j; k++)
+		{	px[k]   += ps[j] * Base(k) * c[j-k];
+			pc[j-k] += ps[j] * Base(k) * x[k];
+		}
+
+		// reverse calculation of c[j1] in forward_sin_op
+		j1 = j - 1;
+		if( j1 == 0 )
+			px[0] -= pc[0] * s[0];
+		else
+		{	pc[j1]   /= Base(j1);
+			for(k = 1; k <= j1; k++)
+			{
+				px[k]    -= pc[j1] * Base(k) * s[j1-k];
+				ps[j1-k] -= pc[j1] * Base(k) * x[k];
+			}
 		}
 		--j;
 	}
-	px[0] += ps[0] * c[0];
-	px[0] -= pc[0] * s[0];
+	if( d == 0 )
+	{	// special case where cos( x[0] ) has not yet been calculated
+		px[0] += ps[0] * cos( x[0] );
+	}
+	else
+	{	px[0] += ps[0] * c[0];
+	}
 }
 
 CPPAD_END_NAMESPACE

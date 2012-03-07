@@ -11,7 +11,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 # include <cppad/cppad.hpp>
 
-bool RevTwo()
+bool RevTwo(void)
 {	bool ok = true;
 	using CppAD::AD;
 	using CppAD::vector;
