@@ -251,8 +251,6 @@ private:
 	inline ADTape<Base> *tape_this(void) const;
 	//
 	// static 
-	static size_t                tape_new(void);
-	static void                  tape_delete(size_t id);
 	inline static ADTape<Base>  *tape_ptr(
 		size_t         thread      ,
 		tape_ptr_job   job
