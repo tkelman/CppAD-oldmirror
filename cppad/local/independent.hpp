@@ -158,14 +158,14 @@ inline void Independent(VectorAD &x)
 {	typedef typename VectorAD::value_type ADBase;
 	typedef typename ADBase::value_type   Base;
 	CPPAD_ASSERT_KNOWN(
-		ADBase::tape_ptr() == CPPAD_NULL,
+		ADBase::tape_ptr( thread_alloc::thread_num(), tape_ptr_return_null_ok) == CPPAD_NULL,
 		"Independent: cannot create a new tape because\n"
 		"a previous tape is still active (for this thread).\n"
 		"AD<Base>::abort_recording() would abort this previous recording."
 	);
 	size_t id = ADBase::tape_new();
 
-	ADBase::tape_ptr(id)->Independent(x); 
+	ADBase::tape_ptr( tape_id2thread_num(id), tape_ptr_return_null_error )->Independent(x); 
 }
 
 

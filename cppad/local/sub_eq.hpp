@@ -18,7 +18,7 @@ namespace CppAD {
 
 template <class Base>
 AD<Base>& AD<Base>::operator -= (const AD<Base> &right)
-{	ADTape<Base> *tape = AD<Base>::tape_ptr();
+{	ADTape<Base> *tape = AD<Base>::tape_ptr( thread_alloc::thread_num(), tape_ptr_return_null_ok);
 	size_t tape_id = 0;
 	if( tape != CPPAD_NULL )
 		tape_id = tape->id_;

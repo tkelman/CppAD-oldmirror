@@ -25,6 +25,14 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 CPPAD_BEGIN_NAMESPACE
 
+// Type used to inform tape_ptr of what job to preform.
+typedef enum { 
+	tape_ptr_new              , 
+	tape_ptr_delete           , 
+	tape_ptr_return_null_ok   ,
+	tape_ptr_return_null_error 
+} tape_ptr_job;
+
 template <class Base>
 class AD {
 	// enable use of AD<Base> in parallel mode
@@ -248,11 +256,12 @@ private:
 	//
 	// static 
 	inline static size_t        *id_handle (size_t thread);
-	inline static ADTape<Base> **tape_handle(size_t thread);
 	static size_t                tape_new(void);
 	static void                  tape_delete(size_t id);
-	inline static ADTape<Base>  *tape_ptr(void);
-	inline static ADTape<Base>  *tape_ptr(size_t id);
+	inline static ADTape<Base>  *tape_ptr(
+		size_t         thread      ,
+		tape_ptr_job   job
+	); 
 }; 
 // ---------------------------------------------------------------------------
 

@@ -3,7 +3,7 @@
 # define CPPAD_PRINT_FOR_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-11 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -140,7 +140,7 @@ namespace CppAD {
 		const char *before, const AD<Base>& var, const char* after)
 	{	CPPAD_ASSERT_NARG_NRES(PriOp, 5, 0);
 
-		ADTape<Base> *tape = AD<Base>::tape_ptr();
+		ADTape<Base> *tape = AD<Base>::tape_ptr( thread_alloc::thread_num(), tape_ptr_return_null_ok);
 
 		// check for case where we are not recording operations
 		if( tape == CPPAD_NULL )
