@@ -252,7 +252,7 @@ private:
 	//
 	// static 
 	inline static ADTape<Base>  *tape_ptr(
-		size_t         thread      ,
+		size_t         tape_id  ,
 		tape_ptr_job   job
 	); 
 }; 

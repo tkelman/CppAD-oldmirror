@@ -140,7 +140,10 @@ namespace CppAD {
 		const char *before, const AD<Base>& var, const char* after)
 	{	CPPAD_ASSERT_NARG_NRES(PriOp, 5, 0);
 
-		ADTape<Base> *tape = AD<Base>::tape_ptr( thread_alloc::thread_num(), tape_ptr_return_null_ok);
+		size_t tape_id = 0;
+		ADTape<Base> *tape = AD<Base>::tape_ptr(
+			tape_id, tape_ptr_return_null_ok
+		);
 
 		// check for case where we are not recording operations
 		if( tape == CPPAD_NULL )

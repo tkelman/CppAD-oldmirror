@@ -157,15 +157,15 @@ template <typename VectorAD>
 inline void Independent(VectorAD &x)
 {	typedef typename VectorAD::value_type ADBase;
 	typedef typename ADBase::value_type   Base;
-	size_t        thread = thread_alloc::thread_num();
-	ADTape<Base>* tape   = ADBase::tape_ptr(thread, tape_ptr_return_null_ok );
+	size_t tape_id = 0;
+	ADTape<Base>* tape = ADBase::tape_ptr(tape_id, tape_ptr_return_null_ok );
 	CPPAD_ASSERT_KNOWN(
 		tape == CPPAD_NULL,
 		"Independent: cannot create a new tape because\n"
 		"a previous tape is still active (for this thread).\n"
 		"AD<Base>::abort_recording() would abort this previous recording."
 	);
-	tape = ADBase::tape_ptr(thread, tape_ptr_new);
+	tape = ADBase::tape_ptr(tape_id, tape_ptr_new);
 	tape->Independent(x); 
 }
 

@@ -73,11 +73,16 @@ recording AD<Base> operations for the specified thread.
 */
 template <class Base>
 inline ADTape<Base> *AD<Base>::tape_ptr(
-	size_t        thread      , 
+	size_t        tape_id     , 
 	tape_ptr_job  job         ) 
 {	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
 	static ADTape<Base> *tape_table[CPPAD_MAX_NUM_THREADS];
 	static size_t          id_table[CPPAD_MAX_NUM_THREADS];
+
+	size_t thread;
+	if( tape_id == 0 )
+		thread = thread_alloc::thread_num();
+	else	thread = tape_id % CPPAD_MAX_NUM_THREADS;
 
 	CPPAD_ASSERT_KNOWN(
 		thread == thread_alloc::thread_num(),

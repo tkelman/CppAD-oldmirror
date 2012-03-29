@@ -110,8 +110,9 @@ namespace CppAD {
 // case where x and y are AD<Base> -----------------------------------------
 template <class Base> AD<Base> 
 pow(const AD<Base> &x, const AD<Base> &y)
-{	ADTape<Base> *tape = AD<Base>::tape_ptr( thread_alloc::thread_num(), tape_ptr_return_null_ok);
+{	
 	size_t tape_id = 0;
+	ADTape<Base> *tape = AD<Base>::tape_ptr(tape_id, tape_ptr_return_null_ok);
 	if( tape != CPPAD_NULL )
 		tape_id = tape->id_;
 
