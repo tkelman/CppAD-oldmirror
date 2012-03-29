@@ -82,14 +82,18 @@ namespace CppAD {
 	CPPAD_INLINE_FRIEND_TEMPLATE_FUNCTION
 	bool Parameter(const AD<Base> &x)
 	{	size_t thread = x.tape_id_ % CPPAD_MAX_NUM_THREADS;
-		return x.tape_id_ != * AD<Base>::id_handle(thread); 
+		ADTape<Base>* tape = 
+			AD<Base>::tape_ptr(thread, tape_ptr_return_null_ok);
+		return (tape == CPPAD_NULL) || x.tape_id_ != tape->id_; 
 	}
 
 	template <class Base>
 	CPPAD_INLINE_FRIEND_TEMPLATE_FUNCTION
 	bool Parameter(const VecAD<Base> &x)
 	{	size_t thread = x.tape_id_ % CPPAD_MAX_NUM_THREADS;
-		return x.tape_id_ != * AD<Base>::id_handle(thread); 
+		ADTape<Base>* tape = 
+			AD<Base>::tape_ptr(thread, tape_ptr_return_null_ok);
+		return (tape == CPPAD_NULL) || x.tape_id_ != tape->id_; 
 	}
 
 	// Variable
@@ -97,14 +101,18 @@ namespace CppAD {
 	CPPAD_INLINE_FRIEND_TEMPLATE_FUNCTION
 	bool Variable(const AD<Base> &x)
 	{	size_t thread = x.tape_id_ % CPPAD_MAX_NUM_THREADS;
-		return x.tape_id_ == * AD<Base>::id_handle(thread); 
+		ADTape<Base>* tape = 
+			AD<Base>::tape_ptr(thread, tape_ptr_return_null_ok);
+		return (tape != CPPAD_NULL) && x.tape_id_ == tape->id_; 
 	}
 
 	template <class Base>
 	CPPAD_INLINE_FRIEND_TEMPLATE_FUNCTION
 	bool Variable(const VecAD<Base> &x)
 	{	size_t thread = x.tape_id_ % CPPAD_MAX_NUM_THREADS;
-		return x.tape_id_ == * AD<Base>::id_handle(thread); 
+		ADTape<Base>* tape = 
+			AD<Base>::tape_ptr(thread, tape_ptr_return_null_ok);
+		return (tape != CPPAD_NULL) && x.tape_id_ == tape->id_; 
 	}
 } 
 // END CppAD namespace

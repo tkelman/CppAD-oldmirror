@@ -3,7 +3,7 @@
 # define CPPAD_AD_TAPE_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-11 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -57,9 +57,13 @@ class ADTape {
 	// Parameter
 	friend bool Parameter     <Base> 
 		(const AD<Base> &u);
+	friend bool Parameter     <Base> 
+		(const VecAD<Base> &u);
 	// Variable
 	friend bool Variable      <Base> 
 		(const AD<Base> &u);
+	friend bool Variable      <Base> 
+		(const VecAD<Base> &u);
 	// operators -----------------------------------------------------------
 	// arithematic binary operators
 	friend AD<Base> operator + <Base>
