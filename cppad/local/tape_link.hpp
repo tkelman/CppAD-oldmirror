@@ -33,43 +33,50 @@ they are all static functions.
 /* \{ */
 
 /*!
-Map from a tape identifier to the corresponding thread number.
-
-\param tape_id
-is the identifier for the tape. 
-
-\return
-The thread number that should correspond to this tape id 
-(if user does not try to use a variable created by a different thread).
-*/
-inline size_t tape_id2thread_num(size_t tape_id)
-{	return tape_id % CPPAD_MAX_NUM_THREADS; }
-
-
-/*!
 Get a pointer to tape 
 that records AD<Base> operations for the current thread.
 
 \tparam Base
-is the base type corresponding to AD<Base> operations.
+is the base type corresponding to AD<Base> operations and the tape.
 
-\par thread
-is the index that identifes the current thread.
-If \c _OPENMP is not defined, \c thread is zero.
-<tt>0 <= thread < thread_alloc::num_threads()</tt>.
+\param tape_id
+is the identifier for the tape that is recording
+AD<Base> operations for this thread current thread.
+The thread corresponding to the tape_id is
+\code
+	thread = thread_alloc::thread_num()  if tape_id == 0 else
+	thread = tape_id % CPPAD_MAX_NUM_THREADS 
+\endcode
+If \c NDEBUG is not defined, and this is not the same as
+<code>thread_alloc::thread_num()</code>, a
+\c CPPAD_ASSERT_KNOWN is generated to the effect that a variable or tape
+being used was created by a different thread.
 
-\param id
-is the identifier for the tape that is currently recording
-AD<Base> operations for the current thread.
-It must hold that <tt>thread = id % CPPAD_MAX_NUM_THREADS</tt>.
-Note this routine should be faster when NDEBUG is defined (?) than
-calling \c tape_ptr without the \c id argument.
+\param job
+- \c tape_ptr_new :
+There must not currently be a tape recording AD<Base> operations
+when this routine is called and there will be a new such tape
+when it returns.  The \c tape_ptr return value points to the new tape.
+- \c tape_ptr_new :
+There must be a tape recording AD<Base> operations
+when this routine is called and there will be no such tape
+when it returns. The \c tape_ptr return value will be \c CPPAD_NULL.
+- \c tape_ptr_null_ok :
+A pointer to the tape that is currently recording AD<Base> 
+operations is returned.
+If no such tape exists, \c CPPAD_NULL is returned.
+
+\c tape_ptr_null_error :
+It is assumed that a tape that is currently recording AD<Base> 
+and a pointer to the tape is returned.
+If \c NDEBUG is not defined, it an assertion error is generated if
+no such a tape exists.
 
 \return
-The return value \c r is a pointer to the tape that records AD<Base> operations
+The return value is a pointer to the tape that records AD<Base> operations
 for the current thread.
-If <tt>r == CPPAD_NULL</tt>, there is no tape currently
-recording AD<Base> operations for the specified thread.
+If this value is \c CPPAD_NULL, there is no tape currently
+recording AD<Base> operations for this thread.
 */
 template <class Base>
 inline ADTape<Base> *AD<Base>::tape_ptr(
