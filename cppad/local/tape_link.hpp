@@ -165,8 +165,7 @@ recording AD<Base> operations for the specified thread.
 template <class Base>
 inline ADTape<Base> *AD<Base>::tape_this(void) const
 {	
-	size_t thread      = tape_id_ % CPPAD_MAX_NUM_THREADS;
-	return tape_ptr(thread, tape_ptr_return_null_ok );
+	return tape_ptr(tape_id_, tape_ptr_return_null_ok );
 }
 
 /* \} */
