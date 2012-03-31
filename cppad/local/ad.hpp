@@ -29,8 +29,7 @@ CPPAD_BEGIN_NAMESPACE
 typedef enum { 
 	tape_ptr_new              , 
 	tape_ptr_delete           , 
-	tape_ptr_return_null_ok   ,
-	tape_ptr_return_null_error 
+	tape_ptr_return_null_ok
 } tape_ptr_job;
 
 template <class Base>

@@ -190,8 +190,9 @@ void ADFun<Base>::Dependent(const ADvector &x, const ADvector &y)
 	);
 	ADTape<Base> *tape = AD<Base>::tape_ptr(
 		x[0].tape_id_               , 
-		tape_ptr_return_null_error 
+		tape_ptr_return_null_ok 
 	);
+	CPPAD_ASSERT_UNKNOWN( tape != CPPAD_NULL );
 	CPPAD_ASSERT_KNOWN(
 		tape->size_independent_ == x.size(),
 		"Dependent: independent variable vector has been changed."

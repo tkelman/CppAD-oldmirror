@@ -66,11 +66,6 @@ A pointer to the tape that is currently recording
 AD<Base> operations for this thread is returned.
 If no such tape exists, \c CPPAD_NULL is returned.
 -
-\c tape_ptr_return_null_error:
-A pointer to the tape that is currently recording 
-AD<Base> operations for this thread is returned.
-If no such tape exists, an assertion is generated.
-
 \return
 The return value is a pointer to the tape that is currently
 recording AD<Base> operations for this thread.
@@ -105,9 +100,6 @@ inline ADTape<Base>* AD<Base>::tape_ptr(
 	ADTape<Base>*tape = tape_table[thread];
 	switch( job )
 	{
-		case tape_ptr_return_null_error:
-		CPPAD_ASSERT_UNKNOWN( tape != CPPAD_NULL );
-
 		case tape_ptr_return_null_ok:
 		return tape; 
 
