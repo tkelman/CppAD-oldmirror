@@ -34,46 +34,51 @@ Routines that Link AD<Base> to corresponding ADTape<Base> Objects
 Get a pointer to tape 
 that records AD<Base> operations for the current thread.
 
-\tparam Base
-is the base type corresponding to AD<Base> operations and the tape.
-
 \param tape_id
-is the identifier for the tape that is recording
-AD<Base> operations for this thread current thread.
-The thread corresponding to the tape_id is
-\code
-	thread = thread_alloc::thread_num()  if tape_id == 0 else
-	thread = tape_id % CPPAD_MAX_NUM_THREADS 
+is either zero, for not defined, or the tape identifier for
+the current thread. If non-zero, 
+\begincode
+	thread = tape_id % CPPAD_MAX_NUM_THREADS
 \endcode
+is the thread for the tape that corresponds to this identifier.
+The default value for \c tape_id is zero.
 
 \param job
-- 
+The parameter determines what \c tape_ptr will do as follows:
+-
 \c tape_ptr_new:
 There must not be a tape recording AD<Base> operations for this thread 
 when \c tape_ptr is called and there will be a new tape when it returns.  
-The argument \c tape_id must be zero.
-The return value points to the new tape.
+The value of \c tape_id must be zero and 
+the return value is not \c CPPAD_NULL;
 -
 \c tape_ptr_delete:
 There must be a tape recording AD<Base> operations for this thread
 what \c tape_ptr is called and there will be no such tape when it returns.
-The argument \c tape_id must be the identifier for the tape that
-was recording operations.
-The return value will be \c CPPAD_NULL.
+The value of \c tape_id must be the identifier 
+for the tape that is being deleted and
+the return value is \c CPPAD_NULL.
 -
-\c tape_ptr_return_null_ok:
-A pointer to the tape that is currently recording 
-AD<Base> operations for this thread is returned.
-If no such tape exists, \c CPPAD_NULL is returned.
+\c tape_ptr_thread:
+Return a pointer to the tape corresponding to the current thread.
+The value of \c tape_id must be zero.
+If a tape is recording AD<Base> operations for the current thread,
+the return value is not \c CPPAD_NULL.
 -
+\c tape_ptr_tape_id:
+If a tape is recording AD<Base> operations for the current thread,
+and its identifier is \c tape_id,
+the retur value is no \c CPPAD_NULL.
+Otherwise, the return value is \c CPPAD_NULL. 
+
 \return
-The return value is a pointer to the tape that is currently
-recording AD<Base> operations for this thread.
+The return value is either \c CPPAD_NULL or a pointer to the tape 
+that is currently recording AD<Base> operations for this thread.
 */
 template <class Base>
 inline ADTape<Base>* AD<Base>::tape_ptr(
-	size_t        tape_id     , 
-	tape_ptr_job  job         ) 
+	tape_ptr_job  job         , 
+	size_t        tape_id = 0 )
 {	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
 	static ADTape<Base> *tape_table[CPPAD_MAX_NUM_THREADS];
 	static size_t          id_table[CPPAD_MAX_NUM_THREADS];
@@ -100,9 +105,6 @@ inline ADTape<Base>* AD<Base>::tape_ptr(
 	ADTape<Base>*tape = tape_table[thread];
 	switch( job )
 	{
-		case tape_ptr_return_null_ok:
-		return tape; 
-
 		case tape_ptr_new:
 		CPPAD_ASSERT_UNKNOWN( tape_id == 0 );
 		if( id_table[thread] == 0 )
@@ -128,6 +130,15 @@ inline ADTape<Base>* AD<Base>::tape_ptr(
 		id_table[thread]  += CPPAD_MAX_NUM_THREADS;
 		delete ( tape );
 		tape_table[thread] = CPPAD_NULL;
+		return CPPAD_NULL;
+
+		case tape_ptr_thread:
+		CPPAD_ASSERT_UNKNOWN( tape_id == 0 );
+		return tape;
+
+		case tape_ptr_tape_id:
+		if( tape_id == id_table[thread] )
+			return tape;
 		return CPPAD_NULL;
 
 		default:
@@ -165,7 +176,7 @@ recording AD<Base> operations for the specified thread.
 template <class Base>
 inline ADTape<Base> *AD<Base>::tape_this(void) const
 {	
-	return tape_ptr(tape_id_, tape_ptr_return_null_ok );
+	return tape_ptr(tape_ptr_tape_id, tape_id_);
 }
 
 /* \} */

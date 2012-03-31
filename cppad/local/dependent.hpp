@@ -152,7 +152,7 @@ The dependent variable vector for the corresponding function.
 template <typename Base>
 template <typename ADvector>
 void ADFun<Base>::Dependent(const ADvector &y)
-{	ADTape<Base> *tape = AD<Base>::tape_ptr( thread_alloc::thread_num(), tape_ptr_return_null_ok);
+{	ADTape<Base> *tape = AD<Base>::tape_ptr(tape_ptr_thread);
 	CPPAD_ASSERT_KNOWN(
 		tape != CPPAD_NULL,
 		"Can't store current operation sequence in this ADFun object"
@@ -189,8 +189,8 @@ void ADFun<Base>::Dependent(const ADvector &x, const ADvector &y)
 		"Dependent: independent variable vector has been changed."
 	);
 	ADTape<Base> *tape = AD<Base>::tape_ptr(
-		x[0].tape_id_               , 
-		tape_ptr_return_null_ok 
+		tape_ptr_tape_id   ,
+		x[0].tape_id_ 
 	);
 	CPPAD_ASSERT_UNKNOWN( tape != CPPAD_NULL );
 	CPPAD_ASSERT_KNOWN(
@@ -279,7 +279,7 @@ void ADFun<Base>::Dependent(ADTape<Base> *tape, const ADvector &y)
 	play_.get(tape->Rec_);
 
 	// now we can delete the tape
-	AD<Base>::tape_ptr(tape->id_, tape_ptr_delete);
+	AD<Base>::tape_ptr(tape_ptr_delete, tape->id_);
 
 	// total number of varables in this recording 
 	CPPAD_ASSERT_UNKNOWN( total_num_var_ == play_.num_rec_var() );

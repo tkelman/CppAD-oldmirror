@@ -82,16 +82,16 @@ namespace CppAD {
 	CPPAD_INLINE_FRIEND_TEMPLATE_FUNCTION
 	bool Parameter(const AD<Base> &x)
 	{	ADTape<Base>* tape = 
-			AD<Base>::tape_ptr(x.tape_id_, tape_ptr_return_null_ok);
-		return (tape == CPPAD_NULL) || x.tape_id_ != tape->id_; 
+			AD<Base>::tape_ptr(tape_ptr_tape_id, x.tape_id_);
+		return (tape == CPPAD_NULL); 
 	}
 
 	template <class Base>
 	CPPAD_INLINE_FRIEND_TEMPLATE_FUNCTION
 	bool Parameter(const VecAD<Base> &x)
 	{	ADTape<Base>* tape = 
-			AD<Base>::tape_ptr(x.tape_id_, tape_ptr_return_null_ok);
-		return (tape == CPPAD_NULL) || x.tape_id_ != tape->id_; 
+			AD<Base>::tape_ptr(tape_ptr_tape_id, x.tape_id_);
+		return (tape == CPPAD_NULL); 
 	}
 
 	// Variable
@@ -99,16 +99,16 @@ namespace CppAD {
 	CPPAD_INLINE_FRIEND_TEMPLATE_FUNCTION
 	bool Variable(const AD<Base> &x)
 	{	ADTape<Base>* tape = 
-			AD<Base>::tape_ptr(x.tape_id_, tape_ptr_return_null_ok);
-		return (tape != CPPAD_NULL) && x.tape_id_ == tape->id_; 
+			AD<Base>::tape_ptr(tape_ptr_tape_id, x.tape_id_);
+		return (tape != CPPAD_NULL); 
 	}
 
 	template <class Base>
 	CPPAD_INLINE_FRIEND_TEMPLATE_FUNCTION
 	bool Variable(const VecAD<Base> &x)
 	{	ADTape<Base>* tape = 
-			AD<Base>::tape_ptr(x.tape_id_, tape_ptr_return_null_ok);
-		return (tape != CPPAD_NULL) && x.tape_id_ == tape->id_; 
+			AD<Base>::tape_ptr(tape_ptr_tape_id, x.tape_id_);
+		return (tape != CPPAD_NULL); 
 	}
 } 
 // END CppAD namespace

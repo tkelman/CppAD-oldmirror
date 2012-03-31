@@ -384,7 +384,8 @@ public:
 		if( Variable(*vec_) )
 		{
 			ADTape<Base> *tape = AD<Base>::tape_ptr(
-				vec_->tape_id_, tape_ptr_return_null_ok 
+				tape_ptr_tape_id ,
+				vec_->tape_id_ 
 			);
 			CPPAD_ASSERT_UNKNOWN( tape != CPPAD_NULL );
 			CPPAD_ASSERT_UNKNOWN( vec_->offset_ > 0  );
@@ -537,7 +538,8 @@ public:
 		if( Parameter(*this) )
 		{	// must place a copy of vector in tape
 			ADTape<Base>* tape = AD<Base>::tape_ptr(
-				x.tape_id_, tape_ptr_return_null_ok
+				tape_ptr_tape_id ,
+				x.tape_id_
 			);
 			CPPAD_ASSERT_UNKNOWN( tape != CPPAD_NULL );
 			offset_ = tape->AddVec(length_, data_);
@@ -572,7 +574,8 @@ void VecAD_reference<Base>::operator=(const AD<Base> &y)
 	);
 
 	ADTape<Base> *tape = AD<Base>::tape_ptr(
-		y.tape_id_, tape_ptr_return_null_ok
+		tape_ptr_tape_id ,
+		y.tape_id_
 	);
 	CPPAD_ASSERT_UNKNOWN( tape != CPPAD_NULL );
 	if( Parameter(*vec_) )
@@ -634,7 +637,8 @@ void VecAD_reference<Base>::operator=(const Base &y)
 		return;
 
 	ADTape<Base> *tape = AD<Base>::tape_ptr(
-		vec_->tape_id_, tape_ptr_return_null_ok
+		tape_ptr_tape_id ,
+		vec_->tape_id_
 	);
 	CPPAD_ASSERT_UNKNOWN( tape != CPPAD_NULL );
 

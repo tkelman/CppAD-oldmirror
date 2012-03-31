@@ -29,7 +29,8 @@ CPPAD_BEGIN_NAMESPACE
 typedef enum { 
 	tape_ptr_new              , 
 	tape_ptr_delete           , 
-	tape_ptr_return_null_ok
+	tape_ptr_thread           ,
+	tape_ptr_tape_id
 } tape_ptr_job;
 
 template <class Base>
@@ -251,8 +252,8 @@ private:
 	//
 	// static 
 	inline static ADTape<Base>  *tape_ptr(
-		size_t         tape_id  ,
-		tape_ptr_job   job
+		tape_ptr_job   job      ,
+		size_t         tape_id
 	); 
 }; 
 // ---------------------------------------------------------------------------

@@ -56,12 +56,9 @@ $end
 namespace CppAD {
 	template <typename Base>
 	void AD<Base>::abort_recording(void)
-	{	size_t tape_id = 0; // no tape identifier case
-		ADTape<Base> *tape = 
-			AD<Base>::tape_ptr(tape_id, tape_ptr_return_null_ok);
-		tape_id = tape->id_;
+	{	ADTape<Base> *tape = AD<Base>::tape_ptr(tape_ptr_thread);
 		if( tape != CPPAD_NULL )
-			AD<Base>::tape_ptr(tape_id, tape_ptr_delete);
+			AD<Base>::tape_ptr(tape_ptr_delete, tape->id_);
 	}
 }
 
