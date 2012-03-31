@@ -23,12 +23,10 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 CPPAD_BEGIN_NAMESPACE
 /*!
 \file tape_link.hpp
-Routines that Link AD<Base> and ADTape<Base> Objects \ref tape_link_hpp.
+Routines that Link AD<Base> to corresponding ADTape<Base> Objects
+\ref tape_link.hpp.
 
-All the routines are AD<Base> member functions and, except for \c tape_this, 
-they are all static functions. 
-
-\defgroup tape_link_hpp  tape_link.hpp
+\defgroup tape_link.hpp tape_link.hpp
 */
 /* \{ */
 
@@ -47,39 +45,38 @@ The thread corresponding to the tape_id is
 	thread = thread_alloc::thread_num()  if tape_id == 0 else
 	thread = tape_id % CPPAD_MAX_NUM_THREADS 
 \endcode
-If \c NDEBUG is not defined, and this is not the same as
-<code>thread_alloc::thread_num()</code>, a
-\c CPPAD_ASSERT_KNOWN is generated to the effect that a variable or tape
-being used was created by a different thread.
 
 \param job
-- \c tape_ptr_new :
-There must not currently be a tape recording AD<Base> operations
-when this routine is called and there will be a new such tape
-when it returns.  The \c tape_ptr return value points to the new tape.
-- \c tape_ptr_new :
-There must be a tape recording AD<Base> operations
-when this routine is called and there will be no such tape
-when it returns. The \c tape_ptr return value will be \c CPPAD_NULL.
-- \c tape_ptr_null_ok :
-A pointer to the tape that is currently recording AD<Base> 
-operations is returned.
+- 
+\c tape_ptr_new:
+There must not be a tape recording AD<Base> operations for this thread 
+when \c tape_ptr is called and there will be a new tape when it returns.  
+The argument \c tape_id must be zero.
+The return value points to the new tape.
+-
+\c tape_ptr_delete:
+There must be a tape recording AD<Base> operations for this thread
+what \c tape_ptr is called and there will be no such tape when it returns.
+The argument \c tape_id must be the identifier for the tape that
+was recording operations.
+The return value will be \c CPPAD_NULL.
+-
+\c tape_ptr_return_null_ok:
+A pointer to the tape that is currently recording 
+AD<Base> operations for this thread is returned.
 If no such tape exists, \c CPPAD_NULL is returned.
-
-\c tape_ptr_null_error :
-It is assumed that a tape that is currently recording AD<Base> 
-and a pointer to the tape is returned.
-If \c NDEBUG is not defined, it an assertion error is generated if
-no such a tape exists.
+-
+\c tape_ptr_return_null_error:
+A pointer to the tape that is currently recording 
+AD<Base> operations for this thread is returned.
+If no such tape exists, an assertion is generated.
 
 \return
-The return value is a pointer to the tape that records AD<Base> operations
-for the current thread.
-If this value is \c CPPAD_NULL, there is no tape currently
+The return value is a pointer to the tape that is currently
 recording AD<Base> operations for this thread.
 */
 template <class Base>
-inline ADTape<Base> *AD<Base>::tape_ptr(
+inline ADTape<Base>* AD<Base>::tape_ptr(
 	size_t        tape_id     , 
 	tape_ptr_job  job         ) 
 {	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
@@ -101,32 +98,34 @@ inline ADTape<Base> *AD<Base>::tape_ptr(
 		"See thread_alloc::parallel_setup for setting these values."
 	);
 	CPPAD_ASSERT_UNKNOWN( 
-		job != tape_ptr_return_null_error || tape_table[thread] != CPPAD_NULL 
-	);
-	CPPAD_ASSERT_UNKNOWN( 
 		(id_table[thread] == 0)
 		| (id_table[thread] % CPPAD_MAX_NUM_THREADS == thread)
 	); 
 
+	ADTape<Base>*tape = tape_table[thread];
 	switch( job )
 	{
 		case tape_ptr_return_null_error:
+		CPPAD_ASSERT_UNKNOWN( tape != CPPAD_NULL );
+
 		case tape_ptr_return_null_ok:
-		return tape_table[thread];
+		return tape; 
 
 		case tape_ptr_new:
+		CPPAD_ASSERT_UNKNOWN( tape_id == 0 );
 		if( id_table[thread] == 0 )
 		{	// initialize id > 1 and thread == id % CPPAD_MAX_NUM_THREADS
 			id_table[thread] = thread + 2 * CPPAD_MAX_NUM_THREADS;
 		}
 		// else id_table[thread] has been set to its new value by tape_delete
-		CPPAD_ASSERT_UNKNOWN( tape_table[thread]  == CPPAD_NULL );
+		CPPAD_ASSERT_UNKNOWN( tape  == CPPAD_NULL );
 		tape_table[thread] = new ADTape<Base>( id_table[thread] );
 		return tape_table[thread];
 
 		case tape_ptr_delete:
-		CPPAD_ASSERT_UNKNOWN( tape_table[thread] != CPPAD_NULL );
-		CPPAD_ASSERT_UNKNOWN( tape_table[thread]->id_  == id_table[thread] );
+		CPPAD_ASSERT_UNKNOWN( tape != CPPAD_NULL );
+		CPPAD_ASSERT_UNKNOWN( tape_id == tape->id_  );
+		CPPAD_ASSERT_UNKNOWN( tape->id_  == id_table[thread] );
 		CPPAD_ASSERT_KNOWN( 
 			id_table[thread] <= 
 				std::numeric_limits<CPPAD_TAPE_ID_TYPE>::max() - 
@@ -135,14 +134,15 @@ inline ADTape<Base> *AD<Base>::tape_ptr(
 			"CPPAD_TAPE_ID_TYPE"
 		);
 		id_table[thread]  += CPPAD_MAX_NUM_THREADS;
-		delete ( tape_table[thread] );
+		delete ( tape );
 		tape_table[thread] = CPPAD_NULL;
 		return CPPAD_NULL;
 
 		default:
 		CPPAD_ASSERT_UNKNOWN( false );
 	}
-	return tape_table[thread];
+	// should not get here, but return value to avoid compiler warning
+	return CPPAD_NULL;
 }
 
 /*!

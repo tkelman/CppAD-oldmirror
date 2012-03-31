@@ -59,6 +59,7 @@ namespace CppAD {
 	{	size_t tape_id = 0; // no tape identifier case
 		ADTape<Base> *tape = 
 			AD<Base>::tape_ptr(tape_id, tape_ptr_return_null_ok);
+		tape_id = tape->id_;
 		if( tape != CPPAD_NULL )
 			AD<Base>::tape_ptr(tape_id, tape_ptr_delete);
 	}
