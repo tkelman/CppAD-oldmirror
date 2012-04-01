@@ -37,7 +37,7 @@ that records AD<Base> operations for the current thread.
 \param tape_id
 is either zero, for not defined, or the tape identifier for
 the current thread. If non-zero, 
-\begincode
+\code
 	thread = tape_id % CPPAD_MAX_NUM_THREADS
 \endcode
 is the thread for the tape that corresponds to this identifier.
