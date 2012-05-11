@@ -3,7 +3,7 @@
 # define CPPAD_SPARSE_JACOBIAN_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-11 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -645,9 +645,6 @@ VectorBase ADFun<Base>::SparseJacobian( const VectorBase& x )
 	// sparsity pattern for Jacobian
 	VectorBool p(m * n);
 
-	// return result
-	VectorBase jac(m * n);
-
 	if( n <= m )
 	{	size_t j, k;
 
@@ -672,9 +669,7 @@ VectorBase ADFun<Base>::SparseJacobian( const VectorBase& x )
 		}
 		p = RevSparseJac(m, s);
 	}
-	bool set_type = true; // only used to dispatch compiler to proper case
-	SparseJacobianCase(set_type, x, p, jac);
-	return jac;
+	return SparseJacobian(x, p);
 }
 
 
