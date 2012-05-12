@@ -556,7 +556,7 @@ void ADFun<Base>::SparseJacobianReverse(
 }
 
 /*!
-Private helper function for SparseJacobianCase(x, p).
+Private helper function SparseJacobianCase(x, p).
 
 All of the description in the public member function SparseJacobian(x, p)
 applies.
@@ -592,7 +592,7 @@ void ADFun<Base>::SparseJacobianCase(
 	size_t m = Range();
 	size_t n = Domain();
 
-	// some values
+	// the value zero
 	const Base zero(0);
 
 	// check VectorSet is Simple Vector class with bool elements
@@ -681,7 +681,7 @@ void ADFun<Base>::SparseJacobianCase(
 }
 
 /*!
-Private helper function for SparseJacobian(x, p).
+Private helper function SparseJacobianCase(x, p).
 
 All of the description in the public member function SparseJacobian(x, p)
 applies.
@@ -718,9 +718,8 @@ void ADFun<Base>::SparseJacobianCase(
 	size_t m = Range();
 	size_t n = Domain();
 
-	// some values
+	// the value zero
 	const Base zero(0);
-	const Base one(1);
 
 	// check VectorSet is Simple Vector class with sets for elements
 	CheckSimpleVector<std::set<size_t>, VectorSet>(
@@ -736,7 +735,7 @@ void ADFun<Base>::SparseJacobianCase(
 	); 
 	CPPAD_ASSERT_KNOWN(
 		p.size() == m,
-		"SparseJacobian: using sets and size of p "
+		"SparseJacobian: using size of set sparsity pattern p "
 		"not equal range dimension for f"
 	); 
 	CPPAD_ASSERT_UNKNOWN(jac.size() == m * n); 
@@ -749,114 +748,67 @@ void ADFun<Base>::SparseJacobianCase(
 		for(j = 0; j < n; j++)
 			jac[i * n + j] = zero;
 
-	// create a copy of the transpose sparsity pattern
-	VectorSet q(n);
+	// row index, column index, value representation
+	// (used to fold problem into user interface case).
 	size_t K = 0;
-	std::set<size_t>::const_iterator itr_i, itr_j;
+	std::set<size_t>::const_iterator itr;
 	for(i = 0; i < m; i++)
-	{	itr_j = p[i].begin();
-		while( itr_j != p[i].end() )
-		{	j = *itr_j++;
-			q[j].insert(i);
+	{	itr = p[i].begin();
+		while( itr != p[i].end() )
+		{	itr++;
 			K++;
 		}
 	}	
+	CppAD::vector<size_t> c(K), r(K);
+	VectorBase J(K);
+
+	// transposed sparsity pattern
+	sparse_set p_transpose;
+	bool transpose = true;
+	vec_set_to_sparse_set(p_transpose, p, m, n, transpose);
 
 	if( n <= m )
 	{	// use forward mode ----------------------------------------
-		CppAD::vector<size_t> r(K), c(K);
 		k = 0;
 		for(j = 0; j < n; j++)
-		{	itr_i = q[j].begin();
-			while( itr_i != q[j].end() )
-			{	i = *itr_i++;
+		{	p_transpose.begin(j);
+			i = p_transpose.next_element();
+			while( i != p_transpose.end() )
+			{	r[k] = i;
+				c[k] = j;
+				k++;
+				i    = p_transpose.next_element();
+			}
+		} 
+
+		// also need a non-transposed copy so can fold vector of sets
+		// into the r, c, J representation.
+		sparse_set sparsity;
+		transpose = false;
+		vec_set_to_sparse_set(sparsity, p, m, n, transpose);
+	
+		// now we have folded this into the following case
+		SparseJacobianForward(x, sparsity, r, c, J);
+	}
+	else
+	{	// use reverse mode ----------------------------------------
+		k = 0;
+		for(i = 0; i < m; i++)
+		{	itr = p[i].begin();
+			while( itr != p[i].end() )
+			{	j = *itr++;
 				r[k] = i;
 				c[k] = j;
 				k++;
 			}
 		} 
-		VectorBase J(K);
 
-		// convert the sparsity pattern to a sparse_set object
-		// so can fold vector of bools and vector of sets into same function
-		sparse_set sparsity;
-		vec_set_to_sparse_set(sparsity, p, m, n);
-	
 		// now we have folded this into the following case
-		SparseJacobianForward(x, sparsity, r, c, J);
-
-		// now set the non-zero return values
-		for(k = 0; k < K; k++)
-			jac[r[k] * n + c[k]] = J[k];
+		SparseJacobianReverse(x, p_transpose, r, c, J);
 	}
-	else
-	{	// use reverse mode ----------------------------------------
-	
-		// initial coloring
-		SizeVector color(m);
-		for(i = 0; i < m; i++)
-			color[i] = i;
-
-		// See GreedyPartialD2Coloring Algorithm Section 3.6.2 of
-		// Graph Coloring in Optimization Revisited by
-		// Assefaw Gebremedhin, Fredrik Maane, Alex Pothen
-		VectorBool forbidden(m);
-		for(i = 0; i < m; i++)
-		{	// initial all colors as ok for this row
-			for(k = 0; k < m; k++)
-				forbidden[k] = false;
-
-			// for each column connected to row i
-			itr_j = p[i].begin();
-			while( itr_j != p[i].end() )
-			{	j = *itr_j++;	
-				// for each row connected to column j
-				itr_i = q[j].begin();
-				while( itr_i != q[j].end() )
-				{	// if this is not i, forbid it
-					k = *itr_i++;
-					forbidden[ color[k] ] = (k != i);
-				}
-			}
-			k = 0;
-			while( forbidden[k] && k < m )
-			{	k++;
-				CPPAD_ASSERT_UNKNOWN( k < n );
-			}
-			color[i] = k;
-		}
-		size_t n_color = 1;
-		for(k = 0; k < m; k++) 
-			n_color = std::max(n_color, color[k] + 1);
-
-		// weight vector for calls to reverse
-		VectorBase w(m);
-
-		// location for return values from Reverse
-		VectorBase dw(n);
-
-		// loop over colors
-		size_t c;
-		for(c = 0; c < n_color; c++)
-		{	// determine all the rows with this color
-			for(i = 0; i < m; i++)
-			{	if( color[i] == c )
-					w[i] = one;
-				else	w[i] = zero;
-			}
-			// call reverse mode for all these rows at once
-			dw = Reverse(1, w);
-
-			// set the corresponding components of the result
-			for(i = 0; i < m; i++) if( color[i] == c )
-			{	itr_j = p[i].begin();
-				while( itr_j != p[i].end() )
-				{	j = *itr_j++;
-					jac[i * n + j] = dw[j];
-				}
-			}
-		}
-	}
+	// now set the non-zero return values
+	for(k = 0; k < K; k++)
+		jac[r[k] * n + c[k]] = J[k];
 }
 
 /*!

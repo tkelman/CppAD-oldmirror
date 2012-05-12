@@ -279,27 +279,49 @@ is a simple vector with elements of type \c std::set<size_t>.
 
 \param sparsity
 The input value of sparisty does not matter.
-Upon return it contains the same sparsity pattern as \c vec_set.
+Upon return it contains the same sparsity pattern as \c vec_set
+(or the transposed sparsity pattern).
 
 \param vec_set
 sparsity pattern that we are placing \c sparsity.
 
 \param n_row
-number of rows in the sparsity pattern.
+number of rows in the sparsity pattern in \c vec_set.
 
 \param n_col
-number of columns in the sparsity pattern.
+number of columns in the sparsity pattern in \c vec_set.
+
+\param transpose
+if true, the sparsity pattern in \c sparsity is the transpose
+of the one in \c vec_bool. 
+Otherwise it is the same sparsity pattern.
 */
 template<class VectorSet>
 void vec_set_to_sparse_set(
 	sparse_set&        sparsity  , 
 	const VectorSet&   vec_set   ,
 	size_t             n_row     ,
-	size_t             n_col     )
+	size_t             n_col     ,
+	bool               transpose )
 {	CPPAD_ASSERT_UNKNOWN( n_row == vec_set.size() );
 	size_t i, j;
 	std::set<size_t>::const_iterator itr;
 
+	// transposed pattern case
+	if( transpose )
+	{	sparsity.resize(n_col, n_row);
+		for(i = 0; i < n_row; i++)
+		{	itr = vec_set[i].begin();
+			while(itr != vec_set[i].end())
+			{	j = *itr++;
+				CPPAD_ASSERT_UNKNOWN( j < n_col );
+				sparsity.add_element(j, i);
+			}
+		}
+		return;
+	}
+
+	// same pattern case
 	sparsity.resize(n_row, n_col);
 	for(i = 0; i < n_row; i++)
 	{	itr = vec_set[i].begin();
