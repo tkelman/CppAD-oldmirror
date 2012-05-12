@@ -31,9 +31,9 @@ $index SparseJacobian$$
 $index jacobian, sparse$$
 
 $head Syntax$$
-$codei%%jac% = %f%.SparseJacobian(%x%)
+$icode%jac% = %f%.SparseJacobian(%x%)
 %$$
-$codei%%jac% = %f%.SparseJacobian(%x%, %p%)%$$
+$icode%jac% = %f%.SparseJacobian(%x%, %p%)%$$
 
 $head Purpose$$
 We use $latex F : \R^n \rightarrow \R^m$$ do denote the
@@ -46,16 +46,16 @@ $latex \[
 This routine assumes
 that the matrix $latex F^{(1)} (x) \in \R^{m \times n}$$ is sparse
 and uses this assumption to reduce the amount of computation necessary.
-One should use speed tests (e.g. $cref/speed_test/$$)
+One should use speed tests (e.g. $cref speed_test$$)
 to verify that results are computed faster
-than when using the routine $cref/Jacobian/$$.
+than when using the routine $cref Jacobian$$.
 
 $head f$$
 The object $icode f$$ has prototype
 $codei%
 	ADFun<%Base%> %f%
 %$$
-Note that the $cref/ADFun/$$ object $icode f$$ is not $code const$$
+Note that the $cref ADFun$$ object $icode f$$ is not $code const$$
 (see $cref/Uses Forward/sparse_jacobian/Uses Forward/$$ below).
 
 $head x$$
@@ -72,7 +72,7 @@ that point at which to evaluate the Jacobian.
 
 $head p$$
 The argument $icode p$$ is optional and has prototype
-$syntax%
+$codei%
 	const %VectorSet%& %p%
 %$$
 (see $cref/VectorSet/sparse_jacobian/VectorSet/$$ below).
@@ -89,7 +89,7 @@ $pre
 $$
 If this sparsity pattern does not change between calls to 
 $codei SparseJacobian$$, it should be faster to calculate $icode p$$ once 
-(using $cref/ForSparseJac/$$ or $cref/RevSparseJac/$$)
+(using $cref ForSparseJac$$ or $cref/RevSparseJac/$$)
 and then pass $icode p$$ to $codei SparseJacobian$$.
 In addition,
 if you specify $icode p$$, CppAD will use the same
@@ -112,19 +112,19 @@ $latex \[
 \] $$
 
 $head VectorBase$$
-The type $icode VectorBase$$ must be a $cref/SimpleVector/$$ class with
+The type $icode VectorBase$$ must be a $cref SimpleVector$$ class with
 $cref/elements of type/SimpleVector/Elements of Specified Type/$$
 $icode Base$$.
-The routine $cref/CheckSimpleVector/$$ will generate an error message
+The routine $cref CheckSimpleVector$$ will generate an error message
 if this is not the case.
 
 $head VectorSet$$
-The type $icode VectorSet$$ must be a $xref/SimpleVector/$$ class with
-$xref/SimpleVector/Elements of Specified Type/elements of type/$$
+The type $icode VectorSet$$ must be a $cref SimpleVector$$ class with
+$cref/elements of type/SimpleVector/Elements of Specified Type/$$
 $code bool$$ or $code std::set<size_t>$$;
 see $cref/sparsity pattern/glossary/Sparsity Pattern/$$ for a discussion
 of the difference.
-The routine $cref/CheckSimpleVector/$$ will generate an error message
+The routine $cref CheckSimpleVector$$ will generate an error message
 if this is not the case.
 
 $subhead Restrictions$$
@@ -136,18 +136,18 @@ $code std::valarray< std::set<size_t> >$$ does not satisfy
 this condition. 
 
 $head Uses Forward$$
-After each call to $cref/Forward/$$,
+After each call to $cref Forward$$,
 the object $icode f$$ contains the corresponding 
 $cref/Taylor coefficients/glossary/Taylor Coefficient/$$.
 After $code SparseJacobian$$,
-the previous calls to $xref/Forward/$$ are undefined.
+the previous calls to $cref Forward$$ are undefined.
 
 $head Example$$
 $children%
 	example/sparse_jacobian.cpp
 %$$
 The routine
-$cref/sparse_jacobian.cpp/$$
+$cref sparse_jacobian.cpp$$
 is examples and tests of $code sparse_jacobian$$.
 It return $code true$$, if it succeeds and $code false$$ otherwise.
 
