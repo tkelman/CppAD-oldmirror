@@ -197,6 +197,29 @@ private:
 		const VectorSize&  c               ,
 		VectorBase&        jac
 	);
+	// ------------------------------------------------------------
+	// vector of bool version of SparseJacobian
+	// (see doxygen in sparse_jacobian.hpp)
+	template <class VectorBase, class VectorSet, class VectorSize>
+	void SparseJacobianCase(
+		bool                     set_type    ,
+		const VectorBase&        x           ,
+		const VectorSet&         p           ,
+		const VectorSize&        r           ,
+		const VectorSize&        c           ,
+		VectorBase&              jac
+	);
+	// vector of std::set<size_t> version of SparseJacobian
+	// (see doxygen in sparse_jacobian.hpp)
+	template <class VectorBase, class VectorSet, class VectorSize>
+	void SparseJacobianCase(
+		const std::set<size_t>&  set_type    ,
+		const VectorBase&        x           ,
+		const VectorSet&         p           ,
+		const VectorSize&        r           ,
+		const VectorSize&        c           ,
+		VectorBase&              jac
+	);
 	// vector of bool version of SparseJacobian
 	// (see doxygen in sparse_jacobian.hpp)
 	template <class VectorBase, class VectorSet>

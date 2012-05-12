@@ -161,6 +161,7 @@ CPPAD_BEGIN_NAMESPACE
 \file sparse_jacobian.hpp
 Sparse Jacobian driver routine and helper functions.
 */
+// ===========================================================================
 /*!
 Nom member helper function that deteremine if row or column major order.
 
@@ -198,8 +199,7 @@ bool is_major_minor_order(const VectorSize& major, const VectorSize& minor)
 	} 
 	return match;
 }
-		
-
+// ===========================================================================
 /*!
 Private helper function SparseJacobianForward(x, p, r, c, jac).
 
@@ -376,7 +376,6 @@ void ADFun<Base>::SparseJacobianForward(
 		}
 	}
 }
-
 /*!
 Private helper function SparseJacobianReverse(x, p_transpose, r, c, jac).
 
@@ -554,15 +553,173 @@ void ADFun<Base>::SparseJacobianReverse(
 		}
 	}
 }
-
+// ===========================================================================
 /*!
-Private helper function SparseJacobianCase(x, p).
+Private helper function SparseJacobianCase(set_type, x, p, r, c, jac).
+
+All of the description in the public member function 
+SparseJacobian(x, p, r, c, jac) applies.
+
+\param set_type
+is a \c bool value. This argument is used to dispatch to the proper source
+code depending on the value of \c VectorSet::value_type.
+
+\param x
+See \c SparseJacobian(x, p, r, c, jac).
+
+\param p
+See \c SparseJacobian(x, p, r, c, jac).
+
+\param r
+See \c SparseJacobian(x, p, r, c, jac).
+
+\param c
+See \c SparseJacobian(x, p, r, c, jac).
+
+\param jac
+See \c SparseJacobian(x, p, r, c, jac).
+*/
+template <class Base>
+template <class VectorBase, class VectorSet, class VectorSize>
+void ADFun<Base>::SparseJacobianCase(
+	bool               set_type        ,
+	const VectorBase&  x               , 
+	const VectorSet&   p               ,
+	const VectorSize&  r               ,
+	const VectorSize&  c               ,
+	VectorBase&        jac             )
+{	size_t n = Domain();
+	size_t m = Range();
+
+	// check VectorSet is Simple Vector class with bool elements
+	CheckSimpleVector<bool, VectorSet>();
+
+	// check VectorBase is Simple Vector class with Base type elements
+	CheckSimpleVector<Base, VectorBase>();
+
+	CPPAD_ASSERT_KNOWN(
+		p.size() == m * n ,
+		"SparseJacobian: using bool values and size of p "
+		" not equal range dimension times domain dimension for f"
+	); 
+	CPPAD_ASSERT_UNKNOWN( x.size() == n );
+	CPPAD_ASSERT_UNKNOWN( r.size() == c.size() ); 
+	CPPAD_ASSERT_UNKNOWN( r.size() == jac.size() ); 
+
+	if( is_major_minor_order(r, c) )
+	{	// use forward mode ----------------------------------------
+
+		// convert the sparsity pattern to a sparse_pack object
+		// so can fold vector of bools and vector of sets into same function
+		sparse_pack sparsity;
+		bool transpose = false;
+		vec_bool_to_sparse_pack(sparsity, p, m, n, transpose);
+	
+		// now we have folded this into the following case
+		SparseJacobianForward(x, sparsity, r, c, jac);
+	}
+	else
+	{	// use reverse mode ----------------------------------------
+
+		// convert the sparsity pattern to a sparse_pack object
+		// so can fold vector of bools and vector of sets into same function
+		sparse_pack sparsity;
+		bool transpose = true;
+		vec_bool_to_sparse_pack(sparsity, p, m, n, transpose);
+	
+		// now we have folded this into the following case
+		SparseJacobianReverse(x, sparsity, r, c, jac);
+	}
+}
+/*!
+Private helper function SparseJacobianCase(set_type, x, p, r, c, jac).
+
+All of the description in the public member function 
+SparseJacobian(x, p, r, c, jac) applies.
+
+\param set_type
+is a \c std::set<size_t> value. 
+This argument is used to dispatch to the proper source
+code depending on the value of \c VectorSet::value_type.
+
+\param x
+See \c SparseJacobian(x, p, r, c, jac).
+
+\param p
+See \c SparseJacobian(x, p, r, c, jac).
+
+\param r
+See \c SparseJacobian(x, p, r, c, jac).
+
+\param c
+See \c SparseJacobian(x, p, r, c, jac).
+
+\param jac
+See \c SparseJacobian(x, p, r, c, jac).
+*/
+template <class Base>
+template <class VectorBase, class VectorSet, class VectorSize>
+void ADFun<Base>::SparseJacobianCase(
+	const std::set<size_t>&  set_type        ,
+	const VectorBase&        x               , 
+	const VectorSet&         p               ,
+	const VectorSize&        r               ,
+	const VectorSize&        c               ,
+	VectorBase&              jac             )
+{	size_t n = Domain();
+	size_t m = Range();
+
+	// check VectorSet is Simple Vector class with sets for elements
+	CheckSimpleVector<std::set<size_t>, VectorSet>(
+		one_element_std_set<size_t>(), two_element_std_set<size_t>()
+	);
+
+	// check VectorBase is Simple Vector class with Base type elements
+	CheckSimpleVector<Base, VectorBase>();
+
+	CPPAD_ASSERT_KNOWN(
+		p.size() == Range() ,
+		"SparseJacobian: using size of set sparsity pattern p "
+		"not equal range dimension for f"
+	); 
+	CPPAD_ASSERT_UNKNOWN( x.size() == n );
+	CPPAD_ASSERT_UNKNOWN( r.size() == c.size() ); 
+	CPPAD_ASSERT_UNKNOWN( r.size() == jac.size() ); 
+
+	if( is_major_minor_order(r, c) )
+	{	// use forward mode ----------------------------------------
+
+		// convert the sparsity pattern to a sparse_pack object
+		// so can fold vector of bools and vector of sets into same function
+		sparse_pack sparsity;
+		bool transpose = false;
+		vec_bool_to_sparse_set(sparsity, p, m, n, transpose);
+	
+		// now we have folded this into the following case
+		SparseJacobianForward(x, sparsity, r, c, jac);
+	}
+	else
+	{	// use reverse mode ----------------------------------------
+
+		// convert the sparsity pattern to a sparse_pack object
+		// so can fold vector of bools and vector of sets into same function
+		sparse_pack sparsity;
+		bool transpose = true;
+		vec_bool_to_sparse_set(sparsity, p, m, n, transpose);
+	
+		// now we have folded this into the following case
+		SparseJacobianReverse(x, sparsity, r, c, jac);
+	}
+}
+// ===========================================================================
+/*!
+Private helper function SparseJacobianCase(set_type, x, p, jac).
 
 All of the description in the public member function SparseJacobian(x, p)
 applies.
 
 \param set_type
-is a \c bool value. This argument is used to dispatch to the proper souce
+is a \c bool value. This argument is used to dispatch to the proper source
 code depending on the value of \c VectorSet::value_type.
 
 \param x
@@ -674,14 +831,14 @@ void ADFun<Base>::SparseJacobianCase(
 }
 
 /*!
-Private helper function SparseJacobianCase(x, p).
+Private helper function SparseJacobianCase(set_type, x, p, jac).
 
 All of the description in the public member function SparseJacobian(x, p)
 applies.
 
 \param set_type
 is a \c std::set<size_t> value.
-This argument is used to dispatch to the proper souce
+This argument is used to dispatch to the proper source
 code depending on the vlaue of \c VectorSet::value_type.
 
 \param x
@@ -797,7 +954,7 @@ void ADFun<Base>::SparseJacobianCase(
 	for(k = 0; k < K; k++)
 		jac[r[k] * n + c[k]] = J[k];
 }
-
+// ============================================================================
 /*!
 Compute a sparse Jacobian.
 
