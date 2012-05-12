@@ -47,10 +47,10 @@ The syntax above sets $icode jac$$ to the Jacobian
 $latex \[
 	jac = F^{(1)} (x) 
 \] $$
-This routine takes advantage of the sparsity of the Jacobain
+This routine takes advantage of the sparsity of the Jacobian
 in order to reduce the amount of computation necessary.
 If $icode r$$ and $icode c$$ are present, it also takes
-advantage of the reduced set of elements of the Jacobain that
+advantage of the reduced set of elements of the Jacobian that
 need to be computed.
 One can use speed tests (e.g. $cref speed_test$$)
 to verify that results are computed faster
@@ -116,6 +116,23 @@ If these argument are present, they must have the same size which we
 denote by $latex K$$.
 They specify which rows and columns of $latex F^{(1)} (x)$$ are
 returned and in which order.
+In addition, they must be in either row major or column major order:
+
+$subhead Row Major Order$$
+Row major order is defined by the following condition:
+for $latex k = 1 , \ldots , K-1$$,
+$latex c[k-1] \leq c[k]$$ and if $latex c[k-1] = c[k]$$ then
+$latex r[k-1] < r[k]$$.
+In this case forward mode will be used to compute the Jacobian
+with multiple columns computed for each forward sweep.
+
+$subhead Column Major Order$$
+Column major order is defined by the following condition:
+for $latex k = 1 , \ldots , K-1$$,
+$latex r[k-1] \leq r[k]$$ and if $latex r[k-1] = r[k]$$ then
+$latex c[k-1] < c[k]$$.
+In this case reverse mode will be used to compute the Jacobian
+with multiple rows computed for each reverse sweep.
 
 $head jac$$
 The result $icode jac$$ has prototype
