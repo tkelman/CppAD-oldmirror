@@ -277,50 +277,50 @@ void ADFun<Base>::SparseJacobianForward(
 
 	// mapping from used index to original column index
 	VectorSize column(n_used);
-	size_t i_used = 0;
+	size_t j_used = 0;
 	for(j = 0; j < n; j++)
 	{	if( used_index[j] != n )
-		{	column[i_used++] = j;
-			CPPAD_ASSERT_UNKNOWN( used_index[j] == i_used-1 );
+		{	column[j_used++] = j;
+			CPPAD_ASSERT_UNKNOWN( used_index[j] == j_used-1 );
 		}
 	}
-	CPPAD_ASSERT_UNKNOWN( i_used == n_used );
+	CPPAD_ASSERT_UNKNOWN( j_used == n_used );
 
 	// initial coloring
 	VectorSize color(n_used);
-	for(i_used = 0; i_used < n_used; i_used++)
-		color[i_used] = i_used;
+	for(j_used = 0; j_used < n_used; j_used++)
+		color[j_used] = j_used;
 
 	// See GreedyPartialD2Coloring Algorithm Section 3.6.2 of
 	// Graph Coloring in Optimization Revisited by
 	// Assefaw Gebremedhin, Fredrik Maane, Alex Pothen
 	vectorBool forbidden(n_used);
 	k = 0;
-	for(i_used = 0; i_used < n_used; i_used++)
+	for(j_used = 0; j_used < n_used; j_used++)
 	{
 		// initial all colors as ok for this column
 		for(ell = 0; ell < n_used; ell++)
 			forbidden[ell] = false;
 
 		// advance k to first index for this column
-		CPPAD_ASSERT_UNKNOWN( c[k] <= column[i_used] )
-		while( c[k] < column[i_used] )
+		CPPAD_ASSERT_UNKNOWN( c[k] <= column[j_used] )
+		while( c[k] < column[j_used] )
 		{	CPPAD_ASSERT_UNKNOWN( k < K-1 );
 			k++;
 		}
-		CPPAD_ASSERT_UNKNOWN( c[k] == column[i_used] );
+		CPPAD_ASSERT_UNKNOWN( c[k] == column[j_used] );
 
 		// for each row we will use a value from this column 
 		// (note that the set in use may be smaller than sparsity pattern).
 		i = r[k];
-		while( k < K && c[k] == column[i_used] )
+		while( k < K && c[k] == column[j_used] )
 		{	// for each column that is connected to this row
 			p.begin(i);
 			j = p.next_element();
 			while( j != p.end() )
 			{	ell = used_index[j];	
 				// if this is not the same column and we want values for it
-				if( (column[i_used] != j) & (ell != n) )
+				if( (column[j_used] != j) & (ell != n) )
 				{	CPPAD_ASSERT_UNKNOWN( ell < n_used );
 					forbidden[ color[ell] ] = true;
 				}
@@ -328,14 +328,14 @@ void ADFun<Base>::SparseJacobianForward(
 			}
 			k++;
 		}
-		CPPAD_ASSERT_UNKNOWN( k < K || i_used == (n_used - 1) );
+		CPPAD_ASSERT_UNKNOWN( k < K || j_used == (n_used - 1) );
 
 		ell = 0;
 		while( forbidden[ell] && ell < n_used )
 		{	ell++;
-			CPPAD_ASSERT_UNKNOWN( ell < i_used );
+			CPPAD_ASSERT_UNKNOWN( ell < j_used );
 		}
-		color[i_used] = ell;
+		color[j_used] = ell;
 	}
 	size_t n_color = 1;
 	for(ell = 0; ell < n_used; ell++) 
