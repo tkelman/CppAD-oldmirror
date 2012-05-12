@@ -3,7 +3,7 @@
 # define CPPAD_SPARSE_PACK_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-11 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -24,7 +24,6 @@ Vector of sets of positive integers.
 /*!
 Vector of sets of postivie integers, each set stored as a packed boolean array.
 */
-
 
 class sparse_pack {
 private:
@@ -318,6 +317,44 @@ public:
 	size_t end(void) const
 	{	return end_; }
 };
+
+/*! 
+Copy a sparsity pattern from a vector of bools into a sparse_pack object.
+
+\tparam VectorBool
+is a simple vector with elements of type bool.
+
+\param sparsity
+The input value of sparisty does not matter.
+Upon return it contains the same sparsity pattern as \c vec_bool.
+
+\param vec_bool
+sparsity pattern that we are placing \c sparsity.
+
+\param n_row
+number of rows in the sparsity pattern.
+
+\param n_col
+number of columns in the sparsity pattern.
+*/
+template<class VectorBool>
+void bool_to_sparse_pack(
+	sparse_pack&       sparsity  , 
+	const VectorBool&  vec_bool  ,
+	size_t             n_row     ,
+	size_t             n_col     )
+{	CPPAD_ASSERT_UNKNOWN( n_row * n_col == vec_bool.size() );
+	size_t i, j;
+
+	sparsity.resize(n_row, n_col);
+	for(i = 0; i < n_row; i++)
+	{	for(j = 0; j < n_col; j++)
+		{	if( vec_bool[ i * n_col + j ] )
+				sparsity.add_element(i, j);
+		}
+	}
+	return;
+}
 
 CPPAD_END_NAMESPACE
 # endif

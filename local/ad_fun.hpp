@@ -181,9 +181,8 @@ private:
 	// (see doxygen in sparse_jacobian.hpp)
 	template <class VectorBase, class VectorSet, class VectorSize>
 	void SparseJacobianForward(
-		bool               set_type        ,
 		const VectorBase&  x               ,
-		const VectorSet&   p               ,
+		VectorSet&         p               ,
 		const VectorSize&  r               ,
 		const VectorSize&  c               ,
 		VectorBase&        jac
