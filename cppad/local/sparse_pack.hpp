@@ -338,7 +338,7 @@ number of rows in the sparsity pattern.
 number of columns in the sparsity pattern.
 */
 template<class VectorBool>
-void bool_to_sparse_pack(
+void vec_bool_to_sparse_pack(
 	sparse_pack&       sparsity  , 
 	const VectorBool&  vec_bool  ,
 	size_t             n_row     ,
