@@ -602,23 +602,12 @@ void ADFun<Base>::SparseJacobianCase(
 	CheckSimpleVector<Base, VectorBase>();
 
 	CPPAD_ASSERT_KNOWN(
-		x.size() == n,
-		"SparseJacobian: size of x not equal domain dimension for f"
-	); 
-	CPPAD_ASSERT_KNOWN(
 		p.size() == m * n,
 		"SparseJacobian: using bool values and size of p "
 		" not equal range dimension times domain dimension for f"
 	); 
+	CPPAD_ASSERT_UNKNOWN( x.size() == n );
 	CPPAD_ASSERT_UNKNOWN(jac.size() == m * n); 
-
-	// point at which we are evaluating the Jacobian
-	Forward(0, x);
-
-	// initialize the return value
-	for(i = 0; i < m; i++)
-		for(j = 0; j < n; j++)
-			jac[i * n + j] = zero;
 
 	// row index, column index, value representation
 	// (used to fold problem into user interface case).
@@ -675,6 +664,10 @@ void ADFun<Base>::SparseJacobianCase(
 		// now we have folded this into the following case
 		SparseJacobianReverse(x, sparsity, r, c, J);
 	}
+	// initialize the return value
+	for(i = 0; i < m; i++)
+		for(j = 0; j < n; j++)
+			jac[i * n + j] = zero;
 	// now set the non-zero return values
 	for(k = 0; k < K; k++)
 		jac[r[k] * n + c[k]] = J[k];
@@ -730,23 +723,12 @@ void ADFun<Base>::SparseJacobianCase(
 	CheckSimpleVector<Base, VectorBase>();
 
 	CPPAD_ASSERT_KNOWN(
-		x.size() == n,
-		"SparseJacobian: size of x not equal domain dimension for f"
-	); 
-	CPPAD_ASSERT_KNOWN(
 		p.size() == m,
 		"SparseJacobian: using size of set sparsity pattern p "
 		"not equal range dimension for f"
 	); 
+	CPPAD_ASSERT_UNKNOWN( x.size() == n );
 	CPPAD_ASSERT_UNKNOWN(jac.size() == m * n); 
-
-	// point at which we are evaluating the Jacobian
-	Forward(0, x);
-
-	// initialize the return value
-	for(i = 0; i < m; i++)
-		for(j = 0; j < n; j++)
-			jac[i * n + j] = zero;
 
 	// row index, column index, value representation
 	// (used to fold problem into user interface case).
@@ -806,6 +788,11 @@ void ADFun<Base>::SparseJacobianCase(
 		// now we have folded this into the following case
 		SparseJacobianReverse(x, p_transpose, r, c, J);
 	}
+	// initialize the return value
+	for(i = 0; i < m; i++)
+		for(j = 0; j < n; j++)
+			jac[i * n + j] = zero;
+
 	// now set the non-zero return values
 	for(k = 0; k < K; k++)
 		jac[r[k] * n + c[k]] = J[k];
@@ -848,6 +835,11 @@ VectorBase ADFun<Base>::SparseJacobian(
 {	size_t m = Range();
 	size_t n = Domain();
 	VectorBase jac(m * n);
+
+	CPPAD_ASSERT_KNOWN(
+		x.size() == n,
+		"SparseJacobian: size of x not equal domain size for f."
+	);
 
 	typedef typename VectorSet::value_type Set_type;
 	SparseJacobianCase( Set_type(), x, p, jac);
