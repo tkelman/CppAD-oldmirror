@@ -454,6 +454,16 @@ public:
 	template <typename VectorBase, typename VectorSet>
 	VectorBase SparseJacobian(const VectorBase &x, const VectorSet &p); 
 
+	/// calculate sparse Jacobians 
+	template <class VectorBase, class VectorSet, class VectorSize>
+	void SparseJacobian(
+		const VectorBase&  x               ,
+		const VectorSet&   p               ,
+		const VectorSize&  r               ,
+		const VectorSize&  c               ,
+		VectorBase&        jac
+	);
+
 	/// calculate sparse Hessians 
 	template <typename VectorBase>
 	VectorBase SparseHessian(const VectorBase &x, const VectorBase &w); 
