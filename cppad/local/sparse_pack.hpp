@@ -326,26 +326,46 @@ is a simple vector with elements of type bool.
 
 \param sparsity
 The input value of sparisty does not matter.
-Upon return it contains the same sparsity pattern as \c vec_bool.
+Upon return it contains the same sparsity pattern as \c vec_bool
+(or the transposed sparsity pattern).
 
 \param vec_bool
 sparsity pattern that we are placing \c sparsity.
 
 \param n_row
-number of rows in the sparsity pattern.
+number of rows in the sparsity pattern in \c vec_bool.
 
 \param n_col
-number of columns in the sparsity pattern.
+number of columns in the sparsity pattern in \c vec_bool.
+
+\param transpose
+if true, the sparsity pattern in \c sparsity is the transpose
+of the one in \c vec_bool. 
+Otherwise it is the same sparsity pattern.
 */
 template<class VectorBool>
 void vec_bool_to_sparse_pack(
 	sparse_pack&       sparsity  , 
 	const VectorBool&  vec_bool  ,
 	size_t             n_row     ,
-	size_t             n_col     )
+	size_t             n_col     ,
+	bool               transpose )
 {	CPPAD_ASSERT_UNKNOWN( n_row * n_col == vec_bool.size() );
 	size_t i, j;
 
+	// transposed pattern case
+	if( transpose )
+	{	sparsity.resize(n_col, n_row);
+		for(j = 0; j < n_col; j++)
+		{	for(i = 0; i < n_row; i++)
+			{	if( vec_bool[ i * n_col + j ] )
+					sparsity.add_element(j, i);
+			}
+		}
+		return;
+	}
+
+	// same pattern case
 	sparsity.resize(n_row, n_col);
 	for(i = 0; i < n_row; i++)
 	{	for(j = 0; j < n_col; j++)
