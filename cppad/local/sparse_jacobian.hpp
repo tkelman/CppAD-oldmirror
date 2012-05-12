@@ -205,10 +205,6 @@ Private helper function SparseJacobianForward(x, p, r, c, jac).
 
 All descriptions in the public function SparseJacobian(x, p, r, c, jac) apply.
 
-\param set_type
-is a \c bool value. This argument is used to dispatch to the proper souce
-code depending on the value of \c VectorSet::value_type.
-
 \param x
 See \c SparseJacobian(x, p, r, c, jac).
 
@@ -266,18 +262,6 @@ void ADFun<Base>::SparseJacobianForward(
 	for(k = 0; k < K; k++)
 		jac[k] = zero;
 
-	// create a transposed copy of the sparsity pattern
-	VectorSet p_transpose;
-	p_transpose.resize(n, m);
-	for(i = 0; i < m; i++)
-	{	p.begin(i);
-		j = p.next_element();
-		while( j != p.end() )
-		{	p_transpose.add_element(j, i);
-			j = p.next_element();
-		}
-	}	
-
 	// mapping from column number to index used for coloring,
 	// where the value n means that this column is not used.
 	VectorSize used_index(n);
@@ -311,28 +295,41 @@ void ADFun<Base>::SparseJacobianForward(
 	// Graph Coloring in Optimization Revisited by
 	// Assefaw Gebremedhin, Fredrik Maane, Alex Pothen
 	vectorBool forbidden(n_used);
+	k = 0;
 	for(i_used = 0; i_used < n_used; i_used++)
-	{	// initial all colors as ok for this column
+	{
+		// initial all colors as ok for this column
 		for(ell = 0; ell < n_used; ell++)
 			forbidden[ell] = false;
 
-		// for each row that is connected to this column 
-		p_transpose.begin( column[i_used] );
-		i = p_transpose.next_element();
-		while( i != p_transpose.end() )
-		{	// for each column that is connected to row i
+		// advance k to first index for this column
+		CPPAD_ASSERT_UNKNOWN( c[k] <= column[i_used] )
+		while( c[k] < column[i_used] )
+		{	CPPAD_ASSERT_UNKNOWN( k < K-1 );
+			k++;
+		}
+		CPPAD_ASSERT_UNKNOWN( c[k] == column[i_used] );
+
+		// for each row we will use a value from this column 
+		// (note that the set in use may be smaller than sparsity pattern).
+		i = r[k];
+		while( k < K && c[k] == column[i_used] )
+		{	// for each column that is connected to this row
 			p.begin(i);
 			j = p.next_element();
 			while( j != p.end() )
 			{	ell = used_index[j];	
+				// if this is not the same column and we want values for it
 				if( (column[i_used] != j) & (ell != n) )
 				{	CPPAD_ASSERT_UNKNOWN( ell < n_used );
 					forbidden[ color[ell] ] = true;
 				}
 				j = p.next_element();
 			}
-			i = p_transpose.next_element();
+			k++;
 		}
+		CPPAD_ASSERT_UNKNOWN( k < K || i_used == (n_used - 1) );
+
 		ell = 0;
 		while( forbidden[ell] && ell < n_used )
 		{	ell++;
