@@ -470,7 +470,7 @@ void ADFun<Base>::SparseJacobianCase(
 		// convert the sparsity pattern to a sparse_pack object
 		// so can fold vector of bools and vector of sets into same function
 		sparse_pack sparsity;
-		bool_to_sparse_pack(sparsity, p, m, n);
+		vec_bool_to_sparse_pack(sparsity, p, m, n);
 	
 		// now we have folded this into the following case
 		SparseJacobianForward(x, sparsity, r, c, J);
@@ -612,82 +612,43 @@ void ADFun<Base>::SparseJacobianCase(
 
 	// create a copy of the transpose sparsity pattern
 	VectorSet q(n);
+	size_t K = 0;
 	std::set<size_t>::const_iterator itr_i, itr_j;
 	for(i = 0; i < m; i++)
 	{	itr_j = p[i].begin();
 		while( itr_j != p[i].end() )
 		{	j = *itr_j++;
 			q[j].insert(i);
+			K++;
 		}
 	}	
 
 	if( n <= m )
 	{	// use forward mode ----------------------------------------
-	
-		// initial coloring
-		SizeVector color(n);
+		CppAD::vector<size_t> r(K), c(K);
+		k = 0;
 		for(j = 0; j < n; j++)
-			color[j] = j;
-
-		// See GreedyPartialD2Coloring Algorithm Section 3.6.2 of
-		// Graph Coloring in Optimization Revisited by
-		// Assefaw Gebremedhin, Fredrik Maane, Alex Pothen
-		VectorBool forbidden(n);
-		for(j = 0; j < n; j++)
-		{	// initial all colors as ok for this column
-			for(k = 0; k < n; k++)
-				forbidden[k] = false;
-
-			// for each row connected to column j
-			itr_i = q[j].begin();
+		{	itr_i = q[j].begin();
 			while( itr_i != q[j].end() )
 			{	i = *itr_i++;
-				// for each column connected to row i
-				itr_j = p[i].begin();
-				while( itr_j != p[i].end() )
-				{	// if this is not j, forbid it
-					k = *itr_j++;
-					forbidden[ color[k] ] = (k != j);
-				}
+				r[k] = i;
+				c[k] = j;
+				k++;
 			}
-			k = 0;
-			while( forbidden[k] && k < n )
-			{	k++;
-				CPPAD_ASSERT_UNKNOWN( k < n );
-			}
-			color[j] = k;
-		}
-		size_t n_color = 1;
-		for(k = 0; k < n; k++) 
-			n_color = std::max(n_color, color[k] + 1);
+		} 
+		VectorBase J(K);
 
-		// direction vector for calls to forward
-		VectorBase dx(n);
+		// convert the sparsity pattern to a sparse_set object
+		// so can fold vector of bools and vector of sets into same function
+		sparse_set sparsity;
+		vec_set_to_sparse_set(sparsity, p, m, n);
+	
+		// now we have folded this into the following case
+		SparseJacobianForward(x, sparsity, r, c, J);
 
-		// location for return values from Reverse
-		VectorBase dy(m);
-
-		// loop over colors
-		size_t c;
-		for(c = 0; c < n_color; c++)
-		{	// determine all the colums with this color
-			for(j = 0; j < n; j++)
-			{	if( color[j] == c )
-					dx[j] = one;
-				else	dx[j] = zero;
-			}
-			// call forward mode for all these columns at once
-			dy = Forward(1, dx);
-
-			// set the corresponding components of the result
-			for(j = 0; j < n; j++) if( color[j] == c )
-			{	itr_i = q[j].begin();
-				while( itr_i != q[j].end() )
-				{	i = *itr_i++;
-					jac[i * n + j] = dy[i];
-				}
-			}
-		}
+		// now set the non-zero return values
+		for(k = 0; k < K; k++)
+			jac[r[k] * n + c[k]] = J[k];
 	}
 	else
 	{	// use reverse mode ----------------------------------------

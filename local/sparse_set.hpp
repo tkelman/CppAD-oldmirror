@@ -3,7 +3,7 @@
 # define CPPAD_SPARSE_SET_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-11 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -270,6 +270,47 @@ public:
 	size_t end(void) const
 	{	return end_; }
 };
+
+/*! 
+Copy a sparsity pattern from a vector of sets into a sparse_set object.
+
+\tparam VectorSet
+is a simple vector with elements of type \c std::set<size_t>.
+
+\param sparsity
+The input value of sparisty does not matter.
+Upon return it contains the same sparsity pattern as \c vec_set.
+
+\param vec_set
+sparsity pattern that we are placing \c sparsity.
+
+\param n_row
+number of rows in the sparsity pattern.
+
+\param n_col
+number of columns in the sparsity pattern.
+*/
+template<class VectorSet>
+void vec_set_to_sparse_set(
+	sparse_set&        sparsity  , 
+	const VectorSet&   vec_set   ,
+	size_t             n_row     ,
+	size_t             n_col     )
+{	CPPAD_ASSERT_UNKNOWN( n_row == vec_set.size() );
+	size_t i, j;
+	std::set<size_t>::const_iterator itr;
+
+	sparsity.resize(n_row, n_col);
+	for(i = 0; i < n_row; i++)
+	{	itr = vec_set[i].begin();
+		while(itr != vec_set[i].end())
+		{	j = *itr++;
+			CPPAD_ASSERT_UNKNOWN( j < n_col );
+			sparsity.add_element(i, j);
+		}
+	}
+	return;
+}
 
 CPPAD_END_NAMESPACE
 # endif
