@@ -201,7 +201,7 @@ bool is_major_minor_order(const VectorSize& major, const VectorSize& minor)
 		
 
 /*!
-Private helper function for SparseJacobianForward(set_type, x, p, r, c, jac).
+Private helper function SparseJacobianForward(x, p, r, c, jac).
 
 All descriptions in the public function SparseJacobian(x, p, r, c, jac) apply.
 
@@ -214,6 +214,8 @@ See \c SparseJacobian(x, p, r, c, jac).
 
 \param p
 See \c SparseJacobian(x, p, r, c, jac).
+Note that we do not change the values in \c p,
+but is not \c const because we use its iterator facility.
 
 \param r
 See \c SparseJacobian(x, p, r, c, jac)
@@ -229,9 +231,8 @@ See \c SparseJacobian(x, p, r, c, jac).
 template<class Base>
 template <class VectorBase, class VectorSet, class VectorSize>
 void ADFun<Base>::SparseJacobianForward(
-	bool               set_type        ,
 	const VectorBase&  x               ,
-	const VectorSet&   p               ,
+	VectorSet&         p               ,
 	const VectorSize&  r               ,
 	const VectorSize&  c               ,
 	VectorBase&        jac             )
@@ -246,19 +247,14 @@ void ADFun<Base>::SparseJacobianForward(
 	const Base zero(0);
 	const Base one(1);
 
-	// check VectorSet is Simple Vector class with bool elements
-	CheckSimpleVector<bool, VectorSet>();
-
 	// check VectorBase is Simple Vector class with Base type elements
 	CheckSimpleVector<Base, VectorBase>();
 
 	CPPAD_ASSERT_UNKNOWN( x.size() == n );
 	CPPAD_ASSERT_UNKNOWN( r.size() == c.size() && r.size() == jac.size() ); 
-	CPPAD_ASSERT_KNOWN(
-		p.size() == m * n,
-		"SparseJacobian: using bool values and size of p "
-		" not equal range dimension times domain dimension for f"
-	); 
+	CPPAD_ASSERT_UNKNOWN( p.n_set() ==  m );
+	CPPAD_ASSERT_UNKNOWN( p.end() ==  n );
+
 	// Assume row major order
 	CPPAD_ASSERT_UNKNOWN( is_major_minor_order(r, c) );
 
@@ -270,24 +266,39 @@ void ADFun<Base>::SparseJacobianForward(
 	for(k = 0; k < K; k++)
 		jac[k] = zero;
 
-	// flag columns that are actually used
-	vectorBool is_used(n);
+	// create a transposed copy of the sparsity pattern
+	VectorSet p_transpose;
+	p_transpose.resize(n, m);
+	for(i = 0; i < m; i++)
+	{	p.begin(i);
+		j = p.next_element();
+		while( j != p.end() )
+		{	p_transpose.add_element(j, i);
+			j = p.next_element();
+		}
+	}	
+
+	// mapping from column number to index used for coloring,
+	// where the value n means that this column is not used.
+	VectorSize used_index(n);
 	for(j = 0; j < n; j++)
-		is_used[j] = false;
+		used_index[j] = n;
 	size_t n_used = 0;
 	for(k = 0; k < K; k++)
-	{	if( ! is_used[c[k]] )
-		{	is_used[c[k]] = true;
-			n_used++;
+	{	if( used_index[c[k]] == n )
+		{	used_index[c[k]] = n_used++;
 		}
 	}
+	CPPAD_ASSERT_UNKNOWN( n_used <= n );
 
 	// mapping from used index to original column index
 	VectorSize column(n_used);
 	size_t i_used = 0;
 	for(j = 0; j < n; j++)
-	{	if( is_used[j] )
-			column[i_used++] = j;
+	{	if( used_index[j] != n )
+		{	column[i_used++] = j;
+			CPPAD_ASSERT_UNKNOWN( used_index[j] == i_used-1 );
+		}
 	}
 	CPPAD_ASSERT_UNKNOWN( i_used == n_used );
 
@@ -306,11 +317,21 @@ void ADFun<Base>::SparseJacobianForward(
 			forbidden[ell] = false;
 
 		// for each row that is connected to this column 
-		for(i = 0; i < m; i++) if( p[i * n + column[i_used]] )
+		p_transpose.begin( column[i_used] );
+		i = p_transpose.next_element();
+		while( i != p_transpose.end() )
 		{	// for each column that is connected to row i
-			for(ell = 0; ell < n_used; ell++)
-			if( p[i * n + column[ell]] & (column[ell] != column[i_used]) )	
-				forbidden[ color[ell] ] = true;
+			p.begin(i);
+			j = p.next_element();
+			while( j != p.end() )
+			{	ell = used_index[j];	
+				if( (column[i_used] != j) & (ell != n) )
+				{	CPPAD_ASSERT_UNKNOWN( ell < n_used );
+					forbidden[ color[ell] ] = true;
+				}
+				j = p.next_element();
+			}
+			i = p_transpose.next_element();
 		}
 		ell = 0;
 		while( forbidden[ell] && ell < n_used )
@@ -445,9 +466,14 @@ void ADFun<Base>::SparseJacobianCase(
 			}
 		} 
 		VectorBase J(K);
+
+		// convert the sparsity pattern to a sparse_pack object
+		// so can fold vector of bools and vector of sets into same function
+		sparse_pack sparsity;
+		bool_to_sparse_pack(sparsity, p, m, n);
 	
 		// now we have folded this into the following case
-		SparseJacobianForward(set_type, x, p, r, c, J);
+		SparseJacobianForward(x, sparsity, r, c, J);
 
 		// now set the non-zero return values
 		for(k = 0; k < K; k++)
