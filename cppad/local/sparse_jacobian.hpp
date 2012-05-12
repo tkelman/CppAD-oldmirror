@@ -33,9 +33,13 @@ $index jacobian, sparse$$
 $head Syntax$$
 $icode%jac% = %f%.SparseJacobian(%x%)
 %$$
-$icode%jac% = %f%.SparseJacobian(%x%, %p%)%$$
+$icode%jac% = %f%.SparseJacobian(%x%, %p%)
+%$$
+$icode%f%.SparseJacobian(%x%, %p%, %r%, %c%, %jac%)%$$
 
 $head Purpose$$
+We use $latex n$$ for the $cref/domain/seq_property/Domain/$$ size,
+and $latex m$$ for the $cref/range/seq_property/Range/$$ size of $icode f$$.
 We use $latex F : \R^n \rightarrow \R^m$$ do denote the
 $cref/AD function/glossary/AD Function/$$
 corresponding to $icode f$$. 
@@ -43,10 +47,12 @@ The syntax above sets $icode jac$$ to the Jacobian
 $latex \[
 	jac = F^{(1)} (x) 
 \] $$
-This routine assumes
-that the matrix $latex F^{(1)} (x) \in \R^{m \times n}$$ is sparse
-and uses this assumption to reduce the amount of computation necessary.
-One should use speed tests (e.g. $cref speed_test$$)
+This routine takes advantage of the sparsity of the Jacobain
+in order to reduce the amount of computation necessary.
+If $icode r$$ and $icode c$$ are present, it also takes
+advantage of the reduced set of elements of the Jacobain that
+need to be computed.
+One can use speed tests (e.g. $cref speed_test$$)
 to verify that results are computed faster
 than when using the routine $cref Jacobian$$.
 
@@ -99,16 +105,43 @@ for its internal calculations.
 Otherwise, the representation
 for the internal calculations is unspecified.
 
+$head r, c$$
+The arguments $icode r$$ and $icode c$$ are optional and have prototype
+$codei%
+	const %VectorSize%& %r%
+	const %VectorSize%& %c%
+%$$
+(see $cref/VectorSize/sparse_jacobian/VectorSize/$$ below).
+If these argument are present, they must have the same size which we 
+denote by $latex K$$.
+They specify which rows and columns of $latex F^{(1)} (x)$$ are
+returned and in which order.
+
 $head jac$$
 The result $icode jac$$ has prototype
 $codei%
-	%VectorBase% %jac%
+	%VectorBase%& %jac%
 %$$
-and its size is $latex m * n$$.
-For $latex i = 0 , \ldots , m - 1$$,
-and $latex j = 0 , \ldots , n - 1 $$ 
+In the case where the arguments $icode r$$ and $icode c$$ are not present,
+the size of $icode jac$$ is $latex m * n$$ and
 $latex \[
 	jac [ i * n + j ] = \D{ F_i }{ x_j } (x)
+\] $$
+$pre
+
+$$
+In the case where the arguments $icode r$$ and $icode c$$ are present,
+the size of $icode jac$$ must be $latex K$$ 
+when $icode SparseJacobian$$ is called and
+the input value of its elements does not matter.
+Upon return, for $latex k = 0 , \ldots , K - 1$$,
+$latex \[
+	jac [ k ] = \D{ F_i }{ x_j } (x)
+	\; , \;
+	\; {\rm where} \;
+	i = r[k]
+	\; {\rm and } \;
+	j = c[k]
 \] $$
 
 $head VectorBase$$
@@ -124,6 +157,13 @@ $cref/elements of type/SimpleVector/Elements of Specified Type/$$
 $code bool$$ or $code std::set<size_t>$$;
 see $cref/sparsity pattern/glossary/Sparsity Pattern/$$ for a discussion
 of the difference.
+The routine $cref CheckSimpleVector$$ will generate an error message
+if this is not the case.
+
+$head VectorSize$$
+The type $icode VectorSize$$ must be a $cref SimpleVector$$ class with
+$cref/elements of type/SimpleVector/Elements of Specified Type/$$
+$code size_t$$.
 The routine $cref CheckSimpleVector$$ will generate an error message
 if this is not the case.
 
@@ -152,7 +192,7 @@ is examples and tests of $code sparse_jacobian$$.
 It return $code true$$, if it succeeds and $code false$$ otherwise.
 
 $end
------------------------------------------------------------------------------
+==============================================================================
 */
 # include <cppad/local/std_set.hpp>
 
@@ -954,7 +994,86 @@ void ADFun<Base>::SparseJacobianCase(
 	for(k = 0; k < K; k++)
 		jac[r[k] * n + c[k]] = J[k];
 }
-// ============================================================================
+// ==========================================================================
+// Public Member functions
+// ==========================================================================
+/*!
+Compute user specified subset of a sparse Jacobian.
+
+The C++ source code corresponding to this operation is
+\verbatim
+	SparceJacobian(x, p, r, c, jac)
+\endverbatim
+
+\tparam Base
+is the base type for the recording that is stored in this
+ADFun<Base object.
+
+\tparam VectorBase
+is a simple vector class with elements of type \a Base.
+
+\tparam VectorSet
+is a simple vector class with elements of type 
+\c bool or \c std::set<size_t>.
+
+\param x
+is a vector specifing the point at which to compute the Jacobian.
+
+\param p
+is the sparsity pattern for the Jacobian that we are calculating.
+
+\param r
+is the vector of row indices for the returned Jacobian values.
+
+\param c
+is the vector of columns indices for the returned Jacobian values.
+It must have the same size are r.
+
+\param jac
+is the vector of Jacobian values.
+It must have the same size are r. 
+The return value <code>jac[k]</code> is the partial of the
+<code>r[k]</code> component of the function with respect
+the the <code>c[k]</component> of its argument.
+*/
+template<class Base>
+template <class VectorBase, class VectorSet, class VectorSize>
+void ADFun<Base>::SparseJacobian(
+	const VectorBase&  x               ,
+	const VectorSet&   p               ,
+	const VectorSize&  r               ,
+	const VectorSize&  c               ,
+	VectorBase&        jac             )
+{
+# ifndef NDEBUG
+	CPPAD_ASSERT_KNOWN(
+		x.size() == Domain() ,
+		"SparseJacobian: size of x not equal domain dimension for f."
+	); 
+	CPPAD_ASSERT_KNOWN(
+		r.size() == c.size() ,
+		"SparseJacobian: size of r not equal the size of c."
+	); 
+	CPPAD_ASSERT_KNOWN(
+		r.size() == jac.size() ,
+		"SparseJacobian: size of r not equal the size of jac."
+	); 
+	size_t m = Range();
+	size_t n = Domain();
+	for(size_t k = 0; k < r.size(); k++)
+	{	CPPAD_ASSERT_KNOWN(
+			r[k] < m,
+			"SparseJacobian: a row index r[k] is too large."
+		);
+		CPPAD_ASSERT_KNOWN(
+			c[k] < n,
+			"SparseJacobian: a column index c[k] is too large."
+		);
+	}
+# endif
+	typedef typename VectorSet::value_type Set_type;
+	SparseJacobianCase(Set_type(), x, p, r, c, jac);
+}
 /*!
 Compute a sparse Jacobian.
 
