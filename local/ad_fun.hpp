@@ -177,12 +177,22 @@ private:
 		VectorSet&               h
 	);
 	// ------------------------------------------------------------
-	// Forward mode vector of bool version of SparseJacobian
+	// Forward mode version of SparseJacobian
 	// (see doxygen in sparse_jacobian.hpp)
 	template <class VectorBase, class VectorSet, class VectorSize>
 	void SparseJacobianForward(
 		const VectorBase&  x               ,
 		VectorSet&         p               ,
+		const VectorSize&  r               ,
+		const VectorSize&  c               ,
+		VectorBase&        jac
+	);
+	// Reverse mode version of SparseJacobian
+	// (see doxygen in sparse_jacobian.hpp)
+	template <class VectorBase, class VectorSet, class VectorSize>
+	void SparseJacobianReverse(
+		const VectorBase&  x               ,
+		VectorSet&         p_transpose     ,
 		const VectorSize&  r               ,
 		const VectorSize&  c               ,
 		VectorBase&        jac
