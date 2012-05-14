@@ -343,9 +343,9 @@ size_t ADFun<Base>::SparseJacobianForward(
 	}
 
 	// initial coloring
-	VectorSize color(m);
-	for(i = 0; i < m; i++)
-		color[i] = i;
+	VectorSize color(n);
+	for(j = 0; j < n; j++)
+		color[j] = j;
 
 	// See GreedyPartialD2Coloring Algorithm Section 3.6.2 of
 	// Graph Coloring in Optimization Revisited by

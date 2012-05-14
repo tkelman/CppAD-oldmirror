@@ -1,6 +1,6 @@
 /* $Id$ */
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-10 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -16,6 +16,84 @@ Old sparse Jacobian example
 
 # include <cppad/cppad.hpp>
 namespace { // ---------------------------------------------------------
+
+template <class VectorBase, class VectorBool> 
+bool rc_bool()
+{	bool ok = true;
+	using CppAD::AD;
+	using CppAD::NearEqual;
+	size_t j, k, ell;
+	double eps = 10. * CppAD::epsilon<double>();
+
+	// domain space vector
+	size_t n = 4;
+	CPPAD_TEST_VECTOR< AD<double> >  X(n);
+	for(j = 0; j < n; j++)
+		X[j] = AD<double> (0);
+
+	// declare independent variables and starting recording
+	CppAD::Independent(X);
+
+	size_t m = 3;
+	CPPAD_TEST_VECTOR< AD<double> >  Y(m);
+	Y[0] = X[0] + X[1];
+	Y[1] = X[2] + X[3];
+	Y[2] = X[0] + X[1] + X[2] + X[3] * X[3] / 2.;
+
+	// create f: X -> Y and stop tape recording
+	CppAD::ADFun<double> f(X, Y);
+
+	// new value for the independent variable vector
+	VectorBase x(n);
+	for(j = 0; j < n; j++)
+		x[j] = double(j);
+
+	// Jacobian of y 
+	/*
+	      [ 1 1 0 0  ]
+	jac = [ 0 0 1 1  ]
+	      [ 1 1 1 x_3]
+	*/
+	VectorBase check(m * n);
+	check[0] = 1.; check[1] = 1.; check[2]  = 0.; check[3]  = 0.;
+	check[4] = 0.; check[5] = 0.; check[6]  = 1.; check[7]  = 1.;
+	check[8] = 1.; check[9] = 1.; check[10] = 1.; check[11] = x[3];
+	VectorBool s(m * n);
+	s[0] = true;   s[1] = true;   s[2] = false;   s[3] = false;
+	s[4] = false;  s[5] = false;  s[6] = true;    s[7] = true;
+	s[8] = true;   s[9] = true;  s[10] = true;   s[11] = true;
+
+	// Use forward mode (column major) to compute rows 0 and 1 
+	CPPAD_TEST_VECTOR<size_t> r(4), c(4);
+	VectorBase jac(4);
+	r[0] = 0; c[0] = 0;
+	r[1] = 0; c[1] = 1;
+	r[2] = 1; c[2] = 2;
+	r[3] = 1; c[3] = 3;
+	size_t n_sweep = f.SparseJacobian(x, s, r, c, jac );
+	for(k = 0; k < 4; k++)
+	{ 	ell = r[k] * n + c[k];
+		ok &=  NearEqual(check[ell], jac[k], eps, eps);
+	}
+	ok &= (n_sweep == 2);
+
+	// Use reverse mode (row major) to compute rows 0 and 1 
+	r[0] = 0; c[0] = 0;
+	r[1] = 0; c[1] = 1;
+	r[2] = 1; c[2] = 2;
+	r[3] = 1; c[3] = 3;
+	n_sweep = f.SparseJacobian(x, s, r, c, jac );
+	for(k = 0; k < 4; k++)
+	{ 	ell = r[k] * n + c[k];
+		ok &=  NearEqual(check[ell], jac[k], eps, eps);
+	}
+	// ok &= (n_sweep == 1);
+	// std::cout << "n_sweep = " << n_sweep << std::endl;
+
+
+	return ok;
+}
+
 
 template <class VectorBase, class VectorBool> 
 bool reverse_bool()
@@ -307,6 +385,7 @@ bool multiple_of_n_bit()
 # include <valarray>
 bool sparse_jacobian(void)
 {	bool ok = true;
+	ok &= rc_bool< CppAD::vector<double>, CppAD::vector<bool> >();
 	// ---------------------------------------------------------------
 	// vector of bool cases
 	ok &= forward_bool< CppAD::vector<double>, CppAD::vectorBool   >();
