@@ -35,7 +35,7 @@ $icode%jac% = %f%.SparseJacobian(%x%)
 %$$
 $icode%jac% = %f%.SparseJacobian(%x%, %p%)
 %$$
-$icode%f%.SparseJacobian(%x%, %p%, %r%, %c%, %jac%)%$$
+$icode%n_sweep% = f%.SparseJacobian(%x%, %p%, %r%, %c%, %jac%)%$$
 
 $head Purpose$$
 We use $latex n$$ for the $cref/domain/seq_property/Domain/$$ size,
@@ -161,6 +161,18 @@ $latex \[
 	j = c[k]
 \] $$
 
+$head n_sweep$$
+The return value $icode n_sweep$$ has prototype
+$codei%
+	size_t %n_sweep%
+%$$
+If row major (column major) order is used for $codei%(%r%, %c%)%$$,
+$icode n_sweep$$ is the number of forward (reverse) sweeps used to compute the
+requested Jacobian values. 
+This is proportional to the total work that $code SparseJacobian$$ does, 
+not counting the zero order forward sweep, 
+or the work to combine multiple columns (rows) into a single sweep.
+
 $head VectorBase$$
 The type $icode VectorBase$$ must be a $cref SimpleVector$$ class with
 $cref/elements of type/SimpleVector/Elements of Specified Type/$$
@@ -281,10 +293,13 @@ with the additional restriction that \c r , \c c are in row major order.
 
 \param jac
 See \c SparseJacobian(x, p, r, c, jac).
+
+\return
+See \c SparseJacobian(x, p, r, c, jac).
 */
 template<class Base>
 template <class VectorBase, class VectorSet, class VectorSize>
-void ADFun<Base>::SparseJacobianForward(
+size_t ADFun<Base>::SparseJacobianForward(
 	const VectorBase&  x               ,
 	VectorSet&         p_transpose     ,
 	const VectorSize&  r               ,
@@ -404,6 +419,7 @@ void ADFun<Base>::SparseJacobianForward(
 			}
 		}
 	}
+	return n_color;
 }
 /*!
 Private helper function SparseJacobianReverse(x, p, r, c, jac).
@@ -428,10 +444,13 @@ with the additional restriction that \c r , \c c are in column major order.
 
 \param jac
 See \c SparseJacobian(x, p, r, c, jac).
+
+\return
+See \c SparseJacobian(x, p, r, c, jac).
 */
 template<class Base>
 template <class VectorBase, class VectorSet, class VectorSize>
-void ADFun<Base>::SparseJacobianReverse(
+size_t ADFun<Base>::SparseJacobianReverse(
 	const VectorBase&  x               ,
 	VectorSet&         p               ,
 	const VectorSize&  r               ,
@@ -551,6 +570,7 @@ void ADFun<Base>::SparseJacobianReverse(
 			}
 		}
 	}
+	return n_color;
 }
 // ===========================================================================
 /*!
@@ -577,10 +597,13 @@ See \c SparseJacobian(x, p, r, c, jac).
 
 \param jac
 See \c SparseJacobian(x, p, r, c, jac).
+
+\return
+See \c SparseJacobian(x, p, r, c, jac).
 */
 template <class Base>
 template <class VectorBase, class VectorSet, class VectorSize>
-void ADFun<Base>::SparseJacobianCase(
+size_t ADFun<Base>::SparseJacobianCase(
 	bool               set_type        ,
 	const VectorBase&  x               , 
 	const VectorSet&   p               ,
@@ -589,6 +612,7 @@ void ADFun<Base>::SparseJacobianCase(
 	VectorBase&        jac             )
 {	size_t n = Domain();
 	size_t m = Range();
+	size_t n_color;
 
 	// check VectorSet is Simple Vector class with bool elements
 	CheckSimpleVector<bool, VectorSet>();
@@ -615,7 +639,7 @@ void ADFun<Base>::SparseJacobianCase(
 		vec_bool_to_sparse_pack(sparsity, p, m, n, transpose);
 	
 		// now we have folded this into the following case
-		SparseJacobianForward(x, sparsity, r, c, jac);
+		n_color = SparseJacobianForward(x, sparsity, r, c, jac);
 	}
 	else
 	{	// use reverse mode ----------------------------------------
@@ -627,8 +651,9 @@ void ADFun<Base>::SparseJacobianCase(
 		vec_bool_to_sparse_pack(sparsity, p, m, n, transpose);
 	
 		// now we have folded this into the following case
-		SparseJacobianReverse(x, sparsity, r, c, jac);
+		n_color = SparseJacobianReverse(x, sparsity, r, c, jac);
 	}
+	return n_color;
 }
 /*!
 Private helper function SparseJacobianCase(set_type, x, p, r, c, jac).
@@ -655,10 +680,13 @@ See \c SparseJacobian(x, p, r, c, jac).
 
 \param jac
 See \c SparseJacobian(x, p, r, c, jac).
+
+\return
+See \c SparseJacobian(x, p, r, c, jac).
 */
 template <class Base>
 template <class VectorBase, class VectorSet, class VectorSize>
-void ADFun<Base>::SparseJacobianCase(
+size_t ADFun<Base>::SparseJacobianCase(
 	const std::set<size_t>&  set_type        ,
 	const VectorBase&        x               , 
 	const VectorSet&         p               ,
@@ -667,6 +695,7 @@ void ADFun<Base>::SparseJacobianCase(
 	VectorBase&              jac             )
 {	size_t n = Domain();
 	size_t m = Range();
+	size_t n_color;
 
 	// check VectorSet is Simple Vector class with sets for elements
 	CheckSimpleVector<std::set<size_t>, VectorSet>(
@@ -690,25 +719,26 @@ void ADFun<Base>::SparseJacobianCase(
 
 		// convert the sparsity pattern to a sparse_pack object
 		// so can fold vector of bools and vector of sets into same function
-		sparse_pack sparsity;
+		sparse_set sparsity;
 		bool transpose = true;
-		vec_bool_to_sparse_set(sparsity, p, m, n, transpose);
+		vec_set_to_sparse_set(sparsity, p, m, n, transpose);
 	
 		// now we have folded this into the following case
-		SparseJacobianForward(x, sparsity, r, c, jac);
+		n_color = SparseJacobianForward(x, sparsity, r, c, jac);
 	}
 	else
 	{	// use reverse mode ----------------------------------------
 
 		// convert the sparsity pattern to a sparse_pack object
 		// so can fold vector of bools and vector of sets into same function
-		sparse_pack sparsity;
+		sparse_set sparsity;
 		bool transpose = false;
-		vec_bool_to_sparse_set(sparsity, p, m, n, transpose);
+		vec_set_to_sparse_set(sparsity, p, m, n, transpose);
 	
 		// now we have folded this into the following case
-		SparseJacobianReverse(x, sparsity, r, c, jac);
+		n_color = SparseJacobianReverse(x, sparsity, r, c, jac);
 	}
+	return n_color;
 }
 // ===========================================================================
 /*!
@@ -994,10 +1024,16 @@ It must have the same size are r.
 The return value <code>jac[k]</code> is the partial of the
 <code>r[k]</code> component of the function with respect
 the the <code>c[k]</component> of its argument.
+
+\return
+Is the number of first order forward (or reverse) sweeps used to compute the
+requested Jacobian values. The total work, not counting the zero order
+forward sweep, or the time to combine computations, is proportional to this
+return value.
 */
 template<class Base>
 template <class VectorBase, class VectorSet, class VectorSize>
-void ADFun<Base>::SparseJacobian(
+size_t ADFun<Base>::SparseJacobian(
 	const VectorBase&  x               ,
 	const VectorSet&   p               ,
 	const VectorSize&  r               ,
@@ -1031,7 +1067,8 @@ void ADFun<Base>::SparseJacobian(
 	}
 # endif
 	typedef typename VectorSet::value_type Set_type;
-	SparseJacobianCase(Set_type(), x, p, r, c, jac);
+	size_t n_color = SparseJacobianCase(Set_type(), x, p, r, c, jac);
+	return n_color;
 }
 /*!
 Compute a sparse Jacobian.
