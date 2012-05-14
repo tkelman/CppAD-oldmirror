@@ -192,7 +192,7 @@ private:
 	template <class VectorBase, class VectorSet, class VectorSize>
 	void SparseJacobianReverse(
 		const VectorBase&  x               ,
-		VectorSet&         p_transpose     ,
+		VectorSet&         p               ,
 		const VectorSize&  r               ,
 		const VectorSize&  c               ,
 		VectorBase&        jac
