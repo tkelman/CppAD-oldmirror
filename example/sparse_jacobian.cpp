@@ -103,8 +103,8 @@ bool reverse()
 	for(ell = 0; ell < check.size(); ell++)
 		ok &=  NearEqual(check[ell], jac[ell], eps, eps );
 
-	// using row and column indices to compute non-zero in second and
-	// third row. Use column major order (reverse mode) because there are
+	// using row and column indices to compute non-zero in rows 1 and 2
+	// (skip row 0) Use column major order (reverse mode) because there are
 	// more rows than columns.
 	size_t K = 6;
 	i_vector r(K), c(K);
@@ -138,7 +138,8 @@ bool forward()
 	using CppAD::NearEqual;
 	typedef CPPAD_TEST_VECTOR< AD<double> > a_vector;
 	typedef CPPAD_TEST_VECTOR<double>       d_vector;
-	size_t j, ell;
+	typedef CPPAD_TEST_VECTOR<size_t>       i_vector;
+	size_t i, j, k, ell;
 	double eps = 10. * CppAD::epsilon<double>();
 
 	// domain space vector
@@ -202,6 +203,32 @@ bool forward()
 	jac = f.SparseJacobian(x, p_s);
 	for(ell = 0; ell < check.size(); ell++)
 		ok &=  NearEqual(check[ell], jac[ell], eps, eps );
+
+	// using row and column indices to compute non-zero elements excluding
+	// row 0 and column 0. Use column major order (forward mode) because 
+	// there are more rows than columns being computed.
+	size_t K = 5;
+	i_vector r(K), c(K);
+	jac.resize(K);
+	k = 0;
+	for(j = 1; j < n; j++)
+	{	for(i = 1; i < m; i++)
+		{	ell = i * n + j;
+			if( p_b[ell] )
+			{	ok &= check[ell] != 0.;
+				r[k] = i;
+				c[k] = j;
+				k++;
+			}
+		}
+	} 
+	ok &= k == K;
+	// could use p_b 
+	f.SparseJacobian(x, p_b, r, c, jac);
+	for(k = 0; k < K; k++)
+	{    ell = r[k] * n + c[k];
+		ok &= NearEqual(check[ell], jac[k], eps, eps);
+	}
 
 	return ok;
 }

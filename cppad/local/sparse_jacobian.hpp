@@ -258,15 +258,16 @@ bool is_major_minor_order(const VectorSize& major, const VectorSize& minor)
 }
 // ===========================================================================
 /*!
-Private helper function SparseJacobianForward(x, p, r, c, jac).
+Private helper function SparseJacobianForward(x, p_transpose, r, c, jac).
 
 All descriptions in the public function SparseJacobian(x, p, r, c, jac) apply.
 
 \param x
 See \c SparseJacobian(x, p, r, c, jac).
 
-\param p
-See \c SparseJacobian(x, p, r, c, jac).
+\param p_transpose
+Sparsity pattern for the transpose of the Jacobian;
+see \c SparseJacobian(x, p, r, c, jac).
 Note that we do not change the values in \c p,
 but is not \c const because we use its iterator facility.
 
@@ -285,7 +286,7 @@ template<class Base>
 template <class VectorBase, class VectorSet, class VectorSize>
 void ADFun<Base>::SparseJacobianForward(
 	const VectorBase&  x               ,
-	VectorSet&         p               ,
+	VectorSet&         p_transpose     ,
 	const VectorSize&  r               ,
 	const VectorSize&  c               ,
 	VectorBase&        jac             )
@@ -305,8 +306,8 @@ void ADFun<Base>::SparseJacobianForward(
 
 	CPPAD_ASSERT_UNKNOWN( x.size() == n );
 	CPPAD_ASSERT_UNKNOWN( r.size() == c.size() && r.size() == jac.size() ); 
-	CPPAD_ASSERT_UNKNOWN( p.n_set() ==  m );
-	CPPAD_ASSERT_UNKNOWN( p.end() ==  n );
+	CPPAD_ASSERT_UNKNOWN( p_transpose.n_set() ==  n );
+	CPPAD_ASSERT_UNKNOWN( p_transpose.end() ==  m );
 
 	// Assume row major order
 	CPPAD_ASSERT_UNKNOWN( is_major_minor_order(r, c) );
@@ -314,88 +315,57 @@ void ADFun<Base>::SparseJacobianForward(
 	// Point at which we are evaluating the Jacobian
 	Forward(0, x);
 
-	// initialize the return value
+	// number of components of Jacobian that are required
 	size_t K = jac.size();
-	for(k = 0; k < K; k++)
-		jac[k] = zero;
 
-	// mapping from column number to index used for coloring,
-	// where the value n means that this column is not used.
-	VectorSize used_index(n);
-	for(j = 0; j < n; j++)
-		used_index[j] = n;
-	size_t n_used = 0;
-	for(k = 0; k < K; k++)
-	{	if( used_index[c[k]] == n )
-		{	used_index[c[k]] = n_used++;
-		}
+	// mapping from row number to set of columns required
+	VectorSet require;
+	require.resize(m, n);
+	k = 0;
+	while( k < K )
+	{	require.add_element(r[k], c[k]);
+		k++;
 	}
-	CPPAD_ASSERT_UNKNOWN( n_used <= n );
-
-	// mapping from used index to original column index
-	VectorSize column(n_used);
-	size_t j_used = 0;
-	for(j = 0; j < n; j++)
-	{	if( used_index[j] != n )
-		{	column[j_used++] = j;
-			CPPAD_ASSERT_UNKNOWN( used_index[j] == j_used-1 );
-		}
-	}
-	CPPAD_ASSERT_UNKNOWN( j_used == n_used );
 
 	// initial coloring
-	VectorSize color(n_used);
-	for(j_used = 0; j_used < n_used; j_used++)
-		color[j_used] = j_used;
+	VectorSize color(m);
+	for(i = 0; i < m; i++)
+		color[i] = i;
 
 	// See GreedyPartialD2Coloring Algorithm Section 3.6.2 of
 	// Graph Coloring in Optimization Revisited by
 	// Assefaw Gebremedhin, Fredrik Maane, Alex Pothen
-	vectorBool forbidden(n_used);
-	k = 0;
-	for(j_used = 0; j_used < n_used; j_used++)
+	vectorBool forbidden(n);
+	for(j = 0; j < n; j++)
 	{
 		// initial all colors as ok for this column
-		for(ell = 0; ell < n_used; ell++)
+		for(ell = 0; ell < n; ell++)
 			forbidden[ell] = false;
 
-		// advance k to first index for this column
-		CPPAD_ASSERT_UNKNOWN( c[k] <= column[j_used] )
-		while( c[k] < column[j_used] )
-		{	CPPAD_ASSERT_UNKNOWN( k < K-1 );
-			k++;
-		}
-		CPPAD_ASSERT_UNKNOWN( c[k] == column[j_used] );
-
-		// for each row that we will use a value from this column 
-		// (note that the set in use may be smaller than sparsity pattern).
-		i = r[k];
-		while( k < K && c[k] == column[j_used] )
-		{	// for each column that is connected to this row
-			p.begin(i);
-			j = p.next_element();
-			while( j != p.end() )
-			{	ell = used_index[j];	
-				// if this is not the same column and we want values for it
-				if( (column[j_used] != j) & (ell != n) )
-				{	CPPAD_ASSERT_UNKNOWN( ell < n_used );
+		// for each row that is non-zero for this column
+		p_transpose.begin(j);
+		i = p_transpose.next_element();
+		while( i != p_transpose.end() )
+		{	// for each column that we require a value for this row
+			require.begin(i);
+			ell = require.next_element();
+			while( ell != require.end() )
+			{	// if this is not the same column, forbid its color
+				if( ell != j )
 					forbidden[ color[ell] ] = true;
-				}
-				j = p.next_element();
+				ell = require.next_element();
 			}
-			k++;
+			i = p_transpose.next_element();
 		}
-		CPPAD_ASSERT_UNKNOWN( k < K || j_used == (n_used - 1) );
-
 		ell = 0;
-		while( forbidden[ell] && ell < n_used )
+		while( forbidden[ell] )
 		{	ell++;
-			CPPAD_ASSERT_UNKNOWN( ell < j_used );
+			CPPAD_ASSERT_UNKNOWN( ell <= j );
 		}
-		color[j_used] = ell;
+		color[j] = ell;
 	}
 	size_t n_color = 1;
-	for(ell = 0; ell < n_used; ell++) 
+	for(ell = 0; ell < n; ell++) 
 		n_color = std::max(n_color, color[ell] + 1);
 
 	// direction vector for calls to forward
@@ -404,29 +374,31 @@ void ADFun<Base>::SparseJacobianForward(
 	// location for return values from forward
 	VectorBase dy(m);
 
+	// initialize the return value
+	for(k = 0; k < K; k++)
+		jac[k] = zero;
+
 	// loop over colors
-	size_t i_color;
-	for(i_color = 0; i_color < n_color; i_color++)
+	for(ell = 0; ell < n_color; ell++)
 	{	for(j = 0; j < n; j++)
 			dx[j] = zero;
 		// determine all the colums with this color
-		for(ell = 0; ell < n_used; ell++)
-		{	if( color[ell] == i_color )
-				dx[column[ell]] = one;
+		for(j = 0; j < n; j++)
+		{	if( color[j] == ell )
+				dx[j] = one;
 		}
 		// call forward mode for all these columns at once
 		dy = Forward(1, dx);
 
 		// set the corresponding components of the result
-		for(ell = 0; ell < n_used; ell++) if( color[ell] == i_color )
+		k = 0;
+		for(j = 0; j < n; j++) if( color[j] == ell )
 		{	// find first index in c for this column
-			k = 0;
-			while( c[k] != column[ell] )
-			{	CPPAD_ASSERT_UNKNOWN( k < K );
+			while( k != K && c[k] < j )
 				k++;
-			}
+
 			// extract the row results for this column
-			while( k < K && c[k] == column[ell] ) 
+			while( k < K && c[k] == j ) 
 			{	jac[k] = dy[r[k]];
 				k++;
 			}
@@ -443,6 +415,8 @@ See \c SparseJacobian(x, p, r, c, jac).
 
 \param p_transpose
 See \c SparseJacobian(x, p, r, c, jac).
+Note that we do not change the values in \c p,
+but is is not \c const because we use its iterator facility.
 
 \param r
 See \c SparseJacobian(x, p, r, c, jac)
@@ -482,13 +456,14 @@ void ADFun<Base>::SparseJacobianReverse(
 	CPPAD_ASSERT_UNKNOWN( p.n_set() ==  m );
 	CPPAD_ASSERT_UNKNOWN( p.end() ==  n );
 
+	// Assume column major order
+	CPPAD_ASSERT_UNKNOWN( is_major_minor_order(c, r) );
+
 	// Point at which we are evaluating the Jacobian
 	Forward(0, x);
 
-	// initialize the return value
+	// number of components of Jacobian that are required
 	size_t K = jac.size();
-	for(k = 0; k < K; k++)
-		jac[k] = zero;
 
 	// mapping from column number to set of rows required
 	VectorSet require;
@@ -514,15 +489,15 @@ void ADFun<Base>::SparseJacobianReverse(
 		for(ell = 0; ell < m; ell++)
 			forbidden[ell] = false;
 
-		// for each column that is no-zero for this row
+		// for each column that is non-zero for this row
 		p.begin(i);
 		j = p.next_element();
 		while( j != p.end() )
-		{	// for each row we require a value for this column
+		{	// for each row that we require a value for this column
 			require.begin(j);
 			ell = require.next_element();
 			while( ell != require.end() )
-			{	// if this is not the same row, forbid color for this row 
+			{	// if this is not the same row, forbid its color 
 				if( ell != i )
 					forbidden[ color[ell] ] = true;
 				ell = require.next_element();
@@ -546,6 +521,10 @@ void ADFun<Base>::SparseJacobianReverse(
 	// location for return values from Reverse
 	VectorBase dw(n);
 
+	// initialize the return value
+	for(k = 0; k < K; k++)
+		jac[k] = zero;
+
 	// loop over colors
 	for(ell = 0; ell < n_color; ell++)
 	{	for(i = 0; i < m; i++)
@@ -563,9 +542,8 @@ void ADFun<Base>::SparseJacobianReverse(
 		for(i = 0; i < m; i++) if( color[i] == ell )
 		{	// find first index in r for this row
 			while( k != K && r[k] < i )
-			{	CPPAD_ASSERT_UNKNOWN( k < K );
 				k++;
-			}
+
 			// extract the row results for this row
 			while( k < K && r[k] == i ) 
 			{	jac[k] = dw[c[k]];
@@ -633,7 +611,7 @@ void ADFun<Base>::SparseJacobianCase(
 		// convert the sparsity pattern to a sparse_pack object
 		// so can fold vector of bools and vector of sets into same function
 		sparse_pack sparsity;
-		bool transpose = false;
+		bool transpose = true;
 		vec_bool_to_sparse_pack(sparsity, p, m, n, transpose);
 	
 		// now we have folded this into the following case
@@ -713,7 +691,7 @@ void ADFun<Base>::SparseJacobianCase(
 		// convert the sparsity pattern to a sparse_pack object
 		// so can fold vector of bools and vector of sets into same function
 		sparse_pack sparsity;
-		bool transpose = false;
+		bool transpose = true;
 		vec_bool_to_sparse_set(sparsity, p, m, n, transpose);
 	
 		// now we have folded this into the following case
@@ -811,10 +789,10 @@ void ADFun<Base>::SparseJacobianCase(
 			}
 		} 
 
-		// convert the sparsity pattern to a sparse_pack object
+		// convert transposed sparsity pattern to a sparse_pack object
 		// so can fold vector of bools and vector of sets into same function
 		sparse_pack sparsity;
-		bool transpose = false;
+		bool transpose = true;
 		vec_bool_to_sparse_pack(sparsity, p, m, n, transpose);
 	
 		// now we have folded this into the following case
@@ -922,28 +900,23 @@ void ADFun<Base>::SparseJacobianCase(
 	CppAD::vector<size_t> c(K), r(K);
 	VectorBase J(K);
 
-	// transposed sparsity pattern
-	sparse_set p_transpose;
-	bool transpose = true;
-	vec_set_to_sparse_set(p_transpose, p, m, n, transpose);
-
-	// also need a non-transposed copy so can fold vector of sets
-	// into the r, c, J representation.
-	sparse_set sparsity;
-	transpose = false;
-	vec_set_to_sparse_set(sparsity, p, m, n, transpose);
-
 	if( n <= m )
 	{	// use forward mode ----------------------------------------
+
+		// need a pack_set transposed copy of the sparsity pattern.
+		sparse_set sparsity;
+		bool transpose = true;
+		vec_set_to_sparse_set(sparsity, p, m, n, transpose);
+
 		k = 0;
 		for(j = 0; j < n; j++)
-		{	p_transpose.begin(j);
-			i = p_transpose.next_element();
-			while( i != p_transpose.end() )
+		{	sparsity.begin(j);
+			i = sparsity.next_element();
+			while( i != sparsity.end() )
 			{	r[k] = i;
 				c[k] = j;
 				k++;
-				i    = p_transpose.next_element();
+				i    = sparsity.next_element();
 			}
 		} 
 	
@@ -962,6 +935,11 @@ void ADFun<Base>::SparseJacobianCase(
 				k++;
 			}
 		} 
+
+		// need a pack_set copy of sparsity pattern
+		sparse_set sparsity;
+		bool transpose = false;
+		vec_set_to_sparse_set(sparsity, p, m, n, transpose);
 
 		// now we have folded this into the following case
 		SparseJacobianReverse(x, sparsity, r, c, J);
