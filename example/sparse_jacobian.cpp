@@ -123,11 +123,12 @@ bool reverse()
 	} 
 	ok &= k == K;
 	// could use p_b 
-	f.SparseJacobian(x, p_b, r, c, jac);
+	size_t n_sweep = f.SparseJacobian(x, p_s, r, c, jac);
 	for(k = 0; k < K; k++)
 	{    ell = r[k] * n + c[k];
 		ok &= NearEqual(check[ell], jac[k], eps, eps);
 	}
+	ok &= n_sweep == 2;
 
 	return ok;
 }
@@ -223,12 +224,13 @@ bool forward()
 		}
 	} 
 	ok &= k == K;
-	// could use p_b 
-	f.SparseJacobian(x, p_b, r, c, jac);
+	// could use p_s 
+	size_t n_sweep = f.SparseJacobian(x, p_b, r, c, jac);
 	for(k = 0; k < K; k++)
 	{    ell = r[k] * n + c[k];
 		ok &= NearEqual(check[ell], jac[k], eps, eps);
 	}
+	ok &= n_sweep == 2;
 
 	return ok;
 }
