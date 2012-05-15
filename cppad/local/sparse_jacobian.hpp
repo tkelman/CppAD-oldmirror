@@ -112,14 +112,19 @@ $codei%
 	const %VectorSize%& %c%
 %$$
 (see $cref/VectorSize/sparse_jacobian/VectorSize/$$ below).
-If these argument are present, they must have the same size which we 
-denote by $latex K$$.
 They specify which rows and columns of $latex F^{(1)} (x)$$ are
 returned and in which order.
-In addition, they must be in either row major or column major order:
+We use $latex K$$ to denote the value $icode%jac%.size()%$$.
+For $latex k = 0 , \ldots , K-1$$, it must hold that
+$latex r[k] < m$$ and $latex c[k] < n$$.
+Furthermore,
+the pair $latex (r,c)$$  must be in either row major or column major order:
 
 $subhead Row Major Order$$
-Row major order is defined by the following condition:
+Row major order is defined by the following conditions:
+$icode%r%.size() == %K%$$,
+$icode%c%.size() == %K%+1$$,
+$latex c[K] = n$$,
 for $latex k = 1 , \ldots , K-1$$,
 $latex c[k-1] \leq c[k]$$ and if $latex c[k-1] = c[k]$$ then
 $latex r[k-1] < r[k]$$.
@@ -128,6 +133,9 @@ with multiple columns computed for each forward sweep.
 
 $subhead Column Major Order$$
 Column major order is defined by the following condition:
+$icode%r%.size() == %K%+1$$,
+$icode%c%.size() == %K%$$,
+$latex r[K] = m$$,
 for $latex k = 1 , \ldots , K-1$$,
 $latex r[k-1] \leq r[k]$$ and if $latex r[k-1] = r[k]$$ then
 $latex c[k-1] < c[k]$$.
@@ -148,9 +156,8 @@ $pre
 
 $$
 In the case where the arguments $icode r$$ and $icode c$$ are present,
-the size of $icode jac$$ must be $latex K$$ 
-when $icode SparseJacobian$$ is called and
-the input value of its elements does not matter.
+we use $latex K$$ to denote the size of $icode jac$$. 
+The input value of its elements does not matter.
 Upon return, for $latex k = 0 , \ldots , K - 1$$,
 $latex \[
 	jac [ k ] = \D{ F_i }{ x_j } (x)
@@ -238,10 +245,12 @@ Nom member helper function that deteremine if row or column major order.
 is a simple vector class with elements of type \c size_t
 
 \param major
-is the vector that varies first in the ordering being checked for.
+is the vector that varies first in the ordering being checked for
+(size K).
 
 \param minor
-is the vector that varies second in the ordering being checked for.
+is the vector that varies second in the ordering being checked for
+(size K+1).
 
 \return
 The return value is true if for all k
@@ -255,16 +264,13 @@ template <class VectorSize>
 bool is_major_minor_order(const VectorSize& major, const VectorSize& minor)
 {	bool match = true;
 
-	CPPAD_ASSERT_UNKNOWN( major.size() == minor.size() ); 
 	size_t k, K = major.size();
-	size_t major_previous = major[0];
-	size_t minor_previous = minor[0];
+	CPPAD_ASSERT_UNKNOWN( K+1 == minor.size() ); 
+
 	for(k = 1; k < K; k++)
-	{	match &= minor_previous <= minor[k];
-		if( minor_previous == minor[k] )
-			match &= major_previous < major[k];
-		major_previous = major[k];
-		minor_previous = minor[k];
+	{	match &= minor[k-1] <= minor[k];
+		if( minor[k-1] == minor[k] )
+			match &= major[k-1] < major[k];
 	} 
 	return match;
 }
@@ -320,18 +326,18 @@ size_t ADFun<Base>::SparseJacobianForward(
 	CheckSimpleVector<Base, VectorBase>();
 
 	CPPAD_ASSERT_UNKNOWN( x.size() == n );
-	CPPAD_ASSERT_UNKNOWN( r.size() == c.size() && r.size() == jac.size() ); 
 	CPPAD_ASSERT_UNKNOWN( p_transpose.n_set() ==  n );
 	CPPAD_ASSERT_UNKNOWN( p_transpose.end() ==  m );
 
-	// Assume row major order
+	// number of components of Jacobian that are required
+	size_t K = jac.size();
+	CPPAD_ASSERT_UNKNOWN( r.size() == K );
+	CPPAD_ASSERT_UNKNOWN( c.size() == K+1 );
+	CPPAD_ASSERT_UNKNOWN( c[K] == n );
 	CPPAD_ASSERT_UNKNOWN( is_major_minor_order(r, c) );
 
 	// Point at which we are evaluating the Jacobian
 	Forward(0, x);
-
-	// number of components of Jacobian that are required
-	size_t K = jac.size();
 
 	// mapping from row number to set of columns required
 	VectorSet require;
@@ -409,11 +415,11 @@ size_t ADFun<Base>::SparseJacobianForward(
 		k = 0;
 		for(j = 0; j < n; j++) if( color[j] == ell )
 		{	// find first index in c for this column
-			while( k != K && c[k] < j )
+			while( c[k] < j )
 				k++;
 
 			// extract the row results for this column
-			while( k < K && c[k] == j ) 
+			while( c[k] == j ) 
 			{	jac[k] = dy[r[k]];
 				k++;
 			}
@@ -471,18 +477,18 @@ size_t ADFun<Base>::SparseJacobianReverse(
 	CheckSimpleVector<Base, VectorBase>();
 
 	CPPAD_ASSERT_UNKNOWN( x.size() == n );
-	CPPAD_ASSERT_UNKNOWN( r.size() == c.size() && r.size() == jac.size() ); 
 	CPPAD_ASSERT_UNKNOWN( p.n_set() ==  m );
 	CPPAD_ASSERT_UNKNOWN( p.end() ==  n );
 
-	// Assume column major order
+	// number of components of Jacobian that are required
+	size_t K = jac.size();
+	CPPAD_ASSERT_UNKNOWN( r.size() == K+1 );
+	CPPAD_ASSERT_UNKNOWN( c.size() == K );
+	CPPAD_ASSERT_UNKNOWN( r[K] == m );
 	CPPAD_ASSERT_UNKNOWN( is_major_minor_order(c, r) );
 
 	// Point at which we are evaluating the Jacobian
 	Forward(0, x);
-
-	// number of components of Jacobian that are required
-	size_t K = jac.size();
 
 	// mapping from column number to set of rows required
 	VectorSet require;
@@ -545,32 +551,44 @@ size_t ADFun<Base>::SparseJacobianReverse(
 		jac[k] = zero;
 
 	// loop over colors
+	size_t n_sweep = 0;
 	for(ell = 0; ell < n_color; ell++)
-	{	for(i = 0; i < m; i++)
-			w[i] = zero;
-		// determine all the rows with this color
-		for(i = 0; i < m; i++)
-		{	if( color[i] == ell )
-				w[i] = one;
-		}
-		// call reverse mode for all these rows at once
-		dw = Reverse(1, w);
-
-		// set the corresponding components of the result
+	{	bool any = false;
 		k = 0;
 		for(i = 0; i < m; i++) if( color[i] == ell )
-		{	// find first index in r for this row
-			while( k != K && r[k] < i )
-				k++;
+		{	// find first k such that r[k] has color ell
+			if( ! any )
+			{	while( r[k] < i )
+					k++;
+				any = r[k] == i;
+			}
+		}
+		if( any )
+		{	n_sweep++;
+			// combine all the rows with this color
+			for(i = 0; i < m; i++)
+				w[i] = zero;
+			for(i = 0; i < m; i++)
+			{	if( color[i] == ell )
+					w[i] = one;
+			}
+			// call reverse mode for all these rows at once
+			dw = Reverse(1, w);
 
-			// extract the row results for this row
-			while( k < K && r[k] == i ) 
-			{	jac[k] = dw[c[k]];
-				k++;
+			// set the corresponding components of the result
+			for(i = 0; i < m; i++) if( color[i] == ell )
+			{	// find first index in r for this row
+				while( r[k] < i )
+					k++;
+				// extract the row results for this row
+				while( r[k] == i ) 
+				{	jac[k] = dw[c[k]];
+					k++;
+				}
 			}
 		}
 	}
-	return n_color;
+	return n_sweep;
 }
 // ===========================================================================
 /*!
@@ -626,11 +644,12 @@ size_t ADFun<Base>::SparseJacobianCase(
 		" not equal range dimension times domain dimension for f"
 	); 
 	CPPAD_ASSERT_UNKNOWN( x.size() == n );
-	CPPAD_ASSERT_UNKNOWN( r.size() == c.size() ); 
-	CPPAD_ASSERT_UNKNOWN( r.size() == jac.size() ); 
+	size_t K = jac.size();
 
-	if( is_major_minor_order(r, c) )
-	{	// use forward mode ----------------------------------------
+	if( c.size() == K+1 )
+	{	// row major, use forward mode ----------------------------------
+		CPPAD_ASSERT_UNKNOWN( r.size() == K );
+		CPPAD_ASSERT_UNKNOWN( c[K] == n );
 
 		// convert the sparsity pattern to a sparse_pack object
 		// so can fold vector of bools and vector of sets into same function
@@ -642,7 +661,10 @@ size_t ADFun<Base>::SparseJacobianCase(
 		n_color = SparseJacobianForward(x, sparsity, r, c, jac);
 	}
 	else
-	{	// use reverse mode ----------------------------------------
+	{	// column major, use reverse mode --------------------------------
+		CPPAD_ASSERT_UNKNOWN( r.size() == K+1 );
+		CPPAD_ASSERT_UNKNOWN( c.size() == K   );
+		CPPAD_ASSERT_UNKNOWN( r[K] == m );
 
 		// convert the sparsity pattern to a sparse_pack object
 		// so can fold vector of bools and vector of sets into same function
@@ -711,11 +733,12 @@ size_t ADFun<Base>::SparseJacobianCase(
 		"not equal range dimension for f"
 	); 
 	CPPAD_ASSERT_UNKNOWN( x.size() == n );
-	CPPAD_ASSERT_UNKNOWN( r.size() == c.size() ); 
-	CPPAD_ASSERT_UNKNOWN( r.size() == jac.size() ); 
+	size_t K = jac.size();
 
-	if( is_major_minor_order(r, c) )
-	{	// use forward mode ----------------------------------------
+	if( c.size() == K+1 )
+	{	// row major, use forward mode ---------------------------------
+		CPPAD_ASSERT_UNKNOWN( r.size() == K );
+		CPPAD_ASSERT_UNKNOWN( c[K] == n );
 
 		// convert the sparsity pattern to a sparse_pack object
 		// so can fold vector of bools and vector of sets into same function
@@ -727,7 +750,10 @@ size_t ADFun<Base>::SparseJacobianCase(
 		n_color = SparseJacobianForward(x, sparsity, r, c, jac);
 	}
 	else
-	{	// use reverse mode ----------------------------------------
+	{	// column major, use reverse mode -----------------------------------
+		CPPAD_ASSERT_UNKNOWN( c.size() == K );
+		CPPAD_ASSERT_UNKNOWN( r.size() == K+1 );
+		CPPAD_ASSERT_UNKNOWN( r[K] == m );
 
 		// convert the sparsity pattern to a sparse_pack object
 		// so can fold vector of bools and vector of sets into same function
@@ -803,11 +829,12 @@ void ADFun<Base>::SparseJacobianCase(
 			if( p[ i * n + j ] )
 				K++;
 	} 
-	CppAD::vector<size_t> r(K), c(K);
 	VectorBase J(K);
+	CppAD::vector<size_t> r, c;
 
 	if( n <= m )
-	{	// use forward mode ----------------------------------------
+	{	// use row major, forward mode -----------------------------------
+		r.resize(K); c.resize(K+1);
 		k = 0;
 		for(j = 0; j < n; j++)
 		{	for(i = 0; i < m; i++)
@@ -818,6 +845,7 @@ void ADFun<Base>::SparseJacobianCase(
 				}
 			}
 		} 
+		c[K] = n;
 
 		// convert transposed sparsity pattern to a sparse_pack object
 		// so can fold vector of bools and vector of sets into same function
@@ -829,7 +857,8 @@ void ADFun<Base>::SparseJacobianCase(
 		SparseJacobianForward(x, sparsity, r, c, J);
 	}
 	else
-	{	// use reverse mode ----------------------------------------
+	{	// use column major, reverse mode ----------------------------------
+		r.resize(K+1); c.resize(K);
 		k = 0;
 		for(i = 0; i < m; i++)
 		{	for(j = 0; j < n; j++)
@@ -840,6 +869,7 @@ void ADFun<Base>::SparseJacobianCase(
 				}
 			}
 		} 
+		r[K] = m;
 
 		// convert the sparsity pattern to a sparse_pack object
 		// so can fold vector of bools and vector of sets into same function
@@ -927,11 +957,12 @@ void ADFun<Base>::SparseJacobianCase(
 			K++;
 		}
 	}	
-	CppAD::vector<size_t> c(K), r(K);
 	VectorBase J(K);
+	CppAD::vector<size_t> r, c;
 
 	if( n <= m )
-	{	// use forward mode ----------------------------------------
+	{	// use row major, forward mode -----------------------------------
+		r.resize(K); c.resize(K+1);
 
 		// need a pack_set transposed copy of the sparsity pattern.
 		sparse_set sparsity;
@@ -949,12 +980,14 @@ void ADFun<Base>::SparseJacobianCase(
 				i    = sparsity.next_element();
 			}
 		} 
+		c[K] = n;
 	
 		// now we have folded this into the following case
 		SparseJacobianForward(x, sparsity, r, c, J);
 	}
 	else
-	{	// use reverse mode ----------------------------------------
+	{	// use column major, reverse mode ---------------------------------
+		r.resize(K+1); c.resize(K);
 		k = 0;
 		for(i = 0; i < m; i++)
 		{	itr = p[i].begin();
@@ -965,6 +998,7 @@ void ADFun<Base>::SparseJacobianCase(
 				k++;
 			}
 		} 
+		r[K] = m;
 
 		// need a pack_set copy of sparsity pattern
 		sparse_set sparsity;
@@ -1041,21 +1075,48 @@ size_t ADFun<Base>::SparseJacobian(
 	VectorBase&        jac             )
 {
 # ifndef NDEBUG
+	size_t m = Range();
+	size_t n = Domain();
+	size_t K = jac.size();
 	CPPAD_ASSERT_KNOWN(
-		x.size() == Domain() ,
+		x.size() == n ,
 		"SparseJacobian: size of x not equal domain dimension for f."
 	); 
 	CPPAD_ASSERT_KNOWN(
-		r.size() == c.size() ,
-		"SparseJacobian: size of r not equal the size of c."
+		r.size() == K+1 || c.size() == K+1 ,
+		"SparseJacobian: neither r nor c has size K+1."
 	); 
-	CPPAD_ASSERT_KNOWN(
-		r.size() == jac.size() ,
-		"SparseJacobian: size of r not equal the size of jac."
-	); 
-	size_t m = Range();
-	size_t n = Domain();
-	for(size_t k = 0; k < r.size(); k++)
+	if( r.size() == K+1 )
+	{	// column major case
+		CPPAD_ASSERT_KNOWN(
+			is_major_minor_order(c, r),
+			"SparseJacobian: r.size() == K+1 but not column major order."
+		);
+		CPPAD_ASSERT_KNOWN(
+			c.size() == K,
+			"SparseJacobian: r.size() == K+1 but c.size() != K."
+		);
+		CPPAD_ASSERT_KNOWN(
+			r[K] == m,
+			"SparseJacobian: r.size() == K+1 but r[K] != m."
+		);
+	}
+	else if( c.size() == K+1 )
+	{	// row major case
+		CPPAD_ASSERT_KNOWN(
+			is_major_minor_order(r, c),
+			"SparseJacobian: c.size() == K+1 but not row major order."
+		);
+		CPPAD_ASSERT_KNOWN(
+			r.size() == K,
+			"SparseJacobian: c.size() == K+1 but r.size() != K."
+		);
+		CPPAD_ASSERT_KNOWN(
+			c[K] == n,
+			"SparseJacobian: c.size() == K+1 but c[K] != n."
+		);
+	}
+	for(size_t k = 0; k < K; k++)
 	{	CPPAD_ASSERT_KNOWN(
 			r[k] < m,
 			"SparseJacobian: a row index r[k] is too large."

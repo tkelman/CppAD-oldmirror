@@ -63,13 +63,14 @@ bool rc_bool()
 	s[4] = false;  s[5] = false;  s[6] = true;    s[7] = true;
 	s[8] = true;   s[9] = true;  s[10] = true;   s[11] = true;
 
-	// Use forward mode (column major) to compute rows 0 and 1 
-	CPPAD_TEST_VECTOR<size_t> r(4), c(4);
+	// Use forward mode (row major) to compute rows 0 and 1 
+	CPPAD_TEST_VECTOR<size_t> r(4), c(5);
 	VectorBase jac(4);
 	r[0] = 0; c[0] = 0;
 	r[1] = 0; c[1] = 1;
 	r[2] = 1; c[2] = 2;
 	r[3] = 1; c[3] = 3;
+	c[4] = n;
 	size_t n_sweep = f.SparseJacobian(x, s, r, c, jac );
 	for(k = 0; k < 4; k++)
 	{ 	ell = r[k] * n + c[k];
@@ -77,19 +78,19 @@ bool rc_bool()
 	}
 	ok &= (n_sweep == 2);
 
-	// Use reverse mode (row major) to compute rows 0 and 1 
+	// Use reverse mode (column major) to compute rows 0 and 1 
+	r.resize(5), c.resize(4);
 	r[0] = 0; c[0] = 0;
 	r[1] = 0; c[1] = 1;
 	r[2] = 1; c[2] = 2;
 	r[3] = 1; c[3] = 3;
+	r[4] = m;
 	n_sweep = f.SparseJacobian(x, s, r, c, jac );
 	for(k = 0; k < 4; k++)
 	{ 	ell = r[k] * n + c[k];
 		ok &=  NearEqual(check[ell], jac[k], eps, eps);
 	}
-	// ok &= (n_sweep == 1);
-	// std::cout << "n_sweep = " << n_sweep << std::endl;
-
+	ok &= (n_sweep == 1);
 
 	return ok;
 }

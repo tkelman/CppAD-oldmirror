@@ -107,7 +107,7 @@ bool reverse()
 	// (skip row 0) Use column major order (reverse mode) because there are
 	// more rows than columns.
 	size_t K = 6;
-	i_vector r(K), c(K);
+	i_vector r(K+1), c(K);
 	jac.resize(K);
 	k = 0;
 	for(i = 1; i < m; i++)
@@ -121,6 +121,7 @@ bool reverse()
 			}
 		}
 	} 
+	r[K] = m;
 	ok &= k == K;
 	// could use p_b 
 	size_t n_sweep = f.SparseJacobian(x, p_s, r, c, jac);
@@ -206,10 +207,10 @@ bool forward()
 		ok &=  NearEqual(check[ell], jac[ell], eps, eps );
 
 	// using row and column indices to compute non-zero elements excluding
-	// row 0 and column 0. Use column major order (forward mode) because 
+	// row 0 and column 0. Use row major order (forward mode) because 
 	// there are more rows than columns being computed.
 	size_t K = 5;
-	i_vector r(K), c(K);
+	i_vector r(K), c(K+1);
 	jac.resize(K);
 	k = 0;
 	for(j = 1; j < n; j++)
@@ -223,6 +224,7 @@ bool forward()
 			}
 		}
 	} 
+	c[K] = n;
 	ok &= k == K;
 	// could use p_s 
 	size_t n_sweep = f.SparseJacobian(x, p_b, r, c, jac);
