@@ -401,32 +401,44 @@ size_t ADFun<Base>::SparseJacobianForward(
 		jac[k] = zero;
 
 	// loop over colors
+	size_t n_sweep = 0;
 	for(ell = 0; ell < n_color; ell++)
-	{	for(j = 0; j < n; j++)
-			dx[j] = zero;
-		// determine all the colums with this color
-		for(j = 0; j < n; j++)
-		{	if( color[j] == ell )
-				dx[j] = one;
-		}
-		// call forward mode for all these columns at once
-		dy = Forward(1, dx);
-
-		// set the corresponding components of the result
+	{	bool any = false;
 		k = 0;
 		for(j = 0; j < n; j++) if( color[j] == ell )
-		{	// find first index in c for this column
-			while( c[k] < j )
-				k++;
+		{	// find first k such that c[k] has color ell
+			if( ! any )
+			{	while( c[k] < j )
+					k++;
+				any = c[k] == j;
+			}
+		}
+		if( any )
+		{	n_sweep++;
+			// combine all columns with this color
+			for(j = 0; j < n; j++)
+				dx[j] = zero;
+			for(j = 0; j < n; j++)
+			{	if( color[j] == ell )
+					dx[j] = one;
+			}
+			// call forward mode for all these columns at once
+			dy = Forward(1, dx);
 
-			// extract the row results for this column
-			while( c[k] == j ) 
-			{	jac[k] = dy[r[k]];
-				k++;
+			// set the corresponding components of the result
+			for(j = 0; j < n; j++) if( color[j] == ell )
+			{	// find first index in c for this column
+				while( c[k] < j )
+					k++;
+				// extract the row results for this column
+				while( c[k] == j ) 
+				{	jac[k] = dy[r[k]];
+					k++;
+				}
 			}
 		}
 	}
-	return n_color;
+	return n_sweep;
 }
 /*!
 Private helper function SparseJacobianReverse(x, p, r, c, jac).
@@ -632,7 +644,7 @@ size_t ADFun<Base>::SparseJacobianCase(
 	VectorBase&        jac             )
 {	size_t n = Domain();
 	size_t m = Range();
-	size_t n_color;
+	size_t n_sweep;
 
 	// check VectorSet is Simple Vector class with bool elements
 	CheckSimpleVector<bool, VectorSet>();
@@ -660,7 +672,7 @@ size_t ADFun<Base>::SparseJacobianCase(
 		vec_bool_to_sparse_pack(sparsity, p, m, n, transpose);
 	
 		// now we have folded this into the following case
-		n_color = SparseJacobianForward(x, sparsity, r, c, jac);
+		n_sweep = SparseJacobianForward(x, sparsity, r, c, jac);
 	}
 	else
 	{	// column major, use reverse mode --------------------------------
@@ -675,9 +687,9 @@ size_t ADFun<Base>::SparseJacobianCase(
 		vec_bool_to_sparse_pack(sparsity, p, m, n, transpose);
 	
 		// now we have folded this into the following case
-		n_color = SparseJacobianReverse(x, sparsity, r, c, jac);
+		n_sweep = SparseJacobianReverse(x, sparsity, r, c, jac);
 	}
-	return n_color;
+	return n_sweep;
 }
 /*!
 Private helper function SparseJacobianCase(set_type, x, p, r, c, jac).
@@ -719,7 +731,7 @@ size_t ADFun<Base>::SparseJacobianCase(
 	VectorBase&              jac             )
 {	size_t n = Domain();
 	size_t m = Range();
-	size_t n_color;
+	size_t n_sweep;
 
 	// check VectorSet is Simple Vector class with sets for elements
 	CheckSimpleVector<std::set<size_t>, VectorSet>(
@@ -749,7 +761,7 @@ size_t ADFun<Base>::SparseJacobianCase(
 		vec_set_to_sparse_set(sparsity, p, m, n, transpose);
 	
 		// now we have folded this into the following case
-		n_color = SparseJacobianForward(x, sparsity, r, c, jac);
+		n_sweep = SparseJacobianForward(x, sparsity, r, c, jac);
 	}
 	else
 	{	// column major, use reverse mode -----------------------------------
@@ -764,9 +776,9 @@ size_t ADFun<Base>::SparseJacobianCase(
 		vec_set_to_sparse_set(sparsity, p, m, n, transpose);
 	
 		// now we have folded this into the following case
-		n_color = SparseJacobianReverse(x, sparsity, r, c, jac);
+		n_sweep = SparseJacobianReverse(x, sparsity, r, c, jac);
 	}
-	return n_color;
+	return n_sweep;
 }
 // ===========================================================================
 /*!
@@ -1130,8 +1142,8 @@ size_t ADFun<Base>::SparseJacobian(
 	}
 # endif
 	typedef typename VectorSet::value_type Set_type;
-	size_t n_color = SparseJacobianCase(Set_type(), x, p, r, c, jac);
-	return n_color;
+	size_t n_sweep = SparseJacobianCase(Set_type(), x, p, r, c, jac);
+	return n_sweep;
 }
 /*!
 Compute a sparse Jacobian.
