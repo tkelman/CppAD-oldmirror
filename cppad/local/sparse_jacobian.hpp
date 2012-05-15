@@ -357,10 +357,11 @@ size_t ADFun<Base>::SparseJacobianForward(
 	// Graph Coloring in Optimization Revisited by
 	// Assefaw Gebremedhin, Fredrik Maane, Alex Pothen
 	vectorBool forbidden(n);
-	for(j = 0; j < n; j++)
+	for(j = 1; j < n; j++)
 	{
 		// initial all colors as ok for this column
-		for(ell = 0; ell < n; ell++)
+		// (value of forbidden for ell > j does not matter)
+		for(ell = 0; ell <= j; ell++)
 			forbidden[ell] = false;
 
 		// for each row that is non-zero for this column
@@ -372,7 +373,7 @@ size_t ADFun<Base>::SparseJacobianForward(
 			ell = require.next_element();
 			while( ell != require.end() )
 			{	// if this is not the same column, forbid its color
-				if( ell != j )
+				if( ell < j )
 					forbidden[ color[ell] ] = true;
 				ell = require.next_element();
 			}
@@ -508,10 +509,11 @@ size_t ADFun<Base>::SparseJacobianReverse(
 	// Graph Coloring in Optimization Revisited by
 	// Assefaw Gebremedhin, Fredrik Maane, Alex Pothen
 	vectorBool forbidden(m);
-	for(i = 0; i < m; i++)
+	for(i = 1; i < m; i++)
 	{
 		// initial all colors as ok for this row
-		for(ell = 0; ell < m; ell++)
+		// (value of forbidden for ell > i does not matter)
+		for(ell = 0; ell <= i; ell++)
 			forbidden[ell] = false;
 
 		// for each column that is non-zero for this row
@@ -523,7 +525,7 @@ size_t ADFun<Base>::SparseJacobianReverse(
 			ell = require.next_element();
 			while( ell != require.end() )
 			{	// if this is not the same row, forbid its color 
-				if( ell != i )
+				if( ell < i )
 					forbidden[ color[ell] ] = true;
 				ell = require.next_element();
 			}
