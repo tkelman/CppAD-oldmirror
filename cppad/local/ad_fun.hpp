@@ -185,7 +185,8 @@ private:
 		VectorSet&         p               ,
 		const VectorSize&  r               ,
 		const VectorSize&  c               ,
-		VectorBase&        jac
+		VectorBase&        jac             ,
+		VectorSize&        work
 	);
 	// Reverse mode version of SparseJacobian
 	// (see doxygen in sparse_jacobian.hpp)
@@ -195,7 +196,8 @@ private:
 		VectorSet&         p               ,
 		const VectorSize&  r               ,
 		const VectorSize&  c               ,
-		VectorBase&        jac
+		VectorBase&        jac             ,
+		VectorSize&        work
 	);
 	// ------------------------------------------------------------
 	// vector of bool version of SparseJacobian
@@ -207,7 +209,8 @@ private:
 		const VectorSet&         p           ,
 		const VectorSize&        r           ,
 		const VectorSize&        c           ,
-		VectorBase&              jac
+		VectorBase&              jac         ,
+		VectorSize&              work
 	);
 	// vector of std::set<size_t> version of SparseJacobian
 	// (see doxygen in sparse_jacobian.hpp)
@@ -218,7 +221,8 @@ private:
 		const VectorSet&         p           ,
 		const VectorSize&        r           ,
 		const VectorSize&        c           ,
-		VectorBase&              jac
+		VectorBase&              jac         ,
+		VectorSize&              work
 	);
 	// vector of bool version of SparseJacobian
 	// (see doxygen in sparse_jacobian.hpp)
@@ -461,7 +465,8 @@ public:
 		const VectorSet&   p               ,
 		const VectorSize&  r               ,
 		const VectorSize&  c               ,
-		VectorBase&        jac
+		VectorBase&        jac             ,
+		VectorSize&        work
 	);
 
 	/// calculate sparse Hessians 

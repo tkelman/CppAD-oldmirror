@@ -123,13 +123,29 @@ bool reverse()
 	} 
 	r[K] = m;
 	ok &= k == K;
+
+	// empty work vector
+	i_vector work;
+	ok &= work.size() == 0;
+
 	// could use p_b 
-	size_t n_sweep = f.SparseJacobian(x, p_s, r, c, jac);
+	size_t n_sweep = f.SparseJacobian(x, p_s, r, c, jac, work);
 	for(k = 0; k < K; k++)
 	{    ell = r[k] * n + c[k];
 		ok &= NearEqual(check[ell], jac[k], eps, eps);
 	}
 	ok &= n_sweep == 2;
+	ok &= work.size() != 0;
+
+	// now recompute at a different x value (using work from previous call)
+	check[11] = x[3] = 10.;
+	n_sweep = f.SparseJacobian(x, p_s, r, c, jac, work);
+	for(k = 0; k < K; k++)
+	{    ell = r[k] * n + c[k];
+		ok &= NearEqual(check[ell], jac[k], eps, eps);
+	}
+	ok &= n_sweep == 2;
+	ok &= work.size() != 0;
 
 	return ok;
 }
@@ -226,13 +242,29 @@ bool forward()
 	} 
 	c[K] = n;
 	ok &= k == K;
+
+	// empty work vector
+	i_vector work;
+	ok &= work.size() == 0;
+
 	// could use p_s 
-	size_t n_sweep = f.SparseJacobian(x, p_b, r, c, jac);
+	size_t n_sweep = f.SparseJacobian(x, p_b, r, c, jac, work);
 	for(k = 0; k < K; k++)
 	{    ell = r[k] * n + c[k];
 		ok &= NearEqual(check[ell], jac[k], eps, eps);
 	}
 	ok &= n_sweep == 2;
+	ok &= work.size() != 0;
+
+	// now recompute at a different x value (using work from previous call)
+	check[11] = x[2] = 10.;
+	n_sweep = f.SparseJacobian(x, p_s, r, c, jac, work);
+	for(k = 0; k < K; k++)
+	{    ell = r[k] * n + c[k];
+		ok &= NearEqual(check[ell], jac[k], eps, eps);
+	}
+	ok &= n_sweep == 2;
+	ok &= work.size() != 0;
 
 	return ok;
 }
