@@ -12,7 +12,6 @@ the terms of the
 A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
-
 /*
 $begin sparse_jacobian$$
 $spell
@@ -32,10 +31,10 @@ $index jacobian, sparse$$
 
 $head Syntax$$
 $icode%jac% = %f%.SparseJacobian(%x%)
+%jac% = %f%.SparseJacobian(%x%, %p%)
+%n_sweep% = %f%.SparseJacobianForward(%x%, %p%, %r%, %c%, %jac%, %work%)
+%n_sweep% = %f%.SparseJacobianReverse(%x%, %p%, %r%, %c%, %jac%, %work%)
 %$$
-$icode%jac% = %f%.SparseJacobian(%x%, %p%)
-%$$
-$icode%n_sweep% = %f%.SparseJacobian(%x%, %p%, %r%, %c%, %jac%, %work%)%$$
 
 $head Purpose$$
 We use $latex n$$ for the $cref/domain/seq_property/Domain/$$ size,
@@ -114,33 +113,11 @@ $codei%
 (see $cref/VectorSize/sparse_jacobian/VectorSize/$$ below).
 They specify which rows and columns of $latex F^{(1)} (x)$$ are
 returned and in which order.
-We use $latex K$$ to denote the value $icode%jac%.size()%$$.
-For $latex k = 0 , \ldots , K-1$$, it must hold that
+We use $latex K$$ to denote the value $icode%jac%.size()%$$
+which must also equal the size of $icode r$$ and $icode c$$.
+Furhermore,
+for $latex k = 0 , \ldots , K-1$$, it must hold that
 $latex r[k] < m$$ and $latex c[k] < n$$.
-Furthermore,
-the pair $latex (r,c)$$  must be in either row major or column major order:
-
-$subhead Row Major Order$$
-Row major order is defined by the following conditions:
-$icode%r%.size() == %K%$$,
-$icode%c%.size() == %K%+1%$$,
-$latex c[K] = n$$,
-for $latex k = 1 , \ldots , K-1$$,
-$latex c[k-1] \leq c[k]$$ and if $latex c[k-1] = c[k]$$ then
-$latex r[k-1] < r[k]$$.
-In this case forward mode will be used to compute the Jacobian
-with multiple columns computed for each forward sweep.
-
-$subhead Column Major Order$$
-Column major order is defined by the following condition:
-$icode%r%.size() == %K%+1%$$,
-$icode%c%.size() == %K%$$,
-$latex r[K] = m$$,
-for $latex k = 1 , \ldots , K-1$$,
-$latex r[k-1] \leq r[k]$$ and if $latex r[k-1] = r[k]$$ then
-$latex c[k-1] < c[k]$$.
-In this case reverse mode will be used to compute the Jacobian
-with multiple rows computed for each reverse sweep.
 
 $head jac$$
 The result $icode jac$$ has prototype
@@ -171,20 +148,24 @@ $latex \[
 $head work$$
 If this argument is present, it has prototype
 $icode%
-	VectorSize& %work%
+	sparse_jacobian_work& %work%
 %$$
 (see $cref/VectorSize/sparse_jacobian/VectorSize/$$ below).
-If $icode%work%.size() != 0%$$, it must be the value returned by 
-$icode SparseJacobian$$ for a previous call with the same value for
-$icode f$$, $icode p$$, $icode r$$, $icode c$$ and $icode forward$$.
-In this case, less work will be required by $code SparseJacobian$$.
+This object can only be used with the routines $code SparseJacobianForward$$
+or $code SparseJaobianReverse$$.
+During its the first use, information is stored in $icode work$$.
+This is used to reduce the work done by future calls to the 
+same routine, with the same $icode f$$, $icode p$$, $icode r$$, and $icode c$$.
+If a future call is make where any of these valuse have changed,
+you must first call $icode%work%.clear()%$$
+to inform CppAD that this information needs to be recomputed.
 
 $head n_sweep$$
 The return value $icode n_sweep$$ has prototype
 $codei%
 	size_t %n_sweep%
 %$$
-If row major (column major) order is used for $codei%(%r%, %c%)%$$,
+If $code SparseJacobianForward$$ ($code SparseJacobianReverse$$) is used, 
 $icode n_sweep$$ is the number of forward (reverse) sweeps used to compute the
 requested Jacobian values. 
 This is proportional to the total work that $code SparseJacobian$$ does, 
@@ -250,96 +231,92 @@ Sparse Jacobian driver routine and helper functions.
 */
 // ===========================================================================
 /*!
-Nom member helper function that deteremine if row or column major order.
+class used by SparseJacobian to hold information 
+so it does not need to be recomputed.
+*/
+class sparse_jacobian_work {
+	public:
+		/// version of user r array sorted by row or column
+		CppAD::vector<size_t> r_sort;
+		/// version of user c array sorted by row or column
+		CppAD::vector<size_t> c_sort;
+		/// mapping from sorted array indices to user array indices
+		CppAD::vector<size_t> k_sort;
+		/// results of the coloring algorithm
+		CppAD::vector<size_t> color;
+		/// inform CppAD that this information needs to be recomputed
+		void clear(void)
+		{	r_sort.resize(0);
+			c_sort.resize(0);
+			k_sort.resize(0);
+			color.resize(0);
+		}
+};
+// ===========================================================================
+/*!
+std::qsort comparision between two \c size_t objects.
 
-\tparam VectorSize_t
-is a simple vector class with elements of type \c size_t
+\param a_vptr
+is a pointer to first \c size_t value to be compared.
 
-\param major
-is the vector that varies first in the ordering being checked for
-(size K).
-
-\param minor
-is the vector that varies second in the ordering being checked for
-(size K+1).
+\param b_vptr
+is a pointer to the second \c size_t value to be compared.
 
 \return
-The return value is true if for all k
-\code
-	minor[k] <= minor[k+1]
-	if( minor[k] == minor[k+1] )
-		major[k] < major[k+1]
-\endcode
+is negative, zero, position if the first value is less than,
+equal, or greater than the second (respectively). 
 */
-template <class VectorSize>
-bool is_major_minor_order(const VectorSize& major, const VectorSize& minor)
-{	bool match = true;
-
-	size_t k, K = major.size();
-	CPPAD_ASSERT_UNKNOWN( K+1 == minor.size() ); 
-
-	for(k = 1; k < K; k++)
-	{	match &= minor[k-1] <= minor[k];
-		if( minor[k-1] == minor[k] )
-			match &= major[k-1] < major[k];
-	} 
-	return match;
+int std_qsort_compare_size_t(const void* a_vptr, const void* b_vptr)
+{	const size_t* a_ptr = reinterpret_cast<const size_t*>(a_vptr);
+	const size_t* b_ptr = reinterpret_cast<const size_t*>(b_vptr);
+	int a = static_cast<int>(*a_ptr);
+	int b = static_cast<int>(*b_ptr);
+	return a - b;
 }
 // ===========================================================================
 /*!
-Private helper function 
-SparseJacobianForward(x, p_transpose, r, c, jac, color).
+Private helper function forward mode cases
 
 \tparam Base
-is the base type for the recording that is stored in this
-ADFun<Base object.
+See \c SparseJacobianForward(x, p, r, c, jac, work).
 
 \tparam VectorBase
-is a simple vector class with elements of type \a Base.
+See \c SparseJacobianForward(x, p, r, c, jac, work).
 
 \tparam VectorSet
 is either \c sparse_pack or \c sparse_set.
 
-\tparam VectorSize
-is a simple vector class with elements of type \c size_t.
-
 \param x
-See \c SparseJacobian(x, p, r, c, jac, work).
+See \c SparseJacobianForward(x, p, r, c, jac, work).
 
 \param p_transpose
-Sparsity pattern for the transpose of the Jacobian.
+Sparsity pattern for the transpose of the Jacobian of this ADFun<Base> object.
 Note that we do not change the values in \c p_transpose,
 but is not \c const because we use its iterator facility.
 
-\param r
-See \c SparseJacobian(x, p, r, c, jac, work)
-with the additional restriction that \c r , \c c are in row major order.
-
-\param c
-See \c SparseJacobian(x, p, r, c, jac, work).
-with the additional restriction that \c r , \c c are in row major order.
-
 \param jac
-See \c SparseJacobian(x, p, r, c, jac, work).
+See \c SparseJacobianForward(x, p, r, c, jac, work).
 
-\param color
-Is the \c work vector in \c SparseJacobian(x, p, r, c, jac, work).
+\param work
+See \c SparseJacobianForward(x, p, r, c, jac, work).
 
 \return
-See \c SparseJacobian(x, p, r, c, jac, work).
+See \c SparseJacobianForward(x, p, r, c, jac, work).
 */
 template<class Base>
-template <class VectorBase, class VectorSet, class VectorSize>
-size_t ADFun<Base>::SparseJacobianForward(
-	const VectorBase&  x               ,
-	VectorSet&         p_transpose     ,
-	const VectorSize&  r               ,
-	const VectorSize&  c               ,
-	VectorBase&        jac             ,
-	VectorSize&        color           )
+template <class VectorBase, class VectorSet>
+size_t ADFun<Base>::SparseJacobianFor(
+	const VectorBase&     x               ,
+	VectorSet&            p_transpose     ,
+	VectorBase&           jac             ,
+	sparse_jacobian_work& work            )
 {
 	using   CppAD::vectorBool;
 	size_t i, j, k, ell;
+
+	CppAD::vector<size_t>& r(work.r_sort);
+	CppAD::vector<size_t>& c(work.c_sort);
+	CppAD::vector<size_t>& color(work.color);
 
 	size_t m = Range();
 	size_t n = Domain();
@@ -360,7 +337,6 @@ size_t ADFun<Base>::SparseJacobianForward(
 	CPPAD_ASSERT_UNKNOWN( r.size() == K );
 	CPPAD_ASSERT_UNKNOWN( c.size() == K+1 );
 	CPPAD_ASSERT_UNKNOWN( c[K] == n );
-	CPPAD_ASSERT_UNKNOWN( is_major_minor_order(r, c) );
 
 	// Point at which we are evaluating the Jacobian
 	Forward(0, x);
@@ -371,7 +347,9 @@ size_t ADFun<Base>::SparseJacobianForward(
 	k = 0;
 	while( k < K )
 	{	require.add_element(r[k], c[k]);
+		CPPAD_ASSERT_UNKNOWN( r[k] < m && c[k] < n );
 		k++;
+		CPPAD_ASSERT_UNKNOWN( k == K || c[k-1] <= c[k] );
 	}
 
 	if( color.size() == 0 )
@@ -469,56 +447,48 @@ size_t ADFun<Base>::SparseJacobianForward(
 	return n_sweep;
 }
 /*!
-Private helper function 
-SparseJacobianReverse(x, p, r, c, jac, color).
+Private helper function for reverse mode cases.
 
 \tparam Base
-is the base type for the recording that is stored in this
-ADFun<Base object.
+See \c SparseJacobianForward(x, p, r, c, jac, work).
 
 \tparam VectorBase
-is a simple vector class with elements of type \a Base.
+See \c SparseJacobianForward(x, p, r, c, jac, work).
 
 \tparam VectorSet
 is either \c sparse_pack or \c sparse_set.
 
-\tparam VectorSize
-is a simple vector class with elements of type \c size_t.
-
 \param x
-See \c SparseJacobian(x, p, r, c, jac, work).
+See \c SparseJacobianForward(x, p, r, c, jac, work).
 
 \param p
-Sparsity pattern for the Jacobian.
-Note that we do not change the values in \c p,
-but is is not \c const because we use its iterator facility.
-
-\param r
-See \c SparseJacobian(x, p, r, c, jac, work)
-with the additional restriction that \c r , \c c are in column major order.
-
-\param c
-See \c SparseJacobian(x, p, r, c, jac, work).
-with the additional restriction that \c r , \c c are in column major order.
+Sparsity pattern for the Jacobian of this ADFun<Base> object.
+Note that we do not change the values in \c p_transpose,
+but is not \c const because we use its iterator facility.
 
 \param jac
-See \c SparseJacobian(x, p, r, c, jac, work).
+See \c SparseJacobianForward(x, p, r, c, jac, work).
+
+\param work
+See \c SparseJacobianForward(x, p, r, c, jac, work).
 
 \return
-See \c SparseJacobian(x, p, r, c, jac, work).
+See \c SparseJacobianForward(x, p, r, c, jac, work).
 */
 template<class Base>
-template <class VectorBase, class VectorSet, class VectorSize>
-size_t ADFun<Base>::SparseJacobianReverse(
-	const VectorBase&  x               ,
-	VectorSet&         p               ,
-	const VectorSize&  r               ,
-	const VectorSize&  c               ,
-	VectorBase&        jac             ,
-	VectorSize&        color           )
+template <class VectorBase, class VectorSet>
+size_t ADFun<Base>::SparseJacobianRev(
+	const VectorBase&     x        ,
+	VectorSet&            p        ,
+	VectorBase&           jac      ,
+	sparse_jacobian_work& work     )
 {
 	using   CppAD::vectorBool;
 	size_t i, j, k, ell;
+
+	CppAD::vector<size_t>& r(work.r_sort);
+	CppAD::vector<size_t>& c(work.c_sort);
+	CppAD::vector<size_t>& color(work.color);
 
 	size_t m = Range();
 	size_t n = Domain();
@@ -539,7 +509,6 @@ size_t ADFun<Base>::SparseJacobianReverse(
 	CPPAD_ASSERT_UNKNOWN( r.size() == K+1 );
 	CPPAD_ASSERT_UNKNOWN( c.size() == K );
 	CPPAD_ASSERT_UNKNOWN( r[K] == m );
-	CPPAD_ASSERT_UNKNOWN( is_major_minor_order(c, r) );
 
 	// Point at which we are evaluating the Jacobian
 	Forward(0, x);
@@ -550,7 +519,9 @@ size_t ADFun<Base>::SparseJacobianReverse(
 	k = 0;
 	while( k < K )
 	{	require.add_element(c[k], r[k]);
+		CPPAD_ASSERT_UNKNOWN( r[k] < m && c[k] < n );
 		k++;
+		CPPAD_ASSERT_UNKNOWN( k == K || r[k-1] <= r[k] );
 	}
 
 	if( color.size() == 0 )
@@ -649,53 +620,40 @@ size_t ADFun<Base>::SparseJacobianReverse(
 }
 // ===========================================================================
 /*!
-Private helper function 
+Private helper function for vector of bool sparsity pattern cases.
 
 \tparam Base
-is the base type for the recording that is stored in this
-ADFun<Base object.
+See \c SparseJacobianForward(x, p, r, c, jac, work).
 
 \tparam VectorBase
-is a simple vector class with elements of type \a Base.
+See \c SparseJacobianForward(x, p, r, c, jac, work).
 
 \tparam VectorSet
-is a simple vector class with elements of type \c bool.
-
-\tparam VectorSize
-is a simple vector class with elements of type \c size_t.
-
-\param set_type
-is a \c bool value. This argument is used to dispatch to the proper source
-code depending on the value of \c VectorSet::value_type.
+is a simple vector with elements of type \c bool.
 
 \param x
-See \c SparseJacobian(x, p, r, c, jac, work).
+See \c SparseJacobianForward(x, p, r, c, jac, work).
 
 \param p
-See \c SparseJacobian(x, p, r, c, jac, work).
-
-\param r
-See \c SparseJacobian(x, p, r, c, jac, work).
-
-\param c
-See \c SparseJacobian(x, p, r, c, jac, work).
+Sparsity pattern for the Jacobian of this ADFun<Base> object.
 
 \param jac
-See \c SparseJacobian(x, p, r, c, jac, work).
+See \c SparseJacobianForward(x, p, r, c, jac, work).
+
+\param work
+See \c SparseJacobianForward(x, p, r, c, jac, work).
 
 \return
-See \c SparseJacobian(x, p, r, c, jac, work).
+See \c SparseJacobianForward(x, p, r, c, jac, work).
 */
 template <class Base>
-template <class VectorBase, class VectorSet, class VectorSize>
+template <class VectorBase, class VectorSet>
 size_t ADFun<Base>::SparseJacobianCase(
-	bool               set_type        ,
-	const VectorBase&  x               , 
-	const VectorSet&   p               ,
-	const VectorSize&  r               ,
-	const VectorSize&  c               ,
-	VectorBase&        jac             ,
-	VectorSize&        work            )
+	bool                  set_type    ,
+	const VectorBase&     x           , 
+	const VectorSet&      p           ,
+	VectorBase&           jac         ,
+	sparse_jacobian_work& work        )
 {	size_t n = Domain();
 	size_t m = Range();
 	size_t n_sweep;
@@ -714,10 +672,10 @@ size_t ADFun<Base>::SparseJacobianCase(
 	CPPAD_ASSERT_UNKNOWN( x.size() == n );
 	size_t K = jac.size();
 
-	if( c.size() == K+1 )
+	if( work.c_sort.size() == K+1 )
 	{	// row major, use forward mode ----------------------------------
-		CPPAD_ASSERT_UNKNOWN( r.size() == K );
-		CPPAD_ASSERT_UNKNOWN( c[K] == n );
+		CPPAD_ASSERT_UNKNOWN( work.r_sort.size() == K );
+		CPPAD_ASSERT_UNKNOWN( work.c_sort[K] == n );
 
 		// convert the sparsity pattern to a sparse_pack object
 		// so can fold vector of bools and vector of sets into same function
@@ -726,13 +684,13 @@ size_t ADFun<Base>::SparseJacobianCase(
 		vec_bool_to_sparse_pack(sparsity, p, m, n, transpose);
 	
 		// now we have folded this into the following case
-		n_sweep = SparseJacobianForward(x, sparsity, r, c, jac, work);
+		n_sweep = SparseJacobianFor(x, sparsity, jac, work);
 	}
 	else
 	{	// column major, use reverse mode --------------------------------
-		CPPAD_ASSERT_UNKNOWN( r.size() == K+1 );
-		CPPAD_ASSERT_UNKNOWN( c.size() == K   );
-		CPPAD_ASSERT_UNKNOWN( r[K] == m );
+		CPPAD_ASSERT_UNKNOWN( work.r_sort.size() == K+1 );
+		CPPAD_ASSERT_UNKNOWN( work.c_sort.size() == K   );
+		CPPAD_ASSERT_UNKNOWN( work.r_sort[K] == m );
 
 		// convert the sparsity pattern to a sparse_pack object
 		// so can fold vector of bools and vector of sets into same function
@@ -741,59 +699,45 @@ size_t ADFun<Base>::SparseJacobianCase(
 		vec_bool_to_sparse_pack(sparsity, p, m, n, transpose);
 	
 		// now we have folded this into the following case
-		n_sweep = SparseJacobianReverse(x, sparsity, r, c, jac, work);
+		n_sweep = SparseJacobianRev(x, sparsity, jac, work);
 	}
 	return n_sweep;
 }
 /*!
-Private helper function 
+Private helper function for vector of std::set<size_t> sparsity pattern cases.
 
 \tparam Base
-is the base type for the recording that is stored in this
-ADFun<Base object.
+See \c SparseJacobianForward(x, p, r, c, jac, work).
 
 \tparam VectorBase
-is a simple vector class with elements of type \a Base.
+See \c SparseJacobianForward(x, p, r, c, jac, work).
 
 \tparam VectorSet
-is a simple vector class with elements of type \c std::set<size_t>.
-
-\tparam VectorSize
-is a simple vector class with elements of type \c size_t.
-
-\param set_type
-is a \c std::set<size_t> value. 
-This argument is used to dispatch to the proper source
-code depending on the value of \c VectorSet::value_type.
+is a simple vector with elements of type <code>std::set<size_t></code>.
 
 \param x
-See \c SparseJacobian(x, p, r, c, jac, work).
+See \c SparseJacobianForward(x, p, r, c, jac, work).
 
 \param p
-See \c SparseJacobian(x, p, r, c, jac, work).
-
-\param r
-See \c SparseJacobian(x, p, r, c, jac, work).
-
-\param c
-See \c SparseJacobian(x, p, r, c, jac, work).
+Sparsity pattern for the Jacobian of this ADFun<Base> object.
 
 \param jac
-See \c SparseJacobian(x, p, r, c, jac, work).
+See \c SparseJacobianForward(x, p, r, c, jac, work).
+
+\param work
+See \c SparseJacobianForward(x, p, r, c, jac, work).
 
 \return
-See \c SparseJacobian(x, p, r, c, jac, work).
+See \c SparseJacobianForward(x, p, r, c, jac, work).
 */
 template <class Base>
-template <class VectorBase, class VectorSet, class VectorSize>
+template <class VectorBase, class VectorSet>
 size_t ADFun<Base>::SparseJacobianCase(
 	const std::set<size_t>&  set_type        ,
 	const VectorBase&        x               , 
 	const VectorSet&         p               ,
-	const VectorSize&        r               ,
-	const VectorSize&        c               ,
 	VectorBase&              jac             ,
-	VectorSize&              work            )
+	sparse_jacobian_work&    work            )
 {	size_t n = Domain();
 	size_t m = Range();
 	size_t n_sweep;
@@ -814,10 +758,10 @@ size_t ADFun<Base>::SparseJacobianCase(
 	CPPAD_ASSERT_UNKNOWN( x.size() == n );
 	size_t K = jac.size();
 
-	if( c.size() == K+1 )
+	if( work.c_sort.size() == K+1 )
 	{	// row major, use forward mode ---------------------------------
-		CPPAD_ASSERT_UNKNOWN( r.size() == K );
-		CPPAD_ASSERT_UNKNOWN( c[K] == n );
+		CPPAD_ASSERT_UNKNOWN( work.r_sort.size() == K );
+		CPPAD_ASSERT_UNKNOWN( work.c_sort[K] == n );
 
 		// convert the sparsity pattern to a sparse_pack object
 		// so can fold vector of bools and vector of sets into same function
@@ -826,13 +770,13 @@ size_t ADFun<Base>::SparseJacobianCase(
 		vec_set_to_sparse_set(sparsity, p, m, n, transpose);
 	
 		// now we have folded this into the following case
-		n_sweep = SparseJacobianForward(x, sparsity, r, c, jac, work);
+		n_sweep = SparseJacobianFor(x, sparsity, jac, work);
 	}
 	else
 	{	// column major, use reverse mode -----------------------------------
-		CPPAD_ASSERT_UNKNOWN( c.size() == K );
-		CPPAD_ASSERT_UNKNOWN( r.size() == K+1 );
-		CPPAD_ASSERT_UNKNOWN( r[K] == m );
+		CPPAD_ASSERT_UNKNOWN( work.c_sort.size() == K );
+		CPPAD_ASSERT_UNKNOWN( work.r_sort.size() == K+1 );
+		CPPAD_ASSERT_UNKNOWN( work.r_sort[K] == m );
 
 		// convert the sparsity pattern to a sparse_pack object
 		// so can fold vector of bools and vector of sets into same function
@@ -841,16 +785,13 @@ size_t ADFun<Base>::SparseJacobianCase(
 		vec_set_to_sparse_set(sparsity, p, m, n, transpose);
 	
 		// now we have folded this into the following case
-		n_sweep = SparseJacobianReverse(x, sparsity, r, c, jac, work);
+		n_sweep = SparseJacobianRev(x, sparsity, jac, work);
 	}
 	return n_sweep;
 }
 // ===========================================================================
 /*!
-Private helper function 
-
-All of the description in the public member function SparseJacobian(x, p)
-applies.
+Private helper function for vector of bool sparsity pattern cases
 
 \param set_type
 is a \c bool value. This argument is used to dispatch to the proper source
@@ -909,7 +850,9 @@ void ADFun<Base>::SparseJacobianCase(
 				K++;
 	} 
 	VectorBase J(K);
-	CppAD::vector<size_t> r, c, work;
+	sparse_jacobian_work work;
+	CppAD::vector<size_t>& r(work.r_sort);
+	CppAD::vector<size_t>& c(work.c_sort);
 
 	if( n <= m )
 	{	// use row major, forward mode -----------------------------------
@@ -933,7 +876,7 @@ void ADFun<Base>::SparseJacobianCase(
 		vec_bool_to_sparse_pack(sparsity, p, m, n, transpose);
 	
 		// now we have folded this into the following case
-		SparseJacobianForward(x, sparsity, r, c, J, work);
+		SparseJacobianFor(x, sparsity, J, work);
 	}
 	else
 	{	// use column major, reverse mode ----------------------------------
@@ -957,7 +900,7 @@ void ADFun<Base>::SparseJacobianCase(
 		vec_bool_to_sparse_pack(sparsity, p, m, n, transpose);
 	
 		// now we have folded this into the following case
-		SparseJacobianReverse(x, sparsity, r, c, J, work);
+		SparseJacobianRev(x, sparsity, J, work);
 	}
 	// initialize the return value
 	for(i = 0; i < m; i++)
@@ -969,10 +912,7 @@ void ADFun<Base>::SparseJacobianCase(
 }
 
 /*!
-Private helper function 
-
-All of the description in the public member function SparseJacobian(x, p)
-applies.
+Private helper function for vector of std::set<size_t> sparsity pattern cases.
 
 \param set_type
 is a \c std::set<size_t> value.
@@ -1037,7 +977,9 @@ void ADFun<Base>::SparseJacobianCase(
 		}
 	}	
 	VectorBase J(K);
-	CppAD::vector<size_t> r, c, work;
+	sparse_jacobian_work work;
+	CppAD::vector<size_t>& r(work.r_sort);
+	CppAD::vector<size_t>& c(work.c_sort);
 
 	if( n <= m )
 	{	// use row major, forward mode -----------------------------------
@@ -1062,7 +1004,7 @@ void ADFun<Base>::SparseJacobianCase(
 		c[K] = n;
 	
 		// now we have folded this into the following case
-		SparseJacobianForward(x, sparsity, r, c, J, work);
+		SparseJacobianFor(x, sparsity, J, work);
 	}
 	else
 	{	// use column major, reverse mode ---------------------------------
@@ -1085,7 +1027,7 @@ void ADFun<Base>::SparseJacobianCase(
 		vec_set_to_sparse_set(sparsity, p, m, n, transpose);
 
 		// now we have folded this into the following case
-		SparseJacobianReverse(x, sparsity, r, c, J, work);
+		SparseJacobianRev(x, sparsity, J, work);
 	}
 	// initialize the return value
 	for(i = 0; i < m; i++)
@@ -1100,11 +1042,11 @@ void ADFun<Base>::SparseJacobianCase(
 // Public Member functions
 // ==========================================================================
 /*!
-Compute user specified subset of a sparse Jacobian.
+Compute user specified subset of a sparse Jacobian using forward mode.
 
 The C++ source code corresponding to this operation is
 \verbatim
-	SparceJacobian(x, p, r, c, jac)
+	SparceJacobianForward(x, p, r, c, jac, work)
 \endverbatim
 
 \tparam Base
@@ -1141,97 +1083,246 @@ The return value <code>jac[k]</code> is the partial of the
 <code>r[k]</code> component of the function with respect
 the the <code>c[k]</component> of its argument.
 
+\param work
+contains information that depends on the function object, sparsity pattern,
+\c r, and \c c vector.
+If these values are the same, \c work does not need to be recomputed.
+To be more specific, 
+\c r_sort is sorted copy of \c r ,
+\c c_sort is sorted copy of \c c ,
+<code>k_sort[k]</code> is the original index corresponding to the
+values <code>r_sort[k]</code> and <code>c_sort[k]</code>.
+The order for the sort is either by rows (for reverse mode calculations)
+or by columns (for forward mode calculations).
+Let \c m be the range dimension, n the domain dimension,
+and K the size of \c r , \c c , and \c jac.
+If sorted by rows, there is one extra entry 
+in the sorted row array and it has value <code>r_sort[K]=m</code>.
+If sorted by columns, there is one extra entry 
+in the sorted column array and it has value <code>c_sort[K]=n</code>.
+
 \return
-Is the number of first order forward (or reverse) sweeps used to compute the
+Is the number of first order forward sweeps used to compute the
 requested Jacobian values. The total work, not counting the zero order
 forward sweep, or the time to combine computations, is proportional to this
 return value.
 */
 template<class Base>
 template <class VectorBase, class VectorSet, class VectorSize>
-size_t ADFun<Base>::SparseJacobian(
-	const VectorBase&  x               ,
-	const VectorSet&   p               ,
-	const VectorSize&  r               ,
-	const VectorSize&  c               ,
-	VectorBase&        jac             ,
-	VectorSize&        work            )
+size_t ADFun<Base>::SparseJacobianForward(
+	const VectorBase&     x    ,
+	const VectorSet&      p    ,
+	const VectorSize&     r    ,
+	const VectorSize&     c    ,
+	VectorBase&           jac  ,
+	sparse_jacobian_work& work )
 {
+	size_t n = Domain();
+	size_t k, K = jac.size();
+	if( work.r_sort.size() == 0 )
+	{	// create version of (r,c,k) sorted by columns
+		size_t min_bytes = 3 * K * sizeof(size_t);
+		size_t cap_bytes;
+		void*  v_ptr  = thread_alloc::get_memory(min_bytes, cap_bytes);
+		size_t* crk  = reinterpret_cast<size_t*>(v_ptr);
+		for(k = 0; k < K; k++)
+		{	// must put column first so it is used for sorting
+			crk[3 * k + 0] = c[k];
+			crk[3 * k + 1] = r[k];
+			crk[3 * k + 2] = k;
+		}
+		std::qsort(crk, K, 3 * sizeof(size_t), std_qsort_compare_size_t);
+		work.c_sort.resize(K+1);
+		work.r_sort.resize(K);
+		work.k_sort.resize(K);
+		for(k = 0; k < K; k++)
+		{	work.c_sort[k] = crk[3 * k + 0];  
+			work.r_sort[k] = crk[3 * k + 1];  
+			work.k_sort[k] = crk[3 * k + 2];  
+		}
+		work.c_sort[K] = n;
+		thread_alloc::return_memory(v_ptr);
+	}
 # ifndef NDEBUG
 	size_t m = Range();
-	size_t n = Domain();
-	size_t K = jac.size();
 	CPPAD_ASSERT_KNOWN(
 		x.size() == n ,
-		"SparseJacobian: size of x not equal domain dimension for f."
+		"SparseJacobianForward: size of x not equal domain dimension for f."
 	); 
 	CPPAD_ASSERT_KNOWN(
-		r.size() == K+1 || c.size() == K+1 ,
-		"SparseJacobian: neither r nor c has size K+1."
+		r.size() == K && c.size() == K ,
+		"SparseJacobianForward: either r or c does not have "
+		"the same size as jac."
 	); 
-	if( r.size() == K+1 )
-	{	// column major case
-		CPPAD_ASSERT_KNOWN(
-			is_major_minor_order(c, r),
-			"SparseJacobian: r.size() == K+1 but not column major order."
-		);
-		CPPAD_ASSERT_KNOWN(
-			c.size() == K,
-			"SparseJacobian: r.size() == K+1 but c.size() != K."
-		);
-		CPPAD_ASSERT_KNOWN(
-			r[K] == m,
-			"SparseJacobian: r.size() == K+1 but r[K] != m."
-		);
-		if( work.size() != 0 )
-		{	CPPAD_ASSERT_KNOWN(
-				work.size() == m,
-				"SparseJacobian: invalid value for work."
-			);
-			for(size_t i = 0; i < m; i++) CPPAD_ASSERT_KNOWN(
-				work[i] < m,
-				"SparseJacobian: invalid value for work."
-			);
-		}
-	}
-	else 
-	{	// row major case
-		CPPAD_ASSERT_KNOWN(
-			is_major_minor_order(r, c),
-			"SparseJacobian: c.size() == K+1 but not row major order."
-		);
-		CPPAD_ASSERT_KNOWN(
-			r.size() == K,
-			"SparseJacobian: c.size() == K+1 but r.size() != K."
-		);
-		CPPAD_ASSERT_KNOWN(
-			c[K] == n,
-			"SparseJacobian: c.size() == K+1 but c[K] != n."
-		);
-		if( work.size() != 0 )
-		{	CPPAD_ASSERT_KNOWN(
-				work.size() == n,
-				"SparseJacobian: invalid value for work."
-			);
-			for(size_t j = 0; j < n; j++) CPPAD_ASSERT_KNOWN(
-				work[j] < n,
-				"SparseJacobian: invalid value for work."
-			);
-		}
-	}
-	for(size_t k = 0; k < K; k++)
+	CPPAD_ASSERT_KNOWN(
+		work.r_sort.size() == K   &&
+		work.c_sort.size() == K+1 &&
+		work.k_sort.size() == K   ,
+		"SparseJacobianForward: invalid value in work."
+	);
+	CPPAD_ASSERT_KNOWN(
+		work.color.size() == 0 || work.color.size() == n,
+		"SparseJacobianForward: invalid value in work."
+	);
+	for(k = 0; k < K; k++)
 	{	CPPAD_ASSERT_KNOWN(
 			r[k] < m,
-			"SparseJacobian: a row index r[k] is too large."
+			"SparseJacobianForward: invalid value in r."
 		);
 		CPPAD_ASSERT_KNOWN(
 			c[k] < n,
-			"SparseJacobian: a column index c[k] is too large."
+			"SparseJacobianForward: invalid value in c."
+		);
+		CPPAD_ASSERT_KNOWN(
+			work.r_sort[k] < m,
+			"SparseJacobianForward: invalid value in work."
+		);
+		CPPAD_ASSERT_KNOWN(
+			work.c_sort[k] < n,
+			"SparseJacobianForward: invalid value in work."
+		);
+		CPPAD_ASSERT_KNOWN(
+			work.k_sort[k] < K,
+			"SparseJacobianForward: invalid value in work."
 		);
 	}
+	if( work.color.size() != 0 )
+		for(size_t j = 0; j < n; j++) CPPAD_ASSERT_KNOWN(
+			work.color[j] < n,
+			"SparseJacobianForward: invalid value in work."
+	);
 # endif
+ 
 	typedef typename VectorSet::value_type Set_type;
-	size_t n_sweep = SparseJacobianCase(Set_type(), x, p, r, c, jac, work);
+	size_t n_sweep = SparseJacobianCase(Set_type(), x, p, jac, work);
+	return n_sweep;
+}
+/*!
+Compute user specified subset of a sparse Jacobian using reverse mode.
+
+The C++ source code corresponding to this operation is
+\verbatim
+	SparceJacobianReverse(x, p, r, c, jac, work)
+\endverbatim
+
+\tparam Base
+See \c SparseJacobianForward(x, p, r, c, jac, work).
+
+\tparam VectorBase
+See \c SparseJacobianForward(x, p, r, c, jac, work).
+
+\tparam VectorSet
+is either \c sparse_pack or \c sparse_set.
+
+\param x
+See \c SparseJacobianForward(x, p, r, c, jac, work).
+
+\param p
+Sparsity pattern for the Jacobian of this ADFun<Base> object.
+
+\param r
+See \c SparseJacobianForward(x, p, r, c, jac, work).
+
+\param c
+See \c SparseJacobianForward(x, p, r, c, jac, work).
+
+\param jac
+See \c SparseJacobianForward(x, p, r, c, jac, work).
+
+\param work
+See \c SparseJacobianForward(x, p, r, c, jac, work).
+
+\return
+See \c SparseJacobianForward(x, p, r, c, jac, work).
+*/
+template<class Base>
+template <class VectorBase, class VectorSet, class VectorSize>
+size_t ADFun<Base>::SparseJacobianReverse(
+	const VectorBase&     x    ,
+	const VectorSet&      p    ,
+	const VectorSize&     r    ,
+	const VectorSize&     c    ,
+	VectorBase&           jac  ,
+	sparse_jacobian_work& work )
+{
+	size_t m = Range();
+	size_t k, K = jac.size();
+	if( work.r_sort.size() == 0 )
+	{	// create version of (r,c,k) sorted by rows
+		size_t min_bytes = 3 * K * sizeof(size_t);
+		size_t cap_bytes;
+		void*  v_ptr  = thread_alloc::get_memory(min_bytes, cap_bytes);
+		size_t* rck  = reinterpret_cast<size_t*>(v_ptr);
+		for(k = 0; k < K; k++)
+		{	// must put column first so it is used for sorting
+			rck[3 * k + 0] = r[k];
+			rck[3 * k + 1] = c[k];
+			rck[3 * k + 2] = k;
+		}
+		std::qsort(rck, K, 3 * sizeof(size_t), std_qsort_compare_size_t);
+		work.c_sort.resize(K);
+		work.r_sort.resize(K+1);
+		work.k_sort.resize(K);
+		for(k = 0; k < K; k++)
+		{	work.r_sort[k] = rck[3 * k + 0];  
+			work.c_sort[k] = rck[3 * k + 1];  
+			work.k_sort[k] = rck[3 * k + 2];  
+		}
+		work.r_sort[K] = m;
+		thread_alloc::return_memory(v_ptr);
+	}
+# ifndef NDEBUG
+	size_t n = Domain();
+	CPPAD_ASSERT_KNOWN(
+		x.size() == n ,
+		"SparseJacobianReverse: size of x not equal domain dimension for f."
+	); 
+	CPPAD_ASSERT_KNOWN(
+		r.size() == K && c.size() == K ,
+		"SparseJacobianReverse: either r or c does not have "
+		"the same size as jac."
+	); 
+	CPPAD_ASSERT_KNOWN(
+		work.r_sort.size() == K+1 &&
+		work.c_sort.size() == K   &&
+		work.k_sort.size() == K   ,
+		"SparseJacobianReverse: invalid value in work."
+	);
+	CPPAD_ASSERT_KNOWN(
+		work.color.size() == 0 || work.color.size() == m,
+		"SparseJacobianReverse: invalid value in work."
+	);
+	for(k = 0; k < K; k++)
+	{	CPPAD_ASSERT_KNOWN(
+			r[k] < m,
+			"SparseJacobianReverse: invalid value in r."
+		);
+		CPPAD_ASSERT_KNOWN(
+			c[k] < n,
+			"SparseJacobianReverse: invalid value in c."
+		);
+		CPPAD_ASSERT_KNOWN(
+			work.r_sort[k] < m,
+			"SparseJacobianReverse: invalid value in work."
+		);
+		CPPAD_ASSERT_KNOWN(
+			work.c_sort[k] < n,
+			"SparseJacobianReverse: invalid value in work."
+		);
+		CPPAD_ASSERT_KNOWN(
+			work.k_sort[k] < K,
+			"SparseJacobianReverse: invalid value in work."
+		);
+	}
+	if( work.color.size() != 0 )
+		for(size_t i = 0; i < m; i++) CPPAD_ASSERT_KNOWN(
+			work.color[i] < m,
+			"SparseJacobianReverse: invalid value in work."
+	);
+# endif
+ 
+	typedef typename VectorSet::value_type Set_type;
+	size_t n_sweep = SparseJacobianCase(Set_type(), x, p, jac, work);
 	return n_sweep;
 }
 /*!
