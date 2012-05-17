@@ -179,50 +179,42 @@ private:
 	// ------------------------------------------------------------
 	// Forward mode version of SparseJacobian
 	// (see doxygen in sparse_jacobian.hpp)
-	template <class VectorBase, class VectorSet, class VectorSize>
-	size_t SparseJacobianForward(
-		const VectorBase&  x               ,
-		VectorSet&         p               ,
-		const VectorSize&  r               ,
-		const VectorSize&  c               ,
-		VectorBase&        jac             ,
-		VectorSize&        work
+	template <class VectorBase, class VectorSet>
+	size_t SparseJacobianFor(
+		const VectorBase&     x     ,
+		VectorSet&            p     ,
+		VectorBase&           jac   ,
+		sparse_jacobian_work& work
 	);
 	// Reverse mode version of SparseJacobian
 	// (see doxygen in sparse_jacobian.hpp)
-	template <class VectorBase, class VectorSet, class VectorSize>
-	size_t SparseJacobianReverse(
-		const VectorBase&  x               ,
-		VectorSet&         p               ,
-		const VectorSize&  r               ,
-		const VectorSize&  c               ,
-		VectorBase&        jac             ,
-		VectorSize&        work
+	template <class VectorBase, class VectorSet>
+	size_t SparseJacobianRev(
+		const VectorBase&     x     ,
+		VectorSet&            p     ,
+		VectorBase&           jac   ,
+		sparse_jacobian_work& work
 	);
 	// ------------------------------------------------------------
 	// vector of bool version of SparseJacobian
 	// (see doxygen in sparse_jacobian.hpp)
-	template <class VectorBase, class VectorSet, class VectorSize>
+	template <class VectorBase, class VectorSet>
 	size_t SparseJacobianCase(
 		bool                     set_type    ,
 		const VectorBase&        x           ,
 		const VectorSet&         p           ,
-		const VectorSize&        r           ,
-		const VectorSize&        c           ,
 		VectorBase&              jac         ,
-		VectorSize&              work
+		sparse_jacobian_work&    work
 	);
 	// vector of std::set<size_t> version of SparseJacobian
 	// (see doxygen in sparse_jacobian.hpp)
-	template <class VectorBase, class VectorSet, class VectorSize>
+	template <class VectorBase, class VectorSet>
 	size_t SparseJacobianCase(
 		const std::set<size_t>&  set_type    ,
 		const VectorBase&        x           ,
 		const VectorSet&         p           ,
-		const VectorSize&        r           ,
-		const VectorSize&        c           ,
 		VectorBase&              jac         ,
-		VectorSize&              work
+		sparse_jacobian_work&    work
 	);
 	// vector of bool version of SparseJacobian
 	// (see doxygen in sparse_jacobian.hpp)
@@ -452,21 +444,31 @@ public:
 
 	/// calculate sparse Jacobians 
 	template <typename VectorBase>
-	VectorBase SparseJacobian(const VectorBase &x); 
-
-	/// calculate sparse Jacobians 
+	VectorBase SparseJacobian(
+		const VectorBase &x
+	); 
 	template <typename VectorBase, typename VectorSet>
-	VectorBase SparseJacobian(const VectorBase &x, const VectorSet &p); 
-
-	/// calculate sparse Jacobians 
+	VectorBase SparseJacobian(
+		const VectorBase &x , 
+		const VectorSet  &p
+	); 
 	template <class VectorBase, class VectorSet, class VectorSize>
-	size_t SparseJacobian(
-		const VectorBase&  x               ,
-		const VectorSet&   p               ,
-		const VectorSize&  r               ,
-		const VectorSize&  c               ,
-		VectorBase&        jac             ,
-		VectorSize&        work
+	size_t SparseJacobianForward(
+		const VectorBase&     x     ,
+		const VectorSet&      p     ,
+		const VectorSize&     r     ,
+		const VectorSize&     c     ,
+		VectorBase&           jac   ,
+		sparse_jacobian_work& work
+	);
+	template <class VectorBase, class VectorSet, class VectorSize>
+	size_t SparseJacobianReverse(
+		const VectorBase&     x    ,
+		const VectorSet&      p    ,
+		const VectorSize&     r    ,
+		const VectorSize&     c    ,
+		VectorBase&           jac  ,
+		sparse_jacobian_work& work
 	);
 
 	/// calculate sparse Hessians 

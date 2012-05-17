@@ -63,37 +63,35 @@ bool rc_bool()
 	s[4] = false;  s[5] = false;  s[6] = true;    s[7] = true;
 	s[8] = true;   s[9] = true;  s[10] = false;  s[11] = true;
 
-	// Use forward mode (row major) to compute columns 0 and 2 
-	CPPAD_TEST_VECTOR<size_t> r(3), c(4), work;
+	// Use forward mode to compute columns 0 and 2 
+	// (make sure order of rows and columns does not matter)
+	CPPAD_TEST_VECTOR<size_t> r(3), c(3);
 	VectorBase jac(3);
-	r[0] = 0; c[0] = 0;
-	r[1] = 2; c[1] = 0;
-	r[2] = 1; c[2] = 2;
-	c[3] = n;
-	size_t n_sweep = f.SparseJacobian(x, s, r, c, jac, work);
+	r[0] = 2; c[0] = 0;
+	r[1] = 1; c[1] = 2;
+	r[2] = 0; c[2] = 0;
+	CppAD::sparse_jacobian_work work;
+	size_t n_sweep = f.SparseJacobianForward(x, s, r, c, jac, work);
 	for(k = 0; k < 3; k++)
 	{ 	ell = r[k] * n + c[k];
 		ok &=  NearEqual(check[ell], jac[k], eps, eps);
 	}
 	ok &= (n_sweep == 1);
-	ok &= work.size() != 0;
 
-	// Use reverse mode (column major) to compute rows 0 and 1 
-	r.resize(5), c.resize(4);
-	jac.resize(4);
+	// Use reverse mode to compute rows 0 and 1 
+	// (make sure order of rows and columns does not matter)
+	r.resize(4), c.resize(4); jac.resize(4);
 	r[0] = 0; c[0] = 0;
-	r[1] = 0; c[1] = 1;
-	r[2] = 1; c[2] = 2;
+	r[1] = 1; c[1] = 2;
+	r[2] = 0; c[2] = 1;
 	r[3] = 1; c[3] = 3;
-	r[4] = m;
-	work.resize(0);
-	n_sweep = f.SparseJacobian(x, s, r, c, jac, work);
+	work.clear();
+	n_sweep = f.SparseJacobianReverse(x, s, r, c, jac, work);
 	for(k = 0; k < 4; k++)
 	{ 	ell = r[k] * n + c[k];
 		ok &=  NearEqual(check[ell], jac[k], eps, eps);
 	}
 	ok &= (n_sweep == 1);
-	ok &= work.size() != 0;
 
 	return ok;
 }

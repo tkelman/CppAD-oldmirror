@@ -104,14 +104,13 @@ bool reverse()
 		ok &=  NearEqual(check[ell], jac[ell], eps, eps );
 
 	// using row and column indices to compute non-zero in rows 1 and 2
-	// (skip row 0) Use column major order (reverse mode) because there are
-	// more rows than columns.
+	// (skip row 0). 
 	size_t K = 6;
-	i_vector r(K+1), c(K);
+	i_vector r(K), c(K);
 	jac.resize(K);
 	k = 0;
-	for(i = 1; i < m; i++)
-	{	for(j = 0; j < n; j++)
+	for(j = 0; j < n; j++)
+	{	for(i = 1; i < m; i++)
 		{	ell = i * n + j;
 			if( p_b[ell] )
 			{	ok &= check[ell] != 0.;
@@ -121,31 +120,27 @@ bool reverse()
 			}
 		}
 	} 
-	r[K] = m;
 	ok &= k == K;
 
-	// empty work vector
-	i_vector work;
-	ok &= work.size() == 0;
+	// empty work structure
+	CppAD::sparse_jacobian_work work;
 
 	// could use p_b 
-	size_t n_sweep = f.SparseJacobian(x, p_s, r, c, jac, work);
+	size_t n_sweep = f.SparseJacobianReverse(x, p_s, r, c, jac, work);
 	for(k = 0; k < K; k++)
 	{    ell = r[k] * n + c[k];
 		ok &= NearEqual(check[ell], jac[k], eps, eps);
 	}
 	ok &= n_sweep == 2;
-	ok &= work.size() != 0;
 
 	// now recompute at a different x value (using work from previous call)
 	check[11] = x[3] = 10.;
-	n_sweep = f.SparseJacobian(x, p_s, r, c, jac, work);
+	n_sweep = f.SparseJacobianReverse(x, p_s, r, c, jac, work);
 	for(k = 0; k < K; k++)
 	{    ell = r[k] * n + c[k];
 		ok &= NearEqual(check[ell], jac[k], eps, eps);
 	}
 	ok &= n_sweep == 2;
-	ok &= work.size() != 0;
 
 	return ok;
 }
@@ -223,14 +218,13 @@ bool forward()
 		ok &=  NearEqual(check[ell], jac[ell], eps, eps );
 
 	// using row and column indices to compute non-zero elements excluding
-	// row 0 and column 0. Use row major order (forward mode) because 
-	// there are more rows than columns being computed.
+	// row 0 and column 0. 
 	size_t K = 5;
-	i_vector r(K), c(K+1);
+	i_vector r(K), c(K);
 	jac.resize(K);
 	k = 0;
-	for(j = 1; j < n; j++)
-	{	for(i = 1; i < m; i++)
+	for(i = 1; i < m; i++)
+	{	for(j = 1; j < n; j++)
 		{	ell = i * n + j;
 			if( p_b[ell] )
 			{	ok &= check[ell] != 0.;
@@ -240,31 +234,27 @@ bool forward()
 			}
 		}
 	} 
-	c[K] = n;
 	ok &= k == K;
 
-	// empty work vector
-	i_vector work;
-	ok &= work.size() == 0;
+	// empty work structure
+	CppAD::sparse_jacobian_work work;
 
 	// could use p_s 
-	size_t n_sweep = f.SparseJacobian(x, p_b, r, c, jac, work);
+	size_t n_sweep = f.SparseJacobianForward(x, p_b, r, c, jac, work);
 	for(k = 0; k < K; k++)
 	{    ell = r[k] * n + c[k];
 		ok &= NearEqual(check[ell], jac[k], eps, eps);
 	}
 	ok &= n_sweep == 2;
-	ok &= work.size() != 0;
 
 	// now recompute at a different x value (using work from previous call)
 	check[11] = x[2] = 10.;
-	n_sweep = f.SparseJacobian(x, p_s, r, c, jac, work);
+	n_sweep = f.SparseJacobianForward(x, p_s, r, c, jac, work);
 	for(k = 0; k < K; k++)
 	{    ell = r[k] * n + c[k];
 		ok &= NearEqual(check[ell], jac[k], eps, eps);
 	}
 	ok &= n_sweep == 2;
-	ok &= work.size() != 0;
 
 	return ok;
 }
