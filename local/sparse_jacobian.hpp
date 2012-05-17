@@ -15,6 +15,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin sparse_jacobian$$
 $spell
+	recomputed
 	valarray
 	std
 	CppAD
@@ -115,7 +116,7 @@ They specify which rows and columns of $latex F^{(1)} (x)$$ are
 returned and in which order.
 We use $latex K$$ to denote the value $icode%jac%.size()%$$
 which must also equal the size of $icode r$$ and $icode c$$.
-Furhermore,
+Furthermore,
 for $latex k = 0 , \ldots , K-1$$, it must hold that
 $latex r[k] < m$$ and $latex c[k] < n$$.
 
@@ -152,11 +153,11 @@ $icode%
 %$$
 (see $cref/VectorSize/sparse_jacobian/VectorSize/$$ below).
 This object can only be used with the routines $code SparseJacobianForward$$
-or $code SparseJaobianReverse$$.
+or $code SparseJacobianReverse$$.
 During its the first use, information is stored in $icode work$$.
 This is used to reduce the work done by future calls to the 
 same routine, with the same $icode f$$, $icode p$$, $icode r$$, and $icode c$$.
-If a future call is make where any of these valuse have changed,
+If a future call is make where any of these values have changed,
 you must first call $icode%work%.clear()%$$
 to inform CppAD that this information needs to be recomputed.
 
@@ -631,6 +632,9 @@ See \c SparseJacobianForward(x, p, r, c, jac, work).
 \tparam VectorSet
 is a simple vector with elements of type \c bool.
 
+\param set_type
+has element type for vector representing the sparsity sets.
+
 \param x
 See \c SparseJacobianForward(x, p, r, c, jac, work).
 
@@ -714,6 +718,9 @@ See \c SparseJacobianForward(x, p, r, c, jac, work).
 
 \tparam VectorSet
 is a simple vector with elements of type <code>std::set<size_t></code>.
+
+\param set_type
+has element type for vector representing the sparsity sets.
 
 \param x
 See \c SparseJacobianForward(x, p, r, c, jac, work).
@@ -1081,7 +1088,7 @@ is the vector of Jacobian values.
 It must have the same size are r. 
 The return value <code>jac[k]</code> is the partial of the
 <code>r[k]</code> component of the function with respect
-the the <code>c[k]</component> of its argument.
+the the <code>c[k]</code> of its argument.
 
 \param work
 contains information that depends on the function object, sparsity pattern,
