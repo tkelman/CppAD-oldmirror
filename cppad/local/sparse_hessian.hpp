@@ -30,9 +30,9 @@ $index SparseHessian$$
 $index hessian, sparse$$
 
 $head Syntax$$
-$codei%%hes% = %f%.SparseHessian(%x%, %w%)
+$icode%hes% = %f%.SparseHessian(%x%, %w%)
 %$$
-$codei%%hes% = %f%.SparseHessian(%x%, %w%, %p%)%$$
+$icode%hes% = %f%.SparseHessian(%x%, %w%, %p%)%$$
 
 $head Purpose$$
 We use $latex F : \R^n \rightarrow \R^m$$ do denote the
@@ -45,14 +45,14 @@ $latex \[
 This routine assumes  that the matrix $icode hes$$ is sparse
 and uses this assumption sparse to reduce the amount of computation necessary.
 One should use speed tests to verify that results are computed faster
-than when using the routine $cref/Hessian/$$.
+than when using the routine $cref Hessian$$.
 
 $head f$$
 The object $icode f$$ has prototype
 $codei%
 	ADFun<%Base%> %f%
 %$$
-Note that the $cref/ADFun/$$ object $icode f$$ is not $code const$$
+Note that the $cref ADFun$$ object $icode f$$ is not $code const$$
 (see $cref/Uses Forward/sparse_hessian/Uses Forward/$$ below).
 
 $head x$$
@@ -120,19 +120,19 @@ $latex \[
 \] $$
 
 $head VectorBase$$
-The type $icode VectorBase$$ must be a $cref/SimpleVector/$$ class with
+The type $icode VectorBase$$ must be a $cref SimpleVector$$ class with
 $cref/elements of type/SimpleVector/Elements of Specified Type/$$
 $icode Base$$.
-The routine $cref/CheckSimpleVector/$$ will generate an error message
+The routine $cref CheckSimpleVector$$ will generate an error message
 if this is not the case.
 
 $head VectorSet$$
-The type $icode VectorSet$$ must be a $xref/SimpleVector/$$ class with
-$xref/SimpleVector/Elements of Specified Type/elements of type/$$
+The type $icode VectorSet$$ must be a $cref SimpleVector$$ class with
+$cref/elements of type/SimpleVector/Elements of Specified Type/$$
 $code bool$$ or $code std::set<size_t>$$;
 see $cref/sparsity pattern/glossary/Sparsity Pattern/$$ for a discussion
 of the difference.
-The routine $xref/CheckSimpleVector/$$ will generate an error message
+The routine $cref CheckSimpleVector$$ will generate an error message
 if this is not the case.
 
 $subhead Restrictions$$
@@ -144,18 +144,18 @@ $code std::valarray< std::set<size_t> >$$ does not satisfy
 this condition. 
 
 $head Uses Forward$$
-After each call to $cref/Forward/$$,
+After each call to $cref Forward$$,
 the object $icode f$$ contains the corresponding 
 $cref/Taylor coefficients/glossary/Taylor Coefficient/$$.
 After $code SparseHessian$$,
-the previous calls to $xref/Forward/$$ are undefined.
+the previous calls to $cref Forward$$ are undefined.
 
 $head Example$$
 $children%
 	example/sparse_hessian.cpp
 %$$
 The routine
-$cref/sparse_hessian.cpp/$$ 
+$cref sparse_hessian.cpp$$ 
 is examples and tests of $code sparse_hessian$$.
 It return $code true$$, if it succeeds and $code false$$ otherwise.
 
