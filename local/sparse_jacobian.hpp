@@ -255,21 +255,29 @@ class sparse_jacobian_work {
 };
 // ===========================================================================
 /*!
-std::qsort comparision between two \c size_t objects.
+std::qsort comparision function
+
+\tparam Key
+Is the type used for the key for the comparision operation.
+There must be a conversion operation from the type 
+\c Key to the type \c int. 
 
 \param a_vptr
-is a pointer to first \c size_t value to be compared.
+is a pointer to first \c Key value to be compared
+(this must be the beginning of the corresponding record being sorted).
 
 \param b_vptr
-is a pointer to the second \c size_t value to be compared.
+is a pointer to the second \c Key value to be compared
+(this must be the beginning of the corresponding record being sorted).
 
 \return
 is negative, zero, position if the first value is less than,
 equal, or greater than the second (respectively). 
 */
-int std_qsort_compare_size_t(const void* a_vptr, const void* b_vptr)
-{	const size_t* a_ptr = reinterpret_cast<const size_t*>(a_vptr);
-	const size_t* b_ptr = reinterpret_cast<const size_t*>(b_vptr);
+template <class Key>
+int std_qsort_compare(const void* a_vptr, const void* b_vptr)
+{	const Key* a_ptr = reinterpret_cast<const Key*>(a_vptr);
+	const Key* b_ptr = reinterpret_cast<const Key*>(b_vptr);
 	int a = static_cast<int>(*a_ptr);
 	int b = static_cast<int>(*b_ptr);
 	return a - b;
@@ -317,6 +325,7 @@ size_t ADFun<Base>::SparseJacobianFor(
 
 	CppAD::vector<size_t>& r(work.r_sort);
 	CppAD::vector<size_t>& c(work.c_sort);
+	CppAD::vector<size_t>& user_k(work.k_sort);
 	CppAD::vector<size_t>& color(work.color);
 
 	size_t m = Range();
@@ -424,9 +433,8 @@ size_t ADFun<Base>::SparseJacobianFor(
 		{	n_sweep++;
 			// combine all columns with this color
 			for(j = 0; j < n; j++)
-				dx[j] = zero;
-			for(j = 0; j < n; j++)
-			{	if( color[j] == ell )
+			{	dx[j] = zero;
+				if( color[j] == ell )
 					dx[j] = one;
 			}
 			// call forward mode for all these columns at once
@@ -439,7 +447,7 @@ size_t ADFun<Base>::SparseJacobianFor(
 					k++;
 				// extract the row results for this column
 				while( c[k] == j ) 
-				{	jac[k] = dy[r[k]];
+				{	jac[ user_k[k] ] = dy[r[k]];
 					k++;
 				}
 			}
@@ -489,6 +497,7 @@ size_t ADFun<Base>::SparseJacobianRev(
 
 	CppAD::vector<size_t>& r(work.r_sort);
 	CppAD::vector<size_t>& c(work.c_sort);
+	CppAD::vector<size_t>& user_k(work.k_sort);
 	CppAD::vector<size_t>& color(work.color);
 
 	size_t m = Range();
@@ -596,9 +605,8 @@ size_t ADFun<Base>::SparseJacobianRev(
 		{	n_sweep++;
 			// combine all the rows with this color
 			for(i = 0; i < m; i++)
-				w[i] = zero;
-			for(i = 0; i < m; i++)
-			{	if( color[i] == ell )
+			{	w[i] = zero;
+				if( color[i] == ell )
 					w[i] = one;
 			}
 			// call reverse mode for all these rows at once
@@ -611,7 +619,7 @@ size_t ADFun<Base>::SparseJacobianRev(
 					k++;
 				// extract the row results for this row
 				while( r[k] == i ) 
-				{	jac[k] = dw[c[k]];
+				{	jac[ user_k[k] ] = dw[c[k]];
 					k++;
 				}
 			}
@@ -860,16 +868,18 @@ void ADFun<Base>::SparseJacobianCase(
 	sparse_jacobian_work work;
 	CppAD::vector<size_t>& r(work.r_sort);
 	CppAD::vector<size_t>& c(work.c_sort);
+	CppAD::vector<size_t>& user_k(work.k_sort);
 
 	if( n <= m )
-	{	// use row major, forward mode -----------------------------------
-		r.resize(K); c.resize(K+1);
+	{	// forward mode, columns are sorted
+		r.resize(K); c.resize(K+1); user_k.resize(K);
 		k = 0;
 		for(j = 0; j < n; j++)
 		{	for(i = 0; i < m; i++)
 			{	if( p[ i * n + j ] )
-				{	r[k] = i;
-					c[k] = j;
+				{	r[k]      = i;
+					c[k]      = j;
+					user_k[k] = k;
 					k++;
 				}
 			}
@@ -886,14 +896,15 @@ void ADFun<Base>::SparseJacobianCase(
 		SparseJacobianFor(x, sparsity, J, work);
 	}
 	else
-	{	// use column major, reverse mode ----------------------------------
-		r.resize(K+1); c.resize(K);
+	{	// reverse mode, rows are sorted
+		r.resize(K+1); c.resize(K); user_k.resize(K);
 		k = 0;
 		for(i = 0; i < m; i++)
 		{	for(j = 0; j < n; j++)
 			{	if( p[ i * n + j ] )
-				{	r[k] = i;
-					c[k] = j;
+				{	r[k]      = i;
+					c[k]      = j;
+					user_k[k] = k;
 					k++;
 				}
 			}
@@ -913,6 +924,7 @@ void ADFun<Base>::SparseJacobianCase(
 	for(i = 0; i < m; i++)
 		for(j = 0; j < n; j++)
 			jac[i * n + j] = zero;
+
 	// now set the non-zero return values
 	for(k = 0; k < K; k++)
 		jac[r[k] * n + c[k]] = J[k];
@@ -987,10 +999,11 @@ void ADFun<Base>::SparseJacobianCase(
 	sparse_jacobian_work work;
 	CppAD::vector<size_t>& r(work.r_sort);
 	CppAD::vector<size_t>& c(work.c_sort);
+	CppAD::vector<size_t>& user_k(work.k_sort);
 
 	if( n <= m )
-	{	// use row major, forward mode -----------------------------------
-		r.resize(K); c.resize(K+1);
+	{	// forward mode, columns are sorted
+		r.resize(K); c.resize(K+1); user_k.resize(K);
 
 		// need a pack_set transposed copy of the sparsity pattern.
 		sparse_set sparsity;
@@ -1002,8 +1015,9 @@ void ADFun<Base>::SparseJacobianCase(
 		{	sparsity.begin(j);
 			i = sparsity.next_element();
 			while( i != sparsity.end() )
-			{	r[k] = i;
-				c[k] = j;
+			{	r[k]      = i;
+				c[k]      = j;
+				user_k[k] = k;
 				k++;
 				i    = sparsity.next_element();
 			}
@@ -1014,15 +1028,16 @@ void ADFun<Base>::SparseJacobianCase(
 		SparseJacobianFor(x, sparsity, J, work);
 	}
 	else
-	{	// use column major, reverse mode ---------------------------------
-		r.resize(K+1); c.resize(K);
+	{	// reverse mode, rows are sorted
+		r.resize(K+1); c.resize(K); user_k.resize(K);
 		k = 0;
 		for(i = 0; i < m; i++)
 		{	itr = p[i].begin();
 			while( itr != p[i].end() )
 			{	j = *itr++;
-				r[k] = i;
-				c[k] = j;
+				r[k]      = i;
+				c[k]      = j;
+				user_k[k] = k;
 				k++;
 			}
 		} 
@@ -1099,14 +1114,17 @@ To be more specific,
 \c c_sort is sorted copy of \c c ,
 <code>k_sort[k]</code> is the original index corresponding to the
 values <code>r_sort[k]</code> and <code>c_sort[k]</code>.
-The order for the sort is either by rows (for reverse mode calculations)
-or by columns (for forward mode calculations).
+The order for the sort is either by rows, for reverse mode calculations,
+and by columns, for forward mode calculations.
 Let \c m be the range dimension, n the domain dimension,
 and K the size of \c r , \c c , and \c jac.
 If sorted by rows, there is one extra entry 
 in the sorted row array and it has value <code>r_sort[K]=m</code>.
 If sorted by columns, there is one extra entry 
 in the sorted column array and it has value <code>c_sort[K]=n</code>.
+The \c work vector \c color is set and used by 
+\c SparseJacobianFor, for the forward mode case,
+and by SparseJacobianRev, for the reverse mode case. 
 
 \return
 Is the number of first order forward sweeps used to compute the
@@ -1138,7 +1156,7 @@ size_t ADFun<Base>::SparseJacobianForward(
 			crk[3 * k + 1] = r[k];
 			crk[3 * k + 2] = k;
 		}
-		std::qsort(crk, K, 3 * sizeof(size_t), std_qsort_compare_size_t);
+		std::qsort(crk, K, 3 * sizeof(size_t), std_qsort_compare<size_t>);
 		work.c_sort.resize(K+1);
 		work.r_sort.resize(K);
 		work.k_sort.resize(K);
@@ -1266,7 +1284,7 @@ size_t ADFun<Base>::SparseJacobianReverse(
 			rck[3 * k + 1] = c[k];
 			rck[3 * k + 2] = k;
 		}
-		std::qsort(rck, K, 3 * sizeof(size_t), std_qsort_compare_size_t);
+		std::qsort(rck, K, 3 * sizeof(size_t), std_qsort_compare<size_t>);
 		work.c_sort.resize(K);
 		work.r_sort.resize(K+1);
 		work.k_sort.resize(K);
