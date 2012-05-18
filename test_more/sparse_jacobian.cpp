@@ -36,9 +36,9 @@ bool rc_bool()
 
 	size_t m = 3;
 	CPPAD_TEST_VECTOR< AD<double> >  Y(m);
-	Y[0] = X[0] + X[1];
-	Y[1] = X[2] + X[3];
-	Y[2] = X[0] + X[1] + X[3] * X[3] / 2.;
+	Y[0] = 1.0*X[0] + 2.0*X[1];
+	Y[1] = 3.0*X[2] + 4.0*X[3];
+	Y[2] = 5.0*X[0] + 6.0*X[1] + 7.0*X[3]*X[3]/2.;
 
 	// create f: X -> Y and stop tape recording
 	CppAD::ADFun<double> f(X, Y);
@@ -50,14 +50,14 @@ bool rc_bool()
 
 	// Jacobian of y 
 	/*
-	      [ 1 1 0 0  ]
-	jac = [ 0 0 1 1  ]
-	      [ 1 1 0 x_3]
+	      [ 1 2 0 0    ]
+	jac = [ 0 0 3 4    ]
+	      [ 5 6 0 7*x_3]
 	*/
 	VectorBase check(m * n);
-	check[0] = 1.; check[1] = 1.; check[2]  = 0.; check[3]  = 0.;
-	check[4] = 0.; check[5] = 0.; check[6]  = 1.; check[7]  = 1.;
-	check[8] = 1.; check[9] = 1.; check[10] = 0.; check[11] = x[3];
+	check[0] = 1.; check[1] = 2.; check[2]  = 0.; check[3]  = 0.;
+	check[4] = 0.; check[5] = 0.; check[6]  = 3.; check[7]  = 4.;
+	check[8] = 5.; check[9] = 6.; check[10] = 0.; check[11] = 7.*x[3];
 	VectorBool s(m * n);
 	s[0] = true;   s[1] = true;   s[2] = false;   s[3] = false;
 	s[4] = false;  s[5] = false;  s[6] = true;    s[7] = true;
@@ -115,9 +115,9 @@ bool reverse_bool()
 
 	size_t m = 3;
 	CPPAD_TEST_VECTOR< AD<double> >  Y(m);
-	Y[0] = X[0] + X[1];
-	Y[1] = X[2] + X[3];
-	Y[2] = X[0] + X[1] + X[2] + X[3] * X[3] / 2.;
+	Y[0] = 1.0*X[0] + 2.0*X[1];
+	Y[1] = 3.0*X[2] + 4.0*X[3];
+	Y[2] = 5.0*X[0] + 6.0*X[1] + 7.0*X[2] + 8.0*X[3]*X[3]/2.;
 
 	// create f: X -> Y and stop tape recording
 	CppAD::ADFun<double> f(X, Y);
@@ -131,14 +131,14 @@ bool reverse_bool()
 	VectorBase jac(m * n);
 	jac = f.SparseJacobian(x);
 	/*
-	      [ 1 1 0 0  ]
-	jac = [ 0 0 1 1  ]
-	      [ 1 1 1 x_3]
+	      [ 1 2 0 0    ]
+	jac = [ 0 0 3 4    ]
+	      [ 5 6 7 8*x_3]
 	*/
 	VectorBase check(m * n);
-	check[0] = 1.; check[1] = 1.; check[2]  = 0.; check[3]  = 0.;
-	check[4] = 0.; check[5] = 0.; check[6]  = 1.; check[7]  = 1.;
-	check[8] = 1.; check[9] = 1.; check[10] = 1.; check[11] = x[3];
+	check[0] = 1.; check[1] = 2.; check[2]  = 0.; check[3]  = 0.;
+	check[4] = 0.; check[5] = 0.; check[6]  = 3.; check[7]  = 4.;
+	check[8] = 5.; check[9] = 6.; check[10] = 7.; check[11] = 8.*x[3];
 	for(k = 0; k < 12; k++)
 		ok &=  NearEqual(check[k], jac[k], 1e-10, 1e-10 );
 
