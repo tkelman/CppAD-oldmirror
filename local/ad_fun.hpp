@@ -505,12 +505,25 @@ public:
 
 	/// calculate sparse Hessians 
 	template <typename VectorBase>
-	VectorBase SparseHessian(const VectorBase &x, const VectorBase &w); 
-
-	/// calculate sparse Hessians 
+	VectorBase SparseHessian(
+		const VectorBase&    x  , 
+		const VectorBase&    w
+	); 
 	template <typename VectorBase, typename VectorBool>
 	VectorBase SparseHessian(
-		const VectorBase &x, const VectorBase &w, const VectorBool &p
+		const VectorBase&    x  ,
+		const VectorBase&    w  ,
+		const VectorBool&    p
+	); 
+	template <class VectorBase, class VectorSet, class VectorSize>
+	size_t SparseHessian(
+		const VectorBase&    x   ,
+		const VectorBase&    w   ,
+		const VectorSet&     p   ,
+		const VectorSize&    r   ,
+		const VectorSize&    c   ,
+		VectorBase&          hes ,
+		sparse_hessian_work& work
 	); 
 
 	// Optimize the tape
