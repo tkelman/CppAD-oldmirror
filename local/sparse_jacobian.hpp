@@ -113,7 +113,7 @@ $codei%
 %$$
 (see $cref/VectorSize/sparse_jacobian/VectorSize/$$ below).
 They specify which rows and columns of $latex F^{(1)} (x)$$ are
-returned and in which order.
+returned and in what order.
 We use $latex K$$ to denote the value $icode%jac%.size()%$$
 which must also equal the size of $icode r$$ and $icode c$$.
 Furthermore,
@@ -127,6 +127,8 @@ $codei%
 %$$
 In the case where the arguments $icode r$$ and $icode c$$ are not present,
 the size of $icode jac$$ is $latex m * n$$ and
+for $latex i = 0 , \ldots , m-1$$,
+$latex j = 0 , \ldots , n-1$$,
 $latex \[
 	jac [ i * n + j ] = \D{ F_i }{ x_j } (x)
 \] $$
@@ -151,13 +153,14 @@ If this argument is present, it has prototype
 $icode%
 	sparse_jacobian_work& %work%
 %$$
-(see $cref/VectorSize/sparse_jacobian/VectorSize/$$ below).
-This object can only be used with the routines $code SparseJacobianForward$$
-or $code SparseJacobianReverse$$.
+This object can only be used with the routines 
+$code SparseJacobianForward$$ and $code SparseJacobianReverse$$.
 During its the first use, information is stored in $icode work$$.
-This is used to reduce the work done by future calls to the 
-same routine, with the same $icode f$$, $icode p$$, $icode r$$, and $icode c$$.
-If a future call is make where any of these values have changed,
+This is used to reduce the work done by future calls to the same mode
+(forward or reverse), 
+the same $icode f$$, $icode p$$, $icode r$$, and $icode c$$.
+If a future call is for a different mode,
+or any of these values have changed,
 you must first call $icode%work%.clear()%$$
 to inform CppAD that this information needs to be recomputed.
 
@@ -167,8 +170,8 @@ $codei%
 	size_t %n_sweep%
 %$$
 If $code SparseJacobianForward$$ ($code SparseJacobianReverse$$) is used, 
-$icode n_sweep$$ is the number of forward (reverse) sweeps used to compute the
-requested Jacobian values. 
+$icode n_sweep$$ is the number of firsr order forward (reverse) sweeps 
+used to compute the requested Jacobian values. 
 This is proportional to the total work that $code SparseJacobian$$ does, 
 not counting the zero order forward sweep, 
 or the work to combine multiple columns (rows) into a single sweep.
@@ -189,13 +192,6 @@ of the difference.
 The routine $cref CheckSimpleVector$$ will generate an error message
 if this is not the case.
 
-$head VectorSize$$
-The type $icode VectorSize$$ must be a $cref SimpleVector$$ class with
-$cref/elements of type/SimpleVector/Elements of Specified Type/$$
-$code size_t$$.
-The routine $cref CheckSimpleVector$$ will generate an error message
-if this is not the case.
-
 $subhead Restrictions$$
 If $icode VectorSet$$ has elements of $code std::set<size_t>$$,
 then $icode%p%[%i%]%$$ must return a reference (not a copy) to the 
@@ -203,6 +199,13 @@ corresponding set.
 According to section 26.3.2.3 of the 1998 C++ standard,
 $code std::valarray< std::set<size_t> >$$ does not satisfy
 this condition. 
+
+$head VectorSize$$
+The type $icode VectorSize$$ must be a $cref SimpleVector$$ class with
+$cref/elements of type/SimpleVector/Elements of Specified Type/$$
+$code size_t$$.
+The routine $cref CheckSimpleVector$$ will generate an error message
+if this is not the case.
 
 $head Uses Forward$$
 After each call to $cref Forward$$,
@@ -767,7 +770,7 @@ size_t ADFun<Base>::SparseJacobianCase(
 
 	CPPAD_ASSERT_KNOWN(
 		p.size() == Range() ,
-		"SparseJacobian: using size of set sparsity pattern p "
+		"SparseJacobian: using size_t sets for sparsity pattern and p.size() "
 		"not equal range dimension for f"
 	); 
 	CPPAD_ASSERT_UNKNOWN( x.size() == n );
@@ -978,7 +981,7 @@ void ADFun<Base>::SparseJacobianCase(
 
 	CPPAD_ASSERT_KNOWN(
 		p.size() == m,
-		"SparseJacobian: using size of set sparsity pattern p "
+		"SparseJacobian: using size_t sets for sparsity pattern and p.size() "
 		"not equal range dimension for f"
 	); 
 	CPPAD_ASSERT_UNKNOWN( x.size() == n );

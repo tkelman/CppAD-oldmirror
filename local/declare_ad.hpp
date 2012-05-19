@@ -19,6 +19,7 @@ namespace CppAD {
 
 	// classes
 	class sparse_jacobian_work;
+	class sparse_hessian_work;
 	template <class Base> class AD;
 	template <class Base> class ADFun;
 	template <class Base> class ADTape;
