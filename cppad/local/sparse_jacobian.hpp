@@ -1119,13 +1119,13 @@ To be more specific,
 values <code>r_sort[k]</code> and <code>c_sort[k]</code>.
 The order for the sort is either by rows, for reverse mode calculations,
 and by columns, for forward mode calculations.
-Let \c m be the range dimension, n the domain dimension,
-and K the size of \c r , \c c , and \c jac.
+Let \c m be the range dimension, \c n the domain dimension,
+and \c K the size of \c r , \c c , and \c jac.
 If sorted by rows, there is one extra entry 
 in the sorted row array and it has value <code>r_sort[K]=m</code>.
 If sorted by columns, there is one extra entry 
 in the sorted column array and it has value <code>c_sort[K]=n</code>.
-The \c work vector \c color is set and used by 
+The \c color vector is set and used by 
 \c SparseJacobianFor, for the forward mode case,
 and by SparseJacobianRev, for the reverse mode case. 
 
@@ -1202,15 +1202,15 @@ size_t ADFun<Base>::SparseJacobianForward(
 			"SparseJacobianForward: invalid value in c."
 		);
 		CPPAD_ASSERT_KNOWN(
-			work.r_sort[k] < m,
-			"SparseJacobianForward: invalid value in work."
-		);
-		CPPAD_ASSERT_KNOWN(
-			work.c_sort[k] < n,
-			"SparseJacobianForward: invalid value in work."
-		);
-		CPPAD_ASSERT_KNOWN(
 			work.k_sort[k] < K,
+			"SparseJacobianForward: invalid value in work."
+		);
+		CPPAD_ASSERT_KNOWN(
+			work.r_sort[k] == r[ work.k_sort[k] ],
+			"SparseJacobianForward: invalid value in work."
+		);
+		CPPAD_ASSERT_KNOWN(
+			work.c_sort[k] == c[ work.k_sort[k] ],
 			"SparseJacobianForward: invalid value in work."
 		);
 	}
@@ -1330,15 +1330,15 @@ size_t ADFun<Base>::SparseJacobianReverse(
 			"SparseJacobianReverse: invalid value in c."
 		);
 		CPPAD_ASSERT_KNOWN(
-			work.r_sort[k] < m,
-			"SparseJacobianReverse: invalid value in work."
-		);
-		CPPAD_ASSERT_KNOWN(
-			work.c_sort[k] < n,
-			"SparseJacobianReverse: invalid value in work."
-		);
-		CPPAD_ASSERT_KNOWN(
 			work.k_sort[k] < K,
+			"SparseJacobianReverse: invalid value in work."
+		);
+		CPPAD_ASSERT_KNOWN(
+			work.r_sort[k] == r[ work.k_sort[k] ],
+			"SparseJacobianReverse: invalid value in work."
+		);
+		CPPAD_ASSERT_KNOWN(
+			work.c_sort[k] == c[ work.k_sort[k] ],
 			"SparseJacobianReverse: invalid value in work."
 		);
 	}

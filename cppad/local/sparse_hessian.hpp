@@ -177,8 +177,8 @@ The return value $icode n_sweep$$ has prototype
 $codei%
 	size_t %n_sweep%
 %$$
-It is the number of combined first order forward sweeps 
-used to compute the requested Jacobian values.
+It is the number of first order forward sweeps 
+used to compute the requested Hessian values.
 Each first forward sweep is followed by a second order reverse sweep 
 so it is also the number of reverse sweeps.
 This is proportional to the total work that $code SparseHessian$$ does, 
@@ -261,6 +261,33 @@ class sparse_hessian_work {
 		}
 };
 // ===========================================================================
+/*!
+Private helper function that does computation for all Sparse Hessian cases.
+
+\tparam Base
+See \c SparseHessian(x, w, p, r, c, hes, work).
+
+\tparam VectorBase
+See \c SparseHessian(x, w, p, r, c, hes, work).
+
+\tparam VectorSet
+is either \c sparse_pack or \c sparse_set.
+
+\param x
+See \c SparseHessian(x, w, p, r, c, hes, work).
+
+\param sparsity
+Sparsity pattern for the Hessian of this ADFun<Base> object.
+
+\param hes
+See \c SparseHessian(x, w, p, r, c, hes, work).
+
+\param work
+See \c SparseHessian(x, w, p, r, c, hes, work).
+
+\return
+See \c SparseHessian(x, w, p, r, c, hes, work).
+*/
 template<class Base>
 template <class VectorBase, class VectorSet>
 size_t ADFun<Base>::SparseHessianCompute(
@@ -291,13 +318,13 @@ size_t ADFun<Base>::SparseHessianCompute(
 	CPPAD_ASSERT_UNKNOWN( sparsity.n_set() ==  n );
 	CPPAD_ASSERT_UNKNOWN( sparsity.end() ==  n );
 
-	// number of components of Jacobian that are required
+	// number of components of Hessian that are required
 	size_t K = hes.size();
 	CPPAD_ASSERT_UNKNOWN( r.size() == K+1 );
 	CPPAD_ASSERT_UNKNOWN( c.size() == K );
 	CPPAD_ASSERT_UNKNOWN( r[K] == n );
 
-	// Point at which we are evaluating the Jacobian
+	// Point at which we are evaluating the Hessian
 	Forward(0, x);
 
 	// Rows of the Hessian (i below) correspond to the forward mode index
@@ -411,6 +438,36 @@ size_t ADFun<Base>::SparseHessianCompute(
 	return n_sweep;
 }
 // ===========================================================================
+/*!
+Private helper function for vector of \c bool sparsity pattern cases.
+
+\tparam Base
+See \c SparseHessian(x, w, p, r, c, hes, work).
+
+\tparam VectorBase
+See \c SparseHessian(x, w, p, r, c, hes, work).
+
+\tparam VectorSet
+is a simple vector with elements of type \c bool.
+
+\param set_type
+has element type for vector representing the sparsity sets.
+
+\param x
+See \c SparseHessian(x, w, p, r, c, hes, work).
+
+\param p
+Sparsity pattern for the Hessian of this ADFun<Base> object.
+
+\param hes
+See \c SparseHessian(x, w, p, r, c, hes, work).
+
+\param work
+See \c SparseHessian(x, w, p, r, c, hes, work).
+
+\return
+See \c SparseHessian(x, w, p, r, c, hes, work).
+*/
 template <class Base>
 template <class VectorBase, class VectorSet>
 size_t ADFun<Base>::SparseHessianCase(
@@ -446,6 +503,36 @@ size_t ADFun<Base>::SparseHessianCase(
 
 	return n_sweep;
 }
+/*!
+Private helper function for vector of std::set<size_t> sparsity pattern cases.
+
+\tparam Base
+See \c SparseHessian(x, w, p, r, c, hes, work).
+
+\tparam VectorBase
+See \c SparseHessian(x, w, p, r, c, hes, work).
+
+\tparam VectorSet
+is a simple vector with elements of type <code>std::set<size_t></code>.
+
+\param set_type
+has element type for vector representing the sparsity sets.
+
+\param x
+See \c SparseHessian(x, w, p, r, c, hes, work).
+
+\param p
+Sparsity pattern for the Hessian of this ADFun<Base> object.
+
+\param hes
+See \c SparseHessian(x, w, p, r, c, hes, work).
+
+\param work
+See \c SparseHessian(x, w, p, r, c, hes, work).
+
+\return
+See \c SparseHessian(x, w, p, r, c, hes, work).
+*/
 template <class Base>
 template <class VectorBase, class VectorSet>
 size_t ADFun<Base>::SparseHessianCase(
@@ -588,7 +675,6 @@ void ADFun<Base>::SparseHessianCase(
 	for(k = 0; k < K; k++)
 		hes[r[k] * n + c[k]] = H[k]; 
 }
-// ===========================================================================
 /*!
 Private helper function for SparseHessian(x, w, p).
 
@@ -701,12 +787,173 @@ void ADFun<Base>::SparseHessianCase(
 		hes[r[k] * n + c[k]] = H[k]; 
 }
 // ===========================================================================
+// Public Member Functions
+// ===========================================================================
+/*!
+Compute user specified subset of a sparse Hessian.
+
+The C++ source code corresponding to this operation is
+\verbatim
+	SparceHessian(x, w, p, r, c, hes, work)
+\endverbatim
+
+\tparam Base
+is the base type for the recording that is stored in this ADFun<Base object.
+
+\tparam VectorBase
+is a simple vector class with elements of type \a Base.
+
+\tparam VectorSet
+is a simple vector class with elements of type 
+\c bool or \c std::set<size_t>.
+
+\tparam VectorSize
+is a simple vector class with elements of type \c size_t.
+
+\param x
+is a vector specifing the point at which to compute the Hessian.
+
+\param w
+is the weighting vector that defines a scalar valued function by
+a weighted sum of the components of the vector valued function
+$latex F(x)$$.
+
+\param p
+is the sparsity pattern for the Hessian that we are calculating.
+
+\param r
+is the vector of row indices for the returned Hessian values.
+
+\param c
+is the vector of columns indices for the returned Hessian values.
+It must have the same size are r.
+
+\param hes
+is the vector of Hessian values.
+It must have the same size are r. 
+The return value <code>hes[k]</code> is the second partial of 
+$latex w^{\rm T} F(x)$$ with respect to the
+<code>r[k]</code> and <code>c[k]</code> component of $latex x$$.
+
+\param work
+contains information that depends on the function object, sparsity pattern,
+\c r, and \c c vector.
+If these values are the same, \c work does not need to be recomputed.
+To be more specific, 
+\c r_sort is sorted copy of \c r ,
+\c c_sort is sorted copy of \c c ,
+<code>k_sort[k]</code> is the original index corresponding to the
+values <code>r_sort[k]</code> and <code>c_sort[k]</code>.
+The order for the sort is by columns.
+Let \c n the domain dimension,
+and \c K the size of \c r , \c c , and \c hes.
+There is one extra entry 
+in the sorted row array and it has value <code>r_sort[K]=n</code>.
+The \c color vector is set and used by \c SparseHessianCompute.
+
+\return
+Is the number of first order forward sweeps used to compute the
+requested Hessian values.
+(This is also equal to the number of second order reverse sweeps.)
+The total work, not counting the zero order
+forward sweep, or the time to combine computations, is proportional to this
+return value.
+*/
+template<class Base>
+template <class VectorBase, class VectorSet, class VectorSize>
+size_t ADFun<Base>::SparseHessian(
+	const VectorBase&     x    ,
+	const VectorBase&     w    ,
+	const VectorSet&      p    ,
+	const VectorSize&     r    ,
+	const VectorSize&     c    ,
+	VectorBase&           hes  ,
+	sparse_hessian_work&  work )
+{
+	size_t n = Domain();
+	size_t k, K = hes.size();
+	if( work.r_sort.size() == 0 )
+	{	// create version of (r,c,k) sorted by rows
+		size_t min_bytes = 3 * K * sizeof(size_t);
+		size_t cap_bytes;
+		void*  v_ptr  = thread_alloc::get_memory(min_bytes, cap_bytes);
+		size_t* rck  = reinterpret_cast<size_t*>(v_ptr);
+		for(k = 0; k < K; k++)
+		{	// must put column first so it is used for sorting
+			rck[3 * k + 0] = r[k];
+			rck[3 * k + 1] = c[k];
+			rck[3 * k + 2] = k;
+		}
+		std::qsort(rck, K, 3 * sizeof(size_t), std_qsort_compare<size_t>);
+		work.c_sort.resize(K);
+		work.r_sort.resize(K+1);
+		work.k_sort.resize(K);
+		for(k = 0; k < K; k++)
+		{	work.r_sort[k] = rck[3 * k + 0];  
+			work.c_sort[k] = rck[3 * k + 1];  
+			work.k_sort[k] = rck[3 * k + 2];  
+		}
+		work.r_sort[K] = n;
+		thread_alloc::return_memory(v_ptr);
+	}
+# ifndef NDEBUG
+	CPPAD_ASSERT_KNOWN(
+		x.size() == n ,
+		"SparseHessian: size of x not equal domain dimension for f."
+	); 
+	CPPAD_ASSERT_KNOWN(
+		r.size() == K && c.size() == K ,
+		"SparseHessian: either r or c does not have the same size as ehs."
+	); 
+	CPPAD_ASSERT_KNOWN(
+		work.r_sort.size() == K+1 &&
+		work.c_sort.size() == K   &&
+		work.k_sort.size() == K   ,
+		"SparseHessian: invalid value in work."
+	);
+	CPPAD_ASSERT_KNOWN(
+		work.color.size() == 0 || work.color.size() == n,
+		"SparseHessian: invalid value in work."
+	);
+	for(k = 0; k < K; k++)
+	{	CPPAD_ASSERT_KNOWN(
+			r[k] < n,
+			"SparseHessian: invalid value in r."
+		);
+		CPPAD_ASSERT_KNOWN(
+			c[k] < n,
+			"SparseHessian: invalid value in c."
+		);
+		CPPAD_ASSERT_KNOWN(
+			work.k_sort[k] < K,
+			"SparseHessian: invalid value in work."
+		);
+		CPPAD_ASSERT_KNOWN(
+			work.r_sort[k] == r[ work.k_sort[k] ] ,
+			"SparseHessian: invalid value in work."
+		);
+		CPPAD_ASSERT_KNOWN(
+			work.c_sort[k] == c[ work.k_sort[k] ],
+			"SparseHessian: invalid value in work."
+		);
+	}
+	if( work.color.size() != 0 )
+		for(size_t j = 0; j < n; j++) CPPAD_ASSERT_KNOWN(
+			work.color[j] < n,
+			"SparseHessian: invalid value in work."
+	);
+# endif
+ 
+	typedef typename VectorSet::value_type Set_type;
+	size_t n_sweep = SparseHessianCase(Set_type(), x, w, p, hes, work);
+	return n_sweep;
+}
 /*!
 Compute a sparse Hessian.
 
 The C++ source code coresponding to this operation is
 \verbatim
-	hes = SparseHessian(x, w)
+	hes = SparseHessian(x, w, p)
 \endverbatim
 
 
@@ -751,9 +998,6 @@ VectorBase ADFun<Base>::SparseHessian(
 
 	return hes;
 }
-// ===========================================================================
-// Public Member Functions
-// ===========================================================================
 /*!
 Compute a sparse Hessian
 
