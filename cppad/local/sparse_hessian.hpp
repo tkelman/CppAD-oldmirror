@@ -411,6 +411,79 @@ size_t ADFun<Base>::SparseHessianCompute(
 	return n_sweep;
 }
 // ===========================================================================
+template <class Base>
+template <class VectorBase, class VectorSet>
+size_t ADFun<Base>::SparseHessianCase(
+	bool                  set_type  ,
+	const VectorBase&     x         ,
+	const VectorBase&     w         ,
+	const VectorSet&      p         ,
+	VectorBase&           hes       ,
+	sparse_hessian_work&  work      )
+{
+	size_t n = Domain();
+
+	// check VectorSet is Simple Vector class with bool elements
+	CheckSimpleVector<bool, VectorSet>();
+
+	// check VectorBase is Simple Vector class with Base type elements
+	CheckSimpleVector<Base, VectorBase>();
+
+	CPPAD_ASSERT_UNKNOWN( x.size() == n );
+	CPPAD_ASSERT_UNKNOWN( w.size() == Range() );
+	CPPAD_ASSERT_KNOWN(
+		p.size() == n * n,
+		"SparseHessian: using bool values for sparsity and p.size() "
+		"not equal square of domain dimension for f"
+	);
+ 
+	sparse_pack sparsity;
+	bool transpose = false;
+	vec_bool_to_sparse_pack(sparsity, p, n, n, transpose);
+	
+	// compute the Hessian
+	size_t n_sweep = SparseHessianCompute(x, w, sparsity, hes, work);
+
+	return n_sweep;
+}
+template <class Base>
+template <class VectorBase, class VectorSet>
+size_t ADFun<Base>::SparseHessianCase(
+	const std::set<size_t>&     set_type  ,
+	const VectorBase&           x         ,
+	const VectorBase&           w         ,
+	const VectorSet&            p         ,
+	VectorBase&                 hes       ,
+	sparse_hessian_work&        work      )
+{
+	size_t n = Domain();
+
+	// check VectorSet is Simple Vector class with std::set<size_t> elements
+	CheckSimpleVector<std::set<size_t>, VectorSet>(
+		one_element_std_set<size_t>(), two_element_std_set<size_t>()
+	);
+
+	// check VectorBase is Simple Vector class with Base type elements
+	CheckSimpleVector<Base, VectorBase>();
+
+	CPPAD_ASSERT_UNKNOWN( x.size() == n );
+	CPPAD_ASSERT_UNKNOWN( w.size() == Range() );
+	CPPAD_ASSERT_KNOWN(
+		p.size() == n,
+		"SparseHessian: using std::set<size_t> for sparsity and p.size() "
+		"not equal domain dimension for f"
+	);
+ 
+	sparse_set sparsity;
+	bool transpose = false;
+	vec_set_to_sparse_set(sparsity, p, n, n, transpose);
+	
+	// compute the Hessian
+	size_t n_sweep = SparseHessianCompute(x, w, sparsity, hes, work);
+
+	return n_sweep;
+}
+// ===========================================================================
 /*!
 Private helper function for SparseHessian(x, w, p).
 
@@ -496,12 +569,16 @@ void ADFun<Base>::SparseHessianCase(
 	}
 	r[K] = n;
  
+# if 0
 	sparse_pack sparsity;
 	bool transpose = false;
 	vec_bool_to_sparse_pack(sparsity, p, n, n, transpose);
 	
 	// compute the Hessian
 	SparseHessianCompute(x, w, sparsity, H, work);
+# else
+	SparseHessianCase(set_type, x, w, p, H, work);
+# endif
 
 	Base zero(0);
 	for(i = 0; i < n; i++)
@@ -604,12 +681,16 @@ void ADFun<Base>::SparseHessianCase(
 	}
 	r[K] = n;
  
+# if 0
 	sparse_set sparsity;
 	bool transpose = false;
 	vec_set_to_sparse_set(sparsity, p, n, n, transpose);
 	
 	// compute the Hessian
 	SparseHessianCompute(x, w, sparsity, H, work);
+# else
+	SparseHessianCase(set_type, x, w, p, H, work);
+# endif
 
 	Base zero(0);
 	for(i = 0; i < n; i++)
