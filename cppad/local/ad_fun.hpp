@@ -235,6 +235,16 @@ private:
 		VectorBase&              jac
 	);
 	// ------------------------------------------------------------
+	// combined sparse_set and sparse_pack version of SparseHessian
+	// (see doxygen in sparse_hessian.hpp)
+	template <class VectorBase, class VectorSet>
+	size_t SparseHessianCompute(
+		const VectorBase&        x           ,
+		const VectorBase&        w           ,
+		VectorSet&               sparsity    ,
+		VectorBase&              hes         ,
+		sparse_hessian_work&     work
+	);
 	// vector of bool version of SparseHessian
 	// (see doxygen in sparse_hessian.hpp)
 	template <class VectorBase, class VectorSet>
