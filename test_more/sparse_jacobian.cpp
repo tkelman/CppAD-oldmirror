@@ -17,7 +17,7 @@ Old sparse Jacobian example
 # include <cppad/cppad.hpp>
 namespace { // ---------------------------------------------------------
 
-bool rc_bidiagonal(void)
+bool rc_tridiagonal(void)
 {	bool ok = true;
 	using CppAD::AD;
 	using CppAD::NearEqual;
@@ -554,7 +554,7 @@ bool multiple_of_n_bit(void)
 # include <valarray>
 bool sparse_jacobian(void)
 {	bool ok = true;
-	ok &= rc_bidiagonal();
+	ok &= rc_tridiagonal();
 	ok &= multiple_of_n_bit();
 	// ---------------------------------------------------------------
 	// vector of bool cases
