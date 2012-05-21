@@ -301,6 +301,11 @@ is either \c sparse_pack or \c sparse_set.
 \param x
 See \c SparseJacobianForward(x, p, r, c, jac, work).
 
+\param p
+Sparsity pattern for the Jacobian of this ADFun<Base> object.
+Note that we do not change the values in \c p_transpose,
+but is not \c const because we use its iterator facility.
+
 \param p_transpose
 Sparsity pattern for the transpose of the Jacobian of this ADFun<Base> object.
 Note that we do not change the values in \c p_transpose,
@@ -318,10 +323,11 @@ See \c SparseJacobianForward(x, p, r, c, jac, work).
 template<class Base>
 template <class VectorBase, class VectorSet>
 size_t ADFun<Base>::SparseJacobianFor(
-	const VectorBase&     x               ,
-	VectorSet&            p_transpose     ,
-	VectorBase&           jac             ,
-	sparse_jacobian_work& work            )
+	const VectorBase&     x           ,
+	VectorSet&            p           ,
+	VectorSet&            p_transpose ,
+	VectorBase&           jac         ,
+	sparse_jacobian_work& work        )
 {
 	using   CppAD::vectorBool;
 	size_t i, j, k, ell;
@@ -342,6 +348,8 @@ size_t ADFun<Base>::SparseJacobianFor(
 	CheckSimpleVector<Base, VectorBase>();
 
 	CPPAD_ASSERT_UNKNOWN( x.size() == n );
+	CPPAD_ASSERT_UNKNOWN( p.n_set() ==  m );
+	CPPAD_ASSERT_UNKNOWN( p.end() ==  n );
 	CPPAD_ASSERT_UNKNOWN( p_transpose.n_set() ==  n );
 	CPPAD_ASSERT_UNKNOWN( p_transpose.end() ==  m );
 
@@ -354,15 +362,17 @@ size_t ADFun<Base>::SparseJacobianFor(
 	// Point at which we are evaluating the Jacobian
 	Forward(0, x);
 
-	// mapping from row number to set of columns required
-	VectorSet require;
-	require.resize(m, n);
+	// rows and columns that are in the returned jacobian
+	VectorSet r_used, c_used;
+	r_used.resize(n, m);
+	c_used.resize(m, n);
 	k = 0;
 	while( k < K )
-	{	require.add_element(r[k], c[k]);
-		CPPAD_ASSERT_UNKNOWN( r[k] < m && c[k] < n );
+	{	CPPAD_ASSERT_UNKNOWN( r[k] < m && c[k] < n );
+		CPPAD_ASSERT_UNKNOWN( k == 0 || c[k-1] <= c[k] );
+		r_used.add_element(c[k], r[k]);
+		c_used.add_element(r[k], c[k]);
 		k++;
-		CPPAD_ASSERT_UNKNOWN( k == K || c[k-1] <= c[k] );
 	}
 
 	if( color.size() == 0 )
@@ -386,17 +396,35 @@ size_t ADFun<Base>::SparseJacobianFor(
 			p_transpose.begin(j);
 			i = p_transpose.next_element();
 			while( i != p_transpose.end() )
-			{	// for each column that we require a value for this row
-				require.begin(i);
-				ell = require.next_element();
-				while( ell != require.end() )
+			{	// for each column that this row uses
+				c_used.begin(i);
+				ell = c_used.next_element();
+				while( ell != c_used.end() )
 				{	// if this is not the same column, forbid its color
 					if( ell < j )
 						forbidden[ color[ell] ] = true;
-					ell = require.next_element();
+					ell = c_used.next_element();
 				}
 				i = p_transpose.next_element();
 			}
+	
+			// for each row that this column uses
+			r_used.begin(j);
+			i = r_used.next_element();
+			while( i != r_used.end() )
+			{	// for each column that is non-zero for this row
+				p.begin(i);
+				ell = p.next_element();
+				while( ell != p.end() )
+				{	// if this is not the same column, forbid its color
+					if( ell < j )
+						forbidden[ color[ell] ] = true;
+					ell = p.next_element();
+				}
+				i = r_used.next_element();
+			}
+
+			// pick the color with smallest index
 			ell = 0;
 			while( forbidden[ell] )
 			{	ell++;
@@ -478,6 +506,11 @@ Sparsity pattern for the Jacobian of this ADFun<Base> object.
 Note that we do not change the values in \c p_transpose,
 but is not \c const because we use its iterator facility.
 
+\param p_transpose
+Sparsity pattern for the transpose of the Jacobian of this ADFun<Base> object.
+Note that we do not change the values in \c p_transpose,
+but is not \c const because we use its iterator facility.
+
 \param jac
 See \c SparseJacobianForward(x, p, r, c, jac, work).
 
@@ -490,10 +523,11 @@ See \c SparseJacobianForward(x, p, r, c, jac, work).
 template<class Base>
 template <class VectorBase, class VectorSet>
 size_t ADFun<Base>::SparseJacobianRev(
-	const VectorBase&     x        ,
-	VectorSet&            p        ,
-	VectorBase&           jac      ,
-	sparse_jacobian_work& work     )
+	const VectorBase&     x           ,
+	VectorSet&            p           ,
+	VectorSet&            p_transpose ,
+	VectorBase&           jac         ,
+	sparse_jacobian_work& work        )
 {
 	using   CppAD::vectorBool;
 	size_t i, j, k, ell;
@@ -516,6 +550,8 @@ size_t ADFun<Base>::SparseJacobianRev(
 	CPPAD_ASSERT_UNKNOWN( x.size() == n );
 	CPPAD_ASSERT_UNKNOWN( p.n_set() ==  m );
 	CPPAD_ASSERT_UNKNOWN( p.end() ==  n );
+	CPPAD_ASSERT_UNKNOWN( p_transpose.n_set() ==  n );
+	CPPAD_ASSERT_UNKNOWN( p_transpose.end() ==  m );
 
 	// number of components of Jacobian that are required
 	size_t K = jac.size();
@@ -526,15 +562,17 @@ size_t ADFun<Base>::SparseJacobianRev(
 	// Point at which we are evaluating the Jacobian
 	Forward(0, x);
 
-	// mapping from column number to set of rows required
-	VectorSet require;
-	require.resize(n, m);
+	// rows and columns that are in the returned jacobian
+	VectorSet r_used, c_used;
+	r_used.resize(n, m);
+	c_used.resize(m, n);
 	k = 0;
 	while( k < K )
-	{	require.add_element(c[k], r[k]);
-		CPPAD_ASSERT_UNKNOWN( r[k] < m && c[k] < n );
+	{	CPPAD_ASSERT_UNKNOWN( r[k] < m && c[k] < n );
+		CPPAD_ASSERT_UNKNOWN( k == 0 || r[k-1] <= r[k] );
+		r_used.add_element(c[k], r[k]);
+		c_used.add_element(r[k], c[k]);
 		k++;
-		CPPAD_ASSERT_UNKNOWN( k == K || r[k-1] <= r[k] );
 	}
 
 	if( color.size() == 0 )
@@ -558,17 +596,36 @@ size_t ADFun<Base>::SparseJacobianRev(
 			p.begin(i);
 			j = p.next_element();
 			while( j != p.end() )
-			{	// for each row that we require a value for this column
-				require.begin(j);
-				ell = require.next_element();
-				while( ell != require.end() )
+			{	// for each row that this column uses
+				r_used.begin(j);
+				ell = r_used.next_element();
+				while( ell != r_used.end() )
 				{	// if this is not the same row, forbid its color 
 					if( ell < i )
 						forbidden[ color[ell] ] = true;
-					ell = require.next_element();
+					ell = r_used.next_element();
 				}
 				j = p.next_element();
 			}
+
+	
+			// for each column that this row uses
+			c_used.begin(i);
+			j = c_used.next_element();
+			while( j != c_used.end() )
+			{	// for each row that is non-zero for this column
+				p_transpose.begin(j);
+				ell = p_transpose.next_element();
+				while( ell != p_transpose.end() )
+				{	// if this is not the same row, forbid its color 
+					if( ell < i )
+						forbidden[ color[ell] ] = true;
+					ell = p_transpose.next_element();
+				}
+				j = c_used.next_element();
+			}
+
+			// pick the color with smallest index
 			ell = 0;
 			while( forbidden[ell] )
 			{	ell++;
@@ -694,12 +751,14 @@ size_t ADFun<Base>::SparseJacobianCase(
 
 		// convert the sparsity pattern to a sparse_pack object
 		// so can fold vector of bools and vector of sets into same function
-		sparse_pack sparsity;
-		bool transpose = true;
-		vec_bool_to_sparse_pack(sparsity, p, m, n, transpose);
+		sparse_pack s, s_transpose;
+		bool transpose = false;
+		vec_bool_to_sparse_pack(s, p, m, n, transpose);
+		transpose      = true;
+		vec_bool_to_sparse_pack(s_transpose, p, m, n, transpose);
 	
 		// now we have folded this into the following case
-		n_sweep = SparseJacobianFor(x, sparsity, jac, work);
+		n_sweep = SparseJacobianFor(x, s, s_transpose, jac, work);
 	}
 	else
 	{	// column major, use reverse mode --------------------------------
@@ -709,12 +768,14 @@ size_t ADFun<Base>::SparseJacobianCase(
 
 		// convert the sparsity pattern to a sparse_pack object
 		// so can fold vector of bools and vector of sets into same function
-		sparse_pack sparsity;
+		sparse_pack s, s_transpose;
 		bool transpose = false;
-		vec_bool_to_sparse_pack(sparsity, p, m, n, transpose);
+		vec_bool_to_sparse_pack(s, p, m, n, transpose);
+		transpose      = true;
+		vec_bool_to_sparse_pack(s_transpose, p, m, n, transpose);
 	
 		// now we have folded this into the following case
-		n_sweep = SparseJacobianRev(x, sparsity, jac, work);
+		n_sweep = SparseJacobianRev(x, s, s_transpose, jac, work);
 	}
 	return n_sweep;
 }
@@ -783,12 +844,14 @@ size_t ADFun<Base>::SparseJacobianCase(
 
 		// convert the sparsity pattern to a sparse_pack object
 		// so can fold vector of bools and vector of sets into same function
-		sparse_set sparsity;
-		bool transpose = true;
-		vec_set_to_sparse_set(sparsity, p, m, n, transpose);
+		sparse_set s, s_transpose;
+		bool transpose = false;
+		vec_set_to_sparse_set(s, p, m, n, transpose);
+		transpose      = true;
+		vec_set_to_sparse_set(s_transpose, p, m, n, transpose);
 	
 		// now we have folded this into the following case
-		n_sweep = SparseJacobianFor(x, sparsity, jac, work);
+		n_sweep = SparseJacobianFor(x, s, s_transpose, jac, work);
 	}
 	else
 	{	// column major, use reverse mode -----------------------------------
@@ -798,12 +861,14 @@ size_t ADFun<Base>::SparseJacobianCase(
 
 		// convert the sparsity pattern to a sparse_pack object
 		// so can fold vector of bools and vector of sets into same function
-		sparse_set sparsity;
+		sparse_set s, s_transpose;
 		bool transpose = false;
-		vec_set_to_sparse_set(sparsity, p, m, n, transpose);
+		vec_set_to_sparse_set(s, p, m, n, transpose);
+		transpose      = true;
+		vec_set_to_sparse_set(s_transpose, p, m, n, transpose);
 	
 		// now we have folded this into the following case
-		n_sweep = SparseJacobianRev(x, sparsity, jac, work);
+		n_sweep = SparseJacobianRev(x, s, s_transpose, jac, work);
 	}
 	return n_sweep;
 }
@@ -891,12 +956,14 @@ void ADFun<Base>::SparseJacobianCase(
 
 		// convert transposed sparsity pattern to a sparse_pack object
 		// so can fold vector of bools and vector of sets into same function
-		sparse_pack sparsity;
-		bool transpose = true;
-		vec_bool_to_sparse_pack(sparsity, p, m, n, transpose);
+		sparse_pack s, s_transpose;
+		bool transpose = false;
+		vec_bool_to_sparse_pack(s, p, m, n, transpose);
+		transpose      = true;
+		vec_bool_to_sparse_pack(s_transpose, p, m, n, transpose);
 	
 		// now we have folded this into the following case
-		SparseJacobianFor(x, sparsity, J, work);
+		SparseJacobianFor(x, s, s_transpose, J, work);
 	}
 	else
 	{	// reverse mode, rows are sorted
@@ -916,12 +983,14 @@ void ADFun<Base>::SparseJacobianCase(
 
 		// convert the sparsity pattern to a sparse_pack object
 		// so can fold vector of bools and vector of sets into same function
-		sparse_pack sparsity;
+		sparse_pack s, s_transpose;
 		bool transpose = false;
-		vec_bool_to_sparse_pack(sparsity, p, m, n, transpose);
+		vec_bool_to_sparse_pack(s, p, m, n, transpose);
+		transpose      = true;
+		vec_bool_to_sparse_pack(s_transpose, p, m, n, transpose);
 	
 		// now we have folded this into the following case
-		SparseJacobianRev(x, sparsity, J, work);
+		SparseJacobianRev(x, s, s_transpose, J, work);
 	}
 	// initialize the return value
 	for(i = 0; i < m; i++)
@@ -1008,27 +1077,29 @@ void ADFun<Base>::SparseJacobianCase(
 	{	// forward mode, columns are sorted
 		r.resize(K); c.resize(K+1); user_k.resize(K);
 
-		// need a pack_set transposed copy of the sparsity pattern.
-		sparse_set sparsity;
-		bool transpose = true;
-		vec_set_to_sparse_set(sparsity, p, m, n, transpose);
+		// need a pack_set copies
+		sparse_set s, s_transpose;
+		bool transpose = false;
+		vec_set_to_sparse_set(s, p, m, n, transpose);
+		transpose      = true;
+		vec_set_to_sparse_set(s_transpose, p, m, n, transpose);
 
 		k = 0;
 		for(j = 0; j < n; j++)
-		{	sparsity.begin(j);
-			i = sparsity.next_element();
-			while( i != sparsity.end() )
+		{	s_transpose.begin(j);
+			i = s_transpose.next_element();
+			while( i != s_transpose.end() )
 			{	r[k]      = i;
 				c[k]      = j;
 				user_k[k] = k;
 				k++;
-				i    = sparsity.next_element();
+				i    = s_transpose.next_element();
 			}
 		} 
 		c[K] = n;
 	
 		// now we have folded this into the following case
-		SparseJacobianFor(x, sparsity, J, work);
+		SparseJacobianFor(x, s, s_transpose, J, work);
 	}
 	else
 	{	// reverse mode, rows are sorted
@@ -1047,12 +1118,14 @@ void ADFun<Base>::SparseJacobianCase(
 		r[K] = m;
 
 		// need a pack_set copy of sparsity pattern
-		sparse_set sparsity;
+		sparse_set s, s_transpose;
 		bool transpose = false;
-		vec_set_to_sparse_set(sparsity, p, m, n, transpose);
+		vec_set_to_sparse_set(s, p, m, n, transpose);
+		transpose      = true;
+		vec_set_to_sparse_set(s_transpose, p, m, n, transpose);
 
 		// now we have folded this into the following case
-		SparseJacobianRev(x, sparsity, J, work);
+		SparseJacobianRev(x, s, s_transpose, J, work);
 	}
 	// initialize the return value
 	for(i = 0; i < m; i++)
