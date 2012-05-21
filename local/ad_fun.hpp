@@ -182,7 +182,6 @@ private:
 	template <class VectorBase, class VectorSet>
 	size_t SparseJacobianFor(
 		const VectorBase&     x               ,
-		VectorSet&            p               ,
 		VectorSet&            p_transpose     ,
 		VectorBase&           jac             ,
 		sparse_jacobian_work& work
@@ -193,7 +192,6 @@ private:
 	size_t SparseJacobianRev(
 		const VectorBase&     x               ,
 		VectorSet&            p               ,
-		VectorSet&            p_transpose     ,
 		VectorBase&           jac             ,
 		sparse_jacobian_work& work
 	);

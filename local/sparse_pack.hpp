@@ -131,6 +131,29 @@ public:
 		data_[ index * n_pack_ + j] |= mask;
 	}
 	// -----------------------------------------------------------------
+	/*! Is an element of a set.
+
+	\param index
+	is the index for this set in the vector of sets.
+
+	\param element
+	is the element we are checking to see if it is in the set.
+
+	\par Checked Assertions
+	\li index    < n_set_
+	\li element  < end_
+	*/
+	bool is_element(size_t index, size_t element)
+	{	static Pack one(1);
+		static Pack zero(0);
+		CPPAD_ASSERT_UNKNOWN( index   < n_set_ );
+		CPPAD_ASSERT_UNKNOWN( element < end_ );
+		size_t j  = element / n_bit_;
+		size_t k  = element - j * n_bit_;
+		Pack mask = one << k;
+		return (data_[ index * n_pack_ + j] & mask) != zero;
+	}
+	// -----------------------------------------------------------------
 	/*! Begin retrieving elements from one of the sets.
 	
 	\param index
