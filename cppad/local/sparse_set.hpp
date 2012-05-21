@@ -118,6 +118,29 @@ public:
 		data_[ index ].insert( element );
 	}
 	// -----------------------------------------------------------------
+	/*! Is an element of a set.
+
+	\param index
+	is the index for this set in the vector of sets.
+
+	\param element
+	is the element we are adding to the set.
+
+	\par Checked Assertions
+	\li index    < n_set_
+	\li element  < end_
+	*/
+	bool is_element(size_t index, size_t element)
+	{	// This routine should use the std::insert operator
+		// that cashes the iterator of previous insertion for when
+		// insertions occur in order. We should speed test that this
+		// actually makes things faster.
+		CPPAD_ASSERT_UNKNOWN( index   < n_set_ );
+		CPPAD_ASSERT_UNKNOWN( element < end_ );
+		std::set<size_t>::iterator itr = data_[ index ].find( element );
+		return itr != data_[index].end();
+	}
+	// -----------------------------------------------------------------
 	/*! Begin retrieving elements from one of the sets.
 	
 	\param index
