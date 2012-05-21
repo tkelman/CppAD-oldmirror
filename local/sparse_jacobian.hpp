@@ -633,7 +633,7 @@ size_t ADFun<Base>::SparseJacobianRev(
 
 	
 			// -----------------------------------------------------
-			// Forbid colors that would destroy resultes for this row.
+			// Forbid colors that would destroy results for this row.
 			// for each column that this row uses
 			c_used.begin(i);
 			j = c_used.next_element();
