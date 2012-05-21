@@ -181,18 +181,20 @@ private:
 	// (see doxygen in sparse_jacobian.hpp)
 	template <class VectorBase, class VectorSet>
 	size_t SparseJacobianFor(
-		const VectorBase&     x     ,
-		VectorSet&            p     ,
-		VectorBase&           jac   ,
+		const VectorBase&     x               ,
+		VectorSet&            p               ,
+		VectorSet&            p_transpose     ,
+		VectorBase&           jac             ,
 		sparse_jacobian_work& work
 	);
 	// Reverse mode version of SparseJacobian
 	// (see doxygen in sparse_jacobian.hpp)
 	template <class VectorBase, class VectorSet>
 	size_t SparseJacobianRev(
-		const VectorBase&     x     ,
-		VectorSet&            p     ,
-		VectorBase&           jac   ,
+		const VectorBase&     x               ,
+		VectorSet&            p               ,
+		VectorSet&            p_transpose     ,
+		VectorBase&           jac             ,
 		sparse_jacobian_work& work
 	);
 	// ------------------------------------------------------------

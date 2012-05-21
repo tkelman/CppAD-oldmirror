@@ -330,15 +330,17 @@ size_t ADFun<Base>::SparseHessianCompute(
 	// Rows of the Hessian (i below) correspond to the forward mode index
 	// and columns (j below) correspond to the reverse mode index.
 
-	// mapping from column number to set of rows required
-	VectorSet require;
-	require.resize(n, n);
+	// rows and columns that are in the returned hessian
+	VectorSet r_used, c_used;
+	r_used.resize(n, n);
+	c_used.resize(n, n);
 	k = 0;
 	while( k < K )
-	{	require.add_element(c[k], r[k]);
-		CPPAD_ASSERT_UNKNOWN( r[k] < n && c[k] < n );
+	{	CPPAD_ASSERT_UNKNOWN( r[k] < n && c[k] < n );
+		CPPAD_ASSERT_UNKNOWN( k == 0 || r[k-1] <= r[k] );
+		r_used.add_element(c[k], r[k]);
+		c_used.add_element(r[k], c[k]);
 		k++;
-		CPPAD_ASSERT_UNKNOWN( k == K || r[k-1] <= r[k] );
 	}
 
 	if( color.size() == 0 )
@@ -362,17 +364,36 @@ size_t ADFun<Base>::SparseHessianCompute(
 			sparsity.begin(i);
 			j = sparsity.next_element();
 			while( j != sparsity.end() )
-			{	// for each row  that we require a value for this column
-				require.begin(j);
-				ell = require.next_element();
-				while( ell != require.end() )
+			{	// for each row that this column uses
+				r_used.begin(j);
+				ell = r_used.next_element();
+				while( ell != r_used.end() )
 				{	// if this is not the same row, forbid its color
 					if( ell < i )
 						forbidden[ color[ell] ] = true;
-					ell = require.next_element();
+					ell = r_used.next_element();
 				}
 				j = sparsity.next_element();
 			}
+	
+			// for each column that this row used
+			c_used.begin(i);
+			j = c_used.next_element();
+			while( j != c_used.end() )
+			{	// for each row that is non-zero for this column
+				// (note that for a Hessian, sparsity is symmetric)
+				sparsity.begin(j);
+				ell = sparsity.next_element();
+				while( ell != sparsity.end() )
+				{	// if this is not the same row, forbid its color
+					if( ell < i )
+						forbidden[ color[ell] ] = true;
+					ell = sparsity.next_element();
+				}
+				j = c_used.next_element();
+			}
+
+			// pick the color with the smallest index
 			ell = 0;
 			while( forbidden[ell] )
 			{	ell++;
