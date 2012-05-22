@@ -551,8 +551,10 @@ size_t ADFun<Base>::SparseHessianCase(
 	);
  
 	sparse_pack sparsity;
-	bool transpose = false;
-	vec_bool_to_sparse_pack(sparsity, p, n, n, transpose);
+	if( work.color.size() == 0 )
+	{	bool transpose = false;
+		vec_bool_to_sparse_pack(sparsity, p, n, n, transpose);
+	}
 	
 	// compute the Hessian
 	size_t n_sweep = SparseHessianCompute(x, w, sparsity, hes, work);
@@ -621,8 +623,10 @@ size_t ADFun<Base>::SparseHessianCase(
 	);
  
 	sparse_set sparsity;
-	bool transpose = false;
-	vec_set_to_sparse_set(sparsity, p, n, n, transpose);
+	if( work.color.size() == 0 )
+	{	bool transpose = false;
+		vec_set_to_sparse_set(sparsity, p, n, n, transpose);
+	}
 	
 	// compute the Hessian
 	size_t n_sweep = SparseHessianCompute(x, w, sparsity, hes, work);
