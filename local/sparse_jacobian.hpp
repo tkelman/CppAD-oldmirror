@@ -170,7 +170,7 @@ $codei%
 	size_t %n_sweep%
 %$$
 If $code SparseJacobianForward$$ ($code SparseJacobianReverse$$) is used, 
-$icode n_sweep$$ is the number of firsr order forward (reverse) sweeps 
+$icode n_sweep$$ is the number of first order forward (reverse) sweeps 
 used to compute the requested Jacobian values. 
 This is proportional to the total work that $code SparseJacobian$$ does, 
 not counting the zero order forward sweep, 
