@@ -45,7 +45,7 @@ bool sparse_hessian(void)
 	double eps = 10. * CppAD::epsilon<double>();
 
 	// domain space vector
-	size_t n = 3;
+	size_t n = 12;  // must be greater than or equal 3; see n_sweep below
 	a_vector a_x(n);
 	for(j = 0; j < n; j++)
 		a_x[j] = AD<double> (0);
@@ -53,33 +53,43 @@ bool sparse_hessian(void)
 	// declare independent variables and starting recording
 	CppAD::Independent(a_x);
 
+	// range space vector
 	size_t m = 1;
 	a_vector a_y(m);
-	a_y[0] = a_x[0]*a_x[0] + a_x[0]*a_x[1] + a_x[1]*a_x[1] + a_x[2]*a_x[2];
+	a_y[0] = a_x[0]*a_x[1];
+	for(j = 0; j < n; j++)
+		a_y[0] += a_x[j] * a_x[j] * a_x[j];
 
 	// create f: x -> y and stop tape recording
-	CppAD::ADFun<double> f(a_x, a_y);
+	// (without executing zero order forward calculation)
+	CppAD::ADFun<double> f;
+	f.Dependent(a_x, a_y);
 
-	// new value for the independent variable vector
-	d_vector x(n);
+	// new value for the independent variable vector, and weighting vector
+	d_vector w(m), x(n);
 	for(j = 0; j < n; j++)
 		x[j] = double(j);
+	w[0] = 1.0;
+
+	// vector used to check the value of the hessian
+	d_vector check(n * n);
+	for(ell = 0; ell < n * n; ell++)
+		check[ell] = 0.0;
+	ell        = 0 * n + 1;
+	check[ell] = 1.0;
+	ell        = 1 * n + 0;
+	check[ell] = 1.0 ;
+	for(j = 0; j < n; j++)
+	{	ell = j * n + j;
+		check[ell] = 6.0 * x[j];
+	}
 
 	// -------------------------------------------------------------------
 	// second derivative of y[0] w.r.t x
-	d_vector w(m), h(n * n), check(n * n);
-	w[0] = 1.;
-	h = f.SparseHessian(x, w);
-	/*
-	    [ 2 1 0 ]
-	h = [ 1 2 0 ]
-	    [ 0 0 2 ]
-	*/
-	check[0] = 2.; check[1] = 1.; check[2] = 0.;
-	check[3] = 1.; check[4] = 2.; check[5] = 0.;
-	check[6] = 0.; check[7] = 0.; check[8] = 2.;
-	for(k = 0; k < n * n; k++)
-		ok &=  NearEqual(check[k], h[k], eps, eps );
+	d_vector hes(n * n);
+	hes = f.SparseHessian(x, w);
+	for(ell = 0; ell < n * n; ell++)
+		ok &=  NearEqual(w[0] * check[ell], hes[ell], eps, eps );
 
 	// --------------------------------------------------------------------
 	// example using vectors of bools to compute sparsity pattern for Hessian
@@ -96,10 +106,9 @@ bool sparse_hessian(void)
 		s_bool[i] = w[i] != 0;
 	b_vector p_bool = f.RevSparseHes(n, s_bool);
 
-	// example passing sparsity pattern to SparseHessian
-	h = f.SparseHessian(x, w, p_bool);
+	hes = f.SparseHessian(x, w, p_bool);
 	for(ell = 0; ell < n * n; ell++)
-		ok &=  NearEqual(check[ell], h[ell], eps, eps );
+		ok &=  NearEqual(w[0] * check[ell], hes[ell], eps, eps );
 
 	// --------------------------------------------------------------------
 	// example using vectors of sets to compute sparsity pattern for Hessian
@@ -115,32 +124,51 @@ bool sparse_hessian(void)
 	s_vector p_set = f.RevSparseHes(n, s_set);
 
 	// example passing sparsity pattern to SparseHessian
-	h = f.SparseHessian(x, w, p_set);
+	hes = f.SparseHessian(x, w, p_set);
 	for(ell = 0; ell < n * n; ell++)
-		ok &=  NearEqual(check[ell], h[ell], 1e-10, 1e-10 );
+		ok &=  NearEqual(w[0] * check[ell], hes[ell], eps, eps );
 
 	// --------------------------------------------------------------------
-	// use row and column indices to specify upper triangle of Hessian
-	size_t K = n * (n + 1) / 2.0;
+	// use row and column indices to specify upper triangle of
+	// non-zero elements of Hessian
+	size_t K = n + 1;
 	i_vector r(K), c(K);
-	d_vector hes(K);
+	hes.resize(K);
 	k = 0;
-	for(i = 0; i < n; i++)
-	{	for(j = i; j < n; j++)
-		{	r[k] = i;
-			c[k] = j;
-			k++;
-		}
+	for(j = 0; j < n; j++)
+	{	// diagonal of Hessian
+		r[k] = j;
+		c[k] = j;
+		k++;
 	}
+	// only off diagonal non-zero elemenet in upper triangle
+	r[k] = 0;
+	c[k] = 1;
+	k++;
 	ok &= k == K;
 	CppAD::sparse_hessian_work work;
 
 	// can use p_set or p_bool.
-	f.SparseHessian(x, w, p_set, r, c, hes, work);
+	size_t n_sweep = f.SparseHessian(x, w, p_set, r, c, hes, work);
 	for(k = 0; k < K; k++)
 	{	ell = r[k] * n + c[k];
-		ok &=  NearEqual(check[ell], hes[k], eps, eps );
+		ok &=  NearEqual(w[0] * check[ell], hes[k], eps, eps );
 	}
+	ok &= n_sweep == 2;
+
+	// now recompute at a different x and w (using work from previous call
+	w[0]       = 2.0;
+	x[1]       = 0.5;
+	ell        = 1 * n + 1;
+	check[ell] = 6.0 * x[1];
+	n_sweep    = f.SparseHessian(x, w, p_set, r, c, hes, work);
+	for(k = 0; k < K; k++)
+	{	ell = r[k] * n + c[k];
+		ok &=  NearEqual(w[0] * check[ell], hes[k], eps, eps );
+	}
+	ok &= n_sweep == 2;
+	
+
 
 	return ok;
 }
