@@ -119,6 +119,9 @@ which must also equal the size of $icode r$$ and $icode c$$.
 Furthermore,
 for $latex k = 0 , \ldots , K-1$$, it must hold that
 $latex r[k] < m$$ and $latex c[k] < n$$.
+In addition, 
+all of the $latex (r[k], c[k])$$ pairs must correspond to a true value
+in the sparsity pattern $icode p$$.
 
 $head jac$$
 The result $icode jac$$ has prototype
@@ -369,6 +372,11 @@ size_t ADFun<Base>::SparseJacobianFor(
 		while( k < K )
 		{	CPPAD_ASSERT_UNKNOWN( r[k] < m && c[k] < n );
 			CPPAD_ASSERT_UNKNOWN( k == 0 || c[k-1] <= c[k] );
+			CPPAD_ASSERT_KNOWN(
+				p_transpose.is_element(c[k], r[k]) ,
+				"SparseJacobianForward: "
+				"an (r,c) pair is not in sparsity pattern."
+			);
 			r_used.add_element(c[k], r[k]);
 			c_used.add_element(r[k], c[k]);
 			k++;
@@ -579,6 +587,11 @@ size_t ADFun<Base>::SparseJacobianRev(
 		while( k < K )
 		{	CPPAD_ASSERT_UNKNOWN( r[k] < m && c[k] < n );
 			CPPAD_ASSERT_UNKNOWN( k == 0 || r[k-1] <= r[k] );
+			CPPAD_ASSERT_KNOWN(
+				p.is_element(r[k], c[k]) ,
+				"SparseJacobianReverse: "
+				"an (r,c) pair is not in sparsity pattern."
+			);
 			r_used.add_element(c[k], r[k]);
 			c_used.add_element(r[k], c[k]);
 			k++;
