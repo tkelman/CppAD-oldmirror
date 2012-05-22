@@ -284,6 +284,9 @@ is either \c sparse_pack or \c sparse_set.
 \param x
 See \c SparseHessian(x, w, p, r, c, hes, work).
 
+\param w
+See \c SparseHessian(x, w, p, r, c, hes, work).
+
 \param sparsity
 If <code>work.color.size() != 0</code>, then \c sparsity is not used.
 Otherwise, it is a 
@@ -506,6 +509,9 @@ has element type for vector representing the sparsity sets.
 \param x
 See \c SparseHessian(x, w, p, r, c, hes, work).
 
+\param w
+See \c SparseHessian(x, w, p, r, c, hes, work).
+
 \param p
 Sparsity pattern for the Hessian of this ADFun<Base> object.
 
@@ -569,6 +575,9 @@ is a simple vector with elements of type <code>std::set<size_t></code>.
 has element type for vector representing the sparsity sets.
 
 \param x
+See \c SparseHessian(x, w, p, r, c, hes, work).
+
+\param w
 See \c SparseHessian(x, w, p, r, c, hes, work).
 
 \param p
@@ -706,16 +715,7 @@ void ADFun<Base>::SparseHessianCase(
 	}
 	r[K] = n;
  
-# if 0
-	sparse_pack sparsity;
-	bool transpose = false;
-	vec_bool_to_sparse_pack(sparsity, p, n, n, transpose);
-	
-	// compute the Hessian
-	SparseHessianCompute(x, w, sparsity, H, work);
-# else
 	SparseHessianCase(set_type, x, w, p, H, work);
-# endif
 
 	Base zero(0);
 	for(i = 0; i < n; i++)
@@ -817,16 +817,7 @@ void ADFun<Base>::SparseHessianCase(
 	}
 	r[K] = n;
  
-# if 0
-	sparse_set sparsity;
-	bool transpose = false;
-	vec_set_to_sparse_set(sparsity, p, n, n, transpose);
-	
-	// compute the Hessian
-	SparseHessianCompute(x, w, sparsity, H, work);
-# else
 	SparseHessianCase(set_type, x, w, p, H, work);
-# endif
 
 	Base zero(0);
 	for(i = 0; i < n; i++)
@@ -882,8 +873,8 @@ It must have the same size are r.
 is the vector of Hessian values.
 It must have the same size are r. 
 The return value <code>hes[k]</code> is the second partial of 
-$latex w^{\rm T} F(x)$$ with respect to the
-<code>r[k]</code> and <code>c[k]</code> component of $latex x$$.
+\f$ w^{\rm T} F(x)\f$ with respect to the
+<code>r[k]</code> and <code>c[k]</code> component of \f$ x\f$.
 
 \param work
 contains information that depends on the function object, sparsity pattern,
