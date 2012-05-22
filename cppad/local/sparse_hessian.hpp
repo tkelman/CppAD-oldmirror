@@ -16,6 +16,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin sparse_hessian$$
 $spell
+	recomputed
 	CppAD
 	valarray
 	std
@@ -135,9 +136,9 @@ The result $icode hes$$ has prototype
 $codei%
 	%VectorBase% %hes%
 %$$
-In the case where $icode r$$ and $icode c$$ are not presetn,
-the size of $icode hess$$ is $latex n * n$$ and
-and its size is $latex n * n$$.
+In the case where $icode r$$ and $icode c$$ are not present,
+the size of $icode hes$$ is $latex n * n$$ and
+its size is $latex n * n$$.
 In this case, for $latex i = 0 , \ldots , n - 1 $$ 
 and $latex ell = 0 , \ldots , n - 1$$
 $latex \[
@@ -209,6 +210,13 @@ corresponding set.
 According to section 26.3.2.3 of the 1998 C++ standard,
 $code std::valarray< std::set<size_t> >$$ does not satisfy
 this condition. 
+
+$head VectorSize$$
+The type $icode VectorSize$$ must be a $cref SimpleVector$$ class with
+$cref/elements of type/SimpleVector/Elements of Specified Type/$$
+$code size_t$$.
+The routine $cref CheckSimpleVector$$ will generate an error message
+if this is not the case.
 
 $head Uses Forward$$
 After each call to $cref Forward$$,
