@@ -106,7 +106,7 @@ bool reverse()
 	// using row and column indices to compute non-zero in rows 1 and 2
 	// (skip row 0). 
 	size_t K = 6;
-	i_vector r(K), c(K);
+	i_vector row(K), col(K);
 	jac.resize(K);
 	k = 0;
 	for(j = 0; j < n; j++)
@@ -114,8 +114,8 @@ bool reverse()
 		{	ell = i * n + j;
 			if( p_b[ell] )
 			{	ok &= check[ell] != 0.;
-				r[k] = i;
-				c[k] = j;
+				row[k] = i;
+				col[k] = j;
 				k++;
 			}
 		}
@@ -126,18 +126,18 @@ bool reverse()
 	CppAD::sparse_jacobian_work work;
 
 	// could use p_b 
-	size_t n_sweep = f.SparseJacobianReverse(x, p_s, r, c, jac, work);
+	size_t n_sweep = f.SparseJacobianReverse(x, p_s, row, col, jac, work);
 	for(k = 0; k < K; k++)
-	{    ell = r[k] * n + c[k];
+	{    ell = row[k] * n + col[k];
 		ok &= NearEqual(check[ell], jac[k], eps, eps);
 	}
 	ok &= n_sweep == 2;
 
 	// now recompute at a different x value (using work from previous call)
 	check[11] = x[3] = 10.;
-	n_sweep = f.SparseJacobianReverse(x, p_s, r, c, jac, work);
+	n_sweep = f.SparseJacobianReverse(x, p_s, row, col, jac, work);
 	for(k = 0; k < K; k++)
-	{    ell = r[k] * n + c[k];
+	{    ell = row[k] * n + col[k];
 		ok &= NearEqual(check[ell], jac[k], eps, eps);
 	}
 	ok &= n_sweep == 2;
@@ -220,7 +220,7 @@ bool forward()
 	// using row and column indices to compute non-zero elements excluding
 	// row 0 and column 0. 
 	size_t K = 5;
-	i_vector r(K), c(K);
+	i_vector row(K), col(K);
 	jac.resize(K);
 	k = 0;
 	for(i = 1; i < m; i++)
@@ -228,8 +228,8 @@ bool forward()
 		{	ell = i * n + j;
 			if( p_b[ell] )
 			{	ok &= check[ell] != 0.;
-				r[k] = i;
-				c[k] = j;
+				row[k] = i;
+				col[k] = j;
 				k++;
 			}
 		}
@@ -240,18 +240,18 @@ bool forward()
 	CppAD::sparse_jacobian_work work;
 
 	// could use p_s 
-	size_t n_sweep = f.SparseJacobianForward(x, p_b, r, c, jac, work);
+	size_t n_sweep = f.SparseJacobianForward(x, p_b, row, col, jac, work);
 	for(k = 0; k < K; k++)
-	{    ell = r[k] * n + c[k];
+	{    ell = row[k] * n + col[k];
 		ok &= NearEqual(check[ell], jac[k], eps, eps);
 	}
 	ok &= n_sweep == 2;
 
 	// now recompute at a different x value (using work from previous call)
 	check[11] = x[2] = 10.;
-	n_sweep = f.SparseJacobianForward(x, p_s, r, c, jac, work);
+	n_sweep = f.SparseJacobianForward(x, p_s, row, col, jac, work);
 	for(k = 0; k < K; k++)
-	{    ell = r[k] * n + c[k];
+	{    ell = row[k] * n + col[k];
 		ok &= NearEqual(check[ell], jac[k], eps, eps);
 	}
 	ok &= n_sweep == 2;
