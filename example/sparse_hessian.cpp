@@ -132,26 +132,26 @@ bool sparse_hessian(void)
 	// use row and column indices to specify upper triangle of
 	// non-zero elements of Hessian
 	size_t K = n + 1;
-	i_vector r(K), c(K);
+	i_vector row(K), col(K);
 	hes.resize(K);
 	k = 0;
 	for(j = 0; j < n; j++)
 	{	// diagonal of Hessian
-		r[k] = j;
-		c[k] = j;
+		row[k] = j;
+		col[k] = j;
 		k++;
 	}
 	// only off diagonal non-zero elemenet in upper triangle
-	r[k] = 0;
-	c[k] = 1;
+	row[k] = 0;
+	col[k] = 1;
 	k++;
 	ok &= k == K;
 	CppAD::sparse_hessian_work work;
 
 	// can use p_set or p_bool.
-	size_t n_sweep = f.SparseHessian(x, w, p_set, r, c, hes, work);
+	size_t n_sweep = f.SparseHessian(x, w, p_set, row, col, hes, work);
 	for(k = 0; k < K; k++)
-	{	ell = r[k] * n + c[k];
+	{	ell = row[k] * n + col[k];
 		ok &=  NearEqual(w[0] * check[ell], hes[k], eps, eps );
 	}
 	ok &= n_sweep == 2;
@@ -161,9 +161,9 @@ bool sparse_hessian(void)
 	x[1]       = 0.5;
 	ell        = 1 * n + 1;
 	check[ell] = 6.0 * x[1];
-	n_sweep    = f.SparseHessian(x, w, p_set, r, c, hes, work);
+	n_sweep    = f.SparseHessian(x, w, p_set, row, col, hes, work);
 	for(k = 0; k < K; k++)
-	{	ell = r[k] * n + c[k];
+	{	ell = row[k] * n + col[k];
 		ok &=  NearEqual(w[0] * check[ell], hes[k], eps, eps );
 	}
 	ok &= n_sweep == 2;
