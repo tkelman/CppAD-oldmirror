@@ -872,10 +872,10 @@ $latex F(x)$$.
 \param p
 is the sparsity pattern for the Hessian that we are calculating.
 
-\param r
+\param row
 is the vector of row indices for the returned Hessian values.
 
-\param c
+\param col
 is the vector of columns indices for the returned Hessian values.
 It must have the same size are r.
 
