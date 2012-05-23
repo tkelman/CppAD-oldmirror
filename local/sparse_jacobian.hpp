@@ -1198,10 +1198,10 @@ is a vector specifing the point at which to compute the Jacobian.
 \param p
 is the sparsity pattern for the Jacobian that we are calculating.
 
-\param r
+\param row
 is the vector of row indices for the returned Jacobian values.
 
-\param c
+\param col
 is the vector of columns indices for the returned Jacobian values.
 It must have the same size are r.
 
@@ -1352,10 +1352,10 @@ See \c SparseJacobianForward(x, p, row, col, jac, work).
 \param p
 Sparsity pattern for the Jacobian of this ADFun<Base> object.
 
-\param r
+\param row
 See \c SparseJacobianForward(x, p, row, col, jac, work).
 
-\param c
+\param col
 See \c SparseJacobianForward(x, p, row, col, jac, work).
 
 \param jac
