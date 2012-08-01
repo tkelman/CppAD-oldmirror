@@ -40,11 +40,11 @@ Demonstrate the use of CppAD by computing the derivative
 of a simple example function.
 
 $head Function$$
-The example function $latex f : \R \rightarrow \R$$ is defined by 
+The example function $latex f : \B{R} \rightarrow \B{R}$$ is defined by 
 $latex \[
       f(x) = a_0 + a_1 * x^1 + \cdots + a_{k-1} * x^{k-1}
 \] $$
-where $italic a$$ is a fixed vector of length $italic k$$.
+where $icode a$$ is a fixed vector of length $icode k$$.
 
 $head Derivative$$
 The derivative of $latex f(x)$$ is given by
@@ -65,7 +65,7 @@ $latex \[
 $head Poly$$
 The routine $code Poly$$ is defined below for this particular application.
 A general purpose polynomial evaluation routine is documented and
-distributed with CppAD (see $xref/Poly/$$).
+distributed with CppAD (see $cref Poly$$).
 
 $head Exercises$$
 Modify the program below to accomplish the following tasks

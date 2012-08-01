@@ -1,6 +1,6 @@
 /* $Id$ */
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-08 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -11,7 +11,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
 /*
-$begin vectorBool.cpp$$
+$begin vector_bool.cpp$$
 $spell
 	Cpp
 	bool
@@ -26,12 +26,12 @@ $index example, CppAD::vectorBool$$
 $index test, CppAD::vectorBool$$
 
 $code
-$verbatim%example/vector_bool.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
+$verbatim%example/vector_bool.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 $end
 */
-// BEGIN PROGRAM
+// BEGIN C++
 
 # include <cppad/vector.hpp>
 # include <cppad/check_simple_vector.hpp>
@@ -83,9 +83,15 @@ bool vectorBool(void)
 	str = buf.str();
 	ok &= (str == correct);
 
-	// test of push_back element
-	size_t i;
+	// test resize(0), capacity, and clear
+	size_t i = x.capacity();
+	ok      &= i > 0;
 	x.resize(0);
+	ok      &= i == x.capacity();
+	x.clear();
+	ok      &= 0 == x.capacity();
+
+	// test of push_back element
 	for(i = 0; i < 100; i++)
 		x.push_back( (i % 3) != 0 );
 	ok &= (x.size() == 100);
@@ -99,4 +105,4 @@ bool vectorBool(void)
 	return ok;
 }
 
-// END PROGRAM
+// END C++

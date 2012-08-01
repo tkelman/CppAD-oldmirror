@@ -140,12 +140,12 @@ derivatives will be computed using a hand coded routine.
 
 $head Source$$
 $code
-$verbatim%multi_thread/multi_newton_time.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
+$verbatim%multi_thread/multi_newton_time.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 $end
 */
-// BEGIN PROGRAM
+// BEGIN C++
 # include <cppad/cppad.hpp>
 # include <cppad/time_test.hpp>
 # include <cmath>
@@ -223,7 +223,8 @@ namespace { // empty namespace
 		double pi      = 4. * std::atan(1.); 
 		double xlow    = 0.;
 		double xup     = (num_zero_ - 1) * pi;
-		double eps     = xup * 100. * CppAD::epsilon<double>();
+		double eps     = 
+			xup * 100. * CppAD::numeric_limits<double>::epsilon();
 		size_t max_itr = 20;
 	
 		bool ok = multi_newton(
@@ -284,16 +285,16 @@ bool multi_newton_time(
 	// Call test_once for a correctness check
 	double pi      = 4. * std::atan(1.); 
 	double xup     = (num_zero_ - 1) * pi;
-	double eps     = xup * 100. * CppAD::epsilon<double>();
+	double eps     = xup * 100. * CppAD::numeric_limits<double>::epsilon();
 	ok        &= (xout_.size() == num_zero);
 	size_t i   = 0;
 	for(i = 0; i < num_zero; i++)
 		ok &= std::fabs( xout_[i] - pi * i) <= 2 * eps;
 
-	// xout_ is a static variable, so resize it to free its memory
-	xout_.resize(0);
+	// xout_ is a static variable, so clear it to free its memory
+	xout_.clear();
 
 	// return correctness check result
 	return  ok;
 }
-// END PROGRAM
+// END C++

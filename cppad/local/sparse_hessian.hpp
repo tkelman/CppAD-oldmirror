@@ -39,7 +39,7 @@ $icode%hes% = %f%.SparseHessian(%x%, %w%)
 $head Purpose$$
 We use $latex n$$ for the $cref/domain/seq_property/Domain/$$ size,
 and $latex m$$ for the $cref/range/seq_property/Range/$$ size of $icode f$$.
-We use $latex F : \R^n \rightarrow \R^m$$ do denote the
+We use $latex F : \B{R}^n \rightarrow \B{R}^m$$ do denote the
 $cref/AD function/glossary/AD Function/$$
 corresponding to $icode f$$. 
 The syntax above sets $icode hes$$ to the Hessian 
@@ -164,7 +164,7 @@ $latex \[
 
 $head work$$
 If this argument is present, it has prototype
-$icode%
+$codei%
 	sparse_hessian_work& %work%
 %$$
 This object can only be used with the routines $code SparseHessian$$.
@@ -264,10 +264,10 @@ class sparse_hessian_work {
 		CppAD::vector<size_t> color;
 		/// inform CppAD that this information needs to be recomputed
 		void clear(void)
-		{	r_sort.resize(0);
-			c_sort.resize(0);
-			k_sort.resize(0);
-			color.resize(0);
+		{	r_sort.clear();
+			c_sort.clear();
+			k_sort.clear();
+			color.clear();
 		}
 };
 // ===========================================================================
@@ -329,7 +329,7 @@ size_t ADFun<Base>::SparseHessianCompute(
 	// check VectorBase is Simple Vector class with Base type elements
 	CheckSimpleVector<Base, VectorBase>();
 
-	CPPAD_ASSERT_UNKNOWN( x.size() == n );
+	CPPAD_ASSERT_UNKNOWN( size_t(x.size()) == n );
 	CPPAD_ASSERT_UNKNOWN( color.size() == 0 || color.size() == n );
 
 	// number of components of Hessian that are required
@@ -548,10 +548,10 @@ size_t ADFun<Base>::SparseHessianCase(
 	// check VectorBase is Simple Vector class with Base type elements
 	CheckSimpleVector<Base, VectorBase>();
 
-	CPPAD_ASSERT_UNKNOWN( x.size() == n );
-	CPPAD_ASSERT_UNKNOWN( w.size() == Range() );
+	CPPAD_ASSERT_UNKNOWN( size_t(x.size()) == n );
+	CPPAD_ASSERT_UNKNOWN( size_t(w.size()) == Range() );
 	CPPAD_ASSERT_KNOWN(
-		p.size() == n * n,
+		size_t(p.size()) == n * n,
 		"SparseHessian: using bool values for sparsity and p.size() "
 		"not equal square of domain dimension for f"
 	);
@@ -559,7 +559,8 @@ size_t ADFun<Base>::SparseHessianCase(
 	sparse_pack sparsity;
 	if( work.color.size() == 0 )
 	{	bool transpose = false;
-		vec_bool_to_sparse_pack(sparsity, p, n, n, transpose);
+		typedef typename VectorSet::value_type Set_type;
+		sparsity_user2internal(sparsity, p, n, n, transpose);
 	}
 	
 	// compute the Hessian
@@ -620,10 +621,10 @@ size_t ADFun<Base>::SparseHessianCase(
 	// check VectorBase is Simple Vector class with Base type elements
 	CheckSimpleVector<Base, VectorBase>();
 
-	CPPAD_ASSERT_UNKNOWN( x.size() == n );
-	CPPAD_ASSERT_UNKNOWN( w.size() == Range() );
+	CPPAD_ASSERT_UNKNOWN( size_t(x.size()) == n );
+	CPPAD_ASSERT_UNKNOWN( size_t(w.size()) == Range() );
 	CPPAD_ASSERT_KNOWN(
-		p.size() == n,
+		size_t(p.size()) == n,
 		"SparseHessian: using std::set<size_t> for sparsity and p.size() "
 		"not equal domain dimension for f"
 	);
@@ -631,7 +632,8 @@ size_t ADFun<Base>::SparseHessianCase(
 	sparse_set sparsity;
 	if( work.color.size() == 0 )
 	{	bool transpose = false;
-		vec_set_to_sparse_set(sparsity, p, n, n, transpose);
+		typedef typename VectorSet::value_type Set_type;
+		sparsity_user2internal(sparsity, p, n, n, transpose);
 	}
 	
 	// compute the Hessian
@@ -685,15 +687,15 @@ void ADFun<Base>::SparseHessianCase(
 	CheckSimpleVector<Base, VectorBase>();
 
 	CPPAD_ASSERT_KNOWN(
-		x.size() == n,
+		size_t(x.size()) == n,
 		"SparseHessian: size of x not equal domain dimension for f"
 	); 
 	CPPAD_ASSERT_KNOWN(
-		w.size() == Range(),
+		size_t(w.size()) == Range(),
 		"SparseHessian: size of w not equal range dimension for f"
 	);
 	CPPAD_ASSERT_KNOWN(
-		p.size() == n * n,
+		size_t(p.size()) == n * n,
 		"SparseHessian: using bool values and size of p "
 		"not equal square of domain dimension for f"
 	);
@@ -783,15 +785,15 @@ void ADFun<Base>::SparseHessianCase(
 	CheckSimpleVector<Base, VectorBase>();
 
 	CPPAD_ASSERT_KNOWN(
-		x.size() == n,
+		size_t(x.size()) == n,
 		"SparseHessian: size of x not equal domain dimension for f"
 	); 
 	CPPAD_ASSERT_KNOWN(
-		w.size() == Range(),
+		size_t(w.size()) == Range(),
 		"SparseHessian: size of w not equal range dimension for f"
 	);
 	CPPAD_ASSERT_KNOWN(
-		p.size() == n,
+		size_t(p.size()) == n,
 		"SparseHessian: using size_t sets for sparsity pattern and p.size() "
 		"not equal domain dimension for f"
 	);
@@ -924,36 +926,27 @@ size_t ADFun<Base>::SparseHessian(
 	size_t n = Domain();
 	size_t k, K = hes.size();
 	if( work.r_sort.size() == 0 )
-	{	// create version of (row, col,k) sorted by rows
-		size_t min_bytes = 3 * K * sizeof(size_t);
-		size_t cap_bytes;
-		void*  v_ptr  = thread_alloc::get_memory(min_bytes, cap_bytes);
-		size_t* rck  = reinterpret_cast<size_t*>(v_ptr);
-		for(k = 0; k < K; k++)
-		{	// must put column first so it is used for sorting
-			rck[3 * k + 0] = row[k];
-			rck[3 * k + 1] = col[k];
-			rck[3 * k + 2] = k;
-		}
-		std::qsort(rck, K, 3 * sizeof(size_t), std_qsort_compare<size_t>);
+	{	// create version of (row, col, k) sorted by row value
 		work.c_sort.resize(K);
 		work.r_sort.resize(K+1);
 		work.k_sort.resize(K);
+
+		// put sorting indices in k_sort
+		index_sort(row, work.k_sort);
+
 		for(k = 0; k < K; k++)
-		{	work.r_sort[k] = rck[3 * k + 0];  
-			work.c_sort[k] = rck[3 * k + 1];  
-			work.k_sort[k] = rck[3 * k + 2];  
+		{	work.r_sort[k] = row[ work.k_sort[k] ];
+			work.c_sort[k] = col[ work.k_sort[k] ];
 		}
 		work.r_sort[K] = n;
-		thread_alloc::return_memory(v_ptr);
 	}
 # ifndef NDEBUG
 	CPPAD_ASSERT_KNOWN(
-		x.size() == n ,
+		size_t(x.size()) == n ,
 		"SparseHessian: size of x not equal domain dimension for f."
 	); 
 	CPPAD_ASSERT_KNOWN(
-		row.size() == K && col.size() == K ,
+		size_t(row.size()) == K && size_t(col.size()) == K ,
 		"SparseHessian: either r or c does not have the same size as ehs."
 	); 
 	CPPAD_ASSERT_KNOWN(

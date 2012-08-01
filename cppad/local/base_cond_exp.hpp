@@ -43,13 +43,12 @@ $index require, base CondExp$$
 
 $head Purpose$$
 These definitions are required by the user's code to support the 
-$codei%AD<%Base%>%$$ type for $cref/CondExp/$$ operations:
+$codei%AD<%Base%>%$$ type for $cref CondExp$$ operations:
 
 $head CompareOp$$
 The following $code enum$$ type is used in the specifications below:
-$codep */
+$codep
 namespace CppAD {
-
 	// The conditional expression operator enum type
 	enum CompareOp 
 	{	CompareLt, // less than
@@ -60,7 +59,7 @@ namespace CppAD {
 		CompareNe  // not equal
 	};
 }
-/* $$
+$$
 
 $head CondExpTemplate$$
 The type $icode Base$$ must support the syntax
@@ -69,7 +68,7 @@ $codei%
 		%cop%, %left%, %right%, %exp_if_true%, %exp_if_false%
 	)
 %$$
-which computes implements the corresponding $cref/CondExp/$$ 
+which computes implements the corresponding $cref CondExp$$ 
 function when the result has prototype
 $codei%
 	%Base% %result%

@@ -42,34 +42,43 @@ Replacement for config.h so that all preprocessor symbols begin with CPPAD_
 \def CPPAD_PACKAGE_STRING
 cppad-yyyymmdd as a C string where yyyy is year, mm is month, and dd is day.
 */
-# define CPPAD_PACKAGE_STRING "cppad-20120423"
+# define CPPAD_PACKAGE_STRING "cppad-20120707"
 
 /*!
 \def CPPAD_BOOSTVECTOR
 If this symbol is one, and _MSC_VER is not defined,
-we are using boost vector for CPPAD_TEST_VECTOR.
+we are using boost vector for CPPAD_TESTVECTOR.
 It this symbol is zero, 
-we are not using boost vector for CPPAD_TEST_VECTOR.
+we are not using boost vector for CPPAD_TESTVECTOR.
 */
 # define CPPAD_BOOSTVECTOR 0
 
 /*!
 \def CPPAD_CPPADVECTOR
 If this symbol is one, 
-we are using CppAD vector for CPPAD_TEST_VECTOR.
+we are using CppAD vector for CPPAD_TESTVECTOR.
 It this symbol is zero, 
-we are not using CppAD vector for CPPAD_TEST_VECTOR.
+we are not using CppAD vector for CPPAD_TESTVECTOR.
 */
 # define CPPAD_CPPADVECTOR 1
 
 /*!
 \def CPPAD_STDVECTOR
 If this symbol is one, 
-we are using standard vector for CPPAD_TEST_VECTOR.
+we are using standard vector for CPPAD_TESTVECTOR.
 It this symbol is zero, 
-we are not using standard vector for CPPAD_TEST_VECTOR.
+we are not using standard vector for CPPAD_TESTVECTOR.
 */
 # define CPPAD_STDVECTOR 0
+
+/*!
+\def CPPAD_EIGENVECTOR
+If this symbol is one, 
+we are using Eigen vector for CPPAD_TESTVECTOR.
+If this symbol is zero, 
+we are not using Eigen vector for CPPAD_TESTVECTOR.
+*/
+# define CPPAD_EIGENVECTOR 0
 
 /*!
 \def CPPAD_GETTIMEOFDAY
@@ -99,6 +108,20 @@ in pod_vector.hpp.
 This type is later defined as \c addr_t in the CppAD namespace.
 */
 # define CPPAD_TAPE_ADDR_TYPE unsigned int
+
+/*!
+\def CPPAD_TAPE_ID_TYPE
+Is the type used to store tape identifiers. If not size_t, then 
+<code>sizeof(CPPAD_TAPE_ID_TYPE) <= sizeof( size_t )</code>
+to conserve memory.
+This type must support \c std::numeric_limits,
+the \c <= operator,
+and conversion to \c size_t.
+Make sure that the type chosen returns true for is_pod<CPPAD_TAPE_ID_TYPE>
+in pod_vector.hpp.
+This type is later defined as \c tape_id_t in the CppAD namespace.
+*/
+# define CPPAD_TAPE_ID_TYPE unsigned int
  
 /*!
 \def CPPAD_MAX_NUM_THREADS

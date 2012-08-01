@@ -1,6 +1,6 @@
-$Id$
+/* $Id$ */
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-08 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -9,27 +9,16 @@ the terms of the
 A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
+# ifndef CPPAD_PRINT_OPTIMIZE_INCLUDED
+# define CPPAD_PRINT_OPTIMIZE_INCLUDED
 
-$begin sparse_evaluate.hpp$$
-$spell
-	ifndef
-	endif
-$$
+# include <cppad/cppad.hpp>
 
-$section Source: sparse_evaluate$$
-
-$index sparse_evaluate, source$$
-$index source, sparse_evaluate$$
-
-$code
-# ifndef CPPAD_SPARSE_EVALUATE_INCLUDED 
-$pre
-$$
-# define CPPAD_SPARSE_EVALUATE_INCLUDED 
-
-$verbatim%cppad/speed/sparse_evaluate.hpp%0%// BEGIN PROGRAM%// END PROGRAM%$$
+void print_optimize(
+	CppAD::ADFun<double>& f       ,
+	bool           print          ,
+	const char*    label          ,
+	size_t         test_id
+);
 
 # endif
-$$
-
-$end

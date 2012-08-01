@@ -1,6 +1,6 @@
 /* $Id$ */
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-11 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -11,7 +11,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
 /*
-$begin CppAD_vector.cpp$$
+$begin cppad_vector.cpp$$
 $spell
 	Cpp
 $$
@@ -24,12 +24,12 @@ $index example, CppAD::vector$$
 $index test, CppAD::vector$$
 
 $code
-$verbatim%example/cppad_vector.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
+$verbatim%example/cppad_vector.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 $end
 */
-// BEGIN PROGRAM
+// BEGIN C++
 
 # include <cppad/vector.hpp>
 # include <cppad/check_simple_vector.hpp>
@@ -43,7 +43,6 @@ bool CppAD_vector(void)
 
 	// check Simple Vector specifications
 	CppAD::CheckSimpleVector< Type, vector<Type> >();
-
 
 	vector<Type> x;          // default constructor 
 	ok &= (x.size() == 0);
@@ -76,10 +75,16 @@ bool CppAD_vector(void)
 	str = buf.str();
 	ok &= (str == correct);
 
-	// test of push_back scalar and capacity
-	size_t i;
-	size_t N = 100;
+	// test resize(0), capacity, and clear
+	size_t i = x.capacity();
+	ok      &= i > 0;
 	x.resize(0);
+	ok      &= i == x.capacity();
+	x.clear();
+	ok      &= 0 == x.capacity();
+
+	// test of push_back scalar and capacity
+	size_t N = 100;
 	for(i = 0; i < N; i++)
 	{	size_t old_capacity = x.capacity();	
 		x.push_back( Type(i) );
@@ -101,4 +106,4 @@ bool CppAD_vector(void)
 	return ok;
 }
 
-// END PROGRAM
+// END C++

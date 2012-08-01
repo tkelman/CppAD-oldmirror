@@ -25,24 +25,24 @@ $index test, sparse Hessian$$
 $index spare, Hessian example$$
 
 $code
-$verbatim%example/sparse_hessian.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
+$verbatim%example/sparse_hessian.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 $end
 */
-// BEGIN PROGRAM
+// BEGIN C++
 # include <cppad/cppad.hpp>
 bool sparse_hessian(void)
 {	bool ok = true;
 	using CppAD::AD;
 	using CppAD::NearEqual;
 	size_t i, j, k, ell;
-	typedef CPPAD_TEST_VECTOR< AD<double> >               a_vector;
-	typedef CPPAD_TEST_VECTOR<double>                     d_vector;
-	typedef CPPAD_TEST_VECTOR<size_t>                     i_vector;
-	typedef CPPAD_TEST_VECTOR<bool>                       b_vector;
-	typedef CPPAD_TEST_VECTOR< std::set<size_t> >         s_vector;
-	double eps = 10. * CppAD::epsilon<double>();
+	typedef CPPAD_TESTVECTOR(AD<double>)               a_vector;
+	typedef CPPAD_TESTVECTOR(double)                     d_vector;
+	typedef CPPAD_TESTVECTOR(size_t)                     i_vector;
+	typedef CPPAD_TESTVECTOR(bool)                       b_vector;
+	typedef CPPAD_TESTVECTOR(std::set<size_t>)         s_vector;
+	double eps = 10. * CppAD::numeric_limits<double>::epsilon();
 
 	// domain space vector
 	size_t n = 12;  // must be greater than or equal 3; see n_sweep below
@@ -172,4 +172,4 @@ bool sparse_hessian(void)
 
 	return ok;
 }
-// END PROGRAM
+// END C++

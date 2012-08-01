@@ -23,11 +23,11 @@ $index example, constructor AD object$$
 $index test, constructor AD object$$
 
 $code
-$verbatim%example/ad_ctor.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
+$verbatim%example/ad_ctor.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 $end
 */
-// BEGIN PROGRAM
+// BEGIN C++
 
 # include <cppad/cppad.hpp>
 
@@ -38,7 +38,7 @@ bool ad_ctor(void)
 	// default constructor
 	AD<double> a;
 	a = 0.;
-	ok != a == 0.;
+	ok &= a == 0.;
 
 	// constructor from base type
 	AD<double> b(1.);   
@@ -61,4 +61,4 @@ bool ad_ctor(void)
 	return ok;
 }
 
-// END PROGRAM
+// END C++

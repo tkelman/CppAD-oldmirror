@@ -9,7 +9,7 @@ the terms of the
 A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
-// BEGIN PROGRAM
+// BEGIN C++
 # include <cppad/cppad.hpp>
 # include <omp.h>
 # define NUMBER_THREADS  2
@@ -71,7 +71,7 @@ bool alloc_openmp(void)
 
 		// test having master thread (thread number zero) 
 		// free memory that was allocated by thread number thread_num.
-		thread_all_[thread_num].x.resize(0);
+		thread_all_[thread_num].x.clear();
 	}
 
 	return ok;

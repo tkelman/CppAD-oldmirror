@@ -1,6 +1,6 @@
 /* $Id$ */
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-10 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -24,7 +24,7 @@ $icode%s% = microsoft_timer()%$$
 
 $head Purpose$$
 This routine is accurate to within .02 seconds
-(see $cref/elapsed_seconds.cpp/$$ which uses this routine when 
+(see $cref elapsed_seconds.cpp$$ which uses this routine when 
 the preprocessor symbol $code _MSC_VER$$ is defined).
 It does not necessary work for time intervals that are greater than a day.
 It uses $code ::GetSystemTime$$ for timing.
@@ -44,7 +44,7 @@ $end
 */
 
 /*!
-\file microsoft_timer.hpp
+\file microsoft_timer.cpp
 \brief Microsoft version of elapsed_seconds.
 */
 /*

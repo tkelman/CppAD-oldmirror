@@ -1,6 +1,6 @@
 /* $Id$ */
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-08 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -10,7 +10,7 @@ A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 /*
-$begin StackMachine.cpp$$
+$begin stack_machine.cpp$$
 $spell
 $$
 
@@ -21,12 +21,12 @@ $index example, interpreter$$
 $index test, interpreter$$
 
 $code
-$verbatim%example/stack_machine.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
+$verbatim%example/stack_machine.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 $end
 */
-// BEGIN PROGRAM
+// BEGIN C++
 
 # include <cstring>
 # include <cstddef>
@@ -215,4 +215,4 @@ bool StackMachine(void)
 
 	return ok;
 }
-// END PROGRAM
+// END C++

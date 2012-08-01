@@ -25,12 +25,12 @@ $index test, sparse Jacobian$$
 $index spare, Jacobian example$$
 
 $code
-$verbatim%example/sparse_jacobian.cpp%0%// BEGIN PROGRAM%// END PROGRAM%1%$$
+$verbatim%example/sparse_jacobian.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 $end
 */
-// BEGIN PROGRAM
+// BEGIN C++
 
 # include <cppad/cppad.hpp>
 namespace { // ---------------------------------------------------------
@@ -38,11 +38,11 @@ bool reverse()
 {	bool ok = true;
 	using CppAD::AD;
 	using CppAD::NearEqual;
-	typedef CPPAD_TEST_VECTOR< AD<double> > a_vector;
-	typedef CPPAD_TEST_VECTOR<double>       d_vector;
-	typedef CPPAD_TEST_VECTOR<size_t>       i_vector;
+	typedef CPPAD_TESTVECTOR(AD<double>) a_vector;
+	typedef CPPAD_TESTVECTOR(double)       d_vector;
+	typedef CPPAD_TESTVECTOR(size_t)       i_vector;
 	size_t i, j, k, ell;
-	double eps = 10. * CppAD::epsilon<double>();
+	double eps = 10. * CppAD::numeric_limits<double>::epsilon();
 
 	// domain space vector
 	size_t n = 4;
@@ -79,7 +79,7 @@ bool reverse()
 	check[0] = 1.; check[1] = 1.; check[2]  = 0.; check[3]  = 0.;
 	check[4] = 0.; check[5] = 0.; check[6]  = 1.; check[7]  = 1.;
 	check[8] = 1.; check[9] = 1.; check[10] = 1.; check[11] = x[3];
-	for(ell = 0; ell < check.size(); ell++)
+	for(ell = 0; ell < size_t(check.size()); ell++)
 		ok &=  NearEqual(check[ell], jac[ell], eps, eps );
 
 	// using packed boolean sparsity patterns
@@ -91,7 +91,7 @@ bool reverse()
 	}
 	p_b   = f.RevSparseJac(m, s_b);
 	jac   = f.SparseJacobian(x, p_b);
-	for(ell = 0; ell < check.size(); ell++)
+	for(ell = 0; ell < size_t(check.size()); ell++)
 		ok &=  NearEqual(check[ell], jac[ell], eps, eps );
 
 	// using vector of sets sparsity patterns
@@ -100,7 +100,7 @@ bool reverse()
 		s_s[i].insert(i);
 	p_s   = f.RevSparseJac(m, s_s);
 	jac   = f.SparseJacobian(x, p_s);
-	for(ell = 0; ell < check.size(); ell++)
+	for(ell = 0; ell < size_t(check.size()); ell++)
 		ok &=  NearEqual(check[ell], jac[ell], eps, eps );
 
 	// using row and column indices to compute non-zero in rows 1 and 2
@@ -128,7 +128,7 @@ bool reverse()
 	// could use p_b 
 	size_t n_sweep = f.SparseJacobianReverse(x, p_s, row, col, jac, work);
 	for(k = 0; k < K; k++)
-	{    ell = row[k] * n + col[k];
+	{	ell = row[k] * n + col[k];
 		ok &= NearEqual(check[ell], jac[k], eps, eps);
 	}
 	ok &= n_sweep == 2;
@@ -137,7 +137,7 @@ bool reverse()
 	check[11] = x[3] = 10.;
 	n_sweep = f.SparseJacobianReverse(x, p_s, row, col, jac, work);
 	for(k = 0; k < K; k++)
-	{    ell = row[k] * n + col[k];
+	{	ell = row[k] * n + col[k];
 		ok &= NearEqual(check[ell], jac[k], eps, eps);
 	}
 	ok &= n_sweep == 2;
@@ -149,11 +149,11 @@ bool forward()
 {	bool ok = true;
 	using CppAD::AD;
 	using CppAD::NearEqual;
-	typedef CPPAD_TEST_VECTOR< AD<double> > a_vector;
-	typedef CPPAD_TEST_VECTOR<double>       d_vector;
-	typedef CPPAD_TEST_VECTOR<size_t>       i_vector;
+	typedef CPPAD_TESTVECTOR(AD<double>) a_vector;
+	typedef CPPAD_TESTVECTOR(double)       d_vector;
+	typedef CPPAD_TESTVECTOR(size_t)       i_vector;
 	size_t i, j, k, ell;
-	double eps = 10. * CppAD::epsilon<double>();
+	double eps = 10. * CppAD::numeric_limits<double>::epsilon();
 
 	// domain space vector
 	size_t n = 3;
@@ -193,7 +193,7 @@ bool forward()
 	check[3] = 1.; check[4]  = 0.; check[5]  = 1.;
 	check[6] = 0.; check[7]  = 1.; check[8]  = 1.; 
 	check[9] = 0.; check[10] = 1.; check[11] = x[2];
-	for(ell = 0; ell < check.size(); ell++)
+	for(ell = 0; ell < size_t(check.size()); ell++)
 		ok &=  NearEqual(check[ell], jac[ell], eps, eps );
 
 	// test using packed boolean vectors for sparsity pattern
@@ -205,7 +205,7 @@ bool forward()
 	}
 	p_b = f.ForSparseJac(n, r_b);
 	jac = f.SparseJacobian(x, p_b);
-	for(ell = 0; ell < check.size(); ell++)
+	for(ell = 0; ell < size_t(check.size()); ell++)
 		ok &=  NearEqual(check[ell], jac[ell], eps, eps );
 
 	// test using vector of sets for sparsity pattern
@@ -214,7 +214,7 @@ bool forward()
 		r_s[j].insert(j);
 	p_s = f.ForSparseJac(n, r_s);
 	jac = f.SparseJacobian(x, p_s);
-	for(ell = 0; ell < check.size(); ell++)
+	for(ell = 0; ell < size_t(check.size()); ell++)
 		ok &=  NearEqual(check[ell], jac[ell], eps, eps );
 
 	// using row and column indices to compute non-zero elements excluding
@@ -267,4 +267,4 @@ bool sparse_jacobian(void)
 
 	return ok;
 }
-// END PROGRAM
+// END C++

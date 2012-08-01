@@ -105,8 +105,8 @@ then
 fi
 # -------------------------------------------------
 # list of files that changed
-svn status | sed -n -e '/^[ADMRC] /p' | \
-	sed -e 's/^[ADMRC] [+ ]*//' \
+svn status | sed -n -e '/^[ADMRC][ADMRC]* /p' | \
+	sed -e 's/^[ADMRC][ADMRC]* [+ ]*//' \
 		-e '/^bin\/commit.sh$/d' -e '/^bin\/commit.sed$/d' | \
 	sort -u > bin/commit.list.$$
 # -------------------------------------------------
