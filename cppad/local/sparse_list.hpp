@@ -39,10 +39,6 @@ private:
 	CppAD::pod_vector<Element> data_;
 	/// next element
 	Element next_element_;
-	/// temporary vectors of type size_t used to avoid reallocation of memory
-	/// (should have size zero between routine calls)
-	CppAD::pod_vector<size_t> temp_left_; 
-	CppAD::pod_vector<size_t> temp_right_; 
 public:
 	// -----------------------------------------------------------------
 	/*! Default constructor (no sets)
@@ -284,62 +280,38 @@ public:
 		size_t                  this_left    , 
 		size_t                  other_right  , 
 		const sparse_list&      other        )
-	{	size_t i;
-
+	{	
 		CPPAD_ASSERT_UNKNOWN( this_target < n_set_         );
 		CPPAD_ASSERT_UNKNOWN( this_left   < n_set_         );
 		CPPAD_ASSERT_UNKNOWN( other_right < other.n_set_   );
 		CPPAD_ASSERT_UNKNOWN( end_        == other.end()   );
-		CPPAD_ASSERT_UNKNOWN( temp_left_.size()  == 0      );
-		CPPAD_ASSERT_UNKNOWN( temp_right_.size() == 0      );
-
-		// copy left set to temporary vector
-		// (can only have one interator at a time)
-		size_t left  = this_left;
-		size_t value = data_[left].value;
-		while( value != end_ )
-		{	i             = temp_left_.extend(1);
-			temp_left_[i] = value;
-			left          = data_[left].next;
-			value         = data_[left].value;
-		}
-		i             = temp_left_.extend(1);
-		temp_left_[i] = end_;
-
-		// copy right set to temporary vector
-		// (can only have one interator at a time)
-		size_t right  = other_right;
-		value         = other.data_[right].value;
-		while( value != end_ )
-		{	i              = temp_right_.extend(1);
-			temp_right_[i] = value;
-			right          = other.data_[right].next;
-			value          = other.data_[right].value;
-		}
-		i             = temp_right_.extend(1);
-		temp_right_[i] = end_;
 
 		// merge left and right into target set
-		left   = 0;
-		right  = 0;
-		size_t current = this_target;
-		while( (temp_left_[left] < end_) | (temp_right_[right] < end_) )
-		{	if( temp_left_[left] == temp_right_[right] )
-				left++;
+		size_t left_value  = data_[this_left].value;
+		size_t left_next   = data_[this_left].next;
+		size_t right_value = other.data_[other_right].value;
+		size_t right_next  = other.data_[other_right].next;
+		size_t current       = this_target;
+		while( (left_value < end_) | (right_value < end_) )
+		{	if( left_value == right_value )
+			{	right_value = other.data_[right_next].value;
+				right_next  = other.data_[right_next].next;
+			}
 			size_t next         = data_.extend(1);
 			data_[current].next = next;
-			if( temp_left_[left] < temp_right_[right] )
-				data_[current].value = temp_left_[left++];
-			else	data_[current].value = temp_right_[right++];
+			if( left_value < right_value )
+			{	data_[current].value = left_value;
+				left_value           = data_[left_next].value;
+				left_next            = data_[left_next].next;
+			}
+			else
+			{	data_[current].value = right_value;
+				right_value = other.data_[right_next].value;
+				right_next  = other.data_[right_next].next;
+			}
 			current = next;
 		}
 		data_[current].value = end_;
-
-		// done with temporary vectors
-		CPPAD_ASSERT_UNKNOWN( left == temp_left_.size() - 1 );
-		CPPAD_ASSERT_UNKNOWN( right == temp_right_.size() - 1 );
-		temp_left_.erase();
-		temp_right_.erase();
 	}
 	// -----------------------------------------------------------------
 	/*! Sum over all sets of the number of elements
