@@ -19,6 +19,13 @@ Define processor symbols and macros that are used by CppAD.
 */
 
 /*!
+\def CPPAD_INTERNAL_SPARSE_SET
+is the internal representation used for sparse vectors of std::set<size_t>
+(either sparse_set or sparse_list).
+*/
+# define CPPAD_INTERNAL_SPARSE_SET sparse_list
+
+/*!
 \def CPPAD_OP_CODE_TYPE
 Is the type used to store enum OpCode values. If not the same as OpCode, then 
 <code>sizeof(CPPAD_OP_CODE_TYPE) <= sizeof( enum OpCode )</code>
