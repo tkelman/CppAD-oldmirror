@@ -711,6 +711,7 @@ ADOLC_DIR
 CppAD_POSTFIX_FALSE
 CppAD_POSTFIX_TRUE
 POSTFIX_DIR
+CPPAD_INTERNAL_SPARSE_SET
 CPPAD_EIGENVECTOR
 CPPAD_BOOSTVECTOR
 CPPAD_STDVECTOR
@@ -779,6 +780,8 @@ with_Documentation
 with_stdvector
 with_boostvector
 with_eigenvector
+with_sparse_set
+with_sparse_list
 enable_dependency_tracking
 '
       ac_precious_vars='build_alias
@@ -1442,6 +1445,8 @@ Optional Packages:
   --with-stdvector        default is no
   --with-boostvector      default is no
   --with-eigenvector      default is no
+  --with-sparse_set       default is not specified
+  --with-sparse_list      default is not specified
 
 Some influential environment variables:
   POSTFIX_DIR postfix directory for CppAD installation
@@ -2836,6 +2841,43 @@ if test "$eigenvector" = "yes" ; then
 
 else
 	CPPAD_EIGENVECTOR=0
+
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking --with-sparse_set" >&5
+$as_echo_n "checking --with-sparse_set... " >&6; }
+
+# Check whether --with-sparse_set was given.
+if test "${with_sparse_set+set}" = set; then :
+  withval=$with_sparse_set; sparse_set="yes"
+else
+  sparse_set="no"
+
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $sparse_set" >&5
+$as_echo "$sparse_set" >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking --with-sparse_list" >&5
+$as_echo_n "checking --with-sparse_list... " >&6; }
+
+# Check whether --with-sparse_list was given.
+if test "${with_sparse_list+set}" = set; then :
+  withval=$with_sparse_list; sparse_list="yes"
+else
+  sparse_list="no"
+
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $sparse_list" >&5
+$as_echo "$sparse_list" >&6; }
+if test "$sparse_set" = "yes" ; then
+	if test "$sparse_list" == "yes" ; then
+		as_fn_error $? "cannot --with both sparse_set and sparse_list" "$LINENO" 5
+	fi
+	CPPAD_INTERNAL_SPARSE_SET=sparse_set
+
+else
+	CPPAD_INTERNAL_SPARSE_SET=sparse_list
 
 fi
 

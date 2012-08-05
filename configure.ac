@@ -178,6 +178,31 @@ else
 	AC_SUBST(CPPAD_EIGENVECTOR, 0)
 fi
 
+dnl Are we using sparse_set or sparse_list ----------------------------
+AC_MSG_CHECKING([--with-sparse_set])
+AC_ARG_WITH(sparse_set, 
+	AC_HELP_STRING([--with-sparse_set], [default is not specified]),
+	[sparse_set="yes"],
+	[sparse_set="no"]
+)
+AC_MSG_RESULT([$sparse_set])
+dnl
+AC_MSG_CHECKING([--with-sparse_list])
+AC_ARG_WITH(sparse_list, 
+	AC_HELP_STRING([--with-sparse_list], [default is not specified]),
+	[sparse_list="yes"],
+	[sparse_list="no"]
+)
+AC_MSG_RESULT([$sparse_list])
+if test "$sparse_set" = "yes" ; then
+	if test "$sparse_list" == "yes" ; then
+		AC_MSG_ERROR([cannot --with both sparse_set and sparse_list])
+	fi
+	AC_SUBST(CPPAD_INTERNAL_SPARSE_SET, sparse_set)
+else
+	AC_SUBST(CPPAD_INTERNAL_SPARSE_SET, sparse_list)
+fi
+
 dnl The postfix directiory corresponding to CppAD ------------------------
 AC_MSG_CHECKING([POSTFIX_DIR])
 AC_ARG_VAR(POSTFIX_DIR, 
