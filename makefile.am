@@ -290,6 +290,7 @@ SUBDIRS =  \
 	$(IPOPT_DIRS) \
 	$(SPEED_DIRS) \
 	example \
+	compare_c \
 	introduction/get_started \
 	introduction/exp_apx \
 	print_for \
@@ -311,6 +312,7 @@ test_directory_list = \
 	$(IPOPT_TESTS) \
 	$(SPEED_TESTS) \
 	example \
+	compare_c \
 	introduction/get_started \
 	introduction/exp_apx \
 	multi_thread \

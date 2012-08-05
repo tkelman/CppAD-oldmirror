@@ -100,7 +100,7 @@ CTAGS = ctags
 DIST_SUBDIRS = cppad_ipopt/src cppad_ipopt/example cppad_ipopt/speed \
 	cppad_ipopt/test speed/src speed/adolc speed/cppad \
 	speed/double speed/example speed/fadbad speed/profile \
-	speed/sacado example introduction/get_started \
+	speed/sacado example compare_c introduction/get_started \
 	introduction/exp_apx print_for multi_thread \
 	multi_thread/test_multi test_more
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -549,6 +549,7 @@ SUBDIRS = \
 	$(IPOPT_DIRS) \
 	$(SPEED_DIRS) \
 	example \
+	compare_c \
 	introduction/get_started \
 	introduction/exp_apx \
 	print_for \
@@ -571,6 +572,7 @@ test_directory_list = \
 	$(IPOPT_TESTS) \
 	$(SPEED_TESTS) \
 	example \
+	compare_c \
 	introduction/get_started \
 	introduction/exp_apx \
 	multi_thread \

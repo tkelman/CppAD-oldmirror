@@ -12,7 +12,7 @@ dnl ---------------------------------------------------------------------------
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl   package   version              bug-report
-AC_INIT(CppAD, 20120707, cppad@list.coin-or.org)
+AC_INIT(CppAD, 20120805, cppad@list.coin-or.org)
 AC_SUBST(PACKAGE_URL, "http://www.coin-or.org/CppAD")
 AC_SUBST(PACKAGE_DESCRIPTION, "Differentiation of C++ Algorithms")
 
@@ -279,7 +279,7 @@ else
 fi
 
 dnl The C++ compiler flags CXX_FLAGS -------------------------------------
-AC_SUBST(CXXFLAGS, "")
+dnl see AC_SUBST(CXXFLAGS, "") next to AC_PROG_CXX
 #
 AC_MSG_CHECKING([CXX_FLAGS])
 AC_ARG_VAR(CXX_FLAGS,
@@ -441,7 +441,15 @@ if test "$CXX" == "cl" || test "$CXX" == "icl"; then
 else
 	AC_MSG_RESULT([no])
 fi
+dnl erase any setting of CXXFLAGS, see CXX_FLAGS documentation
+AC_SUBST(CXXFLAGS, "")
 
+
+dnl AC_PROG_CC([compiler-search-list]) outputs CC as C++ compiler to use
+AC_PROG_CC
+AC_MSG_CHECKING([whether using Microsoft C++ compiler])
+dnl erase any setting of CFLAGS
+AC_SUBST(CFLAGS, "")
 
 dnl Have configure check source directory to see if cppad/CppAD.h is there
 AC_CONFIG_SRCDIR(cppad/CppAD.h)
@@ -649,6 +657,7 @@ AC_CONFIG_FILES([
 
 	makefile
 	example/makefile 
+	compare_c/makefile 
 	cppad_ipopt/src/makefile
 	cppad_ipopt/example/makefile
 	cppad_ipopt/speed/makefile
