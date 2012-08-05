@@ -18,8 +18,8 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 # include <stdbool.h>
 # include <sys/time.h>
 # include <stddef.h>
-
 /*
+-------------------------------------------------------------------------------
 $begin det_of_minor_c$$
 $spell
 	det
@@ -149,9 +149,11 @@ $codei%
 %$$
 and is equal to the determinant of the minor $latex M$$.
 
-$end
----------------------------------------------------------------------------
-*/
+$spell
+	Cj
+$$
+$head Source Code$$
+$codep */
 double det_of_minor( 
 	const double*              a  , 
 	size_t               m  , 
@@ -175,21 +177,21 @@ double det_of_minor(
 	/* initialize sign of factor for neat sub-minor */
 	s = 1;
 
-	/* remove row with indea 0 in M from all the sub-minors of M */
+	/* remove row with index 0 in M from all the sub-minors of M */
 	r[m] = r[R0];
 
 	/* for each column of M */
 	for(j = 0; j < n; j++)
-	{	/* element with indea (0,j) in the minor M */
+	{	/* element with index (0,j) in the minor M */
 		M0j = a[ R0 * m + Cj ];
 
-		/* remove column with indea j in M to form next sub-minor S of M */
+		/* remove column with index j in M to form next sub-minor S of M */
 		c[Cj1] = c[Cj];
 
 		/* compute determinant of the current sub-minor S */
 		detS = det_of_minor(a, m, n - 1, r, c);
 
-		/* restore column Cj to representaion of M as a minor of A */
+		/* restore column Cj to representation of M as a minor of A */
 		c[Cj1] = Cj;
 
 		/* include this sub-minor term in the summation */
@@ -209,7 +211,8 @@ double det_of_minor(
 	/* return the determinant of the minor M */
 	return detM;
 }
-/*
+/* $$
+$end
 -------------------------------------------------------------------------------
 $begin det_by_minor_c$$
 $spell
@@ -251,9 +254,17 @@ $codei%
 %$$
 and is the number of rows (and columns) in the square matrix $latex A$$.
 
-
-$end
-*/
+$hilitecmd%codep%$$
+$hiliteseq%
+	%det_of_minor%(%det_of_minor_c
+%$$
+$spell
+	det
+	malloc
+	sizeof
+$$
+$head Source Code$$
+$codep */
 double det_by_minor(double* a, size_t m)
 {	size_t *r, *c, i;
 	double value;
@@ -275,7 +286,8 @@ double det_by_minor(double* a, size_t m)
 	free(c);
 	return value;
 }
-/* 
+/* $$ 
+$end
 --------------------------------------------------------------------------
 $begin uniform_01_c$$
 
@@ -313,8 +325,16 @@ The input value of the elements of $icode a$$ does not matter.
 Upon return, the elements of $icode a$$ are set to values
 randomly sampled over the interval [0,1].
 
-$end
-*/
+$hilitecmd%codep%$$
+$hiliteseq%
+	%elapsed_seconds%(%elapsed_seconds_c%
+	%repeat_det_by_minor%(%elapsed_seconds_c
+%$$
+$spell
+	srand
+$$
+$head Source Code$$
+$codep */
 void random_seed(size_t seed)
 {	srand(seed); }
 void uniform_01(unsigned n, double* a)
@@ -322,7 +342,8 @@ void uniform_01(unsigned n, double* a)
 	while(n--)
 		a[n] = rand() * factor;
 }
-/*
+/* $$
+$end
 ------------------------------------------------------------------------------
 $begin correct_det_by_minor_c$$
 $spell
@@ -342,15 +363,23 @@ $codei%
 %$$
 It value is $code 1$$ if the test passes and $code 0$$ otherwise.
 
-$end
-*/
+$hilitecmd%codep%$$
+$hiliteseq%
+	%random_seed%(%uniform_01_c%
+	%uniform_01%(%uniform_01_c
+%$$
+$spell
+	fabs
+$$
+$head Source Code$$
+$codep */
 bool correct_det_by_minor(void)
 {	double a[9], det, check;
 
 	random_seed(123);
 	uniform_01(9, a);
 
-	/* compute determinante using eaansion by minors */
+	/* compute determinant using expansion by minors */
 	det = det_by_minor(a, 3);
 	
 	/* use expansion by minors to hand code the determinant  */
@@ -363,7 +392,8 @@ bool correct_det_by_minor(void)
 		return true;
 	return false;
 }
-/*
+/* $$
+$end
 ------------------------------------------------------------------------------
 $begin repeat_det_by_minor_c$$
 $spell
@@ -390,8 +420,17 @@ $codei%
 It specifies the number of rows (and columns) in the square
 matrix we are computing the determinant of.
 
-$end
-*/
+$hilitecmd%codep%$$
+$hiliteseq%
+	%uniform_01%(%uniform_01_c%
+	%det_by_minor%(%det_by_minor_c
+%$$
+$spell
+	malloc
+	sizeof
+$$
+$head Source Code$$
+$codep */
 void repeat_det_by_minor(size_t repeat, size_t size)
 {	double *a;
 	a = (double*) malloc( (size * size) * sizeof(double) );
@@ -404,7 +443,8 @@ void repeat_det_by_minor(size_t repeat, size_t size)
 	free(a);
 	return;
 }
-/*
+/* $$
+$end
 ------------------------------------------------------------------------------
 $begin elapsed_seconds_c$$
 $spell
@@ -425,8 +465,15 @@ $head s$$
 is a $code double$$ equal to the 
 number of seconds since the first call to $code elapsed_seconds$$.
 
-$end
-*/
+$spell
+	usec
+	diff
+	bool
+	struct
+	timeval
+$$
+$head Source Code$$
+$codep */
 double elapsed_seconds(void)
 {	double sec, usec, diff;
 
@@ -447,7 +494,8 @@ double elapsed_seconds(void)
 
 	return diff;
 }
-/*
+/* $$
+$end
 -----------------------------------------------------------------------------
 $begin time_det_by_minor_c$$
 $spell
@@ -489,8 +537,16 @@ and is the number of wall clock seconds that it took for
 $code det_by_minor$$ to compute its determinant
 (plus overhead which includes choosing a random matrix).
 
-$end
-*/
+$hilitecmd%codep%$$
+$hiliteseq%
+	%elapsed_seconds%(%elapsed_seconds_c%
+	 %repeat_det_by_minor%(%elapsed_seconds_c
+%$$
+$spell
+	det
+$$
+$head Source Code$$
+$codep */
 double time_det_by_minor(size_t size, double time_min)
 {	size_t repeat;
 	double s0, s1, time;
@@ -508,9 +564,25 @@ double time_det_by_minor(size_t size, double time_min)
 	time = (s1 - s0) / (double) repeat;
 	return time;
 }
-/*
+/* $$
+$end
 ------------------------------------------------------------------------------
-*/
+$begin main_compare_c$$
+
+$section Main Program For Comparing C and C++ Speed$$
+
+$hilitecmd%codep%$$
+$hiliteseq%
+	%correct_det_by_minor%(%correct_det_by_minor_c%
+	%random_seed%(%uniform_01_c
+%$$
+$spell
+	bool
+	printf
+	det
+$$
+$head Source Code$$
+$codep */
 int main(void)
 {	bool flag;
 	size_t i;
@@ -534,3 +606,6 @@ int main(void)
 		return 0;
 	return 1;
 }
+/* $$
+$end
+*/
