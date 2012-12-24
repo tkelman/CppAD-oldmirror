@@ -1,3 +1,5 @@
+# ifndef CPPAD_IPOPT_SOLVE_INCLUDED
+# define CPPAD_IPOPT_SOLVE_INCLUDED
 /* $Id:$ */
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
@@ -17,6 +19,7 @@ $latex
 	\newcommand{\W}[1]{ {\; #1 \;} }
 $$
 $spell
+	Bvector
 	bool
 	retape
 	infeasibility
@@ -52,12 +55,12 @@ $section Use Ipopt to Solve a Nonlinear Programming Problem$$
 $head Syntax$$
 $codei%# include "ipopt_solve.hpp"
 %$$
-$codei%ipopt::solve(
-%retape%, %nf%, %xi%, %xl%, %xu%, %gl%, %gu%, %fg_eval%, %options%, %result%
+$codei%ipopt_solve(
+	%retape%, %xi%, %xl%, %xu%, %gl%, %gu%, %fg_eval%, %options%, %result%
 )%$$
 
 $head Purpose$$
-The function $code ipopt::solve$$ solves nonlinear programming
+The function $code ipopt_solve$$ solves nonlinear programming
 problems of the form
 $latex \[
 \begin{array}{rll}
@@ -75,41 +78,38 @@ $href%
 %$$
 optimizer and CppAD for the derivative and sparsity calculations. 
 
-$head Vector$$
-The type $icode Vector$$ must be a $cref SimpleVector$$ class with
+$head Bvector$$
+The type $icode Bvector$$ must be a $cref SimpleVector$$ class with
+$cref/elements of type/SimpleVector/Elements of Specified Type/$$ 
+$code bool$$.
+
+$head Dvector$$
+The type $icode DVector$$ must be a $cref SimpleVector$$ class with
 $cref/elements of type/SimpleVector/Elements of Specified Type/$$ 
 $code double$$.
 
-$head ADvector$$
-The type $icode ADvector$$ must be a $cref SimpleVector$$ class with
-$cref/elements of type/SimpleVector/Elements of Specified Type/$$ 
-$code AD<double>$$.
-
-$head retape$$
-The argument $icode retape$$ has prototype
-$codei%
-	bool %retape%
-%$$
-If it is true,
-the $cref/operation sequence/glossary/Operation/Sequence/$$ 
-used by $cref/fg_eval/ipopt_solve/fg_eval/$$ 
-to compute the elements of $icode fg$$ 
-is re-taped for each value of $icode x$$.
-Otherwise, it is assumed that this operation sequence
-does not depend on $icode x$$
-(which should be much faster).
-
 $head nf$$
-The argument $icode nf$$ has prototype
-$codei%
-	size_t %nf%
-%$$
-It specifies the dimension of the range space for 
+The notation $icode nf$$ denotes the dimension of the range space for 
 $latex f : \B{R}^{nx} \rightarrow \B{R}^{nf}$$.
 Let $latex nd(i)$$ be the number of components of $latex x$$
 that the function $latex f_i (x)$$ depends on.
 One should choose the decomposition of the object into a sum
 so as to minimize the maximum, with respect to $latex i$$, of $latex nd(i)$$.
+
+$head retape$$
+The argument $icode retape$$ has prototype
+$codei%
+	const %Bvector%& %retape%
+%$$
+and its size is $icode%nf% + %ng%$$.
+For $icode%i% = 0 , %...% , %nf%+%ng%-1%$$, if $icode%retape%[%i%]%$$ is true,
+the $cref/operation sequence/glossary/Operation/Sequence/$$ 
+used by $cref/fg_eval/ipopt_solve/fg_eval/$$ 
+to compute $icode%fg%[%i%]%$$ 
+is re-taped for each value of $icode x$$.
+Otherwise, it is assumed that this operation sequence
+does not depend on $icode x$$
+(which should be much faster).
 
 $head xi$$
 The argument $icode xi$$ has prototype
@@ -159,9 +159,16 @@ $codei%
 where the class $icode FG_eval$$ is unspecified except for the fact that
 it supports the syntax
 $codei%
+	%FG_eval%::ADvector
 	%fg_eval%(%fg%, %x%)
 %$$
-The arguments to $icode fg_eval$$ have the following meaning:
+The type $icode ADvector$$
+and the arguments to $icode fg$$, $icode x$$ have the following meaning:
+
+$subhead ADvector$$
+The type $icode%FG_eval%::ADVector%$$ must be a $cref SimpleVector$$ class with
+$cref/elements of type/SimpleVector/Elements of Specified Type/$$ 
+$code AD<double>$$.
 
 $subhead x$$
 The $icode fg_eval$$ argument $icode x$$ has prototype
@@ -179,9 +186,12 @@ where $icode%nf% + %ng% = %fg%.size()%$$.
 The input value of the elements of $icode fg$$ does not matter.
 Upon return from $icode fg_eval$$,
 for $latex i = 0 , \ldots , nf-1$$,
-$icode%fg%[%i%] =%$$ $latex f_i (x)$$ and   
-for $latex i = 0, \ldots , ng-1$$,
-$icode%fg%[%nf% + %i%] =%$$ $latex g_i (x)$$.
+$codei%
+	%fg%[%i%] =%$$ $latex f_i (x)$$ $codei%
+%$$
+and   for $latex i = 0, \ldots , ng-1$$,
+$codei%
+	%fg%[%nf% + %i%] =%$$ $latex g_i (x)$$
 
 $head options$$
 The argument $icode options$$ has prototype
@@ -194,7 +204,7 @@ the its options.
 $head result$$
 The argument $icode result$$ has prototype
 $codei%
-	ipopt::solution& %result%
+	ipopt_solve_result<%Dvector%>& %result%
 %$$
 After the optimization process is completed, $icode result$$ contains
 the following information:
@@ -202,7 +212,7 @@ the following information:
 $subhead status$$
 The $icode status$$ field of $icode result$$ has prototype
 $codei%
-	ipopt::solution_status %result%.status
+	ipopt_solve_result<%Dvector%>::result_status %result%.status
 %$$
 It is the final Ipopt status for the optimizer. 
 Here is a list of the possible values for the status:
@@ -311,4 +321,110 @@ $codei%
 It is the final value of the objective function $latex f(x)$$.
 	
 $end
+-------------------------------------------------------------------------------
 */
+CPPAD_BEGIN_NAMESPACE
+/*!
+Class that contains information about ipopt_solve problem solution
+*/
+template <class Vector>
+class ipopt_solve_result 
+{
+public:
+	/// possible values for solution status
+	enum result_status {
+		not_defined,
+		success,
+		maxiter_exceeded,
+		stop_at_tiny_step,
+		stop_at_acceptable_point,
+		local_infeasibility,
+		user_requested_stop,
+		feasible_point_found,
+		diverging_iterates,
+		restoration_failure,
+		error_in_step_computation,
+		invalid_number_detected,
+		too_few_degrees_of_freedom,
+		internal_error,
+		unknown
+	}  status;
+	/// the approximation solution
+	Vector x;
+	/// Lagrange multipliers corresponding to lower bounds on x
+	Vector z_l;
+	/// Lagrange multipliers corresponding to upper bounds on x
+	Vector z_u;
+	/// value of g(x)
+	Vector g;
+	/// Lagrange multipliers correspondiing constraints on g(x)
+	Vector lambda;
+	/// value of f(x)
+	double obj_value;
+	/// constructor initializes solution status as not yet defined
+	cppad_ipopt_solution(void)
+	{	status = not_defined; }
+};
+
+/*!
+Use Ipopt to Solve a Nonlinear Programming Problem
+
+\tparam Bvector
+simple vector class with elements of type bool.
+
+\tparam Dvector
+simple vector class with elements of type double.
+
+\tparam FG_eval
+function object used to evaluate f(x) and g(x); see fg_eval below.
+It must also support
+\code
+	FG_eval::ADvector
+\endcode
+to dentify the type used for the arguments to fg_eval.
+
+\param retape
+identify which components of fg need to be retaped.
+
+\param xi
+initial argument value to start optimization procedure at.
+
+\param xl
+lower limit for argument during optimization
+
+\param xu
+upper limit for argument during optimization
+
+\param gl
+lower limit for g(x) during optimization.
+
+\param gu
+upper limit for g(x) during optimization.
+
+\param fg_eval
+function that evaluates the objective and constraints using the syntax
+\code
+	fg_eval(fg, x)
+\endcode
+
+\param options
+file that contains the Ipopt options.
+
+\param result
+structure that holds the results of the optimization.
+*/
+template <class Bvector, class Dvector, class FG_eval>
+void ipopt_solve(
+	const Bvector&                retape  , 
+	const Dvector&                xi      , 
+	const Dvector&                xl      ,
+	const Dvector&                xu      , 
+	const Dvector&                gl      , 
+	const Dvector&                gu      , 
+	FG_eval&                      fg_eval , 
+	const std::string&            options ,
+	ipopt_solve_result<Dvector>&  result  )
+{
+}
+CPPAD_END_NAMESPACE
+# endif
