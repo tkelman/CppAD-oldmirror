@@ -323,32 +323,22 @@ It is the final value of the objective function $latex f(x)$$.
 $end
 -------------------------------------------------------------------------------
 */
+# include <cppad_ipopt_nlp.hpp>
+
 CPPAD_BEGIN_NAMESPACE
 /*!
 Class that contains information about ipopt_solve problem solution
+
+\tparam Vector
+a simple vector with elements of type double
 */
 template <class Vector>
 class ipopt_solve_result 
-{
+{	typedef typename cppad_ipopt::cppad_ipopt_solution::solution_status 
+		result_status;
 public:
 	/// possible values for solution status
-	enum result_status {
-		not_defined,
-		success,
-		maxiter_exceeded,
-		stop_at_tiny_step,
-		stop_at_acceptable_point,
-		local_infeasibility,
-		user_requested_stop,
-		feasible_point_found,
-		diverging_iterates,
-		restoration_failure,
-		error_in_step_computation,
-		invalid_number_detected,
-		too_few_degrees_of_freedom,
-		internal_error,
-		unknown
-	}  status;
+	result_status status;
 	/// the approximation solution
 	Vector x;
 	/// Lagrange multipliers corresponding to lower bounds on x
@@ -365,6 +355,39 @@ public:
 	cppad_ipopt_solution(void)
 	{	status = not_defined; }
 };
+
+/*!
+FG_info class used by cppad_ipopt_nlp (used for temporary conversion).
+*/
+template <class ADvector, class FG_eval>
+class ipopt_solve_fg_info : public cppad_ipopt::cppad_ipopt_fg_info
+{
+private:
+	size_t   nf_;
+	size_t   ng_;
+	FG_eval& fg_eval_;
+public:
+	// derived class constructor
+	FG_info(size_t nf, size_t ng, FG_eval& fg_eval)
+	: nf_(nf), ng_(ng), fg_eval_(fg_eval)
+	{ }
+	// Evaluation of f(x) and g(x) using AD
+	ADvector eval_r(size_t k, const ADVector& x)
+	{	size_t i;
+		ADvector fg(nf_ + ng_);
+		fg_eval_(x);
+		ADvector r(1 + ng_);
+		r[0] = fg[0];
+		for(i = 1; i < nf; i++)
+			r[0] += fg[i];
+		for(i = 0; i < ng; i++)
+			r[1 + i] = fg[nf + i];
+		return r;
+	}
+	bool retape(size_t k)
+	{	return true; }
+	};
+}
 
 /*!
 Use Ipopt to Solve a Nonlinear Programming Problem
@@ -424,7 +447,80 @@ void ipopt_solve(
 	FG_eval&                      fg_eval , 
 	const std::string&            options ,
 	ipopt_solve_result<Dvector>&  result  )
-{
+{	typedef typename FG_eval::ADvector ADvector;
+	size_t i;
+	bool ok;
+
+	CPPAD_ASSERT_KNOWN(
+		xi.size() == xl.size() && xi.size() == xu.size() ,
+		"ipopt_solve: size of xi, xl, and xu are not all equal."
+	);
+	CPPAD_ASSERT_KNOWN(
+		gl.size() == gu.size() ,
+		"ipopt_solve: size of gl and gu are not equal."
+	);
+	CPPAD_ASSERT_KNOWN(
+		retape.size() > gl.size() ,
+		"ipopt_solve: size of retape is not greater than size of gl."
+	);
+	size_t nx = xi.size();
+	size_t ng = gl.size();
+	size_t nf = retape.size() - ng;
+
+	// convert to types expected by cppad_ipopt_nlp
+	cppad_ipopt::NumberVector x_i(nx), x_l(nx), x_u(nx), g_l(ng), g_u(ng);
+	for(i = 0; i < nx; i++)
+	{	x_i[i] = xi[i];
+		x_l[i] = xl[i];
+		x_u[i] = xu[i];
+	}
+	for(i = 0; i < ng; i++)
+	{	g_l[i] = gl[i];
+		g_u[i] = gu[i];
+	}
+
+	// ipopt callback function
+	ipopt_solve_fg_info<ADvector, FG_eval> fg_info(nf, ng, fg_eval);
+
+	// Create an interface from Ipopt to this specific problem.
+	// Note the assumption here that ADvector is same as cppd_ipopt::ADvector
+	cppad_ipopt::cppad_ipopt_solution solution;
+	Ipopt::SmartPtr<Ipopt::TNLP> cppad_nlp = new_ipopt_nlp(
+		nx, ng, x_i, x_l, x_u, g_l, g_u, &fg_info, &solution
+	);
+
+	// Create an IpoptApplication
+	using Ipopt::IpoptApplication;
+	Ipopt::SmartPtr<IpoptApplication> app = new IpoptApplication();
+
+	// set the options file
+	app->Options()->SetStringValue("option_file_name", options.c_str());
+
+	// Initialize the IpoptApplication and process the options
+	Ipopt::ApplicationReturnStatus status = app->Initialize();
+	ok    &= status == Ipopt::Solve_Succeeded;
+	if( ! ok )
+	{	result.status = result_status::unknown;
+		return;
+	}
+
+	// Run the IpoptApplication
+	app->OptimizeTNLP(cppad_nlp);
+
+	// pass back the result
+	result.status    = solution.status;
+	result.obj_value = solution.obj_value;
+	for(i = 0; i < nx; i++)
+	{	result.x[i]  = solution.x[i];
+		result.zl[i] = solution.z_l[i];
+		result.zu[i] = solution.z_u[i];
+	}
+	for(i = 0; i < ng; i++)
+	{	result.g[i]      = solution.g[i];
+		result.lambda[i] = solution.lambda[i];
+	}
+	return;
 }
+
 CPPAD_END_NAMESPACE
 # endif
