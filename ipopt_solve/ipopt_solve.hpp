@@ -320,6 +320,7 @@ $end
 # include <cppad_ipopt_nlp.hpp>
 
 CPPAD_BEGIN_NAMESPACE
+namespace ipopt {
 /*!
 Class that contains information about ipopt_solve problem result
 
@@ -441,7 +442,7 @@ void ipopt_solve(
 	const Dvector&                       gu        , 
 	FG_eval&                             fg_eval   , 
 	const char*                          options   ,
-	CppAD::ipopt_solve_result<Dvector>&  solution  )
+	ipopt_solve_result<Dvector>&         solution  )
 { 	bool ok = true;
 
 	typedef typename FG_eval::ADvector ADvector;
@@ -475,7 +476,7 @@ void ipopt_solve(
 	}
 
 	// ipopt callback function
-	CppAD::ipopt_solve_fg_info<ADvector, FG_eval> fg_info(nf, ng, fg_eval);
+	ipopt_solve_fg_info<ADvector, FG_eval> fg_info(nf, ng, fg_eval);
 
 	// Create an interface from Ipopt to this specific problem.
 	// Note the assumption here that ADvector is same as cppd_ipopt::ADvector
@@ -522,5 +523,6 @@ void ipopt_solve(
 	return;
 }
 
+} // end ipopt namespace
 CPPAD_END_NAMESPACE
 # endif
