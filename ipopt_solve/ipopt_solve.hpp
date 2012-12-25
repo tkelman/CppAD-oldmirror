@@ -21,7 +21,6 @@ $$
 $spell
 	Bvector
 	bool
-	retape
 	infeasibility
 	const
 	cpp
@@ -56,7 +55,7 @@ $head Syntax$$
 $codei%# include "ipopt_solve.hpp"
 %$$
 $codei%ipopt_solve(
-	%retape%, %xi%, %xl%, %xu%, %gl%, %gu%, %fg_eval%, %options%, %result%
+	%nf%, %xi%, %xl%, %xu%, %gl%, %gu%, %fg_eval%, %options%, %solution%
 )%$$
 
 $head Purpose$$
@@ -78,6 +77,12 @@ $href%
 %$$
 optimizer and CppAD for the derivative and sparsity calculations. 
 
+$head Assumption$$
+It is assumed that the
+$cref/operation sequence/glossary/Operation/Sequence/$$ 
+used by $cref/fg_eval/ipopt_solve/fg_eval/$$ to compute $icode fg$$ 
+does not depend on $icode x$$.
+
 $head Bvector$$
 The type $icode Bvector$$ must be a $cref SimpleVector$$ class with
 $cref/elements of type/SimpleVector/Elements of Specified Type/$$ 
@@ -89,27 +94,16 @@ $cref/elements of type/SimpleVector/Elements of Specified Type/$$
 $code double$$.
 
 $head nf$$
-The notation $icode nf$$ denotes the dimension of the range space for 
+The argument $icode nf$$ has prototype
+$codei%
+	size_t %nf%
+%$$
+It is the the dimension of the range space for 
 $latex f : \B{R}^{nx} \rightarrow \B{R}^{nf}$$.
 Let $latex nd(i)$$ be the number of components of $latex x$$
 that the function $latex f_i (x)$$ depends on.
 One should choose the decomposition of the object into a sum
 so as to minimize the maximum, with respect to $latex i$$, of $latex nd(i)$$.
-
-$head retape$$
-The argument $icode retape$$ has prototype
-$codei%
-	const %Bvector%& %retape%
-%$$
-and its size is $icode%nf% + %ng%$$.
-For $icode%i% = 0 , %...% , %nf%+%ng%-1%$$, if $icode%retape%[%i%]%$$ is true,
-the $cref/operation sequence/glossary/Operation/Sequence/$$ 
-used by $cref/fg_eval/ipopt_solve/fg_eval/$$ 
-to compute $icode%fg%[%i%]%$$ 
-is re-taped for each value of $icode x$$.
-Otherwise, it is assumed that this operation sequence
-does not depend on $icode x$$
-(which should be much faster).
 
 $head xi$$
 The argument $icode xi$$ has prototype
@@ -166,7 +160,7 @@ The type $icode ADvector$$
 and the arguments to $icode fg$$, $icode x$$ have the following meaning:
 
 $subhead ADvector$$
-The type $icode%FG_eval%::ADVector%$$ must be a $cref SimpleVector$$ class with
+The type $icode%FG_eval%::ADvector%$$ must be a $cref SimpleVector$$ class with
 $cref/elements of type/SimpleVector/Elements of Specified Type/$$ 
 $code AD<double>$$.
 
@@ -196,23 +190,23 @@ $codei%
 $head options$$
 The argument $icode options$$ has prototype
 $codei%
-	const std::string& %options%
+	const char* %options%
 %$$
 It is the name of the ipopt options file used to set
 the its options. 
 
-$head result$$
-The argument $icode result$$ has prototype
+$head solution$$
+The argument $icode solution$$ has prototype
 $codei%
-	ipopt_solve_result<%Dvector%>& %result%
+	ipopt_solve_result<%Dvector%>& %solution%
 %$$
-After the optimization process is completed, $icode result$$ contains
+After the optimization process is completed, $icode solution$$ contains
 the following information:
 
 $subhead status$$
-The $icode status$$ field of $icode result$$ has prototype
+The $icode status$$ field of $icode solution$$ has prototype
 $codei%
-	ipopt_solve_result<%Dvector%>::result_status %result%.status
+	ipopt_solve_result<%Dvector%>::status_type %solution%.status
 %$$
 It is the final Ipopt status for the optimizer. 
 Here is a list of the possible values for the status:
@@ -271,52 +265,52 @@ Contact the Ipopt authors through the mailing list.
 $tend
 
 $subhead x$$
-The $code x$$ field of $icode result$$ has prototype
+The $code x$$ field of $icode solution$$ has prototype
 $codei%
-	%Vector% %result%.x
+	%Vector% %solution%.x
 %$$
 and its size is equal to $icode nx$$.
 It is the final $latex x$$ value for the optimizer.
 
 $subhead zl$$
-The $code zl$$ field of $icode result$$ has prototype
+The $code zl$$ field of $icode solution$$ has prototype
 $codei%
-	%Vector% %result%.zl
+	%Vector% %solution%.zl
 %$$
 and its size is equal to $icode nx$$.
 It is the final Lagrange multipliers for the 
 lower bounds on $latex x$$.
 
 $subhead zu$$
-The $code zu$$ field of $icode result$$ has prototype
+The $code zu$$ field of $icode solution$$ has prototype
 $codei%
-	%Vector% %result%.zu
+	%Vector% %solution%.zu
 %$$
 and its size is equal to $icode nx$$.
 It is the final Lagrange multipliers for the 
 upper bounds on $latex x$$.
 
 $subhead g$$
-The $code g$$ field of $icode result$$ has prototype
+The $code g$$ field of $icode solution$$ has prototype
 $codei%
-	%Vector% %result%.g
+	%Vector% %solution%.g
 %$$
 and its size is equal to $icode ng$$.
 It is the final value for the constraint function $latex g(x)$$.
 
 $subhead lambda$$
-The $code lambda$$ field of $icode result$$ has prototype
+The $code lambda$$ field of $icode solution$$ has prototype
 $codei%
-	%Vector%> %result%.lambda
+	%Vector%> %solution%.lambda
 %$$
 and its size is equal to $icode ng$$.
 It is the final value for the 
 Lagrange multipliers corresponding to the constraint function.
 
 $subhead obj_value$$
-The $code obj_value$$ field of $icode result$$ has prototype
+The $code obj_value$$ field of $icode solution$$ has prototype
 $codei%
-	double %result%.obj_value
+	double %solution%.obj_value
 %$$
 It is the final value of the objective function $latex f(x)$$.
 	
@@ -327,33 +321,35 @@ $end
 
 CPPAD_BEGIN_NAMESPACE
 /*!
-Class that contains information about ipopt_solve problem solution
+Class that contains information about ipopt_solve problem result
 
-\tparam Vector
+\tparam Dvector
 a simple vector with elements of type double
 */
-template <class Vector>
+template <class Dvector>
 class ipopt_solve_result 
-{	typedef typename cppad_ipopt::cppad_ipopt_solution::solution_status 
-		result_status;
+{	
 public:
+	typedef typename cppad_ipopt::cppad_ipopt_solution::solution_status
+		status_type;
+
 	/// possible values for solution status
-	result_status status;
+	status_type status;
 	/// the approximation solution
-	Vector x;
+	Dvector x;
 	/// Lagrange multipliers corresponding to lower bounds on x
-	Vector z_l;
+	Dvector zl;
 	/// Lagrange multipliers corresponding to upper bounds on x
-	Vector z_u;
+	Dvector zu;
 	/// value of g(x)
-	Vector g;
+	Dvector g;
 	/// Lagrange multipliers correspondiing constraints on g(x)
-	Vector lambda;
+	Dvector lambda;
 	/// value of f(x)
 	double obj_value;
 	/// constructor initializes solution status as not yet defined
-	cppad_ipopt_solution(void)
-	{	status = not_defined; }
+	ipopt_solve_result(void)
+	{	status = cppad_ipopt::cppad_ipopt_solution::not_defined; }
 };
 
 /*!
@@ -368,26 +364,25 @@ private:
 	FG_eval& fg_eval_;
 public:
 	// derived class constructor
-	FG_info(size_t nf, size_t ng, FG_eval& fg_eval)
+	ipopt_solve_fg_info(size_t nf, size_t ng, FG_eval& fg_eval)
 	: nf_(nf), ng_(ng), fg_eval_(fg_eval)
 	{ }
 	// Evaluation of f(x) and g(x) using AD
-	ADvector eval_r(size_t k, const ADVector& x)
+	ADvector eval_r(size_t k, const ADvector& x)
 	{	size_t i;
 		ADvector fg(nf_ + ng_);
-		fg_eval_(x);
+		fg_eval_(fg, x);
 		ADvector r(1 + ng_);
 		r[0] = fg[0];
-		for(i = 1; i < nf; i++)
+		for(i = 1; i < nf_; i++)
 			r[0] += fg[i];
-		for(i = 0; i < ng; i++)
-			r[1 + i] = fg[nf + i];
+		for(i = 0; i < ng_; i++)
+			r[1 + i] = fg[nf_ + i];
 		return r;
 	}
 	bool retape(size_t k)
-	{	return true; }
-	};
-}
+	{	return false; }
+};
 
 /*!
 Use Ipopt to Solve a Nonlinear Programming Problem
@@ -406,8 +401,8 @@ It must also support
 \endcode
 to dentify the type used for the arguments to fg_eval.
 
-\param retape
-identify which components of fg need to be retaped.
+\param nf
+Number of components in the function f(x).
 
 \param xi
 initial argument value to start optimization procedure at.
@@ -433,20 +428,20 @@ function that evaluates the objective and constraints using the syntax
 \param options
 file that contains the Ipopt options.
 
-\param result
-structure that holds the results of the optimization.
+\param solution
+structure that holds the solution of the optimization.
 */
-template <class Bvector, class Dvector, class FG_eval>
+template <class Dvector, class FG_eval>
 void ipopt_solve(
-	const Bvector&                retape  , 
-	const Dvector&                xi      , 
-	const Dvector&                xl      ,
-	const Dvector&                xu      , 
-	const Dvector&                gl      , 
-	const Dvector&                gu      , 
-	FG_eval&                      fg_eval , 
-	const std::string&            options ,
-	ipopt_solve_result<Dvector>&  result  )
+	size_t                               nf        , 
+	const Dvector&                       xi        , 
+	const Dvector&                       xl        ,
+	const Dvector&                       xu        , 
+	const Dvector&                       gl        , 
+	const Dvector&                       gu        , 
+	FG_eval&                             fg_eval   , 
+	const char*                          options   ,
+	CppAD::ipopt_solve_result<Dvector>&  solution  )
 {	typedef typename FG_eval::ADvector ADvector;
 	size_t i;
 	bool ok;
@@ -460,12 +455,11 @@ void ipopt_solve(
 		"ipopt_solve: size of gl and gu are not equal."
 	);
 	CPPAD_ASSERT_KNOWN(
-		retape.size() > gl.size() ,
-		"ipopt_solve: size of retape is not greater than size of gl."
+		nf > 0 ,
+		"ipopt_solve: nf is not greater than zero."
 	);
 	size_t nx = xi.size();
 	size_t ng = gl.size();
-	size_t nf = retape.size() - ng;
 
 	// convert to types expected by cppad_ipopt_nlp
 	cppad_ipopt::NumberVector x_i(nx), x_l(nx), x_u(nx), g_l(ng), g_u(ng);
@@ -480,13 +474,13 @@ void ipopt_solve(
 	}
 
 	// ipopt callback function
-	ipopt_solve_fg_info<ADvector, FG_eval> fg_info(nf, ng, fg_eval);
+	CppAD::ipopt_solve_fg_info<ADvector, FG_eval> fg_info(nf, ng, fg_eval);
 
 	// Create an interface from Ipopt to this specific problem.
 	// Note the assumption here that ADvector is same as cppd_ipopt::ADvector
-	cppad_ipopt::cppad_ipopt_solution solution;
-	Ipopt::SmartPtr<Ipopt::TNLP> cppad_nlp = new_ipopt_nlp(
-		nx, ng, x_i, x_l, x_u, g_l, g_u, &fg_info, &solution
+	cppad_ipopt::cppad_ipopt_solution old_solution;
+	Ipopt::SmartPtr<Ipopt::TNLP> cppad_nlp = new cppad_ipopt::cppad_ipopt_nlp(
+		nx, ng, x_i, x_l, x_u, g_l, g_u, &fg_info, &old_solution
 	);
 
 	// Create an IpoptApplication
@@ -494,30 +488,30 @@ void ipopt_solve(
 	Ipopt::SmartPtr<IpoptApplication> app = new IpoptApplication();
 
 	// set the options file
-	app->Options()->SetStringValue("option_file_name", options.c_str());
+	app->Options()->SetStringValue("option_file_name", options);
 
 	// Initialize the IpoptApplication and process the options
 	Ipopt::ApplicationReturnStatus status = app->Initialize();
 	ok    &= status == Ipopt::Solve_Succeeded;
 	if( ! ok )
-	{	result.status = result_status::unknown;
+	{	solution.status = cppad_ipopt::cppad_ipopt_solution::unknown; 
 		return;
 	}
 
 	// Run the IpoptApplication
 	app->OptimizeTNLP(cppad_nlp);
 
-	// pass back the result
-	result.status    = solution.status;
-	result.obj_value = solution.obj_value;
+	// pass back the solution
+	solution.status    = old_solution.status;
+	solution.obj_value = old_solution.obj_value;
 	for(i = 0; i < nx; i++)
-	{	result.x[i]  = solution.x[i];
-		result.zl[i] = solution.z_l[i];
-		result.zu[i] = solution.z_u[i];
+	{	solution.x[i]  = old_solution.x[i];
+		solution.zl[i] = old_solution.z_l[i];
+		solution.zu[i] = old_solution.z_u[i];
 	}
 	for(i = 0; i < ng; i++)
-	{	result.g[i]      = solution.g[i];
-		result.lambda[i] = solution.lambda[i];
+	{	solution.g[i]      = old_solution.g[i];
+		solution.lambda[i] = old_solution.lambda[i];
 	}
 	return;
 }
