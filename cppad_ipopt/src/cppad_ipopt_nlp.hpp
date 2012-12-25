@@ -930,7 +930,7 @@ private:
 	cppad_ipopt_nlp& operator=(const cppad_ipopt_nlp&);
 public:
 	// ----------------------------------------------------------------
-	// See cppad_ipopt_nlp.hpp for doxygen documentation of these methods
+	// See cppad_ipopt_nlp.cpp for doxygen documentation of these methods
 	// ----------------------------------------------------------------
 
 	/// only constructor for cppad_ipopot_nlp

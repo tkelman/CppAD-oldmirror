@@ -1,4 +1,4 @@
-/* $Id: get_started.cpp 2506 2012-10-24 19:36:49Z bradbell $ */
+/* $Id$ */
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
 
@@ -54,7 +54,7 @@ $end
 // BEGIN C++
 
 # include <fstream>
-# include <ipopt_solve.hpp>
+# include <cppad/ipopt/solve.hpp>
 
 namespace {
 	using CppAD::AD;
