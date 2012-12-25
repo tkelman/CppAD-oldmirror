@@ -442,9 +442,10 @@ void ipopt_solve(
 	FG_eval&                             fg_eval   , 
 	const char*                          options   ,
 	CppAD::ipopt_solve_result<Dvector>&  solution  )
-{	typedef typename FG_eval::ADvector ADvector;
+{ 	bool ok = true;
+
+	typedef typename FG_eval::ADvector ADvector;
 	size_t i;
-	bool ok;
 
 	CPPAD_ASSERT_KNOWN(
 		xi.size() == xl.size() && xi.size() == xu.size() ,
@@ -504,11 +505,16 @@ void ipopt_solve(
 	// pass back the solution
 	solution.status    = old_solution.status;
 	solution.obj_value = old_solution.obj_value;
+	solution.x.resize(nx);
+	solution.zl.resize(nx);
+	solution.zu.resize(nx);
 	for(i = 0; i < nx; i++)
 	{	solution.x[i]  = old_solution.x[i];
 		solution.zl[i] = old_solution.z_l[i];
 		solution.zu[i] = old_solution.z_u[i];
 	}
+	solution.g.resize(ng);
+	solution.lambda.resize(ng);
 	for(i = 0; i < ng; i++)
 	{	solution.g[i]      = old_solution.g[i];
 		solution.lambda[i] = old_solution.lambda[i];
