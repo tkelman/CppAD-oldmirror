@@ -54,12 +54,12 @@ $section Use Ipopt to Solve a Nonlinear Programming Problem$$
 $head Syntax$$
 $codei%# include "ipopt_solve.hpp"
 %$$
-$codei%ipopt_solve(
+$codei%ipopt::solve(
 	%nf%, %xi%, %xl%, %xu%, %gl%, %gu%, %fg_eval%, %options%, %solution%
 )%$$
 
 $head Purpose$$
-The function $code ipopt_solve$$ solves nonlinear programming
+The function $code ipopt::solve$$ solves nonlinear programming
 problems of the form
 $latex \[
 \begin{array}{rll}
@@ -198,7 +198,7 @@ the its options.
 $head solution$$
 The argument $icode solution$$ has prototype
 $codei%
-	ipopt_solve_result<%Dvector%>& %solution%
+	ipopt::solve_result<%Dvector%>& %solution%
 %$$
 After the optimization process is completed, $icode solution$$ contains
 the following information:
@@ -206,7 +206,7 @@ the following information:
 $subhead status$$
 The $icode status$$ field of $icode solution$$ has prototype
 $codei%
-	ipopt_solve_result<%Dvector%>::status_type %solution%.status
+	ipopt::solve_result<%Dvector%>::status_type %solution%.status
 %$$
 It is the final Ipopt status for the optimizer. 
 Here is a list of the possible values for the status:
@@ -322,13 +322,13 @@ $end
 CPPAD_BEGIN_NAMESPACE
 namespace ipopt {
 /*!
-Class that contains information about ipopt_solve problem result
+Class that contains information about solve problem result
 
 \tparam Dvector
 a simple vector with elements of type double
 */
 template <class Dvector>
-class ipopt_solve_result 
+class solve_result 
 {	
 public:
 	typedef typename cppad_ipopt::cppad_ipopt_solution::solution_status
@@ -349,7 +349,7 @@ public:
 	/// value of f(x)
 	double obj_value;
 	/// constructor initializes solution status as not yet defined
-	ipopt_solve_result(void)
+	solve_result(void)
 	{	status = cppad_ipopt::cppad_ipopt_solution::not_defined; }
 };
 
@@ -357,7 +357,7 @@ public:
 FG_info class used by cppad_ipopt_nlp (used for temporary conversion).
 */
 template <class ADvector, class FG_eval>
-class ipopt_solve_fg_info : public cppad_ipopt::cppad_ipopt_fg_info
+class solve_fg_info : public cppad_ipopt::cppad_ipopt_fg_info
 {
 private:
 	size_t   nf_;
@@ -365,7 +365,7 @@ private:
 	FG_eval& fg_eval_;
 public:
 	// derived class constructor
-	ipopt_solve_fg_info(size_t nf, size_t ng, FG_eval& fg_eval)
+	solve_fg_info(size_t nf, size_t ng, FG_eval& fg_eval)
 	: nf_(nf), ng_(ng), fg_eval_(fg_eval)
 	{ }
 	// Evaluation of f(x) and g(x) using AD
@@ -433,7 +433,7 @@ file that contains the Ipopt options.
 structure that holds the solution of the optimization.
 */
 template <class Dvector, class FG_eval>
-void ipopt_solve(
+void solve(
 	size_t                               nf        , 
 	const Dvector&                       xi        , 
 	const Dvector&                       xl        ,
@@ -442,7 +442,7 @@ void ipopt_solve(
 	const Dvector&                       gu        , 
 	FG_eval&                             fg_eval   , 
 	const char*                          options   ,
-	ipopt_solve_result<Dvector>&         solution  )
+	solve_result<Dvector>&         solution  )
 { 	bool ok = true;
 
 	typedef typename FG_eval::ADvector ADvector;
@@ -450,15 +450,15 @@ void ipopt_solve(
 
 	CPPAD_ASSERT_KNOWN(
 		xi.size() == xl.size() && xi.size() == xu.size() ,
-		"ipopt_solve: size of xi, xl, and xu are not all equal."
+		"ipopt::solve: size of xi, xl, and xu are not all equal."
 	);
 	CPPAD_ASSERT_KNOWN(
 		gl.size() == gu.size() ,
-		"ipopt_solve: size of gl and gu are not equal."
+		"ipopt::solve: size of gl and gu are not equal."
 	);
 	CPPAD_ASSERT_KNOWN(
 		nf > 0 ,
-		"ipopt_solve: nf is not greater than zero."
+		"ipopt::solve: nf is not greater than zero."
 	);
 	size_t nx = xi.size();
 	size_t ng = gl.size();
@@ -476,7 +476,7 @@ void ipopt_solve(
 	}
 
 	// ipopt callback function
-	ipopt_solve_fg_info<ADvector, FG_eval> fg_info(nf, ng, fg_eval);
+	solve_fg_info<ADvector, FG_eval> fg_info(nf, ng, fg_eval);
 
 	// Create an interface from Ipopt to this specific problem.
 	// Note the assumption here that ADvector is same as cppd_ipopt::ADvector

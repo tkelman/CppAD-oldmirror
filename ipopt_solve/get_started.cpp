@@ -142,10 +142,10 @@ bool ipopt_solve_get_started(void)
 	options_file.close();
 
 	// place to return solution
-	CppAD::ipopt::ipopt_solve_result<Dvector> solution;
+	CppAD::ipopt::solve_result<Dvector> solution;
 
 	// solve the problem
-	CppAD::ipopt::ipopt_solve<Dvector, FG_eval>(
+	CppAD::ipopt::solve<Dvector, FG_eval>(
 		nf, xi, xl, xu, gl, gu, fg_eval, options, solution
 	);
 	//
