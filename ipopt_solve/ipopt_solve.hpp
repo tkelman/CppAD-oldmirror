@@ -331,8 +331,24 @@ template <class Dvector>
 class solve_result 
 {	
 public:
-	typedef typename cppad_ipopt::cppad_ipopt_solution::solution_status
-		status_type;
+	/// possible values for the result status
+	enum status_type {
+		not_defined,
+		success,
+		maxiter_exceeded,
+		stop_at_tiny_step,
+		stop_at_acceptable_point,
+		local_infeasibility,
+		user_requested_stop,
+		feasible_point_found,
+		diverging_iterates,
+		restoration_failure,
+		error_in_step_computation,
+		invalid_number_detected,
+		too_few_degrees_of_freedom,
+		internal_error,
+		unknown
+	};
 
 	/// possible values for solution status
 	status_type status;
@@ -350,7 +366,7 @@ public:
 	double obj_value;
 	/// constructor initializes solution status as not yet defined
 	solve_result(void)
-	{	status = cppad_ipopt::cppad_ipopt_solution::not_defined; }
+	{	status = not_defined; }
 };
 
 /*!
@@ -496,7 +512,7 @@ void solve(
 	Ipopt::ApplicationReturnStatus status = app->Initialize();
 	ok    &= status == Ipopt::Solve_Succeeded;
 	if( ! ok )
-	{	solution.status = cppad_ipopt::cppad_ipopt_solution::unknown; 
+	{	solution.status = solve_result<Dvector>::unknown; 
 		return;
 	}
 
@@ -504,7 +520,8 @@ void solve(
 	app->OptimizeTNLP(cppad_nlp);
 
 	// pass back the solution
-	solution.status    = old_solution.status;
+	typedef typename solve_result<Dvector>::status_type status_type;
+	solution.status = static_cast<status_type>(old_solution.status);
 	solution.obj_value = old_solution.obj_value;
 	solution.x.resize(nx);
 	solution.zl.resize(nx);

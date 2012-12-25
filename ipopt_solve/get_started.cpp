@@ -151,7 +151,7 @@ bool ipopt_solve_get_started(void)
 	//
  	// Check some of the solution values
  	//
-	ok &= solution.status == cppad_ipopt::cppad_ipopt_solution::success;
+	ok &= solution.status == CppAD::ipopt::solve_result<Dvector>::success;
 	//
 	double check_x[]  = { 1.000000, 4.743000, 3.82115, 1.379408 };
 	double check_zl[] = { 1.087871, 0.,       0.,      0.       };
