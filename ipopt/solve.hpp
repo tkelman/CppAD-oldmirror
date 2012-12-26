@@ -433,26 +433,11 @@ void solve(
 	size_t nx = xi.size();
 	size_t ng = gl.size();
 
-	// convert to types expected by cppad_ipopt_nlp
-	cppad_ipopt::NumberVector x_i(nx), x_l(nx), x_u(nx), g_l(ng), g_u(ng);
-	for(i = 0; i < nx; i++)
-	{	x_i[i] = xi[i];
-		x_l[i] = xl[i];
-		x_u[i] = xu[i];
-	}
-	for(i = 0; i < ng; i++)
-	{	g_l[i] = gl[i];
-		g_u[i] = gu[i];
-	}
-
-	// ipopt callback function
-	solve_fg_info<ADvector, FG_eval> fg_info(nf, ng, fg_eval);
-
 	// Create an interface from Ipopt to this specific problem.
 	// Note the assumption here that ADvector is same as cppd_ipopt::ADvector
-	cppad_ipopt::cppad_ipopt_solution old_solution;
-	Ipopt::SmartPtr<Ipopt::TNLP> cppad_nlp = new cppad_ipopt::cppad_ipopt_nlp(
-		nx, ng, x_i, x_l, x_u, g_l, g_u, &fg_info, &old_solution
+	Ipopt::SmartPtr<Ipopt::TNLP> cppad_nlp = 
+	new CppAD::ipopt::solve_nlp<Dvector, ADvector, FG_eval>(
+		nf, nx, ng, xi, xl, xu, gl, gu, fg_eval, solution
 	);
 
 	// Create an IpoptApplication
@@ -473,24 +458,6 @@ void solve(
 	// Run the IpoptApplication
 	app->OptimizeTNLP(cppad_nlp);
 
-	// pass back the solution
-	typedef typename solve_result<Dvector>::status_type status_type;
-	solution.status = static_cast<status_type>(old_solution.status);
-	solution.obj_value = old_solution.obj_value;
-	solution.x.resize(nx);
-	solution.zl.resize(nx);
-	solution.zu.resize(nx);
-	for(i = 0; i < nx; i++)
-	{	solution.x[i]  = old_solution.x[i];
-		solution.zl[i] = old_solution.z_l[i];
-		solution.zu[i] = old_solution.z_u[i];
-	}
-	solution.g.resize(ng);
-	solution.lambda.resize(ng);
-	for(i = 0; i < ng; i++)
-	{	solution.g[i]      = old_solution.g[i];
-		solution.lambda[i] = old_solution.lambda[i];
-	}
 	return;
 }
 

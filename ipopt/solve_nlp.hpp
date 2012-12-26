@@ -197,7 +197,7 @@ public:
 	is set to ng_ * nx_ (sparsity not yet implemented) 
 	
 	\param[out] nnz_h_lag
-	is set to nx_ * nx_ (sparsity not yet implemented)
+	is set to nx_*(nx_+1)/2 (sparsity not yet implemented)
 	
 	\param[out] index_style
 	is set to C_STYLE; i.e., zeoro based indexing is used in the
@@ -213,7 +213,7 @@ public:
 		n         = static_cast<Index>(nx_);
 		m         = static_cast<Index>(ng_);
 		nnz_jac_g = static_cast<Index>(ng_ * nx_);
-		nnz_h_lag = static_cast<Index>(nx_ * nx_);
+		nnz_h_lag = static_cast<Index>(nx_*(nx_+1)/2);
 	
 	  	// use the fortran index style for row/col entries
 		index_style = C_STYLE;
@@ -370,8 +370,8 @@ public:
 		double sum = 0.0;
 		for(i = 0; i < nf_; i++)
 			sum += fg0[i];
-		//
 		obj_value = static_cast<Number>(sum);
+		return true;
 	}
 	// -----------------------------------------------------------------------
 	/*!
@@ -417,6 +417,7 @@ public:
 		dw = fg_ad_eval_.Reverse(1, w);
 		for(i = 0; i < nx_; i++)
 			grad_f[i] = dw[i];
+		return true;
 	}
 	// -----------------------------------------------------------------------
 	/*!
@@ -458,6 +459,7 @@ public:
 		fg0 = fg_ad_eval_.Forward(0, x0);
 		for(i = 0; i < ng_; i++)
 			g[i] = fg0[nf_ + i];
+		return true;
 	}
 	// -----------------------------------------------------------------------
 	/*!
@@ -533,7 +535,7 @@ public:
 		CPPAD_ASSERT_UNKNOWN(static_cast<size_t>(nele_jac)  == ng_ * nx_ );
 
 		if( values == NULL )
-		{	for(i = 0; i < nx_; i++)
+		{	for(i = 0; i < ng_; i++)
 			{	for(j = 0; j < nx_; j++)
 				{	k       = i * nx_ + j;
 					iRow[k] = i;
@@ -544,8 +546,8 @@ public:
 		}
 		if( new_x )
 		{	Dvector x0(nx_), fg0(nf_ + ng_);
-			for(i = 0; i < nx_; i++)
-				x0[i] = x[i];
+			for(j = 0; j < nx_; j++)
+				x0[j] = x[j];
 			fg_ad_eval_.Forward(0, x0);
 		}
 		if( nx_ < ng_ )
@@ -628,7 +630,7 @@ public:
 	\param[in] nele_hess
 	is the number of possibly non-zero elements in the 
 	Hessian of the Lagragian;
-	i.e., must be equal to nx_ * nx_.
+	i.e., must be equal to nx_*(nx_+1)/2.
 	
 	\param iRow
 	if values is not NULL, iRow is not defined.
@@ -677,7 +679,9 @@ public:
 	{	size_t i, j, k;
 		CPPAD_ASSERT_UNKNOWN(static_cast<size_t>(m) == ng_ );
 		CPPAD_ASSERT_UNKNOWN(static_cast<size_t>(n) == nx_ );
-		CPPAD_ASSERT_UNKNOWN(static_cast<size_t>(nele_hess) == nx_ * nx_ );
+		CPPAD_ASSERT_UNKNOWN(
+			static_cast<size_t>(nele_hess) == nx_*(nx_+1)/2 
+		);
 
 		if( values == NULL )
 		{	// The Hessian is symmetric, only fill the lower left triangle
@@ -692,12 +696,14 @@ public:
 			return true;
 		}
 
-		Dvector w(nf_ + ng_), hes(nx_ * nx_);
+		Dvector x0(nx_), w(nf_ + ng_), hes(nx_ * nx_);
+		for(j = 0; j < nx_; j++)
+			x0[j] = x[j];
 		for(i = 0; i < nf_; i++)
 			w[i] = obj_factor;
 		for(i = 0; i < ng_; i++)
 			w[i + nf_] = lambda[i];
-		hes = fg_ad_eval_.Hessian(x, w);
+		hes = fg_ad_eval_.Hessian(x0, w);
 		k   = 0;
 		for(i = 0; i < nx_; i++)
 		{	for(j = 0; j <= i; j++)

@@ -122,7 +122,7 @@ bool ipopt_solve_get_started(void)
 	std::ofstream options_file(options);
 
 	// turn off any printing
-	options_file << "print_level                0" << std::endl;
+	options_file << "print_level                5" << std::endl;
 
 	// maximum number of iterations
 	options_file << "max_iter                   10" << std::endl;
