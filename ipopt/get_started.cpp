@@ -46,7 +46,7 @@ the value $cref/ipopt_dir/InstallUnix/ipopt_dir/$$ is specified on the
 $cref/configure/InstallUnix/Configure/$$ command line.
 
 $code
-$verbatim%ipopt_solve/get_started.cpp%0%// BEGIN C++%// END C++%1%$$
+$verbatim%cppad/ipopt/get_started.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 $end
