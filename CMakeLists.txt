@@ -197,44 +197,6 @@ FOREACH(dir ${cmake_install_libdirs})
 	ENDIF( NOT cppad_install_libdir )
 ENDFOREACH(dir ${cmake_install_libdirs})
 # -----------------------------------------------------------------------------
-# boost_prefix:
-FIND_PACKAGE(Boost)
-IF ( Boost_FOUND )
-	# Extract the Boost prefix from Boost_INCLUDE_DIRS
-	#
-	# convert to using unix directory separator
-	dos_path_to_unix("${Boost_INCLUDE_DIRS}" boost_include_dirs)
-	#
-	# convert to just one directory
-	STRING(REGEX REPLACE
-		"([^ ]+).*" "\\1"
-		boost_include_dir "${boost_include_dirs}"
-	)
-	#
-	# extract part before last backslash
-	STRING(REGEX REPLACE 
-		"([^ ]*)/[^/ ]*" "\\1" 
-		boost_prefix "${boost_include_dir}" 
-	) 
-	MESSAGE(STATUS "boost_prefix = ${boost_prefix}")
-	#
-	# add boost include directories
-	FOREACH(dir ${cmake_install_includedirs})
-		IF( IS_DIRECTORY ${boost_prefix}/${dir} )
-			INCLUDE_DIRECTORIES( ${boost_prefix}/${dir} )
-			MESSAGE(STATUS "Found ${boost_prefix}/${dir}")
-		ENDIF( IS_DIRECTORY ${boost_prefix}/${dir} )
-	ENDFOREACH( dir )
-	#
-	# add boost link directories
-	FOREACH(dir ${cmake_install_libdirs})
-		IF( IS_DIRECTORY ${boost_prefix}/${dir} )
-			LINK_DIRECTORIES( ${boost_prefix}/${dir} )
-			MESSAGE(STATUS "Found ${boost_prefix}/${dir}")
-		ENDIF( IS_DIRECTORY ${boost_prefix}/${dir} )
-	ENDFOREACH( dir )
-ENDIF ( Boost_FOUND )
-# -----------------------------------------------------------------------------
 # cppad_cxx_flags_skip_Wshadow
 STRING(REGEX REPLACE 
 	"(.*)-Wshadow(.*)"         "\\1 \\2" 
@@ -278,6 +240,74 @@ ELSE ( cmake_install_postfix )
 		CACHE INTERNAL "cppad install data file directory" FORCE
 	)
 ENDIF ( cmake_install_postfix )
+# -----------------------------------------------------------------------------
+# boost_prefix
+FIND_PACKAGE(Boost)
+IF ( Boost_FOUND )
+	# Extract the Boost prefix from Boost_INCLUDE_DIRS
+	#
+	# convert to using unix directory separator
+	dos_path_to_unix("${Boost_INCLUDE_DIRS}" boost_include_dirs)
+	#
+	# convert to just one directory
+	STRING(REGEX REPLACE
+		"([^ ]+).*" "\\1"
+		boost_include_dir "${boost_include_dirs}"
+	)
+	#
+	# extract part before last backslash
+	STRING(REGEX REPLACE 
+		"([^ ]*)/[^/ ]*" "\\1" 
+		boost_prefix "${boost_include_dir}" 
+	) 
+	MESSAGE(STATUS "boost_prefix = ${boost_prefix}")
+	#
+	# add boost include directories
+	FOREACH(dir ${cmake_install_includedirs})
+		IF( IS_DIRECTORY ${boost_prefix}/${dir} )
+			INCLUDE_DIRECTORIES( ${boost_prefix}/${dir} )
+			MESSAGE(STATUS "Found ${boost_prefix}/${dir}")
+		ENDIF( IS_DIRECTORY ${boost_prefix}/${dir} )
+	ENDFOREACH( dir )
+	#
+	# add boost link directories
+	FOREACH(dir ${cmake_install_libdirs})
+		IF( IS_DIRECTORY ${boost_prefix}/${dir} )
+			LINK_DIRECTORIES( ${boost_prefix}/${dir} )
+			MESSAGE(STATUS "Found ${boost_prefix}/${dir}")
+		ENDIF( IS_DIRECTORY ${boost_prefix}/${dir} )
+	ENDFOREACH( dir )
+ENDIF ( Boost_FOUND )
+# -----------------------------------------------------------------------------
+# ipopt_LIBRARIES and ipopt_LIBRARY_DIRS
+IF( ipopt_prefix )
+	FIND_PACKAGE(PkgConfig)
+	IF( NOT PKG_CONFIG_FOUND )
+		MESSAGE(FATAL_ERROR "Using ipopt_prefix but cannot find pkg-config")
+	ENDIF( NOT PKG_CONFIG_FOUND )
+	#
+	# Set the system environment variable PKG_CONFIG_PATH
+	FOREACH(dir ${cmake_install_libdirs})
+		IF(EXISTS "${ipopt_prefix}/${dir}/pkgconfig/ipopt.pc")
+			SET( ENV{PKG_CONFIG_PATH} ${ipopt_prefix}/${dir}/pkgconfig )
+		ENDIF(EXISTS "${ipopt_prefix}/${dir}/pkgconfig/ipopt.pc")
+	ENDFOREACH(dir)
+	#
+	# pkg_check_modules(<PREFIX> [REQUIRED] <MODULE> [<MODULE>]*)
+	# ipopt_LIBRARIES      ... only the libraries (w/o the '-l')
+	# ipopt_LIBRARY_DIRS   ... the paths of the libraries (w/o the '-L')
+	pkg_check_modules(ipopt ipopt)
+	IF( NOT ipopt_FOUND )
+		MESSAGE(FATAL_ERROR 
+"For all directories dir in cmake_install_libdirs, cannot find the file
+	ipopt_prefix/dir/pkgconfig/ipopt.pc 
+where
+	ipopt_prefix = ${ipopt_prefix}
+	cmake_install_libdirs = ${cmake_install_libdirs}
+"
+		)
+	ENDIF( NOT ipopt_FOUND )
+ENDIF( ipopt_prefix )
 # =============================================================================
 # Currently building tests as normal executables
 # =============================================================================
@@ -311,7 +341,7 @@ add_to_list(list_check check_speed)
 #
 IF ( ipopt_prefix )
 	ADD_SUBDIRECTORY(cppad_ipopt)
-	add_to_list(list_check check_ipopt)
+	add_to_list(list_check check_ipopt_nlp)
 ENDIF( ipopt_prefix )
 #
 ADD_CUSTOM_TARGET(check DEPENDS ${list_check})
