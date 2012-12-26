@@ -327,6 +327,9 @@ add_to_list(list_check check_compare_c)
 ADD_SUBDIRECTORY(example)
 add_to_list(list_check check_example)
 #
+ADD_SUBDIRECTORY(introduction)
+add_to_list(list_check check_introduction)
+#
 ADD_SUBDIRECTORY(print_for)
 add_to_list(list_check check_print_for)
 #

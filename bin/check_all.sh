@@ -21,7 +21,7 @@ echo_exec() {
 }
 echo_exec_log() {
 	echo "$* >> check_all.log"
-	echo    >> $top_srcdir/check_all.log
+	echo $* >> $top_srcdir/check_all.log
 	eval $* >> $top_srcdir/check_all.log
 }
 # circular shift program list and set program to first entry in list
@@ -115,6 +115,8 @@ list='
 	cppad_ipopt/example/example_ipopt_nlp
 	cppad_ipopt/speed/speed_ipopt_nlp
 	cppad_ipopt/test/test_more_ipopt_nlp
+	introduction/exp_apx/introduction_exp_apx
+	introduction/get_started/introduction_get_started
 	speed/example/speed_example
 '
 #

@@ -52,7 +52,10 @@ $code make check_compare_c$$ $cnext
 	$tref compare_c$$ 
 $rnext
 $code make check_example$$   $cnext 
-	most of the $cref Example$$
+	most of the $cref Example$$ programs
+$rnext
+$code make check_introduction$$   $cnext 
+	the programs in the $cref Introduction$$
 $rnext
 $code make check_print_for$$ $cnext 
 	the print_for command

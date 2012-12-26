@@ -76,9 +76,14 @@ The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
 
 $head 12-26$$
+$list number$$
 Convert documentation most all documentation references from
 the deprecated $cref InstallUnix$$ instructions to the new $cref cmake$$
 instructions.
+$lnext
+Include the $cref Introduction$$ programs in the 
+$cref cppad_test$$ built using $cref cmake$$.
+$lend
 
 
 $head 12-25$$
