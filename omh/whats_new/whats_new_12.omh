@@ -75,6 +75,11 @@ This section contains a list of the changes to CppAD during 2012
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
 
+$head 12-25$$
+The $cref Hessian$$ routine Taylor coefficient specifications were modified
+to specify the zero order coefficients after it is called; see
+$cref/Hessian Uses Forward/Hessian/Hessian Uses Forward/$$.
+
 $head 12-22$$
 Define a doxygen module (group) for each file that has doxygen documentation.
 
