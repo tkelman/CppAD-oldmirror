@@ -112,9 +112,9 @@ skip=''
 list='
 	example/example
 	test_more/test_more
-	cppad_ipopt/example/ipopt_example
-	cppad_ipopt/speed/ipopt_speed
-	cppad_ipopt/test/ipopt_test_more
+	cppad_ipopt/example/example_ipopt_nlp
+	cppad_ipopt/speed/speed_ipopt_nlp
+	cppad_ipopt/test/test_more_ipopt_nlp
 	speed/example/speed_example
 '
 #
