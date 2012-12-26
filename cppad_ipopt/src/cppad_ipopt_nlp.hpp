@@ -15,6 +15,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 $begin cppad_ipopt_nlp$$
 $dollar @$$
 $spell
+	libipopt
 	namespace
 	dir
 	cppad
@@ -89,11 +90,15 @@ $head ipopt_library_paths$$
 If you are linking to a shared version of the Ipopt library,
 you may have to add some paths the $code LD_LIBRARY_PATH$$ 
 shell variable using the $code export$$ command in the syntax above.
-For example, perhaps 
+For example, if the file the ipopt library is
 $codei%
-	%ipopt_library_paths%=%ipopt_dir%/lib/coin:%ipopt_dir%/lib/coin/ThirdParty
+	%ipopt_prefix%/lib64/libipopt.a
 %$$
-see $cref/ipopt_dir/InstallUnix/ipopt_dir/$$.
+you will need to add the corresponding directory; e.g.,
+$code%
+	export LD_LIBRARY_PATH="%ipopt_prefix%/lib64%:@LD_LIBRARY_PATH"
+%$$
+see $cref ipopt_prefix$$.
 
 $head fg(x)$$
 The function $latex fg : \B{R}^n \rightarrow \B{R}^{m+1}$$ is defined by
