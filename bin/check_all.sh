@@ -110,14 +110,15 @@ echo_exec_log make check
 # -----------------------------------------------------------------------------
 skip=''
 list='
-	example/example
-	test_more/test_more
 	cppad_ipopt/example/example_ipopt_nlp
 	cppad_ipopt/speed/speed_ipopt_nlp
 	cppad_ipopt/test/test_more_ipopt_nlp
+	example/example
+	example/ipopt_solve/example_ipopt_solve
 	introduction/exp_apx/introduction_exp_apx
 	introduction/get_started/introduction_get_started
 	speed/example/speed_example
+	test_more/test_more
 '
 #
 # standard tests

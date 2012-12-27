@@ -317,43 +317,10 @@ It is the final value of the objective function $latex f(x)$$.
 $end
 -------------------------------------------------------------------------------
 */
-# include <cppad_ipopt_nlp.hpp>
 # include <cppad/ipopt/solve_nlp.hpp>
 
 CPPAD_BEGIN_NAMESPACE
 namespace ipopt {
-
-/*!
-FG_info class used by cppad_ipopt_nlp (used for temporary conversion).
-*/
-template <class ADvector, class FG_eval>
-class solve_fg_info : public cppad_ipopt::cppad_ipopt_fg_info
-{
-private:
-	size_t   nf_;
-	size_t   ng_;
-	FG_eval& fg_eval_;
-public:
-	// derived class constructor
-	solve_fg_info(size_t nf, size_t ng, FG_eval& fg_eval)
-	: nf_(nf), ng_(ng), fg_eval_(fg_eval)
-	{ }
-	// Evaluation of f(x) and g(x) using AD
-	ADvector eval_r(size_t k, const ADvector& x)
-	{	size_t i;
-		ADvector fg(nf_ + ng_);
-		fg_eval_(fg, x);
-		ADvector r(1 + ng_);
-		r[0] = fg[0];
-		for(i = 1; i < nf_; i++)
-			r[0] += fg[i];
-		for(i = 0; i < ng_; i++)
-			r[1 + i] = fg[nf_ + i];
-		return r;
-	}
-	bool retape(size_t k)
-	{	return false; }
-};
 
 /*!
 Use Ipopt to Solve a Nonlinear Programming Problem
@@ -416,7 +383,6 @@ void solve(
 { 	bool ok = true;
 
 	typedef typename FG_eval::ADvector ADvector;
-	size_t i;
 
 	CPPAD_ASSERT_KNOWN(
 		xi.size() == xl.size() && xi.size() == xu.size() ,
