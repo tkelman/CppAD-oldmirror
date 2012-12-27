@@ -580,11 +580,11 @@ $children%
 
 $head Example$$
 The file 
-$cref ipopt_get_started.cpp$$ is an example and test of 
+$cref ipopt_nlp_get_started.cpp$$ is an example and test of 
 $code cppad_ipopt_nlp$$  that uses the 
 $cref/simple representation/cppad_ipopt_nlp/Simple Representation/$$.
 It returns true if it succeeds and false otherwise.
-The section $cref cppad_ipopt_ode$$ discusses an example that
+The section $cref ipopt_nlp_ode$$ discusses an example that
 uses a more complex representation.
 
 $head Wish List$$

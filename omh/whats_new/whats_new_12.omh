@@ -75,6 +75,11 @@ This section contains a list of the changes to CppAD during 2012
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
 
+$head 12-27$$
+Change documentation section names that begin with $code cppad_ipopt$$
+to begin with $cref/ipopt_nlp/cppad_ipopt_nlp/$$
+to distinguish them from $cref/CppAD::ipopt::solve/ipopt_solve/$$.
+
 $head 12-26$$
 $list number$$
 Convert documentation most all documentation references from

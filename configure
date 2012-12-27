@@ -7382,8 +7382,10 @@ adolc_prefix=${ADOLC_DIR}
 
 eigen_prefix=${EIGEN_DIR}
 
-ac_config_files="$ac_config_files cppad/configure.hpp cppad_ipopt/example/test.sh cppad_ipopt/speed/test.sh cppad_ipopt/test/test.sh example/test_one.sh pkgconfig/cppad.pc pkgconfig/cppad-uninstalled.pc test_more/test_one.sh makefile example/makefile compare_c/makefile cppad_ipopt/src/makefile cppad_ipopt/example/makefile cppad_ipopt/speed/makefile cppad_ipopt/test/makefile introduction/get_started/makefile introduction/exp_apx/makefile multi_thread/makefile multi_thread/test_multi/makefile print_for/makefile speed/adolc/makefile speed/cppad/makefile speed/double/makefile speed/example/makefile speed/fadbad/makefile speed/profile/makefile speed/profile/gprof.sed speed/sacado/makefile speed/src/makefile test_more/makefile"
+ac_config_files="$ac_config_files cppad/configure.hpp cppad_ipopt/example/test.sh cppad_ipopt/speed/test.sh cppad_ipopt/test/test.sh example/ipopt_solve/test.sh example/test_one.sh pkgconfig/cppad.pc pkgconfig/cppad-uninstalled.pc test_more/test_one.sh makefile compare_c/makefile cppad_ipopt/src/makefile cppad_ipopt/example/makefile cppad_ipopt/speed/makefile cppad_ipopt/test/makefile example/makefile example/ipopt_solve/makefile introduction/get_started/makefile introduction/exp_apx/makefile multi_thread/makefile multi_thread/test_multi/makefile print_for/makefile speed/adolc/makefile speed/cppad/makefile speed/double/makefile speed/example/makefile speed/fadbad/makefile speed/profile/makefile speed/profile/gprof.sed speed/sacado/makefile speed/src/makefile test_more/makefile"
 
+
+ac_config_commands="$ac_config_commands example_ipopt_solve_test.sh"
 
 ac_config_commands="$ac_config_commands cppad_ipopt_example_test.sh"
 
@@ -8218,17 +8220,19 @@ do
     "cppad_ipopt/example/test.sh") CONFIG_FILES="$CONFIG_FILES cppad_ipopt/example/test.sh" ;;
     "cppad_ipopt/speed/test.sh") CONFIG_FILES="$CONFIG_FILES cppad_ipopt/speed/test.sh" ;;
     "cppad_ipopt/test/test.sh") CONFIG_FILES="$CONFIG_FILES cppad_ipopt/test/test.sh" ;;
+    "example/ipopt_solve/test.sh") CONFIG_FILES="$CONFIG_FILES example/ipopt_solve/test.sh" ;;
     "example/test_one.sh") CONFIG_FILES="$CONFIG_FILES example/test_one.sh" ;;
     "pkgconfig/cppad.pc") CONFIG_FILES="$CONFIG_FILES pkgconfig/cppad.pc" ;;
     "pkgconfig/cppad-uninstalled.pc") CONFIG_FILES="$CONFIG_FILES pkgconfig/cppad-uninstalled.pc" ;;
     "test_more/test_one.sh") CONFIG_FILES="$CONFIG_FILES test_more/test_one.sh" ;;
     "makefile") CONFIG_FILES="$CONFIG_FILES makefile" ;;
-    "example/makefile") CONFIG_FILES="$CONFIG_FILES example/makefile" ;;
     "compare_c/makefile") CONFIG_FILES="$CONFIG_FILES compare_c/makefile" ;;
     "cppad_ipopt/src/makefile") CONFIG_FILES="$CONFIG_FILES cppad_ipopt/src/makefile" ;;
     "cppad_ipopt/example/makefile") CONFIG_FILES="$CONFIG_FILES cppad_ipopt/example/makefile" ;;
     "cppad_ipopt/speed/makefile") CONFIG_FILES="$CONFIG_FILES cppad_ipopt/speed/makefile" ;;
     "cppad_ipopt/test/makefile") CONFIG_FILES="$CONFIG_FILES cppad_ipopt/test/makefile" ;;
+    "example/makefile") CONFIG_FILES="$CONFIG_FILES example/makefile" ;;
+    "example/ipopt_solve/makefile") CONFIG_FILES="$CONFIG_FILES example/ipopt_solve/makefile" ;;
     "introduction/get_started/makefile") CONFIG_FILES="$CONFIG_FILES introduction/get_started/makefile" ;;
     "introduction/exp_apx/makefile") CONFIG_FILES="$CONFIG_FILES introduction/exp_apx/makefile" ;;
     "multi_thread/makefile") CONFIG_FILES="$CONFIG_FILES multi_thread/makefile" ;;
@@ -8244,6 +8248,7 @@ do
     "speed/sacado/makefile") CONFIG_FILES="$CONFIG_FILES speed/sacado/makefile" ;;
     "speed/src/makefile") CONFIG_FILES="$CONFIG_FILES speed/src/makefile" ;;
     "test_more/makefile") CONFIG_FILES="$CONFIG_FILES test_more/makefile" ;;
+    "example_ipopt_solve_test.sh") CONFIG_COMMANDS="$CONFIG_COMMANDS example_ipopt_solve_test.sh" ;;
     "cppad_ipopt_example_test.sh") CONFIG_COMMANDS="$CONFIG_COMMANDS cppad_ipopt_example_test.sh" ;;
     "cppad_ipopt_speed_test.sh") CONFIG_COMMANDS="$CONFIG_COMMANDS cppad_ipopt_speed_test.sh" ;;
     "cppad_ipopt_test_test.sh") CONFIG_COMMANDS="$CONFIG_COMMANDS cppad_ipopt_test_test.sh" ;;
@@ -8773,6 +8778,7 @@ $as_echo X"$file" |
   done
 }
  ;;
+    "example_ipopt_solve_test.sh":C) chmod +x example/ipopt_solve/test.sh ;;
     "cppad_ipopt_example_test.sh":C) chmod +x cppad_ipopt/example/test.sh ;;
     "cppad_ipopt_speed_test.sh":C) chmod +x cppad_ipopt/speed/test.sh ;;
     "cppad_ipopt_test_test.sh":C) chmod +x cppad_ipopt/test/test.sh ;;

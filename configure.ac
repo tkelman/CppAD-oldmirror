@@ -706,18 +706,20 @@ AC_CONFIG_FILES([
 	cppad_ipopt/example/test.sh
 	cppad_ipopt/speed/test.sh
 	cppad_ipopt/test/test.sh
+	example/ipopt_solve/test.sh
 	example/test_one.sh
 	pkgconfig/cppad.pc
 	pkgconfig/cppad-uninstalled.pc
 	test_more/test_one.sh
 
 	makefile
-	example/makefile 
 	compare_c/makefile 
 	cppad_ipopt/src/makefile
 	cppad_ipopt/example/makefile
 	cppad_ipopt/speed/makefile
 	cppad_ipopt/test/makefile
+	example/makefile 
+	example/ipopt_solve/makefile 
 	introduction/get_started/makefile 
 	introduction/exp_apx/makefile
 	multi_thread/makefile
@@ -737,6 +739,10 @@ AC_CONFIG_FILES([
 dnl END AC_CONFIG_FILES 
 dnl the comment line above is used by ./new_stable.sh
 
+AC_CONFIG_COMMANDS(
+	[example_ipopt_solve_test.sh],
+	[chmod +x example/ipopt_solve/test.sh],
+)	[]
 AC_CONFIG_COMMANDS(
 	[cppad_ipopt_example_test.sh],
 	[chmod +x cppad_ipopt/example/test.sh],

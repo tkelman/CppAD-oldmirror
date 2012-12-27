@@ -48,8 +48,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-check_PROGRAMS = example$(EXEEXT)
-subdir = cppad_ipopt/example
+check_PROGRAMS = solve$(EXEEXT)
+subdir = example/ipopt_solve
 DIST_COMMON = $(srcdir)/makefile.am $(srcdir)/makefile.in \
 	$(srcdir)/test.sh.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -59,13 +59,11 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES = test.sh
 CONFIG_CLEAN_VPATH_FILES =
-am_example_OBJECTS = example.$(OBJEXT) get_started.$(OBJEXT) \
-	ode_check.$(OBJEXT) ode_fast_check.$(OBJEXT) \
-	ode_simple_check.$(OBJEXT)
-example_OBJECTS = $(am_example_OBJECTS)
-example_LDADD = $(LDADD)
+am_solve_OBJECTS = solve.$(OBJEXT) get_started.$(OBJEXT)
+solve_OBJECTS = $(am_solve_OBJECTS)
+solve_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
-example_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+solve_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = 
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -76,12 +74,8 @@ CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-CCLD = $(CC)
-LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(example_SOURCES)
-DIST_SOURCES = $(example_SOURCES)
+SOURCES = $(solve_SOURCES)
+DIST_SOURCES = $(solve_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -246,41 +240,25 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 #
-EXTRA_DIST = \
-	ode1.omh \
-	ode2.omh
-
-#
 AM_CXXFLAGS = -g $(CXX_FLAGS) 
 #
 AM_CPPFLAGS = -I. \
 	-I$(top_srcdir) \
-	-I$(top_srcdir)/cppad_ipopt/src \
 	$(BOOST_INCLUDE) \
 	$(EIGEN_INCLUDE) \
 	-I$(IPOPT_DIR)/include
 
 #
 LDADD = \
-                    -lcppad_ipopt \
                     $(CPPAD_IPOPT_LIBS) \
                     $(FCLIBS) \
                     $(PTHREAD_LIB) \
                     $(DL_LIB)
 
-AM_LDFLAGS = -L../src 
 #
-example_SOURCES = \
-	example.cpp \
-	get_started.cpp \
-	ode_check.cpp \
-	ode_check.hpp \
-	ode_fast_check.cpp \
-	ode_fast.hpp \
-	ode_problem.hpp \
-	ode_run.hpp \
-	ode_simple_check.cpp \
-	ode_simple.hpp
+solve_SOURCES = \
+	solve.cpp \
+	get_started.cpp 
 
 all: all-am
 
@@ -295,9 +273,9 @@ $(srcdir)/makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/makefile.am  $(am__confi
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu cppad_ipopt/example/makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu example/ipopt_solve/makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu cppad_ipopt/example/makefile
+	  $(AUTOMAKE) --gnu example/ipopt_solve/makefile
 .PRECIOUS: makefile
 makefile: $(srcdir)/makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -321,9 +299,9 @@ test.sh: $(top_builddir)/config.status $(srcdir)/test.sh.in
 
 clean-checkPROGRAMS:
 	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
-example$(EXEEXT): $(example_OBJECTS) $(example_DEPENDENCIES) $(EXTRA_example_DEPENDENCIES) 
-	@rm -f example$(EXEEXT)
-	$(CXXLINK) $(example_OBJECTS) $(example_LDADD) $(LIBS)
+solve$(EXEEXT): $(solve_OBJECTS) $(solve_DEPENDENCIES) $(EXTRA_solve_DEPENDENCIES) 
+	@rm -f solve$(EXEEXT)
+	$(CXXLINK) $(solve_OBJECTS) $(solve_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -331,11 +309,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/example.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/get_started.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ode_check.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ode_fast_check.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ode_simple_check.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/solve.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

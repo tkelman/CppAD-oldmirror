@@ -12,7 +12,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 /*
 
-$begin ipopt_get_started.cpp$$
+$begin ipopt_nlp_get_started.cpp$$
 $spell
 	cppad_nlp
 	IpoptDir
