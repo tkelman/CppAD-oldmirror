@@ -13,11 +13,6 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 /*
 $begin ipopt_solve$$
-$latex
-	\newcommand{\B}[1]{ {\bf #1} }
-	\newcommand{\R}[1]{ {\rm #1} }
-	\newcommand{\W}[1]{ {\; #1 \;} }
-$$
 $spell
 	Bvector
 	bool
@@ -98,7 +93,7 @@ The argument $icode nf$$ has prototype
 $codei%
 	size_t %nf%
 %$$
-It is the the dimension of the range space for 
+It is the dimension of the range space for 
 $latex f : \B{R}^{nx} \rightarrow \B{R}^{nf}$$.
 Let $latex nd(i)$$ be the number of components of $latex x$$
 that the function $latex f_i (x)$$ depends on.
@@ -313,6 +308,15 @@ $codei%
 	double %solution%.obj_value
 %$$
 It is the final value of the objective function $latex f(x)$$.
+
+$children%
+	example/ipopt_solve/get_started.cpp
+%$$
+$head Example$$
+The file
+$cref%example/ipopt_solve/get_started.cpp%ipopt_solve_get_started.cpp%$$
+is an example and test of $code ipopt::solve$$.
+It returns true if it succeeds and false otherwise.
 	
 $end
 -------------------------------------------------------------------------------
@@ -321,6 +325,12 @@ $end
 
 CPPAD_BEGIN_NAMESPACE
 namespace ipopt {
+/*!
+\defgroup solve_hpp solve.hpp
+\{
+\file solve.hpp
+\brief Implement the ipopt::solve Nonlinear Programming Solver 
+*/
 
 /*!
 Use Ipopt to Solve a Nonlinear Programming Problem
@@ -427,6 +437,7 @@ void solve(
 	return;
 }
 
+/*! \} */
 } // end ipopt namespace
 CPPAD_END_NAMESPACE
 # endif
