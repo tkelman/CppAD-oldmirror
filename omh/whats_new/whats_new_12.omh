@@ -83,6 +83,11 @@ instructions.
 $lnext
 Include the $cref Introduction$$ programs in the 
 $cref cppad_test$$ built using $cref cmake$$.
+$lnext
+Deprecate $cref cppad_ipopt_nlp$$ and replace it by $cref ipopt_solve$$
+which is easier to use.
+This is a first version of $code ipopt_solve$$ and its speed
+and memory use needs to be improved.
 $lend
 
 

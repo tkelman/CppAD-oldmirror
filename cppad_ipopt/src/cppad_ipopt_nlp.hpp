@@ -39,10 +39,14 @@ $$
 $section Nonlinear Programming Using the CppAD Interface to Ipopt$$
 
 $index nonlinear, programming CppAD$$
+$index deprecated, ipopt interface$$
 $index programming, nonlinear$$
 $index CppAD, nonlinear programming$$
 $index Ipopt, AD$$
 $index AD, Ipopt$$
+
+$head Deprecated$$
+This interface to Ipopt is deprecated, use $cref ipopt_solve$$ instead.
 
 $head Syntax$$
 $codei%# include "cppad_ipopt_nlp.hpp"
