@@ -325,13 +325,28 @@ It is the final value of the objective function $latex f(x)$$.
 
 $children%
 	example/ipopt_solve/get_started.cpp%
+	example/ipopt_solve/retape.cpp%
 	example/ipopt_solve/ode_inverse.cpp
 %$$
 $head Example$$
+All the examples return true if it succeeds and false otherwise.
+
+$subhead get_started$$
 The file
 $cref%example/ipopt_solve/get_started.cpp%ipopt_solve_get_started.cpp%$$
-is an example and test of $code ipopt::solve$$.
-It returns true if it succeeds and false otherwise.
+is an example and test of $code ipopt::solve$$
+taken from the Ipopt manual.
+
+$subhead retape$$
+The file
+$cref%example/ipopt_solve/retape.cpp%ipopt_solve_retape.cpp%$$
+demonstrates when it is necessary to specify
+$cref/retape/ipopt_solve/retape/$$ as true.
+
+$subhead ode_inverse$$
+The file
+$cref%example/ipopt_solve/ode_inverse.cpp%ipopt_solve_ode_inverse.cpp%$$
+demonstrates using Ipopt to solve for parameters in an ODE model.
 	
 $end
 -------------------------------------------------------------------------------
