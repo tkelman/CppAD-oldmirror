@@ -25,7 +25,7 @@ $index ipopt, AD example$$
 $section Nonlinear Programming Using CppAD and Ipopt: Example and Test$$
 
 $head Purpose$$
-This example program demonstrates how to use the class cppad_ipopt_nlp to 
+This example program demonstrates how to use $cref ipopt_solve$$ to
 solve the example problem in the Ipopt documentation; i.e., the problem
 $latex \[
 \begin{array}{lc}
@@ -113,6 +113,9 @@ bool get_started(void)
 	// object that computes objective and constraints
 	FG_eval fg_eval;
 
+	// retape the operations sequence for each new x
+	bool retape = false;
+
 	// options file
 	const char* options = "ipopt.opt";
 
@@ -144,7 +147,7 @@ bool get_started(void)
 
 	// solve the problem
 	CppAD::ipopt::solve<Dvector, FG_eval>(
-		nf, xi, xl, xu, gl, gu, fg_eval, options, solution
+		nf, xi, xl, xu, gl, gu, fg_eval, retape, options, solution
 	);
 	//
  	// Check some of the solution values

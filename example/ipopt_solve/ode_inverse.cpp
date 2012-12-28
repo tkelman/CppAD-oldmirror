@@ -19,6 +19,10 @@ $index ode, inverse example$$
 $index inverse, ode example$$
 $index example, ode inverse$$ 
 
+$head Purpose$$
+This example demonstrates how to invert for parameters
+in a ODE where the solution of the ODE is numerically approximated.
+
 $head Forward Problem$$
 We consider the following ordinary differential equation:
 $latex \[
@@ -290,6 +294,9 @@ bool ode_inverse(void)
 	// object defining both f(x) and g(x)
 	FG_eval fg_eval;
 
+	// retape the operations sequence for each new x
+	bool retape = false;
+
 	// options file
 	const char* options = "ipopt.opt";
 
@@ -321,7 +328,7 @@ bool ode_inverse(void)
 
 	// solve the problem
 	CppAD::ipopt::solve<Dvector, FG_eval>(
-		nf, xi, xl, xu, gl, gu, fg_eval, options, solution
+		nf, xi, xl, xu, gl, gu, fg_eval, retape, options, solution
 	);
 	//
  	// Check some of the solution values

@@ -72,17 +72,65 @@ private:
 	const Dvector&                  gl_;
 	/// upper limit for g(x)
 	const Dvector&                  gu_;
+	/// object that evaluates f(x) and g(x)
+	FG_eval&                        fg_eval_;
+	/// should operation sequence be retaped for each new x.
+	bool                            retape_;
 	/// final results are returned to this structure
 	solve_result<Dvector>&          solution_;
 	// ------------------------------------------------------------------
  	// Values that are initilaized by the constructor
 	// ------------------------------------------------------------------
 	/// AD function object that evaluates x -> [ f(x) , g(x) ]
-	CppAD::ADFun<double>            fg_ad_eval_;
+	/// If retape is false, this object is initialzed by constructor
+	/// otherwise it is set by cache_new_x each time it is called.
+	CppAD::ADFun<double>            adfun_;
 	/// value of x corresponding to previous new_x
 	Dvector                         x0_;
 	/// value of fg corresponding to previous new_x
 	Dvector                         fg0_;
+	// ------------------------------------------------------------------
+ 	// Private member functions
+	// ------------------------------------------------------------------
+	/*!
+	Cache information for a new value of x.
+
+	\param x
+	is the new value for x.
+
+	\par x0_
+	the elements of this vector are set to the new value for x.
+
+	\par fg0_
+	the elements of this vector are set to the new value for [f(x), g(x)]
+
+	\par adfun_
+	If retape is true, the operation sequence for this function
+	is changes to correspond to the argument x.
+	If retape is false, the operation sequence is not changed.
+	The zero order Taylor coefficients for this function are set
+	so they correspond to the argument x.  
+	*/
+	void cache_new_x(const Number* x)
+	{	size_t i;
+		if( retape_ )
+		{	// make adfun_, as well as x0_ and fg0_ correspond to this x
+			ADvector a_x(nx_), a_fg(nf_ + ng_);
+			for(i = 0; i < nx_; i++)
+			{	x0_[i] = x[i];
+				a_x[i] = x[i];
+			}
+			CppAD::Independent(a_x);
+			fg_eval_(a_fg, a_x);
+			adfun_.Dependent(a_x, a_fg);
+		}
+		else
+		{	// make x0_ and fg0_ correspond to this x
+			for(i = 0; i < nx_; i++)
+				x0_[i] = x[i];
+		}
+		fg0_ = adfun_.Forward(0, x0_);
+	}
 public:
 	// ----------------------------------------------------------------------
 	/*! 
@@ -128,6 +176,7 @@ public:
 		const Dvector&         gl       ,
 		const Dvector&         gu       ,
 		FG_eval&               fg_eval  ,
+		bool                   retape   ,
 		solve_result<Dvector>& solution ) : 
 	nf_ ( nf ),
 	nx_ ( nx ),
@@ -137,16 +186,19 @@ public:
 	xu_ ( xu ),
 	gl_ ( gl ),
 	gu_ ( gu ),
+	fg_eval_ ( fg_eval ),
+	retape_ ( retape ),
 	solution_ ( solution )
 	{	size_t i;
-		// make fg_ad_eval correspond to x -> [ f(x), g(x) ]
-		ADvector a_x(nx_), a_fg(nf_ + ng_);
-		for(i = 0; i < nx_; i++)
-			a_x[i] = xi_[i];
-		CppAD::Independent(a_x);
-		fg_eval(a_fg, a_x);
-		fg_ad_eval_.Dependent(a_x, a_fg);
-
+		if( ! retape_ )
+		{	// make adfun_ correspond to x -> [ f(x), g(x) ]
+			ADvector a_x(nx_), a_fg(nf_ + ng_);
+			for(i = 0; i < nx_; i++)
+				a_x[i] = xi_[i];
+			CppAD::Independent(a_x);
+			fg_eval_(a_fg, a_x);
+			adfun_.Dependent(a_x, a_fg);
+		}
 		// initialize x0_ and fg0_ wih proper dimensions and value nan
 		x0_.resize(nx);
 		fg0_.resize(nf_ + ng_);
@@ -336,10 +388,8 @@ public:
 		Number&        obj_value   )
 	{	size_t i;
 		if( new_x )
-		{	for(i = 0; i < nx_; i++)
-				x0_[i] = x[i];
-			fg0_ = fg_ad_eval_.Forward(0, x0_);
-		}
+			cache_new_x(x);
+		//
 		double sum = 0.0;
 		for(i = 0; i < nf_; i++)
 			sum += fg0_[i];
@@ -377,16 +427,14 @@ public:
 		Number*         grad_f   )
 	{	size_t i;
 		if( new_x )
-		{	for(i = 0; i < nx_; i++)
-				x0_[i] = x[i];
-			fg0_ = fg_ad_eval_.Forward(0, x0_);
-		}
+			cache_new_x(x);
+		//
 		Dvector w(nf_ + ng_), dw(nx_);
 		for(i = 0; i < nf_; i++)
 			w[i] = 1.0;
 		for(i = 0; i < ng_; i++)
 			w[nf_ + i] = 0.0;
-		dw = fg_ad_eval_.Reverse(1, w);
+		dw = adfun_.Reverse(1, w);
 		for(i = 0; i < nx_; i++)
 			grad_f[i] = dw[i];
 		return true;
@@ -426,10 +474,8 @@ public:
 		Number* g            )
 	{	size_t i;
 		if( new_x )
-		{	for(i = 0; i < nx_; i++)
-				x0_[i] = x[i];
-			fg0_ = fg_ad_eval_.Forward(0, x0_);
-		}
+			cache_new_x(x);
+		//
 		for(i = 0; i < ng_; i++)
 			g[i] = fg0_[nf_ + i];
 		return true;
@@ -518,10 +564,8 @@ public:
 			return true;
 		}
 		if( new_x )
-		{	for(i = 0; i < nx_; i++)
-				x0_[i] = x[i];
-			fg0_ = fg_ad_eval_.Forward(0, x0_);
-		}
+			cache_new_x(x);
+		//
 		if( nx_ < ng_ )
 		{	// user forward mode
 			Dvector x1(nx_), fg1(nf_ + ng_);
@@ -530,7 +574,7 @@ public:
 			for(j = 0; j < nx_; j++)
 			{	// compute j-th column of Jacobian of g(x)
 				x1[j] = 1.0;
-				fg1 = fg_ad_eval_.Forward(1, x1);
+				fg1 = adfun_.Forward(1, x1);
 				for(i = 0; i < ng_; i++)
 				{	k = i * nx_ + j;
 					values[k] = fg1[nf_ + i];
@@ -546,7 +590,7 @@ public:
 			for(i = 0; i < ng_; i++)
 			{	// compute i-th row of Jacobian of g(x)
 				w[i + nf_] = 1.0;
-				dw = fg_ad_eval_.Reverse(1, w);
+				dw = adfun_.Reverse(1, w);
 				for(j = 0; j < nx_; j++)
 				{	k = i * nx_ + j;
 					values[k] = dw[j];
@@ -655,10 +699,8 @@ public:
 			static_cast<size_t>(nele_hess) == nx_*(nx_+1)/2 
 		);
 		if( new_x )
-		{	for(i = 0; i < nx_; i++)
-				x0_[i] = x[i];
-			fg0_ = fg_ad_eval_.Forward(0, x0_);
-		}
+			cache_new_x(x);
+		//
 		if( values == NULL )
 		{	// The Hessian is symmetric, only fill the lower left triangle
 			k = 0;
@@ -677,12 +719,16 @@ public:
 			w[i] = obj_factor;
 		for(i = 0; i < ng_; i++)
 			w[i + nf_] = lambda[i];
-		hes = fg_ad_eval_.Hessian(x0_, w);
+		hes = adfun_.Hessian(x0_, w);
 		k   = 0;
 		for(i = 0; i < nx_; i++)
 		{	for(j = 0; j <= i; j++)
 				values[k++] = hes[i * nx_ + j];
 		}
+		// Hessian does not specify state of zero order Taylor coefficients
+		// in adfun_ after call, so set them as expcected.
+		adfun_.Forward(0, x0_);
+
 		return true;
 	}
 	// ----------------------------------------------------------------------

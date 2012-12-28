@@ -14,6 +14,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin ipopt_solve$$
 $spell
+	retape
 	Bvector
 	bool
 	infeasibility
@@ -50,7 +51,7 @@ $head Syntax$$
 $codei%# include "ipopt_solve.hpp"
 %$$
 $codei%ipopt::solve(
-	%nf%, %xi%, %xl%, %xu%, %gl%, %gu%, %fg_eval%, %options%, %solution%
+%nf%, %xi%, %xl%, %xu%, %gl%, %gu%, %fg_eval%, %retape%, %options%, %solution%
 )%$$
 
 $head Purpose$$
@@ -181,6 +182,19 @@ $codei%
 and   for $latex i = 0, \ldots , ng-1$$,
 $codei%
 	%fg%[%nf% + %i%] =%$$ $latex g_i (x)$$
+
+$head retape$$
+The argument $icode retape$$ has prototype
+$codei%
+	bool %retape%
+%$$
+If it is true,
+$code ipopt::solve$$ will retape the 
+$cref/operation sequence/glossary/Operation/Sequence/$$ for each
+new value of $icode x$$.
+It should be faster to use $icode%retape% = false%$$,
+provided the operation sequence does not change for different values of
+$icode x$$.
 
 $head options$$
 The argument $icode options$$ has prototype
@@ -374,6 +388,9 @@ function that evaluates the objective and constraints using the syntax
 	fg_eval(fg, x)
 \endcode
 
+\param retape
+should the operation sequence be retaped for each new value of x.
+
 \param options
 file that contains the Ipopt options.
 
@@ -389,8 +406,9 @@ void solve(
 	const Dvector&                       gl        , 
 	const Dvector&                       gu        , 
 	FG_eval&                             fg_eval   , 
+	bool                                 retape    ,
 	const char*                          options   ,
-	ipopt::solve_result<Dvector>&               solution  )
+	ipopt::solve_result<Dvector>&        solution  )
 { 	bool ok = true;
 
 	typedef typename FG_eval::ADvector ADvector;
@@ -414,7 +432,7 @@ void solve(
 	// Note the assumption here that ADvector is same as cppd_ipopt::ADvector
 	Ipopt::SmartPtr<Ipopt::TNLP> cppad_nlp = 
 	new CppAD::ipopt::solve_full<Dvector, ADvector, FG_eval>(
-		nf, nx, ng, xi, xl, xu, gl, gu, fg_eval, solution
+		nf, nx, ng, xi, xl, xu, gl, gu, fg_eval, retape, solution
 	);
 
 	// Create an IpoptApplication
