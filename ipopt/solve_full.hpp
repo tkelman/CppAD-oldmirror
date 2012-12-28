@@ -198,6 +198,8 @@ public:
 			CppAD::Independent(a_x);
 			fg_eval_(a_fg, a_x);
 			adfun_.Dependent(a_x, a_fg);
+			// optimize because we will make repeated use of this tape
+			adfun_.optimize();
 		}
 		// initialize x0_ and fg0_ wih proper dimensions and value nan
 		x0_.resize(nx);
