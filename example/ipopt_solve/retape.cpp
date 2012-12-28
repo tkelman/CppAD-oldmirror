@@ -27,7 +27,7 @@ $section Nonlinear Programming Retaping: Example and Test$$
 
 $head Purpose$$
 This example program demonstrates a case were the $code ipopt::solve$$
-argument $cref/retape/ipopt_solve/retape/$$ should be true.
+argument $cref/retape/ipopt_solve/options/Retape/$$ should be true.
 
 $code
 $verbatim%example/ipopt_solve/retape.cpp%0%// BEGIN C++%// END C++%1%$$
@@ -84,41 +84,32 @@ bool retape(void)
 	// object that computes objective and constraints
 	FG_eval fg_eval;
 
-	// retape the operations sequence for each new x
-	bool retape = true;
-
-	// options file
-	const char* options = "ipopt.opt";
-
-	// write out the options file
-	std::ofstream options_file(options);
-
-	// turn off any printing
-	options_file << "print_level                0" << std::endl;
-
-	// maximum number of iterations
-	options_file << "max_iter                   10" << std::endl;
-
-	// approximate accuracy in first order necessary conditions;
-	// see Mathematical Programming, Volume 106, Number 1, 
-	// Pages 25-57, Equation (6)
-	options_file << "tol                        1e-9" << std::endl;
-
-	// derivative testing
-	options_file << "derivative_test            second-order" << std::endl;
-
-	// maximum amount of random pertubation; e.g., when evaluation finite diff
-	options_file << "point_perturbation_radius  0." << std::endl;
-
-	// done with options
-	options_file.close();
+	// options 
+	const char* options_cstring = 
+		// retape operation sequence for each new x
+		"Retape  true\n"
+		// turn off any printing
+		"Integer print_level                0\n" 
+		// maximum number of iterations
+		"Integer max_iter                   10\n"
+		// approximate accuracy in first order necessary conditions;
+		// see Mathematical Programming, Volume 106, Number 1, 
+		// Pages 25-57, Equation (6)
+		"Numeric tol                        1e-9\n"
+		// derivative testing
+		"String  derivative_test            second-order\n"
+		// maximum amount of random pertubation; e.g., 
+		// when evaluation finite diff
+		"Numeric point_perturbation_radius  0.\n"
+	;
+	std::string options(options_cstring);
 
 	// place to return solution
 	CppAD::ipopt::solve_result<Dvector> solution;
 
 	// solve the problem
 	CppAD::ipopt::solve<Dvector, FG_eval>(
-		nf, xi, xl, xu, gl, gu, fg_eval, retape, options, solution
+		options, nf, xi, xl, xu, gl, gu, fg_eval, solution
 	);
 	//
  	// Check some of the solution values

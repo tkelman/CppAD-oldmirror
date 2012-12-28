@@ -51,7 +51,7 @@ $head Syntax$$
 $codei%# include "ipopt_solve.hpp"
 %$$
 $codei%ipopt::solve(
-%nf%, %xi%, %xl%, %xu%, %gl%, %gu%, %fg_eval%, %retape%, %options%, %solution%
+	%options%, %nf%, %xi%, %xl%, %xu%, %gl%, %gu%, %fg_eval%, %solution%
 )%$$
 
 $head Purpose$$
@@ -88,6 +88,53 @@ $head Dvector$$
 The type $icode DVector$$ must be a $cref SimpleVector$$ class with
 $cref/elements of type/SimpleVector/Elements of Specified Type/$$ 
 $code double$$.
+
+$head options$$
+The argument $icode options$$ has prototype
+$codei%
+	const std::string %options%
+%$$
+It contains a list of options.
+Each option, including the last option, 
+is terminated by the $code '\n'$$ character.
+Each line consists of two or three tokens separated by one or more spaces.
+
+$subhead Retape$$
+You can set the retape flag with the following syntax:
+$codei%
+	Retape %value%
+%$$
+If the value is $code true$$, $code ipopt::solve$$ with retape the
+$cref/operation sequence/glossary/Operation/Sequence/$$ for each
+new value of $icode x$$.
+If the value is $code false$$, $code ipopt::solve$$
+will tape the operation sequence at the value
+of $icode xi$$ and use that sequence for the entire optimization process.  
+The default value is $code false$$.
+
+$subhead String$$
+You can set any Ipopt string option using a line with the following syntax:
+$codei%
+	String %name% %value%
+%$$
+Here $icode name$$ is any valid Ipopt string option 
+and $icode value$$ is its setting.
+
+$subhead Numeric$$
+You can set any Ipopt numeric option using a line with the following syntax:
+$codei%
+	Numeric %name% %value%
+%$$
+Here $icode name$$ is any valid Ipopt numeric option 
+and $icode value$$ is its setting.
+
+$subhead Integer$$
+You can set any Ipopt integer option using a line with the following syntax:
+$codei%
+	Numeric %name% %value%
+%$$
+Here $icode name$$ is any valid Ipopt integer option 
+and $icode value$$ is its setting.
 
 $head nf$$
 The argument $icode nf$$ has prototype
@@ -182,27 +229,6 @@ $codei%
 and   for $latex i = 0, \ldots , ng-1$$,
 $codei%
 	%fg%[%nf% + %i%] =%$$ $latex g_i (x)$$
-
-$head retape$$
-The argument $icode retape$$ has prototype
-$codei%
-	bool %retape%
-%$$
-If it is true,
-$code ipopt::solve$$ will retape the 
-$cref/operation sequence/glossary/Operation/Sequence/$$ for each
-new value of $icode x$$.
-It should be faster to use $icode%retape% = false%$$,
-provided the operation sequence does not change for different values of
-$icode x$$.
-
-$head options$$
-The argument $icode options$$ has prototype
-$codei%
-	const char* %options%
-%$$
-It is the name of the ipopt options file used to set
-the its options. 
 
 $head solution$$
 The argument $icode solution$$ has prototype
@@ -341,7 +367,7 @@ $subhead retape$$
 The file
 $cref%example/ipopt_solve/retape.cpp%ipopt_solve_retape.cpp%$$
 demonstrates when it is necessary to specify
-$cref/retape/ipopt_solve/retape/$$ as true.
+$cref/retape/ipopt_solve/options/Retape/$$ as true.
 
 $subhead ode_inverse$$
 The file
@@ -379,6 +405,20 @@ It must also support
 \endcode
 to dentify the type used for the arguments to fg_eval.
 
+\param options
+list of options, one for each line. 
+Ipopt options (are optional) and have one of the following forms
+\code
+	String   name  value
+	Numeric  name  value
+	Integer  name  value
+\endcode
+The following other possible options are listed below:
+\code
+	Retape   value
+\endcode
+
+
 \param nf
 Number of components in the function f(x).
 
@@ -403,17 +443,12 @@ function that evaluates the objective and constraints using the syntax
 	fg_eval(fg, x)
 \endcode
 
-\param retape
-should the operation sequence be retaped for each new value of x.
-
-\param options
-file that contains the Ipopt options.
-
 \param solution
 structure that holds the solution of the optimization.
 */
 template <class Dvector, class FG_eval>
 void solve(
+	const std::string&                   options   ,
 	size_t                               nf        , 
 	const Dvector&                       xi        , 
 	const Dvector&                       xl        ,
@@ -421,8 +456,6 @@ void solve(
 	const Dvector&                       gl        , 
 	const Dvector&                       gu        , 
 	FG_eval&                             fg_eval   , 
-	bool                                 retape    ,
-	const char*                          options   ,
 	ipopt::solve_result<Dvector>&        solution  )
 { 	bool ok = true;
 
@@ -443,20 +476,89 @@ void solve(
 	size_t nx = xi.size();
 	size_t ng = gl.size();
 
-	// Create an interface from Ipopt to this specific problem.
-	// Note the assumption here that ADvector is same as cppd_ipopt::ADvector
-	Ipopt::SmartPtr<Ipopt::TNLP> cppad_nlp = 
-	new CppAD::ipopt::solve_full<Dvector, ADvector, FG_eval>(
-		nf, nx, ng, xi, xl, xu, gl, gu, fg_eval, retape, solution
-	);
-
 	// Create an IpoptApplication
 	using Ipopt::IpoptApplication;
 	Ipopt::SmartPtr<IpoptApplication> app = new IpoptApplication();
 
-	// set the options file
-	if( std::strcmp(options, "ipopt.opt") != 0 )
-		app->Options()->SetStringValue("option_file_name", options);
+	// process the options argument
+	size_t begin_1, end_1, begin_2, end_2, begin_3, end_3;
+	begin_1     = 0;
+	bool retape = false;
+	while( begin_1 < options.size() )
+	{ 	// split this line into tokens
+		while( options[begin_1] == ' ')
+			begin_1++;
+		end_1   = options.find_first_of(" \n", begin_1);
+		begin_2 = end_1;
+		while( options[begin_2] == ' ')
+			begin_2++;
+		end_2   = options.find_first_of(" \n", begin_2);
+		begin_3 = end_2;
+		while( options[begin_3] == ' ')
+			begin_3++;
+		end_3   = options.find_first_of(" \n", begin_3);
+
+		// check for errors
+		CPPAD_ASSERT_KNOWN( 
+			(end_1 != std::string::npos)  & 
+			(end_2 != std::string::npos)  & 
+			(end_3 != std::string::npos)  ,
+			"ipopt::solve: missing '\\n' at end of an option line"
+		);
+		CPPAD_ASSERT_KNOWN( 
+			(end_1 > begin_1) & (end_2 > begin_2) ,
+			"ipopt::solve: an option line does not have two tokens"
+		);
+
+		// get first two tokens
+		std::string tok_1 = options.substr(begin_1, end_1 - begin_1);
+		std::string tok_2 = options.substr(begin_2, end_2 - begin_2);
+
+		// get third token
+		std::string tok_3;
+		if( (tok_1=="String") | (tok_1=="Numeric") | (tok_1=="Integer") )
+		{	CPPAD_ASSERT_KNOWN( 
+				(end_1 > begin_1) & (end_2 > begin_2) ,
+				"ipopt::solve: a String, Numeric, or Integer option line "
+				"does not have three tokens."
+			);
+			tok_3 = options.substr(begin_3, end_3 - begin_3);
+		}
+
+		// switch on option type
+		if( tok_1 == "Retape" )
+		{	CPPAD_ASSERT_KNOWN(
+				(tok_2 == "true") | (tok_2 == "false") ,
+				"ipopt::solve: Retape value is not true or false"
+			);
+			retape = (tok_2 == "true");
+		}
+		else if ( tok_1 == "String" )
+			app->Options()->SetStringValue(tok_2.c_str(), tok_3.c_str());
+		else if ( tok_1 == "Numeric" )
+		{	Ipopt::Number value = std::atof( tok_3.c_str() );	
+			app->Options()->SetNumericValue(tok_2.c_str(), value);
+		}
+		else if ( tok_1 == "Integer" )
+		{	Ipopt::Index value = std::atoi( tok_3.c_str() );	
+			app->Options()->SetIntegerValue(tok_2.c_str(), value);
+		}
+		else	CPPAD_ASSERT_KNOWN(
+			false,
+			"ipopt::solve: First token is not one of\n"
+			"Retape, String, Numeric, Integer"
+		);
+
+		begin_1 = end_3;
+		while( options[begin_1] == ' ')
+			begin_1++;
+		if( options[begin_1] != '\n' ) CPPAD_ASSERT_KNOWN(
+			false,
+			"ipopt::solve: either more than three tokens "
+			"or no '\\n' at end of a line"
+		);
+		begin_1++;
+	}
 
 	// Initialize the IpoptApplication and process the options
 	Ipopt::ApplicationReturnStatus status = app->Initialize();
@@ -465,6 +567,13 @@ void solve(
 	{	solution.status = solve_result<Dvector>::unknown; 
 		return;
 	}
+
+	// Create an interface from Ipopt to this specific problem.
+	// Note the assumption here that ADvector is same as cppd_ipopt::ADvector
+	Ipopt::SmartPtr<Ipopt::TNLP> cppad_nlp = 
+	new CppAD::ipopt::solve_full<Dvector, ADvector, FG_eval>(
+		nf, nx, ng, xi, xl, xu, gl, gu, fg_eval, retape, solution
+	);
 
 	// Run the IpoptApplication
 	app->OptimizeTNLP(cppad_nlp);
