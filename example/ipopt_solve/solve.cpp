@@ -29,9 +29,13 @@ namespace {
 	static size_t Run_error_count = 0;
 	bool Run(bool TestOk(void), const char *name)
 	{	bool ok = true;
+		double s0 = CppAD::elapsed_seconds();
 		ok &= TestOk();
+		double s1 = CppAD::elapsed_seconds();
+		double sec = std::floor(100*(s1 - s0) + 0.5) / 100.;
 		if( ok )
-		{	std::cout << "OK:    " << "ipopt_solve, " << name << std::endl;
+		{	std::cout << "OK:    " << "ipopt_solve: " << name;
+			std::cout << ", seconds = " << sec  << std::endl;
 			Run_ok_count++;
 		}
 		else

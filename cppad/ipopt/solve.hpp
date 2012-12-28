@@ -322,7 +322,7 @@ It returns true if it succeeds and false otherwise.
 $end
 -------------------------------------------------------------------------------
 */
-# include <cppad/ipopt/solve_nlp.hpp>
+# include <cppad/ipopt/solve_full.hpp>
 
 CPPAD_BEGIN_NAMESPACE
 namespace ipopt {
@@ -413,7 +413,7 @@ void solve(
 	// Create an interface from Ipopt to this specific problem.
 	// Note the assumption here that ADvector is same as cppd_ipopt::ADvector
 	Ipopt::SmartPtr<Ipopt::TNLP> cppad_nlp = 
-	new CppAD::ipopt::solve_nlp<Dvector, ADvector, FG_eval>(
+	new CppAD::ipopt::solve_full<Dvector, ADvector, FG_eval>(
 		nf, nx, ng, xi, xl, xu, gl, gu, fg_eval, solution
 	);
 
