@@ -295,6 +295,8 @@ bool ode_inverse(void)
 
 	// options 
 	const char* options_cstring = 
+		// Use sparse matrices for calculation of Jacobians and Hessians
+		"Sparse                             true\n"
 		// turn off any printing
 		"Integer print_level                0\n" 
 		// maximum number of iterations
@@ -303,8 +305,6 @@ bool ode_inverse(void)
 		// see Mathematical Programming, Volume 106, Number 1, 
 		// Pages 25-57, Equation (6)
 		"Numeric tol                        1e-6\n"
-		// derivative testing
-		// "String  derivative_test            second-order\n"
 		// maximum amount of random pertubation; e.g., 
 		// when evaluation finite diff
 		"Numeric point_perturbation_radius  0.\n"

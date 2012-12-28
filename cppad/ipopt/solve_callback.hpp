@@ -76,6 +76,8 @@ private:
 	FG_eval&                        fg_eval_;
 	/// should operation sequence be retaped for each new x.
 	bool                            retape_;
+	/// should sparse methods be used to compute Jacobians and Hessians
+	bool                            sparse_;
 	/// final results are returned to this structure
 	solve_result<Dvector>&          solution_;
 	// ------------------------------------------------------------------
@@ -162,6 +164,12 @@ public:
 
 	\param fg_eval
 	function object that evaluations f(x) and g(x) using fg_eval(fg, x)
+
+	\param retape
+	should the operation sequence be retaped for each argument value.
+
+	\param sparse_
+	should sparse matrix computations be used for Jacobians and Hessians.
 	
 	\param solution
 	object where final results are stored.
@@ -177,6 +185,7 @@ public:
 		const Dvector&         gu       ,
 		FG_eval&               fg_eval  ,
 		bool                   retape   ,
+		bool                   sparse   ,
 		solve_result<Dvector>& solution ) : 
 	nf_ ( nf ),
 	nx_ ( nx ),
@@ -188,6 +197,7 @@ public:
 	gu_ ( gu ),
 	fg_eval_ ( fg_eval ),
 	retape_ ( retape ),
+	sparse_ ( sparse ),
 	solution_ ( solution )
 	{	size_t i;
 		if( ! retape_ )
