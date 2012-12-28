@@ -22,6 +22,7 @@ LINK_DIRECTORIES( ${ipopt_LIBRARY_DIRS} )
 ADD_EXECUTABLE(example_ipopt_solve EXCLUDE_FROM_ALL 
 	solve.cpp
 	get_started.cpp
+	ode_inverse.cpp
 )
 
 # Extra compiler flags

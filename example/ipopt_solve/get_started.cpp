@@ -60,17 +60,16 @@ namespace {
 
 	class FG_eval {
 	public:
-		typedef CppAD::vector< AD<double> >  ADvector;
-		typedef AD<double>                   ADdouble;
+		typedef CPPAD_TESTVECTOR( AD<double> ) ADvector;
 		void operator()(ADvector& fg, const ADvector& x)
 		{	assert( fg.size() == 3 );
 			assert( x.size()  == 4 );
 
 			// Fortran style indexing 
-			ADdouble x1 = x[0];
-			ADdouble x2 = x[1];
-			ADdouble x3 = x[2];
-			ADdouble x4 = x[3];
+			AD<double> x1 = x[0];
+			AD<double> x2 = x[1];
+			AD<double> x3 = x[2];
+			AD<double> x4 = x[3];
 			// f(x)
 			fg[0] = x1 * x4 * (x1 + x2 + x3) + x3;
 			// g_1 (x)
@@ -86,7 +85,7 @@ namespace {
 bool get_started(void)
 {	bool ok = true;
 	size_t i;
-	typedef CppAD::vector<double> Dvector;
+	typedef CPPAD_TESTVECTOR( double ) Dvector;
 
 	// number of components in f(x)
 	size_t nf = 1;
@@ -115,7 +114,7 @@ bool get_started(void)
 	FG_eval fg_eval;
 
 	// options file
-	const char* options = "ipopt_solve.opt";
+	const char* options = "ipopt.opt";
 
 	// write out the options file
 	std::ofstream options_file(options);

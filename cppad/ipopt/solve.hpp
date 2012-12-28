@@ -310,7 +310,8 @@ $codei%
 It is the final value of the objective function $latex f(x)$$.
 
 $children%
-	example/ipopt_solve/get_started.cpp
+	example/ipopt_solve/get_started.cpp%
+	example/ipopt_solve/ode_inverse.cpp
 %$$
 $head Example$$
 The file
@@ -421,7 +422,8 @@ void solve(
 	Ipopt::SmartPtr<IpoptApplication> app = new IpoptApplication();
 
 	// set the options file
-	app->Options()->SetStringValue("option_file_name", options);
+	if( std::strcmp(options, "ipopt.opt") != 0 )
+		app->Options()->SetStringValue("option_file_name", options);
 
 	// Initialize the IpoptApplication and process the options
 	Ipopt::ApplicationReturnStatus status = app->Initialize();

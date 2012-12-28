@@ -59,7 +59,8 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES = test.sh
 CONFIG_CLEAN_VPATH_FILES =
-am_solve_OBJECTS = solve.$(OBJEXT) get_started.$(OBJEXT)
+am_solve_OBJECTS = solve.$(OBJEXT) get_started.$(OBJEXT) \
+	ode_inverse.$(OBJEXT)
 solve_OBJECTS = $(am_solve_OBJECTS)
 solve_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
@@ -258,7 +259,8 @@ LDADD = \
 #
 solve_SOURCES = \
 	solve.cpp \
-	get_started.cpp 
+	get_started.cpp \
+	ode_inverse.cpp
 
 all: all-am
 
@@ -310,6 +312,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/get_started.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ode_inverse.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/solve.Po@am__quote@
 
 .cpp.o:

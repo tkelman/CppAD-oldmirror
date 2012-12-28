@@ -21,6 +21,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 // external complied tests
 extern bool get_started(void);
+extern bool ode_inverse(void);
 
 namespace {
 	// function that runs one test
@@ -47,6 +48,7 @@ int main(void)
 
 	// external compiled tests
 	ok &= Run( get_started,         "get_started"  );
+	ok &= Run( ode_inverse,         "ode_inverse"  );
 	
 	// check for errors
 	using std::cout;

@@ -32,7 +32,8 @@ LDADD             = \
 #
 solve_SOURCES   = \
 	solve.cpp \
-	get_started.cpp 
+	get_started.cpp \
+	ode_inverse.cpp
 
 test: check
 	./test.sh
