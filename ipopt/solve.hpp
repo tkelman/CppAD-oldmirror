@@ -112,6 +112,17 @@ will tape the operation sequence at the value
 of $icode xi$$ and use that sequence for the entire optimization process.  
 The default value is $code false$$.
 
+$subhead Sparse$$
+You can set the sparse Jacobian and Hessian flag with the following syntax:
+$codei%
+	Sparse %value%
+%$$
+If the value is $code true$$, $code ipopt::solve$$ will use a sparse
+matrix representation for the computation of Jaobians and Hessians.
+Otherwise, it will use a full matrix representation for 
+these calculations.
+The default value is $code false$$.
+
 $subhead String$$
 You can set any Ipopt string option using a line with the following syntax:
 $codei%
@@ -484,6 +495,7 @@ void solve(
 	size_t begin_1, end_1, begin_2, end_2, begin_3, end_3;
 	begin_1     = 0;
 	bool retape = false;
+	bool sparse = false;
 	while( begin_1 < options.size() )
 	{ 	// split this line into tokens
 		while( options[begin_1] == ' ')
@@ -533,6 +545,13 @@ void solve(
 			);
 			retape = (tok_2 == "true");
 		}
+		else if( tok_1 == "Sparse" )
+		{	CPPAD_ASSERT_KNOWN(
+				(tok_2 == "true") | (tok_2 == "false") ,
+				"ipopt::solve: Sparse value is not true or false"
+			);
+			sparse = (tok_2 == "true");
+		}
 		else if ( tok_1 == "String" )
 			app->Options()->SetStringValue(tok_2.c_str(), tok_3.c_str());
 		else if ( tok_1 == "Numeric" )
@@ -546,7 +565,7 @@ void solve(
 		else	CPPAD_ASSERT_KNOWN(
 			false,
 			"ipopt::solve: First token is not one of\n"
-			"Retape, String, Numeric, Integer"
+			"Retape, Sparse, String, Numeric, Integer"
 		);
 
 		begin_1 = end_3;
@@ -572,7 +591,7 @@ void solve(
 	// Note the assumption here that ADvector is same as cppd_ipopt::ADvector
 	Ipopt::SmartPtr<Ipopt::TNLP> cppad_nlp = 
 	new CppAD::ipopt::solve_callback<Dvector, ADvector, FG_eval>(
-		nf, nx, ng, xi, xl, xu, gl, gu, fg_eval, retape, solution
+		nf, nx, ng, xi, xl, xu, gl, gu, fg_eval, retape, sparse, solution
 	);
 
 	// Run the IpoptApplication
