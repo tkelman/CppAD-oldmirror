@@ -20,9 +20,9 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 CPPAD_BEGIN_NAMESPACE
 namespace ipopt {
 /*
-\defgroup solve_full solve_full.hpp
+\defgroup solve_callback solve_callback.hpp
 \{
-\file solve_full.hpp
+\file solve_callback.hpp
 \brief Class that connects ipopt::solve to Ipopt
 */
 
@@ -41,7 +41,7 @@ Looking at the code, it seems to be a flag telling Ipopt to abort
 when the flag is false.
 */
 template <class Dvector, class ADvector, class FG_eval>
-class solve_full : public Ipopt::TNLP
+class solve_callback : public Ipopt::TNLP
 {
 private:
 	// ------------------------------------------------------------------
@@ -166,7 +166,7 @@ public:
 	\param solution
 	object where final results are stored.
 	*/
-	solve_full(
+	solve_callback(
 		size_t                 nf       ,
 		size_t                 nx       , 
 		size_t                 ng       ,
@@ -799,7 +799,7 @@ public:
 	
 	\par solution_[out]
 	this is a reference to the solution argument
-	in the constructor for solve_full.
+	in the constructor for solve_callback.
 	The results are stored here
 	(see documentation above).
 	*/
