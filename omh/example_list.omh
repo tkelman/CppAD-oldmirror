@@ -146,6 +146,7 @@ $rref interp_onetape.cpp$$
 $rref interp_retape.cpp$$
 $rref ipopt_solve_get_started.cpp$$ 
 $rref ipopt_solve_ode_inverse.cpp$$ 
+$rref ipopt_solve_retape.cpp$$ 
 $rref jac_lu_det.cpp$$
 $rref jac_minor_det.cpp$$
 $rref jacobian.cpp$$

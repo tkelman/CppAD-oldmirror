@@ -23,6 +23,7 @@ ADD_EXECUTABLE(example_ipopt_solve EXCLUDE_FROM_ALL
 	solve.cpp
 	get_started.cpp
 	ode_inverse.cpp
+	retape.cpp
 )
 
 # Extra compiler flags
