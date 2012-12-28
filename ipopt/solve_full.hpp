@@ -1,6 +1,6 @@
 /* $Id$ */
-# ifndef CPPAD_SOLVE_NLP_INCLUDED
-# define CPPAD_SOLVE_NLP_INCLUDED
+# ifndef CPPAD_SOLVE_FULL_INCLUDED
+# define CPPAD_SOLVE_FULL_INCLUDED
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
 
@@ -15,63 +15,16 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 # include <cppad/cppad.hpp>
 # include <coin/IpIpoptApplication.hpp>
 # include <coin/IpTNLP.hpp>
+# include <cppad/ipopt/solve_result.hpp>
 
 CPPAD_BEGIN_NAMESPACE
 namespace ipopt {
 /*
-\defgroup solve_nlp solve_nlp.hpp
+\defgroup solve_full solve_full.hpp
 \{
-\file solve_nlp.hpp
+\file solve_full.hpp
 \brief Class that connects ipopt::solve to Ipopt
 */
-
-/*!
-Class that contains information about solve problem result
-
-\tparam Dvector
-a simple vector with elements of type double
-*/
-template <class Dvector>
-class solve_result 
-{	
-public:
-	/// possible values for the result status
-	enum status_type {
-		not_defined,
-		success,
-		maxiter_exceeded,
-		stop_at_tiny_step,
-		stop_at_acceptable_point,
-		local_infeasibility,
-		user_requested_stop,
-		feasible_point_found,
-		diverging_iterates,
-		restoration_failure,
-		error_in_step_computation,
-		invalid_number_detected,
-		too_few_degrees_of_freedom,
-		internal_error,
-		unknown
-	};
-
-	/// possible values for solution status
-	status_type status;
-	/// the approximation solution
-	Dvector x;
-	/// Lagrange multipliers corresponding to lower bounds on x
-	Dvector zl;
-	/// Lagrange multipliers corresponding to upper bounds on x
-	Dvector zu;
-	/// value of g(x)
-	Dvector g;
-	/// Lagrange multipliers correspondiing constraints on g(x)
-	Dvector lambda;
-	/// value of f(x)
-	double obj_value;
-	/// constructor initializes solution status as not yet defined
-	solve_result(void)
-	{	status = not_defined; }
-};
 
 /*!
 Class that Ipopt uses for obtaining information about this problem.
@@ -88,7 +41,7 @@ Looking at the code, it seems to be a flag telling Ipopt to abort
 when the flag is false.
 */
 template <class Dvector, class ADvector, class FG_eval>
-class solve_nlp : public Ipopt::TNLP
+class solve_full : public Ipopt::TNLP
 {
 private:
 	// ------------------------------------------------------------------
@@ -158,7 +111,7 @@ public:
 	\param solution
 	object where final results are stored.
 	*/
-	solve_nlp(
+	solve_full(
 		size_t                 nf       ,
 		size_t                 nx       , 
 		size_t                 ng       ,
@@ -781,7 +734,7 @@ public:
 	
 	\par solution_[out]
 	this is a reference to the solution argument
-	in the constructor for solve_nlp.
+	in the constructor for solve_full.
 	The results are stored here
 	(see documentation above).
 	*/
