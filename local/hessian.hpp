@@ -118,9 +118,7 @@ After each call to $cref Forward$$,
 the object $icode f$$ contains the corresponding 
 $cref/Taylor coefficients/glossary/Taylor Coefficient/$$.
 After $code Hessian$$,
-the zero order Taylor coefficient in $icode f$$
-correspond to the point $icode x$$.
-The possibly other Taylor coefficients in $icode f$$ are not specified.
+the previous calls to $cref Forward$$ are undefined.
 
 $head Example$$
 $children%
