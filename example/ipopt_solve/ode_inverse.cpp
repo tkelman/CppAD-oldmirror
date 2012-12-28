@@ -141,10 +141,9 @@ $latex \[
 \] $$
 
 $head Solution Method$$
-One possible solution method 
-is to use constraints to include the solution of 
-the forward problem in the inverse problem.
-To be specific for our example,
+We use constraints to embed the 
+forward problem in the inverse problem.
+To be specific, we solve the optimization problem
 $latex \[
 \begin{array}{rcl}
 {\rm minimize} 
@@ -204,7 +203,9 @@ namespace {
 
 	// Simulated data for case with no noise (first point is not used)
 	double z_[] = {yone(s_[1]), yone(s_[2]), yone(s_[3]), yone(s_[4])};
-	size_t nz_  = sizeof(z_) / sizeof(z_[0]);
+
+	// f_i (x) will be the squared residual corresponding to z_i
+	size_t nf_  = sizeof(z_) / sizeof(z_[0]);
 
 	// number of trapozoidal approximation points per measurement interval
 	size_t np_  = 20;
@@ -227,7 +228,7 @@ namespace {
 				a[i] = x[i];
 
 			// compute the components of the object sum_i f_i (x)
-			for(i = 0; i < nz_; i++)
+			for(i = 0; i < nf_; i++)
 			{	k = (i + 1) * np_;
 				AD<double> y_1 = x[na_ + 2 * k + 1];
 				AD<double> dif = z_[i] - y_1;
@@ -235,11 +236,11 @@ namespace {
 			}  
 
 			// constraint corresponding to initial value y(0, a)
-			fg[nz_+0] = x[na_+0] - a[0];
-			fg[nz_+1] = x[na_+1] - 0.0;
+			fg[nf_+0] = x[na_+0] - a[0];
+			fg[nf_+1] = x[na_+1] - 0.0;
 
 			// constraints corresponding to trapozoidal approximation
-			for(i = 0; i < nz_; i++)
+			for(i = 0; i < nf_; i++)
 			{	// spacing between grid point
 				double dt = (s_[i+1] - s_[i]) / static_cast<double>(np_); 
 				for(j = 1; j <= np_; j++)
@@ -257,8 +258,8 @@ namespace {
 					AD<double> Gm_1  = + a[1] * ym_0 - a[2] * ym_1;
 
 					// constraint should be zero
-					fg[nz_ + 2*k + 0] = y_0  - ym_0 - dt*(G_0 + Gm_0)/2.;
-					fg[nz_ + 2*k + 1] = y_1  - ym_1 - dt*(G_1 + Gm_1)/2.;
+					fg[nf_ + 2*k + 0] = y_0  - ym_0 - dt*(G_0 + Gm_0)/2.;
+					fg[nf_ + 2*k + 1] = y_1  - ym_1 - dt*(G_1 + Gm_1)/2.;
 				}
 			}
 		}	
@@ -269,10 +270,8 @@ bool ode_inverse(void)
 	size_t i;
 	typedef CPPAD_TESTVECTOR( double ) Dvector;
 
-	// number of components in f(x) and z
-	size_t nf = nz_;
 	// number of components in the function g
-	size_t ng = (np_ * nz_ + 1) * 2;
+	size_t ng = (np_ * nf_ + 1) * 2;
 	// number of independent variables
 	size_t nx = na_ + ng;
 	// initial vlaue for the variables we are optimizing w.r.t
@@ -317,7 +316,7 @@ bool ode_inverse(void)
 
 	// solve the problem
 	CppAD::ipopt::solve<Dvector, FG_eval>(
-		options, nf, xi, xl, xu, gl, gu, fg_eval, solution
+		options, nf_, xi, xl, xu, gl, gu, fg_eval, solution
 	);
 	//
  	// Check some of the solution values
