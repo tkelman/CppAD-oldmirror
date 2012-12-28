@@ -96,11 +96,6 @@ and memory use needs to be improved.
 $lend
 
 
-$head 12-25$$
-The $cref Hessian$$ routine Taylor coefficient specifications were modified
-to specify the zero order coefficients after it is called; see
-$cref/Hessian Uses Forward/Hessian/Hessian Uses Forward/$$.
-
 $head 12-22$$
 Define a doxygen module (group) for each file that has doxygen documentation.
 

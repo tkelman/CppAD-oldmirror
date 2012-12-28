@@ -72,10 +72,17 @@ private:
 	const Dvector&                  gl_;
 	/// upper limit for g(x)
 	const Dvector&                  gu_;
+	/// final results are returned to this structure
+	solve_result<Dvector>&          solution_;
+	// ------------------------------------------------------------------
+ 	// Values that are initilaized by the constructor
+	// ------------------------------------------------------------------
 	/// AD function object that evaluates x -> [ f(x) , g(x) ]
 	CppAD::ADFun<double>            fg_ad_eval_;
-	/// place where final results are placed
-	solve_result<Dvector>&          solution_;
+	/// value of x corresponding to previous new_x
+	Dvector                         x0_;
+	/// value of fg corresponding to previous new_x
+	Dvector                         fg0_;
 public:
 	// ----------------------------------------------------------------------
 	/*! 
@@ -133,12 +140,20 @@ public:
 	solution_ ( solution )
 	{	size_t i;
 		// make fg_ad_eval correspond to x -> [ f(x), g(x) ]
-		ADvector x(nx_), fg(nf_ + ng_);
+		ADvector a_x(nx_), a_fg(nf_ + ng_);
 		for(i = 0; i < nx_; i++)
-			x[i] = xi_[i];
-		CppAD::Independent(x);
-		fg_eval(fg, x);
-		fg_ad_eval_.Dependent(x, fg);
+			a_x[i] = xi_[i];
+		CppAD::Independent(a_x);
+		fg_eval(a_fg, a_x);
+		fg_ad_eval_.Dependent(a_x, a_fg);
+
+		// initialize x0_ and fg0_ wih proper dimensions and value nan
+		x0_.resize(nx);
+		fg0_.resize(nf_ + ng_);
+		for(i = 0; i < nx_; i++)
+			x0_[i] = CppAD::nan(0.0);
+		for(i = 0; i < nf_ + ng_; i++)
+			fg0_[i] = CppAD::nan(0.0);
 	}
 	// -----------------------------------------------------------------------
 	/*!
@@ -320,13 +335,14 @@ public:
 		bool           new_x       , 
 		Number&        obj_value   )
 	{	size_t i;
-		Dvector x0(nx_), fg0(nf_ + ng_);
-		for(i = 0; i < nx_; i++)
-			x0[i] = x[i];
-		fg0 = fg_ad_eval_.Forward(0, x0);
+		if( new_x )
+		{	for(i = 0; i < nx_; i++)
+				x0_[i] = x[i];
+			fg0_ = fg_ad_eval_.Forward(0, x0_);
+		}
 		double sum = 0.0;
 		for(i = 0; i < nf_; i++)
-			sum += fg0[i];
+			sum += fg0_[i];
 		obj_value = static_cast<Number>(sum);
 		return true;
 	}
@@ -361,10 +377,9 @@ public:
 		Number*         grad_f   )
 	{	size_t i;
 		if( new_x )
-		{	Dvector x0(nx_), fg0(nf_ + ng_);
-			for(i = 0; i < nx_; i++)
-				x0[i] = x[i];
-			fg_ad_eval_.Forward(0, x0);
+		{	for(i = 0; i < nx_; i++)
+				x0_[i] = x[i];
+			fg0_ = fg_ad_eval_.Forward(0, x0_);
 		}
 		Dvector w(nf_ + ng_), dw(nx_);
 		for(i = 0; i < nf_; i++)
@@ -410,12 +425,13 @@ public:
 		Index   m            , 
 		Number* g            )
 	{	size_t i;
-		Dvector x0(nx_), fg0(nf_ + ng_);
-		for(i = 0; i < nx_; i++)
-			x0[i] = x[i];
-		fg0 = fg_ad_eval_.Forward(0, x0);
+		if( new_x )
+		{	for(i = 0; i < nx_; i++)
+				x0_[i] = x[i];
+			fg0_ = fg_ad_eval_.Forward(0, x0_);
+		}
 		for(i = 0; i < ng_; i++)
-			g[i] = fg0[nf_ + i];
+			g[i] = fg0_[nf_ + i];
 		return true;
 	}
 	// -----------------------------------------------------------------------
@@ -502,10 +518,9 @@ public:
 			return true;
 		}
 		if( new_x )
-		{	Dvector x0(nx_), fg0(nf_ + ng_);
-			for(j = 0; j < nx_; j++)
-				x0[j] = x[j];
-			fg_ad_eval_.Forward(0, x0);
+		{	for(i = 0; i < nx_; i++)
+				x0_[i] = x[i];
+			fg0_ = fg_ad_eval_.Forward(0, x0_);
 		}
 		if( nx_ < ng_ )
 		{	// user forward mode
@@ -639,7 +654,11 @@ public:
 		CPPAD_ASSERT_UNKNOWN(
 			static_cast<size_t>(nele_hess) == nx_*(nx_+1)/2 
 		);
-
+		if( new_x )
+		{	for(i = 0; i < nx_; i++)
+				x0_[i] = x[i];
+			fg0_ = fg_ad_eval_.Forward(0, x0_);
+		}
 		if( values == NULL )
 		{	// The Hessian is symmetric, only fill the lower left triangle
 			k = 0;
@@ -653,14 +672,12 @@ public:
 			return true;
 		}
 
-		Dvector x0(nx_), w(nf_ + ng_), hes(nx_ * nx_);
-		for(j = 0; j < nx_; j++)
-			x0[j] = x[j];
+		Dvector w(nf_ + ng_), hes(nx_ * nx_);
 		for(i = 0; i < nf_; i++)
 			w[i] = obj_factor;
 		for(i = 0; i < ng_; i++)
 			w[i + nf_] = lambda[i];
-		hes = fg_ad_eval_.Hessian(x0, w);
+		hes = fg_ad_eval_.Hessian(x0_, w);
 		k   = 0;
 		for(i = 0; i < nx_; i++)
 		{	for(j = 0; j <= i; j++)
