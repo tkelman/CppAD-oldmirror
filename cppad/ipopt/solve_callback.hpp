@@ -91,19 +91,26 @@ private:
 	Dvector                         x0_;
 	/// value of fg corresponding to previous new_x
 	Dvector                         fg0_;
-	/// Row indices for Jacobian of [f(x), g(x)] in row order
-	/// with extra entry on end that row_jac_[k] = nf_ + ng_.
-	/// (set by constructor and not changed).
+	// ----------------------------------------------------------------------
+	// Jacobian information
+	// ----------------------------------------------------------------------
+	/// Sparsity pattern for Jacobian of [f(x), g(x) ].
+	/// If sparse is true, this pattern set by constructor and does not change.
+	/// Otherwise this vector has size zero.
+	CppAD::vector< std::set<size_t> > pattern_jac_;
+	/// Row indices for Jacobian of [f(x), g(x)] in row order.
+	/// There is an extra entry on end with row_jac_[k] = nf_ + ng_.
+	/// (Set by constructor and not changed.)
 	CppAD::vector<size_t>           row_jac_;
-	/// Column indices for Jacobian of [f(x), g(x)], same order as row_jac_
-	/// with extra entry on end that col_jac_[k] = nx_.
-	/// (set by constructor and not changed).
+	/// Column indices for Jacobian of [f(x), g(x)], same order as row_jac_.
+	/// There is an extra entry on end with col_jac_[k] = nx_.
+	/// (Set by constructor and not changed.)
 	CppAD::vector<size_t>           col_jac_;
 	/// col_order_jac_ sorts row_jac_ and col_jac_ in column order.
-	/// (set by constructor and not changed).
+	/// (Set by constructor and not changed.)
 	CppAD::vector<size_t>           col_order_jac_;
 	/// index in row_jac_ and col_jac_ of first entry for Jacobian of g(x)
-	/// (set by constructor and not changed).
+	/// (Set by constructor and not changed.)
 	size_t                          offset_jac_;
 	// ------------------------------------------------------------------
  	// Private member functions
@@ -215,6 +222,15 @@ public:
 	solution_ ( solution )
 	{	size_t i, j;
 		size_t nfg = nf_ + ng_;
+
+		// initialize x0_ and fg0_ wih proper dimensions and value nan
+		x0_.resize(nx);
+		fg0_.resize(nfg);
+		for(i = 0; i < nx_; i++)
+			x0_[i] = CppAD::nan(0.0);
+		for(i = 0; i < nfg; i++)
+			fg0_[i] = CppAD::nan(0.0);
+
 		if( ! retape_ )
 		{	// make adfun_ correspond to x -> [ f(x), g(x) ]
 			ADvector a_x(nx_), a_fg(nfg);
@@ -226,28 +242,63 @@ public:
 			// optimize because we will make repeated use of this tape
 			adfun_.optimize();
 		}
-		// initialize x0_ and fg0_ wih proper dimensions and value nan
-		x0_.resize(nx);
-		fg0_.resize(nfg);
-		for(i = 0; i < nx_; i++)
-			x0_[i] = CppAD::nan(0.0);
-		for(i = 0; i < nfg; i++)
-			fg0_[i] = CppAD::nan(0.0);
-
-		// Set row and column indices for Jacobian of [f(x), g(x)].
-		// These indices are in row major order. 
-		for(i = 0; i < nfg; i++)
-		{	for(j = 0; j < nx_; j++)
-			{	row_jac_.push_back(i);
-				col_jac_.push_back(j);	
+		if( sparse ) 
+		{	CPPAD_ASSERT_UNKNOWN( ! retape );	
+			pattern_jac_.resize(nf_ + ng_);
+			if( nx_ <= nf_ + ng_ )
+			{	// use forward mode to compute sparsity
+				CppAD::vector< std::set<size_t> > r(nx_);
+				for(i = 0; i < nx_; i++)
+				{	CPPAD_ASSERT_UNKNOWN( r[i].empty() );
+					r[i].insert(i);
+				}
+				pattern_jac_ = adfun_.ForSparseJac(nx_, r);
 			}
-			// Set where Jacobian of g(x) begins.
-			// Do at end of loop incase ng_ = 0 (nf_ cannot be zero).
-			if( i == (nf_ - 1) )
-				offset_jac_ = row_jac_.size();
+			else
+			{	// use reverse mode to compute sparsity
+				size_t m = nf_ + ng_;
+				CppAD::vector< std::set<size_t> > s(m);
+				for(i = 0; i < m; i++)
+				{	CPPAD_ASSERT_UNKNOWN( s[i].empty() );
+					s[i].insert(i);
+				}
+				pattern_jac_ = adfun_.RevSparseJac(m, s);
+			}
+			// Set row and column indices for Jacoian of [f(x), g(x)]
+			// These indices are in row major order.
+			std::set<size_t>:: const_iterator itr, end;
+			for(i = 0; i < nfg; i++)
+			{	itr = pattern_jac_[i].begin();
+				end = pattern_jac_[i].end();
+				while( itr != end )
+				{	j = *itr++;
+					row_jac_.push_back(i);
+					col_jac_.push_back(j);
+				}
+				// Set offset where Jacobian of g(x) begins.
+				// Do at end of loop incase ng_ = 0 (nf_ cannot be zero).
+				if( i == (nf_ - 1) )
+					offset_jac_ = row_jac_.size();
+			}
 		}
+		else
+		{	// Set row and column indices for Jacobian of [f(x), g(x)].
+			// These indices are in row major order. 
+			for(i = 0; i < nfg; i++)
+			{	for(j = 0; j < nx_; j++)
+				{	row_jac_.push_back(i);
+					col_jac_.push_back(j);	
+				}
+				// Set offset where Jacobian of g(x) begins.
+				// Do at end of loop incase ng_ = 0 (nf_ cannot be zero).
+				if( i == (nf_ - 1) )
+					offset_jac_ = row_jac_.size();
+			}
+		}
+		// extra value at end greter than other value in each vector
 		row_jac_.push_back(nfg);
 		col_jac_.push_back(nx_);
+
 		// Column order indirect sort of the indices
 		col_order_jac_.resize( col_jac_.size() );
 		index_sort( col_jac_, col_order_jac_ );
@@ -284,7 +335,12 @@ public:
 		nnz_jac_g = static_cast<Index>(row_jac_.size() - offset_jac_ - 1);
 		nnz_h_lag = static_cast<Index>(nx_*(nx_+1)/2);
 	
-		CPPAD_ASSERT_UNKNOWN(row_jac_.size() - offset_jac_ - 1 == ng_ * nx_);
+# ifndef NDEBUG
+		if( ! sparse_ )
+		{	size_t nnz = static_cast<size_t>(nnz_jac_g);
+			CPPAD_ASSERT_UNKNOWN( nnz == ng_ * nx_);
+		}
+# endif
 
 	  	// use the fortran index style for row/col entries
 		index_style = C_STYLE;
