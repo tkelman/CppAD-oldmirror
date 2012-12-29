@@ -103,11 +103,9 @@ private:
 	/// Otherwise this vector has size zero.
 	CppAD::vector< std::set<size_t> > pattern_jac_;
 	/// Row indices of [f(x), g(x)] for Jacobian of g(x) in row order.
-	/// There is an extra entry on end with row_jac_[k] = nf_ + ng_.
 	/// (Set by constructor and not changed.)
 	CppAD::vector<size_t>           row_jac_;
 	/// Column indices for Jacobian of g(x), same order as row_jac_.
-	/// There is an extra entry on end with col_jac_[k] = nx_.
 	/// (Set by constructor and not changed.)
 	CppAD::vector<size_t>           col_jac_;
 	/// col_order_jac_ sorts row_jac_ and col_jac_ in column order.
@@ -115,6 +113,25 @@ private:
 	CppAD::vector<size_t>           col_order_jac_;
 	/// Work vector used by SparseJacobian, stored here to avoid recalculation.
 	CppAD::sparse_jacobian_work     work_jac_;
+	// ----------------------------------------------------------------------
+	// Hessian information
+	// ----------------------------------------------------------------------
+	/// Sparsity pattern for Hessian of Lagragian
+	/// \f[ L(x) = \sigma \sum_i f_i (x) + \sum_i \lambad_i  g_i (x) \f]
+	/// If sparse is true, this pattern set by constructor and does not change.
+	/// Otherwise this vector has size zero.
+	CppAD::vector< std::set<size_t> > pattern_hes_;
+	/// Row indices of Hessian lower left triangle in row order.
+	/// (Set by constructor and not changed.)
+	CppAD::vector<size_t>           row_hes_;
+	/// Column indices of Hessian left triangle in same order as row_hes_.
+	/// (Set by constructor and not changed.)
+	CppAD::vector<size_t>           col_hes_;
+	/// col_order_hes_ sorts row_hes_ and col_hes_ in column order.
+	/// (Set by constructor and not changed.)
+	CppAD::vector<size_t>           col_order_hes_;
+	/// Work vector used by SparseJacobian, stored here to avoid recalculation.
+	CppAD::sparse_hessian_work      work_hes_;
 	// ------------------------------------------------------------------
  	// Private member functions
 	// ------------------------------------------------------------------
@@ -257,6 +274,8 @@ public:
 		}
 		if( sparse_forward_ | sparse_reverse_ ) 
 		{	CPPAD_ASSERT_UNKNOWN( ! retape );	
+			// -----------------------------------------------------------
+			// Jacobian
 			pattern_jac_.resize(nf_ + ng_);
 			if( nx_ <= nf_ + ng_ )
 			{	// use forward mode to compute sparsity
@@ -289,6 +308,37 @@ public:
 					col_jac_.push_back(j);
 				}
 			}
+			// -----------------------------------------------------------
+			// Hessian
+			pattern_hes_.resize(nx_);
+			CppAD::vector< std::set<size_t> > r(nx_);
+			for(i = 0; i < nx_; i++)
+			{	CPPAD_ASSERT_UNKNOWN( r[i].empty() );
+				r[i].insert(i);
+			}
+			// forward Jacobian sparsity for fg
+			adfun_.ForSparseJac(nx_, r);
+
+			// The Lagragian can use any of the components of f(x), g(x)
+			CppAD::vector< std::set<size_t> > s(1);
+			CPPAD_ASSERT_UNKNOWN( s[0].empty() );
+			for(i = 0; i < nf_ + ng_; i++)
+				s[0].insert(i);
+			pattern_hes_ = adfun_.RevSparseHes(nx_, s);
+
+			// Set row and column indices for Lower triangle of Hessian 
+			// of Lagragian.  These indices are in row major order.
+			for(i = 0; i < nx_; i++)
+			{	itr = pattern_hes_[i].begin();
+				end = pattern_hes_[i].end();
+				while( itr != end )
+				{	j = *itr++;
+					if( j <= i )
+					{	row_hes_.push_back(i);
+						col_hes_.push_back(j);
+					}
+				}
+			}
 		}
 		else
 		{	// Set row and column indices in Jacoian of [f(x), g(x)]
@@ -299,11 +349,23 @@ public:
 					col_jac_.push_back(j);	
 				}
 			}
+			// Set row and column indices for lower triangle of Hessian.
+			// These indices are in row major order.
+			for(i = 0; i < nx_; i++)
+			{	for(j = 0; j <= i; j++)
+				{	row_hes_.push_back(i);
+					col_hes_.push_back(j);
+				}
+			}
 		}
 
-		// Column order indirect sort of the indices
+		// Column order indirect sort of the Jacobian indices
 		col_order_jac_.resize( col_jac_.size() );
 		index_sort( col_jac_, col_order_jac_ );
+
+		// Column order indirect sort of the Hessian indices
+		col_order_hes_.resize( col_hes_.size() );
+		index_sort( col_hes_, col_order_hes_ );
 	}
 	// -----------------------------------------------------------------------
 	/*!
@@ -335,12 +397,15 @@ public:
 		n         = static_cast<Index>(nx_);
 		m         = static_cast<Index>(ng_);
 		nnz_jac_g = static_cast<Index>(row_jac_.size());
-		nnz_h_lag = static_cast<Index>(nx_*(nx_+1)/2);
+		nnz_h_lag = static_cast<Index>(row_hes_.size());
 	
 # ifndef NDEBUG
 		if( ! (sparse_forward_ | sparse_reverse_) )
 		{	size_t nnz = static_cast<size_t>(nnz_jac_g);
 			CPPAD_ASSERT_UNKNOWN( nnz == ng_ * nx_);
+			//
+			nnz = static_cast<size_t>(nnz_h_lag);
+			CPPAD_ASSERT_UNKNOWN( nnz == (nx_ * (nx_ + 1)) / 2 );
 		}
 # endif
 
@@ -656,22 +721,23 @@ public:
 	{	size_t i, j, k, ell;
 		CPPAD_ASSERT_UNKNOWN(static_cast<size_t>(m)         == ng_ );
 		CPPAD_ASSERT_UNKNOWN(static_cast<size_t>(n)         == nx_ );
-
+		//
 		size_t nk = row_jac_.size();
 		CPPAD_ASSERT_UNKNOWN( static_cast<size_t>(nele_jac) == nk );
+		//
+		if( new_x )
+			cache_new_x(x);
 
 		if( values == NULL )
 		{	for(k = 0; k < nk; k++)
-			{	i = static_cast<size_t>(row_jac_[k]);
-				j = static_cast<size_t>(col_jac_[k]);
+			{	i = row_jac_[k];
+				j = col_jac_[k];
 				CPPAD_ASSERT_UNKNOWN( i >= nf_ );
-				iRow[k] = i - nf_;
-				jCol[k] = j;
+				iRow[k] = static_cast<Index>(i - nf_);
+				jCol[k] = static_cast<Index>(j);
 			}
 			return true;
 		}
-		if( new_x )
-			cache_new_x(x);
 		//
 		if( nk == 0 )
 			return true;
@@ -791,29 +857,29 @@ public:
 	\param iRow
 	if values is not NULL, iRow is not defined.
 	if values is NULL, iRow
-	is a vector with size nele_jac.
+	is a vector with size nele_hess.
 	The input value of its elements does not matter.
 	On output, 
-	For <tt>k = 0 , ... , nele_jac-1, iRow[k]</tt> is the 
+	For <tt>k = 0 , ... , nele_hess-1, iRow[k]</tt> is the 
 	base zero row index for the 
 	k-th possibly non-zero entry in the Hessian fo the Lagragian.
 	
 	\param jCol
 	if values is not NULL, jCol is not defined.
 	if values is NULL, jCol
-	is a vector with size nele_jac.
+	is a vector with size nele_hess.
 	The input value of its elements does not matter.
 	On output, 
-	For <tt>k = 0 , ... , nele_jac-1, jCol[k]</tt> is the 
+	For <tt>k = 0 , ... , nele_hess-1, jCol[k]</tt> is the 
 	base zero column index for the 
 	k-th possibly non-zero entry in the Hessian of the Lagragian.
 	
 	\param values
 	if values is not NULL, it
-	is a vector with size nele_jac.
+	is a vector with size nele_hess.
 	The input value of its elements does not matter.
 	On output, 
-	For <tt>k = 0 , ... , nele_jac-1, values[k]</tt> is the 
+	For <tt>k = 0 , ... , nele_hess-1, values[k]</tt> is the 
 	value for the 
 	k-th possibly non-zero entry in the Hessian of the Lagragian.
 	
@@ -835,40 +901,50 @@ public:
 	{	size_t i, j, k;
 		CPPAD_ASSERT_UNKNOWN(static_cast<size_t>(m) == ng_ );
 		CPPAD_ASSERT_UNKNOWN(static_cast<size_t>(n) == nx_ );
-		CPPAD_ASSERT_UNKNOWN(
-			static_cast<size_t>(nele_hess) == nx_*(nx_+1)/2 
-		);
+		//
+		size_t nk = row_hes_.size();
+		CPPAD_ASSERT_UNKNOWN( static_cast<size_t>(nele_hess) == nk ); 
+		//
 		if( new_x )
 			cache_new_x(x);
 		//
 		if( values == NULL )
-		{	// The Hessian is symmetric, only fill the lower left triangle
-			k = 0;
-			for(i = 0; i < nx_; i++)
-			{	for(j = 0; j <= i; j++)
-				{	iRow[k] = i;
-					jCol[k] = j;
-					k++;
-				}
+		{	for(k = 0; k < nk; k++)
+			{	i = row_hes_[k];
+				j = col_hes_[k];
+				iRow[k] = static_cast<Index>(i);
+				jCol[k] = static_cast<Index>(j);
 			}
 			return true;
 		}
+		//
+		if( nk == 0 )
+			return true;
 
-		Dvector w(nf_ + ng_), hes(nx_ * nx_);
+		// weigting vector for Lagragian
+		Dvector w(nf_ + ng_);
 		for(i = 0; i < nf_; i++)
 			w[i] = obj_factor;
 		for(i = 0; i < ng_; i++)
 			w[i + nf_] = lambda[i];
-		hes = adfun_.Hessian(x0_, w);
-		k   = 0;
-		for(i = 0; i < nx_; i++)
-		{	for(j = 0; j <= i; j++)
-				values[k++] = hes[i * nx_ + j];
+		//
+		if( sparse_forward_ | sparse_reverse_ )
+		{	Dvector hes(nk);
+			adfun_.SparseHessian(
+				x0_, w, pattern_hes_, row_hes_, col_hes_, hes, work_hes_
+			);
+			for(k = 0; k < nk; k++)
+				values[k] = hes[k];
 		}
-		// Hessian does not specify state of zero order Taylor coefficients
-		// in adfun_ after call, so set them as expcected.
-		adfun_.Forward(0, x0_);
-
+		else
+		{	Dvector hes(nx_ * nx_);
+			hes = adfun_.Hessian(x0_, w);
+			for(k = 0; k < nk; k++)
+			{	i = row_hes_[k];
+				j = col_hes_[k];
+				values[k] = hes[i * nx_ + j];
+			}
+		}
 		return true;
 	}
 	// ----------------------------------------------------------------------

@@ -128,8 +128,9 @@ If sparse is true, retape must be false.
 $pre
 
 $$
-The value $icode direction$$ must be either $code forward$$ of $code reverse$$.
-If 
+It is unclear if $cref sparse_jacobian$$ would be faster user
+forward or reverse mode so you are able to choose the direction.
+If  
 $codei%
 	%value% == true && %direction% == forward
 %$$
