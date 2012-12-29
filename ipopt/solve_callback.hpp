@@ -91,6 +91,20 @@ private:
 	Dvector                         x0_;
 	/// value of fg corresponding to previous new_x
 	Dvector                         fg0_;
+	/// Row indices for Jacobian of [f(x), g(x)] in row order
+	/// with extra entry on end that row_jac_[k] = nf_ + ng_.
+	/// (set by constructor and not changed).
+	CppAD::vector<size_t>           row_jac_;
+	/// Column indices for Jacobian of [f(x), g(x)], same order as row_jac_
+	/// with extra entry on end that col_jac_[k] = nx_.
+	/// (set by constructor and not changed).
+	CppAD::vector<size_t>           col_jac_;
+	/// col_order_jac_ sorts row_jac_ and col_jac_ in column order.
+	/// (set by constructor and not changed).
+	CppAD::vector<size_t>           col_order_jac_;
+	/// index in row_jac_ and col_jac_ of first entry for Jacobian of g(x)
+	/// (set by constructor and not changed).
+	size_t                          offset_jac_;
 	// ------------------------------------------------------------------
  	// Private member functions
 	// ------------------------------------------------------------------
@@ -199,10 +213,11 @@ public:
 	retape_ ( retape ),
 	sparse_ ( sparse ),
 	solution_ ( solution )
-	{	size_t i;
+	{	size_t i, j;
+		size_t nfg = nf_ + ng_;
 		if( ! retape_ )
 		{	// make adfun_ correspond to x -> [ f(x), g(x) ]
-			ADvector a_x(nx_), a_fg(nf_ + ng_);
+			ADvector a_x(nx_), a_fg(nfg);
 			for(i = 0; i < nx_; i++)
 				a_x[i] = xi_[i];
 			CppAD::Independent(a_x);
@@ -213,11 +228,29 @@ public:
 		}
 		// initialize x0_ and fg0_ wih proper dimensions and value nan
 		x0_.resize(nx);
-		fg0_.resize(nf_ + ng_);
+		fg0_.resize(nfg);
 		for(i = 0; i < nx_; i++)
 			x0_[i] = CppAD::nan(0.0);
-		for(i = 0; i < nf_ + ng_; i++)
+		for(i = 0; i < nfg; i++)
 			fg0_[i] = CppAD::nan(0.0);
+
+		// Set row and column indices for Jacobian of [f(x), g(x)].
+		// These indices are in row major order. 
+		for(i = 0; i < nfg; i++)
+		{	for(j = 0; j < nx_; j++)
+			{	row_jac_.push_back(i);
+				col_jac_.push_back(j);	
+			}
+			// Set where Jacobian of g(x) begins.
+			// Do at end of loop incase ng_ = 0 (nf_ cannot be zero).
+			if( i == (nf_ - 1) )
+				offset_jac_ = row_jac_.size();
+		}
+		row_jac_.push_back(nfg);
+		col_jac_.push_back(nx_);
+		// Column order indirect sort of the indices
+		col_order_jac_.resize( col_jac_.size() );
+		index_sort( col_jac_, col_order_jac_ );
 	}
 	// -----------------------------------------------------------------------
 	/*!
@@ -248,9 +281,11 @@ public:
 	{
 		n         = static_cast<Index>(nx_);
 		m         = static_cast<Index>(ng_);
-		nnz_jac_g = static_cast<Index>(ng_ * nx_);
+		nnz_jac_g = static_cast<Index>(row_jac_.size() - offset_jac_ - 1);
 		nnz_h_lag = static_cast<Index>(nx_*(nx_+1)/2);
 	
+		CPPAD_ASSERT_UNKNOWN(row_jac_.size() - offset_jac_ - 1 == ng_ * nx_);
+
 	  	// use the fortran index style for row/col entries
 		index_style = C_STYLE;
 	
@@ -560,18 +595,21 @@ public:
 		Index *jCol,
                        
 		Number* values)
-	{	size_t i, j, k;
+	{	size_t i, j, k, ell;
 		CPPAD_ASSERT_UNKNOWN(static_cast<size_t>(m)         == ng_ );
 		CPPAD_ASSERT_UNKNOWN(static_cast<size_t>(n)         == nx_ );
-		CPPAD_ASSERT_UNKNOWN(static_cast<size_t>(nele_jac)  == ng_ * nx_ );
+
+		size_t nk = row_jac_.size() - offset_jac_ - 1;
+		CPPAD_ASSERT_UNKNOWN( static_cast<size_t>(nele_jac) == nk );
 
 		if( values == NULL )
-		{	for(i = 0; i < ng_; i++)
-			{	for(j = 0; j < nx_; j++)
-				{	k       = i * nx_ + j;
-					iRow[k] = i;
-					jCol[k] = j;
-				}
+		{
+			for(k = 0; k < nk; k++)
+			{	i = static_cast<size_t>(row_jac_[k + offset_jac_]);
+				j = static_cast<size_t>(col_jac_[k + offset_jac_]);
+				CPPAD_ASSERT_UNKNOWN( i >= nf_ );
+				iRow[k] = i - nf_;
+				jCol[k] = j;
 			}
 			return true;
 		}
@@ -579,35 +617,49 @@ public:
 			cache_new_x(x);
 		//
 		if( nx_ < ng_ )
-		{	// user forward mode
+		{	// use forward mode
 			Dvector x1(nx_), fg1(nf_ + ng_);
 			for(j = 0; j < nx_; j++)
 				x1[j] = 0.0;
+			// index in col_order_jac_ ofnext entry
+			ell = 0;
+			k   = col_order_jac_[ell];
 			for(j = 0; j < nx_; j++)
 			{	// compute j-th column of Jacobian of g(x)
 				x1[j] = 1.0;
 				fg1 = adfun_.Forward(1, x1);
-				for(i = 0; i < ng_; i++)
-				{	k = i * nx_ + j;
-					values[k] = fg1[nf_ + i];
+				while( col_jac_[k] <= j )
+				{	CPPAD_ASSERT_UNKNOWN( col_jac_[k] == j );
+					i = row_jac_[k];
+					if( i >= nf_ )
+					{	CPPAD_ASSERT_UNKNOWN( k >= offset_jac_ );
+						values[k - offset_jac_] = fg1[i];
+					}
+					ell++;
+					k = col_order_jac_[ell];
 				}
 				x1[j] = 0.0;
 			}
 		}
-		if( nx_ > ng_ )
-		{	// user reverse mode
-			Dvector w(nf_ + ng_), dw(nx_);
-			for(i = 0; i < nf_ + ng_; i++)
+		else
+		{	size_t nfg = nf_ + ng_;
+			// user reverse mode
+			Dvector w(nfg), dw(nx_);
+			for(i = 0; i < nfg; i++)
 				w[i] = 0.0;
-			for(i = 0; i < ng_; i++)
+			// index in row_jac_ of next entry
+			k = offset_jac_;
+			for(i = nf_; i < nfg; i++)
 			{	// compute i-th row of Jacobian of g(x)
-				w[i + nf_] = 1.0;
+				w[i] = 1.0;
 				dw = adfun_.Reverse(1, w);
-				for(j = 0; j < nx_; j++)
-				{	k = i * nx_ + j;
-					values[k] = dw[j];
+				while( row_jac_[k] <= i )
+				{	CPPAD_ASSERT_UNKNOWN( row_jac_[k] == i );
+					j = col_jac_[k];
+					values[k - offset_jac_] = dw[j];
+					k++;
 				}
-				w[i + nf_] = 0.0;
+				w[i] = 0.0;
 			}
 		}
 		return true;
