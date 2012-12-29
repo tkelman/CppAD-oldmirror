@@ -109,6 +109,8 @@ private:
 	/// col_order_jac_ sorts row_jac_ and col_jac_ in column order.
 	/// (Set by constructor and not changed.)
 	CppAD::vector<size_t>           col_order_jac_;
+	/// Work vector used by SparseJacobian, stored here to avoid recalculation.
+	CppAD::sparse_jacobian_work     work_jac_;
 	// ------------------------------------------------------------------
  	// Private member functions
 	// ------------------------------------------------------------------
@@ -662,47 +664,69 @@ public:
 		//
 		if( nx_ < ng_ )
 		{	// use forward mode
-			Dvector x1(nx_), fg1(nf_ + ng_);
-			for(j = 0; j < nx_; j++)
-				x1[j] = 0.0;
-			// index in col_order_jac_ of next entry
-			ell = 0;
-			k   = col_order_jac_[ell];
-			for(j = 0; j < nx_; j++)
-			{	// compute j-th column of Jacobian of g(x)
-				x1[j] = 1.0;
-				fg1 = adfun_.Forward(1, x1);
-				while( ell < nk && col_jac_[k] <= j )
-				{	CPPAD_ASSERT_UNKNOWN( col_jac_[k] == j );
-					i = row_jac_[k];
-					CPPAD_ASSERT_UNKNOWN( i >= nf_ )
-					values[k] = fg1[i];
-					ell++;
-					if( ell < nk )
-						k = col_order_jac_[ell];
+			if( sparse_ )
+			{	Dvector jac(nk);
+				adfun_.SparseJacobianForward(
+					x0_ , pattern_jac_, row_jac_, col_jac_, jac, work_jac_
+				);
+				for(k = 0; k < nk; k++)
+					values[k] = jac[k];
+			}
+			else
+			{	Dvector x1(nx_), fg1(nf_ + ng_);
+				for(j = 0; j < nx_; j++)
+					x1[j] = 0.0;
+				// index in col_order_jac_ of next entry
+				ell = 0;
+				k   = col_order_jac_[ell];
+				for(j = 0; j < nx_; j++)
+				{	// compute j-th column of Jacobian of g(x)
+					x1[j] = 1.0;
+					fg1 = adfun_.Forward(1, x1);
+					while( ell < nk && col_jac_[k] <= j )
+					{	CPPAD_ASSERT_UNKNOWN( col_jac_[k] == j );
+						i = row_jac_[k];
+						CPPAD_ASSERT_UNKNOWN( i >= nf_ )
+						values[k] = fg1[i];
+						ell++;
+						if( ell < nk )
+							k = col_order_jac_[ell];
+					}
+					x1[j] = 0.0;
 				}
-				x1[j] = 0.0;
 			}
 		}
 		else
-		{	size_t nfg = nf_ + ng_;
-			// user reverse mode
-			Dvector w(nfg), dw(nx_);
-			for(i = 0; i < nfg; i++)
-				w[i] = 0.0;
-			// index in row_jac_ of next entry
-			k = 0;
-			for(i = nf_; i < nfg; i++)
-			{	// compute i-th row of Jacobian of g(x)
-				w[i] = 1.0;
-				dw = adfun_.Reverse(1, w);
-				while( k < nk && row_jac_[k] <= i )
-				{	CPPAD_ASSERT_UNKNOWN( row_jac_[k] == i );
-					j = col_jac_[k];
-					values[k] = dw[j];
-					k++;
+		{	// user reverse mode	
+			if( sparse_ )
+			{	Dvector jac(nk);
+				adfun_.SparseJacobianReverse(
+					x0_ , pattern_jac_, row_jac_, col_jac_, jac, work_jac_
+				);
+				for(k = 0; k < nk; k++)
+					values[k] = jac[k];
+			}
+			else
+			{
+				size_t nfg = nf_ + ng_;
+				// user reverse mode
+				Dvector w(nfg), dw(nx_);
+				for(i = 0; i < nfg; i++)
+					w[i] = 0.0;
+				// index in row_jac_ of next entry
+				k = 0;
+				for(i = nf_; i < nfg; i++)
+				{	// compute i-th row of Jacobian of g(x)
+					w[i] = 1.0;
+					dw = adfun_.Reverse(1, w);
+					while( k < nk && row_jac_[k] <= i )
+					{	CPPAD_ASSERT_UNKNOWN( row_jac_[k] == i );
+						j = col_jac_[k];
+						values[k] = dw[j];
+						k++;
+					}
+					w[i] = 0.0;
 				}
-				w[i] = 0.0;
 			}
 		}
 		return true;
