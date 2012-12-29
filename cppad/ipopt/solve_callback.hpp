@@ -284,9 +284,6 @@ public:
 				}
 			}
 		}
-		// extra value at end greter than other value in each vector
-		row_jac_.push_back(nfg);
-		col_jac_.push_back(nx_);
 
 		// Column order indirect sort of the indices
 		col_order_jac_.resize( col_jac_.size() );
@@ -321,7 +318,7 @@ public:
 	{
 		n         = static_cast<Index>(nx_);
 		m         = static_cast<Index>(ng_);
-		nnz_jac_g = static_cast<Index>(row_jac_.size() - 1);
+		nnz_jac_g = static_cast<Index>(row_jac_.size());
 		nnz_h_lag = static_cast<Index>(nx_*(nx_+1)/2);
 	
 # ifndef NDEBUG
@@ -644,7 +641,7 @@ public:
 		CPPAD_ASSERT_UNKNOWN(static_cast<size_t>(m)         == ng_ );
 		CPPAD_ASSERT_UNKNOWN(static_cast<size_t>(n)         == nx_ );
 
-		size_t nk = row_jac_.size() - 1;
+		size_t nk = row_jac_.size();
 		CPPAD_ASSERT_UNKNOWN( static_cast<size_t>(nele_jac) == nk );
 
 		if( values == NULL )
@@ -660,25 +657,29 @@ public:
 		if( new_x )
 			cache_new_x(x);
 		//
+		if( nk == 0 )
+			return true;
+		//
 		if( nx_ < ng_ )
 		{	// use forward mode
 			Dvector x1(nx_), fg1(nf_ + ng_);
 			for(j = 0; j < nx_; j++)
 				x1[j] = 0.0;
-			// index in col_order_jac_ ofnext entry
+			// index in col_order_jac_ of next entry
 			ell = 0;
 			k   = col_order_jac_[ell];
 			for(j = 0; j < nx_; j++)
 			{	// compute j-th column of Jacobian of g(x)
 				x1[j] = 1.0;
 				fg1 = adfun_.Forward(1, x1);
-				while( col_jac_[k] <= j )
+				while( ell < nk && col_jac_[k] <= j )
 				{	CPPAD_ASSERT_UNKNOWN( col_jac_[k] == j );
 					i = row_jac_[k];
 					CPPAD_ASSERT_UNKNOWN( i >= nf_ )
 					values[k] = fg1[i];
 					ell++;
-					k = col_order_jac_[ell];
+					if( ell < nk )
+						k = col_order_jac_[ell];
 				}
 				x1[j] = 0.0;
 			}
@@ -695,7 +696,7 @@ public:
 			{	// compute i-th row of Jacobian of g(x)
 				w[i] = 1.0;
 				dw = adfun_.Reverse(1, w);
-				while( row_jac_[k] <= i )
+				while( k < nk && row_jac_[k] <= i )
 				{	CPPAD_ASSERT_UNKNOWN( row_jac_[k] == i );
 					j = col_jac_[k];
 					values[k] = dw[j];
