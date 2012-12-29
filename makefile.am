@@ -118,7 +118,7 @@ nobase_myinclude_HEADERS =  \
 	cppad/error_handler.hpp \
 	cppad/index_sort.hpp \
 	cppad/ipopt/solve.hpp \
-	cppad/ipopt/solve_full.hpp \
+	cppad/ipopt/solve_callback.hpp \
 	cppad/ipopt/solve_result.hpp \
 	cppad/local/abort_recording.hpp \
 	cppad/local/abs.hpp \
