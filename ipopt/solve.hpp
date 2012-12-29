@@ -14,6 +14,8 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 /*
 $begin ipopt_solve$$
 $spell
+	Jacobian
+	Jacobians
 	retape
 	Bvector
 	bool
@@ -118,10 +120,11 @@ $codei%
 	Sparse %value%
 %$$
 If the value is $code true$$, $code ipopt::solve$$ will use a sparse
-matrix representation for the computation of Jaobians and Hessians.
+matrix representation for the computation of Jacobians and Hessians.
 Otherwise, it will use a full matrix representation for 
 these calculations.
 The default value is $code false$$.
+(The case sparse true and retape true is not yet supported.)
 
 $subhead String$$
 You can set any Ipopt string option using a line with the following syntax:
@@ -578,6 +581,10 @@ void solve(
 		);
 		begin_1++;
 	}
+	CPPAD_ASSERT_KNOWN( 
+		! ( retape & sparse ) ,
+		"ipopt::solve: retape and sparse both true is not yet supported."
+	);
 
 	// Initialize the IpoptApplication and process the options
 	Ipopt::ApplicationReturnStatus status = app->Initialize();
