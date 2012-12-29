@@ -98,20 +98,17 @@ private:
 	/// If sparse is true, this pattern set by constructor and does not change.
 	/// Otherwise this vector has size zero.
 	CppAD::vector< std::set<size_t> > pattern_jac_;
-	/// Row indices for Jacobian of [f(x), g(x)] in row order.
+	/// Row indices of [f(x), g(x)] for Jacobian of g(x) in row order.
 	/// There is an extra entry on end with row_jac_[k] = nf_ + ng_.
 	/// (Set by constructor and not changed.)
 	CppAD::vector<size_t>           row_jac_;
-	/// Column indices for Jacobian of [f(x), g(x)], same order as row_jac_.
+	/// Column indices for Jacobian of g(x), same order as row_jac_.
 	/// There is an extra entry on end with col_jac_[k] = nx_.
 	/// (Set by constructor and not changed.)
 	CppAD::vector<size_t>           col_jac_;
 	/// col_order_jac_ sorts row_jac_ and col_jac_ in column order.
 	/// (Set by constructor and not changed.)
 	CppAD::vector<size_t>           col_order_jac_;
-	/// index in row_jac_ and col_jac_ of first entry for Jacobian of g(x)
-	/// (Set by constructor and not changed.)
-	size_t                          offset_jac_;
 	// ------------------------------------------------------------------
  	// Private member functions
 	// ------------------------------------------------------------------
@@ -264,10 +261,10 @@ public:
 				}
 				pattern_jac_ = adfun_.RevSparseJac(m, s);
 			}
-			// Set row and column indices for Jacoian of [f(x), g(x)]
-			// These indices are in row major order.
+			// Set row and column indices in Jacoian of [f(x), g(x)]
+			// for Jacobian of g(x). These indices are in row major order.
 			std::set<size_t>:: const_iterator itr, end;
-			for(i = 0; i < nfg; i++)
+			for(i = nf_; i < nfg; i++)
 			{	itr = pattern_jac_[i].begin();
 				end = pattern_jac_[i].end();
 				while( itr != end )
@@ -275,24 +272,16 @@ public:
 					row_jac_.push_back(i);
 					col_jac_.push_back(j);
 				}
-				// Set offset where Jacobian of g(x) begins.
-				// Do at end of loop incase ng_ = 0 (nf_ cannot be zero).
-				if( i == (nf_ - 1) )
-					offset_jac_ = row_jac_.size();
 			}
 		}
 		else
-		{	// Set row and column indices for Jacobian of [f(x), g(x)].
-			// These indices are in row major order. 
-			for(i = 0; i < nfg; i++)
+		{	// Set row and column indices in Jacoian of [f(x), g(x)]
+			// for Jacobian of g(x). These indices are in row major order.
+			for(i = nf_; i < nfg; i++)
 			{	for(j = 0; j < nx_; j++)
 				{	row_jac_.push_back(i);
 					col_jac_.push_back(j);	
 				}
-				// Set offset where Jacobian of g(x) begins.
-				// Do at end of loop incase ng_ = 0 (nf_ cannot be zero).
-				if( i == (nf_ - 1) )
-					offset_jac_ = row_jac_.size();
 			}
 		}
 		// extra value at end greter than other value in each vector
@@ -332,7 +321,7 @@ public:
 	{
 		n         = static_cast<Index>(nx_);
 		m         = static_cast<Index>(ng_);
-		nnz_jac_g = static_cast<Index>(row_jac_.size() - offset_jac_ - 1);
+		nnz_jac_g = static_cast<Index>(row_jac_.size() - 1);
 		nnz_h_lag = static_cast<Index>(nx_*(nx_+1)/2);
 	
 # ifndef NDEBUG
@@ -655,14 +644,13 @@ public:
 		CPPAD_ASSERT_UNKNOWN(static_cast<size_t>(m)         == ng_ );
 		CPPAD_ASSERT_UNKNOWN(static_cast<size_t>(n)         == nx_ );
 
-		size_t nk = row_jac_.size() - offset_jac_ - 1;
+		size_t nk = row_jac_.size() - 1;
 		CPPAD_ASSERT_UNKNOWN( static_cast<size_t>(nele_jac) == nk );
 
 		if( values == NULL )
-		{
-			for(k = 0; k < nk; k++)
-			{	i = static_cast<size_t>(row_jac_[k + offset_jac_]);
-				j = static_cast<size_t>(col_jac_[k + offset_jac_]);
+		{	for(k = 0; k < nk; k++)
+			{	i = static_cast<size_t>(row_jac_[k]);
+				j = static_cast<size_t>(col_jac_[k]);
 				CPPAD_ASSERT_UNKNOWN( i >= nf_ );
 				iRow[k] = i - nf_;
 				jCol[k] = j;
@@ -687,10 +675,8 @@ public:
 				while( col_jac_[k] <= j )
 				{	CPPAD_ASSERT_UNKNOWN( col_jac_[k] == j );
 					i = row_jac_[k];
-					if( i >= nf_ )
-					{	CPPAD_ASSERT_UNKNOWN( k >= offset_jac_ );
-						values[k - offset_jac_] = fg1[i];
-					}
+					CPPAD_ASSERT_UNKNOWN( i >= nf_ )
+					values[k] = fg1[i];
 					ell++;
 					k = col_order_jac_[ell];
 				}
@@ -704,7 +690,7 @@ public:
 			for(i = 0; i < nfg; i++)
 				w[i] = 0.0;
 			// index in row_jac_ of next entry
-			k = offset_jac_;
+			k = 0;
 			for(i = nf_; i < nfg; i++)
 			{	// compute i-th row of Jacobian of g(x)
 				w[i] = 1.0;
@@ -712,7 +698,7 @@ public:
 				while( row_jac_[k] <= i )
 				{	CPPAD_ASSERT_UNKNOWN( row_jac_[k] == i );
 					j = col_jac_[k];
-					values[k - offset_jac_] = dw[j];
+					values[k] = dw[j];
 					k++;
 				}
 				w[i] = 0.0;
