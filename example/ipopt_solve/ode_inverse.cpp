@@ -296,7 +296,8 @@ bool ode_inverse(void)
 	// options 
 	const char* options_cstring = 
 		// Use sparse matrices for calculation of Jacobians and Hessians
-		"Sparse                             true\n"
+		// with forward mode for Jacobian.
+		"Sparse  true                       forward\n"
 		// turn off any printing
 		"Integer print_level                0\n" 
 		// maximum number of iterations

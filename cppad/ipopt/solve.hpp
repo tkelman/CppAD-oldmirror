@@ -117,14 +117,28 @@ The default value is $code false$$.
 $subhead Sparse$$
 You can set the sparse Jacobian and Hessian flag with the following syntax:
 $codei%
-	Sparse %value%
+	Sparse %value% %direction%
 %$$
 If the value is $code true$$, $code ipopt::solve$$ will use a sparse
 matrix representation for the computation of Jacobians and Hessians.
 Otherwise, it will use a full matrix representation for 
 these calculations.
-The default value is $code false$$.
-(The case sparse true and retape true is not yet supported.)
+The default for $icode value$$ is $code false$$.
+If sparse is true, retape must be false.
+$pre
+
+$$
+The value $icode direction$$ must be either $code forward$$ of $code reverse$$.
+If 
+$codei%
+	%value% == true && %direction% == forward
+%$$
+the Jacobians will be calculated using $code SparseJacobianForward$$. 
+If 
+$codei%
+	%value% == true && %direction% == reverse
+%$$
+the Jacobians will be calculated using $code SparseJacobianReverse$$. 
 
 $subhead String$$
 You can set any Ipopt string option using a line with the following syntax:
@@ -497,8 +511,9 @@ void solve(
 	// process the options argument
 	size_t begin_1, end_1, begin_2, end_2, begin_3, end_3;
 	begin_1     = 0;
-	bool retape = false;
-	bool sparse = false;
+	bool retape          = false;
+	bool sparse_forward  = false;
+	bool sparse_reverse  = false;
 	while( begin_1 < options.size() )
 	{ 	// split this line into tokens
 		while( options[begin_1] == ' ')
@@ -531,11 +546,16 @@ void solve(
 
 		// get third token
 		std::string tok_3;
-		if( (tok_1=="String") | (tok_1=="Numeric") | (tok_1=="Integer") )
+		bool three_tok = false;
+		three_tok |= tok_1 == "Sparse";
+		three_tok |= tok_1 == "String";
+		three_tok |= tok_1 == "Numeric";
+		three_tok |= tok_1 == "Integer";
+		if( three_tok ) 
 		{	CPPAD_ASSERT_KNOWN( 
-				(end_1 > begin_1) & (end_2 > begin_2) ,
-				"ipopt::solve: a String, Numeric, or Integer option line "
-				"does not have three tokens."
+				(end_3 > begin_3) ,
+				"ipopt::solve: a Sparse, String, Numeric, or Integer\n"
+				"option line does not have three tokens."
 			);
 			tok_3 = options.substr(begin_3, end_3 - begin_3);
 		}
@@ -553,7 +573,18 @@ void solve(
 				(tok_2 == "true") | (tok_2 == "false") ,
 				"ipopt::solve: Sparse value is not true or false"
 			);
-			sparse = (tok_2 == "true");
+			CPPAD_ASSERT_KNOWN(
+				(tok_3 == "forward") | (tok_2 == "reverse") ,
+				"ipopt::solve: Sparse direction is not forward or reverse"
+			);
+			if( tok_2 == "false" )
+			{	sparse_forward = false;
+				sparse_reverse = false;
+			}
+			else
+			{	sparse_forward = tok_3 == "forward";
+				sparse_reverse = tok_3 == "reverse";
+			}
 		}
 		else if ( tok_1 == "String" )
 			app->Options()->SetStringValue(tok_2.c_str(), tok_3.c_str());
@@ -582,8 +613,8 @@ void solve(
 		begin_1++;
 	}
 	CPPAD_ASSERT_KNOWN( 
-		! ( retape & sparse ) ,
-		"ipopt::solve: retape and sparse both true is not yet supported."
+		! ( retape & (sparse_forward | sparse_reverse) ) ,
+		"ipopt::solve: retape and sparse both true is not supported."
 	);
 
 	// Initialize the IpoptApplication and process the options
@@ -598,7 +629,19 @@ void solve(
 	// Note the assumption here that ADvector is same as cppd_ipopt::ADvector
 	Ipopt::SmartPtr<Ipopt::TNLP> cppad_nlp = 
 	new CppAD::ipopt::solve_callback<Dvector, ADvector, FG_eval>(
-		nf, nx, ng, xi, xl, xu, gl, gu, fg_eval, retape, sparse, solution
+		nf, 
+		nx, 
+		ng, 
+		xi, 
+		xl, 
+		xu, 
+		gl, 
+		gu, 
+		fg_eval, 
+		retape, 
+		sparse_forward, 
+		sparse_reverse, 
+		solution
 	);
 
 	// Run the IpoptApplication
