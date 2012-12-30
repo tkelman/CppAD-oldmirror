@@ -13,6 +13,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 $begin whats_new_12$$
 $dollar @$$
 $spell
+	Jacobians
 	doxygen
 	txt
 	sys
@@ -75,9 +76,25 @@ This section contains a list of the changes to CppAD during 2012
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
 
+$head 12-29$$
+Complete implementation of sparse Jacobian and Hessian calculations
+and add options that allow to user to choose between forward and reverse
+sparse Jacobians.
+With this $cref ipopt_solve$$ seems to be much faster,
+and simpler than $cref cppad_ipopt_nlp$$. 
+More speed comparisons would be good to have.
+
+
 $head 12-28$$
+$list number$$
 Add the $cref ipopt_solve_retape.cpp$$ and $cref ipopt_solve_ode_inverse.cpp$$
 examples.
+$lnext
+Use $code ipopt::solve$$ $cref/options/ipopt_solve/options/$$
+argument (and not a file) for all the Ipopt options.
+As well as allowing for adding $code ipopt::solve$$ special options; e.g.,
+$cref/retape/ipopt_solve/options/Retape/$$.
+$lend
 
 $head 12-27$$
 Change documentation section names that begin with $code cppad_ipopt$$
