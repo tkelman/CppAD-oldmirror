@@ -187,15 +187,15 @@ $end
 namespace {
 	using CppAD::AD;
 
-	size_t na_ = 3;     // number of components in a
-	double a0_ = 2.0;  // simulation value for a[0]
-	double a1_ = 1.0;  // simulation value for a[1]
-	double a2_ = 0.5;  // simulation value for a[2]
+	// value of a during simulation a[0], a[1], a[2]
+	double a_[] =                   {2.0,  1.0, 0.5};
+	// number of components in a
+	size_t na_ = sizeof(a_) / sizeof(a_[0]);     
 
 	// function used to simulate data
 	double yone(double t)
-	{	double y1 = a0_*a1_ * (exp(-a2_*t) - exp(-a1_*t)) / (a1_ - a2_);
-		return y1;
+	{	return
+			a_[0]*a_[1] * (exp(-a_[2]*t) - exp(-a_[1]*t)) / (a_[1] - a_[2]);
 	}
 
 	// time points were we have data (no data at first point)
@@ -206,7 +206,7 @@ namespace {
 	size_t nz_  = sizeof(z_) / sizeof(z_[0]);
 
 	// number of trapozoidal approximation points per measurement interval
-	size_t np_  = 20;
+	size_t np_  = 40;
 
 
 	class FG_eval
@@ -235,6 +235,7 @@ namespace {
 			}  
 
 			// constraint corresponding to initial value y(0, a)
+			// Note that this constraint is invariant with size of dt
 			fg[1] = x[na_+0] - a[0];
 			fg[2] = x[na_+1] - 0.0;
 
@@ -257,8 +258,12 @@ namespace {
 					AD<double> Gm_1  = + a[1] * ym_0 - a[2] * ym_1;
 
 					// constraint should be zero
-					fg[1 + 2*k + 0] = y_0  - ym_0 - dt*(G_0 + Gm_0)/2.;
-					fg[1 + 2*k + 1] = y_1  - ym_1 - dt*(G_1 + Gm_1)/2.;
+					fg[1 + 2*k ] = y_0  - ym_0 - dt*(G_0 + Gm_0)/2.;
+					fg[2 + 2*k ] = y_1  - ym_1 - dt*(G_1 + Gm_1)/2.;
+
+					// scale g(x) so it has similar size as f(x)
+					fg[1 + 2*k ] /= dt;
+					fg[2 + 2*k ] /= dt;
 				}
 			}
 		}	
@@ -295,7 +300,7 @@ bool ode_inverse(void)
 	// options 
 	const char* options_cstring = 
 		// Use sparse matrices for calculation of Jacobians and Hessians
-		// with forward mode for Jacobian.
+		// with forward mode for Jacobian (seems to be faster for this case).
 		"Sparse  true                       forward\n"
 		// turn off any printing
 		"Integer print_level                0\n" 
@@ -325,9 +330,8 @@ bool ode_inverse(void)
 	//
 	double rel_tol    = 1e-4;  // relative tolerance
 	double abs_tol    = 1e-4;  // absolute tolerance
-	ok &= CppAD::NearEqual( a0_,  solution.x[0],   rel_tol, abs_tol);
-	ok &= CppAD::NearEqual( a1_,  solution.x[1],   rel_tol, abs_tol);
-	ok &= CppAD::NearEqual( a2_,  solution.x[2],   rel_tol, abs_tol);
+	for(i = 0; i < na_; i++)
+		ok &= CppAD::NearEqual( a_[i],  solution.x[i],   rel_tol, abs_tol);
 
 	return ok;
 }
