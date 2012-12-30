@@ -60,7 +60,7 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES = test.sh
 CONFIG_CLEAN_VPATH_FILES =
 am_solve_OBJECTS = solve.$(OBJEXT) get_started.$(OBJEXT) \
-	ode_inverse.$(OBJEXT)
+	ode_inverse.$(OBJEXT) retape.$(OBJEXT)
 solve_OBJECTS = $(am_solve_OBJECTS)
 solve_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
@@ -221,6 +221,7 @@ htmldir = @htmldir@
 includedir = @includedir@
 infodir = @infodir@
 install_sh = @install_sh@
+ipopt_prefix = @ipopt_prefix@
 libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
@@ -260,7 +261,8 @@ LDADD = \
 solve_SOURCES = \
 	solve.cpp \
 	get_started.cpp \
-	ode_inverse.cpp
+	ode_inverse.cpp \
+	retape.cpp
 
 all: all-am
 
@@ -313,6 +315,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/get_started.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ode_inverse.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/retape.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/solve.Po@am__quote@
 
 .cpp.o:

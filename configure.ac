@@ -277,7 +277,7 @@ AC_MSG_CHECKING([IPOPT_DIR])
 AC_ARG_VAR(IPOPT_DIR,
 	[value of the configure prefix directory during Ipopt install]
 )
-AM_CONDITIONAL(CppAD_IPOPT_CPPAD, test "$IPOPT_DIR" != "")
+AM_CONDITIONAL(CppAD_IPOPT, test "$IPOPT_DIR" != "")
 if test "$IPOPT_DIR" != "" ; then
 	AC_MSG_RESULT([$IPOPT_DIR])
 	if test "$have_ar" = "no"; then
@@ -697,6 +697,7 @@ dnl
 dnl names set here so */test_one.sh.in works both with cmake and autoconf 
 AC_SUBST(adolc_prefix,      ${ADOLC_DIR} )
 AC_SUBST(eigen_prefix,      ${EIGEN_DIR} )
+AC_SUBST(ipopt_prefix,      ${IPOPT_DIR} )
 dnl
 dnl -----------------------------------------------------------------------
 dnl AC_CONFIG_FILES(file-list) for each file in the list, configure will 

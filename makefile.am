@@ -42,7 +42,7 @@ SPEED_SACADO_TESTS  =
 endif
 #
 # Did user specify a value for IPOPT_DIR in configure command line 
-if CppAD_IPOPT_CPPAD
+if CppAD_IPOPT
 IPOPT_TESTS = \
 	example/ipopt_solve \
 	cppad_ipopt/example \
