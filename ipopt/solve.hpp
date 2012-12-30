@@ -50,7 +50,7 @@ $$
 $section Use Ipopt to Solve a Nonlinear Programming Problem$$
 
 $head Syntax$$
-$codei%# include "ipopt_solve.hpp"
+$codei%# include <cppad/ipopt/solve.hpp>
 %$$
 $codei%ipopt::solve(
 	%options%, %xi%, %xl%, %xu%, %gl%, %gu%, %fg_eval%, %solution%
@@ -80,6 +80,21 @@ It is assumed that the
 $cref/operation sequence/glossary/Operation/Sequence/$$ 
 used by $cref/fg_eval/ipopt_solve/fg_eval/$$ to compute $icode fg$$ 
 does not depend on $icode x$$.
+
+$head Include File$$
+Currently, this routine 
+$cref/ipopt::solve/ipopt_solve/$$ is not included by the command
+$codei%
+	# include <cppad/cppad.hpp>
+%$$
+(Doing so would require the ipopt library to link
+the corresponding program (even if $code ipopt::solve$$) was not used.)
+For this reason, 
+if you are using $code ipopt::solve$$ you should use
+$codei%
+	# include <cppad/ipopt/solve.hpp>
+%$$
+which in turn will also include $code <cppad/cppad.hpp>$$.
 
 $head Bvector$$
 The type $icode Bvector$$ must be a $cref SimpleVector$$ class with
