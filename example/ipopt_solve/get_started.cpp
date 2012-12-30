@@ -87,8 +87,6 @@ bool get_started(void)
 	size_t i;
 	typedef CPPAD_TESTVECTOR( double ) Dvector;
 
-	// number of components in f(x)
-	size_t nf = 1;
 	// number of independent variables (domain dimension for f and g)
 	size_t nx = 4;  
 	// number of constraints (range dimension for g)
@@ -136,7 +134,7 @@ bool get_started(void)
 
 	// solve the problem
 	CppAD::ipopt::solve<Dvector, FG_eval>(
-		options, nf, xi, xl, xu, gl, gu, fg_eval, solution
+		options, xi, xl, xu, gl, gu, fg_eval, solution
 	);
 	//
  	// Check some of the solution values

@@ -56,7 +56,9 @@ private:
 	// ------------------------------------------------------------------
  	// Values directly passed in to constuctor
 	// ------------------------------------------------------------------
-	/// dimension of the range space for f(x) 
+	/// dimension of the range space for f(x).
+	/// The objective is sum_i f_i (x). 
+	/// Note that, at this point, there is no advantage having nf_ > 1.
 	const size_t                    nf_;
 	/// dimension of the domain space for f(x) and g(x)
 	const size_t                    nx_;
@@ -127,9 +129,6 @@ private:
 	/// Column indices of Hessian left triangle in same order as row_hes_.
 	/// (Set by constructor and not changed.)
 	CppAD::vector<size_t>           col_hes_;
-	/// col_order_hes_ sorts row_hes_ and col_hes_ in column order.
-	/// (Set by constructor and not changed.)
-	CppAD::vector<size_t>           col_order_hes_;
 	/// Work vector used by SparseJacobian, stored here to avoid recalculation.
 	CppAD::sparse_hessian_work      work_hes_;
 	// ------------------------------------------------------------------
@@ -362,10 +361,6 @@ public:
 		// Column order indirect sort of the Jacobian indices
 		col_order_jac_.resize( col_jac_.size() );
 		index_sort( col_jac_, col_order_jac_ );
-
-		// Column order indirect sort of the Hessian indices
-		col_order_hes_.resize( col_hes_.size() );
-		index_sort( col_hes_, col_order_hes_ );
 	}
 	// -----------------------------------------------------------------------
 	/*!

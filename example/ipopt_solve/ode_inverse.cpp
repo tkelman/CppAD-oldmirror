@@ -203,9 +203,7 @@ namespace {
 
 	// Simulated data for case with no noise (first point is not used)
 	double z_[] = {yone(s_[1]), yone(s_[2]), yone(s_[3]), yone(s_[4])};
-
-	// f_i (x) will be the squared residual corresponding to z_i
-	size_t nf_  = sizeof(z_) / sizeof(z_[0]);
+	size_t nz_  = sizeof(z_) / sizeof(z_[0]);
 
 	// number of trapozoidal approximation points per measurement interval
 	size_t np_  = 20;
@@ -227,20 +225,21 @@ namespace {
 			for(i = 0; i < na_; i++)
 				a[i] = x[i];
 
-			// compute the components of the object sum_i f_i (x)
-			for(i = 0; i < nf_; i++)
+			// compute the object f(x)
+			fg[0] = 0.0;
+			for(i = 0; i < nz_; i++)
 			{	k = (i + 1) * np_;
 				AD<double> y_1 = x[na_ + 2 * k + 1];
 				AD<double> dif = z_[i] - y_1;
-				fg[i]          = dif * dif;
+				fg[0]         += dif * dif;
 			}  
 
 			// constraint corresponding to initial value y(0, a)
-			fg[nf_+0] = x[na_+0] - a[0];
-			fg[nf_+1] = x[na_+1] - 0.0;
+			fg[1] = x[na_+0] - a[0];
+			fg[2] = x[na_+1] - 0.0;
 
 			// constraints corresponding to trapozoidal approximation
-			for(i = 0; i < nf_; i++)
+			for(i = 0; i < nz_; i++)
 			{	// spacing between grid point
 				double dt = (s_[i+1] - s_[i]) / static_cast<double>(np_); 
 				for(j = 1; j <= np_; j++)
@@ -258,8 +257,8 @@ namespace {
 					AD<double> Gm_1  = + a[1] * ym_0 - a[2] * ym_1;
 
 					// constraint should be zero
-					fg[nf_ + 2*k + 0] = y_0  - ym_0 - dt*(G_0 + Gm_0)/2.;
-					fg[nf_ + 2*k + 1] = y_1  - ym_1 - dt*(G_1 + Gm_1)/2.;
+					fg[1 + 2*k + 0] = y_0  - ym_0 - dt*(G_0 + Gm_0)/2.;
+					fg[1 + 2*k + 1] = y_1  - ym_1 - dt*(G_1 + Gm_1)/2.;
 				}
 			}
 		}	
@@ -271,7 +270,7 @@ bool ode_inverse(void)
 	typedef CPPAD_TESTVECTOR( double ) Dvector;
 
 	// number of components in the function g
-	size_t ng = (np_ * nf_ + 1) * 2;
+	size_t ng = (np_ * nz_ + 1) * 2;
 	// number of independent variables
 	size_t nx = na_ + ng;
 	// initial vlaue for the variables we are optimizing w.r.t
@@ -317,7 +316,7 @@ bool ode_inverse(void)
 
 	// solve the problem
 	CppAD::ipopt::solve<Dvector, FG_eval>(
-		options, nf_, xi, xl, xu, gl, gu, fg_eval, solution
+		options, xi, xl, xu, gl, gu, fg_eval, solution
 	);
 	//
  	// Check some of the solution values

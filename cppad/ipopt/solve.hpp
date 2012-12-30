@@ -53,7 +53,7 @@ $head Syntax$$
 $codei%# include "ipopt_solve.hpp"
 %$$
 $codei%ipopt::solve(
-	%options%, %nf%, %xi%, %xl%, %xu%, %gl%, %gu%, %fg_eval%, %solution%
+	%options%, %xi%, %xl%, %xu%, %gl%, %gu%, %fg_eval%, %solution%
 )%$$
 
 $head Purpose$$
@@ -61,7 +61,7 @@ The function $code ipopt::solve$$ solves nonlinear programming
 problems of the form
 $latex \[
 \begin{array}{rll}
-{\rm minimize}      & \sum_{i=0}^{nf} f_i (x) 
+{\rm minimize}      & f (x) 
 \\
 {\rm subject \; to} & gl \leq g(x) \leq gu
 \\
@@ -165,18 +165,6 @@ $codei%
 Here $icode name$$ is any valid Ipopt integer option 
 and $icode value$$ is its setting.
 
-$head nf$$
-The argument $icode nf$$ has prototype
-$codei%
-	size_t %nf%
-%$$
-It is the dimension of the range space for 
-$latex f : \B{R}^{nx} \rightarrow \B{R}^{nf}$$.
-Let $latex nd(i)$$ be the number of components of $latex x$$
-that the function $latex f_i (x)$$ depends on.
-One should choose the decomposition of the object into a sum
-so as to minimize the maximum, with respect to $latex i$$, of $latex nd(i)$$.
-
 $head xi$$
 The argument $icode xi$$ has prototype
 $codei%
@@ -248,16 +236,15 @@ The $icode fg_eval$$ argument $icode fg$$ has prototype
 $codei%
 	%ADvector%& %fg%
 %$$
-where $icode%nf% + %ng% = %fg%.size()%$$.
+where $codei%1 + %ng% = %fg%.size()%$$.
 The input value of the elements of $icode fg$$ does not matter.
 Upon return from $icode fg_eval$$,
-for $latex i = 0 , \ldots , nf-1$$,
 $codei%
-	%fg%[%i%] =%$$ $latex f_i (x)$$ $codei%
+	%fg%[0] =%$$ $latex f (x)$$ $codei%
 %$$
 and   for $latex i = 0, \ldots , ng-1$$,
 $codei%
-	%fg%[%nf% + %i%] =%$$ $latex g_i (x)$$
+	%fg%[1 + %i%] =%$$ $latex g_i (x)$$
 
 $head solution$$
 The argument $icode solution$$ has prototype
@@ -448,9 +435,6 @@ The following other possible options are listed below:
 \endcode
 
 
-\param nf
-Number of components in the function f(x).
-
 \param xi
 initial argument value to start optimization procedure at.
 
@@ -478,7 +462,6 @@ structure that holds the solution of the optimization.
 template <class Dvector, class FG_eval>
 void solve(
 	const std::string&                   options   ,
-	size_t                               nf        , 
 	const Dvector&                       xi        , 
 	const Dvector&                       xl        ,
 	const Dvector&                       xu        , 
@@ -497,10 +480,6 @@ void solve(
 	CPPAD_ASSERT_KNOWN(
 		gl.size() == gu.size() ,
 		"ipopt::solve: size of gl and gu are not equal."
-	);
-	CPPAD_ASSERT_KNOWN(
-		nf > 0 ,
-		"ipopt::solve: nf is not greater than zero."
 	);
 	size_t nx = xi.size();
 	size_t ng = gl.size();
@@ -628,6 +607,7 @@ void solve(
 
 	// Create an interface from Ipopt to this specific problem.
 	// Note the assumption here that ADvector is same as cppd_ipopt::ADvector
+	size_t nf = 1;
 	Ipopt::SmartPtr<Ipopt::TNLP> cppad_nlp = 
 	new CppAD::ipopt::solve_callback<Dvector, ADvector, FG_eval>(
 		nf, 
