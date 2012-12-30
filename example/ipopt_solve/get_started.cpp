@@ -112,22 +112,20 @@ bool get_started(void)
 	FG_eval fg_eval;
 
 	// options 
-	const char* options_cstring = 
-		// turn off any printing
-		"Integer print_level                0\n" 
-		// maximum number of iterations
-		"Integer max_iter                   10\n"
-		// approximate accuracy in first order necessary conditions;
-		// see Mathematical Programming, Volume 106, Number 1, 
-		// Pages 25-57, Equation (6)
-		"Numeric tol                        1e-6\n"
-		// derivative testing
-		"String  derivative_test            second-order\n"
-		// maximum amount of random pertubation; e.g., 
-		// when evaluation finite diff
-		"Numeric point_perturbation_radius  0.\n"
-	;
-	std::string options(options_cstring);
+	std::string options;
+	// turn off any printing
+	options += "Integer print_level  0\n"; 
+	// maximum number of iterations
+	options += "Integer max_iter     10\n";
+	// approximate accuracy in first order necessary conditions;
+	// see Mathematical Programming, Volume 106, Number 1, 
+	// Pages 25-57, Equation (6)
+	options += "Numeric tol          1e-6\n";
+	// derivative testing
+	options += "String  derivative_test            second-order\n";
+	// maximum amount of random pertubation; e.g., 
+	// when evaluation finite diff
+	options += "Numeric point_perturbation_radius  0.\n";
 
 	// place to return solution
 	CppAD::ipopt::solve_result<Dvector> solution;
