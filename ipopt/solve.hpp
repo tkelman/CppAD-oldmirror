@@ -554,7 +554,7 @@ void solve(
 				"ipopt::solve: Sparse value is not true or false"
 			);
 			CPPAD_ASSERT_KNOWN(
-				(tok_3 == "forward") | (tok_2 == "reverse") ,
+				(tok_3 == "forward") | (tok_3 == "reverse") ,
 				"ipopt::solve: Sparse direction is not forward or reverse"
 			);
 			if( tok_2 == "false" )
