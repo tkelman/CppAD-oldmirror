@@ -1,0 +1,350 @@
+$Id$
+/* --------------------------------------------------------------------------
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
+
+CppAD is distributed under multiple licenses. This distribution is under
+the terms of the 
+                    Eclipse Public License Version 1.0.
+
+A copy of this license is included in the COPYING file of this distribution.
+Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
+-------------------------------------------------------------------------- */
+
+$begin cmake$$
+$escape $$
+$spell
+	op
+	arg
+	sizeof
+	testvector
+	std
+	Wshadow
+	namespace
+	adouble
+	colpack
+	dir
+	makefile
+	usr
+	hpp
+	xml
+	ipopt
+	libcppad
+	CppAD
+	txt
+	Microsoft
+	Makefiles
+	cmake
+	Dcmake
+	cppad
+	adolc
+	boost
+	eigen
+	fadbad
+	sacado
+	datadir
+	includedirs
+	libdirs
+	cxx 
+	max num
+	postfix
+	id
+	addr
+$$
+
+$section Using CMake to Configure CppAD$$
+$index cmake, configure cppad$$
+$index configure, cppad$$
+$index cppad, cmake configure$$
+
+
+$head The CMake Program$$
+$index cmake$$
+The 
+$href%http://www.cmake.org/cmake/help/install.html%cmake%$$  
+program enables one to create a single set of scripts,
+called $code CMakeLists.txt$$, 
+that can be used to test and install a program on Unix, Microsoft, or
+Apple operating systems. 
+For example, one can use it to automatically generate Microsoft project files.
+   
+$head CMake Command$$
+$index cmake, command$$
+$index configure, cppad$$
+$index cppad, configure$$
+The command below assume that $code cmake$$ is in your execution
+path. If not, you can put the path to $code cmake$$ in font the command. 
+Only the $code cmake$$ command and the path to the distribution directory
+($code ..$$ at the end of the command below) are required.
+In other words, the first and last lines below are required
+and all of the other lines are optional.
+Create a $code work$$ subdirectory of the 
+$cref/distribution directory/download/Distribution Directory/$$,
+change into the $code work$$  directory, 
+and execute the following command:
+$codei%
+cmake %%                                                          \
+	-G %generator%                                               \
+	-D cmake_install_prefix=%cmake_install_prefix%               \
+	-D cmake_install_includedirs=%cmake_install_includedirs%     \
+	-D cmake_install_datadir=%cmake_install_datadir%             \
+	-D cmake_install_libdirs=%cmake_install_libdirs%             \
+	-D cmake_install_postfix=%cmake_install_postfix%             \
+	\
+	-D adolc_prefix=%adolc_prefix%                               \
+	-D eigen_prefix=%eigen_prefix%                               \
+	-D fadbad_prefix=%fadbad_prefix%                             \
+	-D ipopt_prefix=%ipopt_prefix%                               \
+	-D sacado_prefix=%sacado_prefix%                             \
+	\
+	-D cppad_cxx_flags=%cppad_cxx_flags%                         \
+	-D cppad_test_vector_namespace=%cppad_test_vector_namespace% \
+	-D cppad_documentation=%cppad_documentation%                 \
+	-D cppad_max_num_threads=%cppad_max_num_threads%             \
+	-D cppad_sparse_list=%cppad_sparse_list%                     \
+	-D cppad_tape_id_type=%cppad_tape_id_type%                   \
+	-D cppad_tape_addr_type=%cppad_tape_addr_type%               \
+	\
+	..
+%$$
+
+$head generator$$
+$index makefile, generator$$
+$index generator, makefile$$
+The CMake program is capable of generating different kinds of files.
+Below is a table with a few of the possible files
+$table
+$icode generator$$ $cnext Description $rnext
+$code "Unix Makefiles"$$   $cnext make files for unix operating system $rnext
+$code "NMake Makefiles"$$  $cnext make files for Visual Studio
+$tend
+Other generator choices are available; see the cmake 
+$href%http://www.cmake.org/cmake/help/cmake2.6docs.html#section_Generators%
+generators%$$ documentation.
+
+$head cmake_install_prefix$$
+$index install, prefix$$
+$index prefix, install$$
+This is the prefix directory for the CppAD files that get installed by the 
+$codei%
+	make install
+%$$
+All of the installed files will be placed below this directory.
+The default value for this directory is $code /usr$$.
+
+$head cmake_install_includedirs$$
+$index install, include directories$$
+$index include directories, install$$
+This can be one directory, or a list of directories separated
+by spaces or by semi-colons.
+This first entry in the list is the directory, 
+below the $icode cmake_install_prefix$$,
+where the CppAD include files will be installed.
+This directory, and the others in the list, are used for searching
+for include files.
+The default value for this directory list is $code include$$.
+For example, if 
+$icode cmake_install_prefix$$,
+$icode cmake_install_includedirs$$, and
+$icode cmake_install_postfix$$, are not specified,
+the file $code cppad.hpp$$ will be installed in the location
+$codei%
+	/usr/include/cppad/cppad.hpp
+%$$
+
+$head cmake_install_datadir$$
+$index install, data directory$$
+$index data directory, install$$
+This is the directory, 
+below the $icode cmake_install_prefix$$,
+where the data files will be installed.
+The default value for this directory is $code share$$.
+For example, if 
+$icode cmake_install_prefix$$ and
+$icode cmake_install_postfix$$ are not specified, and
+$icode cppad_documentation$$ is $code YES$$, 
+the file $code doc/cppad.xml$$ will be installed in the location
+$codei%
+	/usr/share/doc/cppad-%version%/cppad.xml
+%$$
+where $icode version$$ is version number for this copy of CppAD.
+
+$head cmake_install_libdirs$$
+$index install, library directories$$
+$index library directories, install$$
+This can be one directory, or a list of directories separated
+by spaces or semi-colons.
+The first entry in the list is the directory, 
+below the $icode cmake_install_prefix$$,
+where the CppAD library files will be installed.
+This directory, and the others in the list, are used for searching
+for library files.
+The default value for this directory list is $code lib$$.
+For example, if 
+$icode cmake_install_prefix$$,
+$icode cmake_install_postfix$$,
+$icode cmake_install_libdirs$$ are not specified, and
+$icode ipopt_prefix$$ is specified,
+the file $code libcppad_ipopt.a$$ will be installed in the location
+$codei%
+	/usr/lib/libcppad_ipopt.a
+%$$
+
+$head cmake_install_postfix$$
+$index install, postfix$$
+$index postfix, install$$
+This is the directory, 
+below the include, data, and library directories,
+where files will be installed.
+The default value for this directory is empty 
+(as the example cases above demonstrate).
+For example, 
+if $icode cmake_install_prefix$$ and
+$icode cmake_install_postfix$$ are not specified, and
+$codei%
+	-D cppad_documentation=YES
+	-D cmake_install_postfix=coin
+%$$
+the file $code cppad.xml$$ will be installed in the location
+$codei%
+	/usr/share/coin/doc/cppad-%version%/cppad.xml
+%$$
+
+$head package_prefix$$
+$index package, prefix$$
+$index prefix, package$$
+$table
+$rref adolc_prefix$$
+$rref eigen_prefix$$
+$rref fadbad_prefix$$
+$rref ipopt_prefix$$
+$rref sacado_prefix$$
+$tend
+
+$head cppad_cxx_flags$$
+$index c++, compile flags$$
+$index compile, c++ flags$$
+$index flags, c++ compile$$
+This specifies the addition compiler flags,
+besides the debug and release flags,
+that are used when compiling the CppAD examples and tests.
+The default value for these flags is the empty string $code ""$$.
+These flags must be valid for the C++ compiler
+on your system.
+For example, if you are using $code g++$$ you could specify
+$codep
+	-D cppad_cxx_flags="-Wall -ansi -pedantic-errors -std=c++98 -Wshadow"
+$$
+The packages
+$cref/eigen/eigen_prefix/$$ and $cref/fadbad/fadbad_prefix/$$
+currently generate a lot of shadowed variable warnings.
+Hence the $code -Wshadow$$ flag is automatically removed when
+compiling examples and test that use these packages.
+
+$head cppad_testvector$$
+See $tref cppad_testvector$$.
+
+$head cppad_documentation$$
+$index install, cppad documentation$$
+$index cppad, install documentation$$
+$index documentation, install$$
+The default value for $icode cppad_documentation$$ is $code NO$$.
+If $icode cppad_documentation$$ is $code YES$$,
+and $cref/cmake_install_postfix/cmake/cmake_install_postfix/$$ is empty,
+the CppAD XML documentation files will be installed in the directory
+$codei%
+	%prefix%/%datadir%/doc/cppad-%version%
+%$$
+where $icode prefix$$ is
+$cref/cmake_install_prefix/cmake/cmake_install_prefix/$$,
+$icode datadir$$ is
+$cref/cmake_install_datadir/cmake/cmake_install_datadir/$$,
+and $icode version$$ is the version number for this copy of CppAD. 
+If $icode cmake_install_postfix$$ is non-empty,
+the CppAD XML documentation files will be installed in the directory
+$codei%
+	%prefix%/%datadir%/doc/%postfix%/cppad-%version%
+%$$
+where $icode postfix$$ is $icode cmake_install_postfix$$.
+
+$head cppad_max_num_threads$$
+$index maximum, number threads$$
+$index threads, maximum number$$
+The value $icode cppad_max_num_threads$$
+must be greater than or equal to four; i.e.,
+$icode%max_num_threads% >= 4%$$.
+The current default value for $icode cppad_max_num_threads$$ is 48,
+but it may change in future versions of CppAD.
+The value $icode cppad_max_num_threads$$ in turn specifies
+the default value for the preprocessor symbol
+$cref/CPPAD_MAX_NUM_THREADS/multi_thread/CPPAD_MAX_NUM_THREADS/$$.
+
+$head cppad_sparse_list$$
+$index sparsity, internal structure$$
+$index sparsity, vector of sets$$
+There are two possible values for this option, $code YES$$ and $code NO$$.
+This affect the internal data structure used to store a 
+$cref/sparsity pattern/glossary/Sparsity Pattern/$$ when the
+users version of the sparsity pattern is a vector of $code std::set<size_t>$$.
+If $icode cppad_sparse_list$$ is $code NO$$
+the vectors of standard sets are also used internally.
+If $icode cppad_sparse_list$$ is $code YES$$,
+a special sparse list structure is used instead.
+This should affect the speed and memory required by the
+$cref sparse_jacobian$$, $cref sparse_hessian$$, and
+$cref/sparse drivers/sparse/$$
+The default value for $icode cppad_sparse_list$$ is $code YES$$
+
+$head cppad_tape_id_type$$
+$index memory, usage$$
+$index memory, tape$$
+$index tape, memory$$
+The type $icode cppad_tape_id_type$$ 
+is used for identifying different tapes.
+The valid values for this type are
+$code unsigned short int$$,
+$code unsigned int$$, and
+$code size_t$$.
+The smaller the value of $codei%sizeof(%cppad_tape_id_type%)%$$,
+the less memory is used.
+On the other hand, the value
+$codei%
+	std::numeric_limits<%cppad_tape_id_type%>::max()
+%$$
+must be larger than the maximum number of tapes used by one thread times
+$cref/CPPAD_MAX_NUM_THREADS/multi_thread/CPPAD_MAX_NUM_THREADS/$$.
+
+$head cppad_tape_addr_type$$
+$index memory, usage$$
+$index memory, tape$$
+$index tape, memory$$
+The type $icode cppad_tape_addr_type$$ 
+is used for address in the AD recordings (tapes).
+The valid values for this argument are
+$code unsigned short int$$,
+$code unsigned int$$,
+$code size_t$$.
+The smaller the value of $codei%sizeof(%cppad_tape_addr_type%)%$$,
+the less memory is used.
+On the other hand, the value
+$codei%
+	std::numeric_limits<%cppad_tape_addr_type%>::max()
+%$$
+must be larger than any of the following:
+$cref/size_op/seq_property/size_op/$$,
+$cref/size_op_arg/seq_property/size_op_arg/$$,
+$cref/size_par/seq_property/size_text/$$,
+$cref/size_par/seq_property/size_par/$$,
+$cref/size_par/seq_property/size_VecAD/$$.
+
+
+$children%
+	omh/install/adolc_prefix.omh%
+	omh/install/eigen_prefix.omh%
+	omh/install/fadbad_prefix.omh%
+	omh/install/ipopt_prefix.omh%
+	omh/install/sacado_prefix.omh%
+	omh/install/testvector.omh
+%$$
+
+
+$end
