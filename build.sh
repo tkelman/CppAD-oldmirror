@@ -1,7 +1,7 @@
 #! /bin/bash -e
 # $Id$
 # -----------------------------------------------------------------------------
-# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
+# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-13 Bradley M. Bell
 #
 # CppAD is distributed under multiple licenses. This distribution is under
 # the terms of the 
@@ -19,7 +19,7 @@ FADBAD_DIR=$HOME/prefix/fadbad
 IPOPT_DIR=$HOME/prefix/ipopt
 SACADO_DIR=$HOME/prefix/sacado
 # version type is one of "trunk" or "stable"
-version_type="trunk"
+version_type="stable"
 # -----------------------------------------------------------------------------
 if [ $0 != "./build.sh" ]
 then
