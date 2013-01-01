@@ -1,7 +1,7 @@
 #! /bin/bash -e
 # $Id$
 # -----------------------------------------------------------------------------
-# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
+# CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-13 Bradley M. Bell
 #
 # CppAD is distributed under multiple licenses. This distribution is under
 # the terms of the 
@@ -17,9 +17,10 @@ then
 fi
 if [ "$1" != 'get' ] && [ "$1" != 'set' ] && [ "$1" != 'copy' ]
 then
-	echo 'usage: bin/version.sh (get | set | copy)'
+	echo 'usage: bin/version.sh (get | set | copy) [version]'
 	echo 'get:  Gets the current version number from CMakeLists.txt.'
-	echo 'set:  Sets CMakeLists.txt version number to current yyyymmdd.'
+	echo 'set:  Sets CMakeLists.txt version number to version.'
+	echo '      If version is not present, uses current yyyymmdd.'
 	echo 'copy: Copies version number from CMakeLists.txt to other files.'
 	exit 1
 fi
@@ -28,14 +29,19 @@ echo_exec() {
      eval $*
 }
 # -----------------------------------------------------------------------------
-version=`date +%Y%m%d`
 if [ "$1" == 'set' ]
 then
+	if [ "$2" == '' ]
+	then
+		version=`date +%Y%m%d`
+	else
+		version="$2"
+	fi
 	echo 'sed -i.old CMakeLists.txt ...'
 	sed  \
-		-e "s/(\(cppad_version *\)\"[0-9]\{8\}\" *)/(\1\"$version\" )/"  \
+	-e "s/(\(cppad_version *\)\"[0-9.]\{8\}[0-9.]*\" *)/(\1\"$version\" )/"  \
 		-i.old CMakeLists.txt
-	if diff CMakeLists.txt CMakeLists.txt.old
+	if diff CMakeLists.txt.old CMakeLists.txt
 	then
 		echo 'No change in CMakeLists.txt'
 		exit 1
@@ -46,8 +52,8 @@ fi
 # -----------------------------------------------------------------------------
 # get the current version number
 version=`grep '^SET *( *cppad_version ' CMakeLists.txt | \
-	sed -e 's|^SET *( *cppad_version *"\([0-9]*\)" *)|\1|'`
-if ! (echo $version | grep '[0-9]\{8\}$') > /dev/null
+	sed -e 's|^SET *( *cppad_version *"\([0-9.]\{8\}[0-9.]*\)" *)|\1|'`
+if ! (echo $version | grep '[0-9]\{8\}') > /dev/null
 then
 	echo 'package.sh: Cannot find verison number in CMakeLists.txt'
 	exit 1
@@ -59,7 +65,9 @@ then
 fi
 # -----------------------------------------------------------------------------
 # Make the version number in the relevant files is the same
-yyyy_mm_dd=`echo $version | sed -e 's|\(....\)\(..\)\(..\)|\1-\2-\3|'`
+yyyy_mm_dd=`echo $version | sed \
+	-e 's|\([0-9]\{4\}\)0000|\10101|' \
+	-e 's|\(....\)\(..\)\(..\).*|\1-\2-\3|'`
 echo 'sed -i.old AUTHORS ...'
 sed  \
 	-e "s/, [0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\} *,/, $yyyy_mm_dd,/" \
@@ -86,7 +94,9 @@ list='
 '
 for file in $list
 do
-	sed -e "s/cppad-[0-9]\{8\}/cppad-$version/" -i.old $file
+	sed -e "s/cppad-[0-9]\{8\}\(\.[eg]pl\)/cppad-$version\1/" \
+		-e "s/cppad-[0-9]\{8\}\.[0-9]*\(\.[eg]pl\)/cppad-$version\1/" \
+		-i.old $file
 done 
 list="
 	$list
