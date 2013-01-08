@@ -62,7 +62,7 @@ fi
 # -----------------------------------------------------------------------------
 rep_stable="$repository/stable/$stable_version"
 rep_release="$repository/releases/$release_version"
-echo_eval svn copy $rep_stable $rep_release -m "$msg"
+echo_eval svn copy $rep_stable $rep_release -m \"$msg\"
 # -----------------------------------------------------------------------------
 echo "cd ../.."
 cd ../..
@@ -77,7 +77,7 @@ echo_eval svn checkout $repository/conf conf
 echo_eval cd conf
 #
 msg="Update stable and release numbers in projDesc.xml"
-echo 'Set stable and advance release in ../../conf/projDesc.xml'
+echo 'Settting stable and advance release in ../../conf/projDesc.xml.'
 sed -i projDesc.xml \
 	-e "/^ *<stable/,/^ *<\/stable/s/[0-9]\{8\}/$stable_version/" \
 	-e "/^ *<release/,/^ *<\/release/s/[0-9]\{8\}\.[0-9]*/$release_version/"
