@@ -61,12 +61,12 @@ The download files below are for the current version of CppAD.
 
 $table
 EPL License $pre  $$ $cnext $href%
-http://www.coin-or.org/download/source/CppAD/cppad-20130000.1.epl.tgz%
-cppad-20130000.1.epl.tgz%$$ 
+http://www.coin-or.org/download/source/CppAD/cppad-20130000.2.epl.tgz%
+cppad-20130000.2.epl.tgz%$$ 
 $rnext
 GPL License $pre  $$ $cnext $href%
-http://www.coin-or.org/download/source/CppAD/cppad-20130000.1.gpl.tgz%
-cppad-20130000.1.gpl.tgz%$$
+http://www.coin-or.org/download/source/CppAD/cppad-20130000.2.gpl.tgz%
+cppad-20130000.2.gpl.tgz%$$
 $tend
 
 $subhead Release Versions$$
