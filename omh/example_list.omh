@@ -131,6 +131,7 @@ $rref for_one.cpp$$
 $rref for_sparse_jac.cpp$$
 $rref for_two.cpp$$
 $rref forward.cpp$$
+$rref forward_mul.cpp$$
 $rref fun_assign.cpp$$
 $rref fun_check.cpp$$
 $rref get_started.cpp$$

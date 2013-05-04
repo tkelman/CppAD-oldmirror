@@ -87,8 +87,8 @@ am__example_SOURCES_DIST = mul_level_adolc.cpp mul_level_adolc_ode.cpp \
 	compare_change.cpp complex_poly.cpp cond_exp.cpp conj_grad.cpp \
 	cos.cpp cosh.cpp cppad_vector.cpp div.cpp div_eq.cpp \
 	equal_op_seq.cpp erf.cpp error_handler.cpp exp.cpp for_one.cpp \
-	for_two.cpp forward.cpp for_sparse_jac.cpp fun_assign.cpp \
-	fun_check.cpp hes_lagrangian.cpp hes_lu_det.cpp \
+	for_two.cpp forward.cpp forward_mul.cpp for_sparse_jac.cpp \
+	fun_assign.cpp fun_check.cpp hes_lagrangian.cpp hes_lu_det.cpp \
 	hes_minor_det.cpp hessian.cpp hes_times_dir.cpp \
 	independent.cpp index_sort.cpp integer.cpp interface2c.cpp \
 	interp_onetape.cpp interp_retape.cpp jac_lu_det.cpp \
@@ -128,10 +128,10 @@ am_example_OBJECTS = $(am__objects_1) example.$(OBJEXT) \
 	cosh.$(OBJEXT) cppad_vector.$(OBJEXT) div.$(OBJEXT) \
 	div_eq.$(OBJEXT) equal_op_seq.$(OBJEXT) erf.$(OBJEXT) \
 	error_handler.$(OBJEXT) exp.$(OBJEXT) for_one.$(OBJEXT) \
-	for_two.$(OBJEXT) forward.$(OBJEXT) for_sparse_jac.$(OBJEXT) \
-	fun_assign.$(OBJEXT) fun_check.$(OBJEXT) \
-	hes_lagrangian.$(OBJEXT) hes_lu_det.$(OBJEXT) \
-	hes_minor_det.$(OBJEXT) hessian.$(OBJEXT) \
+	for_two.$(OBJEXT) forward.$(OBJEXT) forward_mul.$(OBJEXT) \
+	for_sparse_jac.$(OBJEXT) fun_assign.$(OBJEXT) \
+	fun_check.$(OBJEXT) hes_lagrangian.$(OBJEXT) \
+	hes_lu_det.$(OBJEXT) hes_minor_det.$(OBJEXT) hessian.$(OBJEXT) \
 	hes_times_dir.$(OBJEXT) independent.$(OBJEXT) \
 	index_sort.$(OBJEXT) integer.$(OBJEXT) interface2c.$(OBJEXT) \
 	interp_onetape.$(OBJEXT) interp_retape.$(OBJEXT) \
@@ -456,6 +456,7 @@ example_SOURCES = \
 	for_one.cpp \
 	for_two.cpp \
 	forward.cpp \
+	forward_mul.cpp \
 	for_sparse_jac.cpp \
 	fun_assign.cpp \
 	fun_check.cpp \
@@ -644,6 +645,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/for_sparse_jac.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/for_two.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/forward.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/forward_mul.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fun_assign.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fun_check.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hes_lagrangian.Po@am__quote@

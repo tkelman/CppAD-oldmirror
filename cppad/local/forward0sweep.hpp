@@ -234,7 +234,7 @@ size_t forward0sweep(
 			// we must inform next_forward of this special case.
 			Rec->forward_csum(op, arg, i_op, i_var);
 			forward_csum_op(
-				0, i_var, arg, num_par, parameter, J, Taylor
+				0, 0, i_var, arg, num_par, parameter, J, Taylor
 			);
 			break;
 

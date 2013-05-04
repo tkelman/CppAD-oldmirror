@@ -13,6 +13,8 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 $begin whats_new_13$$
 $dollar @$$
 $spell
+	checkpointing
+	cout
 	typename
 	bool
 	struct
@@ -42,13 +44,29 @@ This section contains a list of the changes to CppAD during 2013
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
 
+$head 05-04$$
+The option to compute 
+$cref/multiple orders/ForwardAny/x_p/Multiple Orders/$$ was added.
+The $cref atom_usead_2.cpp$$ example shows the need for this.
+The problem is that a new atomic function interface needs to be designed
+with checkpointing as a particular application.
+Multiple order forward mode is the first step in this direction.
+
 $head 04-28$$
+$list number$$
 The scripts $cref get_eigen.sh$$ and $cref get_sacado.sh$$ were added.
 If you are using Unix, and you do not have 
 $href%http://eigen.tuxfamily.org%Eigen%$$ or
 $href%http://trilinos.sandia.gov/packages/sacado%Sacado%$$ 
 installed on your system, you can use the corresponding script 
 to download and install a local copy for use when testing CppAD. 
+$lnext
+The code $codei%std::cout << %X%$$,
+would generate a compile error when $icode X$$ was an Eigen matrix
+with $codei%CppAD::AD<%Base%>%$$ elements.
+This has been fixed.
+$lend
+
 
 
 $head 04-27$$

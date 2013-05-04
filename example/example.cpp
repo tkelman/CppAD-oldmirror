@@ -88,6 +88,7 @@ extern bool ForOne(void);
 extern bool ForTwo(void);
 extern bool ForSparseJac(void);
 extern bool Forward(void);
+extern bool forward_mul(void);
 extern bool fun_assign(void);
 extern bool FunCheck(void);
 extern bool HesLagrangian(void);
@@ -247,6 +248,7 @@ int main(void)
 	ok &= Run( ForOne,            "ForOne"           );
 	ok &= Run( ForTwo,            "ForTwo"           );
 	ok &= Run( Forward,           "Forward"          ); 
+	ok &= Run( forward_mul,       "forward_mul"      ); 
 	ok &= Run( ForSparseJac,      "ForSparseJac"     );
 	ok &= Run( fun_assign,        "fun_assign"       );
 	ok &= Run( FunCheck,          "FunCheck"         );
