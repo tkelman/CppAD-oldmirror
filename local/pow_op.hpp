@@ -377,7 +377,7 @@ inline void forward_powvp_op(
 	CPPAD_ASSERT_UNKNOWN( q <= p );
 
 	// z_0 = log(x)
-	forward_log_op(p, q, i_z, arg[0], nc_taylor, taylor);
+	forward_log_op(q, p, i_z, arg[0], nc_taylor, taylor);
 
 	// z_1 = y * z_0
 	addr_t adr[2];
