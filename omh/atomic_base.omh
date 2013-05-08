@@ -1,0 +1,99 @@
+/* $Id$ */
+/* --------------------------------------------------------------------------
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-13 Bradley M. Bell
+
+CppAD is distributed under multiple licenses. This distribution is under
+the terms of the 
+                    Eclipse Public License Version 1.0.
+
+A copy of this license is included in the COPYING file of this distribution.
+Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
+-------------------------------------------------------------------------- */
+$begin atomic_base$$
+$spell
+	afun
+	arg
+	eval
+	vx
+	vy
+	tx
+	ty
+	px
+	py
+	jac
+	hes
+	CppAD
+	checkpointing
+	algo
+$$
+
+$section User Defined Atomic AD Functions$$
+$index atomic, user function$$
+$index user, atomic function$$
+$index operation, user atomic$$
+$index function, user atomic$$
+
+
+$head Syntax$$
+
+$codei%
+%user_atomic% %afun%(%n%, %m%, %use_set%, %user_arg_list%)
+%ok% = %afun%.eval(%ax%, %ay%)
+%ok% = %afun%.tape(%ax%, %ay%)
+%ok% = %afun%.algo(%ax%, %ay%)
+%ok% = %afun%.forward(%q%, %p%, %vx%, %vy%, %tx%, %ty%)
+%ok% = %afun%.reverse(%p%, %tx%, %ty%, %px%, %py%)
+%ok% = %afun%.for_sparse_jac(%q%, %r%, %s%)
+%ok% = %afun%.rev_sparse_jac(%q%, %r%, %s%)
+%ok% = %afun%.rev_sparse_hes(%q%, %r%, %s%, %t%, %u%, %v%)
+atomic_base<%Base%>::clear()%$$
+
+$head User Defined Derivatives$$
+In some cases, the user knows how to compute derivatives of a function 
+$latex \[
+	y = f(x) \; {\rm where} \; f : B^n \rightarrow B^m 
+\] $$
+more efficiently than by coding it using $codei%AD<%Base%>%$$ 
+$cref/atomic/glossary/Operation/Atomic/$$ operations
+and letting CppAD do the rest.
+In this case $codei%atomic_base%<%Base%>%$$ can use
+the user code for $latex f(x)$$, and its derivatives,
+as $codei%AD<%Base%>%$$ atomic operations. 
+
+$subhead Virtual Functions$$
+User defined derivatives are implemented by defining the
+following virtual functions in the $icode user_atomic$$ class:
+$cref/forward/atomic_forward/$$,
+$cref/reverse/atomic_reverse/$$,
+$cref/for_sparse_jac/atomic_for_sparse_jac/$$,
+$cref/rev_sparse_jac/atomic_rev_sparse_jac/$$, and
+$cref/rev_sparse_hes/atomic_rev_sparse_hes/$$.
+These virtual functions have a default implementation
+that returns $icode%ok% == false%$$.
+The $code forward$$ function, 
+for the case $icode%p% == 0%$$, must be implemented.
+Otherwise, only those functions
+required by the your calculations need to be implemented. 
+For example, 
+$icode forward$$ for the case $icode%p% == 2%$$ can just return
+$icode%ok% == false%$$ unless you require
+forward mode calculation of second derivatives.
+
+
+$head Checkpointing$$
+Another purpose for $codei%atomic_base%<%Base%>%$$ is to
+reduce the amount of memory required.
+To be specific, not only having to store the forward 
+and reverse mode results for one (instead of all)
+applications of the atomic function at a time.
+
+$subhead Virtual Functions$$
+Checkpointing is implemented by defining the
+virtual function 
+$cref/algo/atomic_ad/algo/$$ for the $icode user_atomic$$ class.
+
+$childtable%
+	cppad/local/atomic_base.hpp
+%$$
+
+$end

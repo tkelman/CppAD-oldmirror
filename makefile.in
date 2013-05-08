@@ -442,6 +442,7 @@ nobase_myinclude_HEADERS = \
 	cppad/local/asin_op.hpp \
 	cppad/local/atan2.hpp \
 	cppad/local/atan_op.hpp \
+	cppad/local/atomic_base.hpp \
 	cppad/local/base_complex.hpp \
 	cppad/local/base_cond_exp.hpp \
 	cppad/local/base_double.hpp \

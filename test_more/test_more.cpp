@@ -47,6 +47,7 @@ extern bool Exp(void);
 extern bool ForHess(void);
 extern bool for_sparse_jac(void);
 extern bool Forward(void);
+extern bool forward_mul(void);
 extern bool FromBase(void);
 extern bool FunCheck(void);
 extern bool ipopt_solve(void);
@@ -154,6 +155,7 @@ int main(void)
 	ok &= Run( ForHess,         "ForHess"        );
 	ok &= Run( for_sparse_jac,  "for_sparse_jac" );
 	ok &= Run( Forward,         "Forward"        );
+	ok &= Run( forward_mul,     "forward_mul"    );
 	ok &= Run( FromBase,        "FromBase"       );
 	ok &= Run( FunCheck,        "FunCheck"       );
 	ok &= Run( jacobian,        "jacobian"       );

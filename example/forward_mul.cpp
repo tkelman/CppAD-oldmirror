@@ -33,6 +33,7 @@ bool forward_mul(void)
 {	bool ok = true;
 	using CppAD::AD;
 	using CppAD::NearEqual;
+	double eps = 10. * std::numeric_limits<double>::epsilon();
 
 	// domain space vector
 	size_t n = 2;
@@ -55,11 +56,11 @@ bool forward_mul(void)
 	ok &= f.size_taylor() == 1;
 
 	// Compute three forward orders at one
-	size_t p = 2;
+	size_t p = 2, p1 = p+1;
 	CPPAD_TESTVECTOR(double) x_p(n * (p+1)), y_p(m * (p+1));
-	x_p[0 * p + 0] = 3.; x_p[1 * p + 0] = 4.; // order 0
-	x_p[0 * p + 1] = 1.; x_p[1 * p + 1] = 0.; // order 1
-	x_p[0 * p + 2] = 0.; x_p[1 * p + 2] = 0.; // order 2
+	x_p[0 * p1 + 0] = 3.; x_p[1 * p1 + 0] = 4.; // order 0
+	x_p[0 * p1 + 1] = 1.; x_p[1 * p1 + 1] = 0.; // order 1
+	x_p[0 * p1 + 2] = 0.; x_p[1 * p1 + 2] = 0.; // order 2
 	// X(t) =   x^0 + x^1 * t + x^2 * t^2
 	//      = [ 3 + t, 4 ]   
 	//
@@ -68,15 +69,15 @@ bool forward_mul(void)
 	//
 	// check order zero
 	CPPAD_TESTVECTOR(double) x(n);
-	x[0] = x_p[0 * p + 0];
-	x[1] = x_p[1 * p + 0];
-	ok  &= NearEqual(y_p[0 * p + 0] , x[0]*x[0]*x[1], 1e-10, 1e-10);
+	x[0] = x_p[0 * p1 + 0];
+	x[1] = x_p[1 * p1 + 0];
+	ok  &= NearEqual(y_p[0 * p1 + 0] , x[0]*x[0]*x[1], eps, eps);
 	//
 	// check order one
-	ok   &= NearEqual(y_p[0 * p + 1] , 2.*x[0]*x[1], 1e-10, 1e-10);
+	ok  &= NearEqual(y_p[0 * p1 + 1] , 2.*x[0]*x[1], eps, eps);
 	// check order two
-	double F_00 = 2. * y_p[0 * p + 2]; // second partial F w.r.t. x[0], x[0]
-	ok   &= NearEqual(F_00, 2.*x[1], 1e-10, 1e-10);
+	double F_00 = 2. * y_p[0 * p1 + 2]; // second partial F w.r.t. x[0], x[0]
+	ok   &= NearEqual(F_00, 2.*x[1], eps, eps);
 
 	// check number of orders per variable
 	ok   &= f.size_taylor() == 3;
