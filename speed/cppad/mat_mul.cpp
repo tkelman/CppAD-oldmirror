@@ -1,6 +1,6 @@
 /* $Id$ */
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-13 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -48,7 +48,7 @@ $codep */
 # include <cppad/cppad.hpp>
 # include <cppad/speed/mat_sum_sq.hpp>
 # include <cppad/speed/uniform_01.hpp>
-# include "../../example/mat_mul.hpp"
+# include "../../example/user_mat_mul.hpp"
 # include "print_optimize.hpp"
 
 bool link_mat_mul(
@@ -114,7 +114,7 @@ bool link_mat_mul(
 				ax[j+n] = X[j];
 			}
 			// Y = X * X
-			mat_mul(info_id, ax, ay);
+			user_mat_mul(info_id, ax, ay);
 			Z[0] = 0.;
 			for(j = 0; j < n; j++)
 				Z[0] += ay[j];
@@ -149,7 +149,7 @@ bool link_mat_mul(
 				ax[j+n] = X[j];
 			}
 			// Y = X * X
-			mat_mul(info_id, ax, ay);
+			user_mat_mul(info_id, ax, ay);
 			Z[0] = 0.;
 			for(j = 0; j < n; j++)
 				Z[0] += ay[j];

@@ -1,6 +1,6 @@
 // $Id$
-# ifndef CPPAD_MAT_MUL_INCLUDED
-# define CPPAD_MAT_MUL_INCLUDED
+# ifndef CPPAD_USER_MAT_MUL_INCLUDED
+# define CPPAD_USER_MAT_MUL_INCLUDED
 
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-13 Bradley M. Bell
@@ -14,9 +14,9 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
 /*
-$begin mat_mul.hpp$$
+$begin user_mat_mul.hpp$$
 $spell
-	mat_mul.hpp
+	user_mat_mul.hpp
 	cppad
 	CppAD
 	namespace
@@ -46,7 +46,7 @@ $$
 
 $section Define Matrix Multiply as a User Atomic Operation$$
 
-$index mat_mul, define$$
+$index user_mat_mul, define$$
 $index matrix, multiply$$
 $index multiply, matrix$$
 $index user_atomic, test$$
@@ -59,12 +59,12 @@ This file is located in the $code example$$ directory.
 It can be copied to the current working directory and included
 with the syntax
 $codei%
-	# include "mat_mul.hpp"
+	# include "user_mat_mul.hpp"
 %$$
 
 $head Example$$
-The file $cref mat_mul.cpp$$ contains an example use of 
-$code mat_mul.hpp$$.
+The file $cref user_mat_mul.cpp$$ contains an example use of 
+$code user_mat_mul.hpp$$.
 It returns true if it succeeds and false otherwise.
 
 $head Begin Source$$
@@ -76,7 +76,7 @@ namespace {                      // Begin empty namespace
 
 $head Extra Call Information$$ 
 $codep */
-	// Information we will attach to each mat_mul call
+	// Information we will attach to each user_mat_mul call
 	struct call_info {
 		size_t nr_result;
 		size_t n_middle;
@@ -209,7 +209,7 @@ $head CppAD User Atomic Callback Functions$$
 $codep */
 	// ----------------------------------------------------------------------
 	// forward mode routine called by CppAD
-	bool mat_mul_forward(
+	bool user_mat_mul_forward(
 		size_t                   id ,
 		size_t                    k ,
 		size_t                    n ,
@@ -222,7 +222,7 @@ $codep */
 	{	size_t i, j, ell;
 		get_info(id, k, n, m);
 
-		// check if this is during the call to mat_mul(id, ax, ay)
+		// check if this is during the call to user_mat_mul(id, ax, ay)
 		if( vx.size() > 0 )
 		{	assert( k == 0 && vx.size() > 0 );
 
@@ -270,7 +270,7 @@ $codep */
 	}
 	// ----------------------------------------------------------------------
 	// reverse mode routine called by CppAD
-	bool mat_mul_reverse(
+	bool user_mat_mul_reverse(
 		size_t                   id ,
 		size_t                    k ,
 		size_t                    n ,
@@ -300,7 +300,7 @@ $codep */
 
 	// ----------------------------------------------------------------------
 	// forward Jacobian sparsity routine called by CppAD
-	bool mat_mul_for_jac_sparse(
+	bool user_mat_mul_for_jac_sparse(
 		size_t                               id ,             
 		size_t                                n ,
 		size_t                                m ,
@@ -331,7 +331,7 @@ $codep */
 	}
 	// ----------------------------------------------------------------------
 	// reverse Jacobian sparsity routine called by CppAD
-	bool mat_mul_rev_jac_sparse(
+	bool user_mat_mul_rev_jac_sparse(
 		size_t                               id ,             
 		size_t                                n ,
 		size_t                                m ,
@@ -364,7 +364,7 @@ $codep */
 	}
 	// ----------------------------------------------------------------------
 	// reverse Hessian sparsity routine called by CppAD
-	bool mat_mul_rev_hes_sparse(
+	bool user_mat_mul_rev_hes_sparse(
 		size_t                               id ,             
 		size_t                                n ,
 		size_t                                m ,
@@ -421,21 +421,21 @@ $codep */
 	}
 /* $$
 
-$head Declare mat_mul Function$$
-Declare the $code AD<double>$$ routine $codei%mat_mul(%id%, %ax%, %ay%)%$$
+$head Declare user_mat_mul Function$$
+Declare the $code AD<double>$$ routine $codei%user_mat_mul(%id%, %ax%, %ay%)%$$
 and end empty namespace
 (we could use any $cref/simple vector template class/SimpleVector/$$
 instead of $code CppAD::vector$$):
 $codep */
 	CPPAD_USER_ATOMIC(
-		mat_mul                 , 
+		user_mat_mul                 , 
 		CppAD::vector           ,
 		double                  , 
-		mat_mul_forward         , 
-		mat_mul_reverse         ,
-		mat_mul_for_jac_sparse  ,
-		mat_mul_rev_jac_sparse  ,
-		mat_mul_rev_hes_sparse  
+		user_mat_mul_forward         , 
+		user_mat_mul_reverse         ,
+		user_mat_mul_for_jac_sparse  ,
+		user_mat_mul_rev_jac_sparse  ,
+		user_mat_mul_rev_hes_sparse  
 	)
 } // End empty namespace
 /* $$

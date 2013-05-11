@@ -11,38 +11,24 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
 /*
-$begin atom_usead_1.cpp$$
-$spell
-	checkpoint
-	var
-$$
+$begin user_simple.cpp$$
 
-$section Using AD to Compute Atomic Function Derivatives$$
+$section Reciprocal as a User Atomic Operation: Example and Test$$
 
-$index AD, inside atomic$$
-$index user, atomic AD inside$$
-$index atomic, AD inside$$
-$index checkpoint$$
+$index user_simple, user_atomic$$
+$index user, atomic user_simple$$
+$index atomic, user_simple$$
+$index test, user_atomic$$
+$index user_atomic, example$$
+$index example, user_atomic$$
 
-$head Purpose$$
-Consider the case where an inner function is used repeatedly in the 
-definition of an outer function.
-In this case, it may reduce the number of variables
-$cref/size_var/seq_property/size_var/$$,
-and hence the required memory.
-This is similar the 
-$cref/checkpoint/checkpoint.cpp/$$.
-
-$head Simple Case$$
-This example is the same as $cref reciprocal.cpp$$, except that it 
-uses AD to compute the 
-derivatives needed by an atomic function.
-This is a simple example of an inner function, and hence not really
-useful for the purpose above; 
-see $cref atom_usead_2.cpp$$ for a more complete example.
+$head Theory$$
+The example below defines the user atomic function 
+$latex f : \B{R}^n \rightarrow \B{R}^m$$ where
+$latex n = 1$$, $latex m = 1$$, and $latex f(x) = 1 / x$$.
 
 $code
-$verbatim%example/atom_usead_1.cpp%0%// BEGIN C++%// END C++%1%$$
+$verbatim%example/user_simple.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 $end
@@ -51,28 +37,27 @@ $end
 # include <cppad/cppad.hpp>
 
 namespace { // Begin empty namespace 
-	using CppAD::AD;
-	using CppAD::ADFun;
 	using CppAD::vector;
-
 	// ----------------------------------------------------------------------
-	// function that computes reciprocal
-	ADFun<double>* r_ptr_;
-	void create_r(void)
-	{	vector< AD<double> > ax(1), ay(1);
-		ax[0]  = 1;
-		CppAD::Independent(ax);
-		ay[0]  = 1.0 / ax[0];
-		r_ptr_ = new ADFun<double>(ax, ay);
-	}
-	void destroy_r(void)
-	{	delete r_ptr_; 
-		r_ptr_ = CPPAD_NULL;
+	// a utility to compute the union of two sets.
+	void my_union(
+		std::set<size_t>&         result  ,
+		const std::set<size_t>&   left    ,
+		const std::set<size_t>&   right   )
+	{	std::set<size_t> temp;
+		std::set_union(
+			left.begin()              ,
+			left.end()                ,
+			right.begin()             ,
+			right.end()               ,
+			std::inserter(temp, temp.begin())
+		);
+		result.swap(temp);
 	}
 
 	// ----------------------------------------------------------------------
 	// forward mode routine called by CppAD
-	bool atom_usead_1_forward(
+	bool user_simple_forward(
 		size_t                   id ,
 		size_t                    k ,
 		size_t                    n ,
@@ -86,27 +71,48 @@ namespace { // Begin empty namespace
 		assert( n == 1 );
 		assert( m == 1 );
 		assert( k == 0 || vx.size() == 0 );
-		bool ok = true;	
-		vector<double> x_p(1), y_p(1);
+		bool ok = false;	
+		double f, fp, fpp;
 
-		// check for special case
-		if( vx.size() > 0 )
-			vy[0] = vx[0];
+		// Must always define the case k = 0.
+		// Do not need case k if not using f.Forward(p, xp) for p >= k.
+		switch(k)
+		{	case 0:
+			// this case must  be implemented
+			if( vx.size() > 0 )
+				vy[0] = vx[0];
+			// y^0 = f( x^0 ) = 1 / x^0
+			ty[0] = 1. / tx[0];
+			ok    = true;
+			break;
 
-		// make sure r_ has proper lower order Taylor coefficients stored
-		// then compute ty[k]
-		for(size_t p = 0; p <= k; p++)
-		{	x_p[0] = tx[p];
-			y_p    = r_ptr_->Forward(p, x_p);
-			if( p == k )
-				ty[k] = y_p[0];
-			assert( p == k || ty[p] == y_p[0] );
+			case 1:
+			// needed if first order forward mode is used
+			assert( vx.size() == 0 );
+			// y^1 = f'( x^0 ) x^1
+			f     = ty[0];
+			fp    = - f / tx[0];
+			ty[1] = fp * tx[1]; 
+			ok    = true;
+			break;
+
+			case 2:
+			// needed if second order forward mode is used
+			assert( vx.size() == 0 );
+			// Y''(t) = X'(t)^\R{T} f''[X(t)] X'(t) + f'[X(t)] X''(t)
+			// 2 y^2  = x^1 * f''( x^0 ) x^1 + 2 f'( x^0 ) x^2
+			f     = ty[0];
+			fp    = - f / tx[0];
+			fpp   = - 2.0 * fp / tx[0];
+			ty[2] = tx[1] * fpp * tx[1] / 2.0 + fp * tx[2];
+			ok    = true;
+			break;
 		}
 		return ok;
 	}
 	// ----------------------------------------------------------------------
 	// reverse mode routine called by CppAD
-	bool atom_usead_1_reverse(
+	bool user_simple_reverse(
 		size_t                   id ,
 		size_t                    k ,
 		size_t                    n ,
@@ -116,81 +122,101 @@ namespace { // Begin empty namespace
 		vector<double>&          px ,
 		const vector<double>&    py
 	)
-	{	assert( id == 0 );
+	{	// Do not need case k if not using f.Reverse(k+1, w).
+		assert( id == 0 );
 		assert( n == 1 );
 		assert( m == 1 );
-		bool ok = true;	
-		vector<double> x_p(1), w(k+1), dw(k+1);
+		bool ok = false;	
 
-		// make sure r_ has proper forward mode coefficients 
-		size_t p;
-		for(p = 0; p <= k; p++)
-		{	x_p[0] = tx[p];
-# ifdef NDEBUG
-			r_ptr_->Forward(p, x_p);
-# else
-			vector<double> y_p(1);
-			y_p    = r_ptr_->Forward(p, x_p);
-			assert( ty[p] == y_p[0] );
-# endif
+		double f, fp, fpp, fppp;
+		switch(k)
+		{	case 0:
+			// needed if first order reverse mode is used
+			// reverse: F^0 ( tx ) = y^0 = f( x^0 )
+			f     = ty[0];
+			fp    = - f / tx[0];
+			px[0] = py[0] * fp;;
+			ok    = true;
+			break;
+
+			case 1:
+			// needed if second order reverse mode is used
+			// reverse: F^1 ( tx ) = y^1 = f'( x^0 ) x^1
+			f      = ty[0];
+			fp     = - f / tx[0];
+			fpp    = - 2.0 * fp / tx[0];
+			px[1]  = py[1] * fp;
+			px[0]  = py[1] * fpp * tx[1];
+			// reverse: F^0 ( tx ) = y^0 = f( x^0 );
+			px[0] += py[0] * fp;
+
+			ok     = true;
+			break;
+
+			case 2:
+			// needed if third order reverse mode is used
+			// reverse: F^2 ( tx ) = y^2 =
+			//            = x^1 * f''( x^0 ) x^1 / 2 + f'( x^0 ) x^2
+			f      = ty[0];
+			fp     = - f / tx[0];
+			fpp    = - 2.0 * fp / tx[0];
+			fppp   = - 3.0 * fpp / tx[0];
+			px[2]  = py[2] * fp;
+			px[1]  = py[2] * fpp * tx[1];
+			px[0]  = py[2] * tx[1] * fppp * tx[1] / 2.0 + fpp * tx[2]; 
+			// reverse: F^1 ( tx ) = y^1 = f'( x^0 ) x^1
+			px[1] += py[1] * fp;
+			px[0] += py[1] * fpp * tx[1];
+			// reverse: F^0 ( tx ) = y^0 = f( x^0 );
+			px[0] += py[0] * fp;
+
+			ok = true;
+			break;
 		}
-		for(p = 0; p <=k; p++)
-			w[p] = py[p];
-		dw = r_ptr_->Reverse(k+1, w);
-		for(p = 0; p <=k; p++)
-			px[p] = dw[p];
-
 		return ok;
 	}
 	// ----------------------------------------------------------------------
 	// forward Jacobian sparsity routine called by CppAD
-	bool atom_usead_1_for_jac_sparse(
+	bool user_simple_for_jac_sparse(
 		size_t                               id ,             
 		size_t                                n ,
 		size_t                                m ,
 		size_t                                q ,
 		const vector< std::set<size_t> >&     r ,
 		vector< std::set<size_t> >&           s )
-	{	assert( id == 0 );
+	{	// Can just return false if not using f.ForSparseJac
+		assert( id == 0 );
 		assert( n == 1 );
 		assert( m == 1 );
-		bool ok = true;
 
-		vector< std::set<size_t> > R(1), S(1);
-		R[0] = r[0];
-		S = r_ptr_->ForSparseJac(q, R);
-		s[0] = S[0];
+		// sparsity for S(x) = f'(x) * R is same as sparsity for R
+		s[0] = r[0];
 
-		return ok; 
+		return true; 
 	}
 	// ----------------------------------------------------------------------
 	// reverse Jacobian sparsity routine called by CppAD
-	bool atom_usead_1_rev_jac_sparse(
+	bool user_simple_rev_jac_sparse(
 		size_t                               id ,             
 		size_t                                n ,
 		size_t                                m ,
 		size_t                                q ,
 		vector< std::set<size_t> >&           r ,
 		const vector< std::set<size_t> >&     s )
-	{
+	{	// Can just return false if not using RevSparseJac.
 		assert( id == 0 );
 		assert( n == 1 );
 		assert( m == 1 );
-		bool ok = true;
 
-		vector< std::set<size_t> > R(q), S(q);
-		size_t p;
-		for(p = 0; p < q; p++)
-			S[p] = s[p];
-		R = r_ptr_->RevSparseJac(q, S);
-		for(p = 0; p < q; p++)
-			r[p] = R[p];
+		// sparsity for R(x) = S * f'(x) is same as sparsity for S
+		for(size_t p = 0; p < q; p++)
+			r[p] = s[p];
 
-		return ok; 
+		return true; 
 	}
 	// ----------------------------------------------------------------------
 	// reverse Hessian sparsity routine called by CppAD
-	bool atom_usead_1_rev_hes_sparse(
+	bool user_simple_rev_hes_sparse(
 		size_t                               id ,             
 		size_t                                n ,
 		size_t                                m ,
@@ -204,63 +230,45 @@ namespace { // Begin empty namespace
 		assert( id == 0 );
 		assert( n == 1 );
 		assert( m == 1 );
-		bool ok = true;
 
-		// compute sparsity pattern for T(x) = S(x) * f'(x) 
-		vector<bool> T(1), S(1);
-		S[0]   = s[0];
-		T      = r_ptr_->RevSparseJac(1, S);
-		t[0]   = T[0];
+		// sparsity for T(x) = S(x) * f'(x) is same as sparsity for S
+		t[0] = s[0];
+	
+		// V(x) = [ f'(x)^T * g''(y) * f'(x) + g'(y) * f''(x) ] * R 
+		// U(x) = g''(y) * f'(x) * R
+		// S(x) = g'(y)
+		
+		// back propagate the sparsity for U because derivative of
+		// user_simple may be non-zero
+		v[0] = u[0]; 
 
-		// compute sparsity pattern for A(x) = U(x)^T * f'(x)
-		vector<bool> Ut(q), A(q);
-		size_t p;
-		for(p = 0; p < q; p++)
-			Ut[p] = false;
-		std::set<size_t>::iterator itr;
-		for(itr = u[0].begin(); itr != u[0].end(); itr++)
-			Ut[*itr] = true;
-		A = r_ptr_-> RevSparseJac(q, Ut);
+		// convert forward Jacobian sparsity to Hessian sparsity
+		// because second derivative of user_simple may be non-zero
+		if( s[0] )
+			my_union(v[0], v[0], r[0] );
 
-		// compute sparsity pattern for H(x) = R^T * (S * F)''(x)
-		vector<bool> H(q), R(n);
-		for(p = 0; p < q; p++)
-			R[p] = false;
-		for(itr = r[0].begin(); itr != r[0].end(); itr++)
-			R[*itr] = true;
-		r_ptr_->ForSparseJac(q, R);
-		H = r_ptr_->RevSparseHes(q, S);
 
-		// compute sparsity pattern for V(x) = A(x)^T + H(x)^T
-		v[0].clear();
-		for(p = 0; p < q; p++)
-			if( A[p] | H[p] )
-				v[0].insert(p);
-
-		return ok;
+		return false;
 	}
 	// ---------------------------------------------------------------------
-	// Declare the AD<double> routine atom_usead_1(id, ax, ay)
+	// Declare the AD<double> routine user_simple(id, ax, ay)
 	CPPAD_USER_ATOMIC(
-		atom_usead_1                 , 
+		user_simple                 , 
 		CppAD::vector              ,
 		double                     , 
-		atom_usead_1_forward         , 
-		atom_usead_1_reverse         ,
-		atom_usead_1_for_jac_sparse  ,
-		atom_usead_1_rev_jac_sparse  ,
-		atom_usead_1_rev_hes_sparse  
+		user_simple_forward         , 
+		user_simple_reverse         ,
+		user_simple_for_jac_sparse  ,
+		user_simple_rev_jac_sparse  ,
+		user_simple_rev_hes_sparse  
 	)
 } // End empty namespace
 
-bool atom_usead_1(void)
+bool user_simple(void)
 {	bool ok = true;
+	using CppAD::AD;
 	using CppAD::NearEqual;
 	double eps = 10. * CppAD::numeric_limits<double>::epsilon();
-
-	// --------------------------------------------------------------------
-	// Create the ADFun<doulbe> r_
-	create_r();
 
 	// --------------------------------------------------------------------
 	// Create the function f(x)
@@ -278,16 +286,16 @@ bool atom_usead_1(void)
 	size_t m = 1;
 	vector< AD<double> > ay(m);
 
-	// call user function and store atom_usead_1(x) in au[0] 
+	// call user function and store user_simple(x) in au[0] 
 	vector< AD<double> > au(m);
 	size_t id = 0;           // not used
-	atom_usead_1(id, ax, au);	// u = 1 / x
+	user_simple(id, ax, au);	// u = 1 / x
 
-	// call user function and store atom_usead_1(u) in ay[0] 
-	atom_usead_1(id, au, ay);	// y = 1 / u = x
+	// call user function and store user_simple(u) in ay[0] 
+	user_simple(id, au, ay);	// y = 1 / u = x
 
 	// create f: x -> y and stop tape recording
-	ADFun<double> f(ax, ay);  // f(x) = x
+	CppAD::ADFun<double> f(ax, ay);  // f(x) = x
 
 	// --------------------------------------------------------------------
 	// Check forward mode results
@@ -348,10 +356,6 @@ bool atom_usead_1(void)
 	s3[0] = true;        // compute sparsity pattern for f[0]
 	h     = f.RevSparseJac(q, s3);
 	ok  &= h[0] == true; // second partial of f[0] w.r.t. x[0] may be non-zero
-
-	// -----------------------------------------------------------------
-	// Free all memory associated with the object r_ptr
-	destroy_r();
 
 	// -----------------------------------------------------------------
 	// Free all temporary work space associated with user_atomic objects. 

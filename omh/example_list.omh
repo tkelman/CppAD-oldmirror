@@ -94,8 +94,6 @@ $rref ad_output.cpp$$
 $rref Asin.cpp$$
 $rref atan2.cpp$$
 $rref atan.cpp$$
-$rref atom_usead_1.cpp$$
-$rref atom_usead_2.cpp$$
 $rref base_adolc.hpp$$
 $rref base_alloc.hpp$$
 $rref base_complex.hpp$$
@@ -163,8 +161,6 @@ $rref lu_invert.cpp$$
 $rref lu_ratio.cpp$$
 $rref lu_solve.cpp$$
 $rref lu_vec_ad_ok.cpp$$
-$rref mat_mul.cpp$$
-$rref mat_mul.hpp$$
 $rref mul.cpp$$
 $rref mul_eq.cpp$$
 $rref mul_level_adolc.cpp$$
@@ -195,7 +191,6 @@ $rref pow.cpp$$
 $rref pow_int.cpp$$
 $rref print_for_cout.cpp$$
 $rref print_for_string.cpp$$
-$rref reciprocal.cpp$$
 $rref reverse_any.cpp$$
 $rref reverse_one.cpp$$
 $rref reverse_three.cpp$$
@@ -238,6 +233,11 @@ $rref thread_alloc.cpp$$
 $rref thread_test.cpp$$
 $rref unary_minus.cpp$$
 $rref unary_plus.cpp$$
+$rref user_mat_mul.cpp$$
+$rref user_mat_mul.hpp$$
+$rref user_usead_1.cpp$$
+$rref user_usead_2.cpp$$
+$rref user_simple.cpp$$
 $rref user_tan.cpp$$
 $rref value.cpp$$
 $rref var2par.cpp$$

@@ -44,10 +44,14 @@ This section contains a list of the changes to CppAD during 2013
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
 
+$head 05-11$$
+The $cref/user_atomic examples/user_atomic/Example/$$ 
+names were all changed to begin with $code user$$.
+
 $head 05-04$$
 The option to compute 
 $cref/multiple orders/ForwardAny/x_p/Multiple Orders/$$ was added.
-The $cref atom_usead_2.cpp$$ example shows the need for this.
+The $cref user_usead_2.cpp$$ example shows the need for this.
 The problem is that a new atomic function interface needs to be designed
 with checkpointing as a particular application.
 Multiple order forward mode is the first step in this direction.
@@ -68,7 +72,6 @@ This has been fixed.
 $lend
 
 
-
 $head 04-27$$
 There was a problem using the output operator $code <<$$ with
 and $cref/eigen/cppad_eigen.hpp/$$ matrix of $code AD$$ elements.
@@ -84,7 +87,7 @@ from the scalar type to an $code int$$ and this is dangerous for AD types
 
 $head 04-26$$
 $list number$$
-The example $cref atom_usead_2.cpp$$ was completed. 
+The example $cref user_usead_2.cpp$$ was completed. 
 This is a more realistic, but also more complicated, example of
 using AD to computed derivatives inside an atomic function.
 $lnext
@@ -98,7 +101,7 @@ $lend
 $end
 
 $head 04-20$$
-The example $cref atom_usead_1.cpp$$ was added.
+The example $cref user_usead_1.cpp$$ was added.
 
 $head 04-16$$
 The script $cref get_ipopt.sh$$ has been added.

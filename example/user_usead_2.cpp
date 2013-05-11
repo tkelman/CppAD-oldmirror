@@ -11,7 +11,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
 /*
-$begin atom_usead_2.cpp$$
+$begin user_usead_2.cpp$$
 $spell
 	checkpoint
 	var
@@ -37,7 +37,7 @@ This is similar the
 $cref/checkpoint/checkpoint.cpp/$$.
 
 $code
-$verbatim%example/atom_usead_2.cpp%0%// BEGIN C++%// END C++%1%$$
+$verbatim%example/user_usead_2.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 $end
@@ -93,7 +93,7 @@ namespace { // Begin empty namespace
 
 	// ----------------------------------------------------------------------
 	// forward mode routine called by CppAD
-	bool atom_usead_2_forward(
+	bool user_usead_2_forward(
 		size_t                   id ,
 		size_t                    k ,
 		size_t                    n ,
@@ -154,7 +154,7 @@ namespace { // Begin empty namespace
 	}
 	// ----------------------------------------------------------------------
 	// reverse mode routine called by CppAD
-	bool atom_usead_2_reverse(
+	bool user_usead_2_reverse(
 		size_t                   id ,
 		size_t                    k ,
 		size_t                    n ,
@@ -201,7 +201,7 @@ namespace { // Begin empty namespace
 	}
 	// ----------------------------------------------------------------------
 	// forward Jacobian sparsity routine called by CppAD
-	bool atom_usead_2_for_jac_sparse(
+	bool user_usead_2_for_jac_sparse(
 		size_t                               id ,             
 		size_t                                n ,
 		size_t                                m ,
@@ -228,7 +228,7 @@ namespace { // Begin empty namespace
 	}
 	// ----------------------------------------------------------------------
 	// reverse Jacobian sparsity routine called by CppAD
-	bool atom_usead_2_rev_jac_sparse(
+	bool user_usead_2_rev_jac_sparse(
 		size_t                               id ,             
 		size_t                                n ,
 		size_t                                m ,
@@ -261,7 +261,7 @@ namespace { // Begin empty namespace
 	}
 	// ----------------------------------------------------------------------
 	// reverse Hessian sparsity routine called by CppAD
-	bool atom_usead_2_rev_hes_sparse(
+	bool user_usead_2_rev_hes_sparse(
 		size_t                               id ,             
 		size_t                                n ,
 		size_t                                m ,
@@ -323,20 +323,20 @@ namespace { // Begin empty namespace
 		return ok;
 	}
 	// ---------------------------------------------------------------------
-	// Declare the AD<double> routine atom_usead_2(id, ax, ay)
+	// Declare the AD<double> routine user_usead_2(id, ax, ay)
 	CPPAD_USER_ATOMIC(
-		atom_usead_2                 , 
+		user_usead_2                 , 
 		CppAD::vector              ,
 		double                     , 
-		atom_usead_2_forward         , 
-		atom_usead_2_reverse         ,
-		atom_usead_2_for_jac_sparse  ,
-		atom_usead_2_rev_jac_sparse  ,
-		atom_usead_2_rev_hes_sparse  
+		user_usead_2_forward         , 
+		user_usead_2_reverse         ,
+		user_usead_2_for_jac_sparse  ,
+		user_usead_2_rev_jac_sparse  ,
+		user_usead_2_rev_hes_sparse  
 	)
 } // End empty namespace
 
-bool atom_usead_2(void)
+bool user_usead_2(void)
 {	bool ok = true;
 	using CppAD::NearEqual;
 	double eps = 10. * CppAD::numeric_limits<double>::epsilon();
@@ -360,7 +360,7 @@ bool atom_usead_2(void)
 	ax[2]         = dt;
 	for(size_t i_step = 0; i_step < M; i_step++)
 	{	size_t id = 0;               // not used
-		atom_usead_2(id, ax, ay); 
+		user_usead_2(id, ax, ay); 
 		ax[0] = ay[0];
 		ax[1] = ay[1];
 	}

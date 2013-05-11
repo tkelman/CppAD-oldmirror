@@ -35,6 +35,7 @@ $spell
 	std
 	ctor
 	typedef
+	const
 $$
 
 $section Atomic Function Constructor$$
@@ -42,7 +43,7 @@ $section Atomic Function Constructor$$
 $head Syntax$$
 $icode%atomic_user afun%(%user_ctor_arg_list%)
 %$$
-$codei%atomic_base<%Base%>(%n%, %m%, %use_set%)
+$codei%atomic_base<%Base%>(%name%, %use_set%)
 %$$
 
 $head atomic_user$$
@@ -65,7 +66,7 @@ $codei%
 	class %atomic_user% : public CppAD::atomic_base<%Base%> {
 	public:
 		%atomic_user%(%user_ctor_arg_list%) 
-		: atomic_base<%Base%>(%n%, %m%, %use_set%)
+		: atomic_base<%Base%>(%name%, %use_set%)
 	%...%
 	};
 %$$
@@ -85,21 +86,14 @@ $subhead Base$$
 The template parameter determines the
 $icode Base$$ type for this $codei%AD<%Base%>%$$ atomic operation.
 
-$subhead n$$
+$subhead name$$
 This $icode atomic_base$$ constructor argument has prototype
 $codei%
-	size_t %n%
-%$$ 
-It must be greater than zero and
-specifies the dimension of the domain space for $latex y = f(x)$$.
-
-$subhead m$$
-This $icode atomic_base$$ constructor argument has prototype
-$codei%
-	size_t %m%
-%$$ 
-It must be greater than zero and
-specifies the dimension of the range space for $latex y = f(x)$$.
+	const char* %name%
+%$$
+It is the name for this atomic function and is used for error reporting.
+The suggested value $icode name$$ is $icode afun$$, i.e.,
+the name of the corresponding $icode atomic_user$$ object.
 
 $subhead use_set$$
 This $icode atomic_base$$ constructor argument has prototype
@@ -146,15 +140,23 @@ This class is used for defining an AD<Base> atomic operation y = f(x).
 template <class Base>
 class atomic_base {
 private:
-	/// dimension of the domain space for f; i.e., size of x.
-	const size_t n_;
-	/// dimension of the range space for f; i.e., y.
-	const size_t m_;
+	// -----------------------------------------------------
+	// constants
+	/// name for this atomic funciton (used for error reporting)
+	const std::string name_;
 	/// if true, use sets for sparsity patterns, otherwise use bools.
 	const bool   use_set_;
 	/// index of this object in the list of all objects (see list() below)
 	const size_t index_;
+	// -----------------------------------------------------
+	/// temporary work space used eval, declared here to avoid memory 
+	// allocation/deallocation for each call to eval
+	vector<bool>  eval_vx_[CPPAD_MAX_NUM_THREADS];
+	vector<bool>  eval_vy_[CPPAD_MAX_NUM_THREADS];
+	vector<Base>  eval_tx_[CPPAD_MAX_NUM_THREADS];
+	vector<Base>  eval_ty_[CPPAD_MAX_NUM_THREADS];
 
+	// -----------------------------------------------------
 	/// List of all the object in this class
 	/// (null pointer used for objects that have been deleted)
 	static std::vector<atomic_base *>& list(void)
@@ -172,18 +174,14 @@ public:
 	/*!
 	Constructor
 
-	\param n
-	dimension of domain space
-
-	\param m
-	dimension of range space
+	\param name
+	name used for error reporting
 
 	\param use_set
 	should sets (or bools) be used for sparsity patterns
 	*/
-	atomic_base(size_t n, size_t m, bool use_set) :
-	n_(n),
-	m_(m),
+	atomic_base(const char* name, bool use_set) :
+	name_(name),
 	use_set_(use_set),
 	index_( list().size() )
 	{	CPPAD_ASSERT_KNOWN(
@@ -195,13 +193,19 @@ public:
 	/// destructor informs CppAD that this atomic function with this index
 	/// has dropped out of scope by setting its pointer to null
 	~atomic_base(void)
-	{	CPPAD_ASSERT_UNKNOWN( list().szie() > index_ );
+	{	CPPAD_ASSERT_UNKNOWN( list().size() > index_ );
 		list()[index_] = CPPAD_NULL;
+	}
+	/// atomic_base function object corresponding to a certain index
+	static atomic_base* list(size_t index)
+	{	CPPAD_ASSERT_UNKNOWN( list().size() > index );
+		return list()[index];
 	}
 	
 /*
 -----------------------------------------------------------------------------
 $begin atomic_ad$$
+
 $spell
 	afun
 	checkpointing
@@ -214,7 +218,8 @@ $$
 $section Atomic Function AD Calls: eval, tape, algo$$
 
 $head Syntax$$
-$icode%ok% = %afun%.eval(%ax%, %ay%)
+$icode%ok% = %afun%(%ax%, %ay%, %id%)
+%ok% = %afun%.eval(%ax%, %ay%, %id%)
 %ok% = %afun%.tape(%ax%, %ay%)
 %ok% = %afun%.algo(%ax%, %ay%)%$$
 
@@ -234,7 +239,7 @@ at which an $codei%AD<%Base%>%$$ version of
 $latex y = f(x)$$ is to be evaluated; see 
 $cref/Base/atomic_ctor/atomic_base/Base/$$.
 
-$subhead ay$$
+$head ay$$
 This argument has prototype
 $codei%
 	%Vector%& %ay%
@@ -244,6 +249,19 @@ The input values of its elements do not matter.
 Upon return, it is an $codei%AD<%Base%>%$$ version of 
 $latex y = f(x)$$.
 
+$head id$$
+The $icode id$$ argument is optional and can only be used for
+$cref/user defined derivatives/atomic_base/User Defined Derivatives/$$.
+It is intended to pass extra information about this particular use of
+$icode afun$$.
+If the argument $icode id$$ is not present, the default value
+zero is used.
+This argument should not be present 
+(or must have the value zero) if $icode afun$$ is used for
+$cref/checkpointing/atomic_base/Checkpointing/$$.
+In this case, extra information must be passed as part of the
+$icode ax$$ vector.
+
 $head eval$$
 This function is defined by the
 $cref/atomic_base/atomic_ctor/atomic_base/$$ class.
@@ -251,6 +269,10 @@ Given $icode ax$$ it computes the corresponding value of $icode ay$$.
 If $codei%AD<%Base%>%$$ operations are being recorded,
 it enters the computation as an atomic operation in the recording;
 see $cref/start recording/Independent/Start Recording/$$.
+$codei%
+	%afun%(%ax%, %ay%, %id%)
+%$$
+is an alternative syntax for the $code eval$$ function.
 
 $head tape$$
 This function is used for 
@@ -280,6 +302,146 @@ using $codei%AD<%Base%>%$$ operations.
 
 $end
 -----------------------------------------------------------------------------
+*/
+template <class Vector>
+bool eval(
+	const Vector&  ax     ,
+	      Vector&  ay     ,
+	size_t         id = 0 )
+{	size_t i, j;
+	size_t n = ax.size();
+	size_t m = ay.size();
+# ifndef NDEBUG
+	bool ok;
+	std::string msg = "atomic_base: " + name_ + ".eval: ";
+	if( (n == 0) | (m == 0) )
+	{	msg += "ax.size() or ay.size() is zero";
+		CPPAD_ASSERT_KNOWN(false, msg.c_str() );
+	}
+# endif
+	size_t thread = thread_alloc::thread_num();
+	vector <Base>& tx  = eval_tx_[thread];
+	vector <Base>& ty  = eval_ty_[thread];
+	vector <bool>& vx  = eval_vx_[thread];
+	vector <bool>& vy  = eval_vy_[thread];
+	//
+	if( vx.size() != n )
+	{	vx.resize(n);
+		tx.resize(n);
+	}
+	if( vy.size() != m )
+	{	vy.resize(m);
+		ty.resize(m);
+	}
+	// 
+	// Determine tape corresponding to variables in ax
+	tape_id_t     tape_id  = 0;
+	ADTape<Base>* tape     = CPPAD_NULL;
+	for(j = 0; j < n; j++)
+	{	tx[j]  = ax[j].value_;
+		vx[j]  = Variable( ax[j] );
+		if( vx[j] )
+		{
+			if( tape_id == 0 )
+			{	tape    = ax[j].tape_this();
+				tape_id = ax[j].tape_id_;
+				CPPAD_ASSERT_UNKNOWN( tape != CPPAD_NULL );
+			}
+# ifndef NDEBUG
+			if( tape_id != ax[j].tape_id_ )
+			{	msg += name_ + 
+				": ax contains variables from different threads.";
+				CPPAD_ASSERT_KNOWN(false, msg.c_str());
+			}
+# endif
+		}
+	}
+	// Use zero order forward mode to compute values
+	size_t q = 0, p = 0;
+# ifdef NDEBUG
+	forward(q, p, vx, vy, tx, ty);  
+# else
+	ok = forward(q, p, vx, vy, tx, ty);  
+	if( ! ok )
+	{	msg += name_ + ": ok is false for "
+			"zero order forward mode calculation.";
+		CPPAD_ASSERT_KNOWN(false, msg.c_str());
+	}
+# endif
+	bool record_operation = false;
+	for(i = 0; i < m; i++)
+	{
+		// pass back values
+		ay[i].value_ = ty[i];
+
+		// initialize entire vector parameters (not in tape)
+		ay[i].tape_id_ = 0;
+		ay[i].taddr_   = 0;
+
+		// we need to record this operation if
+		// any of the eleemnts of ay are variables,
+		record_operation |= vy[i];
+	}
+# ifndef NDEBUG
+	if( record_operation & (tape == CPPAD_NULL) )
+	{	msg += 
+		"all elements of vx are false but vy contains a true element";
+		CPPAD_ASSERT_KNOWN(false, msg.c_str() );
+	}
+# endif
+	// if tape is not null, ay is on the tape
+	if( record_operation )
+	{
+		// Operator that marks beginning of this atomic operation
+		CPPAD_ASSERT_UNKNOWN( NumRes(UserOp) == 0 );
+		CPPAD_ASSERT_UNKNOWN( NumArg(UserOp) == 4 );
+		tape->Rec_.PutArg(index_, id, n, m);
+		tape->Rec_.PutOp(UserOp);
+
+		// Now put n operators, one for each element of arugment vector
+		CPPAD_ASSERT_UNKNOWN( NumRes(UsravOp) == 0 );
+		CPPAD_ASSERT_UNKNOWN( NumRes(UsrapOp) == 0 );
+		CPPAD_ASSERT_UNKNOWN( NumArg(UsravOp) == 1 );
+		CPPAD_ASSERT_UNKNOWN( NumArg(UsrapOp) == 1 );
+		for(j = 0; j < n; j++)
+		{	if( vx[j] )
+			{	// information for an argument that is a variable
+				tape->Rec_.PutArg(ax[j].taddr_);
+				tape->Rec_.PutOp(UsravOp);
+			}
+			else
+			{	// information for an arugment that is parameter
+				addr_t par = tape->Rec_.PutPar(ax[j].value_);
+				tape->Rec_.PutArg(par);
+				tape->Rec_.PutOp(UsrapOp);
+			}
+		}
+
+		// Now put m operators, one for each element of result vector
+		CPPAD_ASSERT_UNKNOWN( NumArg(UsrrpOp) == 1 );
+		CPPAD_ASSERT_UNKNOWN( NumRes(UsrrpOp) == 0 );
+		CPPAD_ASSERT_UNKNOWN( NumArg(UsrrvOp) == 0 );
+		CPPAD_ASSERT_UNKNOWN( NumRes(UsrrvOp) == 1 );
+		for(i = 0; i < m; i++)
+		{	if( vy[i] )
+			{	ay[i].taddr_    = tape->Rec_.PutOp(UsrrvOp);
+				ay[i].tape_id_  = tape_id;
+			}
+			else
+			{	addr_t par = tape->Rec_.PutPar(ay[i].value_);
+				tape->Rec_.PutArg(p);
+				tape->Rec_.PutOp(UsrrpOp);
+			}
+		}
+
+		// Put a duplicate UserOp at end of UserOp sequence
+		tape->Rec_.PutArg(index_, id, n, m);
+		tape->Rec_.PutOp(UserOp);
+	} 
+	return;
+}
+/*
+-----------------------------------------------------------------------------
 $begin atomic_forward$$
 $spell
 	afun
@@ -297,7 +459,7 @@ $$
 $section Atomic Forward Mode$$
 
 $head Syntax$$
-$icode%ok% = %afun%.forward(%q%, %p%, %vx%, %vy%, %tx%, %ty%)%$$
+$icode%ok% = %afun%.forward(%id%, %q%, %p%, %vx%, %vy%, %tx%, %ty%)%$$
 
 $head Purpose$$
 This virtual function is used by $cref/eval/atomic_ad/eval/$$
@@ -314,6 +476,15 @@ It can just return $icode%ok% == false%$$
 (and not compute anything) for values
 of $icode%p% > 0%$$ that are greater than those used by your
 $cref/forward/Forward/$$ mode calculations.
+
+$head id$$
+The argument $icode id$$ has prototype
+$codei%
+	size_t %id%
+%$$
+and is the value of
+$cref/id/atomic_ad/id/$$ in the corresponding call to 
+$cref/id/atomic_ad/eval/$$.
 
 $head q$$
 The argument $icode q$$ has prototype
@@ -463,12 +634,13 @@ $end
 -----------------------------------------------------------------------------
 */
 virtual bool forward(
+	size_t                    id ,
 	size_t                    q  ,
 	size_t                    p  ,
 	const vector<bool>&       vx ,
 	      vector<bool>&       vy ,
 	const vector<Base>&       tx ,
-	      vector<Base>&      ty )
+	      vector<Base>&       ty )
 {	return false; }
 /*
 -----------------------------------------------------------------------------
@@ -490,7 +662,7 @@ $spell
 $$
 
 $head Syntax$$
-$icode%ok% = %afun%.reverse(%p%, %tx%, %ty%, %px%, %py%)%$$
+$icode%ok% = %afun%.reverse(%id%, %p%, %tx%, %ty%, %px%, %py%)%$$
 
 $head Purpose$$
 This function is used by $cref/reverse/Reverse/$$ 
@@ -506,6 +678,15 @@ It can just return $icode%ok% == false%$$
 (and not compute anything) for values
 of $icode%p% > 0%$$ that are greater than those used by your
 $cref/reverse/Reverse/$$ mode calculations.
+
+$head id$$
+The argument $icode id$$ has prototype
+$codei%
+	size_t %id%
+%$$
+and is the value of
+$cref/id/atomic_ad/id/$$ in the corresponding call to 
+$cref/id/atomic_ad/eval/$$.
 
 $head p$$
 The argument $icode p$$ has prototype
@@ -639,6 +820,7 @@ $end
 -----------------------------------------------------------------------------
 */
 virtual bool reverse(
+	size_t                    id ,
 	size_t                    p  ,
 	const vector<Base>&       tx ,
 	const vector<Base>&       ty ,
@@ -663,7 +845,7 @@ $$
 $section Atomic Forward Jacobian Sparsity Patterns$$
 
 $head Syntax$$
-$icode%ok% = %afun%.for_sparse_jac(%q%, %r%, %s%)%$$
+$icode%ok% = %afun%.for_sparse_jac(%id%, %q%, %r%, %s%)%$$
 
 $head Purpose$$
 This function is used by $cref ForSparseJac$$ to compute
@@ -682,6 +864,15 @@ $cref/user defined derivatives/atomic_base/User Defined Derivatives/$$,
 and $cref ForSparseJac$$,
 this virtual function must be defined by the
 $cref/atomic_user/atomic_ctor/atomic_user/$$ class.
+
+$head id$$
+The argument $icode id$$ has prototype
+$codei%
+	size_t %id%
+%$$
+and is the value of
+$cref/id/atomic_ad/id/$$ in the corresponding call to 
+$cref/id/atomic_ad/eval/$$.
 
 $subhead q$$
 The argument $icode q$$ has prototype
@@ -722,6 +913,7 @@ $end
 -----------------------------------------------------------------------------
 */
 virtual bool for_sparse_jac(
+	size_t                                  id ,
 	size_t                                  q  ,
 	const vector< std::set<size_t> >&       r  ,
 	      vector< std::set<size_t> >&       s  )
@@ -744,7 +936,7 @@ $$
 $section Atomic Reverse Jacobian Sparsity Patterns$$
 
 $head Syntax$$
-$icode%ok% = %afun%.rev_sparse_jac(%q%, %r%, %s%)%$$
+$icode%ok% = %afun%.rev_sparse_jac(%id%, %q%, %r%, %s%)%$$
 
 $head Purpose$$
 This function is used by $cref RevSparseJac$$ to compute
@@ -763,6 +955,15 @@ $cref/user defined derivatives/atomic_base/User Defined Derivatives/$$,
 and $cref RevSparseJac$$,
 this virtual function must be defined by the
 $cref/atomic_user/atomic_ctor/atomic_user/$$ class.
+
+$head id$$
+The argument $icode id$$ has prototype
+$codei%
+	size_t %id%
+%$$
+and is the value of
+$cref/id/atomic_ad/id/$$ in the corresponding call to 
+$cref/id/atomic_ad/eval/$$.
 
 $subhead q$$
 The argument $icode q$$ has prototype
@@ -805,6 +1006,7 @@ $end
 -----------------------------------------------------------------------------
 */
 virtual bool rev_sparse_jac(
+	size_t                                  id ,
 	size_t                                  q  ,
 	      vector< std::set<size_t> >&       r  ,
 	const vector< std::set<size_t> >&       s  )
@@ -827,7 +1029,7 @@ $$
 $section Atomic Reverse Hessian Sparsity Patterns$$
 
 $head Syntax$$
-$icode%ok% = %afun%.rev_sparse_hes(%q%, %r%, %s%, %t%, %u%, %v%)%$$
+$icode%ok% = %afun%.rev_sparse_hes(%id%, %q%, %r%, %s%, %t%, %u%, %v%)%$$
 
 $head Purpose$$
 This function is used by $cref RevSparseHes$$ to compute
@@ -848,6 +1050,15 @@ $cref/user defined derivatives/atomic_base/User Defined Derivatives/$$,
 and $cref RevSparseHes$$,
 this virtual function must be defined by the
 $cref/atomic_user/atomic_ctor/atomic_user/$$ class.
+
+$head id$$
+The argument $icode id$$ has prototype
+$codei%
+	size_t %id%
+%$$
+and is the value of
+$cref/id/atomic_ad/id/$$ in the corresponding call to 
+$cref/id/atomic_ad/eval/$$.
 
 $subhead q$$
 The argument $icode q$$ has prototype
@@ -944,6 +1155,7 @@ $end
 -----------------------------------------------------------------------------
 */
 virtual bool rev_sparse_hes(
+	size_t                                  id ,
 	size_t                                  q  ,
 	const vector< std::set<size_t> >&       r  ,
 	const vector< std::set<size_t> >&       s  ,
@@ -951,32 +1163,6 @@ virtual bool rev_sparse_hes(
 	const vector< std::set<size_t> >&       u  ,
 	      vector< std::set<size_t> >&       v  )
 {	return false; }
-/*
--------------------------------------------------------------------------------
-$begin atomic_clear$$
-
-$section Free Static Memory$$
-
-$head Syntax$$
-$codei%atomic_base<%Base%>::clear()%$$
-
-$head Purpose$$
-User atomic functions hold onto static work space in order to
-increase speed by avoiding system memory allocation calls.
-The function call $codei%
-	user_atomic<%Base%>::clear()
-%$$ 
-makes to work space $cref/available/ta_available/$$ to
-for other uses by the same thread.
-This should be called when you are done using the 
-user atomic functions for a specific value of $icode Base$$.
-
-$subhead Restriction$$
-The user atomic $code clear$$ routine cannot be called
-while in $cref/parallel/ta_in_parallel/$$ execution mode.
-
-$end
-*/
 };
 
 /*! \} */

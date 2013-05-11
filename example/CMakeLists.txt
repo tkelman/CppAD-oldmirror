@@ -84,8 +84,6 @@ ADD_EXECUTABLE(example EXCLUDE_FROM_ALL example.cpp
 	asin.cpp
 	atan.cpp
 	atan2.cpp
-	atom_usead_1.cpp
-	atom_usead_2.cpp
 	base_alloc.hpp
 	base_require.cpp
 	bender_quad.cpp
@@ -140,8 +138,6 @@ ADD_EXECUTABLE(example EXCLUDE_FROM_ALL example.cpp
 	lu_vec_ad.cpp
 	lu_vec_ad.hpp
 	lu_vec_ad_ok.cpp
-	mat_mul.cpp
-	mat_mul.hpp
 	mul.cpp
 	mul_eq.cpp
 	mul_level.cpp
@@ -165,7 +161,6 @@ ADD_EXECUTABLE(example EXCLUDE_FROM_ALL example.cpp
 	pow.cpp
 	pow_int.cpp
 	print_for.cpp
-	reciprocal.cpp
 	reverse_any.cpp
 	reverse_one.cpp
 	reverse_three.cpp
@@ -196,7 +191,12 @@ ADD_EXECUTABLE(example EXCLUDE_FROM_ALL example.cpp
 	thread_alloc.cpp
 	unary_minus.cpp
 	unary_plus.cpp
+	user_mat_mul.cpp
+	user_mat_mul.hpp
+	user_simple.cpp
 	user_tan.cpp
+	user_usead_1.cpp
+	user_usead_2.cpp
 	value.cpp
 	var2par.cpp
 	vec_ad.cpp

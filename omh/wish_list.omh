@@ -56,14 +56,14 @@ See the $cref/problem/BenderQuad/Problem/$$ with the
 current $code BenderQuad$$ specifications.
 
 $head Checkpointing$$
-The $cref atom_usead_2.cpp$$ example shows how one could
+The $cref user_usead_2.cpp$$ example shows how one could
 create an atomic function using an $code ADFun$$ object.
 This could be made easy for the user and would be
 a good way to package checkpointing.
 
 $subhead Multiple Order Forward$$
 Multiple order forward mode would make this more efficient.
-As $cref atom_usead_2.cpp$$ stands, it has to recalculate the
+As $cref user_usead_2.cpp$$ stands, it has to recalculate the
 same forward mode information more than necessary.
 
 $subhead Iterator Interface$$
