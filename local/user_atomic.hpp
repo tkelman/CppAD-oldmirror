@@ -701,21 +701,21 @@ The user atomic $code clear$$ routine cannot be called
 while in $cref/parallel/ta_in_parallel/$$ execution mode.
 
 $children%
-	example/reciprocal.cpp%
-	example/atom_usead_1.cpp%
-	example/atom_usead_2.cpp%
+	example/user_simple.cpp%
+	example/user_usead_1.cpp%
+	example/user_usead_2.cpp%
 	example/user_tan.cpp%
-	example/mat_mul.cpp
+	example/user_mat_mul.cpp
 %$$
 $head Example$$
 
-$subhead Reciprocal$$
-The file $cref reciprocal.cpp$$ contains the simplest example and test
+$subhead Simple$$
+The file $cref user_simple.cpp$$ contains the simplest example and test
 of a user atomic operation.
 
 $subhead Use AD$$
 The examples 
-$cref atom_usead_1.cpp$$ and $cref atom_usead_2.cpp$$
+$cref user_usead_1.cpp$$ and $cref user_usead_2.cpp$$
 use AD to compute the derivatives 
 inside a user defined atomic function.
 This may have the advantage of reducing the size of the tape, because
@@ -726,7 +726,7 @@ The file $cref user_tan.cpp$$ contains an example and test
 implementation of the tangent function as a user atomic operation.
 
 $subhead Matrix Multiplication$$
-The file  $cref mat_mul.cpp$$ contains an example and test
+The file  $cref user_mat_mul.cpp$$ contains an example and test
 implementation of matrix multiplication a a user atomic operation.
 
 $end
