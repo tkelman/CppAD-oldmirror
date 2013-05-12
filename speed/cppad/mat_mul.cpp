@@ -114,7 +114,7 @@ bool link_mat_mul(
 				ax[j+n] = X[j];
 			}
 			// Y = X * X
-			user_mat_mul(info_id, ax, ay);
+			mat_mul(info_id, ax, ay);
 			Z[0] = 0.;
 			for(j = 0; j < n; j++)
 				Z[0] += ay[j];
@@ -149,7 +149,7 @@ bool link_mat_mul(
 				ax[j+n] = X[j];
 			}
 			// Y = X * X
-			user_mat_mul(info_id, ax, ay);
+			mat_mul(info_id, ax, ay);
 			Z[0] = 0.;
 			for(j = 0; j < n; j++)
 				Z[0] += ay[j];
