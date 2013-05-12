@@ -823,7 +823,7 @@ A new user_atomic object is generated each time the user invokes
 the CPPAD_USER_ATOMIC macro; see static object in that macro.
 */
 template <class Base>
-class user_atomic {
+class user_atomic : public atomic_base<Base> {
 	/// type for user routine that computes forward mode results
 	typedef bool (*F) (
 		size_t                  id ,
@@ -936,7 +936,8 @@ public:
 	static object \c List.
 	*/
 	user_atomic(const char* afun, F f, R r, FJS fjs, RJS rjs, RHS rhs) : 
-	name_(afun)
+	atomic_base<Base>(afun, true) // name = afun, use_set = true
+	, name_(afun)
 	, f_(f)
 	, r_(r)
 	, fjs_(fjs)

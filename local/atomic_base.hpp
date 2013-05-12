@@ -161,9 +161,14 @@ private:
 	/// (null pointer used for objects that have been deleted)
 	static std::vector<atomic_base *>& list(void)
 	{	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
-		std::vector<atomic_base *> list_;
+		static std::vector<atomic_base *> list_;
 		return list_;
 	}
+
+	/// Name corresponding to a base_atomic object
+	static const char* name(size_t index)
+	{	return list()[index]->name_.c_str(); }
+
 public:
 	/// make sure user does not invoke the default constructor
 	atomic_base(void)
@@ -174,14 +179,14 @@ public:
 	/*!
 	Constructor
 
-	\param name
+	\param name_in
 	name used for error reporting
 
 	\param use_set
 	should sets (or bools) be used for sparsity patterns
 	*/
-	atomic_base(const char* name, bool use_set) :
-	name_(name),
+	atomic_base(const char* name_in, bool use_set) :
+	name_(name_in),
 	use_set_(use_set),
 	index_( list().size() )
 	{	CPPAD_ASSERT_KNOWN(
@@ -218,8 +223,8 @@ $$
 $section Atomic Function AD Calls: eval, tape, algo$$
 
 $head Syntax$$
-$icode%ok% = %afun%(%ax%, %ay%, %id%)
-%ok% = %afun%.eval(%ax%, %ay%, %id%)
+$icode%afun%(%ax%, %ay%, %id%)
+%afun%.eval(%ax%, %ay%, %id%)
 %ok% = %afun%.tape(%ax%, %ay%)
 %ok% = %afun%.algo(%ax%, %ay%)%$$
 
@@ -304,7 +309,7 @@ $end
 -----------------------------------------------------------------------------
 */
 template <class Vector>
-bool eval(
+void eval(
 	const Vector&  ax     ,
 	      Vector&  ay     ,
 	size_t         id = 0 )
@@ -359,9 +364,9 @@ bool eval(
 	// Use zero order forward mode to compute values
 	size_t q = 0, p = 0;
 # ifdef NDEBUG
-	forward(q, p, vx, vy, tx, ty);  
+	forward(id, q, p, vx, vy, tx, ty);  
 # else
-	ok = forward(q, p, vx, vy, tx, ty);  
+	ok = forward(id, q, p, vx, vy, tx, ty);  
 	if( ! ok )
 	{	msg += name_ + ": ok is false for "
 			"zero order forward mode calculation.";
@@ -429,7 +434,7 @@ bool eval(
 			}
 			else
 			{	addr_t par = tape->Rec_.PutPar(ay[i].value_);
-				tape->Rec_.PutArg(p);
+				tape->Rec_.PutArg(par);
 				tape->Rec_.PutOp(UsrrpOp);
 			}
 		}
