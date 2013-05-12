@@ -1,6 +1,6 @@
 // $Id$
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-13 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -311,13 +311,21 @@ bool user_tan(void)
 	af[2] = az[0]; 
 
 	// create f: x -> f and stop tape recording
-	CppAD::ADFun<float> F(ax, af); 
+	CppAD::ADFun<float> F;
+	F.Dependent(ax, af); 
 
-	// check value 
+	// check function value 
 	float tan = std::tan(x0);
 	ok &= NearEqual(af[0] , tan,  eps, eps);
 	float tanh = std::tanh(x0);
 	ok &= NearEqual(af[1] , tanh,  eps, eps);
+
+	// check zero order forward
+	CppAD::vector<float> x(n), f(m);
+	x[0] = x0;
+	f    = F.Forward(0, x);
+	ok &= NearEqual(f[0] , tan,  eps, eps);
+	ok &= NearEqual(f[1] , tanh,  eps, eps);
 
 	// compute first partial of f w.r.t. x[0] using forward mode
 	CppAD::vector<float> dx(n), df(m);
@@ -399,7 +407,6 @@ bool user_tan(void)
 	ok  &= (h[0] == false);  // Hessian is zero
 
 	// check tanh results for a large value of x
-	CppAD::vector<float> x(n), f(m);
 	x[0]  = std::numeric_limits<float>::max() / two;
 	f     = F.Forward(0, x);
 	tanh  = 1.;

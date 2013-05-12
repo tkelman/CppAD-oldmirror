@@ -369,12 +369,13 @@ bool user_usead_2(void)
 	// y_0(t) = u_0 + t                   = u_0 + u_2
 	// y_1(t) = u_1 + u_0 * t + t^2 / 2   = u_1 + u_0 * u_2 + u_2^2 / 2
 	// where t = u_2
-	ADFun<double> f(au, ay); 
+	ADFun<double> f;
+	f.Dependent(au, ay); 
 
 	// --------------------------------------------------------------------
 	// Check forward mode results
 	//
-	// function values
+	// zero order forward
 	vector<double> up(n), yp(m);
 	size_t p  = 0;
 	double u0 = 0.5;

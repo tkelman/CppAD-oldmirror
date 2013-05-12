@@ -287,18 +287,25 @@ bool user_usead_1(void)
 	user_usead_1(id, au, ay);	// y = 1 / u = x
 
 	// create f: x -> y and stop tape recording
-	ADFun<double> f(ax, ay);  // f(x) = x
+	ADFun<double> f;
+	f.Dependent(ax, ay);  // f(x) = x
 
 	// --------------------------------------------------------------------
-	// Check forward mode results
+	// Check function value results
 	//
 	// check function value 
 	double check = x0;
 	ok &= NearEqual( Value(ay[0]) , check,  eps, eps);
 
-	// check first order forward mode
+	// check zero order forward mode
 	size_t p;
 	vector<double> x_p(n), y_p(m);
+	p      = 0;
+	x_p[0] = x0;
+	y_p    = f.Forward(p, x_p);
+	ok &= NearEqual(y_p[0] , check,  eps, eps);
+
+	// check first order forward mode
 	p      = 1;
 	x_p[0] = 1;
 	y_p    = f.Forward(p, x_p);

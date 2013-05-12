@@ -95,7 +95,8 @@ bool user_mat_mul(void)
 	ok &= ay[3] == (5*7 + 6*8); ok &= Parameter( ay[3] );
 	//----------------------------------------------------------------------
 	// use user_mat_mul to define a function g : X -> ay
-	CppAD::ADFun<double> G(X, ay);
+	CppAD::ADFun<double> G;
+	G.Dependent(X, ay);
 	// g(x) = [ x0*x2 + x1*x3 , x0*7 + x1*8 , 5*x2  + 6*x3  , 5*7 + 6*8 ]^T
 	//----------------------------------------------------------------------
 	// Test zero order forward mode evaluation of g(x)
