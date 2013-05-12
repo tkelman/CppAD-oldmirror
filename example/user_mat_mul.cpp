@@ -75,18 +75,18 @@ bool user_mat_mul(void)
 	*/
 
 	// The call back routines need to know the dimensions of the matrices.
-	// Store information about the matrix multiply for this call to user_mat_mul.
+	// Store information about the matrix multiply for this call to mat_mul.
 	call_info info;
 	info.nr_result = nr_result;
 	info.n_middle  = n_middle;
 	info.nc_result = nc_result;
-	// info.vx gets set by forward during call to user_mat_mul below
+	// info.vx gets set by forward during call to mat_mul below
 	assert( info.vx.size() == 0 ); 
 	size_t id      = info_.size();
 	info_.push_back(info);
 
 	// user defined AD<double> version of matrix multiply
-	user_mat_mul(id, ax, ay);
+	mat_mul(id, ax, ay);
 	//----------------------------------------------------------------------
 	// check AD<double>  results
 	ok &= ay[0] == (1*3 + 2*4); ok &= Variable( ay[0] );
@@ -94,7 +94,7 @@ bool user_mat_mul(void)
 	ok &= ay[2] == (5*3 + 6*4); ok &= Variable( ay[2] );
 	ok &= ay[3] == (5*7 + 6*8); ok &= Parameter( ay[3] );
 	//----------------------------------------------------------------------
-	// use user_mat_mul to define a function g : X -> ay
+	// use mat_mul to define a function g : X -> ay
 	CppAD::ADFun<double> G;
 	G.Dependent(X, ay);
 	// g(x) = [ x0*x2 + x1*x3 , x0*7 + x1*8 , 5*x2  + 6*x3  , 5*7 + 6*8 ]^T

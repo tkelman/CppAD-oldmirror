@@ -56,7 +56,7 @@ namespace { // Begin empty namespace
 	using CppAD::vector;
 
 	// ----------------------------------------------------------------------
-	// function that computes user_simple
+	// function that computes reciprocal
 	ADFun<double>* r_ptr_;
 	void create_r(void)
 	{	vector< AD<double> > ax(1), ay(1);
@@ -72,7 +72,7 @@ namespace { // Begin empty namespace
 
 	// ----------------------------------------------------------------------
 	// forward mode routine called by CppAD
-	bool user_usead_1_forward(
+	bool reciprocal_forward(
 		size_t                   id ,
 		size_t                    k ,
 		size_t                    n ,
@@ -106,7 +106,7 @@ namespace { // Begin empty namespace
 	}
 	// ----------------------------------------------------------------------
 	// reverse mode routine called by CppAD
-	bool user_usead_1_reverse(
+	bool reciprocal_reverse(
 		size_t                   id ,
 		size_t                    k ,
 		size_t                    n ,
@@ -144,7 +144,7 @@ namespace { // Begin empty namespace
 	}
 	// ----------------------------------------------------------------------
 	// forward Jacobian sparsity routine called by CppAD
-	bool user_usead_1_for_jac_sparse(
+	bool reciprocal_for_jac_sparse(
 		size_t                               id ,             
 		size_t                                n ,
 		size_t                                m ,
@@ -165,7 +165,7 @@ namespace { // Begin empty namespace
 	}
 	// ----------------------------------------------------------------------
 	// reverse Jacobian sparsity routine called by CppAD
-	bool user_usead_1_rev_jac_sparse(
+	bool reciprocal_rev_jac_sparse(
 		size_t                               id ,             
 		size_t                                n ,
 		size_t                                m ,
@@ -190,7 +190,7 @@ namespace { // Begin empty namespace
 	}
 	// ----------------------------------------------------------------------
 	// reverse Hessian sparsity routine called by CppAD
-	bool user_usead_1_rev_hes_sparse(
+	bool reciprocal_rev_hes_sparse(
 		size_t                               id ,             
 		size_t                                n ,
 		size_t                                m ,
@@ -240,16 +240,16 @@ namespace { // Begin empty namespace
 		return ok;
 	}
 	// ---------------------------------------------------------------------
-	// Declare the AD<double> routine user_usead_1(id, ax, ay)
+	// Declare the AD<double> routine reciprocal(id, ax, ay)
 	CPPAD_USER_ATOMIC(
-		user_usead_1                 , 
+		reciprocal                 , 
 		CppAD::vector              ,
 		double                     , 
-		user_usead_1_forward         , 
-		user_usead_1_reverse         ,
-		user_usead_1_for_jac_sparse  ,
-		user_usead_1_rev_jac_sparse  ,
-		user_usead_1_rev_hes_sparse  
+		reciprocal_forward         , 
+		reciprocal_reverse         ,
+		reciprocal_for_jac_sparse  ,
+		reciprocal_rev_jac_sparse  ,
+		reciprocal_rev_hes_sparse  
 	)
 } // End empty namespace
 
@@ -278,13 +278,13 @@ bool user_usead_1(void)
 	size_t m = 1;
 	vector< AD<double> > ay(m);
 
-	// call user function and store user_usead_1(x) in au[0] 
+	// call user function and store reciprocal(x) in au[0] 
 	vector< AD<double> > au(m);
 	size_t id = 0;           // not used
-	user_usead_1(id, ax, au);	// u = 1 / x
+	reciprocal(id, ax, au);	// u = 1 / x
 
-	// call user function and store user_usead_1(u) in ay[0] 
-	user_usead_1(id, au, ay);	// y = 1 / u = x
+	// call user function and store reciprocal(u) in ay[0] 
+	reciprocal(id, au, ay);	// y = 1 / u = x
 
 	// create f: x -> y and stop tape recording
 	ADFun<double> f;

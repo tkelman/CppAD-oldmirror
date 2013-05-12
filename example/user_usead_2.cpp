@@ -93,7 +93,7 @@ namespace { // Begin empty namespace
 
 	// ----------------------------------------------------------------------
 	// forward mode routine called by CppAD
-	bool user_usead_2_forward(
+	bool solve_ode_forward(
 		size_t                   id ,
 		size_t                    k ,
 		size_t                    n ,
@@ -154,7 +154,7 @@ namespace { // Begin empty namespace
 	}
 	// ----------------------------------------------------------------------
 	// reverse mode routine called by CppAD
-	bool user_usead_2_reverse(
+	bool solve_ode_reverse(
 		size_t                   id ,
 		size_t                    k ,
 		size_t                    n ,
@@ -201,7 +201,7 @@ namespace { // Begin empty namespace
 	}
 	// ----------------------------------------------------------------------
 	// forward Jacobian sparsity routine called by CppAD
-	bool user_usead_2_for_jac_sparse(
+	bool solve_ode_for_jac_sparse(
 		size_t                               id ,             
 		size_t                                n ,
 		size_t                                m ,
@@ -228,7 +228,7 @@ namespace { // Begin empty namespace
 	}
 	// ----------------------------------------------------------------------
 	// reverse Jacobian sparsity routine called by CppAD
-	bool user_usead_2_rev_jac_sparse(
+	bool solve_ode_rev_jac_sparse(
 		size_t                               id ,             
 		size_t                                n ,
 		size_t                                m ,
@@ -261,7 +261,7 @@ namespace { // Begin empty namespace
 	}
 	// ----------------------------------------------------------------------
 	// reverse Hessian sparsity routine called by CppAD
-	bool user_usead_2_rev_hes_sparse(
+	bool solve_ode_rev_hes_sparse(
 		size_t                               id ,             
 		size_t                                n ,
 		size_t                                m ,
@@ -323,16 +323,16 @@ namespace { // Begin empty namespace
 		return ok;
 	}
 	// ---------------------------------------------------------------------
-	// Declare the AD<double> routine user_usead_2(id, ax, ay)
+	// Declare the AD<double> routine solve_ode(id, ax, ay)
 	CPPAD_USER_ATOMIC(
-		user_usead_2                 , 
-		CppAD::vector              ,
-		double                     , 
-		user_usead_2_forward         , 
-		user_usead_2_reverse         ,
-		user_usead_2_for_jac_sparse  ,
-		user_usead_2_rev_jac_sparse  ,
-		user_usead_2_rev_hes_sparse  
+		solve_ode                 , 
+		CppAD::vector             ,
+		double                    , 
+		solve_ode_forward         , 
+		solve_ode_reverse         ,
+		solve_ode_for_jac_sparse  ,
+		solve_ode_rev_jac_sparse  ,
+		solve_ode_rev_hes_sparse  
 	)
 } // End empty namespace
 
@@ -360,7 +360,7 @@ bool user_usead_2(void)
 	ax[2]         = dt;
 	for(size_t i_step = 0; i_step < M; i_step++)
 	{	size_t id = 0;               // not used
-		user_usead_2(id, ax, ay); 
+		solve_ode(id, ax, ay); 
 		ax[0] = ay[0];
 		ax[1] = ay[1];
 	}

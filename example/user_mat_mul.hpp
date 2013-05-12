@@ -76,7 +76,7 @@ namespace {                      // Begin empty namespace
 
 $head Extra Call Information$$ 
 $codep */
-	// Information we will attach to each user_mat_mul call
+	// Information we will attach to each mat_mul call
 	struct call_info {
 		size_t nr_result;
 		size_t n_middle;
@@ -209,7 +209,7 @@ $head CppAD User Atomic Callback Functions$$
 $codep */
 	// ----------------------------------------------------------------------
 	// forward mode routine called by CppAD
-	bool user_mat_mul_forward(
+	bool mat_mul_forward(
 		size_t                   id ,
 		size_t                    k ,
 		size_t                    n ,
@@ -222,7 +222,7 @@ $codep */
 	{	size_t i, j, ell;
 		get_info(id, k, n, m);
 
-		// check if this is during the call to user_mat_mul(id, ax, ay)
+		// check if this is during the call to mat_mul(id, ax, ay)
 		if( vx.size() > 0 )
 		{	assert( k == 0 && vx.size() > 0 );
 
@@ -270,7 +270,7 @@ $codep */
 	}
 	// ----------------------------------------------------------------------
 	// reverse mode routine called by CppAD
-	bool user_mat_mul_reverse(
+	bool mat_mul_reverse(
 		size_t                   id ,
 		size_t                    k ,
 		size_t                    n ,
@@ -300,7 +300,7 @@ $codep */
 
 	// ----------------------------------------------------------------------
 	// forward Jacobian sparsity routine called by CppAD
-	bool user_mat_mul_for_jac_sparse(
+	bool mat_mul_for_jac_sparse(
 		size_t                               id ,             
 		size_t                                n ,
 		size_t                                m ,
@@ -331,7 +331,7 @@ $codep */
 	}
 	// ----------------------------------------------------------------------
 	// reverse Jacobian sparsity routine called by CppAD
-	bool user_mat_mul_rev_jac_sparse(
+	bool mat_mul_rev_jac_sparse(
 		size_t                               id ,             
 		size_t                                n ,
 		size_t                                m ,
@@ -364,7 +364,7 @@ $codep */
 	}
 	// ----------------------------------------------------------------------
 	// reverse Hessian sparsity routine called by CppAD
-	bool user_mat_mul_rev_hes_sparse(
+	bool mat_mul_rev_hes_sparse(
 		size_t                               id ,             
 		size_t                                n ,
 		size_t                                m ,
@@ -421,21 +421,21 @@ $codep */
 	}
 /* $$
 
-$head Declare user_mat_mul Function$$
-Declare the $code AD<double>$$ routine $codei%user_mat_mul(%id%, %ax%, %ay%)%$$
+$head Declare mat_mul Function$$
+Declare the $code AD<double>$$ routine $codei%mat_mul(%id%, %ax%, %ay%)%$$
 and end empty namespace
 (we could use any $cref/simple vector template class/SimpleVector/$$
 instead of $code CppAD::vector$$):
 $codep */
 	CPPAD_USER_ATOMIC(
-		user_mat_mul                 , 
+		mat_mul                 , 
 		CppAD::vector           ,
 		double                  , 
-		user_mat_mul_forward         , 
-		user_mat_mul_reverse         ,
-		user_mat_mul_for_jac_sparse  ,
-		user_mat_mul_rev_jac_sparse  ,
-		user_mat_mul_rev_hes_sparse  
+		mat_mul_forward         , 
+		mat_mul_reverse         ,
+		mat_mul_for_jac_sparse  ,
+		mat_mul_rev_jac_sparse  ,
+		mat_mul_rev_hes_sparse  
 	)
 } // End empty namespace
 /* $$
