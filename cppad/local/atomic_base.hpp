@@ -92,7 +92,7 @@ $codei%
 	const char* %name%
 %$$
 It is the name for this atomic function and is used for error reporting.
-The suggested value $icode name$$ is $icode afun$$, i.e.,
+The suggested value for $icode name$$ is $icode afun$$, i.e.,
 the name of the corresponding $icode atomic_user$$ object.
 
 $subhead use_set$$
@@ -307,6 +307,27 @@ using $codei%AD<%Base%>%$$ operations.
 
 $end
 -----------------------------------------------------------------------------
+*/
+/*!
+Function object syntax for eval functions.
+
+\copydetails atomic_base::eval.
+*/
+template <class Vector>
+void operator()(const Vector& ax, Vector& ay, size_t id = 0)
+{	this->eval(ax, ay, id);
+}
+/*!
+Evaluate an atomic function and, if necessary, put it in the tape.
+
+\param ax [in]
+arugment value for this function.
+
+\param ay [out]
+result value for this function.
+
+\param id [in]
+possible auxillary information (not used be atomic_base).
 */
 template <class Vector>
 void eval(
