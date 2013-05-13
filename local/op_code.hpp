@@ -3,7 +3,7 @@
 # define CPPAD_OP_CODE_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-13 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -596,7 +596,7 @@ void printOp(
 
 		case UserOp:
 		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 4 );
-		{	const char* name = user_atomic<Base>::name(ind[0]);
+		{	const char* name = atomic_base<Base>::name(ind[0]);
 			printOpField(os, " f=",   name, ncol);
 			printOpField(os, " i=", ind[1], ncol);
 			printOpField(os, " n=", ind[2], ncol);

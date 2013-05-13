@@ -1302,12 +1302,14 @@ while in $cref/parallel/ta_in_parallel/$$ execution mode.
 $end
 ------------------------------------------------------------------------------
 */
-
+/*!
+Free all thread_alloc static memory held by atomic_base (avoids reallocations).
+*/
 /// Free vector memory used by this class (work space)
 static void clear(void)
 {	CPPAD_ASSERT_KNOWN(
 		! thread_alloc::in_parallel() ,
-		"cannot use user_atomic clear during parallel execution"
+		"cannot use atomic_base clear during parallel execution"
 	);
 	size_t i = list().size();
 	while(i--)

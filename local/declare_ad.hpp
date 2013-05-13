@@ -38,7 +38,6 @@ namespace CppAD {
 	template <class Base> class discrete;
 	template <class Base> class player;
 	template <class Base> class recorder;
-	template <class Base> class user_atomic;
 	template <class Base> class VecAD;
 	template <class Base> class VecAD_reference;
 

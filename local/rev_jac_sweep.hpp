@@ -141,7 +141,7 @@ void RevJacSweep(
 	size_set::iterator set_end;  // end of iterator sequence
 	vector< size_set > user_r;   // sparsity pattern for the argument x
 	vector< size_set > user_s;   // sparisty pattern for the result y
-	size_t user_index = 0;       // indentifier for this user_atomic operation
+	size_t user_index = 0;       // indentifier for this atomic operation
 	size_t user_id    = 0;       // user identifier for this call to operator
 	size_t user_i     = 0;       // index in result vector
 	size_t user_j     = 0;       // index in argument vector
