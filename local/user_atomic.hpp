@@ -869,8 +869,6 @@ class user_atomic : public atomic_base<Base> {
 		vector< std::set<size_t> >&       v 
 	);
 private:
-	/// users name for the AD version of this atomic operation
-	const std::string     name_;
 	/// user's implementation of forward mode
 	const F                  f_;
 	/// user's implementation of reverse mode
@@ -881,28 +879,13 @@ private:
 	const RJS              rjs_;
 	/// user's implementation of reverse Hessian sparsity calculations
 	const RHS              rhs_;
-	/// index of this object in the vector of all objects in this class
-	const size_t         index_;
 
-	/// temporary work space used to avoid memory allocation/deallocation
-	/// extra information to be passed to the functions
-	vector<bool>            vx_[CPPAD_MAX_NUM_THREADS];
-	vector<bool>            vy_[CPPAD_MAX_NUM_THREADS];
-	vector<Base>             x_[CPPAD_MAX_NUM_THREADS];
-	vector<Base>             y_[CPPAD_MAX_NUM_THREADS];
-
-	/// List of all objects in this class.
-	static std::vector<user_atomic *>& List(void)
-	{	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
-		static std::vector<user_atomic *> list;
-		return list;
-	}
 public:
 	/*!
  	Constructor called for each invocation of CPPAD_USER_ATOMIC.
 
 	Put this object in the list of all objects for this class and set
-	the constant private data name_, f_, r_, and index_.
+	the constant private data f_, r_, fjs_, rjs_, rhs_.
 
 	\param afun
 	is the user's name for the AD version of this atomic operation.
@@ -924,24 +907,16 @@ public:
 
 	\par
 	This constructor can not be used in parallel mode because
-	the object it constructs is static. In addition, it changes the
-	static object \c List.
+	atomic_base has this restriction.
 	*/
 	user_atomic(const char* afun, F f, R r, FJS fjs, RJS rjs, RHS rhs) : 
 	atomic_base<Base>(afun, true) // name = afun, use_set = true
-	, name_(afun)
 	, f_(f)
 	, r_(r)
 	, fjs_(fjs)
 	, rjs_(rjs)
 	, rhs_(rhs)
-	, index_( List().size() )
-	{	CPPAD_ASSERT_KNOWN(
-			! thread_alloc::in_parallel() ,
-			"First call to the function *afun is in parallel mode."
-		);
-		List().push_back(this);
-	}
+	{ }
 
 	/*!
  	Implement the user call to <tt>afun(id, ax, ay)</tt>.
@@ -970,10 +945,6 @@ public:
 		this->eval(ax, ay, id);
 		return;
 	}
-
-	/// Name corresponding to a user_atomic object
-	static const char* name(size_t index)
-	{	return List()[index]->name_.c_str(); }
 	/*!
  	Link from user_atomic to forward mode 
 
@@ -1086,29 +1057,6 @@ public:
 		CPPAD_ASSERT_UNKNOWN( t.size() == n );
 		bool ok = rhs_(id, n, m, q, r, s, t, u, v);
 		return ok;
-	}
-
-	/// Free static CppAD::vector memory used by this class (work space)
-	static void clear(void)
-	{	CPPAD_ASSERT_KNOWN(
-			! thread_alloc::in_parallel() ,
-			"cannot use user_atomic clear during parallel execution"
-		);
-		size_t i = List().size();
-		while(i--)
-		{	size_t thread = CPPAD_MAX_NUM_THREADS;
-			while(thread--)
-			{
-				user_atomic* op = List()[i];
-				op->vx_[thread].clear();
-				op->vy_[thread].clear();
-				op->x_[thread].clear();
-				op->y_[thread].clear();
-			}
-		}
-
-		atomic_base<Base>::clear();
-		return;
 	}
 };
 
