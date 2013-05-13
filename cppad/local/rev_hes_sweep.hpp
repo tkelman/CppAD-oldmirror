@@ -177,7 +177,7 @@ void RevHesSweep(
 	vector<bool>       user_t;   // reverse Jacobian sparsity for x
 	vector< size_set > user_u;   // reverse Hessian sparsity for y
 	vector< size_set > user_v;   // reverse Hessian sparsity for x
-	size_t user_index = 0;       // indentifier for this user_atomic operation
+	size_t user_index = 0;       // indentifier for this atomic operation
 	size_t user_id    = 0;       // user identifier for this call to operator
 	size_t user_i     = 0;       // index in result vector
 	size_t user_j     = 0;       // index in argument vector

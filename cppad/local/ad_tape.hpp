@@ -32,7 +32,6 @@ class ADTape {
 	friend class ADFun<Base>;
 	friend class atomic_base<Base>;
 	friend class discrete<Base>;
-	friend class user_atomic<Base>;
 	friend class VecAD<Base>;
 	friend class VecAD_reference<Base>;
 
