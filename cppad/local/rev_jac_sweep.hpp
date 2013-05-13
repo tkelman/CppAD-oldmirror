@@ -514,9 +514,9 @@ void RevJacSweep(
 				user_id    = arg[1];
 				user_n     = arg[2];
 				user_m     = arg[3];
-				if(user_r.size() < user_n )
+				if(user_r.size() != user_n )
 					user_r.resize(user_n);
-				if(user_s.size() < user_m )
+				if(user_s.size() != user_m )
 					user_s.resize(user_m);
 				user_j     = user_n;
 				user_i     = user_m;
@@ -571,8 +571,10 @@ void RevJacSweep(
 			user_s[user_i].clear();
 			if( user_i == 0 )
 			{	// call users function for this operation
-				user_atomic<Base>::rev_jac_sparse(user_index, user_id,
-					user_n, user_m, user_q, user_r, user_s
+				atomic_base<Base>* atom =
+					atomic_base<Base>::list(user_index);
+				atom->rev_sparse_jac(
+					user_id, user_q, user_r, user_s
 				);
 				user_state = user_arg;
 			}
@@ -592,8 +594,10 @@ void RevJacSweep(
 			}
 			if( user_i == 0 )
 			{	// call users function for this operation
-				user_atomic<Base>::rev_jac_sparse(user_index, user_id,
-					user_n, user_m, user_q, user_r, user_s
+				atomic_base<Base>* atom =
+					atomic_base<Base>::list(user_index);
+				atom->rev_sparse_jac(
+					user_id, user_q, user_r, user_s
 				);
 				user_state = user_arg;
 			}

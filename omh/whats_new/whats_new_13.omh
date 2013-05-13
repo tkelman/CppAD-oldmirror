@@ -44,6 +44,10 @@ This section contains a list of the changes to CppAD during 2013
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
 
+$head 05-12$$
+The sparse hessian example in $cref user_simple.cpp$$ was not
+being run. This has been fixed.
+
 $head 05-11$$
 The $cref/user_atomic examples/user_atomic/Example/$$ 
 names were all changed to begin with $code user$$.

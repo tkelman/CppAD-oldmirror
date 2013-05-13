@@ -159,8 +159,9 @@ size_t forward_sweep(
 	}
 
 	// Work space used by UserOp. Note User assumes q = p.
-	const size_t user_k  = p;    // order of this use forward mode calculation
-	const size_t user_k1 = p+1;  // number of orders for this user calculation
+	const size_t user_p1 = p+1;  // number of orders for this user calculation
+	vector<bool> user_vx;        // empty vector
+	vector<bool> user_vy;        // empty vector
 	vector<Base> user_tx;        // argument vector Taylor coefficients 
 	vector<Base> user_ty;        // result vector Taylor coefficients 
 	vector<size_t> user_iy;      // variable indices for results vector
@@ -553,11 +554,6 @@ size_t forward_sweep(
 
 			case UserOp:
 			// start or end an atomic operation sequence
-			CPPAD_ASSERT_KNOWN(
-				q == p,
-				"Operation sequence for this ADFun has atomic functions\n"
-				"so cannot use Forward(p, x_p) with x_p.size() > n"
-			);
 			CPPAD_ASSERT_UNKNOWN( NumRes( UserOp ) == 0 );
 			CPPAD_ASSERT_UNKNOWN( NumArg( UserOp ) == 4 );
 			if( user_state == user_start )
@@ -565,11 +561,11 @@ size_t forward_sweep(
 				user_id    = arg[1];
 				user_n     = arg[2];
 				user_m     = arg[3];
-				if(user_tx.size() < user_n * user_k1)
-					user_tx.resize(user_n * user_k1);
-				if(user_ty.size() < user_m * user_k1)
-					user_ty.resize(user_m * user_k1);
-				if(user_iy.size() < user_m)
+				if(user_tx.size() != user_n * user_p1)
+					user_tx.resize(user_n * user_p1);
+				if(user_ty.size() != user_m * user_p1)
+					user_ty.resize(user_m * user_p1);
+				if(user_iy.size() != user_m)
 					user_iy.resize(user_m);
 				user_j     = 0;
 				user_i     = 0;
@@ -584,12 +580,16 @@ size_t forward_sweep(
 				user_state = user_start;
 
 				// call users function for this operation
-				user_atomic<Base>::forward(user_index, user_id,
-					user_k, user_n, user_m, user_tx, user_ty
+				atomic_base<Base>* atom = 
+					atomic_base<Base>::list(user_index);
+				atom->forward(
+					user_id, q, p, user_vx, user_vy, user_tx, user_ty
 				);
-				for(i = 0; i < user_m; i++) if( user_iy[i] > 0 )
-					Taylor[ user_iy[i] * J + user_k ] = 
-						user_ty[ i * user_k1 + user_k ];
+				for(i = 0; i < user_m; i++) 
+					if( user_iy[i] > 0 )
+						for(ell = q; ell <= p; ell++)
+							Taylor[ user_iy[i] * J + ell ] = 
+								user_ty[ i * user_p1 + ell ];
 			}
 			break;
 
@@ -599,9 +599,9 @@ size_t forward_sweep(
 			CPPAD_ASSERT_UNKNOWN( user_state == user_arg );
 			CPPAD_ASSERT_UNKNOWN( user_j < user_n );
 			CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) < num_par );
-			user_tx[user_j * user_k1 + 0] = parameter[ arg[0]];
-			for(ell = 1; ell < user_k1; ell++)
-				user_tx[user_j * user_k1 + ell] = Base(0);
+			user_tx[user_j * user_p1 + 0] = parameter[ arg[0]];
+			for(ell = 1; ell < user_p1; ell++)
+				user_tx[user_j * user_p1 + ell] = Base(0);
 			++user_j;
 			if( user_j == user_n )
 				user_state = user_ret;
@@ -613,8 +613,8 @@ size_t forward_sweep(
 			CPPAD_ASSERT_UNKNOWN( user_state == user_arg );
 			CPPAD_ASSERT_UNKNOWN( user_j < user_n );
 			CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) <= i_var );
-			for(ell = 0; ell < user_k1; ell++)
-				user_tx[user_j * user_k1 + ell] = Taylor[ arg[0] * J + ell];
+			for(ell = 0; ell < user_p1; ell++)
+				user_tx[user_j * user_p1 + ell] = Taylor[ arg[0] * J + ell];
 			++user_j;
 			if( user_j == user_n )
 				user_state = user_ret;
@@ -626,9 +626,9 @@ size_t forward_sweep(
 			CPPAD_ASSERT_UNKNOWN( user_state == user_ret );
 			CPPAD_ASSERT_UNKNOWN( user_i < user_m );
 			user_iy[user_i] = 0;
-			user_ty[user_i * user_k1 + 0] = parameter[ arg[0]];
-			for(ell = 1; ell < user_k; ell++)
-				user_ty[user_i * user_k1 + ell] = Base(0);
+			user_ty[user_i * user_p1 + 0] = parameter[ arg[0]];
+			for(ell = 1; ell < q; ell++)
+				user_ty[user_i * user_p1 + ell] = Base(0);
 			user_i++;
 			if( user_i == user_m )
 				user_state = user_end;
@@ -640,8 +640,8 @@ size_t forward_sweep(
 			CPPAD_ASSERT_UNKNOWN( user_state == user_ret );
 			CPPAD_ASSERT_UNKNOWN( user_i < user_m );
 			user_iy[user_i] = i_var;
-			for(ell = 0; ell < user_k; ell++)
-				user_ty[user_i * user_k1 + ell] = Taylor[ i_var * J + ell];
+			for(ell = 0; ell < q; ell++)
+				user_ty[user_i * user_p1 + ell] = Taylor[ i_var * J + ell];
 			user_i++;
 			if( user_i == user_m )
 				user_state = user_end;

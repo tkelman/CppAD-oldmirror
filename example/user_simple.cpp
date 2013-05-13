@@ -223,9 +223,9 @@ namespace { // Begin empty namespace
 		size_t                                q ,
 		const vector< std::set<size_t> >&     r ,
 		const vector<bool>&                   s ,
-		vector<bool>&                         t ,
+		      vector<bool>&                   t ,
 		const vector< std::set<size_t> >&     u ,
-		vector< std::set<size_t> >&           v )
+		      vector< std::set<size_t> >&     v )
 	{	// Can just return false if not use RevSparseHes.
 		assert( id == 0 );
 		assert( n == 1 );
@@ -361,7 +361,7 @@ bool user_simple(void)
 	// Hessian sparsity (using previous ForSparseJac call) 
 	CppAD::vectorBool s3(m), h(q * n);
 	s3[0] = true;        // compute sparsity pattern for f[0]
-	h     = f.RevSparseJac(q, s3);
+	h     = f.RevSparseHes(q, s3);
 	ok  &= h[0] == true; // second partial of f[0] w.r.t. x[0] may be non-zero
 
 	// -----------------------------------------------------------------

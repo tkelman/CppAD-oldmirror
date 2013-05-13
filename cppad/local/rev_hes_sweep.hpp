@@ -563,13 +563,13 @@ void RevHesSweep(
 				user_id    = arg[1];
 				user_n     = arg[2];
 				user_m     = arg[3];
-				if(user_ix.size() < user_n)
+				if(user_ix.size() != user_n)
 				{	user_ix.resize(user_n);
 					user_r.resize(user_n);
 					user_t.resize(user_n);
 					user_v.resize(user_n);
 				}
-				if(user_s.size() < user_m)
+				if(user_s.size() != user_m)
 				{	user_s.resize(user_m);
 					user_u.resize(user_m);
 				}
@@ -586,8 +586,9 @@ void RevHesSweep(
 				user_state = user_end;
 
 				// call users function for this operation
-				user_atomic<Base>::rev_hes_sparse(user_index, user_id,
-					user_n, user_m, 
+				atomic_base<Base>* atom =
+					atomic_base<Base>::list(user_index);
+				atom->rev_sparse_hes(user_id,
 					user_q, user_r, user_s, user_t, user_u, user_v
 				);
 				for(j = 0; j < user_n; j++) if( user_ix[j] > 0 )

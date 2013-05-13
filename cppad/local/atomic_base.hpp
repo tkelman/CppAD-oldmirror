@@ -638,6 +638,33 @@ $latex \[
 $end
 -----------------------------------------------------------------------------
 */
+/*!
+Link from atomic_base to forward mode 
+
+\param id [in]
+extra information vector that is just passed through by CppAD,
+and possibly used by user's routines.
+
+\param q [in]
+lowerest order for this forward mode calculation.
+
+\param p [in]
+highest order for this forward mode calculation.
+
+\param vx [in]
+if size not zero, which components of \c x are variables
+
+\param vy [out]
+if size not zero, which components of \c y are variables
+
+\param tx [in]
+Taylor coefficients corresponding to \c x for this calculation.
+
+\param ty [out]
+Taylor coefficient corresponding to \c y for this calculation
+
+See the forward mode in user's documentation for base_atomic 
+*/
 virtual bool forward(
 	size_t                    id ,
 	size_t                    q  ,
@@ -824,6 +851,30 @@ otherwise it failed.
 $end
 -----------------------------------------------------------------------------
 */
+/*!
+Link from reverse mode sweep to users routine.
+
+\param id [in]
+extra information vector that is just passed through by CppAD,
+and possibly used by user's routines.
+
+\param p [in]
+highest order for this reverse mode calculation.
+
+\param tx [in]
+Taylor coefficients corresponding to \c x for this calculation.
+
+\param ty [in]
+Taylor coefficient corresponding to \c y for this calculation
+
+\param px [out]
+Partials w.r.t. the \c x Taylor coefficients.
+
+\param py [in]
+Partials w.r.t. the \c y Taylor coefficients.
+
+See atomic_reverse mode use documentation 
+*/
 virtual bool reverse(
 	size_t                    id ,
 	size_t                    p  ,
@@ -917,6 +968,22 @@ otherwise it failed.
 $end
 -----------------------------------------------------------------------------
 */
+/*!
+Link from forward Jacobian sparsity sweep to atomic_base
+
+\param id
+extra information vector that is just passed through by CppAD,
+and possibly used by user's routines.
+
+\param q
+is the column dimension for the Jacobian sparsity partterns.
+
+\param r
+is the Jacobian sparsity pattern for the argument vector x
+
+\param s
+is the Jacobian sparsity pattern for the result vector y
+*/
 virtual bool for_sparse_jac(
 	size_t                                  id ,
 	size_t                                  q  ,
@@ -988,7 +1055,7 @@ $codei%
 The input value of its elements do not matter.
 Upon return, $icode r$$ is a 
 $cref/atomic_sparsity/atomic_ctor/atomic_sparsity/$$ pattern for
-$latex R(x) \in B^{q \times n}$$. 
+$latex R(x)^\R{T} \in B^{n \times q}$$. 
  
 $subhead s$$
 This argument has prototype
@@ -997,7 +1064,7 @@ $codei%
 %$$
 and is a 
 $cref/atomic_sparsity/atomic_ctor/atomic_sparsity/$$ pattern for
-$latex S \in B^{q \times m}$$.
+$latex S^\R{T} \in B^{m \times q}$$.
 
 $head ok$$
 The return value $icode ok$$ has prototype
@@ -1009,6 +1076,22 @@ otherwise it failed.
 
 $end
 -----------------------------------------------------------------------------
+*/
+/*!
+Link from reverse Jacobian sparsity sweep to atomic_base
+
+\param id [in]
+extra information vector that is just passed through by CppA
+and possibly used by user's routines
+
+\param q [in]
+is the row dimension for the Jacobian sparsity partterns
+
+\param r [out]
+is the tansposed Jacobian sparsity pattern for the argument vector x
+
+\param s [in]
+is the tansposed Jacobian sparsity pattern for the result vector y
 */
 virtual bool rev_sparse_jac(
 	size_t                                  id ,
@@ -1083,23 +1166,25 @@ and is a $cref/atomic_sparsity/atomic_ctor/atomic_sparsity/$$ pattern for
 $latex R \in B^{n \times q}$$.
 
 $subhead s$$
-This argument has prototype
+The argument $icode s$$ has prototype
 $codei%
-     const %atomic_sparsity%& %s%
+     const vector<bool>& %s%
 %$$
 and is a $cref/atomic_sparsity/atomic_ctor/atomic_sparsity/$$ pattern for 
-$latex S(x) = g^{(1)} (y) \in B^{1 \times m}$$.
+$latex S(x)^\R{T} \in B^{m \times 1}$$ where
+$latex S(x) = g^{(1)} (y)$$.
 
 $subhead t$$
 This argument has prototype
 $codei%
-     %atomic_sparsity%& %t%
+     vector<bool>& %t%
 %$$
 The input values of its elements do not matter.
 Upon return, $icode t$$ is a 
 $cref/atomic_sparsity/atomic_ctor/atomic_sparsity/$$ pattern for 
+$latex T(x)^\R{T} \in B^{m \times 1}$$ where
 $latex \[
-	T(x) = (g \circ f)^{(1)} (x) = S(x) * f^{(1)} (x) \in B^{1 \times n}
+	T(x) = (g \circ f)^{(1)} (x) = S(x) * f^{(1)} (x)
 \]$$
 
 $head u$$
@@ -1159,17 +1244,89 @@ f^{(1)} (x)^\R{T} U(x)
 $end
 -----------------------------------------------------------------------------
 */
+/*!
+Link from reverse Hessian sparsity sweep to base_atomic
+
+\param id [in]
+extra information vector that is just passed through by CppAD,
+and possibly used by user's routines.
+
+\param q [in]
+is the column dimension for the sparsity partterns.
+
+\param r [in]
+is the forward Jacobian sparsity pattern w.r.t the argument vector x
+
+\param s [in]
+is the reverse Jacobian sparsity pattern w.r.t the result vector y.
+
+\param t [out]
+is the reverse Jacobian sparsity pattern w.r.t the argument vector x.
+
+\param u [in]
+is the Hessian sparsity pattern w.r.t the result vector y.
+
+\param v [out]
+is the Hessian sparsity pattern w.r.t the argument vector x.
+*/
 virtual bool rev_sparse_hes(
 	size_t                                  id ,
 	size_t                                  q  ,
 	const vector< std::set<size_t> >&       r  ,
-	const vector< std::set<size_t> >&       s  ,
-	      vector< std::set<size_t> >&       t  ,
+	const vector<bool>&                     s  ,
+	      vector<bool>&                     t  ,
 	const vector< std::set<size_t> >&       u  ,
 	      vector< std::set<size_t> >&       v  )
 {	return false; }
-};
+/*
+------------------------------------------------------------------------------
+$begin atomic_base_clear$$
 
+$section Free Static Variables$$
+
+$head Syntax$$
+$codei%atomic_base<%Base%>::clear()%$$
+
+$head Purpose$$
+The $code atomic_base$$ class holds onto static work space in order to
+increase speed by avoiding system memory allocation calls.
+This call makes to work space $cref/available/ta_available/$$ to
+for other uses by the same thread.
+This should be called when you are done using the 
+user atomic functions for a specific value of $icode Base$$.
+
+$head Restriction$$
+This routine cannot be called
+while in $cref/parallel/ta_in_parallel/$$ execution mode.
+
+$end
+------------------------------------------------------------------------------
+*/
+
+/// Free vector memory used by this class (work space)
+static void clear(void)
+{	CPPAD_ASSERT_KNOWN(
+		! thread_alloc::in_parallel() ,
+		"cannot use user_atomic clear during parallel execution"
+	);
+	size_t i = list().size();
+	while(i--)
+	{	size_t thread = CPPAD_MAX_NUM_THREADS;
+		while(thread--)
+		{
+			atomic_base* op = list()[i];
+			if( op != CPPAD_NULL )
+			{	op->eval_vx_[thread].clear();
+				op->eval_vy_[thread].clear();
+				op->eval_tx_[thread].clear();
+				op->eval_ty_[thread].clear();
+			}
+		}
+	}
+	return;
+}
+// ---------------------------------------------------------------------------
+};
 /*! \} */
 CPPAD_END_NAMESPACE
 # endif

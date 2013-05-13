@@ -160,7 +160,7 @@ void ReverseSweep(
 		parameter = Rec->GetPar();
 
 	// work space used by UserOp.
-	const size_t user_k  = d;    // order of this forward mode calculation
+	const size_t user_k  = d;    // highest order we are differentiating
 	const size_t user_k1 = d+1;  // number of orders for this calculation
 	vector<size_t> user_ix;      // variable indices for argument vector
 	vector<Base> user_tx;        // argument vector Taylor coefficients
@@ -520,13 +520,13 @@ void ReverseSweep(
 				user_id    = arg[1];
 				user_n     = arg[2];
 				user_m     = arg[3];
-				if(user_ix.size() < user_n)
+				if(user_ix.size() != user_n)
 					user_ix.resize(user_n);
-				if(user_tx.size() < user_n * user_k1)
+				if(user_tx.size() != user_n * user_k1)
 				{	user_tx.resize(user_n * user_k1);
 					user_px.resize(user_n * user_k1);
 				}
-				if(user_ty.size() < user_m * user_k1)
+				if(user_ty.size() != user_m * user_k1)
 				{	user_ty.resize(user_m * user_k1);
 					user_py.resize(user_m * user_k1);
 				}
@@ -543,9 +543,10 @@ void ReverseSweep(
 				user_state = user_end;
 
 				// call users function for this operation
-				user_atomic<Base>::reverse(user_index, user_id,
-					user_k, user_n, user_m, user_tx, user_ty,
-					user_px, user_py
+				atomic_base<Base>* atom =
+					atomic_base<Base>::list(user_index);
+				atom->reverse(
+					user_id, user_k, user_tx, user_ty, user_px, user_py
 				);
 				for(j = 0; j < user_n; j++) if( user_ix[j] > 0 )
 				{	for(ell = 0; ell < user_k1; ell++)
