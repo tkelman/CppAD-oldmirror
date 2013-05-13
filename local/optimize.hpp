@@ -3,7 +3,7 @@
 # define CPPAD_OPTIMIZE_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-13 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -1126,8 +1126,10 @@ void optimize(
 			user_s[user_i].clear();
 			if( user_i == 0 )
 			{	// call users function for this operation
-				user_atomic<Base>::rev_jac_sparse(user_index, user_id,
-					user_n, user_m, user_q, user_r, user_s
+				atomic_base<Base>* atom = 
+					atomic_base<Base>::list(user_index);
+				atom->rev_sparse_jac(
+					user_id, user_q, user_r, user_s
 				);
 				user_state = user_arg;
 			}
@@ -1143,8 +1145,10 @@ void optimize(
 				user_s[user_i].insert(0);
 			if( user_i == 0 )
 			{	// call users function for this operation
-				user_atomic<Base>::rev_jac_sparse(user_index, user_id,
-					user_n, user_m, user_q, user_r, user_s
+				atomic_base<Base>* atom = 
+					atomic_base<Base>::list(user_index);
+				atom->rev_sparse_jac(
+					user_id, user_q, user_r, user_s
 				);
 				user_state = user_arg;
 			}
