@@ -148,6 +148,7 @@ nobase_myinclude_HEADERS =  \
 	cppad/local/bool_fun.hpp \
 	cppad/local/bool_valued.hpp \
 	cppad/local/cap_taylor.hpp \
+	cppad/local/checkpoint.hpp \
 	cppad/local/compare.hpp \
 	cppad/local/comp_op.hpp \
 	cppad/local/compute_assign.hpp \

@@ -103,8 +103,8 @@ $rref bool_fun.cpp$$
 $rref capacity_taylor.cpp$$
 $rref change_const.cpp$$
 $rref check_numeric_type.cpp$$
-$rref checkpoint.cpp$$
 $rref check_simple_vector.cpp$$
+$rref chkpt_simple.cpp$$
 $rref compare_change.cpp$$
 $rref compare.cpp$$
 $rref complex_poly.cpp$$

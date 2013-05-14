@@ -44,6 +44,12 @@ This section contains a list of the changes to CppAD during 2013
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
 
+$head 05-14$$
+The $cref checkpoint$$ class has been added.
+This is a much easier way to do checkpointing than the
+old checkpoint example.
+The old checkpointing example is now the $cref reverse_any.cpp$$ example.
+
 $head 05-12$$
 The sparse hessian example in $cref user_simple.cpp$$ was not
 being run. This has been fixed.

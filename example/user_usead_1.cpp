@@ -30,8 +30,7 @@ definition of an outer function.
 In this case, it may reduce the number of variables
 $cref/size_var/seq_property/size_var/$$,
 and hence the required memory.
-This is similar the 
-$cref/checkpoint/checkpoint.cpp/$$.
+(This is simpler to do using $cref checkpoint$$.)
 
 $head Simple Case$$
 This example is the same as $cref user_simple.cpp$$, except that it 
