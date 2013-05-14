@@ -38,9 +38,8 @@ $head Syntax$$
 
 $codei%
 %user_atomic% %afun%(%n%, %m%, %use_set%, %user_arg_list%)
+%ok% = %afun%(%ax%, %ay%)
 %ok% = %afun%.eval(%ax%, %ay%)
-%ok% = %afun%.tape(%ax%, %ay%)
-%ok% = %afun%.algo(%ax%, %ay%)
 %ok% = %afun%.forward(%q%, %p%, %vx%, %vy%, %tx%, %ty%)
 %ok% = %afun%.reverse(%p%, %tx%, %ty%, %px%, %py%)
 %ok% = %afun%.for_sparse_jac(%q%, %r%, %s%)
@@ -48,7 +47,7 @@ $codei%
 %ok% = %afun%.rev_sparse_hes(%q%, %r%, %s%, %t%, %u%, %v%)
 atomic_base<%Base%>::clear()%$$
 
-$head User Defined Derivatives$$
+$head Purpose$$
 In some cases, the user knows how to compute derivatives of a function 
 $latex \[
 	y = f(x) \; {\rm where} \; f : B^n \rightarrow B^m 
@@ -60,7 +59,7 @@ In this case $codei%atomic_base%<%Base%>%$$ can use
 the user code for $latex f(x)$$, and its derivatives,
 as $codei%AD<%Base%>%$$ atomic operations. 
 
-$subhead Virtual Functions$$
+$head Virtual Functions$$
 User defined derivatives are implemented by defining the
 following virtual functions in the $icode user_atomic$$ class:
 $cref/forward/atomic_forward/$$,
@@ -83,14 +82,8 @@ forward mode calculation of second derivatives.
 $head Checkpointing$$
 Another purpose for $codei%atomic_base%<%Base%>%$$ is to
 reduce the amount of memory required.
-To be specific, not only having to store the forward 
-and reverse mode results for one (instead of all)
-applications of the atomic function at a time.
-
-$subhead Virtual Functions$$
-Checkpointing is implemented by defining the
-virtual function 
-$cref/algo/atomic_ad/algo/$$ for the $icode user_atomic$$ class.
+The $cref checkpoint$$ class is derived from $code atomic_base$$
+and makes this easy.
 
 $childtable%
 	cppad/local/atomic_base.hpp
