@@ -211,66 +211,23 @@ public:
 	
 /*
 -----------------------------------------------------------------------------
-$begin atomic_ad$$
+$begin atomic_eval$$
 
 $spell
 	afun
-	checkpointing
 	eval
 	const
 	CppAD
-	algo
 $$
 
-$section Atomic Function AD Calls: eval, tape, algo$$
+$section Using an Atomic Function$$
 
 $head Syntax$$
 $icode%afun%(%ax%, %ay%, %id%)
-%afun%.eval(%ax%, %ay%, %id%)
-%ok% = %afun%.tape(%ax%, %ay%)
-%ok% = %afun%.algo(%ax%, %ay%)%$$
+%afun%.eval(%ax%, %ay%, %id%)%$$
 
-$head Vector$$
-The type $icode Vector$$ must be a
-$cref/simple vector class/SimpleVector/$$ with elements of type
-$codei%AD<%Base%>%$$; see $cref/Base/atomic_ctor/atomic_base/Base/$$.
-
-$head ax$$
-This argument has prototype
-$codei%
-	const %Vector%& %ax%
-%$$
-and size must be equal to $icode n$$.
-It specifies vector $latex x \in B^n$$ 
-at which an $codei%AD<%Base%>%$$ version of 
-$latex y = f(x)$$ is to be evaluated; see 
-$cref/Base/atomic_ctor/atomic_base/Base/$$.
-
-$head ay$$
-This argument has prototype
-$codei%
-	%Vector%& %ay%
-%$$
-and size must be equal to $icode m$$.
-The input values of its elements do not matter.
-Upon return, it is an $codei%AD<%Base%>%$$ version of 
-$latex y = f(x)$$.
-
-$head id$$
-The $icode id$$ argument is optional and can only be used for
-$cref/user defined derivatives/atomic_base/User Defined Derivatives/$$.
-It is intended to pass extra information about this particular use of
-$icode afun$$.
-If the argument $icode id$$ is not present, the default value
-zero is used.
-This argument should not be present 
-(or must have the value zero) if $icode afun$$ is used for
-$cref/checkpointing/atomic_base/Checkpointing/$$.
-In this case, extra information must be passed as part of the
-$icode ax$$ vector.
-
-$head eval$$
-This function is defined by the
+$head Purpose$$
+The $code eval$$ function is defined by the
 $cref/atomic_base/atomic_ctor/atomic_base/$$ class.
 Given $icode ax$$ it computes the corresponding value of $icode ay$$. 
 If $codei%AD<%Base%>%$$ operations are being recorded,
@@ -281,31 +238,37 @@ $codei%
 %$$
 is an alternative syntax for the $code eval$$ function.
 
-$head tape$$
-This function is used for 
-$cref/checkpointing/atomic_base/Checkpointing/$$ and
-is defined by the $cref/atomic_base/atomic_ctor/atomic_base/$$ class.
-A call to $code tape$$ instructs CppAD to 
-$list number$$
-$cref/start recording/Independent/Start Recording/$$
-$codei%AD<%Base%>%$$ operations
-$lnext
-Use $icode%afun%.algo(%ax%, %ay%)%$$ compute the value of $icode ay$$
-$lnext
-$cref/stop the recording/Independent/Stop Recording/$$
-$lend
-The resulting $cref ADFun$$ object is used 
-by $code atomic_base$$ to compute the necessary
-functions values and derivatives corresponding to future calls to 
-$code eval$$.
+$head ADVector$$
+The type $icode ADVector$$ must be a
+$cref/simple vector class/SimpleVector/$$ with elements of type
+$codei%AD<%Base%>%$$; see $cref/Base/atomic_ctor/atomic_base/Base/$$.
 
-$head algo$$
-If you are using $cref/checkpointing/atomic_base/Checkpointing/$$,
-this virtual function must be defined by the 
-$cref/atomic_user/atomic_ctor/atomic_user/$$ class.
-It is used by the $code tape$$ function.
-Given $icode ax$$ it computes the corresponding value of $icode ay$$
-using $codei%AD<%Base%>%$$ operations.
+$head ax$$
+This argument has prototype
+$codei%
+	const %ADVector%& %ax%
+%$$
+and size must be equal to $icode n$$.
+It specifies vector $latex x \in B^n$$ 
+at which an $codei%AD<%Base%>%$$ version of 
+$latex y = f(x)$$ is to be evaluated; see 
+$cref/Base/atomic_ctor/atomic_base/Base/$$.
+
+$head ay$$
+This argument has prototype
+$codei%
+	%ADVector%& %ay%
+%$$
+and size must be equal to $icode m$$.
+The input values of its elements do not matter.
+Upon return, it is an $codei%AD<%Base%>%$$ version of 
+$latex y = f(x)$$.
+
+$head id$$
+The $icode id$$ argument is optional and its default value 
+(when it is not present in a call to $code eval$$ is zero.
+It is intended to pass extra information about this particular use of
+$icode afun$$.
 
 $end
 -----------------------------------------------------------------------------
@@ -315,12 +278,12 @@ Function object syntax for eval functions.
 
 \copydetails atomic_base::eval.
 */
-template <class Vector>
-void operator()(const Vector& ax, Vector& ay, size_t id = 0)
+template <class ADVector>
+void operator()(const ADVector& ax, ADVector& ay, size_t id = 0)
 {	this->eval(ax, ay, id);
 }
 /*!
-Evaluate an atomic function and, if necessary, put it in the tape.
+Evaluate an atomic function 
 
 \param ax [in]
 arugment value for this function.
@@ -331,11 +294,11 @@ result value for this function.
 \param id [in]
 possible auxillary information (not used be atomic_base).
 */
-template <class Vector>
+template <class ADVector>
 void eval(
-	const Vector&  ax     ,
-	      Vector&  ay     ,
-	size_t         id = 0 )
+	const ADVector&  ax     ,
+	      ADVector&  ay     ,
+	size_t           id = 0 )
 {	size_t i, j;
 	size_t n = ax.size();
 	size_t m = ay.size();
@@ -473,7 +436,6 @@ void eval(
 $begin atomic_forward$$
 $spell
 	afun
-	checkpointing
 	vx
 	vy
 	ty
@@ -490,15 +452,13 @@ $head Syntax$$
 $icode%ok% = %afun%.forward(%id%, %q%, %p%, %vx%, %vy%, %tx%, %ty%)%$$
 
 $head Purpose$$
-This virtual function is used by $cref/eval/atomic_ad/eval/$$
+This virtual function is used by $cref atomic_eval$$
 to evaluate function values.
 It is also used buy $cref/forward/Forward/$$
 to compute function vales and derivatives.
 
 $head Implementation$$
-If you are using
-$cref/user defined derivatives/atomic_base/User Defined Derivatives/$$, 
-this virtual function must be defined by the
+This virtual function must be defined by the
 $cref/atomic_user/atomic_ctor/atomic_user/$$ class.
 It can just return $icode%ok% == false%$$ 
 (and not compute anything) for values
@@ -511,8 +471,8 @@ $codei%
 	size_t %id%
 %$$
 and is the value of
-$cref/id/atomic_ad/id/$$ in the corresponding call to 
-$cref/eval/atomic_ad/eval/$$.
+$cref/id/atomic_eval/id/$$ in the corresponding call to 
+$cref atomic_eval$$.
 
 $head q$$
 The argument $icode q$$ has prototype
@@ -520,7 +480,7 @@ $codei%
 	size_t %q%
 %$$
 It specifies the lowest order Taylor coefficient that we are evaluating. 
-During calls to $cref/eval/atomic_ad/eval/$$, $icode%q% == 0%$$.
+During calls to $cref atomic_eval$$, $icode%q% == 0%$$.
 
 $head p$$
 The argument $icode p$$ has prototype
@@ -528,7 +488,7 @@ $codei%
 	size_t %p%
 %$$
 It specifies the highest order Taylor coefficient that we are evaluating. 
-During calls to $cref/eval/atomic_ad/eval/$$, $icode%p% == 0%$$.
+During calls to $cref atomic_eval$$, $icode%p% == 0%$$.
 
 $head vx$$
 The $code forward$$ argument $icode vx$$ has prototype
@@ -536,7 +496,7 @@ $codei%
 	const CppAD::vector<bool>& %vx%
 %$$
 The case $icode%vx%.size() > 0%$$ only occurs while evaluating a call to 
-$cref/eval/atomic_ad/eval/$$.
+$cref atomic_eval$$.
 In this case,
 $icode%q% == %p% == 0%$$, 
 $icode%vx%.size() == %n%$$, and
@@ -702,7 +662,6 @@ virtual bool forward(
 $begin atomic_reverse$$
 $spell
 	afun
-	checkpointing
 	ty
 	px
 	py
@@ -726,8 +685,7 @@ to compute derivatives.
 
 $head Implementation$$
 If you are using
-$cref/user defined derivatives/atomic_base/User Defined Derivatives/$$, 
-and $cref/reverse/Reverse/$$ mode,
+$cref/reverse/Reverse/$$ mode,
 this virtual function must be defined by the
 $cref/atomic_user/atomic_ctor/atomic_user/$$ class.
 It can just return $icode%ok% == false%$$ 
@@ -741,8 +699,8 @@ $codei%
 	size_t %id%
 %$$
 and is the value of
-$cref/id/atomic_ad/id/$$ in the corresponding call to 
-$cref/eval/atomic_ad/eval/$$.
+$cref/id/atomic_eval/id/$$ in the corresponding call to 
+$cref atomic_eval$$.
 
 $head p$$
 The argument $icode p$$ has prototype
@@ -913,7 +871,6 @@ $begin atomic_for_sparse_jac$$
 $spell
 	eval
 	afun
-	checkpointing
 	Jacobian
 	jac
 	const
@@ -940,9 +897,7 @@ Given a $cref/sparsity pattern/glossary/Sparsity Pattern/$$ for $latex R$$,
 $code for_sparse_jac$$ computes a sparsity pattern for $latex S(x)$$.
 
 $head Implementation$$
-If you are using
-$cref/user defined derivatives/atomic_base/User Defined Derivatives/$$, 
-and $cref ForSparseJac$$,
+If you are using $cref ForSparseJac$$,
 this virtual function must be defined by the
 $cref/atomic_user/atomic_ctor/atomic_user/$$ class.
 
@@ -952,8 +907,8 @@ $codei%
 	size_t %id%
 %$$
 and is the value of
-$cref/id/atomic_ad/id/$$ in the corresponding call to 
-$cref/eval/atomic_ad/eval/$$.
+$cref/id/atomic_eval/id/$$ in the corresponding call to 
+$cref atomic_eval$$.
 
 $subhead q$$
 The argument $icode q$$ has prototype
@@ -1022,7 +977,6 @@ $spell
 	rt
 	eval
 	afun
-	checkpointing
 	Jacobian
 	jac
 	CppAD
@@ -1049,9 +1003,7 @@ Given a $cref/sparsity pattern/glossary/Sparsity Pattern/$$ for $latex S$$,
 $code rev_sparse_jac$$ computes a sparsity pattern for $latex R(x)$$.
 
 $head Implementation$$
-If you are using
-$cref/user defined derivatives/atomic_base/User Defined Derivatives/$$, 
-and $cref RevSparseJac$$,
+If you are using $cref RevSparseJac$$,
 this virtual function must be defined by the
 $cref/atomic_user/atomic_ctor/atomic_user/$$ class.
 
@@ -1061,8 +1013,8 @@ $codei%
 	size_t %id%
 %$$
 and is the value of
-$cref/id/atomic_ad/id/$$ in the corresponding call to 
-$cref/eval/atomic_ad/eval/$$.
+$cref/id/atomic_eval/id/$$ in the corresponding call to 
+$cref atomic_eval$$.
 
 $subhead q$$
 The argument $icode q$$ has prototype
@@ -1132,7 +1084,6 @@ $begin atomic_rev_sparse_hes$$
 $spell
 	eval
 	afun
-	checkpointing
 	Jacobian
 	jac
 	CppAD
@@ -1161,9 +1112,7 @@ $latex \[
 \] $$
 
 $head Implementation$$
-If you are using
-$cref/user defined derivatives/atomic_base/User Defined Derivatives/$$, 
-and $cref RevSparseHes$$,
+If you are using and $cref RevSparseHes$$,
 this virtual function must be defined by the
 $cref/atomic_user/atomic_ctor/atomic_user/$$ class.
 
@@ -1173,8 +1122,8 @@ $codei%
 	size_t %id%
 %$$
 and is the value of
-$cref/id/atomic_ad/id/$$ in the corresponding call to 
-$cref/eval/atomic_ad/eval/$$.
+$cref/id/atomic_eval/id/$$ in the corresponding call to 
+$cref atomic_eval$$.
 
 $subhead q$$
 The argument $icode q$$ has prototype

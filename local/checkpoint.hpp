@@ -181,6 +181,28 @@ public:
 		f_.Dependent(ay);
 	}
 	/*!
+	Function object syntax for eval function for checpoint class.
+
+	\copydetails atomic_base::eval
+	*/
+	template <class ADVector>
+	void operator()(const ADVector& ax, ADVector& ay, size_t id = 0)
+	{	this->eval(ax, ay, id);
+	}
+	/*!
+	Eval function for checkpoint class.
+
+	\copydetails atomic_base::eval
+	*/
+	template <class ADVector>
+	void eval(const ADVector& ax, ADVector& ay, size_t id = 0)
+	{	CPPAD_ASSERT_KNOWN(
+			id == 0,
+			"checkpoint: id is non-zero in eval(ax, ay, id)"
+		);
+		this->atomic_base<Base>::eval(ax, ay, id);
+	}
+	/*!
  	Link from user_atomic to forward mode 
 
 	\copydetails atomic_base::forward
