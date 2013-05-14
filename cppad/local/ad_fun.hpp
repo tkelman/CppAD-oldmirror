@@ -3,7 +3,7 @@
 # define CPPAD_AD_FUN_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-13 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -145,6 +145,7 @@ private:
 	template <class VectorSet>
 	void RevSparseJacCase(
 		bool               set_type  ,
+		bool               transpose ,
 		size_t             p         ,
 		const VectorSet&   s         ,  
 		VectorSet&         r
@@ -154,6 +155,7 @@ private:
 	template <class VectorSet>
 	void RevSparseJacCase(
 		const std::set<size_t>&  set_type  ,
+		bool                     transpose ,
 		size_t                   p         ,
 		const VectorSet&         s         ,  
 		VectorSet&               r
@@ -346,7 +348,7 @@ public:
 	// (see doxygen documentation in rev_sparse_jac.hpp)
 	template <typename VectorSet>
 	VectorSet RevSparseJac(
-		size_t q, const VectorSet &s
+		size_t q, const VectorSet &s, bool transpose = false
 	);
 	// reverse mode Hessian sparsity 
 	// (see doxygen documentation in rev_sparse_hes.hpp)

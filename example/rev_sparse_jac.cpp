@@ -1,6 +1,6 @@
 /* $Id$ */
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-13 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -80,6 +80,19 @@ bool BoolCases(void)
 	ok &= (r[ 1 * n + 1 ] == true);  // Y[1] does     depend on X[1]
 	ok &= (r[ 2 * n + 0 ] == false); // Y[2] does not depend on X[0]
 	ok &= (r[ 2 * n + 1 ] == true);  // Y[2] does     depend on X[1]
+
+	// sparsity pattern for F'(x)^T
+	bool transpose = true;
+	Vector rt(n * m);
+	rt = f.RevSparseJac(m, s, transpose);
+
+	// check values
+	ok &= (rt[ 0 * m + 0 ] == true);  // Y[0] does     depend on X[0]
+	ok &= (rt[ 1 * m + 0 ] == false); // Y[0] does not depend on X[1]
+	ok &= (rt[ 0 * m + 1 ] == true);  // Y[1] does     depend on X[0]
+	ok &= (rt[ 1 * m + 1 ] == true);  // Y[1] does     depend on X[1]
+	ok &= (rt[ 0 * m + 2 ] == false); // Y[2] does not depend on X[0]
+	ok &= (rt[ 1 * m + 2 ] == true);  // Y[2] does     depend on X[1]
 
 	return ok;
 }

@@ -54,6 +54,9 @@ $lnext
 Fix bug in $cref RevSparseJac$$ for case when $cref/p/RevSparseJac/p/$$
 was not equal to $icode m$$ (range dimension) and sparsity pattern was a 
 vector of $code bool$$.
+$lnext
+Add the $cref/transpose/RevSparseJac/transpose/$$ option to
+$cref/RevSparseJac/$$.
 $lend
 
 $head 05-12$$
