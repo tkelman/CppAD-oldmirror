@@ -12,8 +12,9 @@ the terms of the
 A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
-// 2DO: add and implement choice between sets and bools for sparsity patterns.
-//      overide operator(), and check that id is zero there.
+// 2DO: Add and implement choice between sets and bools for sparsity patterns.
+//      Overide operator(), and check that id==0, ax.size()==n, ay.size()==m.
+//      Use f_.Domain() and f_.Range() to set n and m.
 
 CPPAD_BEGIN_NAMESPACE
 /*!
@@ -290,6 +291,97 @@ public:
 		f_.size_forward_set(0);
 		
 		return ok; 
+	}
+	virtual bool rev_sparse_jac(
+		size_t                                  id ,
+		size_t                                  q  ,
+		      vector< std::set<size_t> >&       rt ,
+		const vector< std::set<size_t> >&       st )
+	{	// 2DO: Add AFun<Base>::RevSparseJacTran 
+		// so it is not necessary to create transposes here
+		CPPAD_ASSERT_UNKNOWN( id == 0 );
+		size_t n = rt.size();
+		size_t m = st.size();
+		bool ok  = true;
+
+		// start with empty sets
+		vector< std::set<size_t> > r(q), s(q);
+		std::set<size_t>::const_iterator itr;
+		size_t i, j;
+
+		// untranspose s
+		for(i = 0; i < m; i++)
+		{	for(itr = st[i].begin(); itr != st[i].end(); itr++)
+				s[*itr].insert(i);
+		}
+
+		// compute r
+		r = f_.RevSparseJac(q, s);
+
+		// transpose r
+		for(j = 0; j < n; j++)
+			rt[j].clear();
+		for(i = 0; i < q; i++)
+		{	for(itr = r[i].begin(); itr != r[i].end(); itr++)
+				rt[*itr].insert(i);
+		}
+		return ok; 
+	}
+	virtual bool rev_sparse_hes(
+		size_t                                  id ,
+		size_t                                  q  ,
+		const vector< std::set<size_t> >&       r  ,
+		const vector<bool>&                     s  ,
+		      vector<bool>&                     t  ,
+		const vector< std::set<size_t> >&       u  ,
+		      vector< std::set<size_t> >&       v  )
+	{	CPPAD_ASSERT_UNKNOWN( id == 0 );
+		size_t m = s.size();
+		size_t n = t.size();
+		bool ok  = true;
+		std::set<size_t>::const_iterator itr;
+
+		// compute sparsity pattern for T(x) = S(x) * f'(x)
+		vector< std::set<size_t> > S(1);
+		size_t i, j;
+		S[0].clear();
+		for(i = 0; i < m; i++)
+			if( s[i] )
+				S[0].insert(i);
+		t = f_.RevSparseJac(1, s);
+
+		// compute sparsity pattern for A(x)^T = U(x)^T * f'(x)
+		vector< std::set<size_t> > ut(q), at(q);
+		for(i = 0; i < m; i++)
+		{	for(itr = u[i].begin(); itr != u[i].end(); itr++)
+				ut[*itr].insert(i);
+		}
+		at = f_.RevSparseJac(q, ut);
+
+		// compute sparsity pattern for H(x)^T = R^T * (S * F)''(x)
+		vector< std::set<size_t> > rt(n), ht(q);
+		for(j = 0; j < n; j++)
+		{	for(itr = rt[j].begin(); itr != rt[j].end(); itr++)
+				rt[ *itr ].insert(j);
+		}
+		f_.ForSparseJac(q, rt);
+		ht = f_.RevSparseHes(q, S);
+
+		// compute sparsity pattern for V(x) = A(x) + H(x)^T
+		for(j = 0; j < n; j++)
+			v[j].clear();
+		for(i = 0; i < q; i++)
+		{	for(itr = at[i].begin(); itr != at[i].end(); itr++)
+				v[*itr].insert(i);
+			for(itr = ht[i].begin(); itr != ht[i].end(); itr++)
+				v[*itr].insert(i);
+		}
+
+		// no longer need the forward mode sparsity pattern
+		// (have to reconstruct them every time)
+		f_.size_forward_set(0);
+
+		return ok;
 	}
 };
 
