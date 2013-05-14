@@ -12,6 +12,8 @@ the terms of the
 A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
+// 2DO: add and implement choice between sets and bools for sparsity patterns.
+//      overide operator(), and check that id is zero there.
 
 CPPAD_BEGIN_NAMESPACE
 /*!
@@ -47,10 +49,16 @@ checkpointing functions of the form $latex y = f(x)$$ where
 $latex f : B^n \rightarrow B^m$$.
 
 $head constructor$$
-The $code checkpoint$$ constructor cannot be called in
-$cref/parallel/ta_in_parallel/$$ mode.
+The constructor 
+$codei%
+	checkpoint<%Base%> %afun%(%name%, %algo%, %ax%, %ay%)
+%$$
+cannot be called in $cref/parallel/ta_in_parallel/$$ mode.
 In addition, you cannot currently be recording 
 $codei%AD<%Base%>%$$ operations when the constructor is called.
+This class is implemented as a derived class of
+$cref/atomic_base/atomic_ctor/atomic_base/$$ and hence 
+some of its error message will refer to $code atomic_base$$.
 
 $head Base$$
 The type $icode Base$$ specifies the base type for AD operations.
@@ -184,7 +192,9 @@ public:
 		      vector<bool>&      vy , 
 		const vector<Base>&      tx ,
 		      vector<Base>&      ty )
-	{	CPPAD_ASSERT_UNKNOWN( tx.size() % (p+1) == 0 );
+	{	CPPAD_ASSERT_UNKNOWN( id == 0 );
+		CPPAD_ASSERT_UNKNOWN( f_.size_var() > 0 );
+		CPPAD_ASSERT_UNKNOWN( tx.size() % (p+1) == 0 );
 		CPPAD_ASSERT_UNKNOWN( ty.size() % (p+1) == 0 );
 		size_t n = tx.size() / (p+1);
 		size_t m = ty.size() / (p+1);
@@ -194,7 +204,7 @@ public:
 		// check for special case
 		if( vx.size() > 0 )
 		{	//Compute r, a Jacobian sparsity pattern.
-			// Use reverse mode because m < n.
+			// 2DO: use forward mode when m < n
 			vector< std::set<size_t> > s(m), r(m);
 			for(i = 0; i < m; i++)
 				s[i].insert(i);
@@ -216,6 +226,70 @@ public:
 		// (have to reconstruct them every time)
 		f_.capacity_taylor(0);
 		return ok;
+	}
+	/*!
+ 	Link from user_atomic to reverse mode 
+
+	\copydetails atomic_base::reverse
+ 	*/
+	virtual bool reverse(
+		size_t                    id ,
+		size_t                    p  ,
+		const vector<Base>&       tx ,
+		const vector<Base>&       ty ,
+		      vector<Base>&       px ,
+		const vector<Base>&       py )
+	{	CPPAD_ASSERT_UNKNOWN( id == 0 );
+		CPPAD_ASSERT_UNKNOWN( f_.size_var() > 0 );
+		CPPAD_ASSERT_UNKNOWN( tx.size() % (p+1) == 0 );
+		CPPAD_ASSERT_UNKNOWN( ty.size() % (p+1) == 0 );
+		bool ok  = true;	
+
+		// put proper forward mode coefficients in f_
+# ifdef NDEBUG
+		f_.Forward(p, tx);
+# else
+		size_t n = tx.size() / (p+1);
+		size_t m = ty.size() / (p+1);
+		CPPAD_ASSERT_UNKNOWN( px.size() == n * (p+1) );
+		CPPAD_ASSERT_UNKNOWN( py.size() == m * (p+1) );
+		size_t i, j, k;
+		//
+		vector<Base> check_ty = f_.Forward(p, tx);
+		for(i = 0; i < m; i++)
+		{	for(k = 0; k <= p; k++)
+			{	j = i * (p+1) + k;
+				CPPAD_ASSERT_UNKNOWN( check_ty[j] == ty[j] );
+			}
+		}
+# endif
+		// now can run reverse mode
+		px = f_.Reverse(p+1, py);
+
+		// no longer need the Taylor coefficients in f_
+		// (have to reconstruct them every time)
+		f_.capacity_taylor(0);
+		return ok;
+	}
+	/*!
+ 	Link from user_atomic to forward sparse Jacobian 
+
+	\copydetails atomic_base::for_sparse_jac
+ 	*/
+	virtual bool for_sparse_jac(
+		size_t                                  id ,
+		size_t                                  q  ,
+		const vector< std::set<size_t> >&       r  ,
+		      vector< std::set<size_t> >&       s  )
+	{	CPPAD_ASSERT_UNKNOWN( id == 0 );
+		bool ok = true;
+		s = f_.ForSparseJac(q, r);
+
+		// no longer need the forward mode sparsity pattern
+		// (have to reconstruct them every time)
+		f_.size_forward_set(0);
+		
+		return ok; 
 	}
 };
 

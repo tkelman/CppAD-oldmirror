@@ -93,30 +93,50 @@ bool chkpt_simple(void)
 	Independent(ax);
 	f_algo(ax, ay);
 	g_algo(ay, az);
-	ADFun<double> no_check(ax, az);
+	ADFun<double> check_not(ax, az);
 
 	// Record a version of z = g[f(x)] with checkpointing
 	Independent(ax);
 	f_check(ax, ay);
 	g_check(ay, az);
-	ADFun<double> yes_check(ax, az);
+	ADFun<double> check_yes(ax, az);
 
 	// checkpointing should use fewer operations
-	ok &= yes_check.size_var() < no_check.size_var();
+	ok &= check_yes.size_var() < check_not.size_var();
 
 	// compare forward mode results for orders 0, 1, 2
 	size_t p = 2;
-	CPPAD_TESTVECTOR(double) x_p(n*(p+1)), z_no(m*(p+1)), z_yes(m*(p+1));
-	z_no  = no_check.Forward(p, x_p);
-	z_yes = yes_check.Forward(p, x_p);
+	CPPAD_TESTVECTOR(double) x_p(n*(p+1)), z_not(m*(p+1)), z_yes(m*(p+1));
+	z_not = check_not.Forward(p, x_p);
+	z_yes = check_yes.Forward(p, x_p);
 	for(i = 0; i < m; i++)
 	{	for(k = 0; k <= p; k++)
-		{	double zik_no  = z_no[ i * (p+1) + k];
+		{	double zik_not = z_not[ i * (p+1) + k];
 			double zik_yes = z_yes[ i * (p+1) + k];
-			ok &= NearEqual(zik_no, zik_yes, eps, eps);
+			ok &= NearEqual(zik_not, zik_yes, eps, eps);
 		}
 	}
 
+	// compare reverse mode results
+	CPPAD_TESTVECTOR(double) w(m*(p+1)), dw_not(n*(p+1)), dw_yes(n*(p+1));
+	dw_not = check_not.Reverse(p+1, w);
+	dw_yes = check_yes.Reverse(p+1, w);
+	for(j = 0; j < n; j++)
+	{	for(k = 0; k <= p; k++)
+		{	double dwjk_not = dw_not[ j * (p+1) + k];
+			double dwjk_yes = dw_yes[ j * (p+1) + k];
+			ok &= NearEqual(dwjk_not, dwjk_yes, eps, eps);
+		}
+	}
+
+	// compare forward mode sparsity patterns
+	CppAD::vector< std::set<size_t> > r(n), s_not(m), s_yes(m);
+	for(j = 0; j < n; j++)
+		r[j].insert(j);
+	s_not = check_not.ForSparseJac(n, r);
+	s_yes = check_yes.ForSparseJac(n, r);
+	for(i = 0; i < m; i++)
+		ok &= s_not[i] == s_yes[i];
 	
 	checkpoint<double>::clear();
 	return ok;
