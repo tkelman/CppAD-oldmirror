@@ -278,17 +278,13 @@ namespace { // Begin empty namespace
 		std::set<size_t>::const_iterator itr;
 
 		// compute sparsity pattern for T(x) = S(x) * f'(x)
-		vector< std::set<size_t> > T(1), S(1);
+		vector< std::set<size_t> > S(1);
 		size_t i, j;
 		S[0].clear();
 		for(i = 0; i < m; i++)
 			if( s[i] )
 				S[0].insert(i);
-		T = r_ptr_->RevSparseJac(1, S);
-		for(i = 0; i < m; i++)
-			t[i] = false;
-		for(itr = T[0].begin(); itr != T[0].end(); itr++)
-			t[*itr] = true;
+		t = r_ptr_->RevSparseJac(1, s);
 
 		// compute sparsity pattern for A(x)^T = U(x)^T * f'(x)
 		vector< std::set<size_t> > Ut(q), At(q);

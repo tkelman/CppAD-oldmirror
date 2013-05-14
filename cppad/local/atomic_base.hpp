@@ -512,7 +512,7 @@ $codei%
 %$$
 and is the value of
 $cref/id/atomic_ad/id/$$ in the corresponding call to 
-$cref/id/atomic_ad/eval/$$.
+$cref/eval/atomic_ad/eval/$$.
 
 $head q$$
 The argument $icode q$$ has prototype
@@ -714,6 +714,7 @@ $$
 $section Atomic Reverse Mode$$
 $spell
 	bool
+	eval
 $$
 
 $head Syntax$$
@@ -741,7 +742,7 @@ $codei%
 %$$
 and is the value of
 $cref/id/atomic_ad/id/$$ in the corresponding call to 
-$cref/id/atomic_ad/eval/$$.
+$cref/eval/atomic_ad/eval/$$.
 
 $head p$$
 The argument $icode p$$ has prototype
@@ -910,6 +911,7 @@ virtual bool reverse(
 -------------------------------------- ---------------------------------------
 $begin atomic_for_sparse_jac$$
 $spell
+	eval
 	afun
 	checkpointing
 	Jacobian
@@ -951,7 +953,7 @@ $codei%
 %$$
 and is the value of
 $cref/id/atomic_ad/id/$$ in the corresponding call to 
-$cref/id/atomic_ad/eval/$$.
+$cref/eval/atomic_ad/eval/$$.
 
 $subhead q$$
 The argument $icode q$$ has prototype
@@ -1017,6 +1019,8 @@ virtual bool for_sparse_jac(
 -------------------------------------- ---------------------------------------
 $begin atomic_rev_sparse_jac$$
 $spell
+	rt
+	eval
 	afun
 	checkpointing
 	Jacobian
@@ -1031,7 +1035,7 @@ $$
 $section Atomic Reverse Jacobian Sparsity Patterns$$
 
 $head Syntax$$
-$icode%ok% = %afun%.rev_sparse_jac(%id%, %q%, %r%, %s%)%$$
+$icode%ok% = %afun%.rev_sparse_jac(%id%, %q%, %rt%, %st%)%$$
 
 $head Purpose$$
 This function is used by $cref RevSparseJac$$ to compute
@@ -1058,7 +1062,7 @@ $codei%
 %$$
 and is the value of
 $cref/id/atomic_ad/id/$$ in the corresponding call to 
-$cref/id/atomic_ad/eval/$$.
+$cref/eval/atomic_ad/eval/$$.
 
 $subhead q$$
 The argument $icode q$$ has prototype
@@ -1070,20 +1074,20 @@ $latex S \in B^{q \times m}$$ and the Jacobian
 $latex R(x) \in B^{q \times n}$$. 
 
 
-$subhead r$$
+$subhead rt$$
 This argument has prototype
 $codei%
-	%atomic_sparsity%& %r%
+	%atomic_sparsity%& %rt%
 %$$
 The input value of its elements do not matter.
 Upon return, $icode r$$ is a 
 $cref/atomic_sparsity/atomic_ctor/atomic_sparsity/$$ pattern for
 $latex R(x)^\R{T} \in B^{n \times q}$$. 
  
-$subhead s$$
+$subhead st$$
 This argument has prototype
 $codei%
-     const %atomic_sparsity%& %s%
+     const %atomic_sparsity%& %st%
 %$$
 and is a 
 $cref/atomic_sparsity/atomic_ctor/atomic_sparsity/$$ pattern for
@@ -1110,22 +1114,23 @@ and possibly used by user's routines
 \param q [in]
 is the row dimension for the Jacobian sparsity partterns
 
-\param r [out]
+\param rt [out]
 is the tansposed Jacobian sparsity pattern for the argument vector x
 
-\param s [in]
+\param st [in]
 is the tansposed Jacobian sparsity pattern for the result vector y
 */
 virtual bool rev_sparse_jac(
 	size_t                                  id ,
 	size_t                                  q  ,
-	      vector< std::set<size_t> >&       r  ,
-	const vector< std::set<size_t> >&       s  )
+	      vector< std::set<size_t> >&       rt ,
+	const vector< std::set<size_t> >&       st )
 {	return false; }
 /*
 -------------------------------------- ---------------------------------------
 $begin atomic_rev_sparse_hes$$
 $spell
+	eval
 	afun
 	checkpointing
 	Jacobian
@@ -1169,7 +1174,7 @@ $codei%
 %$$
 and is the value of
 $cref/id/atomic_ad/id/$$ in the corresponding call to 
-$cref/id/atomic_ad/eval/$$.
+$cref/eval/atomic_ad/eval/$$.
 
 $subhead q$$
 The argument $icode q$$ has prototype

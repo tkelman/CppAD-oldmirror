@@ -45,10 +45,16 @@ The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
 
 $head 05-14$$
+$list number$$
 The $cref checkpoint$$ class has been added.
 This is a much easier way to do checkpointing than the
 old checkpoint example.
 The old checkpointing example is now the $cref reverse_any.cpp$$ example.
+$lnext
+Fix bug in $cref RevSparseJac$$ for case when $cref/p/RevSparseJac/p/$$
+was not equal to $icode m$$ (range dimension) and sparsity pattern was a 
+vector of $code bool$$.
+$lend
 
 $head 05-12$$
 The sparse hessian example in $cref user_simple.cpp$$ was not

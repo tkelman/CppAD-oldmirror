@@ -129,7 +129,7 @@ bool chkpt_simple(void)
 		}
 	}
 
-	// compare forward mode sparsity patterns
+	// compare forward mode Jacobian sparsity patterns
 	CppAD::vector< std::set<size_t> > r(n), s_not(m), s_yes(m);
 	for(j = 0; j < n; j++)
 		r[j].insert(j);
@@ -137,6 +137,25 @@ bool chkpt_simple(void)
 	s_yes = check_yes.ForSparseJac(n, r);
 	for(i = 0; i < m; i++)
 		ok &= s_not[i] == s_yes[i];
+
+	// compare reverse mode Jacobian sparsity patterns
+	CppAD::vector< std::set<size_t> > s(m), r_not(m), r_yes(m);
+	for(i = 0; i < m; i++)
+		s[i].insert(i);
+	r_not = check_not.RevSparseJac(m, s);
+	r_yes = check_yes.RevSparseJac(m, s);
+	for(i = 0; i < m; i++)
+		ok &= s_not[i] == s_yes[i];
+	
+
+	// compare reverse mode Hessian sparsity patterns
+	CppAD::vector< std::set<size_t> > s_one(1), h_not(n), h_yes(n); 
+	for(i = 0; i < m; i++)
+		s_one[0].insert(i);
+	h_not = check_not.RevSparseHes(n, s_one);
+	h_yes = check_yes.RevSparseJac(n, s);
+	for(i = 0; i < n; i++)
+		ok &= h_not[i] == h_yes[i];
 	
 	checkpoint<double>::clear();
 	return ok;
