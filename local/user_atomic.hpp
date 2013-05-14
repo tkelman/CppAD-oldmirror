@@ -917,7 +917,6 @@ public:
 	, rjs_(rjs)
 	, rhs_(rhs)
 	{ }
-
 	/*!
  	Implement the user call to <tt>afun(id, ax, ay)</tt>.
 
@@ -935,14 +934,11 @@ public:
 	\param ay
 	is the result vector for this call,
 	<tt>ay.size()</tt> determines the number of results.
-
-	This routine is not \c const because it may modify the works
-	space vectors \c x_ and \c y_.
  	*/
 	template <class ADVector>
 	void operator()(size_t id, const ADVector& ax, ADVector& ay)
-	{	// call atomic_base eval function
-		this->eval(ax, ay, id);
+	{	// call atomic_base function object
+		this->atomic_base<Base>::operator()(ax, ay, id);
 		return;
 	}
 	/*!

@@ -151,12 +151,12 @@ private:
 	/// index of this object in the list of all objects (see list() below)
 	const size_t index_;
 	// -----------------------------------------------------
-	/// temporary work space used eval, declared here to avoid memory 
-	// allocation/deallocation for each call to eval
-	vector<bool>  eval_vx_[CPPAD_MAX_NUM_THREADS];
-	vector<bool>  eval_vy_[CPPAD_MAX_NUM_THREADS];
-	vector<Base>  eval_tx_[CPPAD_MAX_NUM_THREADS];
-	vector<Base>  eval_ty_[CPPAD_MAX_NUM_THREADS];
+	/// temporary work space used afun, declared here to avoid memory 
+	// allocation/deallocation for each call to afun
+	vector<bool>  afun_vx_[CPPAD_MAX_NUM_THREADS];
+	vector<bool>  afun_vy_[CPPAD_MAX_NUM_THREADS];
+	vector<Base>  afun_tx_[CPPAD_MAX_NUM_THREADS];
+	vector<Base>  afun_ty_[CPPAD_MAX_NUM_THREADS];
 
 	// -----------------------------------------------------
 	/// List of all the object in this class
@@ -211,11 +211,10 @@ public:
 	
 /*
 -----------------------------------------------------------------------------
-$begin atomic_eval$$
+$begin atomic_afun$$
 
 $spell
 	afun
-	eval
 	const
 	CppAD
 $$
@@ -223,25 +222,24 @@ $$
 $section Using an Atomic Function$$
 
 $head Syntax$$
-$icode%afun%(%ax%, %ay%, %id%)
-%afun%.eval(%ax%, %ay%, %id%)%$$
+$icode%afun%(%ax%, %ay%, %id%)%$$
 
 $head Purpose$$
-The $code eval$$ function is defined by the
-$cref/atomic_base/atomic_ctor/atomic_base/$$ class.
-Given $icode ax$$ it computes the corresponding value of $icode ay$$. 
+Given $icode ax$$,
+this call computes the corresponding value of $icode ay$$. 
 If $codei%AD<%Base%>%$$ operations are being recorded,
 it enters the computation as an atomic operation in the recording;
 see $cref/start recording/Independent/Start Recording/$$.
-$codei%
-	%afun%(%ax%, %ay%, %id%)
-%$$
-is an alternative syntax for the $code eval$$ function.
 
 $head ADVector$$
 The type $icode ADVector$$ must be a
 $cref/simple vector class/SimpleVector/$$ with elements of type
 $codei%AD<%Base%>%$$; see $cref/Base/atomic_ctor/atomic_base/Base/$$.
+
+$head afun$$
+is a $cref/atomic_user/atomic_ctor/atomic_user/$$ object 
+and this $icode afun$$ function call is implemented by the
+$cref/atomic_base/atomic_ctor/atomic_base/$$ class. 
 
 $head ax$$
 This argument has prototype
@@ -266,7 +264,7 @@ $latex y = f(x)$$.
 
 $head id$$
 The $icode id$$ argument is optional and its default value 
-(when it is not present in a call to $code eval$$ is zero.
+(when it is not present in a call to $icode afun$$ it is zero.
 It is intended to pass extra information about this particular use of
 $icode afun$$.
 
@@ -274,28 +272,26 @@ $end
 -----------------------------------------------------------------------------
 */
 /*!
-Function object syntax for eval functions.
+Implement the user call to <tt>afun(ax, ay, id)</tt>.
 
-\copydetails atomic_base::eval.
+\tparam ADVector
+A simple vector class with elements of type <code>AD<Base></code>.
+
+\param id
+optional extra information vector that is just passed through by CppAD,
+and possibly used by user's routines.
+The default value of \c id (if it is not present) is zero.
+
+\param ax
+is the argument vector for this call,
+<tt>ax.size()</tt> determines the number of arguments.
+
+\param ay
+is the result vector for this call,
+<tt>ay.size()</tt> determines the number of results.
 */
 template <class ADVector>
-void operator()(const ADVector& ax, ADVector& ay, size_t id = 0)
-{	this->eval(ax, ay, id);
-}
-/*!
-Evaluate an atomic function 
-
-\param ax [in]
-arugment value for this function.
-
-\param ay [out]
-result value for this function.
-
-\param id [in]
-possible auxillary information (not used be atomic_base).
-*/
-template <class ADVector>
-void eval(
+void operator()(
 	const ADVector&  ax     ,
 	      ADVector&  ay     ,
 	size_t           id = 0 )
@@ -311,10 +307,10 @@ void eval(
 	}
 # endif
 	size_t thread = thread_alloc::thread_num();
-	vector <Base>& tx  = eval_tx_[thread];
-	vector <Base>& ty  = eval_ty_[thread];
-	vector <bool>& vx  = eval_vx_[thread];
-	vector <bool>& vy  = eval_vy_[thread];
+	vector <Base>& tx  = afun_tx_[thread];
+	vector <Base>& ty  = afun_ty_[thread];
+	vector <bool>& vx  = afun_vx_[thread];
+	vector <bool>& vy  = afun_vy_[thread];
 	//
 	if( vx.size() != n )
 	{	vx.resize(n);
@@ -439,7 +435,6 @@ $spell
 	vx
 	vy
 	ty
-	eval
 	Taylor
 	const
 	CppAD
@@ -452,7 +447,7 @@ $head Syntax$$
 $icode%ok% = %afun%.forward(%id%, %q%, %p%, %vx%, %vy%, %tx%, %ty%)%$$
 
 $head Purpose$$
-This virtual function is used by $cref atomic_eval$$
+This virtual function is used by $cref atomic_afun$$
 to evaluate function values.
 It is also used buy $cref/forward/Forward/$$
 to compute function vales and derivatives.
@@ -471,8 +466,8 @@ $codei%
 	size_t %id%
 %$$
 and is the value of
-$cref/id/atomic_eval/id/$$ in the corresponding call to 
-$cref atomic_eval$$.
+$cref/id/atomic_afun/id/$$ in the corresponding call to 
+$cref atomic_afun$$.
 
 $head q$$
 The argument $icode q$$ has prototype
@@ -480,7 +475,7 @@ $codei%
 	size_t %q%
 %$$
 It specifies the lowest order Taylor coefficient that we are evaluating. 
-During calls to $cref atomic_eval$$, $icode%q% == 0%$$.
+During calls to $cref atomic_afun$$, $icode%q% == 0%$$.
 
 $head p$$
 The argument $icode p$$ has prototype
@@ -488,7 +483,7 @@ $codei%
 	size_t %p%
 %$$
 It specifies the highest order Taylor coefficient that we are evaluating. 
-During calls to $cref atomic_eval$$, $icode%p% == 0%$$.
+During calls to $cref atomic_afun$$, $icode%p% == 0%$$.
 
 $head vx$$
 The $code forward$$ argument $icode vx$$ has prototype
@@ -496,7 +491,7 @@ $codei%
 	const CppAD::vector<bool>& %vx%
 %$$
 The case $icode%vx%.size() > 0%$$ only occurs while evaluating a call to 
-$cref atomic_eval$$.
+$cref atomic_afun$$.
 In this case,
 $icode%q% == %p% == 0%$$, 
 $icode%vx%.size() == %n%$$, and
@@ -505,7 +500,7 @@ $icode%vx%[%j%]%$$ is true if and only if
 $icode%ax%[%j%]%$$ is a $cref/variable/glossary/Variable/$$ 
 in the corresponding call to 
 $codei%
-	%afun%.eval(%ax%, %ay%)
+	%afun%(%ax%, %ay%, %id%)
 %$$
 $pre
 
@@ -673,7 +668,6 @@ $$
 $section Atomic Reverse Mode$$
 $spell
 	bool
-	eval
 $$
 
 $head Syntax$$
@@ -699,8 +693,8 @@ $codei%
 	size_t %id%
 %$$
 and is the value of
-$cref/id/atomic_eval/id/$$ in the corresponding call to 
-$cref atomic_eval$$.
+$cref/id/atomic_afun/id/$$ in the corresponding call to 
+$cref atomic_afun$$.
 
 $head p$$
 The argument $icode p$$ has prototype
@@ -869,7 +863,6 @@ virtual bool reverse(
 -------------------------------------- ---------------------------------------
 $begin atomic_for_sparse_jac$$
 $spell
-	eval
 	afun
 	Jacobian
 	jac
@@ -907,8 +900,8 @@ $codei%
 	size_t %id%
 %$$
 and is the value of
-$cref/id/atomic_eval/id/$$ in the corresponding call to 
-$cref atomic_eval$$.
+$cref/id/atomic_afun/id/$$ in the corresponding call to 
+$cref atomic_afun$$.
 
 $subhead q$$
 The argument $icode q$$ has prototype
@@ -975,7 +968,6 @@ virtual bool for_sparse_jac(
 $begin atomic_rev_sparse_jac$$
 $spell
 	rt
-	eval
 	afun
 	Jacobian
 	jac
@@ -1013,8 +1005,8 @@ $codei%
 	size_t %id%
 %$$
 and is the value of
-$cref/id/atomic_eval/id/$$ in the corresponding call to 
-$cref atomic_eval$$.
+$cref/id/atomic_afun/id/$$ in the corresponding call to 
+$cref atomic_afun$$.
 
 $subhead q$$
 The argument $icode q$$ has prototype
@@ -1082,7 +1074,6 @@ virtual bool rev_sparse_jac(
 -------------------------------------- ---------------------------------------
 $begin atomic_rev_sparse_hes$$
 $spell
-	eval
 	afun
 	Jacobian
 	jac
@@ -1122,8 +1113,8 @@ $codei%
 	size_t %id%
 %$$
 and is the value of
-$cref/id/atomic_eval/id/$$ in the corresponding call to 
-$cref atomic_eval$$.
+$cref/id/atomic_afun/id/$$ in the corresponding call to 
+$cref atomic_afun$$.
 
 $subhead q$$
 The argument $icode q$$ has prototype
@@ -1295,10 +1286,10 @@ static void clear(void)
 		{
 			atomic_base* op = list()[i];
 			if( op != CPPAD_NULL )
-			{	op->eval_vx_[thread].clear();
-				op->eval_vy_[thread].clear();
-				op->eval_tx_[thread].clear();
-				op->eval_ty_[thread].clear();
+			{	op->afun_vx_[thread].clear();
+				op->afun_vy_[thread].clear();
+				op->afun_tx_[thread].clear();
+				op->afun_ty_[thread].clear();
 			}
 		}
 	}

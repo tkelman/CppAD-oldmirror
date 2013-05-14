@@ -181,26 +181,29 @@ public:
 		f_.Dependent(ay);
 	}
 	/*!
-	Function object syntax for eval function for checpoint class.
-
-	\copydetails atomic_base::eval
+	Implement the user call to <tt>afun(ax, ay)</tt>.
+	
+	\tparam ADVector
+	A simple vector class with elements of type <code>AD<Base></code>.
+	
+	\param id
+	optional parameter which must be zero if present.
+	
+	\param ax
+	is the argument vector for this call,
+	<tt>ax.size()</tt> determines the number of arguments.
+	
+	\param ay
+	is the result vector for this call,
+	<tt>ay.size()</tt> determines the number of results.
 	*/
 	template <class ADVector>
 	void operator()(const ADVector& ax, ADVector& ay, size_t id = 0)
-	{	this->eval(ax, ay, id);
-	}
-	/*!
-	Eval function for checkpoint class.
-
-	\copydetails atomic_base::eval
-	*/
-	template <class ADVector>
-	void eval(const ADVector& ax, ADVector& ay, size_t id = 0)
 	{	CPPAD_ASSERT_KNOWN(
 			id == 0,
-			"checkpoint: id is non-zero in eval(ax, ay, id)"
+			"checkpoint: id is non-zero in afun(ax, ay, id)"
 		);
-		this->atomic_base<Base>::eval(ax, ay, id);
+		this->atomic_base<Base>::operator()(ax, ay, id);
 	}
 	/*!
  	Link from user_atomic to forward mode 
