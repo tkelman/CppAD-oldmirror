@@ -202,14 +202,22 @@ public:
 		bool ok  = true;	
 		size_t i, j;
 
-		// check for special case
+		// 2DO: test both forward and reverse vy information
 		if( vx.size() > 0 )
-		{	//Compute r, a Jacobian sparsity pattern.
-			// 2DO: use forward mode when m < n
-			vector< std::set<size_t> > s(m), r(m);
-			for(i = 0; i < m; i++)
-				s[i].insert(i);
-			r = f_.RevSparseJac(m, s);
+		{	//Compute Jacobian sparsity pattern.
+			vector< std::set<size_t> > s(m);
+			if( n <= m )
+			{	vector< std::set<size_t> > r(n);
+				for(j = 0; j < n; j++)
+					r[j].insert(j);
+				s = f_.ForSparseJac(n, r);
+			}
+			else
+			{	vector< std::set<size_t> > r(m);
+				for(i = 0; i < m; i++)
+					r[i].insert(i);
+				s = f_.RevSparseJac(m, r);
+			}
 			std::set<size_t>::const_iterator itr;
 			for(i = 0; i < m; i++)
 			{	vy[i] = false;
@@ -297,34 +305,13 @@ public:
 		size_t                                  q  ,
 		      vector< std::set<size_t> >&       rt ,
 		const vector< std::set<size_t> >&       st )
-	{	// 2DO: Add AFun<Base>::RevSparseJacTran 
-		// so it is not necessary to create transposes here
-		CPPAD_ASSERT_UNKNOWN( id == 0 );
-		size_t n = rt.size();
-		size_t m = st.size();
+	{	CPPAD_ASSERT_UNKNOWN( id == 0 );
 		bool ok  = true;
 
-		// start with empty sets
-		vector< std::set<size_t> > r(q), s(q);
-		std::set<size_t>::const_iterator itr;
-		size_t i, j;
+		// compute rt
+		bool transpose = true;
+		rt = f_.RevSparseJac(q, st, transpose);
 
-		// untranspose s
-		for(i = 0; i < m; i++)
-		{	for(itr = st[i].begin(); itr != st[i].end(); itr++)
-				s[*itr].insert(i);
-		}
-
-		// compute r
-		r = f_.RevSparseJac(q, s);
-
-		// transpose r
-		for(j = 0; j < n; j++)
-			rt[j].clear();
-		for(i = 0; i < q; i++)
-		{	for(itr = r[i].begin(); itr != r[i].end(); itr++)
-				rt[*itr].insert(i);
-		}
 		return ok; 
 	}
 	virtual bool rev_sparse_hes(
@@ -335,7 +322,9 @@ public:
 		      vector<bool>&                     t  ,
 		const vector< std::set<size_t> >&       u  ,
 		      vector< std::set<size_t> >&       v  )
-	{	CPPAD_ASSERT_UNKNOWN( id == 0 );
+	{	// 2DO: prehaps we can get rid of transposes in a manner
+		// similar to how it was done for rev_sparse_jac above.
+		CPPAD_ASSERT_UNKNOWN( id == 0 );
 		size_t m = s.size();
 		size_t n = t.size();
 		bool ok  = true;

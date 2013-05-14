@@ -533,7 +533,9 @@ void ADFun<Base>::RevSparseJacCase(
 	const VectorSet&             s                 ,
 	VectorSet&                   r                 )
 {	// dimension of the result vector
-	r.resize( p );
+	if( transpose )
+		r.resize( Domain() );
+	else	r.resize( p );
 
 	// store results in r
 	RevSparseJacSet(
