@@ -12,6 +12,8 @@ the terms of the
 A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
+// 2DO: implement choice between sets and bools for sparsity patterns.
+
 # include <set>
 # include <cppad/local/cppad_assert.hpp>
 // needed before one can use CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL
@@ -826,7 +828,7 @@ The argument $icode py$$ has prototype
 $codei%
 	const CppAD::vector<%Base%>& %py%
 %$$
-and $icode%py%.size() == (%p%+1) * %m%$$.
+and $icode%py%.size() == m * (%p%+1)%$$.
 For $latex i = 0 , \ldots , m-1$$, $latex k = 0 , \ldots , p$$,
 $latex \[
 	py[ i * (p + 1 ) + k ] = \partial G / \partial y_i^k
@@ -837,7 +839,7 @@ The $icode px$$ has prototype
 $codei%
 	CppAD::vector<%Base%>& %px%
 %$$
-and $icode%px%.size() == (%p%+1) * %n%$$.
+and $icode%px%.size() == n * (%p%+1)%$$.
 The input values of the elements of $icode px$$ do not matter.
 Upon return,
 for $latex j = 0 , \ldots , n-1$$ and $latex \ell = 0 , \ldots , p$$,
