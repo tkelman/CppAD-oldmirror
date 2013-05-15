@@ -986,13 +986,13 @@ $icode%ok% = %afun%.rev_sparse_jac(%id%, %q%, %rt%, %st%)%$$
 $head Purpose$$
 This function is used by $cref RevSparseJac$$ to compute
 Jacobian sparsity patterns.
-For a fixed matrix $latex S \in B^{q \times m}$$,
-the Jacobian of $latex S * f( x )$$ with respect to $latex x \in B^q$$ is
+For a fixed matrix $latex R \in B^{q \times m}$$,
+the Jacobian of $latex R * f( x )$$ with respect to $latex x \in B^q$$ is
 $latex \[
-	R(x) = S * f^{(1)} (x)
+	S(x) = R * f^{(1)} (x)
 \] $$
-Given a $cref/sparsity pattern/glossary/Sparsity Pattern/$$ for $latex S$$,
-$code rev_sparse_jac$$ computes a sparsity pattern for $latex R(x)$$.
+Given a $cref/sparsity pattern/glossary/Sparsity Pattern/$$ for $latex R$$,
+$code rev_sparse_jac$$ computes a sparsity pattern for $latex S(x)$$.
 
 $head Implementation$$
 If you are using $cref RevSparseJac$$,
@@ -1014,28 +1014,27 @@ $codei%
      size_t %q%
 %$$
 It specifies the number of rows in 
-$latex S \in B^{q \times m}$$ and the Jacobian 
-$latex R(x) \in B^{q \times n}$$. 
-
+$latex R \in B^{q \times m}$$ and the Jacobian 
+$latex S(x) \in B^{q \times n}$$. 
 
 $subhead rt$$
 This argument has prototype
 $codei%
-	%atomic_sparsity%& %rt%
-%$$
-The input value of its elements do not matter.
-Upon return, $icode r$$ is a 
-$cref/atomic_sparsity/atomic_ctor/atomic_sparsity/$$ pattern for
-$latex R(x)^\R{T} \in B^{n \times q}$$. 
- 
-$subhead st$$
-This argument has prototype
-$codei%
-     const %atomic_sparsity%& %st%
+     const %atomic_sparsity%& %rt%
 %$$
 and is a 
 $cref/atomic_sparsity/atomic_ctor/atomic_sparsity/$$ pattern for
-$latex S^\R{T} \in B^{m \times q}$$.
+$latex R^\R{T} \in B^{m \times q}$$.
+
+$subhead st$$
+This argument has prototype
+$codei%
+	%atomic_sparsity%& %st%
+%$$
+The input value of its elements do not matter.
+Upon return, $icode s$$ is a 
+$cref/atomic_sparsity/atomic_ctor/atomic_sparsity/$$ pattern for
+$latex S(x)^\R{T} \in B^{n \times q}$$. 
 
 $head ok$$
 The return value $icode ok$$ has prototype
@@ -1059,16 +1058,16 @@ and possibly used by user's routines
 is the row dimension for the Jacobian sparsity partterns
 
 \param rt [out]
-is the tansposed Jacobian sparsity pattern for the argument vector x
+is the tansposed Jacobian sparsity pattern w.r.t to range variables y
 
 \param st [in]
-is the tansposed Jacobian sparsity pattern for the result vector y
+is the tansposed Jacobian sparsity pattern for the argument variables x
 */
 virtual bool rev_sparse_jac(
 	size_t                                  id ,
 	size_t                                  q  ,
-	      vector< std::set<size_t> >&       rt ,
-	const vector< std::set<size_t> >&       st )
+	const vector< std::set<size_t> >&       rt ,
+	      vector< std::set<size_t> >&       st )
 {	return false; }
 /*
 -------------------------------------- ---------------------------------------

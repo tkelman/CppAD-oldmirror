@@ -13,7 +13,6 @@ $begin atomic_base$$
 $spell
 	afun
 	arg
-	eval
 	vx
 	vy
 	tx
@@ -39,7 +38,6 @@ $head Syntax$$
 $codei%
 %user_atomic% %afun%(%n%, %m%, %use_set%, %user_arg_list%)
 %ok% = %afun%(%ax%, %ay%)
-%ok% = %afun%.eval(%ax%, %ay%)
 %ok% = %afun%.forward(%q%, %p%, %vx%, %vy%, %tx%, %ty%)
 %ok% = %afun%.reverse(%p%, %tx%, %ty%, %px%, %py%)
 %ok% = %afun%.for_sparse_jac(%q%, %r%, %s%)

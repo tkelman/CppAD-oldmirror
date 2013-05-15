@@ -514,10 +514,10 @@ void RevJacSweep(
 				user_id    = arg[1];
 				user_n     = arg[2];
 				user_m     = arg[3];
-				if(user_r.size() != user_n )
-					user_r.resize(user_n);
-				if(user_s.size() != user_m )
-					user_s.resize(user_m);
+				if(user_r.size() != user_m )
+					user_r.resize(user_m);
+				if(user_s.size() != user_n )
+					user_s.resize(user_n);
 				user_j     = user_n;
 				user_i     = user_m;
 				user_state = user_ret;
@@ -553,8 +553,8 @@ void RevJacSweep(
 			--user_j;
 			// It might be faster if we add set union to var_sparsity
 			// where one of the sets is not in var_sparsity.
-			set_itr = user_r[user_j].begin();
-			set_end = user_r[user_j].end();
+			set_itr = user_s[user_j].begin();
+			set_end = user_s[user_j].end();
 			while( set_itr != set_end )
 				var_sparsity.add_element(arg[0], *set_itr++);	
 			if( user_j == 0 )
@@ -568,7 +568,7 @@ void RevJacSweep(
 			CPPAD_ASSERT_UNKNOWN( NumArg(op) == 1 );
 			CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) < num_par );
 			--user_i;
-			user_s[user_i].clear();
+			user_r[user_i].clear();
 			if( user_i == 0 )
 			{	// call users function for this operation
 				atomic_base<Base>* atom =
@@ -585,11 +585,11 @@ void RevJacSweep(
 			CPPAD_ASSERT_UNKNOWN( user_state == user_ret );
 			CPPAD_ASSERT_UNKNOWN( 0 < user_i && user_i <= user_m );
 			--user_i;
-			user_s[user_i].clear();
+			user_r[user_i].clear();
 			var_sparsity.begin(i_var);
 			i = var_sparsity.next_element();
 			while( i < user_q )
-			{	user_s[user_i].insert(i);
+			{	user_r[user_i].insert(i);
 				i = var_sparsity.next_element();
 			}
 			if( user_i == 0 )
