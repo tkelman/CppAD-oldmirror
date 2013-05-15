@@ -3,7 +3,7 @@
 # define CPPAD_FOR_SPARSE_JAC_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-13 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -129,7 +129,7 @@ its size is $latex n$$ and all the set elements must be between
 zero and $icode%q%-1%$$ inclusive.
 It specifies a 
 $cref/sparsity pattern/glossary/Sparsity Pattern/$$ 
-for the matrix $icode R$$.
+for the matrix $icode R \in B^{n \times p}$$.
 
 $head s$$
 The return value $icode s$$ has prototype
@@ -144,7 +144,7 @@ its size is $latex m$$ and all its set elements are between
 zero and $icode%q%-1%$$ inclusive.
 It specifies a 
 $cref/sparsity pattern/glossary/Sparsity Pattern/$$ 
-for the matrix $latex S(x)$$.
+for the matrix $latex S(x) \in B^{m \times p}$$.
 
 $head VectorSet$$
 The type $icode VectorSet$$ must be a $cref SimpleVector$$ class with
