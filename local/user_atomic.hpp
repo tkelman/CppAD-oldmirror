@@ -1026,11 +1026,11 @@ public:
 	virtual bool rev_sparse_jac(
 		size_t                               id ,
 		size_t                               q  ,
-		vector< std::set<size_t> >&          rt ,
-		const vector< std::set<size_t> >&    st )
-	{	size_t n = rt.size();
-		size_t m = st.size();
-		bool ok  = rjs_(id, n, m, q, rt, st);
+		const vector< std::set<size_t> >&    rt ,
+		      vector< std::set<size_t> >&    st )
+	{	size_t n = st.size();
+		size_t m = rt.size();
+		bool ok  = rjs_(id, n, m, q, st, rt);
 		return ok;
 	}
 	/*!

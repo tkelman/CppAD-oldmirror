@@ -27,6 +27,7 @@ defining checkpoint functions.
 /*
 $begin checkpoint$$
 $spell
+	CppAD
 	checkpoint
 	checkpointing
 	algo
@@ -39,9 +40,9 @@ $index function, checkpoint$$
 $index checkpoint, function$$
 
 $head Syntax$$
-$icode%checkpoint<%Base%> %afun%(%name%, %algo%, %ax%, %ay%)
-%ok% = %afun%(%ax%, %ay%)
+$codei%checkpoint<%Base%> %afun%(%name%, %algo%, %ax%, %ay%)
 %ok% = %algo%(%ax%, %ay%)
+%ok% = %afun%(%ax%, %ay%)
 checkpoint<%Base%>::clear()%$$
 
 $head Purpose$$
@@ -105,7 +106,7 @@ $codei%
 	%ok% = %algo%(%ax%, %ay%)
 %$$ 
 must evaluate the function $latex y = f(x)$$ using
-$codei%AD%<%Base%>%$$ operations.
+$codei%AD<%Base%>%$$ operations.
 In addition, we assume that the 
 $cref/operation sequence/glossary/Operation/Sequence/$$
 does not depend on the value of $icode ax$$.
@@ -114,8 +115,11 @@ $head afun$$
 Given $icode ax$$ it computes the corresponding value of $icode ay$$
 using the operation sequence corresponding to $icode algo$$. 
 If $codei%AD<%Base%>%$$ operations are being recorded,
-it enters the computation as single operation in the recording;
+it enters the computation as single operation in the recording
 see $cref/start recording/Independent/Start Recording/$$.
+(Currently each use of $icode afun$$ actually corresponds to
+$icode%m%+%n%+2%$$ operations and creates $icode m$$ new variables, 
+but this is not part of the CppAD specifications and my change.)
 
 $head clear$$
 The $code atomic_base$$ class holds onto static work space in order to
@@ -328,14 +332,14 @@ public:
 	virtual bool rev_sparse_jac(
 		size_t                                  id ,
 		size_t                                  q  ,
-		      vector< std::set<size_t> >&       rt ,
-		const vector< std::set<size_t> >&       st )
+		const vector< std::set<size_t> >&       rt ,
+		      vector< std::set<size_t> >&       st )
 	{	CPPAD_ASSERT_UNKNOWN( id == 0 );
 		bool ok  = true;
 
 		// compute rt
 		bool transpose = true;
-		rt = f_.RevSparseJac(q, st, transpose);
+		st = f_.RevSparseJac(q, rt, transpose);
 
 		return ok; 
 	}
@@ -381,7 +385,7 @@ public:
 		f_.ForSparseJac(q, rt);
 		ht = f_.RevSparseHes(q, S);
 
-		// compute sparsity pattern for V(x) = A(x) + H(x)^T
+		// compute sparsity pattern for V(x) = A(x) + H(x)
 		for(j = 0; j < n; j++)
 			v[j].clear();
 		for(i = 0; i < q; i++)
