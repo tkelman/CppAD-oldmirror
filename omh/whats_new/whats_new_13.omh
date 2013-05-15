@@ -44,6 +44,10 @@ This section contains a list of the changes to CppAD during 2013
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
 
+$head 05-15$$
+Change $cref RevSparseJac$$ parameter names to be closer to the
+$cref ForSparseJac$$ names so the difference is clearer.
+
 $head 05-14$$
 $list number$$
 The $cref checkpoint$$ class has been added.
@@ -51,7 +55,7 @@ This is a much easier way to do checkpointing than the
 old checkpoint example.
 The old checkpointing example is now the $cref reverse_any.cpp$$ example.
 $lnext
-Fix bug in $cref RevSparseJac$$ for case when $cref/p/RevSparseJac/p/$$
+Fix bug in $cref RevSparseJac$$ for case when $cref/q/RevSparseJac/q/$$
 was not equal to $icode m$$ (range dimension) and sparsity pattern was a 
 vector of $code bool$$.
 $lnext
