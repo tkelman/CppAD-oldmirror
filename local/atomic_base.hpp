@@ -27,6 +27,45 @@ CPPAD_BEGIN_NAMESPACE
 Base class for atomic user operations.
 */
 
+template <class Base>
+class atomic_base {
+// ===================================================================
+public:
+	enum option_enum { bool_sparsity, set_sparsity};
+private:
+	/// name for this atomic funciton (used for error reporting)
+	const std::string name_;
+
+	/// index of this object in the list of all objects (see list() below)
+	const size_t index_;
+
+	// -----------------------------------------------------
+	/// sparsity pattern this object is currently using
+	/// (set by constructor and option member functions)
+	option_enum sparsity_;
+
+	// -----------------------------------------------------
+	/// temporary work space used afun, declared here to avoid memory 
+	// allocation/deallocation for each call to afun
+	vector<bool>  afun_vx_[CPPAD_MAX_NUM_THREADS];
+	vector<bool>  afun_vy_[CPPAD_MAX_NUM_THREADS];
+	vector<Base>  afun_tx_[CPPAD_MAX_NUM_THREADS];
+	vector<Base>  afun_ty_[CPPAD_MAX_NUM_THREADS];
+
+	// -----------------------------------------------------
+	/// List of all the object in this class
+	/// (null pointer used for objects that have been deleted)
+	static std::vector<atomic_base *>& list(void)
+	{	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
+		static std::vector<atomic_base *> list_;
+		return list_;
+	}
+
+	/// Name corresponding to a base_atomic object
+	static const char* name(size_t index)
+	{	return list()[index]->name_.c_str(); }
+	// =====================================================================
+public:
 /*
 $begin atomic_ctor$$
 $spell
@@ -103,37 +142,6 @@ Base class for atomic_user functions.
 \tparam Base
 This class is used for defining an AD<Base> atomic operation y = f(x).
 */
-template <class Base>
-class atomic_base {
-// ===================================================================
-private:
-// constants
-/// name for this atomic funciton (used for error reporting)
-const std::string name_;
-/// index of this object in the list of all objects (see list() below)
-const size_t index_;
-// -----------------------------------------------------
-/// temporary work space used afun, declared here to avoid memory 
-// allocation/deallocation for each call to afun
-vector<bool>  afun_vx_[CPPAD_MAX_NUM_THREADS];
-vector<bool>  afun_vy_[CPPAD_MAX_NUM_THREADS];
-vector<Base>  afun_tx_[CPPAD_MAX_NUM_THREADS];
-vector<Base>  afun_ty_[CPPAD_MAX_NUM_THREADS];
-
-// -----------------------------------------------------
-/// List of all the object in this class
-/// (null pointer used for objects that have been deleted)
-static std::vector<atomic_base *>& list(void)
-{	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
-	static std::vector<atomic_base *> list_;
-	return list_;
-}
-
-/// Name corresponding to a base_atomic object
-static const char* name(size_t index)
-{	return list()[index]->name_.c_str(); }
-// =====================================================================
-public:
 /// make sure user does not invoke the default constructor
 atomic_base(void)
 {	CPPAD_ASSERT_KNOWN(false,
@@ -179,15 +187,27 @@ $$
 $section Set Atomic Function Options$$
 
 $head Syntax$$
-$icode%afun%.set(%option%)%$$
+$icode%afun%.option(%option_value%)%$$
 
 $head atomic_sparsity$$
-If neither the $code use_set$$ or $code use_bool$$ option is set,
+If neither the $code set_sparsity$$ or $code bool_sparsity$$ option is set,
 the type for $icode atomic_sparsity$$ is one of the two choices below
 (and otherwise unspecified).
 
-$subhead use_set$$
-If $icode option$$ is $code atomic_base::use_set$$, 
+$subhead bool_sparsity$$
+If $icode option_value$$ is $code atomic_base::bool_sparsity$$, 
+then the type used by $icode afun$$ for
+$cref/sparsity patterns/glossary/Sparsity Pattern/$$,
+(after the option is set) will be
+$icode%
+	typedef CppAD::vector<bool> %atomic_sparsity%
+%$$
+If $icode r$$ is a sparsity pattern 
+for a matrix $icode R \in B^{p \times q}%$$:
+$icode%r%.size() == %p% * %q%$$.
+
+$subhead set_sparsity$$
+If $icode option_value$$ is $code atomic_base::set_sparsity$$, 
 then the type used by $icode afun$$ for
 $cref/sparsity patterns/glossary/Sparsity Pattern/$$,
 (after the option is set) will be
@@ -199,20 +219,23 @@ for a matrix $icode R \in B^{p \times q}%$$:
 $icode%r%.size() == %p%$$, and for $latex i = 0 , \ldots , p-1$$,
 the elements of $icode%r%[%i%]%$$ are between zero and $latex q-1$$ inclusive. 
 
-$subhead use_bool$$
-If $icode option$$ is $code atomic_base::use_bool$$, 
-then the type used by $icode afun$$ for
-$cref/sparsity patterns/glossary/Sparsity Pattern/$$,
-(after the option is set) will be
-$icode%
-	typedef CppAD::vector<bool> %atomic_sparsity%
-%$$
-If $icode r$$ is a sparsity pattern 
-for a matrix $icode R \in B^{p \times q}%$$:
-$icode%r%.size() == %p% * %q%$$.
-
 $end
 */
+void option(enum option_enum option_value)
+{	switch( option_value )
+	{	case bool_sparsity:
+		case set_sparsity:
+		sparsity_ = option_value;
+		break;
+
+		default:
+		CPPAD_ASSERT_KNOWN(
+			false,
+			"atoic_base::option: option_value is not valid"
+		);
+	}
+	return;
+}
 /*
 -----------------------------------------------------------------------------
 $begin atomic_afun$$
