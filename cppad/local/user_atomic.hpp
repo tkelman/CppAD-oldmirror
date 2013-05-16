@@ -910,7 +910,7 @@ public:
 	atomic_base has this restriction.
 	*/
 	user_atomic(const char* afun, F f, R r, FJS fjs, RJS rjs, RHS rhs) : 
-	atomic_base<Base>(afun, true) // name = afun, use_set = true
+	atomic_base<Base>(afun) // name = afun
 	, f_(f)
 	, r_(r)
 	, fjs_(fjs)
