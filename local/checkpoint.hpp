@@ -151,7 +151,7 @@ public:
 	/*!
  	Constructor of a checkpoint object
 
-	\param name_in [in]
+	\param name_afun [in]
 	is the user's name for the AD version of this atomic operation.
 
 	\param algo [in/out]
@@ -165,9 +165,9 @@ public:
 	function value at specified argument value.
 	*/
 	template <class Algo, class ADVector>
-	checkpoint(const char* name_in, 
+	checkpoint(const char* name_afun, 
 		Algo& algo, const ADVector& ax, ADVector& ay)
-	: atomic_base<Base>(name_in, true) // name = afun, use_set = true
+	: atomic_base<Base>(name_afun)
 	{	CheckSimpleVector< CppAD::AD<Base> , ADVector>();
 
 		// make a copy of ax because Independent modifies AD information

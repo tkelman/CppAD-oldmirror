@@ -34,23 +34,21 @@ $spell
 	arg
 	CppAD
 	bool
-	std
 	ctor
-	typedef
 	const
 $$
 
 $section Atomic Function Constructor$$
 
 $head Syntax$$
-$icode%atomic_user afun%(%user_ctor_arg_list%)
+$icode%atomic_user afun%(%ctor_arg_list%)
 %$$
-$codei%atomic_base<%Base%>(%name%, %use_set%)
+$codei%atomic_base<%Base%>(%name%)
 %$$
 
 $head atomic_user$$
 
-$subhead user_ctor_arg_list$$
+$subhead ctor_arg_list$$
 Is a list of arguments for the $icode atomic_user$$ constructor.
 
 $subhead afun$$
@@ -67,12 +65,12 @@ It should be declared as follows:
 $codei%
 	class %atomic_user% : public CppAD::atomic_base<%Base%> {
 	public:
-		%atomic_user%(%user_ctor_arg_list%) 
-		: atomic_base<%Base%>(%name%, %use_set%)
+		%atomic_user%(%ctor_arg_list%) : atomic_base<%Base%>(%name%)
 	%...%
 	};
 %$$
-where $icode ...$$  denotes the rest of the implementation of the derived class.
+where $icode ...$$  
+denotes the rest of the implementation of the derived class.
 This includes completing the constructor and
 all the virtual functions that have their 
 $code atomic_base$$ implementations replaced by 
@@ -97,40 +95,6 @@ It is the name for this atomic function and is used for error reporting.
 The suggested value for $icode name$$ is $icode afun$$, i.e.,
 the name of the corresponding $icode atomic_user$$ object.
 
-$subhead use_set$$
-This $icode atomic_base$$ constructor argument has prototype
-$codei%
-	bool %use_set%
-%$$ 
-specifies if $code std::set$$ ($code true$$)
-or vector of $code bool$$  ($code false$$)
-are used the sparsity patterns
-calculated by this atomic operation.
-
-$head atomic_sparsity$$
-If $icode use_set$$ is true, we define the type $icode atomic_sparsity$$ 
-and a $cref/sparsity patterns/glossary/Sparsity Pattern/$$ 
-$icode r$$ for $latex R \in B^{p \times q}$$ by
-$codei%
-	typedef CppAD::vector< std::set<size_t> %atomic_sparsity%
-	%atomic_sparsity% %r%
-%$$
-where $icode%r%.size() == %p%$$ and
-for $latex i = 0 , \ldots , p-1$$,
-all the elements of $icode%r%[%i%]%$$ are between zero and $latex q-1$$
-inclusive. 
-$pre
-
-$$
-If $icode use_set$$ is false, we define the type $icode atomic_sparsity$$ 
-and a $cref/sparsity patterns/glossary/Sparsity Pattern/$$ 
-$icode r$$ for $latex R \in B^{p \times q}$$ by
-$codei%
-	typedef CppAD::vector<bool> %atomic_sparsity%
-	%atomic_sparsity% %r%
-%$$
-where $icode%r%.size() == %p%*%q%$$.
-
 $end
 */
 /*!
@@ -141,74 +105,114 @@ This class is used for defining an AD<Base> atomic operation y = f(x).
 */
 template <class Base>
 class atomic_base {
+// ===================================================================
 private:
-	// -----------------------------------------------------
-	// constants
-	/// name for this atomic funciton (used for error reporting)
-	const std::string name_;
-	/// if true, use sets for sparsity patterns, otherwise use bools.
-	const bool   use_set_;
-	/// index of this object in the list of all objects (see list() below)
-	const size_t index_;
-	// -----------------------------------------------------
-	/// temporary work space used afun, declared here to avoid memory 
-	// allocation/deallocation for each call to afun
-	vector<bool>  afun_vx_[CPPAD_MAX_NUM_THREADS];
-	vector<bool>  afun_vy_[CPPAD_MAX_NUM_THREADS];
-	vector<Base>  afun_tx_[CPPAD_MAX_NUM_THREADS];
-	vector<Base>  afun_ty_[CPPAD_MAX_NUM_THREADS];
+// constants
+/// name for this atomic funciton (used for error reporting)
+const std::string name_;
+/// index of this object in the list of all objects (see list() below)
+const size_t index_;
+// -----------------------------------------------------
+/// temporary work space used afun, declared here to avoid memory 
+// allocation/deallocation for each call to afun
+vector<bool>  afun_vx_[CPPAD_MAX_NUM_THREADS];
+vector<bool>  afun_vy_[CPPAD_MAX_NUM_THREADS];
+vector<Base>  afun_tx_[CPPAD_MAX_NUM_THREADS];
+vector<Base>  afun_ty_[CPPAD_MAX_NUM_THREADS];
 
-	// -----------------------------------------------------
-	/// List of all the object in this class
-	/// (null pointer used for objects that have been deleted)
-	static std::vector<atomic_base *>& list(void)
-	{	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
-		static std::vector<atomic_base *> list_;
-		return list_;
-	}
+// -----------------------------------------------------
+/// List of all the object in this class
+/// (null pointer used for objects that have been deleted)
+static std::vector<atomic_base *>& list(void)
+{	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;
+	static std::vector<atomic_base *> list_;
+	return list_;
+}
 
-	/// Name corresponding to a base_atomic object
-	static const char* name(size_t index)
-	{	return list()[index]->name_.c_str(); }
-
+/// Name corresponding to a base_atomic object
+static const char* name(size_t index)
+{	return list()[index]->name_.c_str(); }
+// =====================================================================
 public:
-	/// make sure user does not invoke the default constructor
-	atomic_base(void)
-	{	CPPAD_ASSERT_KNOWN(false,
-			"Attempt to use the atomic_base default constructor"
-		);
-	}
-	/*!
-	Constructor
+/// make sure user does not invoke the default constructor
+atomic_base(void)
+{	CPPAD_ASSERT_KNOWN(false,
+		"Attempt to use the atomic_base default constructor"
+	);
+}
+/*!
+Constructor
 
-	\param name_in
-	name used for error reporting
+\param name_afun
+name used for error reporting
+*/
+atomic_base(const char* name_afun) :
+name_(name_afun),
+index_( list().size() )
+{	CPPAD_ASSERT_KNOWN(
+		! thread_alloc::in_parallel() ,
+		"atomic_base: constructor cannot be called in parallel mode."
+	);
+	list().push_back(this);
+}
+/// destructor informs CppAD that this atomic function with this index
+/// has dropped out of scope by setting its pointer to null
+~atomic_base(void)
+{	CPPAD_ASSERT_UNKNOWN( list().size() > index_ );
+	list()[index_] = CPPAD_NULL;
+}
+/// atomic_base function object corresponding to a certain index
+static atomic_base* list(size_t index)
+{	CPPAD_ASSERT_UNKNOWN( list().size() > index );
+	return list()[index];
+}
+/*
+$begin atomic_option$$
+$spell
+	afun
+	bool
+	CppAD
+	std
+	typedef
+$$
 
-	\param use_set
-	should sets (or bools) be used for sparsity patterns
-	*/
-	atomic_base(const char* name_in, bool use_set) :
-	name_(name_in),
-	use_set_(use_set),
-	index_( list().size() )
-	{	CPPAD_ASSERT_KNOWN(
-			! thread_alloc::in_parallel() ,
-			"atomic_base: constructor cannot be called in parallel mode."
-		);
-		list().push_back(this);
-	}
-	/// destructor informs CppAD that this atomic function with this index
-	/// has dropped out of scope by setting its pointer to null
-	~atomic_base(void)
-	{	CPPAD_ASSERT_UNKNOWN( list().size() > index_ );
-		list()[index_] = CPPAD_NULL;
-	}
-	/// atomic_base function object corresponding to a certain index
-	static atomic_base* list(size_t index)
-	{	CPPAD_ASSERT_UNKNOWN( list().size() > index );
-		return list()[index];
-	}
-	
+$section Set Atomic Function Options$$
+
+$head Syntax$$
+$icode%afun%.set(%option%)%$$
+
+$head atomic_sparsity$$
+If neither the $code use_set$$ or $code use_bool$$ option is set,
+the type for $icode atomic_sparsity$$ is one of the two choices below
+(and otherwise unspecified).
+
+$subhead use_set$$
+If $icode option$$ is $code atomic_base::use_set$$, 
+then the type used by $icode afun$$ for
+$cref/sparsity patterns/glossary/Sparsity Pattern/$$,
+(after the option is set) will be
+$icode%
+	typedef CppAD::vector< std::set<size_t> > %atomic_sparsity%
+%$$
+If $icode r$$ is a sparsity pattern 
+for a matrix $icode R \in B^{p \times q}%$$:
+$icode%r%.size() == %p%$$, and for $latex i = 0 , \ldots , p-1$$,
+the elements of $icode%r%[%i%]%$$ are between zero and $latex q-1$$ inclusive. 
+
+$subhead use_bool$$
+If $icode option$$ is $code atomic_base::use_bool$$, 
+then the type used by $icode afun$$ for
+$cref/sparsity patterns/glossary/Sparsity Pattern/$$,
+(after the option is set) will be
+$icode%
+	typedef CppAD::vector<bool> %atomic_sparsity%
+%$$
+If $icode r$$ is a sparsity pattern 
+for a matrix $icode R \in B^{p \times q}%$$:
+$icode%r%.size() == %p% * %q%$$.
+
+$end
+*/
 /*
 -----------------------------------------------------------------------------
 $begin atomic_afun$$
@@ -917,7 +921,7 @@ This argument has prototype
 $codei%
      const %atomic_sparsity%& %r%
 %$$
-and is a $cref/atomic_sparsity/atomic_ctor/atomic_sparsity/$$ pattern for 
+and is a $cref/atomic_sparsity/atomic_option/atomic_sparsity/$$ pattern for 
 $latex R \in B^{n \times q}$$.
 
 $subhead s$$
@@ -927,7 +931,7 @@ $codei%
 %$$
 The input values of its elements do not matter.
 Upon return, $icode s$$ is a 
-$cref/atomic_sparsity/atomic_ctor/atomic_sparsity/$$ pattern for 
+$cref/atomic_sparsity/atomic_option/atomic_sparsity/$$ pattern for 
 $latex S(x) \in B^{m \times q}$$.
 
 $head ok$$
@@ -1023,7 +1027,7 @@ $codei%
      const %atomic_sparsity%& %rt%
 %$$
 and is a 
-$cref/atomic_sparsity/atomic_ctor/atomic_sparsity/$$ pattern for
+$cref/atomic_sparsity/atomic_option/atomic_sparsity/$$ pattern for
 $latex R^\R{T} \in B^{m \times q}$$.
 
 $subhead st$$
@@ -1033,7 +1037,7 @@ $codei%
 %$$
 The input value of its elements do not matter.
 Upon return, $icode s$$ is a 
-$cref/atomic_sparsity/atomic_ctor/atomic_sparsity/$$ pattern for
+$cref/atomic_sparsity/atomic_option/atomic_sparsity/$$ pattern for
 $latex S(x)^\R{T} \in B^{n \times q}$$. 
 
 $head ok$$
@@ -1129,7 +1133,7 @@ This argument has prototype
 $codei%
      const %atomic_sparsity%& %r%
 %$$
-and is a $cref/atomic_sparsity/atomic_ctor/atomic_sparsity/$$ pattern for 
+and is a $cref/atomic_sparsity/atomic_option/atomic_sparsity/$$ pattern for 
 $latex R \in B^{n \times q}$$.
 
 $subhead s$$
@@ -1137,7 +1141,7 @@ The argument $icode s$$ has prototype
 $codei%
      const vector<bool>& %s%
 %$$
-and is a $cref/atomic_sparsity/atomic_ctor/atomic_sparsity/$$ pattern for 
+and is a $cref/atomic_sparsity/atomic_option/atomic_sparsity/$$ pattern for 
 $latex S(x)^\R{T} \in B^{m \times 1}$$ where
 $latex S(x) = g^{(1)} (y)$$.
 
@@ -1148,7 +1152,7 @@ $codei%
 %$$
 The input values of its elements do not matter.
 Upon return, $icode t$$ is a 
-$cref/atomic_sparsity/atomic_ctor/atomic_sparsity/$$ pattern for 
+$cref/atomic_sparsity/atomic_option/atomic_sparsity/$$ pattern for 
 $latex T(x)^\R{T} \in B^{m \times 1}$$ where
 $latex \[
 	T(x) = (g \circ f)^{(1)} (x) = S(x) * f^{(1)} (x)
@@ -1159,7 +1163,7 @@ This argument has prototype
 $codei%
      const %atomic_sparsity%& %u%
 %$$
-and is a $cref/atomic_sparsity/atomic_ctor/atomic_sparsity/$$ pattern for 
+and is a $cref/atomic_sparsity/atomic_option/atomic_sparsity/$$ pattern for 
 $latex U(x) \in B^{m \times q}$$ which is defined by
 $latex \[
 \begin{array}{rcl}
@@ -1182,7 +1186,7 @@ $codei%
 %$$
 The input value of its elements do not matter.
 Upon return, $icode v$$ is a 
-$cref/atomic_sparsity/atomic_ctor/atomic_sparsity/$$ pattern for 
+$cref/atomic_sparsity/atomic_option/atomic_sparsity/$$ pattern for 
 $latex V(x) \in B^{n \times q}$$ which is defined by
 $latex \[
 \begin{array}{rcl}
