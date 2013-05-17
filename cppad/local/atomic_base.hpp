@@ -33,6 +33,8 @@ class atomic_base {
 public:
 	enum option_enum { bool_sparsity, set_sparsity};
 private:
+	// ------------------------------------------------------
+	// constants
 	/// name for this atomic funciton (used for error reporting)
 	const std::string name_;
 
@@ -40,19 +42,25 @@ private:
 	const size_t index_;
 
 	// -----------------------------------------------------
+	// variables
 	/// sparsity pattern this object is currently using
 	/// (set by constructor and option member functions)
 	option_enum sparsity_;
 
-	// -----------------------------------------------------
 	/// temporary work space used afun, declared here to avoid memory 
-	// allocation/deallocation for each call to afun
+	/// allocation/deallocation for each call to afun
 	vector<bool>  afun_vx_[CPPAD_MAX_NUM_THREADS];
 	vector<bool>  afun_vy_[CPPAD_MAX_NUM_THREADS];
 	vector<Base>  afun_tx_[CPPAD_MAX_NUM_THREADS];
 	vector<Base>  afun_ty_[CPPAD_MAX_NUM_THREADS];
+	// -----------------------------------------------------
+	// member functions
+	/// current sparsity setting
+	option_enum sparsity(void)
+	{	return sparsity_; }
 
 	// -----------------------------------------------------
+	// static member functions
 	/// List of all the object in this class
 	/// (null pointer used for objects that have been deleted)
 	static std::vector<atomic_base *>& list(void)
