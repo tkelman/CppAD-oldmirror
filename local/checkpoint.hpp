@@ -12,9 +12,6 @@ the terms of the
 A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
-// 2DO: Add and implement choice between sets and bools for sparsity patterns.
-//      Overide operator(), and check that id==0, ax.size()==n, ay.size()==m.
-//      Use f_.Domain() and f_.Range() to set n and m.
 
 CPPAD_BEGIN_NAMESPACE
 /*!
@@ -356,6 +353,11 @@ public:
 		
 		return ok; 
 	}
+	/*!
+ 	Link from user_atomic to forward sparse Jacobian 
+
+	\copydetails atomic_base::rev_sparse_jac
+ 	*/
 	virtual bool rev_sparse_jac(
 		size_t                                  id ,
 		size_t                                  q  ,
@@ -370,6 +372,30 @@ public:
 
 		return ok; 
 	}
+	/*!
+ 	Link from user_atomic to forward sparse Jacobian 
+
+	\copydetails atomic_base::rev_sparse_jac
+ 	*/
+	virtual bool rev_sparse_jac(
+		size_t                                  id ,
+		size_t                                  q  ,
+		const vector<bool>&                     rt ,
+		      vector<bool>&                     st )
+	{	CPPAD_ASSERT_UNKNOWN( id == 0 );
+		bool ok  = true;
+
+		// compute rt
+		bool transpose = true;
+		st = f_.RevSparseJac(q, rt, transpose);
+
+		return ok; 
+	}
+	/*!
+ 	Link from user_atomic to forward sparse Jacobian 
+
+	\copydetails atomic_base::rev_sparse_hes
+ 	*/
 	virtual bool rev_sparse_hes(
 		size_t                                  id ,
 		size_t                                  q  ,
@@ -404,22 +430,76 @@ public:
 		at = f_.RevSparseJac(q, ut);
 
 		// compute sparsity pattern for H(x)^T = R^T * (S * F)''(x)
-		vector< std::set<size_t> > rt(n), ht(q);
-		for(j = 0; j < n; j++)
-		{	for(itr = rt[j].begin(); itr != rt[j].end(); itr++)
-				rt[ *itr ].insert(j);
+		vector< std::set<size_t> > rt(q), ht(q);
+		for(i = 0; i < n; i++)
+		{	for(itr = r[i].begin(); itr != r[i].end(); itr++)
+				rt[ *itr ].insert(i);
 		}
 		f_.ForSparseJac(q, rt);
 		ht = f_.RevSparseHes(q, S);
 
 		// compute sparsity pattern for V(x) = A(x) + H(x)
-		for(j = 0; j < n; j++)
-			v[j].clear();
-		for(i = 0; i < q; i++)
-		{	for(itr = at[i].begin(); itr != at[i].end(); itr++)
-				v[*itr].insert(i);
-			for(itr = ht[i].begin(); itr != ht[i].end(); itr++)
-				v[*itr].insert(i);
+		for(i = 0; i < n; i++)
+			v[i].clear();
+		for(j = 0; j < q; j++)
+		{	for(itr = at[j].begin(); itr != at[j].end(); itr++)
+				v[*itr].insert(j);
+			for(itr = ht[j].begin(); itr != ht[j].end(); itr++)
+				v[*itr].insert(j);
+		}
+
+		// no longer need the forward mode sparsity pattern
+		// (have to reconstruct them every time)
+		f_.size_forward_set(0);
+
+		return ok;
+	}
+	/*!
+ 	Link from user_atomic to forward sparse Jacobian 
+
+	\copydetails atomic_base::rev_sparse_hes
+ 	*/
+	virtual bool rev_sparse_hes(
+		size_t                                  id ,
+		size_t                                  q  ,
+		const vector<bool>&                     r  ,
+		const vector<bool>&                     s  ,
+		      vector<bool>&                     t  ,
+		const vector<bool>&                     u  ,
+		      vector<bool>&                     v  )
+	{	// 2DO: prehaps we can get rid of transposes in a manner
+		// similar to how it was done for rev_sparse_jac above.
+		CPPAD_ASSERT_UNKNOWN( id == 0 );
+		size_t m = s.size();
+		size_t n = t.size();
+		bool ok  = true;
+		std::set<size_t>::const_iterator itr;
+		size_t i, j;
+
+		// compute sparsity pattern for T(x) = S(x) * f'(x)
+		t = f_.RevSparseJac(1, s);
+
+		// compute sparsity pattern for A(x)^T = U(x)^T * f'(x)
+		vector<bool> ut(q * m), at(q * m);
+		for(i = 0; i < m; i++)
+		{	for(j = 0; j < q; j++)
+				ut[j * m + i] = u[ i * q + j];
+		}
+		at = f_.RevSparseJac(q, ut);
+
+		// compute sparsity pattern for H(x)^T = R^T * (S * F)''(x)
+		vector<bool> rt(q * n), ht(q * n);
+		for(i = 0; i < n; i++)
+		{	for(j = 0; j < q; j++)
+				rt[j * n + i] = r[ i * q + j ];
+		}
+		f_.ForSparseJac(q, rt);
+		ht = f_.RevSparseHes(q, s);
+
+		// compute sparsity pattern for V(x) = A(x) + H(x)
+		for(i = 0; i < n; i++)
+		{	for(j = 0; j < q; j++)
+				v[ i * q + j ] = at[ j * n + i] | ht[ j * n + i];
 		}
 
 		// no longer need the forward mode sparsity pattern
