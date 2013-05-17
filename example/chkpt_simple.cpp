@@ -89,10 +89,6 @@ bool chkpt_simple(void)
 	checkpoint<double> f_check("f_check", f_algo, ax, ay); 
 	checkpoint<double> g_check("g_check", g_algo, ay, az); 
 
-	// start with both functions using bool sparsity
-	f_check.option( CppAD::atomic_base<double>::bool_sparsity_enum );
-	g_check.option( CppAD::atomic_base<double>::bool_sparsity_enum );
-
 	// Record a version of z = g[f(x)] without checkpointing
 	Independent(ax);
 	f_algo(ax, ay);
@@ -133,6 +129,10 @@ bool chkpt_simple(void)
 		}
 	}
 
+	// mix sparsity so test both cases
+	f_check.option( CppAD::atomic_base<double>::bool_sparsity_enum );
+	g_check.option( CppAD::atomic_base<double>::set_sparsity_enum );
+
 	// compare forward mode Jacobian sparsity patterns
 	CppAD::vector< std::set<size_t> > r(n), s_not(m), s_yes(m);
 	for(j = 0; j < n; j++)
@@ -157,7 +157,7 @@ bool chkpt_simple(void)
 	for(i = 0; i < m; i++)
 		s_one[0].insert(i);
 	h_not = check_not.RevSparseHes(n, s_one);
-	h_yes = check_yes.RevSparseJac(n, s);
+	h_yes = check_yes.RevSparseHes(n, s_one);
 	for(i = 0; i < n; i++)
 		ok &= h_not[i] == h_yes[i];
 	

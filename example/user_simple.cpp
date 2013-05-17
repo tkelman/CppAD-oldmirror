@@ -248,7 +248,7 @@ namespace { // Begin empty namespace
 			my_union(v[0], v[0], r[0] );
 
 
-		return false;
+		return true;
 	}
 	// ---------------------------------------------------------------------
 	// Declare the AD<double> routine reciprocal(id, ax, ay)

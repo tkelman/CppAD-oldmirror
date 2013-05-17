@@ -66,10 +66,6 @@ private:
 		static std::vector<atomic_base *> list_;
 		return list_;
 	}
-
-	/// Name corresponding to a base_atomic object
-	static const char* name(size_t index)
-	{	return list()[index]->name_.c_str(); }
 	// =====================================================================
 public:
 	// -----------------------------------------------------
@@ -77,6 +73,10 @@ public:
 	/// current sparsity setting
 	option_enum sparsity(void)
 	{	return sparsity_; }
+
+	/// Name corresponding to a base_atomic object
+	std::string name(void)
+	{	return name_; }
 /*
 $begin atomic_ctor$$
 $spell
@@ -1121,6 +1121,12 @@ virtual bool rev_sparse_jac(
 	const vector< std::set<size_t> >&       rt ,
 	      vector< std::set<size_t> >&       st )
 {	return false; }
+virtual bool rev_sparse_jac(
+	size_t                                  id ,
+	size_t                                  q  ,
+	const vector<bool>&                     rt ,
+	      vector<bool>&                     st )
+{	return false; }
 /*
 -------------------------------------- ---------------------------------------
 $begin atomic_rev_sparse_hes$$
@@ -1296,6 +1302,15 @@ virtual bool rev_sparse_hes(
 	      vector<bool>&                     t  ,
 	const vector< std::set<size_t> >&       u  ,
 	      vector< std::set<size_t> >&       v  )
+{	return false; }
+virtual bool rev_sparse_hes(
+	size_t                                  id ,
+	size_t                                  q  ,
+	const vector<bool>&                     r  ,
+	const vector<bool>&                     s  ,
+	      vector<bool>&                     t  ,
+	const vector<bool>&                     u  ,
+	      vector<bool>&                     v  )
 {	return false; }
 /*
 ------------------------------------------------------------------------------
