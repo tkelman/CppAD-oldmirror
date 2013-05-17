@@ -138,6 +138,9 @@ void ForJacSweep(
 	vector< size_set > set_r;    // set sparsity pattern for the argument x
 	vector< size_set > set_s;    // set sparisty pattern for the result y
 	//
+	vector<bool>       bool_r;   // bool sparsity pattern for the argument x
+	vector<bool>       bool_s;   // bool sparisty pattern for the result y
+	//
 	const size_t user_q = limit; // maximum element plus one
 	size_t user_index = 0;       // indentifier for this atomic operation
 	size_t user_id    = 0;       // user identifier for this call to operator
@@ -147,6 +150,7 @@ void ForJacSweep(
 	size_t user_n     = 0;       // size of arugment vector
 	//
 	atomic_base<Base>* user_atom = CPPAD_NULL; // user's atomic op calculator
+	bool               user_bool = false;      // use bool or set sparsity ?
 	//
 	// next expected operator in a UserOp sequence
 	enum { user_start, user_arg, user_ret, user_end } user_state = user_start;
@@ -519,10 +523,26 @@ void ForJacSweep(
 				user_n     = arg[2];
 				user_m     = arg[3];
 				user_atom  = atomic_base<Base>::list(user_index);
-				if(set_r.size() != user_n )
-					set_r.resize(user_n);
-				if(set_s.size() != user_m )
-					set_s.resize(user_m);
+				user_bool  = user_atom->sparsity() ==
+							atomic_base<Base>::bool_sparsity;
+				//
+				if( user_bool )
+				{	if( bool_r.size() != user_n * user_q )
+						bool_r.resize( user_n * user_q );
+					if( bool_s.size() != user_m * user_q )
+						bool_r.resize( user_m * user_q );
+					for(i = 0; i < user_n; i++)
+						for(j = 0; j < user_q; j++)
+							bool_r[ i * user_q + j] = false;
+				}
+				else
+				{	if(set_r.size() != user_n )
+						set_r.resize(user_n);
+					if(set_s.size() != user_m )
+						set_s.resize(user_m);
+					for(i = 0; i < user_n; i++)
+						set_r[i].clear();
+				}
 				user_j     = 0;
 				user_i     = 0;
 				user_state = user_arg;
@@ -542,12 +562,15 @@ void ForJacSweep(
 			CPPAD_ASSERT_UNKNOWN( user_state == user_arg );
 			CPPAD_ASSERT_UNKNOWN( user_j < user_n );
 			CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) < num_par );
-			// parameters have an empty sparsity pattern
-			set_r[user_j].clear();
+			// set row user_j to empty sparsity pattern
 			++user_j;
 			if( user_j == user_n )
 			{	// call users function for this operation
-				user_atom->for_sparse_jac(user_id, user_q, set_r, set_s);
+				if( user_bool )
+					;
+				else	user_atom->for_sparse_jac(
+					user_id, user_q, set_r, set_s
+				);
 				user_state = user_ret;
 			}
 			break;
@@ -557,18 +580,25 @@ void ForJacSweep(
 			CPPAD_ASSERT_UNKNOWN( user_state == user_arg );
 			CPPAD_ASSERT_UNKNOWN( user_j < user_n );
 			CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) <= i_var );
-			// set set_r[user_j] to sparsity pattern for variable arg[0]
-			set_r[user_j].clear();
-			var_sparsity.begin(arg[0]);
-			i = var_sparsity.next_element();
-			while( i < user_q )
-			{	set_r[user_j].insert(i);
+			// set row user_j to sparsity pattern for variable arg[0]
+			if( user_bool )
+				;
+			else
+			{	var_sparsity.begin(arg[0]);
 				i = var_sparsity.next_element();
+				while( i < user_q )
+				{	set_r[user_j].insert(i);
+					i = var_sparsity.next_element();
+				}
 			}
 			++user_j;
 			if( user_j == user_n )
 			{	// call users function for this operation
-				user_atom->for_sparse_jac(user_id, user_q, set_r, set_s);
+				if( user_bool )
+					;
+				else	user_atom->for_sparse_jac(
+					user_id, user_q, set_r, set_s
+				);
 				user_state = user_ret;
 			}
 			break;
@@ -588,10 +618,14 @@ void ForJacSweep(
 			CPPAD_ASSERT_UNKNOWN( user_i < user_m );
 			// It might be faster if we add set union to var_sparsity
 			// where one of the sets is not in var_sparsity
-			set_itr = set_s[user_i].begin();
-			set_end = set_s[user_i].end();
-			while( set_itr != set_end )
-				var_sparsity.add_element(i_var, *set_itr++);
+			if( user_bool )
+				;
+			else
+			{	set_itr = set_s[user_i].begin();
+				set_end = set_s[user_i].end();
+				while( set_itr != set_end )
+					var_sparsity.add_element(i_var, *set_itr++);
+			}
 			user_i++;
 			if( user_i == user_m )
 				user_state = user_end;
