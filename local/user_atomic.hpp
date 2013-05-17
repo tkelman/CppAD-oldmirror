@@ -916,7 +916,8 @@ public:
 	, fjs_(fjs)
 	, rjs_(rjs)
 	, rhs_(rhs)
-	{ }
+	{	this->option( atomic_base<Base>::set_sparsity_enum );
+	}
 	/*!
  	Implement the user call to <tt>afun(id, ax, ay)</tt>.
 
