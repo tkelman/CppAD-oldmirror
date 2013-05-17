@@ -53,14 +53,11 @@ private:
 	vector<bool>  afun_vy_[CPPAD_MAX_NUM_THREADS];
 	vector<Base>  afun_tx_[CPPAD_MAX_NUM_THREADS];
 	vector<Base>  afun_ty_[CPPAD_MAX_NUM_THREADS];
-	// -----------------------------------------------------
-	// member functions
-	/// current sparsity setting
-	option_enum sparsity(void)
-	{	return sparsity_; }
 
 	// -----------------------------------------------------
 	// static member functions
+	// 2DO: seems like this function needs to be public to be used by 
+	//      *_sweep.hpp, but it seems to work this way. Why ?
 	/// List of all the object in this class
 	/// (null pointer used for objects that have been deleted)
 	static std::vector<atomic_base *>& list(void)
@@ -74,6 +71,11 @@ private:
 	{	return list()[index]->name_.c_str(); }
 	// =====================================================================
 public:
+	// -----------------------------------------------------
+	// member functions not in user API
+	/// current sparsity setting
+	option_enum sparsity(void)
+	{	return sparsity_; }
 /*
 $begin atomic_ctor$$
 $spell
@@ -164,7 +166,8 @@ name used for error reporting
 */
 atomic_base(const char* name_afun) :
 name_(name_afun),
-index_( list().size() )
+index_( list().size() ),
+sparsity_( set_sparsity )
 {	CPPAD_ASSERT_KNOWN(
 		! thread_alloc::in_parallel() ,
 		"atomic_base: constructor cannot be called in parallel mode."
