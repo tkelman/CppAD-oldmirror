@@ -524,13 +524,12 @@ void ForJacSweep(
 				user_m     = arg[3];
 				user_atom  = atomic_base<Base>::list(user_index);
 				user_bool  = user_atom->sparsity() ==
-							atomic_base<Base>::bool_sparsity;
-				//
+							atomic_base<Base>::bool_sparsity_enum;
 				if( user_bool )
 				{	if( bool_r.size() != user_n * user_q )
 						bool_r.resize( user_n * user_q );
 					if( bool_s.size() != user_m * user_q )
-						bool_r.resize( user_m * user_q );
+						bool_s.resize( user_m * user_q );
 					for(i = 0; i < user_n; i++)
 						for(j = 0; j < user_q; j++)
 							bool_r[ i * user_q + j] = false;
@@ -567,9 +566,12 @@ void ForJacSweep(
 			if( user_j == user_n )
 			{	// call users function for this operation
 				if( user_bool )
-					;
-				else	user_atom->for_sparse_jac(
-					user_id, user_q, set_r, set_s
+					user_atom->for_sparse_jac(
+						user_id, user_q, bool_r, bool_s
+				);
+				else
+					user_atom->for_sparse_jac(
+						user_id, user_q, set_r, set_s
 				);
 				user_state = user_ret;
 			}
@@ -582,7 +584,13 @@ void ForJacSweep(
 			CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) <= i_var );
 			// set row user_j to sparsity pattern for variable arg[0]
 			if( user_bool )
-				;
+			{	var_sparsity.begin(arg[0]);
+				i = var_sparsity.next_element();
+				while( i < user_q )
+				{	bool_r[user_j * user_q + i] = true;
+					i = var_sparsity.next_element();
+				}
+			}
 			else
 			{	var_sparsity.begin(arg[0]);
 				i = var_sparsity.next_element();
@@ -595,9 +603,12 @@ void ForJacSweep(
 			if( user_j == user_n )
 			{	// call users function for this operation
 				if( user_bool )
-					;
-				else	user_atom->for_sparse_jac(
-					user_id, user_q, set_r, set_s
+					user_atom->for_sparse_jac(
+						user_id, user_q, bool_r, bool_s
+				);
+				else
+					user_atom->for_sparse_jac(
+						user_id, user_q, set_r, set_s
 				);
 				user_state = user_ret;
 			}
@@ -619,7 +630,10 @@ void ForJacSweep(
 			// It might be faster if we add set union to var_sparsity
 			// where one of the sets is not in var_sparsity
 			if( user_bool )
-				;
+			{	for(j = 0; j < user_q; j++)
+					if( bool_s[ user_i * user_q + j ] )
+						var_sparsity.add_element(i_var, j);
+			}
 			else
 			{	set_itr = set_s[user_i].begin();
 				set_end = set_s[user_i].end();

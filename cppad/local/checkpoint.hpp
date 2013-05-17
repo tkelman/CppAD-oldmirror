@@ -41,6 +41,7 @@ $index checkpoint, function$$
 
 $head Syntax$$
 $codei%checkpoint<%Base%> %afun%(%name%, %algo%, %ax%, %ay%)
+%afun%.option(%option_value%)
 %ok% = %algo%(%ax%, %ay%)
 %ok% = %afun%(%ax%, %ay%)
 checkpoint<%Base%>::clear()%$$
@@ -98,6 +99,12 @@ Its input size must be equal to $icode m$$ and does not change.
 The input values of its elements do not matter.
 Upon return, it is an $codei%AD<%Base%>%$$ version of 
 $latex y = f(x)$$.
+
+$head option$$
+The $code option$$ syntax can be used to set the type of sparsity
+pattern used by $icode afun$$.
+This is an $codei%atomic_base<%Base%>%$$ function and its documentation
+can be found at $cref atomic_option$$.
 
 $head algo$$
 The type of $icode algo$$ is arbitrary, except for the fact that
@@ -326,6 +333,26 @@ public:
 		// no longer need the forward mode sparsity pattern
 		// (have to reconstruct them every time)
 		f_.size_forward_set(0);
+		
+		return ok; 
+	}
+	/*!
+ 	Link from user_atomic to forward sparse Jacobian 
+
+	\copydetails atomic_base::for_sparse_jac
+ 	*/
+	virtual bool for_sparse_jac(
+		size_t                                  id ,
+		size_t                                  q  ,
+		const vector<bool>&                     r  ,
+		      vector<bool>&                     s  )
+	{	CPPAD_ASSERT_UNKNOWN( id == 0 );
+		bool ok = true;
+		s = f_.ForSparseJac(q, r);
+
+		// no longer need the forward mode sparsity pattern
+		// (have to reconstruct them every time)
+		f_.size_forward_bool(0);
 		
 		return ok; 
 	}

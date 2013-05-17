@@ -13,6 +13,7 @@ A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 // 2DO: implement choice between sets and bools for sparsity patterns.
+// 2DO: add $index entires to user documentation.
 
 # include <set>
 # include <cppad/local/cppad_assert.hpp>
@@ -31,7 +32,7 @@ template <class Base>
 class atomic_base {
 // ===================================================================
 public:
-	enum option_enum { bool_sparsity, set_sparsity};
+	enum option_enum { bool_sparsity_enum, set_sparsity_enum};
 private:
 	// ------------------------------------------------------
 	// constants
@@ -167,7 +168,7 @@ name used for error reporting
 atomic_base(const char* name_afun) :
 name_(name_afun),
 index_( list().size() ),
-sparsity_( set_sparsity )
+sparsity_( set_sparsity_enum )
 {	CPPAD_ASSERT_KNOWN(
 		! thread_alloc::in_parallel() ,
 		"atomic_base: constructor cannot be called in parallel mode."
@@ -188,6 +189,7 @@ static atomic_base* list(size_t index)
 /*
 $begin atomic_option$$
 $spell
+	enum
 	afun
 	bool
 	CppAD
@@ -201,12 +203,18 @@ $head Syntax$$
 $icode%afun%.option(%option_value%)%$$
 
 $head atomic_sparsity$$
-If neither the $code set_sparsity$$ or $code bool_sparsity$$ option is set,
+You can used this option to set to type used for 
+$icode afun$$ sparsity patterns.
+This does not apply individual calls to $icode afun$$,
+but rather all its uses between when the sparsity pattern is set and when
+it is changed.
+If neither the $code set_sparsity_enum$$ or 
+$code bool_sparsity_enum$$ option is set,
 the type for $icode atomic_sparsity$$ is one of the two choices below
 (and otherwise unspecified).
 
-$subhead bool_sparsity$$
-If $icode option_value$$ is $code atomic_base::bool_sparsity$$, 
+$subhead bool_sparsity_enum$$
+If $icode option_value$$ is $code atomic_base::bool_sparsity_enum$$, 
 then the type used by $icode afun$$ for
 $cref/sparsity patterns/glossary/Sparsity Pattern/$$,
 (after the option is set) will be
@@ -217,8 +225,8 @@ If $icode r$$ is a sparsity pattern
 for a matrix $icode R \in B^{p \times q}%$$:
 $icode%r%.size() == %p% * %q%$$.
 
-$subhead set_sparsity$$
-If $icode option_value$$ is $code atomic_base::set_sparsity$$, 
+$subhead set_sparsity_enum$$
+If $icode option_value$$ is $code atomic_base::set_sparsity_enum$$, 
 then the type used by $icode afun$$ for
 $cref/sparsity patterns/glossary/Sparsity Pattern/$$,
 (after the option is set) will be
@@ -234,8 +242,8 @@ $end
 */
 void option(enum option_enum option_value)
 {	switch( option_value )
-	{	case bool_sparsity:
-		case set_sparsity:
+	{	case bool_sparsity_enum:
+		case set_sparsity_enum:
 		sparsity_ = option_value;
 		break;
 
@@ -1000,6 +1008,12 @@ virtual bool for_sparse_jac(
 	size_t                                  q  ,
 	const vector< std::set<size_t> >&       r  ,
 	      vector< std::set<size_t> >&       s  )
+{	return false; }
+virtual bool for_sparse_jac(
+	size_t                                  id ,
+	size_t                                  q  ,
+	const vector<bool>&                     r  ,
+	      vector<bool>&                     s  )
 {	return false; }
 /*
 -------------------------------------- ---------------------------------------

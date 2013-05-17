@@ -89,6 +89,10 @@ bool chkpt_simple(void)
 	checkpoint<double> f_check("f_check", f_algo, ax, ay); 
 	checkpoint<double> g_check("g_check", g_algo, ay, az); 
 
+	// start with both functions using bool sparsity
+	f_check.option( CppAD::atomic_base<double>::bool_sparsity_enum );
+	g_check.option( CppAD::atomic_base<double>::bool_sparsity_enum );
+
 	// Record a version of z = g[f(x)] without checkpointing
 	Independent(ax);
 	f_algo(ax, ay);
