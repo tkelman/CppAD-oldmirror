@@ -1,7 +1,6 @@
 /* $Id$ */
 # ifndef CPPAD_USER_ATOMIC_INCLUDED
 # define CPPAD_USER_ATOMIC_INCLUDED
-
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-13 Bradley M. Bell
 
@@ -12,6 +11,13 @@ the terms of the
 A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
+// 2DO: Depreciate user_atomic using the following steps:
+// 1. make atomic_simple.cpp, atomic_tan.cpp, atomic_mat_mul.cpp examples.
+//    from corresponding user examples.
+// 2. Move omhelp include of cppad/local/user_atomic.hpp from 
+//    cppad/local/ad_fun.hpp to omh/deprecated/deprecated.omh
+// 3. Put Deprecated below each user_atomic syntex with cross reference
+//    to atomic_base and checkpoint.
 
 /*
 $begin user_atomic$$

@@ -92,7 +92,7 @@ ADD_EXECUTABLE(example EXCLUDE_FROM_ALL example.cpp
 	change_const.cpp
 	check_numeric_type.cpp
 	check_simple_vector.cpp
-	chkpt_simple.cpp
+	checkpoint.cpp
 	compare.cpp
 	compare_change.cpp
 	complex_poly.cpp

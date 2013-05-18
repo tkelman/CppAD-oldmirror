@@ -67,7 +67,7 @@ extern bool capacity_taylor(void);
 extern bool change_const(void);
 extern bool CheckNumericType(void);
 extern bool CheckSimpleVector(void);
-extern bool chkpt_simple(void);
+extern bool checkpoint(void);
 extern bool Compare(void);
 extern bool CompareChange(void);
 extern bool complex_poly(void);
@@ -230,7 +230,7 @@ int main(void)
 	ok &= Run( change_const,      "change_const"     );
 	ok &= Run( CheckNumericType,  "CheckNumericType" );
 	ok &= Run( CheckSimpleVector, "CheckSimpleVector");
-	ok &= Run( chkpt_simple,      "chkpt_simple"     );
+	ok &= Run( checkpoint,        "checkpoint"       );
 	ok &= Run( Compare,           "Compare"          );
 	ok &= Run( CompareChange,     "CompareChange"    );
 	ok &= Run( complex_poly,      "complex_poly"     );

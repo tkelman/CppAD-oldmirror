@@ -11,7 +11,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
 /*
-$begin chkpt_simple.cpp$$
+$begin checkpoint.cpp$$
 $spell
 	checkpointing
 	Taylor
@@ -40,7 +40,7 @@ $latex \[
 \] $$
 
 $code
-$verbatim%example/chkpt_simple.cpp%0%// BEGIN C++%// END C++%1%$$
+$verbatim%example/checkpoint.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 
@@ -74,7 +74,7 @@ namespace {
 	}
 }
 
-bool chkpt_simple(void)
+bool checkpoint(void)
 {	bool ok = true;
 	using CppAD::checkpoint;
 	using CppAD::ADFun;
@@ -107,6 +107,10 @@ bool chkpt_simple(void)
 	// compare forward mode results for orders 0, 1, 2
 	size_t p = 2;
 	CPPAD_TESTVECTOR(double) x_p(n*(p+1)), z_not(m*(p+1)), z_yes(m*(p+1));
+	for(j = 0; j < n; j++)
+	{	for(k = 0; k <= p; k++)
+			x_p[ j * (p+1) + k ] = 1.0 / (p + 1 - k);
+	}
 	z_not = check_not.Forward(p, x_p);
 	z_yes = check_yes.Forward(p, x_p);
 	for(i = 0; i < m; i++)

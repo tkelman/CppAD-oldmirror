@@ -138,10 +138,10 @@ The $code clear$$ routine cannot be called
 while in $cref/parallel/ta_in_parallel/$$ execution mode.
 
 $children%
-	example/chkpt_simple.cpp
+	example/checkpoint.cpp
 %$$
 $head Example$$
-The file $cref chkpt_simple.cpp$$ contains an example and test
+The file $cref checkpoint.cpp$$ contains an example and test
 of these operations.
 It returns true if it succeeds and false if it fails.
 
