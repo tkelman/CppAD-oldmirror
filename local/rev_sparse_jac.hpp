@@ -35,9 +35,9 @@ $index sparse, reverse Jacobian$$
 $index pattern, reverse Jacobian$$
 
 $head Syntax$$
-$icode%s% = %F%.RevSparseJac(%q%, %r%)
+$icode%s% = %f%.RevSparseJac(%q%, %r%)
 %$$
-$icode%s% = %F%.RevSparseJac(%q%, %r%, %transpose%)%$$
+$icode%s% = %f%.RevSparseJac(%q%, %r%, %transpose%)%$$
 
 $head Purpose$$
 We use $latex F : B^n \rightarrow B^m$$ to denote the
@@ -88,7 +88,7 @@ $codei%
 see $cref/VectorSet/RevSparseJac/VectorSet/$$ below.
 
 $subhead transpose false$$
-If it has elements of type $code bool$$,
+If $icode r$$ has elements of type $code bool$$,
 its size is $latex q * m$$.
 If it has elements of type $code std::set<size_t>$$,
 its size is $icode q$$ and all its set elements are between
@@ -98,7 +98,7 @@ $cref/sparsity pattern/glossary/Sparsity Pattern/$$
 for the matrix $latex R \in B^{q \times m}$$.
 
 $subhead transpose true$$
-If it has elements of type $code bool$$,
+If $icode r$$ has elements of type $code bool$$,
 its size is $latex m * q$$.
 If it has elements of type $code std::set<size_t>$$,
 its size is $icode m$$ and all its set elements are between
@@ -485,7 +485,7 @@ void ADFun<Base>::RevSparseJacCase(
 	// dimension of the result vector
 	s.resize( q * n );
 
-	// store results in r
+	// store results in s
 	RevSparseJacBool(
 		transpose      ,
 		q              ,

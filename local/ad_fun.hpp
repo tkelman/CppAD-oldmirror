@@ -126,6 +126,7 @@ private:
 	template <class VectorSet>
 	void ForSparseJacCase(
 		bool               set_type  ,
+		bool               transpose ,
 		size_t             q         ,
 		const VectorSet&   r         ,  
 		VectorSet&         s
@@ -135,6 +136,7 @@ private:
 	template <class VectorSet>
 	void ForSparseJacCase(
 		const std::set<size_t>&  set_type  ,
+		bool                     transpose ,
 		size_t                   q         ,
 		const VectorSet&         r         ,  
 		VectorSet&               s
@@ -342,7 +344,7 @@ public:
 	// (see doxygen documentation in for_sparse_jac.hpp)
 	template <typename VectorSet>
 	VectorSet ForSparseJac(
-		size_t q, const VectorSet &r
+		size_t q, const VectorSet &r, bool transpose = false
 	);
 	// reverse mode Jacobian sparsity 
 	// (see doxygen documentation in rev_sparse_jac.hpp)
