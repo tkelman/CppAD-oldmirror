@@ -70,7 +70,7 @@ $codei%
 	size_t %q%
 %$$
 It specifies the number of rows in
-$latex R B^{q \times m}$$ and the 
+$latex R \in B^{q \times m}$$ and the 
 Jacobian $latex S(x) \in B^{q \times n}$$. 
 
 $head transpose$$
@@ -78,7 +78,7 @@ The argument $icode transpose$$ has prototype
 $codei%
 	bool %transpose%
 %$$
-The default value false is used when $icode transpose$$ is not present.
+The default value $code false$$ is used when $icode transpose$$ is not present.
 
 $head r$$
 The argument $icode s$$ has prototype

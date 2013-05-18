@@ -168,6 +168,7 @@ private:
 	template <class VectorSet>
 	void RevSparseHesCase(
 		bool               set_type  ,
+		bool               transpose ,
 		size_t             q         ,
 		const VectorSet&   s         ,  
 		VectorSet&         h
@@ -177,6 +178,7 @@ private:
 	template <class VectorSet>
 	void RevSparseHesCase(
 		const std::set<size_t>&  set_type  ,
+		bool                     transpose ,
 		size_t                   q         ,
 		const VectorSet&         s         ,  
 		VectorSet&               h
@@ -356,7 +358,7 @@ public:
 	// (see doxygen documentation in rev_sparse_hes.hpp)
 	template <typename VectorSet>
 	VectorSet RevSparseHes(
-		size_t q, const VectorSet &s
+		size_t q, const VectorSet &s, bool transpose = false
 	);
 
 	/// amount of memeory used for Jacobain sparsity pattern

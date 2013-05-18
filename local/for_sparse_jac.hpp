@@ -123,7 +123,7 @@ The argument $icode transpose$$ has prototype
 $codei%
 	bool %transpose%
 %$$
-The default value false is used when $icode transpose$$ is not present.
+The default value $code false$$ is used when $icode transpose$$ is not present.
 
 
 $head r$$
