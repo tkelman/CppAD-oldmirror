@@ -1047,12 +1047,18 @@ public:
 		      vector<bool>&                   t ,
 		const vector< std::set<size_t> >&     u ,
 		      vector< std::set<size_t> >&     v )
-	{	size_t m = u.size();
+	{	size_t m = s.size();
 		size_t n = v.size();
 		CPPAD_ASSERT_UNKNOWN( r.size() == n );
-		CPPAD_ASSERT_UNKNOWN( s.size() == m );
+		CPPAD_ASSERT_UNKNOWN( u.size() == q );
 		CPPAD_ASSERT_UNKNOWN( t.size() == n );
-		bool ok = rhs_(id, n, m, q, r, s, t, u, v);
+		std::set<size_t>::const_iterator itr;
+		vector< std::set<size_t> > ut(m);
+		for(size_t i = 0; i < q; i++)
+		{	for(itr = u[i].begin(); itr != u[i].end(); itr++)
+				ut[*itr].insert(i);
+		}
+		bool ok = rhs_(id, n, m, q, r, s, t, ut, v);
 		return ok;
 	}
 };
