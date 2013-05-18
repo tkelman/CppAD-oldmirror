@@ -232,6 +232,9 @@ is the base type for this recording.
 \tparam VectorSet
 is a simple vector class with elements of type \c bool.
 
+\param transpose
+are the sparsity patterns transposed.
+
 \param q
 is the number of columns in the matrix \f$ R \f$.
 
@@ -509,7 +512,7 @@ applies.
 is a \c bool value. This argument is used to dispatch to the proper source
 code depending on the value of \c VectorSet::value_type.
 
-\param tanspose
+\param transpose
 See \c ForSparseJac(q, r).
 
 \param q
@@ -637,7 +640,7 @@ are sparsity patterns for \f$ R \f$ and \f$ S(x) \f$ transposed.
 
 \return
 The value of \c transpose is false (true),
-the return value is a sparsity pattern for \f$ S(x) \f$ (\f$ S(x)^T \f%) where
+the return value is a sparsity pattern for \f$ S(x) \f$ (\f$ S(x)^T \f$) where
 \f[
 	S(x) = F^{(1)} (x) * R
 \f]
