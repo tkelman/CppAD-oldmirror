@@ -421,31 +421,27 @@ public:
 				S[0].insert(i);
 		t = f_.RevSparseJac(1, s);
 
-		// compute sparsity pattern for A(x)^T = U(x)^T * f'(x)
-		vector< std::set<size_t> > ut(q), at(q);
+		// compute sparsity pattern for A(x) = f'(x)^T * U(x)
+		vector< std::set<size_t> > ut(q), a(n);
 		for(i = 0; i < m; i++)
 		{	for(itr = u[i].begin(); itr != u[i].end(); itr++)
 				ut[*itr].insert(i);
 		}
-		at = f_.RevSparseJac(q, ut);
+		bool transpose = true;
+		a = f_.RevSparseJac(q, ut, transpose);
 
-		// compute sparsity pattern for H(x)^T = R^T * (S * F)''(x)
-		vector< std::set<size_t> > rt(q), ht(q);
-		for(i = 0; i < n; i++)
-		{	for(itr = r[i].begin(); itr != r[i].end(); itr++)
-				rt[ *itr ].insert(i);
-		}
-		f_.ForSparseJac(q, rt);
-		ht = f_.RevSparseHes(q, S);
+		// compute sparsity pattern for H(x) = (S * F)''(x) * R
+		// (store it in v)
+		f_.ForSparseJac(q, r);
+		v = f_.RevSparseHes(q, S, transpose);
 
 		// compute sparsity pattern for V(x) = A(x) + H(x)
-		for(i = 0; i < n; i++)
-			v[i].clear();
-		for(j = 0; j < q; j++)
-		{	for(itr = at[j].begin(); itr != at[j].end(); itr++)
-				v[*itr].insert(j);
-			for(itr = ht[j].begin(); itr != ht[j].end(); itr++)
-				v[*itr].insert(j);
+		for(i = 0; i < m; i++)
+		{	for(itr = a[i].begin(); itr != a[i].end(); itr++)
+			{	j = *itr;
+				CPPAD_ASSERT_UNKNOWN( j < q );
+				v[i].insert(j);
+			}
 		}
 
 		// no longer need the forward mode sparsity pattern
