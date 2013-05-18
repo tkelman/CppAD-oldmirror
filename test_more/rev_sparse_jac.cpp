@@ -480,7 +480,6 @@ bool case_five()
 
 	// -----------------------------------------------------------------
 	// dependency matrix for the identity function
-	bool transpose = true;
 	CPPAD_TESTVECTOR( bool ) Py(m * m);
 	size_t i, j;
 	for(i = 0; i < m; i++)
@@ -489,6 +488,7 @@ bool case_five()
 	}
 
 	// evaluate the dependency matrix for F(x)
+	bool transpose = true;
 	CPPAD_TESTVECTOR( bool ) Px(n * m);
 	Px = F.RevSparseJac(m, Py, transpose);
 
@@ -514,7 +514,7 @@ bool case_five()
 	bool found;
 	for(i = 0; i < m; i++)
 	{	for(j = 0; j < n; j++)
-		{	found = Sx[j].find(i) != Sx[i].end();
+		{	found = Sx[j].find(i) != Sx[j].end();
 			ok &= (found == Check[i * n + j]);
 		}
 	}	

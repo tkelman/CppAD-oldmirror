@@ -44,6 +44,10 @@ This section contains a list of the changes to CppAD during 2013
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
 
+$head 05-17$$
+Add the $cref/transpose/ForSparseJac/transpose/$$ option to
+$cref/ForSparseJac/$$.
+
 $head 05-15$$
 Change $cref RevSparseJac$$ parameter names to be closer to the
 $cref ForSparseJac$$ names so the difference is clearer.
