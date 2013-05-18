@@ -12,7 +12,6 @@ the terms of the
 A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
-// 2DO: add $index entires to user documentation.
 
 # include <set>
 # include <cppad/local/cppad_assert.hpp>
@@ -88,6 +87,9 @@ $spell
 $$
 
 $section Atomic Function Constructor$$
+$index constructor, atomic function$$
+$index atomic, function constructor$$
+$index function, atomic constructor$$
 
 $head Syntax$$
 $icode%atomic_user afun%(%ctor_arg_list%)
@@ -197,11 +199,15 @@ $spell
 $$
 
 $section Set Atomic Function Options$$
+$index atomic, options$$
+$index options, atomic$$
 
 $head Syntax$$
 $icode%afun%.option(%option_value%)%$$
 
 $head atomic_sparsity$$
+$index atomic_sparsity$$
+$index sparsity, atomic$$
 You can used this option to set to type used for 
 $icode afun$$ sparsity patterns.
 This does not apply individual calls to $icode afun$$,
@@ -213,6 +219,7 @@ the type for $icode atomic_sparsity$$ is one of the two choices below
 (and otherwise unspecified).
 
 $subhead bool_sparsity_enum$$
+$index bool_sparsity_enum$$
 If $icode option_value$$ is $code atomic_base::bool_sparsity_enum$$, 
 then the type used by $icode afun$$ for
 $cref/sparsity patterns/glossary/Sparsity Pattern/$$,
@@ -225,6 +232,7 @@ for a matrix $icode R \in B^{p \times q}%$$:
 $icode%r%.size() == %p% * %q%$$.
 
 $subhead set_sparsity_enum$$
+$index set_sparsity_enum$$
 If $icode option_value$$ is $code atomic_base::set_sparsity_enum$$, 
 then the type used by $icode afun$$ for
 $cref/sparsity patterns/glossary/Sparsity Pattern/$$,
@@ -265,6 +273,7 @@ $spell
 $$
 
 $section Using an Atomic Function$$
+$index atomic, use function$$
 
 $head Syntax$$
 $icode%afun%(%ax%, %ay%, %id%)%$$
@@ -487,6 +496,10 @@ $spell
 $$
 
 $section Atomic Forward Mode$$
+$index atomic, forward callback$$
+$index forward, atomic callback$$
+$index forward, atomic virtual$$
+
 
 $head Syntax$$
 $icode%ok% = %afun%.forward(%id%, %q%, %p%, %vx%, %vy%, %tx%, %ty%)%$$
@@ -711,6 +724,9 @@ $spell
 $$
 
 $section Atomic Reverse Mode$$
+$index atomic, reverse callback$$
+$index reverse, atomic callback$$
+$index reverse, atomic virtual$$
 $spell
 	bool
 $$
@@ -919,6 +935,9 @@ $spell
 $$
 
 $section Atomic Forward Jacobian Sparsity Patterns$$
+$index atomic, for_sparse_jac callback$$
+$index for_sparse_jac, atomic callback$$
+$index for_sparse_jac, atomic virtual$$
 
 $head Syntax$$
 $icode%ok% = %afun%.for_sparse_jac(%id%, %q%, %r%, %s%)%$$
@@ -1030,6 +1049,9 @@ $spell
 $$
 
 $section Atomic Reverse Jacobian Sparsity Patterns$$
+$index atomic, rev_sparse_jac callback$$
+$index rev_sparse_jac, atomic callback$$
+$index rev_sparse_jac, atomic virtual$$
 
 $head Syntax$$
 $icode%ok% = %afun%.rev_sparse_jac(%id%, %q%, %rt%, %st%)%$$
@@ -1141,6 +1163,9 @@ $spell
 $$
 
 $section Atomic Reverse Hessian Sparsity Patterns$$
+$index atomic, rev_sparse_hes callback$$
+$index rev_sparse_hes, atomic callback$$
+$index rev_sparse_hes, atomic virtual$$
 
 $head Syntax$$
 $icode%ok% = %afun%.rev_sparse_hes(%id%, %q%, %r%, %s%, %t%, %u%, %v%)%$$
@@ -1316,6 +1341,10 @@ virtual bool rev_sparse_hes(
 $begin atomic_base_clear$$
 
 $section Free Static Variables$$
+$index free, atomic static$$
+$index atomic, free static$$
+$index static, free atomic$$
+$index clear, atomic static$$
 
 $head Syntax$$
 $codei%atomic_base<%Base%>::clear()%$$
