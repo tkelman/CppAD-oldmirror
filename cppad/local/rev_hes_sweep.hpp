@@ -595,14 +595,14 @@ void RevHesSweep(
 				}
 				user_s.resize(user_m);
 				if( user_bool )
-				{	bool_u.resize(user_m * user_q);
-					for(i = 0; i < user_m; i++)
-						for(j = 0; j < user_q; j++)
-							bool_u[ i * user_q + j] = false;
+				{	bool_u.resize(user_q * user_m);
+					for(i = 0; i < user_q; i++)
+						for(j = 0; j < user_m; j++)
+							bool_u[ i * user_m + j] = false;
 				}
 				else
-				{	set_u.resize(user_m);
-					for(i = 0; i < user_m; i++)
+				{	set_u.resize(user_q);
+					for(i = 0; i < user_q; i++)
 						set_u[i].clear();
 				}
 				user_j     = user_n;
@@ -716,9 +716,9 @@ void RevHesSweep(
 			i = rev_hes_sparse.next_element();
 			while( i < user_q )
 			{	if( user_bool )
-					bool_u[ user_i * user_q + i ] = true;
+					bool_u[i * user_m + user_i] = true;
 				else
-					set_u[user_i].insert(i);
+					set_u[i].insert(user_i);
 				i = rev_hes_sparse.next_element();
 			}
 			if( user_i == 0 )

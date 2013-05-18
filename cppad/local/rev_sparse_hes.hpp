@@ -84,8 +84,10 @@ It specifies the number of columns in $latex R \in \B{R}^{n \times q}$$
 and the number of rows in $latex H(x) \in \B{R}^{q \times n}$$.
 It must be the same value as in the previous $cref ForSparseJac$$ call 
 $codei%
-	%f%.ForSparseJac(%q%, %r%)
+	%f%.ForSparseJac(%q%, %r%, %r_transpose%)
 %$$
+Note that if $icode r_transpose$$ is true, $icode r$$ in the call above
+corresponding to $latex R^\R{T} \in \B{R}^{q \times n}$$
 
 $head transpose$$
 The argument $icode transpose$$ has prototype

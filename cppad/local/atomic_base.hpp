@@ -12,7 +12,6 @@ the terms of the
 A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
-// 2DO: implement choice between sets and bools for sparsity patterns.
 // 2DO: add $index entires to user documentation.
 
 # include <set>
@@ -1218,10 +1217,10 @@ $codei%
      const %atomic_sparsity%& %u%
 %$$
 and is a $cref/atomic_sparsity/atomic_option/atomic_sparsity/$$ pattern for 
-$latex U(x) \in B^{m \times q}$$ which is defined by
+$latex U(x) \in B^{p \times m}$$ which is defined by
 $latex \[
 \begin{array}{rcl}
-U(x) 
+U(x)^\R{T} 
 & = & 
 \partial_u \{ \partial_y g[ y + f^{(1)} (x) R u ] \}_{u=0}
 \\

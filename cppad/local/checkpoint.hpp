@@ -404,9 +404,7 @@ public:
 		      vector<bool>&                     t  ,
 		const vector< std::set<size_t> >&       u  ,
 		      vector< std::set<size_t> >&       v  )
-	{	// 2DO: prehaps we can get rid of transposes in a manner
-		// similar to how it was done for rev_sparse_jac above.
-		CPPAD_ASSERT_UNKNOWN( id == 0 );
+	{	CPPAD_ASSERT_UNKNOWN( id == 0 );
 		size_t m = s.size();
 		size_t n = t.size();
 		bool ok  = true;
@@ -422,13 +420,9 @@ public:
 		t = f_.RevSparseJac(1, s);
 
 		// compute sparsity pattern for A(x) = f'(x)^T * U(x)
-		vector< std::set<size_t> > ut(q), a(n);
-		for(i = 0; i < m; i++)
-		{	for(itr = u[i].begin(); itr != u[i].end(); itr++)
-				ut[*itr].insert(i);
-		}
+		vector< std::set<size_t> > a(n);
 		bool transpose = true;
-		a = f_.RevSparseJac(q, ut, transpose);
+		a = f_.RevSparseJac(q, u, transpose);
 
 		// compute sparsity pattern for H(x) = (S * F)''(x) * R
 		// (store it in v)
@@ -463,11 +457,8 @@ public:
 		      vector<bool>&                     t  ,
 		const vector<bool>&                     u  ,
 		      vector<bool>&                     v  )
-	{	// 2DO: prehaps we can get rid of transposes in a manner
-		// similar to how it was done for rev_sparse_jac above.
-		CPPAD_ASSERT_UNKNOWN( id == 0 );
+	{	CPPAD_ASSERT_UNKNOWN( id == 0 );
 		size_t m = s.size();
-		size_t n = t.size();
 		bool ok  = true;
 		std::set<size_t>::const_iterator itr;
 		size_t i, j;
@@ -475,27 +466,19 @@ public:
 		// compute sparsity pattern for T(x) = S(x) * f'(x)
 		t = f_.RevSparseJac(1, s);
 
-		// compute sparsity pattern for A(x)^T = U(x)^T * f'(x)
-		vector<bool> ut(q * m), at(q * m);
-		for(i = 0; i < m; i++)
-		{	for(j = 0; j < q; j++)
-				ut[j * m + i] = u[ i * q + j];
-		}
-		at = f_.RevSparseJac(q, ut);
+		// compute sparsity pattern for A(x) = f'(x)^T * U(x)
+		vector<bool> a(m * q);
+		a = f_.RevSparseJac(q, u);
 
-		// compute sparsity pattern for H(x)^T = R^T * (S * F)''(x)
-		vector<bool> rt(q * n), ht(q * n);
-		for(i = 0; i < n; i++)
-		{	for(j = 0; j < q; j++)
-				rt[j * n + i] = r[ i * q + j ];
-		}
-		f_.ForSparseJac(q, rt);
-		ht = f_.RevSparseHes(q, s);
+		// compute sparsity pattern for H(x) =(S * F)''(x) * R
+		bool transpose = true;
+		f_.ForSparseJac(q, r);
+		v = f_.RevSparseHes(q, s, transpose);
 
 		// compute sparsity pattern for V(x) = A(x) + H(x)
-		for(i = 0; i < n; i++)
+		for(i = 0; i < m; i++)
 		{	for(j = 0; j < q; j++)
-				v[ i * q + j ] = at[ j * n + i] | ht[ j * n + i];
+				v[ i * q + j ] |= a[ i * q + j];
 		}
 
 		// no longer need the forward mode sparsity pattern
