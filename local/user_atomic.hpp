@@ -12,14 +12,12 @@ A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 // 2DO: Depreciate user_atomic using the following steps:
-// 1. make atomic_simple.cpp, atomic_tan.cpp, atomic_mat_mul.cpp examples.
-//    from corresponding user examples.
+// 1. make atomic_tan.cpp, atomic_mat_mul.cpp examples for atomic_base.
 // 2. Move omhelp include of cppad/local/user_atomic.hpp from 
 //    cppad/local/ad_fun.hpp to omh/deprecated/deprecated.omh
-// 3. Put Deprecated below each user_atomic syntex with cross reference
-//    to atomic_base and checkpoint.
-// 4. Change user_atomic.hpp to atomic_old.hpp (do similar with example names
-//    for the deprecated atomic function interface).
+// 3. move example/atomic/user_* to example/atomic/old_* and
+//    deprecate correpsonding example.
+// 4. move user_atomic.hpp to atomic_old.hpp
 
 /*
 $begin user_atomic$$
@@ -51,6 +49,8 @@ $index operation, user atomic$$
 $index function, user atomic$$
 
 $head Syntax$$
+Using $code CPPAD_USER_ATOMIC$$ has been deprecated. 
+Use $cref atomic_base$$ instead.
 
 $subhead Define Function$$
 $codei%CPPAD_USER_ATOMIC(%afun%, %Tvector%, %Base%, 
@@ -709,7 +709,7 @@ The user atomic $code clear$$ routine cannot be called
 while in $cref/parallel/ta_in_parallel/$$ execution mode.
 
 $children%
-	example/atomic/user_simple.cpp%
+	example/atomic/old_reciprocal.cpp%
 	example/atomic/user_usead_1.cpp%
 	example/atomic/user_usead_2.cpp%
 	example/atomic/user_tan.cpp%
@@ -718,7 +718,7 @@ $children%
 $head Example$$
 
 $subhead Simple$$
-The file $cref user_simple.cpp$$ contains the simplest example and test
+The file $cref old_reciprocal.cpp$$ contains the simplest example and test
 of a user atomic operation.
 
 $subhead Use AD$$
