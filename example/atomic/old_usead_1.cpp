@@ -11,7 +11,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
 /*
-$begin user_usead_1.cpp$$
+$begin old_usead_1.cpp$$
 $spell
 	checkpoint
 	var
@@ -38,10 +38,10 @@ uses AD to compute the
 derivatives needed by an atomic function.
 This is a simple example of an inner function, and hence not really
 useful for the purpose above; 
-see $cref user_usead_2.cpp$$ for a more complete example.
+see $cref old_usead_2.cpp$$ for a more complete example.
 
 $code
-$verbatim%example/atomic/user_usead_1.cpp%0%// BEGIN C++%// END C++%1%$$
+$verbatim%example/atomic/old_usead_1.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 $end
@@ -252,7 +252,7 @@ namespace { // Begin empty namespace
 	)
 } // End empty namespace
 
-bool user_usead_1(void)
+bool old_usead_1(void)
 {	bool ok = true;
 	using CppAD::NearEqual;
 	double eps = 10. * CppAD::numeric_limits<double>::epsilon();
@@ -360,10 +360,10 @@ bool user_usead_1(void)
 	destroy_r();
 
 	// -----------------------------------------------------------------
-	// Free all temporary work space associated with user_atomic objects. 
+	// Free all temporary work space associated with old_atomic objects. 
 	// (If there are future calls to user atomic functions, they will 
 	// create new temporary work space.)
-	CppAD::user_atomic<double>::clear();
+	CppAD::old_atomic<double>::clear();
 
 	return ok;
 }

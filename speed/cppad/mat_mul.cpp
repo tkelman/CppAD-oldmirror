@@ -48,7 +48,7 @@ $codep */
 # include <cppad/cppad.hpp>
 # include <cppad/speed/mat_sum_sq.hpp>
 # include <cppad/speed/uniform_01.hpp>
-# include "../../example/atomic/user_mat_mul.hpp"
+# include "../../example/atomic/old_mat_mul.hpp"
 # include "print_optimize.hpp"
 
 bool link_mat_mul(
@@ -174,7 +174,7 @@ bool link_mat_mul(
 	// --------------------------------------------------------------------
 	// Free temporary work space. (If there are future calls to 
 	// mat_mul they would create new temporary work space.)
-	CppAD::user_atomic<double>::clear();
+	CppAD::old_atomic<double>::clear();
 	info_.clear();
 
 	return true;

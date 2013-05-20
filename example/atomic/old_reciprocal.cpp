@@ -364,10 +364,10 @@ bool old_reciprocal(void)
 	ok  &= h[0] == true; // second partial of f[0] w.r.t. x[0] may be non-zero
 
 	// -----------------------------------------------------------------
-	// Free all temporary work space associated with user_atomic objects. 
+	// Free all temporary work space associated with old_atomic objects. 
 	// (If there are future calls to user atomic functions, they will 
 	// create new temporary work space.)
-	CppAD::user_atomic<double>::clear();
+	CppAD::old_atomic<double>::clear();
 
 	return ok;
 }

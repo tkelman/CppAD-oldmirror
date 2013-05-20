@@ -11,7 +11,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
 /*
-$begin user_usead_2.cpp$$
+$begin old_usead_2.cpp$$
 $spell
 	checkpoint
 	var
@@ -36,7 +36,7 @@ and hence the required memory.
 (This is simpler to do using $cref checkpoint$$.)
 
 $code
-$verbatim%example/atomic/user_usead_2.cpp%0%// BEGIN C++%// END C++%1%$$
+$verbatim%example/atomic/old_usead_2.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 $end
@@ -331,7 +331,7 @@ namespace { // Begin empty namespace
 	)
 } // End empty namespace
 
-bool user_usead_2(void)
+bool old_usead_2(void)
 {	bool ok = true;
 	using CppAD::NearEqual;
 	double eps = 10. * CppAD::numeric_limits<double>::epsilon();
@@ -488,10 +488,10 @@ bool user_usead_2(void)
 	// --------------------------------------------------------------------
 	destroy_r();
 
-	// Free all temporary work space associated with user_atomic objects. 
+	// Free all temporary work space associated with old_atomic objects. 
 	// (If there are future calls to user atomic functions, they will 
 	// create new temporary work space.)
-	CppAD::user_atomic<double>::clear();
+	CppAD::old_atomic<double>::clear();
 
 	return ok;
 }

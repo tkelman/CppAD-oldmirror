@@ -36,7 +36,7 @@ $index function, user atomic$$
 $head Syntax$$
 
 $codei%
-%user_atomic% %afun%(%n%, %m%, %use_set%, %user_arg_list%)
+%old_atomic% %afun%(%n%, %m%, %use_set%, %user_arg_list%)
 %ok% = %afun%(%ax%, %ay%)
 %ok% = %afun%.forward(%q%, %p%, %vx%, %vy%, %tx%, %ty%)
 %ok% = %afun%.reverse(%p%, %tx%, %ty%, %px%, %py%)
@@ -59,7 +59,7 @@ as $codei%AD<%Base%>%$$ atomic operations.
 
 $head Virtual Functions$$
 User defined derivatives are implemented by defining the
-following virtual functions in the $icode user_atomic$$ class:
+following virtual functions in the $icode old_atomic$$ class:
 $cref/forward/atomic_forward/$$,
 $cref/reverse/atomic_reverse/$$,
 $cref/for_sparse_jac/atomic_for_sparse_jac/$$,
@@ -86,7 +86,7 @@ $childtable%
 	cppad/local/atomic_base.hpp%
 	example/atomic/reciprocal.cpp%
 	cppad/local/checkpoint.hpp%
-	cppad/local/user_atomic.hpp
+	cppad/local/old_atomic.hpp
 %$$
 $head Example$$
 The file $cref atomic_reciprocal.cpp$$ contains an example and test

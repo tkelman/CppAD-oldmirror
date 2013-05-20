@@ -21,10 +21,10 @@ ADD_EXECUTABLE(example_atomic EXCLUDE_FROM_ALL
 	checkpoint.cpp
 	old_reciprocal.cpp
 	reciprocal.cpp
-	user_mat_mul.cpp
-	user_tan.cpp
-	user_usead_1.cpp
-	user_usead_2.cpp
+	old_mat_mul.cpp
+	old_tan.cpp
+	old_usead_1.cpp
+	old_usead_2.cpp
 )
 
 # Extra compiler flags

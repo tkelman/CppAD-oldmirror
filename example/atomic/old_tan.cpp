@@ -11,19 +11,19 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
 /*
-$begin user_tan.cpp$$
+$begin old_tan.cpp$$
 $spell
 	Tanh
 $$
 
 $section Tan and Tanh as User Atomic Operations: Example and Test$$
 
-$index tan, user_atomic$$
+$index tan, old_atomic$$
 $index user, atomic tan$$
 $index atomic, tan$$
-$index test, user_atomic$$
-$index user_atomic, example$$
-$index example, user_atomic$$
+$index test, old_atomic$$
+$index old_atomic, example$$
+$index example, old_atomic$$
 
 $head Theory$$
 The code below uses the $cref tan_forward$$ and $cref tan_reverse$$
@@ -31,7 +31,7 @@ to implement the tangent ($icode%id% == 0%$$) and hyperbolic tangent
 ($icode%id% == 1%$$) functions as user atomic operations.
 
 $code
-$verbatim%example/atomic/user_tan.cpp%0%// BEGIN C++%// END C++%1%$$
+$verbatim%example/atomic/old_tan.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 $end
@@ -271,7 +271,7 @@ namespace { // Begin empty namespace
 	)
 } // End empty namespace
 
-bool user_tan(void)
+bool old_tan(void)
 {	bool ok = true;
 	using CppAD::AD;
 	using CppAD::NearEqual;
@@ -416,10 +416,10 @@ bool user_tan(void)
 	ok   &= NearEqual(df[1], tanhp, eps, eps);
  
 	// --------------------------------------------------------------------
-	// Free all temporary work space associated with user_atomic objects. 
+	// Free all temporary work space associated with old_atomic objects. 
 	// (If there are future calls to user atomic functions, they will 
 	// create new temporary work space.)
-	CppAD::user_atomic<float>::clear();
+	CppAD::old_atomic<float>::clear();
 
 	return ok;
 }

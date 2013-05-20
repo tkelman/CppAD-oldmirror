@@ -251,7 +251,7 @@ nobase_myinclude_HEADERS =  \
 	cppad/local/unary_plus.hpp \
 	cppad/local/undef.hpp \
 	cppad/local/user_ad.hpp \
-	cppad/local/user_atomic.hpp \
+	cppad/local/old_atomic.hpp \
 	cppad/local/value.hpp \
 	cppad/local/var2par.hpp \
 	cppad/local/vec_ad.hpp \

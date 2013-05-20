@@ -14,9 +14,9 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
 /*
-$begin user_mat_mul.hpp$$
+$begin old_mat_mul.hpp$$
 $spell
-	user_mat_mul.hpp
+	old_mat_mul.hpp
 	cppad
 	CppAD
 	namespace
@@ -46,25 +46,25 @@ $$
 
 $section Define Matrix Multiply as a User Atomic Operation$$
 
-$index user_mat_mul, define$$
+$index old_mat_mul, define$$
 $index matrix, multiply$$
 $index multiply, matrix$$
-$index user_atomic, test$$
-$index test, user_atomic$$
-$index user_atomic, example$$
-$index example, user_atomic$$
+$index old_atomic, test$$
+$index test, old_atomic$$
+$index old_atomic, example$$
+$index example, old_atomic$$
 
 $head Syntax$$
 This file is located in the $code example$$ directory.
 It can be copied to the current working directory and included
 with the syntax
 $codei%
-	# include "user_mat_mul.hpp"
+	# include "old_mat_mul.hpp"
 %$$
 
 $head Example$$
-The file $cref user_mat_mul.cpp$$ contains an example use of 
-$code user_mat_mul.hpp$$.
+The file $cref old_mat_mul.cpp$$ contains an example use of 
+$code old_mat_mul.hpp$$.
 It returns true if it succeeds and false otherwise.
 
 $head Begin Source$$

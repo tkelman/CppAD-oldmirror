@@ -956,7 +956,7 @@ namespace {
 		result.swap(temp);
 	}
 
-	bool user_atomic_forward(
+	bool old_atomic_forward(
 		size_t                         id ,
 		size_t                          k , 
 		size_t                          n ,
@@ -982,7 +982,7 @@ namespace {
 		return true; 
 	}
 
-	bool user_atomic_reverse(
+	bool old_atomic_reverse(
 		size_t                         id ,
 		size_t                          k , 
 		size_t                          n , 
@@ -993,7 +993,7 @@ namespace {
 		const CppAD::vector<double>&   py )
 	{	return false; }
 
-	bool user_atomic_for_jac_sparse(
+	bool old_atomic_for_jac_sparse(
 		size_t                                  id ,
 		size_t                                   n ,
 		size_t                                   m ,
@@ -1002,7 +1002,7 @@ namespace {
 		CppAD::vector< std::set<size_t>  >&      s )
 	{	return false; }
 
-	bool user_atomic_rev_jac_sparse(
+	bool old_atomic_rev_jac_sparse(
 		size_t                                  id ,
 		size_t                                   n ,
 		size_t                                   m ,
@@ -1023,7 +1023,7 @@ namespace {
 		return true; 
 	}
 
-	bool user_atomic_rev_hes_sparse(
+	bool old_atomic_rev_hes_sparse(
 		size_t                                  id ,
 		size_t                                   n ,
 		size_t                                   m ,
@@ -1036,17 +1036,17 @@ namespace {
 	{	return false; }
 
 	CPPAD_USER_ATOMIC(
-		my_user_atomic             ,
+		my_old_atomic             ,
 		CppAD::vector              ,
 		double                     ,
-		user_atomic_forward        ,
-		user_atomic_reverse        ,
-		user_atomic_for_jac_sparse ,
-		user_atomic_rev_jac_sparse ,
-		user_atomic_rev_hes_sparse 
+		old_atomic_forward        ,
+		old_atomic_reverse        ,
+		old_atomic_for_jac_sparse ,
+		old_atomic_rev_jac_sparse ,
+		old_atomic_rev_hes_sparse 
 	)
 
-	bool user_atomic_test(void)
+	bool old_atomic_test(void)
 	{	bool ok = true;
 
 		using CppAD::AD;
@@ -1060,9 +1060,9 @@ namespace {
 
 		size_t id = 0;
 		// first call should stay in the tape
-		my_user_atomic(id++, ax, ay);
+		my_old_atomic(id++, ax, ay);
 		// second call will not get used
-		my_user_atomic(id++, ax, az);
+		my_old_atomic(id++, ax, az);
 		// create function
 		CppAD::ADFun<double> g(ax, ay);
 		// should have 1 + n + m + m varaibles
@@ -1134,11 +1134,11 @@ bool optimize(void)
 	ok     &= reverse_sparse_hessian_csum();
 	// check that CondExp properly detects dependencies
 	ok     &= cond_exp_depend();
-	// check user_atomic functions
-	ok     &= user_atomic_test();
+	// check old_atomic functions
+	ok     &= old_atomic_test();
 	// case where results are not identically equal
 	ok     &= not_identically_equal();
 
-	CppAD::user_atomic<double>::clear();
+	CppAD::old_atomic<double>::clear();
 	return ok;
 }

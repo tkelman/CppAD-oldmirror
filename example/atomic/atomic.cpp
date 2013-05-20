@@ -23,10 +23,10 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 extern bool checkpoint(void);
 extern bool old_reciprocal(void);
 extern bool reciprocal(void);
-extern bool user_mat_mul(void);
-extern bool user_tan(void);
-extern bool user_usead_1(void);
-extern bool user_usead_2(void);
+extern bool old_mat_mul(void);
+extern bool old_tan(void);
+extern bool old_usead_1(void);
+extern bool old_usead_2(void);
 
 namespace {
 	// function that runs one test
@@ -55,10 +55,10 @@ int main(void)
 	ok &= Run( checkpoint,          "checkpoint"     );
 	ok &= Run( old_reciprocal,      "old_reciprocal" );
 	ok &= Run( reciprocal,          "reciprocal"     );
-	ok &= Run( user_mat_mul,        "user_mat_mul"   );
-	ok &= Run( user_tan,            "user_tan"       );
-	ok &= Run( user_usead_1,        "user_usead_1"   );
-	ok &= Run( user_usead_2,        "user_usead_2"   );
+	ok &= Run( old_mat_mul,        "old_mat_mul"   );
+	ok &= Run( old_tan,            "old_tan"       );
+	ok &= Run( old_usead_1,        "old_usead_1"   );
+	ok &= Run( old_usead_2,        "old_usead_2"   );
 	
 	// check for errors
 	using std::cout;

@@ -77,13 +77,13 @@ The sparse hessian example in $cref old_reciprocal.cpp$$ was not
 being run. This has been fixed.
 
 $head 05-11$$
-The $cref/user_atomic examples/user_atomic/Example/$$ 
+The $cref/old_atomic examples/old_atomic/Example/$$ 
 names were all changed to begin with $code user$$.
 
 $head 05-04$$
 The option to compute 
 $cref/multiple orders/ForwardAny/x_p/Multiple Orders/$$ was added.
-The $cref user_usead_2.cpp$$ example shows the need for this.
+The $cref old_usead_2.cpp$$ example shows the need for this.
 The problem is that a new atomic function interface needs to be designed
 with checkpointing as a particular application.
 Multiple order forward mode is the first step in this direction.
@@ -119,7 +119,7 @@ from the scalar type to an $code int$$ and this is dangerous for AD types
 
 $head 04-26$$
 $list number$$
-The example $cref user_usead_2.cpp$$ was completed. 
+The example $cref old_usead_2.cpp$$ was completed. 
 This is a more realistic, but also more complicated, example of
 using AD to computed derivatives inside an atomic function.
 $lnext
@@ -133,7 +133,7 @@ $lend
 $end
 
 $head 04-20$$
-The example $cref user_usead_1.cpp$$ was added.
+The example $cref old_usead_1.cpp$$ was added.
 
 $head 04-16$$
 The script $cref get_ipopt.sh$$ has been added.

@@ -11,36 +11,36 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
 /*
-$begin user_mat_mul.cpp$$
+$begin old_mat_mul.cpp$$
 $spell
 	mul
 $$
 
 $section Matrix Multiply as a User Atomic Operation: Example and Test$$
 
-$index user_atomic, example$$
-$index user_atomic, test$$
+$index old_atomic, example$$
+$index old_atomic, test$$
 $index matrix, atomic example$$
-$index user_mat_mul, example$$
-$index user_mat_mul, test$$
+$index old_mat_mul, example$$
+$index old_mat_mul, test$$
 
 $children%
-	example/atomic/user_mat_mul.hpp
+	example/atomic/old_mat_mul.hpp
 %$$
 $head Include File$$
-This routine uses the include file $cref user_mat_mul.hpp$$.
+This routine uses the include file $cref old_mat_mul.hpp$$.
 
 $code
-$verbatim%example/atomic/user_mat_mul.cpp%0%// BEGIN C++%// END C++%1%$$
+$verbatim%example/atomic/old_mat_mul.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 $end
 */
 // BEGIN C++
 # include <cppad/cppad.hpp>
-# include "user_mat_mul.hpp"
+# include "old_mat_mul.hpp"
 
-bool user_mat_mul(void)
+bool old_mat_mul(void)
 {	bool ok = true;
 	using CppAD::AD;
 
@@ -260,8 +260,8 @@ bool user_mat_mul(void)
 
 	// --------------------------------------------------------------------
 	// Free temporary work space. (If there are future calls to 
-	// user_mat_mul they would create new temporary work space.)
-	CppAD::user_atomic<double>::clear();
+	// old_mat_mul they would create new temporary work space.)
+	CppAD::old_atomic<double>::clear();
 	info_.clear();
 
 	return ok;

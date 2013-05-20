@@ -319,7 +319,7 @@ The size of $icode x_p$$ must be either $icode n$$ or
 $icode%n%*(%p%+1)%$$.
 
 $subhead Restrictions$$
-Note if $icode f$$ uses $cref user_atomic$$ functions,
+Note if $icode f$$ uses $cref old_atomic$$ functions,
 the size of $icode x_p$$ must be $icode n$$.
 
 $subhead One Order$$
