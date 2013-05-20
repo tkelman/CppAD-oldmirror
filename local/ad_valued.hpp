@@ -46,6 +46,6 @@ $end
 # include <cppad/local/discrete.hpp>
 # include <cppad/local/atomic_base.hpp>
 # include <cppad/local/checkpoint.hpp>
-# include <cppad/local/user_atomic.hpp>
+# include <cppad/local/old_atomic.hpp>
 
 # endif

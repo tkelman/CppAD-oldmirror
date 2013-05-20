@@ -1,6 +1,6 @@
 /* $Id$ */
-# ifndef CPPAD_USER_ATOMIC_INCLUDED
-# define CPPAD_USER_ATOMIC_INCLUDED
+# ifndef CPPAD_OLD_ATOMIC_INCLUDED
+# define CPPAD_OLD_ATOMIC_INCLUDED
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-13 Bradley M. Bell
 
@@ -11,16 +11,16 @@ the terms of the
 A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
-// 2DO: Depreciate user_atomic using the following steps:
+// 2DO: Depreciate old_atomic using the following steps:
 // 1. make atomic_tan.cpp, atomic_mat_mul.cpp examples for atomic_base.
-// 2. Move omhelp include of cppad/local/user_atomic.hpp from 
+// 2. Move omhelp include of cppad/local/old_atomic.hpp from 
 //    cppad/local/ad_fun.hpp to omh/deprecated/deprecated.omh
 // 3. move example/atomic/user_* to example/atomic/old_* and
 //    deprecate correpsonding example.
-// 4. move user_atomic.hpp to atomic_old.hpp
+// 4. move old_atomic.hpp to atomic_old.hpp
 
 /*
-$begin user_atomic$$
+$begin old_atomic$$
 $spell
 	hes
 	std
@@ -75,7 +75,7 @@ $icode%ok% = %rev_hes_sparse%(%id%, %n%, %m%, %q%, %r%, %s%, %t%, %u%, %v%)
 %$$
 
 $subhead Free Static Memory$$
-$codei%user_atomic<%Base%>::clear()%$$
+$codei%old_atomic<%Base%>::clear()%$$
 
 $head Purpose$$
 In some cases, the user knows how to compute the derivative
@@ -93,15 +93,15 @@ $pre
 
 $$
 Another possible purpose is to reduce the size of the tape; 
-see $cref/use AD/user_atomic/Example/Use AD/$$
+see $cref/use AD/old_atomic/Example/Use AD/$$
 
 $head Partial Implementation$$
 The routines 
-$cref/forward/user_atomic/forward/$$,
-$cref/reverse/user_atomic/reverse/$$,
-$cref/for_jac_sparse/user_atomic/for_jac_sparse/$$,
-$cref/rev_jac_sparse/user_atomic/rev_jac_sparse/$$, and
-$cref/rev_hes_sparse/user_atomic/rev_hes_sparse/$$,
+$cref/forward/old_atomic/forward/$$,
+$cref/reverse/old_atomic/reverse/$$,
+$cref/for_jac_sparse/old_atomic/for_jac_sparse/$$,
+$cref/rev_jac_sparse/old_atomic/rev_jac_sparse/$$, and
+$cref/rev_hes_sparse/old_atomic/rev_hes_sparse/$$,
 must be defined by the user.
 The $icode forward$$ the routine, 
 for the case $icode%k% = 0%$$, must be implemented.
@@ -165,8 +165,8 @@ $codei%
 	size_t %k%
 %$$
 The value $icode%k%$$ is the order of the Taylor coefficient that
-we are evaluating ($cref/forward/user_atomic/forward/$$)
-or taking the derivative of ($cref/reverse/user_atomic/reverse/$$).
+we are evaluating ($cref/forward/old_atomic/forward/$$)
+or taking the derivative of ($cref/reverse/old_atomic/reverse/$$).
 
 $head n$$
 For all routines documented below, 
@@ -214,12 +214,12 @@ $latex \[
 \] $$
 
 $head ty$$
-In calls to $cref/forward/user_atomic/forward/$$, 
+In calls to $cref/forward/old_atomic/forward/$$, 
 the argument $icode ty$$ has prototype
 $codei%
 	CppAD::vector<%Base%>& %ty%
 %$$
-while in calls to $cref/reverse/user_atomic/reverse/$$ it has prototype
+while in calls to $cref/reverse/old_atomic/reverse/$$ it has prototype
 $codei%
 	const CppAD::vector<%Base%>& %ty%
 %$$
@@ -274,7 +274,7 @@ It is the argument vector $latex x \in B^n$$
 at which the $codei%AD<%Base%>%$$ version of 
 $latex y = f(x)$$ is to be evaluated.
 The dimension of the domain space for $latex y = f (x)$$
-is specified by $cref/n/user_atomic/n/$$ $codei%= %ax%.size()%$$,
+is specified by $cref/n/old_atomic/n/$$ $codei%= %ax%.size()%$$,
 which must be greater than zero.
 
 $subhead ay$$
@@ -286,19 +286,19 @@ The input values of its elements do not matter.
 Upon return, it is the $codei%AD<%Base%>%$$ version of the 
 result vector $latex y = f(x)$$.
 The dimension of the range space for $latex y = f (x)$$
-is specified by $cref/m/user_atomic/m/$$ $codei%= %ay%.size()%$$,
+is specified by $cref/m/old_atomic/m/$$ $codei%= %ay%.size()%$$,
 which must be greater than zero.
 
 $subhead Parallel Mode$$
-$index parallel, user_atomic$$
-$index user_atomic, parallel$$
+$index parallel, old_atomic$$
+$index old_atomic, parallel$$
 The first call to 
 $codei%
 	%afun%(%id%, %ax%, %ay%)
 %$$
 must not be in $cref/parallel/ta_in_parallel/$$ mode.
 In addition, the
-$cref/user_atomic clear/user_atomic/clear/$$
+$cref/old_atomic clear/old_atomic/clear/$$
 routine cannot be called while in parallel mode.
 
 $head forward$$
@@ -403,7 +403,7 @@ to denote these Taylor coefficients where the implicit range indices are
 $latex i = 0 , \ldots , m-1$$,
 $latex j = 0 , \ldots , n-1$$,
 $latex \ell = 0 , \ldots , k$$.
-Using the calculations done by $cref/forward/user_atomic/forward/$$,
+Using the calculations done by $cref/forward/old_atomic/forward/$$,
 the Taylor coefficients $latex \{ y_i^\ell \}$$ are a function of the Taylor
 coefficients for $latex \{ x_j^\ell \}$$; i.e., given $latex y = f(x)$$
 we define the function
@@ -697,7 +697,7 @@ $head clear$$
 User atomic functions hold onto static work space in order to
 increase speed by avoiding system memory allocation calls.
 The function call $codei%
-	user_atomic<%Base%>::clear()
+	old_atomic<%Base%>::clear()
 %$$ 
 makes to work space $cref/available/ta_available/$$ to
 for other uses by the same thread.
@@ -710,10 +710,10 @@ while in $cref/parallel/ta_in_parallel/$$ execution mode.
 
 $children%
 	example/atomic/old_reciprocal.cpp%
-	example/atomic/user_usead_1.cpp%
-	example/atomic/user_usead_2.cpp%
-	example/atomic/user_tan.cpp%
-	example/atomic/user_mat_mul.cpp
+	example/atomic/old_usead_1.cpp%
+	example/atomic/old_usead_2.cpp%
+	example/atomic/old_tan.cpp%
+	example/atomic/old_mat_mul.cpp
 %$$
 $head Example$$
 
@@ -723,18 +723,18 @@ of a user atomic operation.
 
 $subhead Use AD$$
 The examples 
-$cref user_usead_1.cpp$$ and $cref user_usead_2.cpp$$
+$cref old_usead_1.cpp$$ and $cref old_usead_2.cpp$$
 use AD to compute the derivatives 
 inside a user defined atomic function.
 This may have the advantage of reducing the size of the tape, because
 a repeated section of code would only be taped once.
 
 $subhead Tangent Function$$
-The file $cref user_tan.cpp$$ contains an example and test
+The file $cref old_tan.cpp$$ contains an example and test
 implementation of the tangent function as a user atomic operation.
 
 $subhead Matrix Multiplication$$
-The file  $cref user_mat_mul.cpp$$ contains an example and test
+The file  $cref old_mat_mul.cpp$$ contains an example and test
 implementation of matrix multiplication a a user atomic operation.
 
 $end
@@ -748,9 +748,9 @@ $end
 
 CPPAD_BEGIN_NAMESPACE
 /*!
-\defgroup user_atomic_hpp user_atomic.hpp
+\defgroup old_atomic_hpp old_atomic.hpp
 \{
-\file user_atomic.hpp
+\file old_atomic.hpp
 user defined atomic operations.
 */
 
@@ -793,7 +793,7 @@ name of the user defined routine that computes corresponding
 results during reverse mode Hessian sparsity sweeps.
 
 \par memory allocation
-Note that user_atomic is used as a static object, so its objects
+Note that old_atomic is used as a static object, so its objects
 do note get deallocated until the program terminates. 
 */
 
@@ -807,7 +807,7 @@ do note get deallocated until the program terminates.
      rev_jac_sparse  ,                                                \
      rev_hes_sparse                                                   \
 )                                                                     \
-CppAD::user_atomic<Base> afun(                                        \
+CppAD::old_atomic<Base> afun(                                        \
           #afun          ,                                            \
           forward        ,                                            \
           reverse        ,                                            \
@@ -819,11 +819,11 @@ CppAD::user_atomic<Base> afun(                                        \
 /*!
 Class that actually implements the <tt>afun(id, ax, ay)</tt> calls.
 
-A new user_atomic object is generated each time the user invokes
+A new old_atomic object is generated each time the user invokes
 the CPPAD_USER_ATOMIC macro; see static object in that macro.
 */
 template <class Base>
-class user_atomic : public atomic_base<Base> {
+class old_atomic : public atomic_base<Base> {
 	/// type for user routine that computes forward mode results
 	typedef bool (*F) (
 		size_t                  id ,
@@ -917,7 +917,7 @@ public:
 	This constructor can not be used in parallel mode because
 	atomic_base has this restriction.
 	*/
-	user_atomic(const char* afun, F f, R r, FJS fjs, RJS rjs, RHS rhs) : 
+	old_atomic(const char* afun, F f, R r, FJS fjs, RJS rjs, RHS rhs) : 
 	atomic_base<Base>(afun) // name = afun
 	, f_(f)
 	, r_(r)
@@ -951,7 +951,7 @@ public:
 		return;
 	}
 	/*!
- 	Link from user_atomic to forward mode 
+ 	Link from old_atomic to forward mode 
 
 	\copydetails atomic_base::forward
  	*/
@@ -973,7 +973,7 @@ public:
 		vector<Base> y(m * (p+1));
 		vector<bool> empty;
 
-		// user_atomic interface can only handel one order at a time
+		// old_atomic interface can only handel one order at a time
 		// so must just throuh hoops to get multiple orders at one time.
 		bool ok = true;
 		for(k = q; k <= p; k++)
@@ -993,7 +993,7 @@ public:
 		return ok;
 	}
 	/*!
- 	Link from user_atomic to reverse mode
+ 	Link from old_atomic to reverse mode
 
 	\copydetails atomic_base::reverse
  	*/
@@ -1012,7 +1012,7 @@ public:
 		return ok;
 	}
 	/*!
- 	Link from forward Jacobian sparsity sweep to user_atomic
+ 	Link from forward Jacobian sparsity sweep to old_atomic
 
 	\copydetails atomic_base::for_sparse_jac
 	*/
@@ -1028,7 +1028,7 @@ public:
 	}
 
 	/*!
- 	Link from reverse Jacobian sparsity sweep to user_atomic.
+ 	Link from reverse Jacobian sparsity sweep to old_atomic.
 
 	\copydetails atomic_base::rev_sparse_jac
 	*/
@@ -1043,7 +1043,7 @@ public:
 		return ok;
 	}
 	/*!
- 	Link from reverse Hessian sparsity sweep to user_atomic
+ 	Link from reverse Hessian sparsity sweep to old_atomic
 
 	\copydetails atomic_base::rev_sparse_hes
 	*/
