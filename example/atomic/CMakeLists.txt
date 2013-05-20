@@ -19,9 +19,9 @@ SET(CMAKE_BUILD_TYPE DEBUG)
 ADD_EXECUTABLE(example_atomic EXCLUDE_FROM_ALL 
 	atomic.cpp
 	checkpoint.cpp
+	old_reciprocal.cpp
 	reciprocal.cpp
 	user_mat_mul.cpp
-	user_simple.cpp
 	user_tan.cpp
 	user_usead_1.cpp
 	user_usead_2.cpp

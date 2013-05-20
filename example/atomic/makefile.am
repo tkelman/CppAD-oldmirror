@@ -26,9 +26,9 @@ AM_CPPFLAGS       = -I. \
 solve_SOURCES   = \
 	atomic.cpp \
 	checkpoint.cpp \
+	old_reciprocal.cpp \
 	reciprocal.cpp \
 	user_mat_mul.cpp \
-	user_simple.cpp \
 	user_tan.cpp \
 	user_usead_1.cpp \
 	user_usead_2.cpp 

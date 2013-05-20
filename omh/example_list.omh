@@ -183,6 +183,7 @@ $rref ode_gear_control.cpp$$
 $rref ode_gear.cpp$$
 $rref ode_stiff.cpp$$
 $rref ode_taylor.cpp$$
+$rref old_reciprocal.cpp$$
 $rref omp_alloc.cpp$$
 $rref optimize.cpp$$
 $rref opt_val_hes.cpp$$
@@ -238,7 +239,6 @@ $rref user_mat_mul.cpp$$
 $rref user_mat_mul.hpp$$
 $rref user_usead_1.cpp$$
 $rref user_usead_2.cpp$$
-$rref user_simple.cpp$$
 $rref user_tan.cpp$$
 $rref value.cpp$$
 $rref var2par.cpp$$

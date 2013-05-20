@@ -52,13 +52,13 @@ int main(void)
 {	bool ok = true;
 
 	// external compiled tests
-	ok &= Run( checkpoint,          "checkpoint"   );
-	ok &= Run( reciprocal,          "reciprocal"   );
-	ok &= Run( user_mat_mul,        "user_mat_mul" );
-	ok &= Run( user_simple,         "user_simple"  );
-	ok &= Run( user_tan,            "user_tan"     );
-	ok &= Run( user_usead_1,        "user_usead_1" );
-	ok &= Run( user_usead_2,        "user_usead_2" );
+	ok &= Run( checkpoint,          "checkpoint"     );
+	ok &= Run( old_reciprocal,      "old_reciprocal" );
+	ok &= Run( reciprocal,          "reciprocal"     );
+	ok &= Run( user_mat_mul,        "user_mat_mul"   );
+	ok &= Run( user_tan,            "user_tan"       );
+	ok &= Run( user_usead_1,        "user_usead_1"   );
+	ok &= Run( user_usead_2,        "user_usead_2"   );
 	
 	// check for errors
 	using std::cout;

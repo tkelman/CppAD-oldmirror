@@ -411,10 +411,10 @@ $cref/rev_hes_sparse/user_atomic/rev_hes_sparse/$$
 argument
 $cref/v/user_atomic/rev_hes_sparse/v/$$.
 In addition,
-add sparsity calculations to the $cref user_simple.cpp$$ example.
+add sparsity calculations to the $cref old_reciprocal.cpp$$ example.
 
 $head 09-11$$
-Add $cref user_simple.cpp$$,
+Add $code user_simple.cpp$$,
 a simpler $cref user_atomic$$ example.
 
 $head 08-05$$

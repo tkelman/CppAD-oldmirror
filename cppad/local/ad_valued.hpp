@@ -30,9 +30,7 @@ $childtable%
 	cppad/local/math_other.hpp%
 	cppad/local/cond_exp.hpp%
 	cppad/local/discrete.hpp%
-	omh/atomic_base.omh%
-	cppad/local/checkpoint.hpp%
-	cppad/local/user_atomic.hpp
+	omh/atomic_base.omh
 %$$
 
 $end

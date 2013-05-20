@@ -73,7 +73,7 @@ $cref/RevSparseJac/$$.
 $lend
 
 $head 05-12$$
-The sparse hessian example in $cref user_simple.cpp$$ was not
+The sparse hessian example in $cref old_reciprocal.cpp$$ was not
 being run. This has been fixed.
 
 $head 05-11$$

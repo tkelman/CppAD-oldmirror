@@ -84,7 +84,9 @@ and makes this easy.
 
 $childtable%
 	cppad/local/atomic_base.hpp%
-	example/atomic/reciprocal.cpp
+	example/atomic/reciprocal.cpp%
+	cppad/local/checkpoint.hpp%
+	cppad/local/user_atomic.hpp
 %$$
 $head Example$$
 The file $cref atomic_reciprocal.cpp$$ contains an example and test

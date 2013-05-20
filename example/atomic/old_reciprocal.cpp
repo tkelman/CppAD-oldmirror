@@ -11,16 +11,15 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
 
 /*
-$begin user_simple.cpp$$
+$begin old_reciprocal.cpp$$
+$section Old Atomic Operation Reciprocal: Example and Test$$
+$index user, old atomic reciprocal$$
+$index atomic, old atomic reciprocal$$
+$index reciprocal, old atomic$$
 
-$section Reciprocal as a User Atomic Operation: Example and Test$$
-
-$index user_simple, user_atomic$$
-$index user, atomic user_simple$$
-$index atomic, user_simple$$
-$index test, user_atomic$$
-$index user_atomic, example$$
-$index example, user_atomic$$
+$head Deprecated$$
+This example has been deprecated;
+see $cref atomic_reciprocal.cpp$$.
 
 $head Theory$$
 The example below defines the user atomic function 
@@ -28,7 +27,7 @@ $latex f : \B{R}^n \rightarrow \B{R}^m$$ where
 $latex n = 1$$, $latex m = 1$$, and $latex f(x) = 1 / x$$.
 
 $code
-$verbatim%example/atomic/user_simple.cpp%0%// BEGIN C++%// END C++%1%$$
+$verbatim%example/atomic/old_reciprocal.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 $end
@@ -264,7 +263,7 @@ namespace { // Begin empty namespace
 	)
 } // End empty namespace
 
-bool user_simple(void)
+bool old_reciprocal(void)
 {	bool ok = true;
 	using CppAD::AD;
 	using CppAD::NearEqual;

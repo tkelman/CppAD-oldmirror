@@ -33,7 +33,7 @@ and hence the required memory.
 (This is simpler to do using $cref checkpoint$$.)
 
 $head Simple Case$$
-This example is the same as $cref user_simple.cpp$$, except that it 
+This example is the same as $cref old_reciprocal.cpp$$, except that it 
 uses AD to compute the 
 derivatives needed by an atomic function.
 This is a simple example of an inner function, and hence not really
