@@ -16,6 +16,9 @@
 # empty, Debug, Release, RelWithDebInfo and MinSizeRel
 SET(CMAKE_BUILD_TYPE DEBUG)
 
+# atomic examples
+ADD_SUBDIRECTORY(atomic)
+
 # adolc_prefix
 IF ( adolc_prefix )
 	# Extra source files if we are including adolc
@@ -92,7 +95,6 @@ ADD_EXECUTABLE(example EXCLUDE_FROM_ALL example.cpp
 	change_const.cpp
 	check_numeric_type.cpp
 	check_simple_vector.cpp
-	checkpoint.cpp
 	compare.cpp
 	compare_change.cpp
 	complex_poly.cpp
@@ -191,12 +193,6 @@ ADD_EXECUTABLE(example EXCLUDE_FROM_ALL example.cpp
 	thread_alloc.cpp
 	unary_minus.cpp
 	unary_plus.cpp
-	user_mat_mul.cpp
-	user_mat_mul.hpp
-	user_simple.cpp
-	user_tan.cpp
-	user_usead_1.cpp
-	user_usead_2.cpp
 	value.cpp
 	var2par.cpp
 	vec_ad.cpp
@@ -210,4 +206,8 @@ add_cppad_cxx_flags(example)
 TARGET_LINK_LIBRARIES(example ${example_adolc} ${example_eigen})
 
 # Add the check_example target
-ADD_CUSTOM_TARGET(check_example example DEPENDS example ${example_ipopt})
+ADD_CUSTOM_TARGET(check_example example DEPENDS 
+	example 
+	check_example_atomic 
+	${example_ipopt}
+)

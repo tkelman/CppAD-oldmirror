@@ -36,7 +36,7 @@ and hence the required memory.
 (This is simpler to do using $cref checkpoint$$.)
 
 $code
-$verbatim%example/user_usead_2.cpp%0%// BEGIN C++%// END C++%1%$$
+$verbatim%example/atomic/user_usead_2.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 $end

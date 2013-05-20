@@ -41,7 +41,7 @@ useful for the purpose above;
 see $cref user_usead_2.cpp$$ for a more complete example.
 
 $code
-$verbatim%example/user_usead_1.cpp%0%// BEGIN C++%// END C++%1%$$
+$verbatim%example/atomic/user_usead_1.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 $end

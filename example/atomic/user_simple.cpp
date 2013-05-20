@@ -28,7 +28,7 @@ $latex f : \B{R}^n \rightarrow \B{R}^m$$ where
 $latex n = 1$$, $latex m = 1$$, and $latex f(x) = 1 / x$$.
 
 $code
-$verbatim%example/user_simple.cpp%0%// BEGIN C++%// END C++%1%$$
+$verbatim%example/atomic/user_simple.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 $end

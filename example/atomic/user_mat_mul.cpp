@@ -25,13 +25,13 @@ $index user_mat_mul, example$$
 $index user_mat_mul, test$$
 
 $children%
-	example/user_mat_mul.hpp
+	example/atomic/user_mat_mul.hpp
 %$$
 $head Include File$$
 This routine uses the include file $cref user_mat_mul.hpp$$.
 
 $code
-$verbatim%example/user_mat_mul.cpp%0%// BEGIN C++%// END C++%1%$$
+$verbatim%example/atomic/user_mat_mul.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 $end

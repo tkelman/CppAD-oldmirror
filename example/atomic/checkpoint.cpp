@@ -40,7 +40,7 @@ $latex \[
 \] $$
 
 $code
-$verbatim%example/checkpoint.cpp%0%// BEGIN C++%// END C++%1%$$
+$verbatim%example/atomic/checkpoint.cpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 
