@@ -76,15 +76,19 @@ $icode forward$$ for the case $icode%p% == 2%$$ can just return
 $icode%ok% == false%$$ unless you require
 forward mode calculation of second derivatives.
 
-
 $head Checkpointing$$
-Another purpose for $codei%atomic_base%<%Base%>%$$ is to
+Another use for $codei%atomic_base%<%Base%>%$$ is to
 reduce the amount of memory required.
 The $cref checkpoint$$ class is derived from $code atomic_base$$
 and makes this easy.
 
 $childtable%
-	cppad/local/atomic_base.hpp
+	cppad/local/atomic_base.hpp%
+	example/atomic/reciprocal.cpp
 %$$
+$head Example$$
+The file $cref atomic_reciprocal.cpp$$ contains an example and test
+where the user provides the code for computing derivatives.
+
 
 $end

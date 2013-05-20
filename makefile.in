@@ -55,6 +55,7 @@ DIST_COMMON = README $(am__configure_deps) \
 	$(am__myinclude_HEADERS_DIST) $(nobase_myinclude_HEADERS) \
 	$(srcdir)/makefile.am $(srcdir)/makefile.in \
 	$(top_srcdir)/configure $(top_srcdir)/cppad/configure.hpp.in \
+	$(top_srcdir)/example/atomic/test.sh.in \
 	$(top_srcdir)/pkgconfig/cppad-uninstalled.pc.in \
 	$(top_srcdir)/pkgconfig/cppad.pc.in AUTHORS COPYING ChangeLog \
 	INSTALL NEWS depcomp install-sh missing
@@ -65,8 +66,8 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
-CONFIG_CLEAN_FILES = cppad/configure.hpp pkgconfig/cppad.pc \
-	pkgconfig/cppad-uninstalled.pc
+CONFIG_CLEAN_FILES = cppad/configure.hpp example/atomic/test.sh \
+	pkgconfig/cppad.pc pkgconfig/cppad-uninstalled.pc
 CONFIG_CLEAN_VPATH_FILES =
 AM_V_GEN = $(am__v_GEN_@AM_V@)
 am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
@@ -650,7 +651,7 @@ test_directory_list = \
 	$(IPOPT_TESTS) \
 	$(SPEED_TESTS) \
 	example \
-	example_atomic \
+	example/atomic \
 	compare_c \
 	introduction/get_started \
 	introduction/exp_apx \
@@ -704,6 +705,8 @@ $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	$(am__cd) $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
 $(am__aclocal_m4_deps):
 cppad/configure.hpp: $(top_builddir)/config.status $(top_srcdir)/cppad/configure.hpp.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+example/atomic/test.sh: $(top_builddir)/config.status $(top_srcdir)/example/atomic/test.sh.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 pkgconfig/cppad.pc: $(top_builddir)/config.status $(top_srcdir)/pkgconfig/cppad.pc.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@

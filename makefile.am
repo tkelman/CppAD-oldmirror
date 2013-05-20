@@ -344,7 +344,7 @@ test_directory_list = \
 	$(IPOPT_TESTS) \
 	$(SPEED_TESTS) \
 	example \
-	example_atomic \
+	example/atomic \
 	compare_c \
 	introduction/get_started \
 	introduction/exp_apx \

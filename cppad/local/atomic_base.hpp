@@ -35,7 +35,7 @@ private:
 	// ------------------------------------------------------
 	// constants
 	/// name for this atomic funciton (used for error reporting)
-	const std::string name_;
+	const std::string afun_name_;
 
 	/// index of this object in the list of all objects (see list() below)
 	const size_t index_;
@@ -73,8 +73,8 @@ public:
 	{	return sparsity_; }
 
 	/// Name corresponding to a base_atomic object
-	std::string name(void)
-	{	return name_; }
+	std::string afun_name(void)
+	{	return afun_name_; }
 /*
 $begin atomic_ctor$$
 $spell
@@ -143,8 +143,8 @@ $codei%
 	const char* %name%
 %$$
 It is the name for this atomic function and is used for error reporting.
-The suggested value for $icode name$$ is $icode afun$$, i.e.,
-the name of the corresponding $icode atomic_user$$ object.
+The suggested value for $icode name$$ is $icode afun$$ or $icode atomic_user$$,
+i.e., the name of the corresponding atomic object or class.
 
 $end
 */
@@ -163,11 +163,11 @@ atomic_base(void)
 /*!
 Constructor
 
-\param name_afun
+\param name
 name used for error reporting
 */
-atomic_base(const char* name_afun) :
-name_(name_afun),
+atomic_base(const char* name) :
+afun_name_(name),
 index_( list().size() ),
 sparsity_( set_sparsity_enum )
 {	CPPAD_ASSERT_KNOWN(
@@ -354,7 +354,7 @@ void operator()(
 	size_t m = ay.size();
 # ifndef NDEBUG
 	bool ok;
-	std::string msg = "atomic_base: " + name_ + ".eval: ";
+	std::string msg = "atomic_base: " + afun_name_ + ".eval: ";
 	if( (n == 0) | (m == 0) )
 	{	msg += "ax.size() or ay.size() is zero";
 		CPPAD_ASSERT_KNOWN(false, msg.c_str() );
@@ -390,7 +390,7 @@ void operator()(
 			}
 # ifndef NDEBUG
 			if( tape_id != ax[j].tape_id_ )
-			{	msg += name_ + 
+			{	msg += afun_name_ + 
 				": ax contains variables from different threads.";
 				CPPAD_ASSERT_KNOWN(false, msg.c_str());
 			}
@@ -404,7 +404,7 @@ void operator()(
 # else
 	ok = forward(id, q, p, vx, vy, tx, ty);  
 	if( ! ok )
-	{	msg += name_ + ": ok is false for "
+	{	msg += afun_name_ + ": ok is false for "
 			"zero order forward mode calculation.";
 		CPPAD_ASSERT_KNOWN(false, msg.c_str());
 	}
@@ -1231,7 +1231,7 @@ $codei%
 The input values of its elements do not matter.
 Upon return, $icode t$$ is a 
 $cref/atomic_sparsity/atomic_option/atomic_sparsity/$$ pattern for 
-$latex T(x)^\R{T} \in B^{m \times 1}$$ where
+$latex T(x)^\R{T} \in B^{n \times 1}$$ where
 $latex \[
 	T(x) = (g \circ f)^{(1)} (x) = S(x) * f^{(1)} (x)
 \]$$

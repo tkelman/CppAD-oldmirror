@@ -20,12 +20,13 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 # include <cppad/ipopt/solve.hpp>
 
 // external complied tests
+extern bool checkpoint(void);
+extern bool reciprocal(void);
 extern bool user_mat_mul(void);
 extern bool user_simple(void);
 extern bool user_tan(void);
 extern bool user_usead_1(void);
 extern bool user_usead_2(void);
-extern bool checkpoint(void);
 
 namespace {
 	// function that runs one test
@@ -33,17 +34,13 @@ namespace {
 	static size_t Run_error_count = 0;
 	bool Run(bool TestOk(void), const char *name)
 	{	bool ok = true;
-		double s0 = CppAD::elapsed_seconds();
 		ok &= TestOk();
-		double s1 = CppAD::elapsed_seconds();
-		double sec = std::floor(100*(s1 - s0) + 0.5) / 100.;
 		if( ok )
-		{	std::cout << "OK:    " << "atomic: " << name;
-			std::cout << ", seconds = " << sec  << std::endl;
+		{	std::cout << "OK:    " << "atomic: " << name << std::endl;
 			Run_ok_count++;
 		}
 		else
-		{	std::cout << "Error: " << "atomic, " << name << std::endl;
+		{	std::cout << "Error: " << "atomic: " << name << std::endl;
 			Run_error_count++;
 		}
 		return ok;
@@ -55,6 +52,8 @@ int main(void)
 {	bool ok = true;
 
 	// external compiled tests
+	ok &= Run( checkpoint,          "checkpoint"   );
+	ok &= Run( reciprocal,          "reciprocal"   );
 	ok &= Run( user_mat_mul,        "user_mat_mul" );
 	ok &= Run( user_simple,         "user_simple"  );
 	ok &= Run( user_tan,            "user_tan"     );

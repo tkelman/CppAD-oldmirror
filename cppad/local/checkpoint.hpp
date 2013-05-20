@@ -138,7 +138,7 @@ The $code clear$$ routine cannot be called
 while in $cref/parallel/ta_in_parallel/$$ execution mode.
 
 $children%
-	example/checkpoint.cpp
+	example/atomic/checkpoint.cpp
 %$$
 $head Example$$
 The file $cref checkpoint.cpp$$ contains an example and test
@@ -155,7 +155,7 @@ public:
 	/*!
  	Constructor of a checkpoint object
 
-	\param name_afun [in]
+	\param name [in]
 	is the user's name for the AD version of this atomic operation.
 
 	\param algo [in/out]
@@ -169,9 +169,9 @@ public:
 	function value at specified argument value.
 	*/
 	template <class Algo, class ADVector>
-	checkpoint(const char* name_afun, 
+	checkpoint(const char* name, 
 		Algo& algo, const ADVector& ax, ADVector& ay)
-	: atomic_base<Base>(name_afun)
+	: atomic_base<Base>(name)
 	{	CheckSimpleVector< CppAD::AD<Base> , ADVector>();
 
 		// make a copy of ax because Independent modifies AD information

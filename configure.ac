@@ -712,6 +712,7 @@ AC_CONFIG_FILES([
 	cppad_ipopt/example/test.sh
 	cppad_ipopt/speed/test.sh
 	cppad_ipopt/test/test.sh
+	example/atomic/test.sh
 	example/ipopt_solve/test.sh
 	example/test_one.sh
 	pkgconfig/cppad.pc
