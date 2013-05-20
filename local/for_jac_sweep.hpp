@@ -578,7 +578,7 @@ void ForJacSweep(
 				CPPAD_ASSERT_UNKNOWN( user_m     == size_t(arg[3]) );
 # ifndef NDEBUG
 				if( ! user_ok )
-				{	std::string msg = user_atom->name()
+				{	std::string msg = user_atom->afun_name()
 					+ ": atomic_base.for_sparse_jac: returned false";
 					CPPAD_ASSERT_KNOWN(false, msg.c_str() );
 				}

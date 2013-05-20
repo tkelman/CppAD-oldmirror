@@ -637,7 +637,7 @@ void RevHesSweep(
 						user_q, set_r, user_s, user_t, set_u, set_v
 				);
 				if( ! user_ok )
-				{	std::string msg = user_atom->name()
+				{	std::string msg = user_atom->afun_name()
 					+ ": atomic_base.rev_sparse_hes: returned false";
 					CPPAD_ASSERT_KNOWN(false, msg.c_str() );
 				}

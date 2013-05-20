@@ -18,6 +18,8 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 //    cppad/local/ad_fun.hpp to omh/deprecated/deprecated.omh
 // 3. Put Deprecated below each user_atomic syntex with cross reference
 //    to atomic_base and checkpoint.
+// 4. Change user_atomic.hpp to atomic_old.hpp (do similar with example names
+//    for the deprecated atomic function interface).
 
 /*
 $begin user_atomic$$
@@ -707,11 +709,11 @@ The user atomic $code clear$$ routine cannot be called
 while in $cref/parallel/ta_in_parallel/$$ execution mode.
 
 $children%
-	example/user_simple.cpp%
-	example/user_usead_1.cpp%
-	example/user_usead_2.cpp%
-	example/user_tan.cpp%
-	example/user_mat_mul.cpp
+	example/atomic/user_simple.cpp%
+	example/atomic/user_usead_1.cpp%
+	example/atomic/user_usead_2.cpp%
+	example/atomic/user_tan.cpp%
+	example/atomic/user_mat_mul.cpp
 %$$
 $head Example$$
 
@@ -1018,7 +1020,7 @@ public:
 		size_t                               id ,
 		size_t                                q ,
 		const vector< std::set<size_t> >&     r ,
-		vector< std::set<size_t> >&           s )
+		      vector< std::set<size_t> >&     s )
 	{	size_t n = r.size();
 		size_t m = s.size();
 		bool ok  = fjs_(id, n, m, q, r, s);
@@ -1054,7 +1056,7 @@ public:
 		const vector< std::set<size_t> >&     u ,
 		      vector< std::set<size_t> >&     v )
 	{	size_t m = s.size();
-		size_t n = v.size();
+		size_t n = t.size();
 		CPPAD_ASSERT_UNKNOWN( r.size() == n );
 		CPPAD_ASSERT_UNKNOWN( u.size() == q );
 		CPPAD_ASSERT_UNKNOWN( t.size() == n );
