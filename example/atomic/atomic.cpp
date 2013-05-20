@@ -21,9 +21,9 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 // external complied tests
 extern bool checkpoint(void);
+extern bool old_reciprocal(void);
 extern bool reciprocal(void);
 extern bool user_mat_mul(void);
-extern bool user_simple(void);
 extern bool user_tan(void);
 extern bool user_usead_1(void);
 extern bool user_usead_2(void);
