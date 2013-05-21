@@ -45,7 +45,7 @@ compute function and derivative values.
 
 $head f$$
 The object $icode f$$ has prototype
-$icode%
+$codei%
 	ADFun<%Base%> %f%
 %$$
 

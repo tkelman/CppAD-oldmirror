@@ -224,7 +224,7 @@ If $icode option_value$$ is $code atomic_base::bool_sparsity_enum$$,
 then the type used by $icode afun$$ for
 $cref/sparsity patterns/glossary/Sparsity Pattern/$$,
 (after the option is set) will be
-$icode%
+$codei%
 	typedef CppAD::vector<bool> %atomic_sparsity%
 %$$
 If $icode r$$ is a sparsity pattern 
@@ -237,7 +237,7 @@ If $icode option_value$$ is $code atomic_base::set_sparsity_enum$$,
 then the type used by $icode afun$$ for
 $cref/sparsity patterns/glossary/Sparsity Pattern/$$,
 (after the option is set) will be
-$icode%
+$codei%
 	typedef CppAD::vector< std::set<size_t> > %atomic_sparsity%
 %$$
 If $icode r$$ is a sparsity pattern 
