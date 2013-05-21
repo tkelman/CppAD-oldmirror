@@ -261,7 +261,7 @@ bool old_mat_mul(void)
 	// --------------------------------------------------------------------
 	// Free temporary work space. (If there are future calls to 
 	// old_mat_mul they would create new temporary work space.)
-	CppAD::old_atomic<double>::clear();
+	CppAD::user_atomic<double>::clear();
 	info_.clear();
 
 	return ok;

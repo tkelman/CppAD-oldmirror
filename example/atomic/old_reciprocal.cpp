@@ -367,7 +367,7 @@ bool old_reciprocal(void)
 	// Free all temporary work space associated with old_atomic objects. 
 	// (If there are future calls to user atomic functions, they will 
 	// create new temporary work space.)
-	CppAD::old_atomic<double>::clear();
+	CppAD::user_atomic<double>::clear();
 
 	return ok;
 }

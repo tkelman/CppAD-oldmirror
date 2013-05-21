@@ -75,7 +75,7 @@ $icode%ok% = %rev_hes_sparse%(%id%, %n%, %m%, %q%, %r%, %s%, %t%, %u%, %v%)
 %$$
 
 $subhead Free Static Memory$$
-$codei%old_atomic<%Base%>::clear()%$$
+$codei%user_atomic<%Base%>::clear()%$$
 
 $head Purpose$$
 In some cases, the user knows how to compute the derivative
@@ -697,7 +697,7 @@ $head clear$$
 User atomic functions hold onto static work space in order to
 increase speed by avoiding system memory allocation calls.
 The function call $codei%
-	old_atomic<%Base%>::clear()
+	user_atomic<%Base%>::clear()
 %$$ 
 makes to work space $cref/available/ta_available/$$ to
 for other uses by the same thread.
@@ -807,7 +807,7 @@ do note get deallocated until the program terminates.
      rev_jac_sparse  ,                                                \
      rev_hes_sparse                                                   \
 )                                                                     \
-CppAD::old_atomic<Base> afun(                                        \
+CppAD::old_atomic<Base> afun(                                         \
           #afun          ,                                            \
           forward        ,                                            \
           reverse        ,                                            \
@@ -815,6 +815,10 @@ CppAD::old_atomic<Base> afun(                                        \
           rev_jac_sparse ,                                            \
           rev_hes_sparse                                              \
      );
+
+/// link so that user_atomic<Base>::clear() still works
+template <class Base> class user_atomic : public atomic_base<Base> {
+};
 
 /*!
 Class that actually implements the <tt>afun(id, ax, ay)</tt> calls.
