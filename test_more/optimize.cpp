@@ -1139,6 +1139,6 @@ bool optimize(void)
 	// case where results are not identically equal
 	ok     &= not_identically_equal();
 
-	CppAD::old_atomic<double>::clear();
+	CppAD::user_atomic<double>::clear();
 	return ok;
 }

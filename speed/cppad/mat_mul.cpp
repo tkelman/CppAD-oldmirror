@@ -174,7 +174,7 @@ bool link_mat_mul(
 	// --------------------------------------------------------------------
 	// Free temporary work space. (If there are future calls to 
 	// mat_mul they would create new temporary work space.)
-	CppAD::old_atomic<double>::clear();
+	CppAD::user_atomic<double>::clear();
 	info_.clear();
 
 	return true;

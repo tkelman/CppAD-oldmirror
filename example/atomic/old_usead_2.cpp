@@ -24,8 +24,9 @@ $index user, atomic AD inside$$
 $index atomic, AD inside$$
 $index checkpoint$$
 
-$head Warning$$
-This example is currently under construction.
+$head Deprecated$$
+This example has been deprecated because it is easier to use the 
+$cref checkpoint$$ class instead.
 
 $head Purpose$$
 Consider the case where an inner function is used repeatedly in the 
@@ -33,7 +34,6 @@ definition of an outer function.
 In this case, it may reduce the number of variables
 $cref/size_var/seq_property/size_var/$$,
 and hence the required memory.
-(This is simpler to do using $cref checkpoint$$.)
 
 $code
 $verbatim%example/atomic/old_usead_2.cpp%0%// BEGIN C++%// END C++%1%$$

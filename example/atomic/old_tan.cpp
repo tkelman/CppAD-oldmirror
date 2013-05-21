@@ -25,6 +25,12 @@ $index test, old_atomic$$
 $index old_atomic, example$$
 $index example, old_atomic$$
 
+$head Deprecated$$
+This example has not yet been converted from the $cref old_atomic$$ interface
+to the $cref atomic_base$$ interface.
+The differences can be seen by comparing 
+$cref old_reciprocal.cpp$$ and $cref atomic_reciprocal.cpp$$.
+
 $head Theory$$
 The code below uses the $cref tan_forward$$ and $cref tan_reverse$$
 to implement the tangent ($icode%id% == 0%$$) and hyperbolic tangent

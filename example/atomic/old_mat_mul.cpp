@@ -24,6 +24,12 @@ $index matrix, atomic example$$
 $index old_mat_mul, example$$
 $index old_mat_mul, test$$
 
+$head Deprecated$$
+This example has not yet been converted from the $cref old_atomic$$ interface
+to the $cref atomic_base$$ interface.
+The differences can be seen by comparing 
+$cref old_reciprocal.cpp$$ and $cref atomic_reciprocal.cpp$$.
+
 $children%
 	example/atomic/old_mat_mul.hpp
 %$$

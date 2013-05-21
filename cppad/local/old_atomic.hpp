@@ -11,14 +11,6 @@ the terms of the
 A copy of this license is included in the COPYING file of this distribution.
 Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 -------------------------------------------------------------------------- */
-// 2DO: Depreciate old_atomic using the following steps:
-// 1. make atomic_tan.cpp, atomic_mat_mul.cpp examples for atomic_base.
-// 2. Move omhelp include of cppad/local/old_atomic.hpp from 
-//    cppad/local/ad_fun.hpp to omh/deprecated/deprecated.omh
-// 3. move example/atomic/user_* to example/atomic/old_* and
-//    deprecate correpsonding example.
-// 4. move old_atomic.hpp to atomic_old.hpp
-
 /*
 $begin old_atomic$$
 $spell
@@ -828,6 +820,13 @@ the CPPAD_USER_ATOMIC macro; see static object in that macro.
 */
 template <class Base>
 class old_atomic : public atomic_base<Base> {
+	/// disable old_atomic<Base>::clear(void)
+	static void clear(void)
+	{	CPPAD_ASSERT_KNOWN(
+			false,
+			"Depreacted API uses user_atomic<Base>::clear()"
+		);
+	}
 	/// type for user routine that computes forward mode results
 	typedef bool (*F) (
 		size_t                  id ,

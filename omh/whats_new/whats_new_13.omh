@@ -44,6 +44,10 @@ This section contains a list of the changes to CppAD during 2013
 The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
 
+$head 05-21$$
+Deprecate the $cref old_atomic$$ interface and replace it by the
+$cref atomic_base$$ and $cref checkpoint$$ interfaces.
+
 $head 05-17$$
 $list number$$
 Add the $cref/transpose/ForSparseJac/transpose/$$ option to

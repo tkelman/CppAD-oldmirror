@@ -19,7 +19,7 @@ $index reciprocal, old atomic$$
 
 $head Deprecated$$
 This example has been deprecated;
-see $cref atomic_reciprocal.cpp$$.
+see $cref atomic_reciprocal.cpp$$ instead.
 
 $head Theory$$
 The example below defines the user atomic function 
