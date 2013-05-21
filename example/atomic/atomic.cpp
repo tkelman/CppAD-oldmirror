@@ -16,8 +16,8 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 // C style asserts
 # include <cassert>
 
-// ipopt solve include file
-# include <cppad/ipopt/solve.hpp>
+// for thread_alloc
+# include <cppad/thread_alloc.hpp>
 
 // external complied tests
 extern bool checkpoint(void);

@@ -13,6 +13,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 $begin whats_new_13$$
 $dollar @$$
 $spell
+	cxx
 	checkpointing
 	cout
 	typename
@@ -45,8 +46,15 @@ The purpose of this section is to
 assist you in learning about changes between various versions of CppAD.
 
 $head 05-21$$
+$list number$$
 Deprecate the $cref old_atomic$$ interface and replace it by the
 $cref atomic_base$$ and $cref checkpoint$$ interfaces.
+$lnext
+There was a problem with the $cref cmake$$ command
+if the $cref/cppad_cxx_flags/cmake/cppad_cxx_flags/$$ was not specified.
+This has been fixed.
+$lend
+
 
 $head 05-17$$
 $list number$$

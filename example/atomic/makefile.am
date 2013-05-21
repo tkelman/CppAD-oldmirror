@@ -28,6 +28,7 @@ solve_SOURCES   = \
 	checkpoint.cpp \
 	old_reciprocal.cpp \
 	reciprocal.cpp \
+	old_mat_mul.hpp \
 	old_mat_mul.cpp \
 	old_tan.cpp \
 	old_usead_1.cpp \
