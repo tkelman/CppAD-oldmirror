@@ -788,7 +788,6 @@ results during reverse mode Hessian sparsity sweeps.
 Note that old_atomic is used as a static object, so its objects
 do note get deallocated until the program terminates. 
 */
-
 # define CPPAD_USER_ATOMIC(                                           \
      afun            ,                                                \
      Tvector         ,                                                \
@@ -799,14 +798,22 @@ do note get deallocated until the program terminates.
      rev_jac_sparse  ,                                                \
      rev_hes_sparse                                                   \
 )                                                                     \
-CppAD::old_atomic<Base> afun(                                         \
+inline void afun (                                                    \
+     size_t                               id ,                        \
+     const Tvector< CppAD::AD<Base> >&    ax ,                        \
+     Tvector< CppAD::AD<Base> >&          ay                          \
+)                                                                     \
+{	CPPAD_ASSERT_FIRST_CALL_NOT_PARALLEL;                            \
+	static CppAD::old_atomic<Base> fun(                              \
           #afun          ,                                            \
           forward        ,                                            \
           reverse        ,                                            \
           for_jac_sparse ,                                            \
           rev_jac_sparse ,                                            \
           rev_hes_sparse                                              \
-     );
+     );                                                               \
+     fun(id, ax, ay);                                                 \
+}
 
 /// link so that user_atomic<Base>::clear() still works
 template <class Base> class user_atomic : public atomic_base<Base> {
