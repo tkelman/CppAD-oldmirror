@@ -66,7 +66,7 @@ namespace { // Begin empty namespace
 
 	// ----------------------------------------------------------------------
 	// forward mode routine called by CppAD
-	bool my_tan_forward(
+	bool old_tan_forward(
 		size_t                   id ,
 		size_t                order ,
 		size_t                    n ,
@@ -87,7 +87,7 @@ namespace { // Begin empty namespace
 		size_t j = order;
 		size_t k;
 
-		// check if this is during the call to my_tan(id, ax, ay)
+		// check if this is during the call to old_tan(id, ax, ay)
 		if( vx.size() > 0 )
 		{	assert( vx.size() >= n );
 			assert( vzy.size() >= m );
@@ -127,7 +127,7 @@ namespace { // Begin empty namespace
 	}
 	// ----------------------------------------------------------------------
 	// reverse mode routine called by CppAD
-	bool my_tan_reverse(
+	bool old_tan_reverse(
 		size_t                   id ,
 		size_t                order ,
 		size_t                    n ,
@@ -186,7 +186,7 @@ namespace { // Begin empty namespace
 	}
 	// ----------------------------------------------------------------------
 	// forward Jacobian sparsity routine called by CppAD
-	bool my_tan_for_jac_sparse(
+	bool old_tan_for_jac_sparse(
 		size_t                               id ,             
 		size_t                                n ,
 		size_t                                m ,
@@ -208,7 +208,7 @@ namespace { // Begin empty namespace
 	}
 	// ----------------------------------------------------------------------
 	// reverse Jacobian sparsity routine called by CppAD
-	bool my_tan_rev_jac_sparse(
+	bool old_tan_rev_jac_sparse(
 		size_t                               id ,             
 		size_t                                n ,
 		size_t                                m ,
@@ -229,7 +229,7 @@ namespace { // Begin empty namespace
 	}
 	// ----------------------------------------------------------------------
 	// reverse Hessian sparsity routine called by CppAD
-	bool my_tan_rev_hes_sparse(
+	bool old_tan_rev_hes_sparse(
 		size_t                               id ,             
 		size_t                                n ,
 		size_t                                m ,
@@ -264,16 +264,16 @@ namespace { // Begin empty namespace
 		return true;
 	}
 	// ---------------------------------------------------------------------
-	// Declare the AD<float> routine my_tan(id, ax, ay)
+	// Declare the AD<float> routine old_tan(id, ax, ay)
 	CPPAD_USER_ATOMIC(
-		my_tan                 , 
-		CppAD::vector          ,
-		float                  , 
-		my_tan_forward         , 
-		my_tan_reverse         ,
-		my_tan_for_jac_sparse  ,
-		my_tan_rev_jac_sparse  ,
-		my_tan_rev_hes_sparse  
+		old_tan                 , 
+		CppAD::vector           ,
+		float                   , 
+		old_tan_forward         , 
+		old_tan_reverse         ,
+		old_tan_for_jac_sparse  ,
+		old_tan_rev_jac_sparse  ,
+		old_tan_rev_hes_sparse  
 	)
 } // End empty namespace
 
@@ -296,24 +296,24 @@ bool old_tan(void)
 	size_t m = 3;
 	CppAD::vector< AD<float> > af(m);
 
-	// temporary vector for my_tan computations
-	// (my_tan computes tan or tanh and its square)
+	// temporary vector for old_tan computations
+	// (old_tan computes tan or tanh and its square)
 	CppAD::vector< AD<float> > az(2);
 
 	// call user tan function and store tan(x) in f[0] (ignore tan(x)^2)
 	size_t id = 0;
-	my_tan(id, ax, az);
+	old_tan(id, ax, az);
 	af[0] = az[0];
 
 	// call user tanh function and store tanh(x) in f[1] (ignore tanh(x)^2)
 	id = 1;
-	my_tan(id, ax, az);
+	old_tan(id, ax, az);
 	af[1] = az[0];
 
 	// put a constant in f[2] = tanh(1.) (for sparsity pattern testing)
 	CppAD::vector< AD<float> > one(1);
 	one[0] = 1.;
-	my_tan(id, one, az);
+	old_tan(id, one, az);
 	af[2] = az[0]; 
 
 	// create f: x -> f and stop tape recording
