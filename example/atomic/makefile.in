@@ -48,23 +48,22 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-check_PROGRAMS = solve$(EXEEXT)
+check_PROGRAMS = atomic$(EXEEXT)
 subdir = example/atomic
-DIST_COMMON = $(srcdir)/makefile.am $(srcdir)/makefile.in \
-	$(srcdir)/test.sh.in
+DIST_COMMON = $(srcdir)/makefile.am $(srcdir)/makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
-CONFIG_CLEAN_FILES = test.sh
+CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am_solve_OBJECTS = atomic.$(OBJEXT) checkpoint.$(OBJEXT) \
+am_atomic_OBJECTS = atomic.$(OBJEXT) checkpoint.$(OBJEXT) \
 	old_reciprocal.$(OBJEXT) reciprocal.$(OBJEXT) \
 	old_mat_mul.$(OBJEXT) old_tan.$(OBJEXT) old_usead_1.$(OBJEXT) \
 	old_usead_2.$(OBJEXT)
-solve_OBJECTS = $(am_solve_OBJECTS)
-solve_LDADD = $(LDADD)
+atomic_OBJECTS = $(am_atomic_OBJECTS)
+atomic_LDADD = $(LDADD)
 DEFAULT_INCLUDES = 
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -96,8 +95,8 @@ am__v_CCLD_0 = @echo "  CCLD  " $@;
 AM_V_GEN = $(am__v_GEN_@AM_V@)
 am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
 am__v_GEN_0 = @echo "  GEN   " $@;
-SOURCES = $(solve_SOURCES)
-DIST_SOURCES = $(solve_SOURCES)
+SOURCES = $(atomic_SOURCES)
+DIST_SOURCES = $(atomic_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -273,7 +272,7 @@ AM_CPPFLAGS = -I. \
 	$(EIGEN_INCLUDE) 
 
 #
-solve_SOURCES = \
+atomic_SOURCES = \
 	atomic.cpp \
 	checkpoint.cpp \
 	old_reciprocal.cpp \
@@ -318,14 +317,12 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
-test.sh: $(top_builddir)/config.status $(srcdir)/test.sh.in
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 
 clean-checkPROGRAMS:
 	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
-solve$(EXEEXT): $(solve_OBJECTS) $(solve_DEPENDENCIES) $(EXTRA_solve_DEPENDENCIES) 
-	@rm -f solve$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(solve_OBJECTS) $(solve_LDADD) $(LIBS)
+atomic$(EXEEXT): $(atomic_OBJECTS) $(atomic_DEPENDENCIES) $(EXTRA_atomic_DEPENDENCIES) 
+	@rm -f atomic$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(atomic_OBJECTS) $(atomic_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -559,7 +556,7 @@ uninstall-am:
 
 
 test: check
-	./test.sh
+	./atomic
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

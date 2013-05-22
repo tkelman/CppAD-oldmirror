@@ -422,7 +422,7 @@ bool case_four()
 	s[1] = false;
 	r = F.RevSparseJac(q, s);
 
-	ok &= r.size() == q * n;
+	ok &= size_t( r.size() ) == q * n;
 	ok &= r[0] == false;
 	ok &= r[1] == true;
 
