@@ -827,6 +827,7 @@ the CPPAD_USER_ATOMIC macro; see static object in that macro.
 */
 template <class Base>
 class old_atomic : public atomic_base<Base> {
+public:
 	/// disable old_atomic<Base>::clear(void)
 	static void clear(void)
 	{	CPPAD_ASSERT_KNOWN(
@@ -887,6 +888,8 @@ class old_atomic : public atomic_base<Base> {
 		vector< std::set<size_t> >&       v 
 	);
 private:
+	/// id value corresponding to next virtual callback
+	size_t                  id_;
 	/// user's implementation of forward mode
 	const F                  f_;
 	/// user's implementation of reverse mode
@@ -961,12 +964,19 @@ public:
 		return;
 	}
 	/*!
+	Store id for next virtual function callback
+
+	\param id
+	id value corresponding to next virtual callback
+	*/
+	virtual void set_id(size_t id)
+	{	id_ = id; }
+	/*!
  	Link from old_atomic to forward mode 
 
 	\copydetails atomic_base::forward
  	*/
 	virtual bool forward(
-		size_t                   id , 
 		size_t                    q ,
 		size_t                    p ,
 		const vector<bool>&      vx , 
@@ -994,9 +1004,9 @@ public:
 				for(ell = 0; ell < k; ell++)
 					y[ i * (k+1) + ell ] = ty[ i * (p+1) + ell ];
 			if( k == 0 )
-				ok &= f_(id, k, n, m, vx, vy, x, y);
+				ok &= f_(id_, k, n, m, vx, vy, x, y);
 			else
-				ok &= f_(id, k, n, m, empty, empty, x, y);
+				ok &= f_(id_, k, n, m, empty, empty, x, y);
 			for(i = 0; i < m; i++)
 				ty[ i * (p+1) + k ] = y[ i * (k+1) + k];
 		}
@@ -1008,7 +1018,6 @@ public:
 	\copydetails atomic_base::reverse
  	*/
 	virtual bool reverse(
-		size_t                  id ,
 		size_t                   p ,
 		const vector<Base>&     tx ,
 		const vector<Base>&     ty ,
@@ -1018,7 +1027,7 @@ public:
 		CPPAD_ASSERT_UNKNOWN( ty.size() % (p+1) == 0 );
 		size_t n = tx.size() / (p+1);
 		size_t m = ty.size() / (p+1);
-		bool   ok = r_(id, p, n, m, tx, ty, px, py);
+		bool   ok = r_(id_, p, n, m, tx, ty, px, py);
 		return ok;
 	}
 	/*!
@@ -1027,13 +1036,12 @@ public:
 	\copydetails atomic_base::for_sparse_jac
 	*/
 	virtual bool for_sparse_jac(
-		size_t                               id ,
 		size_t                                q ,
 		const vector< std::set<size_t> >&     r ,
 		      vector< std::set<size_t> >&     s )
 	{	size_t n = r.size();
 		size_t m = s.size();
-		bool ok  = fjs_(id, n, m, q, r, s);
+		bool ok  = fjs_(id_, n, m, q, r, s);
 		return ok;
 	}
 
@@ -1043,13 +1051,12 @@ public:
 	\copydetails atomic_base::rev_sparse_jac
 	*/
 	virtual bool rev_sparse_jac(
-		size_t                               id ,
 		size_t                               q  ,
 		const vector< std::set<size_t> >&    rt ,
 		      vector< std::set<size_t> >&    st )
 	{	size_t n = st.size();
 		size_t m = rt.size();
-		bool ok  = rjs_(id, n, m, q, st, rt);
+		bool ok  = rjs_(id_, n, m, q, st, rt);
 		return ok;
 	}
 	/*!
@@ -1058,7 +1065,6 @@ public:
 	\copydetails atomic_base::rev_sparse_hes
 	*/
 	virtual bool rev_sparse_hes(
-		size_t                               id ,
 		size_t                                q ,
 		const vector< std::set<size_t> >&     r ,
 		const vector<bool>&                   s ,
@@ -1076,7 +1082,7 @@ public:
 		{	for(itr = u[i].begin(); itr != u[i].end(); itr++)
 				ut[*itr].insert(i);
 		}
-		bool ok = rhs_(id, n, m, q, r, s, t, ut, v);
+		bool ok = rhs_(id_, n, m, q, r, s, t, ut, v);
 		return ok;
 	}
 };

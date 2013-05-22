@@ -582,8 +582,9 @@ size_t forward_sweep(
 				// call users function for this operation
 				atomic_base<Base>* atom = 
 					atomic_base<Base>::list(user_index);
+				atom->set_id(user_id);
 				atom->forward(
-					user_id, q, p, user_vx, user_vy, user_tx, user_ty
+					q, p, user_vx, user_vy, user_tx, user_ty
 				);
 				for(i = 0; i < user_m; i++) 
 					if( user_iy[i] > 0 )

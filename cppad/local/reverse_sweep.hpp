@@ -545,8 +545,9 @@ void ReverseSweep(
 				// call users function for this operation
 				atomic_base<Base>* atom =
 					atomic_base<Base>::list(user_index);
+				atom->set_id(user_id);
 				atom->reverse(
-					user_id, user_k, user_tx, user_ty, user_px, user_py
+					user_k, user_tx, user_ty, user_px, user_py
 				);
 				for(j = 0; j < user_n; j++) if( user_ix[j] > 0 )
 				{	for(ell = 0; ell < user_k1; ell++)

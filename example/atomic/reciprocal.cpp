@@ -64,7 +64,6 @@ private:
 	// ----------------------------------------------------------------------
 	// forward mode routine called by CppAD
 	virtual bool forward(
-		size_t                   id ,
 		size_t                    q ,
 		size_t                    p ,
 		const vector<bool>&      vx ,
@@ -74,7 +73,6 @@ private:
 	)
 	{	size_t n = tx.size() / (p + 1);
 		size_t m = ty.size() / (p + 1);
-		assert( id == 0 );
 		assert( n == 1 );
 		assert( m == 1 );
 		assert( q <= p );
@@ -122,7 +120,6 @@ private:
 	// ----------------------------------------------------------------------
 	// reverse mode routine called by CppAD
 	virtual bool reverse(
-		size_t                   id ,
 		size_t                    p ,
 		const vector<double>&    tx ,
 		const vector<double>&    ty ,
@@ -131,7 +128,6 @@ private:
 	)
 	{	size_t n = tx.size() / (p + 1);
 		size_t m = ty.size() / (p + 1);	
-		assert( id == 0 );
 		assert( n == 1 );
 		assert( m == 1 );
 		bool ok = p <= 2;	
@@ -187,7 +183,6 @@ private:
 	// ----------------------------------------------------------------------
 	// forward Jacobian bool sparsity routine called by CppAD
 	virtual bool for_sparse_jac(
-		size_t                               id ,             
 		size_t                                q ,
 		const vector<bool>&                   r ,
 		      vector<bool>&                   s )
@@ -195,7 +190,6 @@ private:
 		// with afun.option( CppAD::atomic_base<double>::bool_sparsity_enum )
 		size_t n = r.size() / q;
 		size_t m = s.size() / q;
-		assert( id == 0 );
 		assert( n == 1 );
 		assert( m == 1 );
 
@@ -207,7 +201,6 @@ private:
 	}
 	// forward Jacobian set sparsity routine called by CppAD
 	virtual bool for_sparse_jac(
-		size_t                               id ,             
 		size_t                                q ,
 		const vector< std::set<size_t> >&     r ,
 		      vector< std::set<size_t> >&     s )
@@ -215,7 +208,6 @@ private:
 		// with afun.option( CppAD::atomic_base<double>::set_sparsity_enum )
 		size_t n = r.size();
 		size_t m = s.size();
-		assert( id == 0 );
 		assert( n == 1 );
 		assert( m == 1 );
 
@@ -227,7 +219,6 @@ private:
 	// ----------------------------------------------------------------------
 	// reverse Jacobian bool sparsity routine called by CppAD
 	virtual bool rev_sparse_jac(
-		size_t                               id  ,             
 		size_t                                q  ,
 		const vector<bool>&                   rt ,
 		      vector<bool>&                   st )
@@ -235,7 +226,6 @@ private:
 		// with afun.option( CppAD::atomic_base<double>::bool_sparsity_enum )
 		size_t n = st.size() / q;
 		size_t m = rt.size() / q;
-		assert( id == 0 );
 		assert( n == 1 );
 		assert( m == 1 );
 
@@ -247,7 +237,6 @@ private:
 	}
 	// reverse Jacobian set sparsity routine called by CppAD
 	virtual bool rev_sparse_jac(
-		size_t                               id  ,             
 		size_t                                q  ,
 		const vector< std::set<size_t> >&     rt ,
 		      vector< std::set<size_t> >&     st )
@@ -255,7 +244,6 @@ private:
 		// with afun.option( CppAD::atomic_base<double>::set_sparsity_enum )
 		size_t n = st.size();
 		size_t m = rt.size();
-		assert( id == 0 );
 		assert( n == 1 );
 		assert( m == 1 );
 
@@ -268,7 +256,6 @@ private:
 	// ----------------------------------------------------------------------
 	// reverse Hessian bool sparsity routine called by CppAD
 	virtual bool rev_sparse_hes(
-		size_t                               id ,             
 		size_t                                q ,
 		const vector<bool>&                   r ,
 		const vector<bool>&                   s ,
@@ -279,7 +266,6 @@ private:
 		// with afun.option( CppAD::atomic_base<double>::bool_sparsity_enum )
 		size_t m = s.size();
 		size_t n = t.size();
-		assert( id == 0 );
 		assert( n == 1 );
 		assert( m == 1 );
 
@@ -306,7 +292,6 @@ private:
 	}
 	// reverse Hessian set sparsity routine called by CppAD
 	virtual bool rev_sparse_hes(
-		size_t                               id ,             
 		size_t                                q ,
 		const vector< std::set<size_t> >&     r ,
 		const vector<bool>&                   s ,
@@ -317,7 +302,6 @@ private:
 		// with afun.option( CppAD::atomic_base<double>::set_sparsity_enum )
 		size_t m = s.size();
 		size_t n = t.size();
-		assert( id == 0 );
 		assert( n == 1 );
 		assert( m == 1 );
 

@@ -276,7 +276,7 @@ $section Using an Atomic Function$$
 $index atomic, use function$$
 
 $head Syntax$$
-$icode%afun%(%ax%, %ay%, %id%)%$$
+$icode%afun%(%ax%, %ay%)%$$
 
 $head Purpose$$
 Given $icode ax$$,
@@ -316,25 +316,21 @@ The input values of its elements do not matter.
 Upon return, it is an $codei%AD<%Base%>%$$ version of 
 $latex y = f(x)$$.
 
-$head id$$
-The $icode id$$ argument is optional and its default value 
-(when it is not present in a call to $icode afun$$ it is zero.
-It is intended to pass extra information about this particular use of
-$icode afun$$.
-
 $end
 -----------------------------------------------------------------------------
 */
 /*!
-Implement the user call to <tt>afun(ax, ay, id)</tt>.
+Implement the user call to <tt>afun(ax, ay)</tt> and old_atomic call to
+<tt>afun(ax, ay, id)</tt>.
 
 \tparam ADVector
 A simple vector class with elements of type <code>AD<Base></code>.
 
 \param id
 optional extra information vector that is just passed through by CppAD,
-and possibly used by user's routines.
-The default value of \c id (if it is not present) is zero.
+and used by old_atomic derived class (not other derived classes).
+This is an extra parameter to the virtual callbacks for old_atomic;
+see the set_id member function.
 
 \param ax
 is the argument vector for this call,
@@ -399,10 +395,11 @@ void operator()(
 	}
 	// Use zero order forward mode to compute values
 	size_t q = 0, p = 0;
+	set_id(id);
 # ifdef NDEBUG
-	forward(id, q, p, vx, vy, tx, ty);  
+	forward(q, p, vx, vy, tx, ty);  
 # else
-	ok = forward(id, q, p, vx, vy, tx, ty);  
+	ok = forward(q, p, vx, vy, tx, ty);  
 	if( ! ok )
 	{	msg += afun_name_ + ": ok is false for "
 			"zero order forward mode calculation.";
@@ -502,7 +499,7 @@ $index forward, atomic virtual$$
 
 
 $head Syntax$$
-$icode%ok% = %afun%.forward(%id%, %q%, %p%, %vx%, %vy%, %tx%, %ty%)%$$
+$icode%ok% = %afun%.forward(%q%, %p%, %vx%, %vy%, %tx%, %ty%)%$$
 
 $head Purpose$$
 This virtual function is used by $cref atomic_afun$$
@@ -517,15 +514,6 @@ It can just return $icode%ok% == false%$$
 (and not compute anything) for values
 of $icode%p% > 0%$$ that are greater than those used by your
 $cref/forward/Forward/$$ mode calculations.
-
-$head id$$
-The argument $icode id$$ has prototype
-$codei%
-	size_t %id%
-%$$
-and is the value of
-$cref/id/atomic_afun/id/$$ in the corresponding call to 
-$cref atomic_afun$$.
 
 $head q$$
 The argument $icode q$$ has prototype
@@ -677,10 +665,6 @@ $end
 /*!
 Link from atomic_base to forward mode 
 
-\param id [in]
-extra information vector that is just passed through by CppAD,
-and possibly used by user's routines.
-
 \param q [in]
 lowerest order for this forward mode calculation.
 
@@ -702,7 +686,6 @@ Taylor coefficient corresponding to \c y for this calculation
 See the forward mode in user's documentation for base_atomic 
 */
 virtual bool forward(
-	size_t                    id ,
 	size_t                    q  ,
 	size_t                    p  ,
 	const vector<bool>&       vx ,
@@ -732,7 +715,7 @@ $spell
 $$
 
 $head Syntax$$
-$icode%ok% = %afun%.reverse(%id%, %p%, %tx%, %ty%, %px%, %py%)%$$
+$icode%ok% = %afun%.reverse(%p%, %tx%, %ty%, %px%, %py%)%$$
 
 $head Purpose$$
 This function is used by $cref/reverse/Reverse/$$ 
@@ -747,15 +730,6 @@ It can just return $icode%ok% == false%$$
 (and not compute anything) for values
 of $icode%p% > 0%$$ that are greater than those used by your
 $cref/reverse/Reverse/$$ mode calculations.
-
-$head id$$
-The argument $icode id$$ has prototype
-$codei%
-	size_t %id%
-%$$
-and is the value of
-$cref/id/atomic_afun/id/$$ in the corresponding call to 
-$cref atomic_afun$$.
 
 $head p$$
 The argument $icode p$$ has prototype
@@ -891,10 +865,6 @@ $end
 /*!
 Link from reverse mode sweep to users routine.
 
-\param id [in]
-extra information vector that is just passed through by CppAD,
-and possibly used by user's routines.
-
 \param p [in]
 highest order for this reverse mode calculation.
 
@@ -913,7 +883,6 @@ Partials w.r.t. the \c y Taylor coefficients.
 See atomic_reverse mode use documentation 
 */
 virtual bool reverse(
-	size_t                    id ,
 	size_t                    p  ,
 	const vector<Base>&       tx ,
 	const vector<Base>&       ty ,
@@ -940,7 +909,7 @@ $index for_sparse_jac, atomic callback$$
 $index for_sparse_jac, atomic virtual$$
 
 $head Syntax$$
-$icode%ok% = %afun%.for_sparse_jac(%id%, %q%, %r%, %s%)%$$
+$icode%ok% = %afun%.for_sparse_jac(%q%, %r%, %s%)%$$
 
 $head Purpose$$
 This function is used by $cref ForSparseJac$$ to compute
@@ -957,15 +926,6 @@ $head Implementation$$
 If you are using $cref ForSparseJac$$,
 this virtual function must be defined by the
 $cref/atomic_user/atomic_ctor/atomic_user/$$ class.
-
-$head id$$
-The argument $icode id$$ has prototype
-$codei%
-	size_t %id%
-%$$
-and is the value of
-$cref/id/atomic_afun/id/$$ in the corresponding call to 
-$cref atomic_afun$$.
 
 $subhead q$$
 The argument $icode q$$ has prototype
@@ -1008,10 +968,6 @@ $end
 /*!
 Link from forward Jacobian sparsity sweep to atomic_base
 
-\param id
-extra information vector that is just passed through by CppAD,
-and possibly used by user's routines.
-
 \param q
 is the column dimension for the Jacobian sparsity partterns.
 
@@ -1022,13 +978,11 @@ is the Jacobian sparsity pattern for the argument vector x
 is the Jacobian sparsity pattern for the result vector y
 */
 virtual bool for_sparse_jac(
-	size_t                                  id ,
 	size_t                                  q  ,
 	const vector< std::set<size_t> >&       r  ,
 	      vector< std::set<size_t> >&       s  )
 {	return false; }
 virtual bool for_sparse_jac(
-	size_t                                  id ,
 	size_t                                  q  ,
 	const vector<bool>&                     r  ,
 	      vector<bool>&                     s  )
@@ -1054,7 +1008,7 @@ $index rev_sparse_jac, atomic callback$$
 $index rev_sparse_jac, atomic virtual$$
 
 $head Syntax$$
-$icode%ok% = %afun%.rev_sparse_jac(%id%, %q%, %rt%, %st%)%$$
+$icode%ok% = %afun%.rev_sparse_jac(%q%, %rt%, %st%)%$$
 
 $head Purpose$$
 This function is used by $cref RevSparseJac$$ to compute
@@ -1071,15 +1025,6 @@ $head Implementation$$
 If you are using $cref RevSparseJac$$,
 this virtual function must be defined by the
 $cref/atomic_user/atomic_ctor/atomic_user/$$ class.
-
-$head id$$
-The argument $icode id$$ has prototype
-$codei%
-	size_t %id%
-%$$
-and is the value of
-$cref/id/atomic_afun/id/$$ in the corresponding call to 
-$cref atomic_afun$$.
 
 $subhead q$$
 The argument $icode q$$ has prototype
@@ -1123,10 +1068,6 @@ $end
 /*!
 Link from reverse Jacobian sparsity sweep to atomic_base
 
-\param id [in]
-extra information vector that is just passed through by CppA
-and possibly used by user's routines
-
 \param q [in]
 is the row dimension for the Jacobian sparsity partterns
 
@@ -1137,13 +1078,11 @@ is the tansposed Jacobian sparsity pattern w.r.t to range variables y
 is the tansposed Jacobian sparsity pattern for the argument variables x
 */
 virtual bool rev_sparse_jac(
-	size_t                                  id ,
 	size_t                                  q  ,
 	const vector< std::set<size_t> >&       rt ,
 	      vector< std::set<size_t> >&       st )
 {	return false; }
 virtual bool rev_sparse_jac(
-	size_t                                  id ,
 	size_t                                  q  ,
 	const vector<bool>&                     rt ,
 	      vector<bool>&                     st )
@@ -1168,7 +1107,7 @@ $index rev_sparse_hes, atomic callback$$
 $index rev_sparse_hes, atomic virtual$$
 
 $head Syntax$$
-$icode%ok% = %afun%.rev_sparse_hes(%id%, %q%, %r%, %s%, %t%, %u%, %v%)%$$
+$icode%ok% = %afun%.rev_sparse_hes(%q%, %r%, %s%, %t%, %u%, %v%)%$$
 
 $head Purpose$$
 This function is used by $cref RevSparseHes$$ to compute
@@ -1187,15 +1126,6 @@ $head Implementation$$
 If you are using and $cref RevSparseHes$$,
 this virtual function must be defined by the
 $cref/atomic_user/atomic_ctor/atomic_user/$$ class.
-
-$head id$$
-The argument $icode id$$ has prototype
-$codei%
-	size_t %id%
-%$$
-and is the value of
-$cref/id/atomic_afun/id/$$ in the corresponding call to 
-$cref atomic_afun$$.
 
 $subhead q$$
 The argument $icode q$$ has prototype
@@ -1296,10 +1226,6 @@ $end
 /*!
 Link from reverse Hessian sparsity sweep to base_atomic
 
-\param id [in]
-extra information vector that is just passed through by CppAD,
-and possibly used by user's routines.
-
 \param q [in]
 is the column dimension for the sparsity partterns.
 
@@ -1319,7 +1245,6 @@ is the Hessian sparsity pattern w.r.t the result vector y.
 is the Hessian sparsity pattern w.r.t the argument vector x.
 */
 virtual bool rev_sparse_hes(
-	size_t                                  id ,
 	size_t                                  q  ,
 	const vector< std::set<size_t> >&       r  ,
 	const vector<bool>&                     s  ,
@@ -1328,7 +1253,6 @@ virtual bool rev_sparse_hes(
 	      vector< std::set<size_t> >&       v  )
 {	return false; }
 virtual bool rev_sparse_hes(
-	size_t                                  id ,
 	size_t                                  q  ,
 	const vector<bool>&                     r  ,
 	const vector<bool>&                     s  ,
@@ -1389,6 +1313,15 @@ static void clear(void)
 	}
 	return;
 }
+// -------------------------------------------------------------------------
+/*!
+Set value of id (used by deprecated old_atomic class)
+
+This function is called just before calling any of the virtual funcitons
+and has the corresponding id of the corresponding virtual call.
+*/
+virtual void set_id(size_t id) 
+{ }
 // ---------------------------------------------------------------------------
 };
 /*! \} */

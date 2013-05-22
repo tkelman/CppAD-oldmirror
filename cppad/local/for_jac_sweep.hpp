@@ -596,13 +596,14 @@ void ForJacSweep(
 			++user_j;
 			if( user_j == user_n )
 			{	// call users function for this operation
+				user_atom->set_id(user_id);
 				if( user_bool )
 					CPPAD_ATOMIC_CALL(
-						user_id, user_q, bool_r, bool_s
+						user_q, bool_r, bool_s
 				);
 				else
 					CPPAD_ATOMIC_CALL(
-						user_id, user_q, set_r, set_s
+						user_q, set_r, set_s
 				);
 				user_state = user_ret;
 			}
@@ -626,13 +627,14 @@ void ForJacSweep(
 			++user_j;
 			if( user_j == user_n )
 			{	// call users function for this operation
+				user_atom->set_id(user_id);
 				if( user_bool )
 					CPPAD_ATOMIC_CALL(
-						user_id, user_q, bool_r, bool_s
+						user_q, bool_r, bool_s
 				);
 				else
 					CPPAD_ATOMIC_CALL(
-						user_id, user_q, set_r, set_s
+						user_q, set_r, set_s
 				);
 				user_state = user_ret;
 			}

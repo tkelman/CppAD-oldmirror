@@ -540,7 +540,8 @@ size_t forward0sweep(
 			{	// call users function for this operation
 				atomic_base<Base>* atom =
 					atomic_base<Base>::list(user_index);
-				atom->forward(user_id, user_q, user_p, 
+				atom->set_id(user_id);
+				atom->forward(user_q, user_p, 
 					user_vx, user_vy, user_tx, user_ty
 				);
 				user_state = user_ret;
@@ -557,7 +558,8 @@ size_t forward0sweep(
 			{	// call users function for this operation
 				atomic_base<Base>* atom =
 					atomic_base<Base>::list(user_index);
-				atom->forward(user_id, user_q, user_p, 
+				atom->set_id(user_id);
+				atom->forward(user_q, user_p, 
 					user_vx, user_vy, user_tx, user_ty
 				);
 				user_state = user_ret;
