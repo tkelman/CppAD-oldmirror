@@ -219,14 +219,13 @@ public:
 	\copydetails atomic_base::forward
  	*/
 	virtual bool forward(
-		size_t                   id , 
 		size_t                    q ,
 		size_t                    p ,
 		const vector<bool>&      vx , 
 		      vector<bool>&      vy , 
 		const vector<Base>&      tx ,
 		      vector<Base>&      ty )
-	{	CPPAD_ASSERT_UNKNOWN( id == 0 );
+	{
 		CPPAD_ASSERT_UNKNOWN( f_.size_var() > 0 );
 		CPPAD_ASSERT_UNKNOWN( tx.size() % (p+1) == 0 );
 		CPPAD_ASSERT_UNKNOWN( ty.size() % (p+1) == 0 );
@@ -275,13 +274,12 @@ public:
 	\copydetails atomic_base::reverse
  	*/
 	virtual bool reverse(
-		size_t                    id ,
 		size_t                    p  ,
 		const vector<Base>&       tx ,
 		const vector<Base>&       ty ,
 		      vector<Base>&       px ,
 		const vector<Base>&       py )
-	{	CPPAD_ASSERT_UNKNOWN( id == 0 );
+	{
 		CPPAD_ASSERT_UNKNOWN( f_.size_var() > 0 );
 		CPPAD_ASSERT_UNKNOWN( tx.size() % (p+1) == 0 );
 		CPPAD_ASSERT_UNKNOWN( ty.size() % (p+1) == 0 );
@@ -319,11 +317,10 @@ public:
 	\copydetails atomic_base::for_sparse_jac
  	*/
 	virtual bool for_sparse_jac(
-		size_t                                  id ,
 		size_t                                  q  ,
 		const vector< std::set<size_t> >&       r  ,
 		      vector< std::set<size_t> >&       s  )
-	{	CPPAD_ASSERT_UNKNOWN( id == 0 );
+	{
 		bool ok = true;
 		s = f_.ForSparseJac(q, r);
 
@@ -339,11 +336,10 @@ public:
 	\copydetails atomic_base::for_sparse_jac
  	*/
 	virtual bool for_sparse_jac(
-		size_t                                  id ,
 		size_t                                  q  ,
 		const vector<bool>&                     r  ,
 		      vector<bool>&                     s  )
-	{	CPPAD_ASSERT_UNKNOWN( id == 0 );
+	{
 		bool ok = true;
 		s = f_.ForSparseJac(q, r);
 
@@ -359,11 +355,10 @@ public:
 	\copydetails atomic_base::rev_sparse_jac
  	*/
 	virtual bool rev_sparse_jac(
-		size_t                                  id ,
 		size_t                                  q  ,
 		const vector< std::set<size_t> >&       rt ,
 		      vector< std::set<size_t> >&       st )
-	{	CPPAD_ASSERT_UNKNOWN( id == 0 );
+	{
 		bool ok  = true;
 
 		// compute rt
@@ -378,11 +373,10 @@ public:
 	\copydetails atomic_base::rev_sparse_jac
  	*/
 	virtual bool rev_sparse_jac(
-		size_t                                  id ,
 		size_t                                  q  ,
 		const vector<bool>&                     rt ,
 		      vector<bool>&                     st )
-	{	CPPAD_ASSERT_UNKNOWN( id == 0 );
+	{
 		bool ok  = true;
 
 		// compute rt
@@ -397,14 +391,13 @@ public:
 	\copydetails atomic_base::rev_sparse_hes
  	*/
 	virtual bool rev_sparse_hes(
-		size_t                                  id ,
 		size_t                                  q  ,
 		const vector< std::set<size_t> >&       r  ,
 		const vector<bool>&                     s  ,
 		      vector<bool>&                     t  ,
 		const vector< std::set<size_t> >&       u  ,
 		      vector< std::set<size_t> >&       v  )
-	{	CPPAD_ASSERT_UNKNOWN( id == 0 );
+	{
 		size_t m = s.size();
 		size_t n = t.size();
 		bool ok  = true;
@@ -450,14 +443,13 @@ public:
 	\copydetails atomic_base::rev_sparse_hes
  	*/
 	virtual bool rev_sparse_hes(
-		size_t                                  id ,
 		size_t                                  q  ,
 		const vector<bool>&                     r  ,
 		const vector<bool>&                     s  ,
 		      vector<bool>&                     t  ,
 		const vector<bool>&                     u  ,
 		      vector<bool>&                     v  )
-	{	CPPAD_ASSERT_UNKNOWN( id == 0 );
+	{
 		size_t m = s.size();
 		bool ok  = true;
 		std::set<size_t>::const_iterator itr;

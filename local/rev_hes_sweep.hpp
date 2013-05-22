@@ -618,22 +618,23 @@ void RevHesSweep(
 				user_state = user_end;
 
 				// call users function for this operation
+				user_atom->set_id(user_id);
 # ifdef NDEBUG
 			 	if( user_bool )
-					user_atom->rev_sparse_hes(user_id,
+					user_atom->rev_sparse_hes(
 						user_q, bool_r, user_s, user_t, bool_u, bool_v
 				);
 				else
-					user_atom->rev_sparse_hes(user_id,
+					user_atom->rev_sparse_hes(
 						user_q, set_r, user_s, user_t, set_u, set_v
 				);
 # else
 			 	if( user_bool )
-					user_ok = user_atom->rev_sparse_hes(user_id,
+					user_ok = user_atom->rev_sparse_hes(
 						user_q, bool_r, user_s, user_t, bool_u, bool_v
 				);
 				else
-					user_ok = user_atom->rev_sparse_hes(user_id,
+					user_ok = user_atom->rev_sparse_hes(
 						user_q, set_r, user_s, user_t, set_u, set_v
 				);
 				if( ! user_ok )

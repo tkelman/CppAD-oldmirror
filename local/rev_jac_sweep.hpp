@@ -630,13 +630,14 @@ void RevJacSweep(
 			--user_i;
 			if( user_i == 0 )
 			{	// call users function for this operation
+				user_atom->set_id(user_id);
 				if( user_bool) 
 					CPPAD_ATOMIC_CALL(
-						user_id, user_q, bool_r, bool_s
+						user_q, bool_r, bool_s
 				);
 				else
 					CPPAD_ATOMIC_CALL(
-						user_id, user_q, set_r, set_s
+						user_q, set_r, set_s
 				);
 				user_state = user_arg;
 			}
@@ -658,13 +659,14 @@ void RevJacSweep(
 			}
 			if( user_i == 0 )
 			{	// call users function for this operation
+				user_atom->set_id(user_id);
 				if( user_bool) 
 					CPPAD_ATOMIC_CALL(
-						user_id, user_q, bool_r, bool_s
+						user_q, bool_r, bool_s
 				);
 				else
 					CPPAD_ATOMIC_CALL(
-						user_id, user_q, set_r, set_s
+						user_q, set_r, set_s
 				);
 				user_state = user_arg;
 			}
