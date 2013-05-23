@@ -59,9 +59,9 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am_atomic_OBJECTS = atomic.$(OBJEXT) checkpoint.$(OBJEXT) \
-	old_reciprocal.$(OBJEXT) reciprocal.$(OBJEXT) \
-	old_mat_mul.$(OBJEXT) old_tan.$(OBJEXT) old_usead_1.$(OBJEXT) \
-	old_usead_2.$(OBJEXT)
+	reciprocal.$(OBJEXT) tangent.$(OBJEXT) old_mat_mul.$(OBJEXT) \
+	old_reciprocal.$(OBJEXT) old_tan.$(OBJEXT) \
+	old_usead_1.$(OBJEXT) old_usead_2.$(OBJEXT)
 atomic_OBJECTS = $(am_atomic_OBJECTS)
 atomic_LDADD = $(LDADD)
 DEFAULT_INCLUDES = 
@@ -275,10 +275,11 @@ AM_CPPFLAGS = -I. \
 atomic_SOURCES = \
 	atomic.cpp \
 	checkpoint.cpp \
-	old_reciprocal.cpp \
 	reciprocal.cpp \
+	tangent.cpp \
 	old_mat_mul.hpp \
 	old_mat_mul.cpp \
+	old_reciprocal.cpp \
 	old_tan.cpp \
 	old_usead_1.cpp \
 	old_usead_2.cpp 
@@ -338,6 +339,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/old_usead_1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/old_usead_2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/reciprocal.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tangent.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
