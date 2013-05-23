@@ -398,9 +398,10 @@ public:
 		const vector< std::set<size_t> >&       u  ,
 		      vector< std::set<size_t> >&       v  )
 	{
-		size_t m = s.size();
-		size_t n = t.size();
-		bool ok  = true;
+		size_t m       = s.size();
+		size_t n       = t.size();
+		bool ok        = true;
+		bool transpose = true;
 		std::set<size_t>::const_iterator itr;
 
 		// compute sparsity pattern for T(x) = S(x) * f'(x)
@@ -414,7 +415,6 @@ public:
 
 		// compute sparsity pattern for A(x) = f'(x)^T * U(x)
 		vector< std::set<size_t> > a(n);
-		bool transpose = true;
 		a = f_.RevSparseJac(q, u, transpose);
 
 		// compute sparsity pattern for H(x) = (S * F)''(x) * R
@@ -450,8 +450,9 @@ public:
 		const vector<bool>&                     u  ,
 		      vector<bool>&                     v  )
 	{
-		size_t n = t.size();
-		bool ok  = true;
+		size_t n       = t.size();
+		bool ok        = true;
+		bool transpose = true;
 		std::set<size_t>::const_iterator itr;
 		size_t i, j;
 
@@ -460,10 +461,9 @@ public:
 
 		// compute sparsity pattern for A(x) = f'(x)^T * U(x)
 		vector<bool> a(n * q);
-		a = f_.RevSparseJac(q, u);
+		a = f_.RevSparseJac(q, u, transpose);
 
 		// compute sparsity pattern for H(x) =(S * F)''(x) * R
-		bool transpose = true;
 		f_.ForSparseJac(q, r);
 		v = f_.RevSparseHes(q, s, transpose);
 

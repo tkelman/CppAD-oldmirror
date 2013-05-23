@@ -273,21 +273,21 @@ private:
 		// sparsity for T(x) = S(x) * f'(x) is same as sparsity for S
 		t[0] = s[0];
 	
-		// V(x)   = [ f'(x)^T * g''(y) * f'(x) + g'(y) * f''(x) ] * R 
-		// U(x)^T = g''(y) * f'(x) * R
-		// S(x)   = g'(y)
+		// V(x) = [ f'(x)^T * g''(y) * f'(x) + g'(y) * f''(x) ] * R 
+		// U(x) = g''(y) * f'(x) * R
+		// S(x) = g'(y)
 		
-		// back propagate the sparsity for U^T because derivative of
+		// back propagate the sparsity for U because derivative of
 		// reciprocal may be non-zero;
-		size_t i;
-		for(i = 0; i < q; i++)
-			v[i] = u[i];
+		size_t j;
+		for(j = 0; j < q; j++)
+			v[j] = u[j];
 
 		// convert forward Jacobian sparsity to Hessian sparsity
 		// because second derivative of reciprocal may be non-zero
 		if( s[0] )
-		{	for(i = 0; i < q; i++)
-				v[i] |= r[i];
+		{	for(j = 0; j < q; j++)
+				v[j] |= r[j];
 		}
 		return true;
 	}
@@ -313,22 +313,16 @@ private:
 		// U(x) = g''(y) * f'(x) * R
 		// S(x) = g'(y)
 		
-		// back propagate the sparsity for U^T because derivative of
+		// back propagate the sparsity for U because derivative of
 		// reciprocal may be non-zero;
 		v[0].clear();
-		std::set<size_t>::const_iterator itr;
-		for(size_t j = 0; j < q; j++)
-		{	for(itr = u[j].begin(); itr != u[j].end(); itr++)	
-			{	assert( *itr == 0 );
-				v[0].insert(j);
-			}
-		}
+		if( s[0] )
+			v[0] = u[0];
 
-		// convert forward Jacobian sparsity to Hessian sparsity
+		// add forward Jacobian sparsity to Hessian sparsity
 		// because second derivative of reciprocal may be non-zero
 		if( s[0] )
 			my_union(v[0], v[0], r[0] );
-
 
 		return true;
 	}

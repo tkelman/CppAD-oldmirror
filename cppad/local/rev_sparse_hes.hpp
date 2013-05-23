@@ -328,8 +328,12 @@ void RevSparseHesBool(
 	// return values corresponding to independent variables
 	CPPAD_ASSERT_UNKNOWN( size_t(h.size()) == n * q );
 	for(j = 0; j < n; j++)
-		for(i = 0; i < q; i++) 
-			h[ i * n + j ] = false;
+	{	for(i = 0; i < q; i++) 
+		{	if( transpose )
+				h[ j * q + i ] = false;
+			else	h[ i * n + j ] = false;
+		}
+	}
 
 	// j is index corresponding to reverse mode partial
 	for(j = 0; j < n; j++)
@@ -345,7 +349,7 @@ void RevSparseHesBool(
 		i = rev_hes_sparsity.next_element();
 		while( i < q )
 		{	if( transpose )
-				h[ j * n + i ] = true;
+				h[ j * q + i ] = true;
 			else	h[ i * n + j ] = true;
 			i = rev_hes_sparsity.next_element();
 		}

@@ -98,11 +98,18 @@ bool checkpoint(void)
 	g_check.option( CppAD::atomic_base<double>::set_sparsity_enum );
 
 	// compare forward mode Jacobian sparsity patterns
+	size_t q = n - 1;
 	CppAD::vector< std::set<size_t> > r(n), s_not(m), s_yes(m);
 	for(j = 0; j < n; j++)
-		r[j].insert(j);
-	s_not = check_not.ForSparseJac(n, r);
-	s_yes = check_yes.ForSparseJac(n, r);
+	{	if( j < q )
+			r[j].insert(j);
+		else
+		{	r[j].insert(0);
+			r[j].insert(1);
+		}
+	}
+	s_not = check_not.ForSparseJac(q, r);
+	s_yes = check_yes.ForSparseJac(q, r);
 	for(i = 0; i < m; i++)
 		ok &= s_not[i] == s_yes[i];
 
@@ -117,12 +124,12 @@ bool checkpoint(void)
 	
 
 	// compare reverse mode Hessian sparsity patterns
-	CppAD::vector< std::set<size_t> > s_one(1), h_not(n), h_yes(n); 
+	CppAD::vector< std::set<size_t> > s_one(1), h_not(q), h_yes(q); 
 	for(i = 0; i < m; i++)
 		s_one[0].insert(i);
-	h_not = check_not.RevSparseHes(n, s_one);
-	h_yes = check_yes.RevSparseHes(n, s_one);
-	for(i = 0; i < n; i++)
+	h_not = check_not.RevSparseHes(q, s_one);
+	h_yes = check_yes.RevSparseHes(q, s_one);
+	for(i = 0; i < q; i++)
 		ok &= h_not[i] == h_yes[i];
 	
 	checkpoint<double>::clear();

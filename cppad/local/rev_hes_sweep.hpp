@@ -595,14 +595,14 @@ void RevHesSweep(
 				}
 				user_s.resize(user_m);
 				if( user_bool )
-				{	bool_u.resize(user_q * user_m);
-					for(i = 0; i < user_q; i++)
-						for(j = 0; j < user_m; j++)
-							bool_u[ i * user_m + j] = false;
+				{	bool_u.resize(user_m * user_q);
+					for(i = 0; i < user_m; i++)
+						for(j = 0; j < user_q; j++)
+							bool_u[ i * user_q + j] = false;
 				}
 				else
-				{	set_u.resize(user_q);
-					for(i = 0; i < user_q; i++)
+				{	set_u.resize(user_m);
+					for(i = 0; i < user_m; i++)
 						set_u[i].clear();
 				}
 				user_j     = user_n;
@@ -714,13 +714,13 @@ void RevHesSweep(
 			--user_i;
 			user_s[user_i] = RevJac[i_var];
 			rev_hes_sparse.begin(i_var);
-			i = rev_hes_sparse.next_element();
-			while( i < user_q )
+			j = rev_hes_sparse.next_element();
+			while( j < user_q )
 			{	if( user_bool )
-					bool_u[i * user_m + user_i] = true;
+					bool_u[user_i * user_q + j] = true;
 				else
-					set_u[i].insert(user_i);
-				i = rev_hes_sparse.next_element();
+					set_u[user_i].insert(j);
+				j = rev_hes_sparse.next_element();
 			}
 			if( user_i == 0 )
 				user_state = user_arg;
