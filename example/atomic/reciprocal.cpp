@@ -128,6 +128,8 @@ private:
 	)
 	{	size_t n = tx.size() / (p + 1);
 		size_t m = ty.size() / (p + 1);	
+		assert( px.size() == n * (p + 1) );
+		assert( py.size() == m * (p + 1) );
 		assert( n == 1 );
 		assert( m == 1 );
 		bool ok = p <= 2;	
@@ -248,8 +250,7 @@ private:
 		assert( m == 1 );
 
 		// sparsity for S(x)^T = f'(x)^T * R^T is same as sparsity for R^T
-		for(size_t i = 0; i < q; i++)
-			st[i] = rt[i];
+		st[0] = rt[0];
 
 		return true; 
 	}

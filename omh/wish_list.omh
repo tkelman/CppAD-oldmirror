@@ -53,8 +53,8 @@ a special operator for it.
 
 $head Atomic Operators$$
 The $cref atomic_base$$ documentation could be improved
-by converting all the $cref old_atomic$$ examples to 
-$cref atomic_base$$ examples or $cref checkpoint$$ examples.
+by converting all the $cref old_mat_mul.cpp$$ example to an 
+$cref atomic_base$$ example.
 In addition, $cref cppad_mat_mul.cpp$$ should be converted from using
 $cref old_atomic$$ to using $cref atomic_base$$.
 

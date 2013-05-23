@@ -92,16 +92,25 @@ instead of user provided derivatives.
 $childtable%
 	cppad/local/atomic_base.hpp%
 	example/atomic/reciprocal.cpp%
+	example/atomic/tangent.cpp%
 	cppad/local/checkpoint.hpp
 %$$
 
 $head Example$$
+
+$subhead Scalar Function$$
 The file $cref atomic_reciprocal.cpp$$ contains an example and test
 where the user provides the code for computing derivatives.
+This example is simple because the domain and range are scalars.
+
+$subhead Vector Range$$
+The file $cref atomic_tangent.cpp$$ contains another example
+where the user provides the code for computing derivatives.
+This example is more complex because the range has two components.
 
 $head Deprecated Interface$$
-Only the reciprocal example has been converted from the old interface
-to the new one. It may be helpful to look at the 
+Only the reciprocal and tangent examples has been converted from the old 
+interface to the new one. It may be helpful to look at the 
 $cref old_atomic$$ examples
 to see how to program up more complex cases with the new interface; see
 $table
