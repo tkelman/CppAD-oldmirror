@@ -105,7 +105,7 @@ its size is $icode m$$ and all its set elements are between
 zero and $latex q - 1$$.
 It specifies a 
 $cref/sparsity pattern/glossary/Sparsity Pattern/$$ 
-for the matrix $latex S^\R{T} \in B^{m \times q}$$.
+for the matrix $latex R^\R{T} \in B^{m \times q}$$.
 
 $head s$$
 The return value $icode s$$ has prototype

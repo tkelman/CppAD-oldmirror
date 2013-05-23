@@ -676,7 +676,10 @@ void ADFun<Base>::RevSparseHesCase(
 	size_t                    q                ,  
 	const VectorSet&          s                ,
 	VectorSet&                h                )
-{	h.resize(q);
+{	size_t n = Domain();
+	if( transpose )
+		h.resize(n);
+	else	h.resize(q);
 
 	CPPAD_ASSERT_KNOWN( 
 		for_jac_sparse_set_.n_set() > 0,
