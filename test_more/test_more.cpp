@@ -30,6 +30,7 @@ extern bool Atan2(void);
 extern bool base_adolc(void);
 extern bool base_alloc_test(void);
 extern bool check_simple_vector(void);
+extern bool checkpoint(void);
 extern bool Compare(void);
 extern bool CompareChange(void);
 extern bool CondExp(void);
@@ -139,6 +140,7 @@ int main(void)
 	ok &= Run( Atan,            "Atan"           );
 	ok &= Run( Atan2,           "Atan2"          );
 	ok &= Run( check_simple_vector, "check_simple_vector" );
+	ok &= Run( checkpoint,      "checkpoint"     );
 	ok &= Run( Compare,         "Compare"        );
 	ok &= Run( CompareChange,   "CompareChange"  );
 	ok &= Run( CondExp,         "CondExp"        );

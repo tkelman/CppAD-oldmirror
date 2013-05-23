@@ -423,7 +423,7 @@ public:
 		v = f_.RevSparseHes(q, S, transpose);
 
 		// compute sparsity pattern for V(x) = A(x) + H(x)
-		for(i = 0; i < m; i++)
+		for(i = 0; i < n; i++)
 		{	for(itr = a[i].begin(); itr != a[i].end(); itr++)
 			{	j = *itr;
 				CPPAD_ASSERT_UNKNOWN( j < q );
@@ -450,7 +450,7 @@ public:
 		const vector<bool>&                     u  ,
 		      vector<bool>&                     v  )
 	{
-		size_t m = s.size();
+		size_t n = t.size();
 		bool ok  = true;
 		std::set<size_t>::const_iterator itr;
 		size_t i, j;
@@ -459,7 +459,7 @@ public:
 		t = f_.RevSparseJac(1, s);
 
 		// compute sparsity pattern for A(x) = f'(x)^T * U(x)
-		vector<bool> a(m * q);
+		vector<bool> a(n * q);
 		a = f_.RevSparseJac(q, u);
 
 		// compute sparsity pattern for H(x) =(S * F)''(x) * R
@@ -468,7 +468,7 @@ public:
 		v = f_.RevSparseHes(q, s, transpose);
 
 		// compute sparsity pattern for V(x) = A(x) + H(x)
-		for(i = 0; i < m; i++)
+		for(i = 0; i < n; i++)
 		{	for(j = 0; j < q; j++)
 				v[ i * q + j ] |= a[ i * q + j];
 		}
