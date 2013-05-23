@@ -1172,10 +1172,10 @@ $codei%
      const %atomic_sparsity%& %u%
 %$$
 and is a $cref/atomic_sparsity/atomic_option/atomic_sparsity/$$ pattern for 
-$latex U(x) \in B^{p \times m}$$ which is defined by
+$latex U(x) \in B^{m \times q}$$ which is defined by
 $latex \[
 \begin{array}{rcl}
-U(x)^\R{T} 
+U(x)
 & = & 
 \partial_u \{ \partial_y g[ y + f^{(1)} (x) R u ] \}_{u=0}
 \\
@@ -1211,12 +1211,12 @@ V(x)
 & = &
 f^{(1)} (x)^\R{T} g^{(2)} ( y ) f^{(1)} (x)  R
 +
-\sum_{i=1}^m [ g^{(1)} (y) ]_i \; f_i^{(2)} (x) R
+\sum_{i=1}^m g_i^{(1)} (y) \; f_i^{(2)} (x) R
 \\
 & = &
 f^{(1)} (x)^\R{T} U(x)
 +
-\sum_{i=1}^m S(x)_i \; f_i^{(2)} (x) R
+\sum_{i=1}^m S_i (x) \; f_i^{(2)} (x) R
 \end{array}
 \] $$
 
