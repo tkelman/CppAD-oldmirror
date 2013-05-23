@@ -273,22 +273,22 @@ private:
 		// sparsity for T(x) = S(x) * f'(x) is same as sparsity for S
 		t[0] = s[0];
 	
-		// V(x) = [ f'(x)^T * g''(y) * f'(x) + g'(y) * f''(x) ] * R 
+		// V(x) = f'(x)^T * g''(y) * f'(x) * R  +  g'(y) * f''(x) * R 
 		// U(x) = g''(y) * f'(x) * R
 		// S(x) = g'(y)
 		
-		// back propagate the sparsity for U because derivative of
-		// reciprocal may be non-zero;
+		// back propagate the sparsity for U, note f'(x) may be non-zero;
 		size_t j;
 		for(j = 0; j < q; j++)
 			v[j] = u[j];
 
-		// convert forward Jacobian sparsity to Hessian sparsity
-		// because second derivative of reciprocal may be non-zero
+		// include forward Jacobian sparsity in Hessian sparsity
+		// (note sparsty for f''(x) * R same as for R)
 		if( s[0] )
 		{	for(j = 0; j < q; j++)
 				v[j] |= r[j];
 		}
+
 		return true;
 	}
 	// reverse Hessian set sparsity routine called by CppAD
@@ -309,18 +309,15 @@ private:
 		// sparsity for T(x) = S(x) * f'(x) is same as sparsity for S
 		t[0] = s[0];
 	
-		// V(x) = [ f'(x)^T * g''(y) * f'(x) + g'(y) * f''(x) ] * R 
+		// V(x) = f'(x)^T * g''(y) * f'(x) * R  +  g'(y) * f''(x) * R 
 		// U(x) = g''(y) * f'(x) * R
 		// S(x) = g'(y)
 		
-		// back propagate the sparsity for U because derivative of
-		// reciprocal may be non-zero;
-		v[0].clear();
-		if( s[0] )
-			v[0] = u[0];
+		// back propagate the sparsity for U, note f'(x) may be non-zero;
+		v[0] = u[0];
 
-		// add forward Jacobian sparsity to Hessian sparsity
-		// because second derivative of reciprocal may be non-zero
+		// include forward Jacobian sparsity in Hessian sparsity
+		// (note sparsty for f''(x) * R same as for R)
 		if( s[0] )
 			my_union(v[0], v[0], r[0] );
 

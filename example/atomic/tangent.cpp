@@ -75,9 +75,9 @@ private:
 		const vector<float>&     tx ,
 		      vector<float>&    tzy
 	)
-	{	size_t n       = tx.size()  / (p + 1);
-		size_t m       = tzy.size() / (p + 1);
-		size_t n_order = p + 1;
+	{	size_t p1 = p + 1;
+		size_t n  = tx.size()  / p1;
+		size_t m  = tzy.size() / p1;
 		assert( n == 1 );
 		assert( m == 2 );
 		assert( q <= p );
@@ -97,7 +97,7 @@ private:
 			else	tzy[0] = tan( tx[0] );
 
 			// y^{(0)} = z^{(0)} * z^{(0)}
-			tzy[n_order + 0] = tzy[0] * tzy[0];
+			tzy[p1 + 0] = tzy[0] * tzy[0];
 		
 			q++;
 		}
@@ -109,12 +109,12 @@ private:
 			// z^{(j)} = x^{(j)} +- sum_{k=1}^j k x^{(k)} y^{(j-k)} / j
 			tzy[j] = tx[j];  
 			for(k = 1; k <= j; k++)
-				tzy[j] += tx[k] * tzy[n_order + j-k] * k * j_inv;
+				tzy[j] += tx[k] * tzy[p1 + j-k] * k * j_inv;
 
 			// y^{(j)} = sum_{k=0}^j z^{(k)} z^{(j-k)}
-			tzy[n_order + j] = 0.;
+			tzy[p1 + j] = 0.;
 			for(k = 0; k <= j; k++)
-				tzy[n_order + j] += tzy[k] * tzy[j-k];
+				tzy[p1 + j] += tzy[k] * tzy[j-k];
 		}
 
 		// All orders are implemented and there are no possible errors
@@ -129,13 +129,13 @@ private:
 		      vector<float>&     px ,
 		const vector<float>&    pzy
 	)
-	{	size_t n = tx.size()  / (p + 1);
-		size_t m = tzy.size() / (p + 1);	
-		assert( px.size()  == n * (p + 1) );
-		assert( pzy.size() == m * (p + 1) );
+	{	size_t p1 = p + 1;
+		size_t n  = tx.size()  / p1;
+		size_t m  = tzy.size() / p1;	
+		assert( px.size()  == n * p1 );
+		assert( pzy.size() == m * p1 );
 		assert( n == 1 );
 		assert( m == 2 );
-		size_t n_order = p + 1;
 
 		size_t j, k;
 
@@ -143,7 +143,7 @@ private:
 		vector<float> qzy = pzy;
 
 		// initialize accumultion of reverse mode partials
-		for(k = 0; k < n_order; k++)
+		for(k = 0; k < p1; k++)
 			px[k] = 0.;
 
 		// eliminate positive orders
@@ -155,42 +155,26 @@ private:
 			// H_{x^{(k)}} += delta(j-k) +- H_{z^{(j)} y^{(j-k)} * k / j
 			px[j] += qzy[j];
 			for(k = 1; k <= j; k++)
-				px[k] += qzy[j] * tzy[n_order + j-k] * k * j_inv;  
+				px[k] += qzy[j] * tzy[p1 + j-k] * k * j_inv;  
 
 			// H_{y^{j-k)} += +- H_{z^{(j)} x^{(k)} * k / j
 			for(k = 1; k <= j; k++)
-				qzy[n_order + j-k] += qzy[j] * tx[k] * k * j_inv;  
+				qzy[p1 + j-k] += qzy[j] * tx[k] * k * j_inv;  
 
 			// H_{z^{(k)}} += H_{y^{(j-1)}} * z^{(j-k-1)} * 2. 
 			for(k = 0; k < j; k++)
-				qzy[k] += qzy[n_order + j-1] * tzy[j-k-1] * 2.f; 
+				qzy[k] += qzy[p1 + j-1] * tzy[j-k-1] * 2.f; 
 		}
 
 		// eliminate order zero
 		if( hyperbolic_ )
-			px[0] += qzy[0] * (1.f - tzy[n_order + 0]);
+			px[0] += qzy[0] * (1.f - tzy[p1 + 0]);
 		else
-			px[0] += qzy[0] * (1.f + tzy[n_order + 0]);
+			px[0] += qzy[0] * (1.f + tzy[p1 + 0]);
 
 		return true; 
 	}
 	// ----------------------------------------------------------------------
-	// forward Jacobian sparsity routine called by CppAD
-	virtual bool for_sparse_jac(
-		size_t                                q ,
-		const vector< std::set<size_t> >&     r ,
-		      vector< std::set<size_t> >&     s )
-	{	size_t n = r.size();
-		size_t m = s.size();
-		assert( n == 1 );
-		assert( m == 2 );
-
-		// sparsity for S(x) = f'(x) * R
-		s[0] = r[0];
-		s[1] = r[0];
-
-		return true;
-	}
 	// forward Jacobian sparsity routine called by CppAD
 	virtual bool for_sparse_jac(
 		size_t                                q ,
@@ -209,21 +193,23 @@ private:
 
 		return true;
 	}
-	// ----------------------------------------------------------------------
-	// reverse Jacobian sparsity routine called by CppAD
-	virtual bool rev_sparse_jac(
+	// forward Jacobian sparsity routine called by CppAD
+	virtual bool for_sparse_jac(
 		size_t                                q ,
-		const vector< std::set<size_t> >&    rt ,
-		      vector< std::set<size_t> >&    st )
-	{	size_t n = st.size();
-		size_t m = rt.size();
+		const vector< std::set<size_t> >&     r ,
+		      vector< std::set<size_t> >&     s )
+	{	size_t n = r.size();
+		size_t m = s.size();
 		assert( n == 1 );
 		assert( m == 2 );
 
-		// sparsity for S(x)^T = f'(x)^T * R^T
-		my_union(st[0], rt[0], rt[1]);
-		return true; 
+		// sparsity for S(x) = f'(x) * R
+		s[0] = r[0];
+		s[1] = r[0];
+
+		return true;
 	}
+	// ----------------------------------------------------------------------
 	// reverse Jacobian sparsity routine called by CppAD
 	virtual bool rev_sparse_jac(
 		size_t                                q ,
@@ -240,7 +226,56 @@ private:
 
 		return true; 
 	}
+	// reverse Jacobian sparsity routine called by CppAD
+	virtual bool rev_sparse_jac(
+		size_t                                q ,
+		const vector< std::set<size_t> >&    rt ,
+		      vector< std::set<size_t> >&    st )
+	{	size_t n = st.size();
+		size_t m = rt.size();
+		assert( n == 1 );
+		assert( m == 2 );
+
+		// sparsity for S(x)^T = f'(x)^T * R^T
+		my_union(st[0], rt[0], rt[1]);
+		return true; 
+	}
 	// ----------------------------------------------------------------------
+	// reverse Hessian sparsity routine called by CppAD
+	virtual bool rev_sparse_hes(
+		size_t                                q ,
+		const vector<bool>&                   r ,
+		const vector<bool>&                   s ,
+		      vector<bool>&                   t ,
+		const vector<bool>&                   u ,
+		      vector<bool>&                   v )
+	{	size_t m = s.size();
+		size_t n = t.size();
+		assert( n == 1 );
+		assert( m == 2 );
+
+		// sparsity for T(x) = S(x) * f'(x) 
+		t[0] =  s[0] | s[1];
+
+		// V(x) = f'(x)^T * g''(y) * f'(x) * R  +  g'(y) * f''(x) * R 
+		// U(x) = g''(y) * f'(x) * R
+		// S(x) = g'(y)
+		
+		// back propagate the sparsity for U, note both components 
+		// of f'(x) may be non-zero;
+		size_t j;
+		for(j = 0; j < q; j++)
+			v[j] = u[ 0 * q + j ] | u[ 1 * q + j ];
+
+		// include forward Jacobian sparsity in Hessian sparsity
+		// (note sparsty for f''(x) * R same as for R)
+		if( s[0] | s[1] )
+		{	for(j = 0; j < q; j++)
+				v[j] |= r[j];
+		}
+
+		return true;
+	}
 	// reverse Hessian sparsity routine called by CppAD
 	virtual bool rev_sparse_hes(
 		size_t                                q ,
@@ -257,23 +292,16 @@ private:
 		// sparsity for T(x) = S(x) * f'(x) 
 		t[0] =  s[0] | s[1];
 
-		// V(x) = [ f'(x)^T * g''(y) * f'(x) + g'(y) * f''(x) ] * R 
+		// V(x) = f'(x)^T * g''(y) * f'(x) * R  +  g'(y) * f''(x) * R 
 		// U(x) = g''(y) * f'(x) * R
 		// S(x) = g'(y)
 		
-		// back propagate the sparsity for U^T for both components because
-		// both components of f'(x) may be non-zero;
-		v[0].clear();
-		std::set<size_t>::const_iterator itr;
-		for(size_t j = 0; j < q; j++)
-		{	for(itr = u[j].begin(); itr != u[j].end(); itr++)	
-			{	assert( *itr == 0 || *itr == 1 );
-				v[0].insert(j);
-			}
-		}
+		// back propagate the sparsity for U, note both components 
+		// of f'(x) may be non-zero;
+		my_union(v[0], u[0], u[1]);
 
-		// convert forward Jacobian sparsity to Hessian sparsity
-		// because tan and tanh are nonlinear
+		// include forward Jacobian sparsity in Hessian sparsity
+		// (note sparsty for f''(x) * R same as for R)
 		if( s[0] | s[1] )
 			my_union(v[0], v[0], r[0]);
 

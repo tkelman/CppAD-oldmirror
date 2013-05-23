@@ -34,9 +34,17 @@ and
 $latex G : \B{R}^2 \rightarrow \B{R}^2$$ 
 defined by
 $latex \[
-	F(x) = \left( \begin{array}{c} x_0 x_1   \\ x_1 - x_0 \end{array} \right) 
+	F(x) = \left( \begin{array}{c} 
+		x_0 \cdot x_0 \cdot x_0 \cdot x_0 \cdot x_0
+		\\
+		x_1 \cdot x_1 \cdot x_1 \cdot x_1 \cdot x_1
+	\end{array} \right) 
 	\; , \;
-	G(y) = \left( \begin{array}{c} y_0 - y_1 \\ y_1  y_0   \end{array} \right) 
+	G(y) = \left( \begin{array}{c} 
+		y_0 + y_0 + y_0 
+		\\ 
+		y_1 + y_1 + y_1 
+	\end{array} \right) 
 \] $$
 
 $code
