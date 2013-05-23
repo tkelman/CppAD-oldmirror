@@ -21,6 +21,26 @@ CPPAD_BEGIN_NAMESPACE
 Compute zero order forward mode Taylor coefficients.
 */
 
+/*
+\def CPPAD_ATOMIC_CALL
+This avoids warnings when NDEBUG is defined and user_ok is not used.
+If \c NDEBUG is defined, this resolves to
+\code
+	user_atom->forward
+\endcode
+otherwise, it respolves to
+\code
+	user_ok = user_atom->forward
+\endcode
+This maco is undefined at the end of this file to facillitate is 
+use with a different definition in other files.
+*/
+# ifdef NDEBUG
+# define CPPAD_ATOMIC_CALL user_atom->forward
+# else
+# define CPPAD_ATOMIC_CALL user_ok = user_atom->forward
+# endif
+
 /*!
 \def CPPAD_FORWARD0SWEEP_TRACE
 This value is either zero or one. 
@@ -152,6 +172,12 @@ size_t forward0sweep(
 	size_t user_j     = 0;       // index in argument vector
 	size_t user_m     = 0;       // size of result vector
 	size_t user_n     = 0;       // size of arugment vector
+	//
+	atomic_base<Base>* user_atom = CPPAD_NULL; // user's atomic op calculator
+# ifndef NDEBUG
+	bool               user_ok   = false;      // atomic op return value
+# endif
+	//
 	// next expected operator in a UserOp sequence
 	enum { user_start, user_arg, user_ret, user_end } user_state = user_start;
 
@@ -512,6 +538,7 @@ size_t forward0sweep(
 				user_id    = arg[1];
 				user_n     = arg[2];
 				user_m     = arg[3];
+				user_atom  = atomic_base<Base>::list(user_index);
 				if(user_tx.size() != user_n)
 					user_tx.resize(user_n);
 				if(user_ty.size() != user_m)
@@ -526,6 +553,13 @@ size_t forward0sweep(
 				CPPAD_ASSERT_UNKNOWN( user_id    == size_t(arg[1]) );
 				CPPAD_ASSERT_UNKNOWN( user_n     == size_t(arg[2]) );
 				CPPAD_ASSERT_UNKNOWN( user_m     == size_t(arg[3]) );
+# ifndef NDEBUG
+				if( ! user_ok )
+				{	std::string msg = user_atom->afun_name()
+					+ ": atomic_base.forward: returned false";
+					CPPAD_ASSERT_KNOWN(false, msg.c_str() );
+				}
+# endif
 				user_state = user_start;
 			}
 			break;
@@ -538,10 +572,8 @@ size_t forward0sweep(
 			user_tx[user_j++] = parameter[ arg[0] ];
 			if( user_j == user_n )
 			{	// call users function for this operation
-				atomic_base<Base>* atom =
-					atomic_base<Base>::list(user_index);
-				atom->set_id(user_id);
-				atom->forward(user_q, user_p, 
+				user_atom->set_id(user_id);
+				CPPAD_ATOMIC_CALL(user_q, user_p, 
 					user_vx, user_vy, user_tx, user_ty
 				);
 				user_state = user_ret;
@@ -556,10 +588,8 @@ size_t forward0sweep(
 			user_tx[user_j++] = Taylor[ arg[0] * J + 0 ];
 			if( user_j == user_n )
 			{	// call users function for this operation
-				atomic_base<Base>* atom =
-					atomic_base<Base>::list(user_index);
-				atom->set_id(user_id);
-				atom->forward(user_q, user_p, 
+				user_atom->set_id(user_id);
+				CPPAD_ATOMIC_CALL(user_q, user_p, 
 					user_vx, user_vy, user_tx, user_ty
 				);
 				user_state = user_ret;
@@ -620,5 +650,6 @@ CPPAD_END_NAMESPACE
 
 // preprocessor symbols that are local to this file
 # undef CPPAD_FORWARD0SWEEP_TRACE
+# undef CPPAD_ATOMIC_CALL
 
 # endif
