@@ -91,6 +91,7 @@ instead of user provided derivatives.
 
 $childtable%
 	cppad/local/atomic_base.hpp%
+	example/atomic/mat_mul.cpp%
 	example/atomic/reciprocal.cpp%
 	example/atomic/tangent.cpp%
 	cppad/local/checkpoint.hpp

@@ -1,6 +1,6 @@
 // $Id$
-# ifndef CPPAD_USER_MAT_MUL_INCLUDED
-# define CPPAD_USER_MAT_MUL_INCLUDED
+# ifndef CPPAD_OLD_MAT_MUL_INCLUDED
+# define CPPAD_OLD_MAT_MUL_INCLUDED
 
 /* --------------------------------------------------------------------------
 CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-13 Bradley M. Bell
@@ -168,7 +168,7 @@ $codep */
 		const vector<double>&         tx ,
 		const vector<double>&         ty ,
 		vector<double>&               px ,
-		const vector<double>          py ) 
+		const vector<double>&         py ) 
 	{	size_t i, j;
 		size_t order_result = order_left + order_right; 
 		for(i = 0; i < nr_result_; i++)
