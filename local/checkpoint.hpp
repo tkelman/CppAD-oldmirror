@@ -393,39 +393,39 @@ public:
 	virtual bool rev_sparse_hes(
 		size_t                                  q  ,
 		const vector< std::set<size_t> >&       r  ,
-		const vector<bool>&                     s  ,
-		      vector<bool>&                     t  ,
+		const vector< std::set<size_t> >&       s  ,
+		      vector< std::set<size_t> >&       t  ,
 		const vector< std::set<size_t> >&       u  ,
 		      vector< std::set<size_t> >&       v  )
 	{
-		size_t m       = s.size();
-		size_t n       = t.size();
+		CPPAD_ASSERT_UNKNOWN( r.size() == v.size() );
+		CPPAD_ASSERT_UNKNOWN( s.size() == 1 );
+		CPPAD_ASSERT_UNKNOWN( t.size() == 1 );
+		size_t n       = v.size();
 		bool ok        = true;
 		bool transpose = true;
 		std::set<size_t>::const_iterator itr;
 
 		// compute sparsity pattern for T(x) = S(x) * f'(x)
-		vector< std::set<size_t> > S(1);
-		size_t i, j;
-		S[0].clear();
-		for(i = 0; i < m; i++)
-			if( s[i] )
-				S[0].insert(i);
 		t = f_.RevSparseJac(1, s);
 
+		// V(x) = f'(x)^T * g''(y) * f'(x) * R  +  g'(y) * f''(x) * R 
+		// U(x) = g''(y) * f'(x) * R
+		// S(x) = g'(y)
+		
 		// compute sparsity pattern for A(x) = f'(x)^T * U(x)
 		vector< std::set<size_t> > a(n);
 		a = f_.RevSparseJac(q, u, transpose);
 
-		// compute sparsity pattern for H(x) = (S * F)''(x) * R
+		// compute sparsity pattern for H(x) = (S(x) * F)''(x) * R
 		// (store it in v)
 		f_.ForSparseJac(q, r);
-		v = f_.RevSparseHes(q, S, transpose);
+		v = f_.RevSparseHes(q, s, transpose);
 
 		// compute sparsity pattern for V(x) = A(x) + H(x)
-		for(i = 0; i < n; i++)
+		for(size_t i = 0; i < n; i++)
 		{	for(itr = a[i].begin(); itr != a[i].end(); itr++)
-			{	j = *itr;
+			{	size_t j = *itr;
 				CPPAD_ASSERT_UNKNOWN( j < q );
 				v[i].insert(j);
 			}
@@ -450,6 +450,9 @@ public:
 		const vector<bool>&                     u  ,
 		      vector<bool>&                     v  )
 	{
+		CPPAD_ASSERT_UNKNOWN( r.size() == v.size() );
+		CPPAD_ASSERT_UNKNOWN( s.size() == u.size() / q );
+		CPPAD_ASSERT_UNKNOWN( t.size() == v.size() / q );
 		size_t n       = t.size();
 		bool ok        = true;
 		bool transpose = true;
@@ -459,11 +462,16 @@ public:
 		// compute sparsity pattern for T(x) = S(x) * f'(x)
 		t = f_.RevSparseJac(1, s);
 
+		// V(x) = f'(x)^T * g''(y) * f'(x) * R  +  g'(y) * f''(x) * R 
+		// U(x) = g''(y) * f'(x) * R
+		// S(x) = g'(y)
+
 		// compute sparsity pattern for A(x) = f'(x)^T * U(x)
 		vector<bool> a(n * q);
 		a = f_.RevSparseJac(q, u, transpose);
 
-		// compute sparsity pattern for H(x) =(S * F)''(x) * R
+		// compute sparsity pattern for H(x) =(S(x) * F)''(x) * R
+		// (store it in v)
 		f_.ForSparseJac(q, r);
 		v = f_.RevSparseHes(q, s, transpose);
 

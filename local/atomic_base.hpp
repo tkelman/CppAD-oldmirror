@@ -1133,7 +1133,8 @@ $codei%
      size_t %q%
 %$$
 It specifies the number of columns in 
-$latex R \in B^{n \times q}$$ and 
+$latex R \in B^{n \times q}$$,
+$latex U(x) \in B^{m \times q}$$, and
 $latex V(x) \in B^{n \times q}$$. 
 
 $subhead r$$
@@ -1147,21 +1148,20 @@ $latex R \in B^{n \times q}$$.
 $subhead s$$
 The argument $icode s$$ has prototype
 $codei%
-     const vector<bool>& %s%
+     const %atomic_sparsity%& %s%
 %$$
 and is a $cref/atomic_sparsity/atomic_option/atomic_sparsity/$$ pattern for 
-$latex S(x)^\R{T} \in B^{m \times 1}$$ where
-$latex S(x) = g^{(1)} (y)$$.
+$latex S(x) = g^{(1)} (y) \in B^{1 \times m}$$.
 
 $subhead t$$
 This argument has prototype
 $codei%
-     vector<bool>& %t%
+     %atomic_sparsity%& %t%
 %$$
 The input values of its elements do not matter.
 Upon return, $icode t$$ is a 
 $cref/atomic_sparsity/atomic_option/atomic_sparsity/$$ pattern for 
-$latex T(x)^\R{T} \in B^{n \times 1}$$ where
+$latex T(x) \in B^{1 \times n}$$ where
 $latex \[
 	T(x) = (g \circ f)^{(1)} (x) = S(x) * f^{(1)} (x)
 \]$$
@@ -1247,8 +1247,8 @@ is the Hessian sparsity pattern w.r.t the argument vector x.
 virtual bool rev_sparse_hes(
 	size_t                                  q  ,
 	const vector< std::set<size_t> >&       r  ,
-	const vector<bool>&                     s  ,
-	      vector<bool>&                     t  ,
+	const vector< std::set<size_t> >&       s  ,
+	      vector< std::set<size_t> >&       t  ,
 	const vector< std::set<size_t> >&       u  ,
 	      vector< std::set<size_t> >&       v  )
 {	return false; }
