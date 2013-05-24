@@ -194,6 +194,66 @@ bool mat_mul(void)
 	}
 	// s[3] == {}
 	ok &= s[3].empty();
+
+	//----------------------------------------------------------------------
+	// Test reverse Jacobian sparsity pattern
+	for(i = 0; i <  m; i++)
+	{	s[i].clear();
+		s[i].insert(i);
+	}
+	r = g.RevSparseJac(m, s);
+	for(j = 0; j <  n ; j++)
+	{	// r[0] = {0, 1, 2, 3}
+		ok &= r[0].find(j) != r[0].end();
+		// r[1] = {0, 1}
+		if( j == 0 || j == 1 )
+			ok &= r[1].find(j) != r[1].end();
+		else	ok &= r[1].find(j) == r[1].end();
+		// r[2] = {2, 3}
+		if( j == 2 || j == 3 )
+			ok &= r[2].find(j) != r[2].end();
+		else	ok &= r[2].find(j) == r[2].end();
+	}
+	// r[3] == {}
+	ok &= r[3].empty();
+
+# if 0
+	//----------------------------------------------------------------------
+	/* Test reverse Hessian sparsity pattern
+	g_0^2 (x) = [ 0, 0, 1, 0 ] and for i > 0, g_i^2 = 0
+	            [ 0, 0, 0, 1 ]
+	            [ 1, 0, 0, 0 ]
+	            [ 0, 1, 0, 0 ]
+	so for the sparsity pattern for the first component of g is
+	h[0] = {2}
+	h[1] = {3}
+	h[2] = {0}
+	h[3] = {1}
+	*/
+	CppAD::vector< std::set<size_t> > h(n), t(1);
+	t[0].clear();
+	t[0].insert(0);
+	h = g.RevSparseHes(n, t);
+	size_t check[] = {2, 3, 0, 1};
+	for(j = 0; j <  n; j++)
+	{	// h[j] = { check[j] }
+		for(i = 0; i < n; i++) 
+		{	if( i == check[j] )
+				ok &= h[j].find(i) != h[j].end();
+			else	ok &= h[j].find(i) == h[j].end();
+		}
+	}
+	t[0].clear();
+	for( j = 1; j < n; j++)
+			t[0].insert(j);
+	h = g.RevSparseHes(n, t);
+	for(j = 0; j <  n; j++)
+	{	// h[j] = { }
+		for(i = 0; i < n; i++) 
+			ok &= h[j].find(i) == h[j].end();
+	}
+# endif
+
 	//-----------------------------------------------------------------
 	} // end for(size_t sparse_index  ...
 	//-----------------------------------------------------------------

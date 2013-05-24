@@ -296,6 +296,7 @@ private:
 				for(size_t ell = 0; ell < n_middle_; ell++)
 				{	size_t i_left  = left(i, ell, k, nk);
 					size_t i_right = right(ell, j, k, nk);
+					//
 					my_union( s[i_result], s[i_result], r[i_left] );
 					my_union( s[i_result], s[i_result], r[i_right] );
 				}
@@ -303,7 +304,71 @@ private:
 		}
 		return true;
 	}
-			
+	// ----------------------------------------------------------------------
+	// reverse Jacobian sparsity routine called by CppAD
+	virtual bool rev_sparse_jac(
+		size_t                                q ,
+		const vector<bool>&                  rt ,
+		      vector<bool>&                  st )
+	{	assert( n_ * q == st.size() );
+		assert( m_ * q == rt.size() );
+		size_t i, j, p;
+
+		// initialize
+		for(i = 0; i < n_; i++)
+		{	for(p = 0; p < q; p++)
+				st[ i * q + p ] = false;
+		}
+
+		// sparsity for S(x)^T = f'(x)^T * R^T
+		size_t nk = 1;
+		size_t k  = 0;
+		for(i = 0; i < nr_result_; i++)
+		{	for(j = 0; j < nc_result_; j++)
+			{	size_t i_result = result(i, j, k, nk);
+				for(size_t ell = 0; ell < n_middle_; ell++)
+				{	size_t i_left  = left(i, ell, k, nk);
+					size_t i_right = right(ell, j, k, nk);
+					for(p = 0; p < q; p++)
+					{	st[i_left * q + p] |= rt[i_result * q + p];
+						st[i_right* q + p] |= rt[i_result * q + p];
+					}
+				}
+			}
+		}
+		return true;
+	}
+	virtual bool rev_sparse_jac(
+		size_t                                q ,
+		const vector< std::set<size_t> >&    rt ,
+		      vector< std::set<size_t> >&    st )
+	{	assert( n_ == st.size() );
+		assert( m_ == rt.size() );
+		size_t i, j;
+
+		// initialize
+		for(i = 0; i < n_; i++)
+			st[i].clear();
+
+		// sparsity for S(x)^T = f'(x)^T * R^T
+		size_t nk = 1;
+		size_t k  = 0;
+		for(i = 0; i < nr_result_; i++)
+		{	for(j = 0; j < nc_result_; j++)
+			{	size_t i_result = result(i, j, k, nk);
+				for(size_t ell = 0; ell < n_middle_; ell++)
+				{	size_t i_left  = left(i, ell, k, nk);
+					size_t i_right = right(ell, j, k, nk);
+					//
+					my_union(st[i_left],  st[i_left],  rt[i_result]);
+					my_union(st[i_right], st[i_right], rt[i_result]);
+				}
+			}
+		}
+		return true;
+
+	}
+
 };
 
 } // End empty namespace
