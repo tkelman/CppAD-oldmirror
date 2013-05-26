@@ -1107,7 +1107,7 @@ $index rev_sparse_hes, atomic callback$$
 $index rev_sparse_hes, atomic virtual$$
 
 $head Syntax$$
-$icode%ok% = %afun%.rev_sparse_hes(%q%, %r%, %s%, %t%, %u%, %v%)%$$
+$icode%ok% = %afun%.rev_sparse_hes(%s%, %t%, %q%, %r%, %u%, %v%)%$$
 
 $head Purpose$$
 This function is used by $cref RevSparseHes$$ to compute
@@ -1126,24 +1126,6 @@ $head Implementation$$
 If you are using and $cref RevSparseHes$$,
 this virtual function must be defined by the
 $cref/atomic_user/atomic_ctor/atomic_user/$$ class.
-
-$subhead q$$
-The argument $icode q$$ has prototype
-$codei%
-     size_t %q%
-%$$
-It specifies the number of columns in 
-$latex R \in B^{n \times q}$$,
-$latex U(x) \in B^{m \times q}$$, and
-$latex V(x) \in B^{n \times q}$$. 
-
-$subhead r$$
-This argument has prototype
-$codei%
-     const %atomic_sparsity%& %r%
-%$$
-and is a $cref/atomic_sparsity/atomic_option/atomic_sparsity/$$ pattern for 
-$latex R \in B^{n \times q}$$.
 
 $subhead s$$
 The argument $icode s$$ has prototype
@@ -1165,6 +1147,24 @@ $latex T(x) \in B^{1 \times n}$$ where
 $latex \[
 	T(x) = (g \circ f)^{(1)} (x) = S(x) * f^{(1)} (x)
 \]$$
+
+$subhead q$$
+The argument $icode q$$ has prototype
+$codei%
+     size_t %q%
+%$$
+It specifies the number of columns in 
+$latex R \in B^{n \times q}$$,
+$latex U(x) \in B^{m \times q}$$, and
+$latex V(x) \in B^{n \times q}$$. 
+
+$subhead r$$
+This argument has prototype
+$codei%
+     const %atomic_sparsity%& %r%
+%$$
+and is a $cref/atomic_sparsity/atomic_option/atomic_sparsity/$$ pattern for 
+$latex R \in B^{n \times q}$$.
 
 $head u$$
 This argument has prototype
@@ -1226,17 +1226,17 @@ $end
 /*!
 Link from reverse Hessian sparsity sweep to base_atomic
 
-\param q [in]
-is the column dimension for the sparsity partterns.
-
-\param r [in]
-is the forward Jacobian sparsity pattern w.r.t the argument vector x
-
 \param s [in]
 is the reverse Jacobian sparsity pattern w.r.t the result vector y.
 
 \param t [out]
 is the reverse Jacobian sparsity pattern w.r.t the argument vector x.
+
+\param q [in]
+is the column dimension for the sparsity partterns.
+
+\param r [in]
+is the forward Jacobian sparsity pattern w.r.t the argument vector x
 
 \param u [in]
 is the Hessian sparsity pattern w.r.t the result vector y.
@@ -1245,18 +1245,18 @@ is the Hessian sparsity pattern w.r.t the result vector y.
 is the Hessian sparsity pattern w.r.t the argument vector x.
 */
 virtual bool rev_sparse_hes(
-	size_t                                  q  ,
-	const vector< std::set<size_t> >&       r  ,
 	const vector< std::set<size_t> >&       s  ,
 	      vector< std::set<size_t> >&       t  ,
+	size_t                                  q  ,
+	const vector< std::set<size_t> >&       r  ,
 	const vector< std::set<size_t> >&       u  ,
 	      vector< std::set<size_t> >&       v  )
 {	return false; }
 virtual bool rev_sparse_hes(
-	size_t                                  q  ,
-	const vector<bool>&                     r  ,
 	const vector<bool>&                     s  ,
 	      vector<bool>&                     t  ,
+	size_t                                  q  ,
+	const vector<bool>&                     r  ,
 	const vector<bool>&                     u  ,
 	      vector<bool>&                     v  )
 {	return false; }

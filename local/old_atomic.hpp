@@ -1065,10 +1065,10 @@ public:
 	\copydetails atomic_base::rev_sparse_hes
 	*/
 	virtual bool rev_sparse_hes(
-		size_t                                q ,
-		const vector< std::set<size_t> >&     r ,
 		const vector< std::set<size_t> >&     s ,
 		      vector< std::set<size_t> >&     t ,
+		size_t                                q ,
+		const vector< std::set<size_t> >&     r ,
 		const vector< std::set<size_t> >&     u ,
 		      vector< std::set<size_t> >&     v )
 	{	size_t m = u.size();

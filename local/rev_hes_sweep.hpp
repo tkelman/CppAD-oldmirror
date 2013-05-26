@@ -633,20 +633,20 @@ void RevHesSweep(
 # ifdef NDEBUG
 			 	if( user_bool )
 					user_atom->rev_sparse_hes(
-						user_q, bool_r, bool_s, bool_t, bool_u, bool_v
+						bool_s, bool_t, user_q, bool_r, bool_u, bool_v
 				);
 				else
 					user_atom->rev_sparse_hes(
-						user_q, set_r, set_s, set_t, set_u, set_v
+						set_s, set_t, user_q, set_r, set_u, set_v
 				);
 # else
 			 	if( user_bool )
 					user_ok = user_atom->rev_sparse_hes(
-						user_q, bool_r, bool_s, bool_t, bool_u, bool_v
+						bool_s, bool_t, user_q, bool_r, bool_u, bool_v
 				);
 				else
 					user_ok = user_atom->rev_sparse_hes(
-						user_q, set_r, set_s, set_t, set_u, set_v
+						set_s, set_t, user_q, set_r, set_u, set_v
 				);
 				if( ! user_ok )
 				{	std::string msg = user_atom->afun_name()
