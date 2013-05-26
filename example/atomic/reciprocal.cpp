@@ -265,11 +265,11 @@ private:
 		      vector<bool>&                   v )
 	{	// This function needed if using RevSparseHes
 		// with afun.option( CppAD::atomic_base<double>::bool_sparsity_enum )
-		size_t m = u.size() / q;
-		size_t n = v.size() / q;
-		assert( r.size() == v.size() );
-		assert( s.size() == u.size() / q );
-		assert( t.size() == v.size() / q );
+		size_t m = s.size();
+		size_t n = t.size();
+		assert( r.size() == n * q );
+		assert( u.size() == m * q );
+		assert( v.size() == n * q );
 		assert( n == 1 );
 		assert( m == 1 );
 
@@ -296,19 +296,19 @@ private:
 	}
 	// reverse Hessian set sparsity routine called by CppAD
 	virtual bool rev_sparse_hes(
-		const vector< std::set<size_t> >&     s ,
-		      vector< std::set<size_t> >&     t ,
+		const vector<bool>&                   s ,
+		      vector<bool>&                   t ,
 		size_t                                q ,
 		const vector< std::set<size_t> >&     r ,
 		const vector< std::set<size_t> >&     u ,
 		      vector< std::set<size_t> >&     v )
 	{	// This function needed if using RevSparseHes
 		// with afun.option( CppAD::atomic_base<double>::set_sparsity_enum )
-		size_t m = u.size();
-		size_t n = v.size();
-		assert( r.size() == v.size() );
-		assert( s.size() == 1 );
-		assert( t.size() == 1 );
+		size_t m = s.size();
+		size_t n = t.size();
+		assert( r.size() == n );
+		assert( u.size() == m );
+		assert( v.size() == n );
 		assert( n == 1 );
 		assert( m == 1 );
 
@@ -324,7 +324,7 @@ private:
 
 		// include forward Jacobian sparsity in Hessian sparsity
 		// (note sparsty for f''(x) * R same as for R)
-		if( ! s[0].empty() )
+		if( s[0] )
 			my_union(v[0], v[0], r[0] );
 
 		return true;
