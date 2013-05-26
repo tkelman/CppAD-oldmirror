@@ -391,17 +391,17 @@ public:
 	\copydetails atomic_base::rev_sparse_hes
  	*/
 	virtual bool rev_sparse_hes(
-		const vector< std::set<size_t> >&       s  ,
-		      vector< std::set<size_t> >&       t  ,
+		const vector<bool>&                     s  ,
+		      vector<bool>&                     t  ,
 		size_t                                  q  ,
 		const vector< std::set<size_t> >&       r  ,
 		const vector< std::set<size_t> >&       u  ,
 		      vector< std::set<size_t> >&       v  )
-	{
+	{	size_t n       = v.size();
+		size_t m       = u.size();
 		CPPAD_ASSERT_UNKNOWN( r.size() == v.size() );
-		CPPAD_ASSERT_UNKNOWN( s.size() == 1 );
-		CPPAD_ASSERT_UNKNOWN( t.size() == 1 );
-		size_t n       = v.size();
+		CPPAD_ASSERT_UNKNOWN( s.size() == m );
+		CPPAD_ASSERT_UNKNOWN( t.size() == n );
 		bool ok        = true;
 		bool transpose = true;
 		std::set<size_t>::const_iterator itr;
@@ -417,13 +417,21 @@ public:
 		vector< std::set<size_t> > a(n);
 		a = f_.RevSparseJac(q, u, transpose);
 
+		// set version of s
+		vector< std::set<size_t> > set_s(1);
+		CPPAD_ASSERT_UNKNOWN( set_s[0].empty() );
+		size_t i;
+		for(i = 0; i < m; i++)
+			if( s[i] )
+				set_s[0].insert(i);
+
 		// compute sparsity pattern for H(x) = (S(x) * F)''(x) * R
 		// (store it in v)
 		f_.ForSparseJac(q, r);
-		v = f_.RevSparseHes(q, s, transpose);
+		v = f_.RevSparseHes(q, set_s, transpose);
 
 		// compute sparsity pattern for V(x) = A(x) + H(x)
-		for(size_t i = 0; i < n; i++)
+		for(i = 0; i < n; i++)
 		{	for(itr = a[i].begin(); itr != a[i].end(); itr++)
 			{	size_t j = *itr;
 				CPPAD_ASSERT_UNKNOWN( j < q );

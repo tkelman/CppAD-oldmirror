@@ -1065,8 +1065,8 @@ public:
 	\copydetails atomic_base::rev_sparse_hes
 	*/
 	virtual bool rev_sparse_hes(
-		const vector< std::set<size_t> >&     s ,
-		      vector< std::set<size_t> >&     t ,
+		const vector<bool>&                   s ,
+		      vector<bool>&                   t ,
 		size_t                                q ,
 		const vector< std::set<size_t> >&     r ,
 		const vector< std::set<size_t> >&     u ,
@@ -1074,22 +1074,10 @@ public:
 	{	size_t m = u.size();
 		size_t n = v.size();
 		CPPAD_ASSERT_UNKNOWN( r.size() == n );
-		CPPAD_ASSERT_UNKNOWN( s.size() == 1 );
-		CPPAD_ASSERT_UNKNOWN( t.size() == 1 );
-		vector<bool> bool_s(m), bool_t(n);
-		std::set<size_t>::const_iterator itr;
+		CPPAD_ASSERT_UNKNOWN( s.size() == m );
+		CPPAD_ASSERT_UNKNOWN( t.size() == n );
 		//
-		for(size_t i = 0; i < m; i++)
-			bool_s[i] = false;
-		for(itr = s[0].begin(); itr != s[0].end(); itr++)
-			bool_s[*itr] = true;
-		//
-		for(size_t j = 0; j < n; j++)
-			bool_t[j] = false;
-		for(itr = t[0].begin(); itr != t[0].end(); itr++)
-			bool_t[*itr] = true;
-		//
-		bool ok = rhs_(id_, n, m, q, r, bool_s, bool_t, u, v);
+		bool ok = rhs_(id_, n, m, q, r, s, t, u, v);
 		return ok;
 	}
 };

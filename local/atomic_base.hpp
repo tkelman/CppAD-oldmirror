@@ -1130,19 +1130,21 @@ $cref/atomic_user/atomic_ctor/atomic_user/$$ class.
 $subhead s$$
 The argument $icode s$$ has prototype
 $codei%
-     const %atomic_sparsity%& %s%
+     const CppAD:vector<bool>& %s%
 %$$
-and is a $cref/atomic_sparsity/atomic_option/atomic_sparsity/$$ pattern for 
+andits size is $icode m$$. 
+It is a sparsity pattern for 
 $latex S(x) = g^{(1)} (y) \in B^{1 \times m}$$.
 
 $subhead t$$
 This argument has prototype
 $codei%
-     %atomic_sparsity%& %t%
+     CppAD:vector<bool>& %t%
 %$$
+and its size is $icode m$$.
 The input values of its elements do not matter.
 Upon return, $icode t$$ is a 
-$cref/atomic_sparsity/atomic_option/atomic_sparsity/$$ pattern for 
+sparsity pattern for 
 $latex T(x) \in B^{1 \times n}$$ where
 $latex \[
 	T(x) = (g \circ f)^{(1)} (x) = S(x) * f^{(1)} (x)
@@ -1245,8 +1247,8 @@ is the Hessian sparsity pattern w.r.t the result vector y.
 is the Hessian sparsity pattern w.r.t the argument vector x.
 */
 virtual bool rev_sparse_hes(
-	const vector< std::set<size_t> >&       s  ,
-	      vector< std::set<size_t> >&       t  ,
+	const vector<bool>&                     s  ,
+	      vector<bool>&                     t  ,
 	size_t                                  q  ,
 	const vector< std::set<size_t> >&       r  ,
 	const vector< std::set<size_t> >&       u  ,

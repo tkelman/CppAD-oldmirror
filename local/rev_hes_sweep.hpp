@@ -172,17 +172,15 @@ void RevHesSweep(
 	size_set::iterator set_itr;  // iterator for a standard set
 	size_set::iterator set_end;  // end of iterator sequence
 	vector< size_set > set_r;    // forward Jacobian sparsity for x
-	vector< size_set > set_s;    // reverse Jacobian sparsity for y
-	vector< size_set > set_t;    // reverse Jacobian sparsity for x
 	vector< size_set > set_u;    // reverse Hessian sparsity for y
 	vector< size_set > set_v;    // reverse Hessian sparsity for x
 	//
 	vector<bool>       bool_r;   // bool forward Jacobian sparsity for x
-	vector<bool>       bool_s;   // reverse Jacobian sparsity for y
-	vector<bool>       bool_t;   // reverse Jacobian sparsity for x
 	vector<bool>       bool_u;   // bool reverse Hessian sparsity for y
 	vector<bool>       bool_v;   // bool reverse Hessian sparsity for x
 	//
+	vector<bool>       user_s;   // reverse Jacobian sparsity for y
+	vector<bool>       user_t;   // reverse Jacobian sparsity for x
 	const size_t user_q = limit; // maximum element plus one
 	size_t user_index = 0;       // indentifier for this atomic operation
 	size_t user_id    = 0;       // user identifier for this call to operator
@@ -580,20 +578,25 @@ void RevHesSweep(
 				user_bool  = user_atom->sparsity() ==
 							atomic_base<Base>::bool_sparsity_enum;
 				user_ix.resize(user_n);
+				user_s.resize(user_m);
+				user_t.resize(user_n);
+				// simpler to initialize all patterns as empty
+				for(i = 0; i < user_m; i++)
+					user_s[i] = false;
+				for(i = 0; i < user_n; i++)
+					user_t[i] = false;
 				if( user_bool )
 				{	bool_r.resize(user_n * user_q);
-					bool_s.resize(user_m);
-					bool_t.resize(user_n);
 					bool_u.resize(user_m * user_q);
 					bool_v.resize(user_n * user_q);
 					// simpler to initialize all patterns as empty
 					for(i = 0; i < user_m; i++)
-					{	bool_s[i] = false;
+					{
 						for(j = 0; j < user_q; j++)
 							bool_u[ i * user_q + j] = false;
 					}
 					for(i = 0; i < user_n; i++)
-					{	bool_t[i] = false;
+					{
 						for(j = 0; j < user_q; j++)
 						{	bool_r[ i * user_q + j] = false;
 							bool_v[ i * user_q + j] = false;
@@ -602,13 +605,8 @@ void RevHesSweep(
 				}
 				else
 				{	set_r.resize(user_n);
-					set_s.resize(1);
-					set_t.resize(1);
 					set_u.resize(user_m);
 					set_v.resize(user_n);
-					// simpler to initialize all patterns as empty
-					set_s[0].clear();
-					set_t[0].clear();
 					for(i = 0; i < user_m; i++)
 						set_u[i].clear();
 					for(i = 0; i < user_n; i++)
@@ -633,20 +631,20 @@ void RevHesSweep(
 # ifdef NDEBUG
 			 	if( user_bool )
 					user_atom->rev_sparse_hes(
-						bool_s, bool_t, user_q, bool_r, bool_u, bool_v
+						user_s, user_t, user_q, bool_r, bool_u, bool_v
 				);
 				else
 					user_atom->rev_sparse_hes(
-						set_s, set_t, user_q, set_r, set_u, set_v
+						user_s, user_t, user_q, set_r, set_u, set_v
 				);
 # else
 			 	if( user_bool )
 					user_ok = user_atom->rev_sparse_hes(
-						bool_s, bool_t, user_q, bool_r, bool_u, bool_v
+						user_s, user_t, user_q, bool_r, bool_u, bool_v
 				);
 				else
 					user_ok = user_atom->rev_sparse_hes(
-						set_s, set_t, user_q, set_r, set_u, set_v
+						user_s, user_t, user_q, set_r, set_u, set_v
 				);
 				if( ! user_ok )
 				{	std::string msg = user_atom->afun_name()
@@ -655,18 +653,18 @@ void RevHesSweep(
 				}
 # endif
 				for(i = 0; i < user_n; i++) if( user_ix[i] > 0 )
-				{	size_t  i_x = user_ix[i];
+				{
+					size_t  i_x = user_ix[i];
+					if( user_t[i] )
+						RevJac[i_x] = true;
 					if( user_bool )
-					{	if( bool_t[i] )
-							RevJac[i_x] = true;
+					{
 						for(j = 0; j < user_q; j++)
 							if( bool_v[ i * user_q + j ] )
 								rev_hes_sparse.add_element(i_x, j);
 					}
 					else
-					{	set_itr = set_t[0].find(i);
-						if( set_itr != set_t[0].end() )
-							RevJac[i_x] = true;
+					{
 						set_itr = set_v[i].begin();
 						set_end = set_v[i].end();
 						while( set_itr != set_end )
@@ -727,9 +725,8 @@ void RevHesSweep(
 			CPPAD_ASSERT_UNKNOWN( 0 < user_i && user_i <= user_m );
 			--user_i;
 			if( RevJac[i_var] )
-			{	if( user_bool )
-					bool_s[user_i] = true;
-				else	set_s[0].insert(user_i);
+			{
+				user_s[user_i] = true;
 			}
 			rev_hes_sparse.begin(i_var);
 			j = rev_hes_sparse.next_element();
