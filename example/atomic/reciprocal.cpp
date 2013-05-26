@@ -257,10 +257,10 @@ private:
 	// ----------------------------------------------------------------------
 	// reverse Hessian bool sparsity routine called by CppAD
 	virtual bool rev_sparse_hes(
-		size_t                                q ,
-		const vector<bool>&                   r ,
 		const vector<bool>&                   s ,
 		      vector<bool>&                   t ,
+		size_t                                q ,
+		const vector<bool>&                   r ,
 		const vector<bool>&                   u ,
 		      vector<bool>&                   v )
 	{	// This function needed if using RevSparseHes
@@ -296,10 +296,10 @@ private:
 	}
 	// reverse Hessian set sparsity routine called by CppAD
 	virtual bool rev_sparse_hes(
-		size_t                                q ,
-		const vector< std::set<size_t> >&     r ,
 		const vector< std::set<size_t> >&     s ,
 		      vector< std::set<size_t> >&     t ,
+		size_t                                q ,
+		const vector< std::set<size_t> >&     r ,
 		const vector< std::set<size_t> >&     u ,
 		      vector< std::set<size_t> >&     v )
 	{	// This function needed if using RevSparseHes
