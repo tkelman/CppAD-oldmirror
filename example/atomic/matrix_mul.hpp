@@ -379,11 +379,13 @@ private:
 		const vector< std::set<size_t> >&     u ,
 		      vector< std::set<size_t> >&     v )
 	{	size_t n = vx.size();	
-		size_t m = s.size();
 		assert( t.size() == n );
 		assert( r.size() == n );
-		assert( u.size() == m );
 		assert( v.size() == n );
+# ifndef NDEBUG
+		size_t m = s.size();
+		assert( u.size() == m );
+# endif
 		size_t i, j;
 		//
 		// initilaize sparsity patterns as false
@@ -434,11 +436,13 @@ private:
 		const vector<bool>&                   u ,
 		      vector<bool>&                   v )
 	{	size_t n = vx.size();
-		size_t m = s.size();
 		assert( t.size() == n );
 		assert( r.size() == n * q );
-		assert( u.size() == m * q );
 		assert( v.size() == n * q );
+# ifndef NDEBUG
+		size_t m = s.size();
+		assert( u.size() == m * q );
+# endif
 		size_t i, j, p;
 		//
 		// initilaize sparsity patterns as false
