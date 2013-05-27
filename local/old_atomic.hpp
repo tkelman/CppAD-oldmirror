@@ -1065,6 +1065,7 @@ public:
 	\copydetails atomic_base::rev_sparse_hes
 	*/
 	virtual bool rev_sparse_hes(
+		const vector<bool>&                   vx,
 		const vector<bool>&                   s ,
 		      vector<bool>&                   t ,
 		size_t                                q ,
@@ -1077,6 +1078,7 @@ public:
 		CPPAD_ASSERT_UNKNOWN( s.size() == m );
 		CPPAD_ASSERT_UNKNOWN( t.size() == n );
 		//
+		// old interface used id instead of vx
 		bool ok = rhs_(id_, n, m, q, r, s, t, u, v);
 		return ok;
 	}

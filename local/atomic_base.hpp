@@ -548,6 +548,8 @@ in the corresponding call to
 $codei%
 	%afun%(%ax%, %ay%, %id%)
 %$$
+This is only necessary to use for cross term second derivatives because
+CppAD knows which components are variables.
 $pre
 
 $$
@@ -1091,6 +1093,7 @@ virtual bool rev_sparse_jac(
 -------------------------------------- ---------------------------------------
 $begin atomic_rev_sparse_hes$$
 $spell
+	vx
 	afun
 	Jacobian
 	jac
@@ -1107,7 +1110,7 @@ $index rev_sparse_hes, atomic callback$$
 $index rev_sparse_hes, atomic virtual$$
 
 $head Syntax$$
-$icode%ok% = %afun%.rev_sparse_hes(%s%, %t%, %q%, %r%, %u%, %v%)%$$
+$icode%ok% = %afun%.rev_sparse_hes(%vx%, %s%, %t%, %q%, %r%, %u%, %v%)%$$
 
 $head Purpose$$
 This function is used by $cref RevSparseHes$$ to compute
@@ -1127,12 +1130,26 @@ If you are using and $cref RevSparseHes$$,
 this virtual function must be defined by the
 $cref/atomic_user/atomic_ctor/atomic_user/$$ class.
 
+$subhead vx$$
+The argument $icode vx$$ has prototype
+$codei%
+     const CppAD:vector<bool>& %vx%
+%$$
+$icode%vx%.size() == %n%$$, and
+for $latex j = 0 , \ldots , n-1$$,
+$icode%vx%[%j%]%$$ is true if and only if
+$icode%ax%[%j%]%$$ is a $cref/variable/glossary/Variable/$$ 
+in the corresponding call to 
+$codei%
+	%afun%(%ax%, %ay%, %id%)
+%$$
+
 $subhead s$$
 The argument $icode s$$ has prototype
 $codei%
      const CppAD:vector<bool>& %s%
 %$$
-andits size is $icode m$$. 
+and its size is $icode m$$. 
 It is a sparsity pattern for 
 $latex S(x) = g^{(1)} (y) \in B^{1 \times m}$$.
 
@@ -1228,6 +1245,9 @@ $end
 /*!
 Link from reverse Hessian sparsity sweep to base_atomic
 
+\param vx [in]
+which componens of x are variables.
+
 \param s [in]
 is the reverse Jacobian sparsity pattern w.r.t the result vector y.
 
@@ -1247,6 +1267,7 @@ is the Hessian sparsity pattern w.r.t the result vector y.
 is the Hessian sparsity pattern w.r.t the argument vector x.
 */
 virtual bool rev_sparse_hes(
+	const vector<bool>&                     vx ,
 	const vector<bool>&                     s  ,
 	      vector<bool>&                     t  ,
 	size_t                                  q  ,
@@ -1255,6 +1276,7 @@ virtual bool rev_sparse_hes(
 	      vector< std::set<size_t> >&       v  )
 {	return false; }
 virtual bool rev_sparse_hes(
+	const vector<bool>&                     vx ,
 	const vector<bool>&                     s  ,
 	      vector<bool>&                     t  ,
 	size_t                                  q  ,
