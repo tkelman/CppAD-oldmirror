@@ -179,6 +179,7 @@ void RevHesSweep(
 	vector<bool>       bool_u;   // bool reverse Hessian sparsity for y
 	vector<bool>       bool_v;   // bool reverse Hessian sparsity for x
 	//
+	vector<bool>       user_vx;  // which components of x are variables
 	vector<bool>       user_s;   // reverse Jacobian sparsity for y
 	vector<bool>       user_t;   // reverse Jacobian sparsity for x
 	const size_t user_q = limit; // maximum element plus one
@@ -578,9 +579,11 @@ void RevHesSweep(
 				user_bool  = user_atom->sparsity() ==
 							atomic_base<Base>::bool_sparsity_enum;
 				user_ix.resize(user_n);
+				user_vx.resize(user_n);
 				user_s.resize(user_m);
 				user_t.resize(user_n);
-				// simpler to initialize all patterns as empty
+
+				// simpler to initialize all sparsity patterns as empty
 				for(i = 0; i < user_m; i++)
 					user_s[i] = false;
 				for(i = 0; i < user_n; i++)
@@ -630,20 +633,20 @@ void RevHesSweep(
 				user_atom->set_id(user_id);
 # ifdef NDEBUG
 			 	if( user_bool )
-					user_atom->rev_sparse_hes(
+					user_atom->rev_sparse_hes(user_vx,
 						user_s, user_t, user_q, bool_r, bool_u, bool_v
 				);
 				else
-					user_atom->rev_sparse_hes(
+					user_atom->rev_sparse_hes(user_vx,
 						user_s, user_t, user_q, set_r, set_u, set_v
 				);
 # else
 			 	if( user_bool )
-					user_ok = user_atom->rev_sparse_hes(
+					user_ok = user_atom->rev_sparse_hes(user_vx,
 						user_s, user_t, user_q, bool_r, bool_u, bool_v
 				);
 				else
-					user_ok = user_atom->rev_sparse_hes(
+					user_ok = user_atom->rev_sparse_hes(user_vx,
 						user_s, user_t, user_q, set_r, set_u, set_v
 				);
 				if( ! user_ok )
@@ -682,6 +685,7 @@ void RevHesSweep(
 			CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) < num_par );
 			--user_j;
 			user_ix[user_j] = 0;
+			user_vx[user_j] = false;
 			if( user_j == 0 )
 				user_state = user_start;
 			break;
@@ -695,6 +699,7 @@ void RevHesSweep(
 			CPPAD_ASSERT_UNKNOWN( 0 < arg[0] );
 			--user_j;
 			user_ix[user_j] = arg[0];
+			user_vx[user_j] = true;
 			for_jac_sparse.begin(arg[0]);
 			i = for_jac_sparse.next_element();
 			while( i < user_q )

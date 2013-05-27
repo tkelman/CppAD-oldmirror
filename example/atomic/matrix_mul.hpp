@@ -368,7 +368,123 @@ private:
 		return true;
 
 	}
+	// ----------------------------------------------------------------------
+	// reverse Hessian sparsity routine called by CppAD
+	virtual bool rev_sparse_hes(
+		const vector<bool>&                   vx,
+		const vector<bool>&                   s ,
+		      vector<bool>&                   t ,
+		size_t                                q ,
+		const vector< std::set<size_t> >&     r ,
+		const vector< std::set<size_t> >&     u ,
+		      vector< std::set<size_t> >&     v )
+	{	size_t n = vx.size();	
+		size_t m = s.size();
+		assert( t.size() == n );
+		assert( r.size() == n );
+		assert( u.size() == m );
+		assert( v.size() == n );
+		size_t i, j;
+		//
+		// initilaize sparsity patterns as false
+		for(j = 0; j < n; j++)
+		{	t[j] = false;
+			v[j].clear();
+		}
+		size_t nk = 1;
+		size_t k  = 0;
+		for(i = 0; i < nr_result_; i++)
+		{	for(j = 0; j < nc_result_; j++)
+			{	size_t i_result = result(i, j, k, nk);
+				for(size_t ell = 0; ell < n_middle_; ell++)
+				{	size_t i_left  = left(i, ell, k, nk);
+					size_t i_right = right(ell, j, k, nk);
+					//
+					// Compute sparsity for T(x) = S(x) * f'(x).
+					// We need not use vx with f'(x) back propagation.
+					t[i_left]  |= s[i_result];
+					t[i_right] |= s[i_result];
 
+					// V(x) = f'(x)^T * U(x) +  S(x) * f''(x) * R 
+					// U(x) = g''(y) * f'(x) * R
+					// S(x) = g'(y)
+
+					// back propagate f'(x)^T * U(x)
+					// (no need to use vx with f'(x) propogation)
+					my_union(v[i_left],  v[i_left],  u[i_result] );
+					my_union(v[i_right], v[i_right], u[i_result] );
+
+					// back propagate S(x) * f''(x) * R
+					// (here is where we must check for cross terms)
+					if( s[i_result] & vx[i_left] & vx[i_right] )
+					{	my_union(v[i_left],  v[i_left],  r[i_right] );
+						my_union(v[i_right], v[i_right], r[i_left]  );
+					}
+				}
+			}
+		}
+		return true;
+	}
+	virtual bool rev_sparse_hes(
+		const vector<bool>&                   vx,
+		const vector<bool>&                   s ,
+		      vector<bool>&                   t ,
+		size_t                                q ,
+		const vector<bool>&                   r ,
+		const vector<bool>&                   u ,
+		      vector<bool>&                   v )
+	{	size_t n = vx.size();
+		size_t m = s.size();
+		assert( t.size() == n );
+		assert( r.size() == n * q );
+		assert( u.size() == m * q );
+		assert( v.size() == n * q );
+		size_t i, j, p;
+		//
+		// initilaize sparsity patterns as false
+		for(j = 0; j < n; j++)
+		{	t[j] = false;
+			for(p = 0; p < q; p++)
+				v[j * q + p] = false;
+		}
+		size_t nk = 1;
+		size_t k  = 0;
+		for(i = 0; i < nr_result_; i++)
+		{	for(j = 0; j < nc_result_; j++)
+			{	size_t i_result = result(i, j, k, nk);
+				for(size_t ell = 0; ell < n_middle_; ell++)
+				{	size_t i_left  = left(i, ell, k, nk);
+					size_t i_right = right(ell, j, k, nk);
+					//
+					// Compute sparsity for T(x) = S(x) * f'(x).
+					// We so not need to use vx with f'(x) propagation.
+					t[i_left]  |= s[i_result];
+					t[i_right] |= s[i_result];
+
+					// V(x) = f'(x)^T * U(x) +  S(x) * f''(x) * R 
+					// U(x) = g''(y) * f'(x) * R
+					// S(x) = g'(y)
+
+					// back propagate f'(x)^T * U(x)
+					// (no need to use vx with f'(x) propogation)
+					for(p = 0; p < q; p++)
+					{	v[ i_left  * q + p] |= u[ i_result * q + p];
+						v[ i_right * q + p] |= u[ i_result * q + p];
+					}
+
+					// back propagate S(x) * f''(x) * R
+					// (here is where we must check for cross terms)
+					if( s[i_result] & vx[i_left] & vx[i_right] )
+					{	for(p = 0; p < q; p++)
+						{	v[i_left * q + p]  |= r[i_right * q + p];
+							v[i_right * q + p] |= r[i_left * q + p];
+						}
+					}
+				}
+			}
+		}
+		return true;
+	}
 };
 
 } // End empty namespace

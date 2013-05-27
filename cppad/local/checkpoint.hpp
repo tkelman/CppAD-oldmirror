@@ -391,6 +391,7 @@ public:
 	\copydetails atomic_base::rev_sparse_hes
  	*/
 	virtual bool rev_sparse_hes(
+		const vector<bool>&                     vx ,
 		const vector<bool>&                     s  ,
 		      vector<bool>&                     t  ,
 		size_t                                  q  ,
@@ -408,6 +409,10 @@ public:
 
 		// compute sparsity pattern for T(x) = S(x) * f'(x)
 		t = f_.RevSparseJac(1, s);
+# ifndef NDEBUG
+		for(size_t j = 0; j < n; j++)
+			CPPAD_ASSERT_UNKNOWN( vx[j] || ! t[j] )
+# endif
 
 		// V(x) = f'(x)^T * g''(y) * f'(x) * R  +  g'(y) * f''(x) * R 
 		// U(x) = g''(y) * f'(x) * R
@@ -451,6 +456,7 @@ public:
 	\copydetails atomic_base::rev_sparse_hes
  	*/
 	virtual bool rev_sparse_hes(
+		const vector<bool>&                     vx ,
 		const vector<bool>&                     s  ,
 		      vector<bool>&                     t  ,
 		size_t                                  q  ,
@@ -469,6 +475,10 @@ public:
 
 		// compute sparsity pattern for T(x) = S(x) * f'(x)
 		t = f_.RevSparseJac(1, s);
+# ifndef NDEBUG
+		for(j = 0; j < n; j++)
+			CPPAD_ASSERT_UNKNOWN( vx[j] || ! t[j] )
+# endif
 
 		// V(x) = f'(x)^T * g''(y) * f'(x) * R  +  g'(y) * f''(x) * R 
 		// U(x) = g''(y) * f'(x) * R

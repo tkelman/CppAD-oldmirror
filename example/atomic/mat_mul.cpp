@@ -217,7 +217,6 @@ bool mat_mul(void)
 	// r[3] == {}
 	ok &= r[3].empty();
 
-# if 0
 	//----------------------------------------------------------------------
 	/* Test reverse Hessian sparsity pattern
 	g_0^2 (x) = [ 0, 0, 1, 0 ] and for i > 0, g_i^2 = 0
@@ -252,7 +251,6 @@ bool mat_mul(void)
 		for(i = 0; i < n; i++) 
 			ok &= h[j].find(i) == h[j].end();
 	}
-# endif
 
 	//-----------------------------------------------------------------
 	} // end for(size_t sparse_index  ...

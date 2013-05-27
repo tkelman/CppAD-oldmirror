@@ -243,6 +243,7 @@ private:
 	// ----------------------------------------------------------------------
 	// reverse Hessian sparsity routine called by CppAD
 	virtual bool rev_sparse_hes(
+		const vector<bool>&                   vx,
 		const vector<bool>&                   s ,
 		      vector<bool>&                   t ,
 		size_t                                q ,
@@ -257,6 +258,9 @@ private:
 		assert( v.size() == n * q );
 		assert( n == 1 );
 		assert( m == 2 );
+
+		// There are no cross term second derivatives for this case,
+		// so it is not necessary to vx.
 
 		// sparsity for T(x) = S(x) * f'(x) 
 		t[0] =  s[0] | s[1];
@@ -282,6 +286,7 @@ private:
 	}
 	// reverse Hessian sparsity routine called by CppAD
 	virtual bool rev_sparse_hes(
+		const vector<bool>&                   vx,
 		const vector<bool>&                   s ,
 		      vector<bool>&                   t ,
 		size_t                                q ,
@@ -295,6 +300,9 @@ private:
 		assert( v.size() == n );
 		assert( n == 1 );
 		assert( m == 2 );
+
+		// There are no cross term second derivatives for this case,
+		// so it is not necessary to vx.
 
 		// sparsity for T(x) = S(x) * f'(x) 
 		t[0] =  s[0] | s[1];

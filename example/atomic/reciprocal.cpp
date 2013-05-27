@@ -257,6 +257,7 @@ private:
 	// ----------------------------------------------------------------------
 	// reverse Hessian bool sparsity routine called by CppAD
 	virtual bool rev_sparse_hes(
+		const vector<bool>&                   vx,
 		const vector<bool>&                   s ,
 		      vector<bool>&                   t ,
 		size_t                                q ,
@@ -272,6 +273,9 @@ private:
 		assert( v.size() == n * q );
 		assert( n == 1 );
 		assert( m == 1 );
+
+		// There are no cross term second derivatives for this case,
+		// so it is not necessary to vx.
 
 		// sparsity for T(x) = S(x) * f'(x) is same as sparsity for S
 		t[0] = s[0];
@@ -296,6 +300,7 @@ private:
 	}
 	// reverse Hessian set sparsity routine called by CppAD
 	virtual bool rev_sparse_hes(
+		const vector<bool>&                   vx,
 		const vector<bool>&                   s ,
 		      vector<bool>&                   t ,
 		size_t                                q ,
@@ -304,13 +309,17 @@ private:
 		      vector< std::set<size_t> >&     v )
 	{	// This function needed if using RevSparseHes
 		// with afun.option( CppAD::atomic_base<double>::set_sparsity_enum )
+		size_t n = vx.size();
 		size_t m = s.size();
-		size_t n = t.size();
+		assert( t.size() == n );
 		assert( r.size() == n );
 		assert( u.size() == m );
 		assert( v.size() == n );
 		assert( n == 1 );
 		assert( m == 1 );
+
+		// There are no cross term second derivatives for this case,
+		// so it is not necessary to vx.
 
 		// sparsity for T(x) = S(x) * f'(x) is same as sparsity for S
 		t[0] = s[0];
