@@ -482,6 +482,7 @@ void operator()(
 -----------------------------------------------------------------------------
 $begin atomic_forward$$
 $spell
+	hes
 	afun
 	vx
 	vy
@@ -548,8 +549,9 @@ in the corresponding call to
 $codei%
 	%afun%(%ax%, %ay%, %id%)
 %$$
-This is only necessary to use for cross term second derivatives because
-CppAD knows which components are variables.
+This is only necessary to use for second order cross terms because
+CppAD knows which components are variables; e.g., see
+$code rev_sparse_hes$$ in the $cref atomic_matrix_mul.hpp$$ example.
 $pre
 
 $$
