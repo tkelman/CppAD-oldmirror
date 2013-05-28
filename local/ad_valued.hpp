@@ -23,14 +23,14 @@ $index function, AD valued$$
 
 $section AD Valued Operations and Functions$$
 
-$comment atomic_base.omh includes atomic_base.hpp$$
+$comment atomic.omh includes atomic_base.omh which atomic_base.hpp$$
 $childtable%
 	cppad/local/arithmetic.hpp%
 	cppad/local/std_math_ad.hpp%
 	cppad/local/math_other.hpp%
 	cppad/local/cond_exp.hpp%
 	cppad/local/discrete.hpp%
-	omh/atomic_base.omh
+	omh/atomic.omh
 %$$
 
 $end

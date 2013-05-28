@@ -24,6 +24,7 @@ defining checkpoint functions.
 /*
 $begin checkpoint$$
 $spell
+	cppad.hpp
 	CppAD
 	checkpoint
 	checkpointing
@@ -47,6 +48,16 @@ $head Purpose$$
 You can reduce the size of the tape and memory required for AD by 
 checkpointing functions of the form $latex y = f(x)$$ where
 $latex f : B^n \rightarrow B^m$$.
+
+$head Method$$
+The $code checkpoint$$ class is derived from $code atomic_base$$
+and makes this easy.
+It implements all the 
+$cref/virtual functions/atomic_base/Virtual Functions/$$
+listed above and hence its source code $code cppad/local/checkpoint.hpp$$
+provides an example implementation.
+The difference is that $code checkpoint.hpp$$ uses AD 
+instead of user provided derivatives.
 
 $head constructor$$
 The constructor 
