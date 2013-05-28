@@ -78,23 +78,11 @@ $icode forward$$ for the case $icode%p% == 2%$$ can just return
 $icode%ok% == false%$$ unless you require
 forward mode calculation of second derivatives.
 
-$head Checkpointing$$
-Another use for $codei%atomic_base%<%Base%>%$$ is to
-reduce the amount of memory required.
-The $cref checkpoint$$ class is derived from $code atomic_base$$
-and makes this easy.
-The $code checkpoint$$ class implements all the virtual functions listed above 
-and hence its source code $code cppad/local/checkpoint.hpp$$
-provides an example implementation.
-The difference is that $code checkpoint.hpp$$ uses AD 
-instead of user provided derivatives.
-
 $childtable%
 	cppad/local/atomic_base.hpp%
 	example/atomic/mat_mul.cpp%
 	example/atomic/reciprocal.cpp%
-	example/atomic/tangent.cpp%
-	cppad/local/checkpoint.hpp
+	example/atomic/tangent.cpp
 %$$
 
 $head Example$$
@@ -109,19 +97,10 @@ The file $cref atomic_tangent.cpp$$ contains another example
 where the user provides the code for computing derivatives.
 This example is more complex because the range has two components.
 
-$head Deprecated Interface$$
-Only the reciprocal and tangent examples has been converted from the old 
-interface to the new one. It may be helpful to look at the 
-$cref old_atomic$$ examples
-to see how to program up more complex cases with the new interface; see
-$table
-$rref old_reciprocal.cpp$$
-$rref old_tan.cpp$$
-$rref old_mat_mul.hpp$$
-$rref old_mat_mul.cpp$$
-$rref old_usead_1.cpp$$
-$rref old_usead_2.cpp$$
-$tend
-
+$head General Case$$
+The file $cref atomic_mat_mul.cpp$$ contains a more general example
+where the user provides the code for computing derivatives.
+This example is more complex because both the domain and range
+dimensions are arbitrary.
 
 $end
