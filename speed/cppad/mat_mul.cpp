@@ -47,7 +47,7 @@ $codep */
 # include <cppad/cppad.hpp>
 # include <cppad/speed/mat_sum_sq.hpp>
 # include <cppad/speed/uniform_01.hpp>
-# include "../../example/atomic/matrix_mul.hpp"
+# include <cppad/example/matrix_mul.hpp>
 # include "print_optimize.hpp"
 
 bool link_mat_mul(

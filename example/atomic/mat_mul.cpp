@@ -22,7 +22,7 @@ $index matrix, atomic multiply example$$
 $index multiply, matrix atomic$$
 
 $children%
-	example/atomic/matrix_mul.hpp
+	cppad/example/matrix_mul.hpp
 %$$
 $head Include File$$
 This routine uses the include file $cref atomic_matrix_mul.hpp$$.
@@ -35,7 +35,7 @@ $end
 */
 // BEGIN C++
 # include <cppad/cppad.hpp>
-# include "matrix_mul.hpp"
+# include <cppad/example/matrix_mul.hpp>
 
 bool mat_mul(void)
 {	bool ok = true;

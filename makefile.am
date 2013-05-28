@@ -114,6 +114,7 @@ nobase_myinclude_HEADERS =  \
 	cppad/example/base_adolc.hpp \
 	cppad/example/cppad_eigen.hpp \
 	cppad/example/eigen_plugin.hpp \
+	cppad/example/matrix_mul.hpp \
 	cppad/error_handler.hpp \
 	cppad/index_sort.hpp \
 	cppad/ipopt/solve.hpp \

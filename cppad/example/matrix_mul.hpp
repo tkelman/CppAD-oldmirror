@@ -24,7 +24,7 @@ $index atomic, matrix multiply operation$$
 $index matrix, multiply atomic operation$$
 
 $code
-$verbatim%example/atomic/matrix_mul.hpp%0%// BEGIN C++%// END C++%1%$$
+$verbatim%cppad/example/matrix_mul.hpp%0%// BEGIN C++%// END C++%1%$$
 $$
 
 $end
