@@ -12,7 +12,7 @@ dnl ---------------------------------------------------------------------------
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl   package   version              bug-report
-AC_INIT(cppad, 20130000.2, cppad@list.coin-or.org)
+AC_INIT(cppad, 20130000.3, cppad@list.coin-or.org)
 
 dnl By defalut disable maintainer mode when running configure;
 dnl --enable-maintainer-mode will enable it.

@@ -49,7 +49,7 @@ $index CppAD$$
 $index version, CppAD$$
 
 $section 
-cppad-20130000.2: A Package for Differentiation of C++ Algorithms
+cppad-20130000.3: A Package for Differentiation of C++ Algorithms
 $$ 
 
 $comment This comment is used to remove the table below$$
