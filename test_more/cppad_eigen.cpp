@@ -1,6 +1,6 @@
 /* $Id$ */
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-13 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -23,8 +23,6 @@ bool cppad_eigen(void)
 	using Eigen::Dynamic;
 
 	typedef Eigen::NumTraits<AD<double> >         traits;
-	typedef Eigen::Matrix<AD<double>, Dynamic, 1> a_vector;
-	typedef typename a_vector::value_type         a_scalar;
 
 	ok &= traits::IsComplex              == 0;
 	ok &= traits::IsInteger              == 0;

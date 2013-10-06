@@ -3,7 +3,7 @@
 # define CPPAD_NAN_INCLUDED
 
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-13 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -198,8 +198,6 @@ inline bool isnan(const Scalar &s)
 template <class Vector>
 bool hasnan(const Vector &v)
 {
-	typedef typename Vector::value_type Scalar;
-
 	bool found_nan;
 	size_t i;
 	i   = v.size();
