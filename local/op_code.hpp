@@ -55,7 +55,19 @@ enum OpCode {
 	AsinOp,   // asin(variable)
 	AtanOp,   // atan(variable)
 	BeginOp,  // used to mark the beginning of the tape
-	CExpOp,   // CondExp(cop, left, right, trueCase, falseCase)
+	BskipOp,  // begin a conditional skip of operations
+	// arg[0] = index in cond_skip we will check for true
+	// arg[1] = number of operations that we will skip if true
+	CExpOp,   // CondExpRel(left, right, trueCase, falseCase)
+	// arg[0]     = the Rel operator: Lt, Le, Eq, Ge, Gt, or Ne
+	// arg[1] & 1 = is left a variable
+	// arg[1] & 2 = is right a variable
+	// arg[1] & 4 = is trueCase a variable
+	// arg[1] & 8 = is falseCase a variable
+	// arg[2]     = index correspoding to left 
+	// arg[3]     = index correspoding to right 
+	// arg[4]     = index correspoding to trueCase 
+	// arg[5]     = index correspoding to falseCase 
 	ComOp,    // Compare(cop, result, left, right)
 	CosOp,    //  cos(variable)
 	CoshOp,   // cosh(variable)
@@ -71,6 +83,9 @@ enum OpCode {
 	DivvpOp,  //      variable   / parameter
 	DivvvOp,  //      variable   / variable
 	EndOp,    //  used to mark the end of the tape
+	EskipOp,  // end a conditional skip of operations
+	// arg[0] = index in cond_skip we will check for true
+	// arg[1] = number of operations that we will skip if true
 	ExpOp,    //  exp(variable)
 	InvOp,    //                             independent variable
 	LdpOp,    //    z[parameter]
@@ -87,6 +102,10 @@ enum OpCode {
 	SinOp,    //  sin(variable)
 	SinhOp,   // sinh(variable)
 	SqrtOp,   // sqrt(variable)
+	SskipOp,  // set the next pair of conditional skip values
+	// arg[0]   = index in operation sequence of a CExpOp
+	// arg[1]   = index in cond_skip set to comparison result
+	// arg[1]+1 = index in cond_skip set to not comparison result
 	StppOp,   //    z[parameter] = parameter
 	StpvOp,   //    z[parameter] = variable
 	StvpOp,   //    z[variable]  = parameter
@@ -129,6 +148,7 @@ const size_t NumArgTable[] = {
 	1, // AsinOp
 	1, // AtanOp
 	0, // BeginOp
+	2, // BskipOp
 	6, // CExpOp
 	4, // ComOp
 	1, // CosOp
@@ -139,6 +159,7 @@ const size_t NumArgTable[] = {
 	2, // DivvpOp
 	2, // DivvvOp
 	0, // EndOp
+	2, // EskipOp
 	1, // ExpOp
 	0, // InvOp
 	3, // LdpOp
@@ -155,6 +176,7 @@ const size_t NumArgTable[] = {
 	1, // SinOp
 	1, // SinhOp
 	1, // SqrtOp
+	3, // SskipOp
 	3, // StppOp
 	3, // StpvOp
 	3, // StvpOp
@@ -227,6 +249,7 @@ const size_t NumResTable[] = {
 	2, // AsinOp
 	2, // AtanOp
 	1, // BeginOp  offsets first variable to have index one (not zero)
+	0, // BskipOp
 	1, // CExpOp
 	0, // ComOp
 	2, // CosOp
@@ -237,6 +260,7 @@ const size_t NumResTable[] = {
 	1, // DivvpOp
 	1, // DivvvOp
 	0, // EndOp
+	0, // EskipOp
 	1, // ExpOp
 	1, // InvOp
 	1, // LdpOp
@@ -253,6 +277,7 @@ const size_t NumResTable[] = {
 	2, // SinOp
 	2, // SinhOp
 	1, // SqrtOp
+	0, // SskipOp
 	0, // StppOp
 	0, // StpvOp
 	0, // StvpOp
@@ -428,6 +453,7 @@ void printOp(
 		"Asin"  ,
 		"Atan"  ,
 		"Begin" ,
+		"Bskip" ,
 		"CExp"  ,
 		"Com"   ,
 		"Cos"   ,
@@ -438,6 +464,7 @@ void printOp(
 		"Divvp" ,
 		"Divvv" ,
 		"End"   ,
+		"Eskip" ,
 		"Exp"   ,
 		"Inv"   ,
 		"Ldp"   ,
@@ -454,6 +481,7 @@ void printOp(
 		"Sin"   ,
 		"Sinh"  ,
 		"Sqrt"  ,
+		"Sskip" ,
 		"Stpp"  ,
 		"Stpv"  ,
 		"Stvp"  ,
@@ -489,6 +517,26 @@ void printOp(
 	size_t ncol = 5;
 	switch( op )
 	{
+		case BskipOp:
+		case EskipOp:
+		/*
+		ind[0] = index in cond_skip we will check for true
+		ind[1] = number of operations that we will skip if true.
+		*/
+		printOpField(os, "idx=", ind[0], ncol);
+		printOpField(os, "num=", ind[1], ncol);
+		break;
+
+		case SskipOp:
+		/*
+		arg[0]   = index in operation sequence of a CExpOp
+		arg[1]   = index in cond_skip set to comparison result
+		arg[1]+1 = index in cond_skip set to not comparison result
+		*/
+		printOpField(os, "cdx=", ind[0], ncol);
+		printOpField(os, "sdx=", ind[1], ncol);
+		break;
+
 		case CSumOp:
 		/*
 		ind[0] = number of addition variables in summation
