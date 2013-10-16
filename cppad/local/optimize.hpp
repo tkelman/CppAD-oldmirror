@@ -154,16 +154,14 @@ enum optimize_connection_type {
 	/// independent variables.
 	yes_connected      ,
 
-	/// There is only one parrent operation that connects this variable to 
-	/// the independent variables and it is one of the following:
-	///  AddvvOp, AddpvOp, SubpvOp, SubvpOp, or SubvvOp.
+	/// There is only one parrent that connects this variable to the 
+	/// independent variables and the parent is a summation operation; i.e.,
+	/// AddvvOp, AddpvOp, SubpvOp, SubvpOp, or SubvvOp.
 	sum_connected      ,
 
-	/// Satisfies sum_connected and in addition 
-	/// the parrent operation is one of the following:
-	///  AddvvOp, AddpvOp, SubpvOp, SubvpOp, or SubvvOp.
+	/// Satisfies the sum_connected assumptions above and in addition 
+	/// this variable is the result of summation operator.
 	csum_connected
-
 };
 
 
@@ -944,7 +942,8 @@ and then the elements can be reused with calls to \c optimize_record_csum.
 \par Exception
 <tt>tape[i].new_var</tt>
 is not yet defined for any node \c i that is \c csum_connected
-to the \a current node.
+to the \a current node
+(or that is \c sum_connected to a node that is \c csum_connected).
 For example; suppose that index \c j corresponds to a variable
 in the current operator,
 <tt>i = tape[current].arg[j]</tt>,
@@ -958,6 +957,9 @@ It then follows that
 must be one of <tt>AddpvOp, AddvvOp, SubpvOp, SubvpOp, SubvvOp</tt>.
 
 \li <tt>tape[current].connect_type</tt> must be \c yes_connected.
+
+\li <tt>tape[j].connect_type == csum_connected</tt> for some index
+j that is a variable operand for the current operation.
 */
 
 
@@ -987,6 +989,19 @@ size_t optimize_record_csum(
 	var.add = true; 
 	work.op_stack.push( var );
 	Base sum_par(0);
+
+# ifndef NDEBUG
+	bool ok = false;
+	if( var.op == SubvpOp )
+		ok = tape[ tape[current].arg[0] ].connect_type == csum_connected;
+	if( var.op == AddpvOp || var.op == SubpvOp )
+		ok = tape[ tape[current].arg[1] ].connect_type == csum_connected;
+	if( var.op == AddvvOp || var.op == SubvvOp )
+	{	ok  = tape[ tape[current].arg[0] ].connect_type == csum_connected;
+		ok |= tape[ tape[current].arg[1] ].connect_type == csum_connected;
+	}
+	CPPAD_ASSERT_UNKNOWN( ok );
+# endif
 	while( ! work.op_stack.empty() )
 	{	var     = work.op_stack.top();
 		work.op_stack.pop();
@@ -1258,10 +1273,13 @@ void optimize(
 			case SubvpOp:
 			if( tape[i_var].connect_type != not_connected )
 			{
+				// check for case where arg[0] is sum_connected 
 				if( tape[arg[0]].connect_type == not_connected )
 					tape[arg[0]].connect_type = sum_connected;
-				else
-					tape[arg[0]].connect_type = yes_connected;
+				else	tape[arg[0]].connect_type = yes_connected;
+
+				// check for case where i_var is sum_connected to and 
+				// it is the result of a summation. 
 				if( tape[i_var].connect_type == sum_connected )
 					tape[i_var].connect_type = csum_connected;
 			}
@@ -1272,10 +1290,13 @@ void optimize(
 			case SubpvOp:
 			if( tape[i_var].connect_type != not_connected )
 			{
+				// check for case where arg[1] is sum_connected 
 				if( tape[arg[1]].connect_type == not_connected )
 					tape[arg[1]].connect_type = sum_connected;
-				else
-					tape[arg[1]].connect_type = yes_connected;
+				else	tape[arg[1]].connect_type = yes_connected;
+
+				// check for case where i_var is sum_connected to and 
+				// it is the result of a summation. 
 				if( tape[i_var].connect_type == sum_connected )
 					tape[i_var].connect_type = csum_connected;
 			}
@@ -1287,15 +1308,18 @@ void optimize(
 			case SubvvOp:
 			if( tape[i_var].connect_type != not_connected )
 			{
+				// check for case where arg[0] is sum_connected 
 				if( tape[arg[0]].connect_type == not_connected )
 					tape[arg[0]].connect_type = sum_connected;
-				else
-					tape[arg[0]].connect_type = yes_connected;
+				else	tape[arg[0]].connect_type = yes_connected;
 
+				// check for case where arg[1] is sum_connected 
 				if( tape[arg[1]].connect_type == not_connected )
 					tape[arg[1]].connect_type = sum_connected;
-				else
-					tape[arg[1]].connect_type = yes_connected;
+				else	tape[arg[1]].connect_type = yes_connected;
+
+				// check for case where i_var is sum_connected to and 
+				// it is the result of a summation. 
 				if( tape[i_var].connect_type == sum_connected )
 					tape[i_var].connect_type = csum_connected;
 			}
