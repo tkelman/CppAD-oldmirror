@@ -145,7 +145,7 @@ Routines for optimizing a tape
 /*!
 State for this variable set during reverse sweep.
 */
-enum optimize_connection {
+enum optimize_connection_type {
 	/// There is no operation that connects this variable to the
 	/// independent variables.
 	not_connected     ,
@@ -181,7 +181,7 @@ struct optimize_old_variable {
 	const addr_t*       arg;
 
 	/// How is this variable connected to the independent variables
-	optimize_connection connect; 
+	optimize_connection_type connect_type; 
 
 	/// Set during forward sweep to the index in the
 	/// new operation sequence corresponding to this old varable.
@@ -949,7 +949,7 @@ For example; suppose that index \c j corresponds to a variable
 in the current operator,
 <tt>i = tape[current].arg[j]</tt>,
 and 
-<tt>tape[arg[j]].connect == csum_connected</tt>.
+<tt>tape[arg[j]].connect_type == csum_connected</tt>.
 It then follows that
 <tt>tape[i].new_var == tape.size()</tt>.
 
@@ -957,7 +957,7 @@ It then follows that
 \li <tt>tape[current].op</tt> 
 must be one of <tt>AddpvOp, AddvvOp, SubpvOp, SubvpOp, SubvvOp</tt>.
 
-\li <tt>tape[current].connect</tt> must be \c yes_connected.
+\li <tt>tape[current].connect_type</tt> must be \c yes_connected.
 */
 
 
@@ -974,7 +974,7 @@ size_t optimize_record_csum(
 	CPPAD_ASSERT_UNKNOWN( work.op_stack.empty() );
 	CPPAD_ASSERT_UNKNOWN( work.add_stack.empty() );
 	CPPAD_ASSERT_UNKNOWN( work.sub_stack.empty() );
-	CPPAD_ASSERT_UNKNOWN( tape[current].connect == yes_connected );
+	CPPAD_ASSERT_UNKNOWN( tape[current].connect_type == yes_connected );
 
 	size_t                        i;
 	OpCode                        op;
@@ -1006,7 +1006,7 @@ size_t optimize_record_csum(
 			case AddvvOp:
 			case SubvpOp:
 			case SubvvOp:
-			if( tape[arg[0]].connect == csum_connected )
+			if( tape[arg[0]].connect_type == csum_connected )
 			{	CPPAD_ASSERT_UNKNOWN(
 					size_t(tape[arg[0]].new_var) == tape.size()
 				);
@@ -1039,7 +1039,7 @@ size_t optimize_record_csum(
 
 			case AddvvOp:
 			case AddpvOp:
-			if( tape[arg[1]].connect == csum_connected )
+			if( tape[arg[1]].connect_type == csum_connected )
 			{	CPPAD_ASSERT_UNKNOWN(
 					size_t(tape[arg[1]].new_var) == tape.size()
 				);
@@ -1157,17 +1157,17 @@ void optimize(
 
 	// initialize all variables has having no connections
 	for(i = 0; i < num_var; i++)
-		tape[i].connect = not_connected;
+		tape[i].connect_type = not_connected;
 
 	for(j = 0; j < m; j++)
 	{	// mark dependent variables as having one or more connections
-		tape[ dep_taddr[j] ].connect = yes_connected;
+		tape[ dep_taddr[j] ].connect_type = yes_connected;
 	}
 
 	// vecad_connect contains a value for each VecAD object.
 	// vecad maps a VecAD index (which corresponds to the beginning of the
 	// VecAD object) to the vecad_connect falg for the VecAD object.
-	CppAD::vector<optimize_connection>   vecad_connect(num_vecad_vec);
+	CppAD::vector<optimize_connection_type>   vecad_connect(num_vecad_vec);
 	CppAD::vector<size_t> vecad(num_vecad_ind);
 	j = 0;
 	for(i = 0; i < num_vecad_vec; i++)
@@ -1241,8 +1241,8 @@ void optimize(
 			case SqrtOp:
 			case TanOp:
 			case TanhOp:
-			if( tape[i_var].connect != not_connected )
-				tape[arg[0]].connect = yes_connected;
+			if( tape[i_var].connect_type != not_connected )
+				tape[arg[0]].connect_type = yes_connected;
 			break; // --------------------------------------------
 
 			// Unary operator where operand is arg[1]
@@ -1250,34 +1250,34 @@ void optimize(
 			case DivpvOp:
 			case MulpvOp:
 			case PowpvOp:
-			if( tape[i_var].connect != not_connected )
-				tape[arg[1]].connect = yes_connected;
+			if( tape[i_var].connect_type != not_connected )
+				tape[arg[1]].connect_type = yes_connected;
 			break; // --------------------------------------------
 		
 			// Special case for SubvpOp
 			case SubvpOp:
-			if( tape[i_var].connect != not_connected )
+			if( tape[i_var].connect_type != not_connected )
 			{
-				if( tape[arg[0]].connect == not_connected )
-					tape[arg[0]].connect = sum_connected;
+				if( tape[arg[0]].connect_type == not_connected )
+					tape[arg[0]].connect_type = sum_connected;
 				else
-					tape[arg[0]].connect = yes_connected;
-				if( tape[i_var].connect == sum_connected )
-					tape[i_var].connect = csum_connected;
+					tape[arg[0]].connect_type = yes_connected;
+				if( tape[i_var].connect_type == sum_connected )
+					tape[i_var].connect_type = csum_connected;
 			}
 			break; // --------------------------------------------
 		
 			// Special case for AddpvOp and SubpvOp
 			case AddpvOp:
 			case SubpvOp:
-			if( tape[i_var].connect != not_connected )
+			if( tape[i_var].connect_type != not_connected )
 			{
-				if( tape[arg[1]].connect == not_connected )
-					tape[arg[1]].connect = sum_connected;
+				if( tape[arg[1]].connect_type == not_connected )
+					tape[arg[1]].connect_type = sum_connected;
 				else
-					tape[arg[1]].connect = yes_connected;
-				if( tape[i_var].connect == sum_connected )
-					tape[i_var].connect = csum_connected;
+					tape[arg[1]].connect_type = yes_connected;
+				if( tape[i_var].connect_type == sum_connected )
+					tape[i_var].connect_type = csum_connected;
 			}
 			break; // --------------------------------------------
 
@@ -1285,19 +1285,19 @@ void optimize(
 			// Special case for AddvvOp and SubvvOp
 			case AddvvOp:
 			case SubvvOp:
-			if( tape[i_var].connect != not_connected )
+			if( tape[i_var].connect_type != not_connected )
 			{
-				if( tape[arg[0]].connect == not_connected )
-					tape[arg[0]].connect = sum_connected;
+				if( tape[arg[0]].connect_type == not_connected )
+					tape[arg[0]].connect_type = sum_connected;
 				else
-					tape[arg[0]].connect = yes_connected;
+					tape[arg[0]].connect_type = yes_connected;
 
-				if( tape[arg[1]].connect == not_connected )
-					tape[arg[1]].connect = sum_connected;
+				if( tape[arg[1]].connect_type == not_connected )
+					tape[arg[1]].connect_type = sum_connected;
 				else
-					tape[arg[1]].connect = yes_connected;
-				if( tape[i_var].connect == sum_connected )
-					tape[i_var].connect = csum_connected;
+					tape[arg[1]].connect_type = yes_connected;
+				if( tape[i_var].connect_type == sum_connected )
+					tape[i_var].connect_type = csum_connected;
 			}
 			break; // --------------------------------------------
 
@@ -1306,23 +1306,23 @@ void optimize(
 			case DivvvOp:
 			case MulvvOp:
 			case PowvvOp:
-			if( tape[i_var].connect != not_connected )
+			if( tape[i_var].connect_type != not_connected )
 			{
-				tape[arg[0]].connect = yes_connected;
-				tape[arg[1]].connect = yes_connected;
+				tape[arg[0]].connect_type = yes_connected;
+				tape[arg[1]].connect_type = yes_connected;
 			}
 			break; // --------------------------------------------
 
 			// Conditional expression operators
 			case CExpOp:
 			CPPAD_ASSERT_UNKNOWN( NumArg(CExpOp) == 6 );
-			if( tape[i_var].connect != not_connected )
+			if( tape[i_var].connect_type != not_connected )
 			{
 				mask = 1;
 				for(i = 2; i < 6; i++)
 				{	if( arg[1] & mask )
 					{	CPPAD_ASSERT_UNKNOWN( size_t(arg[i]) < i_var );
-						tape[arg[i]].connect = yes_connected;
+						tape[arg[i]].connect_type = yes_connected;
 					}
 					mask = mask << 1;
 				}
@@ -1340,7 +1340,7 @@ void optimize(
 
 			// Load using a parameter index
 			case LdpOp:
-			if( tape[i_var].connect != not_connected )
+			if( tape[i_var].connect_type != not_connected )
 			{
 				i                = vecad[ arg[0] - 1 ];
 				vecad_connect[i] = yes_connected;
@@ -1349,11 +1349,11 @@ void optimize(
 
 			// Load using a variable index
 			case LdvOp:
-			if( tape[i_var].connect != not_connected )
+			if( tape[i_var].connect_type != not_connected )
 			{
 				i                    = vecad[ arg[0] - 1 ];
 				vecad_connect[i]     = yes_connected;
-				tape[arg[1]].connect = yes_connected;
+				tape[arg[1]].connect_type = yes_connected;
 			}
 			break; // --------------------------------------------
 
@@ -1361,15 +1361,15 @@ void optimize(
 			case StpvOp:
 			i = vecad[ arg[0] - 1 ];
 			if( vecad_connect[i] != not_connected )
-				tape[arg[2]].connect = yes_connected;
+				tape[arg[2]].connect_type = yes_connected;
 			break; // --------------------------------------------
 
 			// Store a variable using a variable index
 			case StvvOp:
 			i = vecad[ arg[0] - 1 ];
 			if( vecad_connect[i] )
-			{	tape[arg[1]].connect = yes_connected;
-				tape[arg[2]].connect = yes_connected;
+			{	tape[arg[1]].connect_type = yes_connected;
+				tape[arg[2]].connect_type = yes_connected;
 			}
 			break; 
 			// ============================================================
@@ -1422,7 +1422,7 @@ void optimize(
 			CPPAD_ASSERT_UNKNOWN( 0 < arg[0] );
 			--user_j;
 			if( ! user_s[user_j].empty() )
-			{	tape[arg[0]].connect = yes_connected;
+			{	tape[arg[0]].connect_type = yes_connected;
 				user_keep.top() = true;
 			}
 			if( user_j == 0 )
@@ -1455,7 +1455,7 @@ void optimize(
 			CPPAD_ASSERT_UNKNOWN( 0 < user_i && user_i <= user_m );
 			--user_i;
 			user_r[user_i].clear();
-			if( tape[i_var].connect != not_connected )
+			if( tape[i_var].connect_type != not_connected )
 				user_r[user_i].insert(0);
 			if( user_i == 0 )
 			{	// call users function for this operation
@@ -1571,8 +1571,8 @@ void optimize(
 			case SubpvOp:
 			case SubvpOp:
 			case SubvvOp:
-			keep  = tape[i_var].connect != not_connected;
-			keep &= tape[i_var].connect != csum_connected;
+			keep  = tape[i_var].connect_type != not_connected;
+			keep &= tape[i_var].connect_type != csum_connected;
 			break; 
 
 			case UserOp:
@@ -1584,7 +1584,7 @@ void optimize(
 			break;
 
 			default:
-			keep = tape[i_var].connect != not_connected;
+			keep = tape[i_var].connect_type != not_connected;
 			break;
 		}
 
@@ -1631,7 +1631,7 @@ void optimize(
 			// Binary operators where 
 			// left is a variable and right is a parameter
 			case SubvpOp:
-			if( tape[arg[0]].connect == csum_connected )
+			if( tape[arg[0]].connect_type == csum_connected )
 			{
 				// convert to a sequence of summation operators
 				tape[i_var].new_var = optimize_record_csum(
@@ -1675,7 +1675,7 @@ void optimize(
 			// left is a parameter and right is a variable
 			case SubpvOp:
 			case AddpvOp:
-			if( tape[arg[1]].connect == csum_connected )
+			if( tape[arg[1]].connect_type == csum_connected )
 			{
 				// convert to a sequence of summation operators
 				tape[i_var].new_var = optimize_record_csum(
@@ -1720,8 +1720,8 @@ void optimize(
 			// both operators are variables
 			case AddvvOp:
 			case SubvvOp:
-			if( (tape[arg[0]].connect == csum_connected) |
-			    (tape[arg[1]].connect == csum_connected)
+			if( (tape[arg[0]].connect_type == csum_connected) |
+			    (tape[arg[1]].connect_type == csum_connected)
 			)
 			{
 				// convert to a sequence of summation operators
