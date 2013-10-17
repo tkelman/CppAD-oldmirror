@@ -148,20 +148,28 @@ State for this variable set during reverse sweep.
 enum optimize_connection_type {
 	/// There is no operation that connects this variable to the
 	/// independent variables.
-	not_connected     ,
+	not_connected        ,
 
 	/// There is one or more operations that connects this variable to the
 	/// independent variables.
-	yes_connected      ,
+	yes_connected        ,
 
 	/// There is only one parrent that connects this variable to the 
 	/// independent variables and the parent is a summation operation; i.e.,
 	/// AddvvOp, AddpvOp, SubpvOp, SubvpOp, or SubvvOp.
-	sum_connected      ,
+	sum_connected        ,
 
 	/// Satisfies the sum_connected assumptions above and in addition 
 	/// this variable is the result of summation operator.
-	csum_connected
+	csum_connected       ,
+
+	/// This node is only connected in the case where the comparision is 
+	/// true for the conditional expression with index \c connect_index.
+	cexp_true_connected  ,
+
+	/// This node is only connected in the case where the comparision is 
+	/// false for the conditional expression with index \c connect_index.
+	cexp_false_connected
 };
 
 
@@ -180,6 +188,15 @@ struct optimize_old_variable {
 
 	/// How is this variable connected to the independent variables
 	optimize_connection_type connect_type; 
+
+	/*!
+	The meaning of this index depends on \c connect_type as follows:
+
+	\par cexp_flag_connected
+	For flag equal to ture or false, \c connect_index is the index of the 
+	conditional expression corresponding to this connection.
+	*/
+	size_t connect_index;
 
 	/// Set during forward sweep to the index in the
 	/// new operation sequence corresponding to this old varable.
@@ -1346,9 +1363,16 @@ void optimize(
 			{
 				mask = 1;
 				for(i = 2; i < 6; i++)
-				{	if( arg[1] & mask )
-					{	CPPAD_ASSERT_UNKNOWN( size_t(arg[i]) < i_var );
-						tape[arg[i]].connect_type = yes_connected;
+				{	CPPAD_ASSERT_UNKNOWN( size_t(arg[i]) < i_var );
+					if( arg[1] & mask )
+					{	if( i == 2 || i == 3 )
+							tape[arg[i]].connect_type = yes_connected;
+						if( i == 4 )
+							tape[arg[i]].connect_type = 
+									cexp_true_connected;
+						if( i == 5 )
+							tape[arg[i]].connect_type = 
+									cexp_false_connected;
 					}
 					mask = mask << 1;
 				}
