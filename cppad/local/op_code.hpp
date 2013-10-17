@@ -71,6 +71,13 @@ enum OpCode {
 	ComOp,    // Compare(cop, result, left, right)
 	CosOp,    //  cos(variable)
 	CoshOp,   // cosh(variable)
+	CSkipOp,  // Conditional skip
+	// arg[0] = index of the corresponding CExpOp
+	// arg[1] = number of operations to skip if CExpOp comparision is true
+	// arg[2] = number of operations to skip if CExpOp comparision is false
+	// arg[3] -> arg[2+arg[0]]               = skip operations if true
+	// arg[3+arg[0]] -> arg[2+arg[0]+arg[1]] = skip operations if false
+	// arg[3+arg[0]+arg[1]] = arg[1] + arg[2]
 	CSumOp,   // Cummulative summation 
 	// arg[0] = number of addition variables in summation
 	// arg[1] = number of subtraction variables in summation
@@ -153,6 +160,7 @@ const size_t NumArgTable[] = {
 	4, // ComOp
 	1, // CosOp
 	1, // CoshOp
+	0, // CSkipOp  (actually has a variable number of arguments, not zero)
 	0, // CSumOp   (actually has a variable number of arguments, not zero)
 	2, // DisOp
 	2, // DivpvOp
@@ -254,6 +262,7 @@ const size_t NumResTable[] = {
 	0, // ComOp
 	2, // CosOp
 	2, // CoshOp
+	0, // CSkipOp
 	1, // CSumOp
 	1, // DisOp
 	1, // DivpvOp
@@ -458,6 +467,7 @@ void printOp(
 		"Com"   ,
 		"Cos"   ,
 		"Cosh"  ,
+		"CSkip" ,
 		"CSum"  ,
 		"Dis"   ,
 		"Divpv" ,
@@ -535,6 +545,23 @@ void printOp(
 		*/
 		printOpField(os, "cdx=", ind[0], ncol);
 		printOpField(os, "sdx=", ind[1], ncol);
+		break;
+
+		case CSkipOp:
+		/*
+		ind[0] = index of the corresponding CExpOp
+		ind[1] = number of operations to skip if CExpOp comparision is true
+		ind[2] = number of operations to skip if CExpOp comparision is false
+		ind[3] -> ind[2+ind[0]]               = skip operations if true
+		ind[3+ind[0]] -> ind[2+ind[0]+ind[1]] = skip operations if false
+		ind[3+ind[0]+ind[1]] = ind[1] + ind[2]
+		*/
+		CPPAD_ASSERT_UNKNOWN( ind[3+ind[0]+ind[1]] == ind[0]+ind[1] );
+		printOpField(os, " pr=", Rec->GetPar(ind[2]), ncol);
+		for(i = 0; i < size_t(ind[0]); i++)
+			 printOpField(os, " +v=", ind[3+i], ncol);
+		for(i = 0; i < size_t(ind[1]); i++)
+			 printOpField(os, " -v=", ind[3+ind[0]+i], ncol);
 		break;
 
 		case CSumOp:
