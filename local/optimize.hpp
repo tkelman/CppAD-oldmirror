@@ -1229,10 +1229,10 @@ void optimize(
 	// next expected operator in a UserOp sequence
 	enum { user_start, user_arg, user_ret, user_end } user_state;
 
-	// During reverse mode, push true if user operation is connected, 
-	// push false otherwise. During forward mode, use to determine if 
-	// we are keeping this operation and then pop.
-	std::stack<bool> user_keep;
+	// During reverse mode, compute type of connection for each call to
+	// a user atomic function.
+	std::stack<optimize_connection_type> user_connect_type;
+	std::stack<size_t>                   user_connect_index;
 
 	// Initialize a reverse mode sweep through the operation sequence
 	size_t i_op;
@@ -1448,10 +1448,30 @@ void optimize(
 			case DivvvOp:
 			case MulvvOp:
 			case PowvvOp:
-			if( tape[i_var].connect_type != not_connected )
-			{
-				tape[arg[0]].connect_type = yes_connected;
-				tape[arg[1]].connect_type = yes_connected;
+			for(i = 0; i < 2; i++) switch( connect_type )
+			{	case not_connected:
+				break;
+
+				case yes_connected:
+				case sum_connected:
+				case csum_connected:
+				tape[arg[i]].connect_type = yes_connected;
+				break;
+
+				case cexp_true_connected:
+				case cexp_false_connected:
+				if( tape[arg[i]].connect_type == not_connected )
+				{	tape[arg[i]].connect_type  = connect_type;
+					tape[arg[i]].connect_index = connect_index;
+				}
+				flag  = tape[arg[i]].connect_type  != connect_type;
+				flag |= tape[arg[i]].connect_index != connect_index;
+				if( flag )
+					tape[arg[i]].connect_type = yes_connected;
+				break;
+
+				default:
+				CPPAD_ASSERT_UNKNOWN(false);
 			}
 			break; // --------------------------------------------
 
@@ -1544,7 +1564,8 @@ void optimize(
 				user_j     = user_n;
 				user_i     = user_m;
 				user_state = user_ret;
-				user_keep.push(false);
+				user_connect_type.push( not_connected );
+				user_connect_index.push( 0 );
 			}
 			else
 			{	CPPAD_ASSERT_UNKNOWN( user_state == user_start );
@@ -1577,7 +1598,7 @@ void optimize(
 			--user_j;
 			if( ! user_s[user_j].empty() )
 			{	tape[arg[0]].connect_type = yes_connected;
-				user_keep.top() = true;
+				user_connect_type.top()   = yes_connected;
 			}
 			if( user_j == 0 )
 				user_state = user_start;
@@ -1609,8 +1630,33 @@ void optimize(
 			CPPAD_ASSERT_UNKNOWN( 0 < user_i && user_i <= user_m );
 			--user_i;
 			user_r[user_i].clear();
-			if( tape[i_var].connect_type != not_connected )
+			switch( connect_type )
+			{	case not_connected:
+				break;
+
+				case yes_connected:
+				case sum_connected:
+				case csum_connected:
+				user_connect_type.top() = yes_connected;
 				user_r[user_i].insert(0);
+				break;
+
+				case cexp_true_connected:
+				case cexp_false_connected:
+				if( user_connect_type.top() == not_connected )
+				{	user_connect_type.top()  = connect_type;
+					user_connect_index.top() = connect_index;
+				}
+				flag  = user_connect_type.top()  != connect_type;
+				flag |= user_connect_index.top() != connect_index;
+				if( flag )
+					user_connect_type.top() = yes_connected;
+				user_r[user_i].insert(0);
+				break;
+
+				default:
+				CPPAD_ASSERT_UNKNOWN(false);
+			}
 			if( user_i == 0 )
 			{	// call users function for this operation
 				atomic_base<Base>* atom = 
@@ -1734,7 +1780,7 @@ void optimize(
 			case UsravOp:
 			case UsrrpOp:
 			case UsrrvOp:
-			keep = user_keep.top();
+			keep = user_connect_type.top() != not_connected;
 			break;
 
 			default:
@@ -2068,7 +2114,8 @@ void optimize(
 				user_state = user_arg;
 			else
 			{	user_state = user_start;
-				user_keep.pop();	
+				user_connect_type.pop();	
+				user_connect_index.pop();
 			}
 			// user_index, user_id, user_n, user_m
 			rec->PutArg(arg[0], arg[1], arg[2], arg[3]);
