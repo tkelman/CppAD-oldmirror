@@ -124,6 +124,10 @@ enum OpCode {
 	TanhOp,   //  tan(variable)
 	// user atomic operation codes
 	UserOp,   //  start of a user atomic operaiton
+	// arg[0] = index of the operation if atomic_base<Base> class
+	// arg[1] = extra information passed trough by deprecated old atomic class
+	// arg[2] = number of arguments to this atomic function
+	// arg[3] = number of results for this atomic function
 	UsrapOp,  //  this user atomic argument is a parameter
 	UsravOp,  //  this user atomic argument is a variable
 	UsrrpOp,  //  this user atomic result is a parameter
