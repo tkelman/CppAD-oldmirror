@@ -650,7 +650,7 @@ void printOp(
 
 		case UserOp:
 		CPPAD_ASSERT_UNKNOWN( NumArg(op) == 4 );
-		{	std::string name = atomic_base<Base>::class_name(ind[0]);
+		{	std::string name =  atomic_base<Base>::class_name(ind[0]);
 			printOpField(os, " f=",   name.c_str(), ncol);
 			printOpField(os, " i=", ind[1], ncol);
 			printOpField(os, " n=", ind[2], ncol);
