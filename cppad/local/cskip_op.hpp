@@ -122,7 +122,7 @@ inline void forward_cskip_op_0(
 
 	Base left, right;
 	if( arg[1] & 1 )
-	{	CPPAD_ASSERT_UNKNOWN( size_t(arg[2]) < i_z );
+	{	CPPAD_ASSERT_UNKNOWN( size_t(arg[2]) <= i_z );
 		left = taylor[ arg[2] * nc_taylor + 0 ];
 		CPPAD_ASSERT_UNKNOWN( IdenticalPar(left) );
 	}
@@ -132,7 +132,7 @@ inline void forward_cskip_op_0(
 		CPPAD_ASSERT_UNKNOWN( IdenticalPar(left) );
 	}
 	if( arg[1] & 2 )
-	{	CPPAD_ASSERT_UNKNOWN( size_t(arg[3]) < i_z );
+	{	CPPAD_ASSERT_UNKNOWN( size_t(arg[3]) <= i_z );
 		right = taylor[ arg[3] * nc_taylor + 0 ];
 		CPPAD_ASSERT_UNKNOWN( IdenticalPar(right) );
 	}
@@ -141,6 +141,7 @@ inline void forward_cskip_op_0(
 		right = parameter[ arg[3] ];
 		CPPAD_ASSERT_UNKNOWN( IdenticalPar(right) );
 	}
+
 
 	// initialize to avoid compiler warning
 	bool true_case = false;
@@ -176,11 +177,11 @@ inline void forward_cskip_op_0(
 	}
 	if( true_case )
 	{	for(size_t i = 0; i < size_t(arg[4]); i++)
-			cskip_var[ arg[5+i] ] = true; 
+			cskip_var[ arg[6+i] ] = true; 
 	}
 	else
 	{	for(size_t i = 0; i < size_t(arg[5]); i++)
-			cskip_var[ arg[5+arg[4]+i] ] = true; 
+			cskip_var[ arg[6+arg[4]+i] ] = true; 
 	}
 	return;
 }
