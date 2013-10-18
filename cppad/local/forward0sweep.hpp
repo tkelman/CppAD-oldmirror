@@ -116,6 +116,13 @@ that have a different result from when the information in
 \a Rec was recorded.
 (Note that if NDEBUG is true, there are no ComOp operations
 in Rec and hence this return value is always zero.)
+
+\param cskip_var
+Is a vector with size \c numvar,
+the input value of the elements does not matter.
+Upon return, if cskip_var[i] is true, the value of variable with index i
+does not affect any of the dependent variable (given the value
+of the independent variables).
 */
 
 template <class Base>
@@ -126,7 +133,8 @@ size_t forward0sweep(
 	size_t                numvar,
 	player<Base>         *Rec,
 	size_t                J,
-	Base                 *Taylor
+	Base                 *Taylor,
+	CppAD::vector<bool>&  cskip_var
 )
 {	CPPAD_ASSERT_UNKNOWN( J >= 1 );
 
@@ -262,9 +270,9 @@ size_t forward0sweep(
 			// next_forward thinks it one has one argument.
 			// we must inform next_forward of this special case.
 			Rec->forward_cskip(op, arg, i_op, i_var);
-			// forward_cskip_op_0(
-			// 	0, 0, i_var, arg, num_par, parameter, J, Taylor
-			// );
+			forward_cskip_op_0(
+				i_var, arg, num_par, parameter, J, Taylor, cskip_var
+			);
 			break;
 			// -------------------------------------------------
 

@@ -108,6 +108,9 @@ private:
 	/// results of the forward mode calculations
 	pod_vector<Base> taylor_;
 
+	/// which variables do not affect the results
+	CppAD::vector<bool> cskip_var_;
+
 	/// Packed results of the forward mode Jacobian sparsity calculations.
 	/// for_jac_sparse_pack_.n_set() != 0  implies other sparsity results
 	/// are empty

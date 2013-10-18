@@ -102,20 +102,20 @@ If right is a variable,
 <code>taylor [ arg[3] * nc_taylor + 0 ]</code>
 is the zeroth order Taylor coefficient corresponding to right.
 
-\param \skip_op_list [in,out]
+\param \cskip_var [in,out]
 is vector specifying which operations are at this point are know to be
 unecessary and can be skipped. 
 This is both an input and an output.
 */
 template <class Base>
 inline void forward_cskip_op_0(
-	size_t         i_z                    ,
-	const addr_t*  arg                    ,
-	size_t         num_par                ,
-	const Base*    parameter              ,
-	size_t         nc_taylor              ,
-	Base*          taylor                 ,
-	CppAD::pod_vector<bool>& skip_op_list )
+	size_t               i_z            ,
+	const addr_t*        arg            ,
+	size_t               num_par        ,
+	const Base*          parameter      ,
+	size_t               nc_taylor      ,
+	Base*                taylor         ,
+	CppAD::vector<bool>& cskip_var      )
 {
 	CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) < size_t(CompareNe) );
 	CPPAD_ASSERT_UNKNOWN( arg[1] != 0 );
@@ -142,31 +142,33 @@ inline void forward_cskip_op_0(
 		CPPAD_ASSERT_UNKNOWN( IdenticalPar(right) );
 	}
 
-	bool true_case;
+	// initialize to avoid compiler warning
+	bool true_case = false;
+	Base diff      = left - right;
 	switch( CompareOp( arg[0] ) )
 	{
 		case CompareLt:
-		true_case = left < right;
+		true_case = LessThanZero(diff);
 		break;
 
 		case CompareLe:
-		true_case = left <= right;
+		true_case = LessThanOrZero(diff);
 		break;
 
 		case CompareEq:
-		true_case = left == right;
+		true_case = IdenticalZero(diff);
 		break;
 
 		case CompareGe:
-		true_case = left >= right;
+		true_case = GreaterThanOrZero(diff);
 		break;
 
 		case CompareGt:
-		true_case = left > right;
+		true_case = GreaterThanZero(diff);
 		break;
 
 		case CompareNe:
-		true_case = left != right;
+		true_case = ! IdenticalZero(diff);
 		break;
 
 		default:
@@ -174,11 +176,11 @@ inline void forward_cskip_op_0(
 	}
 	if( true_case )
 	{	for(size_t i = 0; i < size_t(arg[4]); i++)
-			skip_op_list[ arg[5+i] ] = true; 
+			cskip_var[ arg[5+i] ] = true; 
 	}
 	else
 	{	for(size_t i = 0; i < size_t(arg[5]); i++)
-			skip_op_list[ arg[5+arg[4]+i] ] = true; 
+			cskip_var[ arg[5+arg[4]+i] ] = true; 
 	}
 	return;
 }
