@@ -2,7 +2,7 @@
 # ifndef CPPAD_RECORDER_INCLUDED
 # define CPPAD_RECORDER_INCLUDED
 /* --------------------------------------------------------------------------
-CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-12 Bradley M. Bell
+CppAD: C++ Algorithmic Differentiation: Copyright (C) 2003-13 Bradley M. Bell
 
 CppAD is distributed under multiple licenses. This distribution is under
 the terms of the 
@@ -109,6 +109,8 @@ public:
 	/// Put six operation argument index in the recording
 	inline void PutArg(addr_t arg0, addr_t arg1, addr_t arg2, addr_t arg3,
 		addr_t arg4, addr_t arg5);
+	/// Reserve spacke for a specified number or arguments
+	inline addr_t* ReserveArg(size_t n_arg);
 
 	/// Put a character string in the text for this recording.
 	inline size_t PutTxt(const char *text);
@@ -420,6 +422,24 @@ inline void recorder<Base>::PutArg(addr_t arg0, addr_t arg1, addr_t arg2,
 	rec_op_arg_[i++] =  static_cast<addr_t>( arg4 );
 	rec_op_arg_[i]   =  static_cast<addr_t>( arg5 );
 	CPPAD_ASSERT_UNKNOWN( rec_op_arg_.size() == i + 1 );
+}
+// --------------------------------------------------------------------------
+/*!
+Reserve space for arguments, but delay placing values there.
+
+\param n_arg
+number of arguements to reserve space for
+
+\return
+point to the first argument; i.e., if arg is the return value,
+arg[0] throught arg[n_arg-1] are the arguments.
+*/
+template <class Base>
+inline addr_t* recorder<Base>::ReserveArg(size_t n_arg)
+{ 
+	size_t i = rec_op_arg_.extend(n_arg);
+	CPPAD_ASSERT_UNKNOWN( rec_op_arg_.size() == i + n_arg );
+	return rec_op_arg_.data() + i;
 }
 // --------------------------------------------------------------------------
 /*!

@@ -452,16 +452,16 @@ public:
 		CPPAD_ASSERT_UNKNOWN( op == CSkipOp );
 		CPPAD_ASSERT_UNKNOWN( NumArg(CSkipOp) == 0 );
 		CPPAD_ASSERT_UNKNOWN(
-		op_arg[1] + op_arg[2] == op_arg[ 3 + op_arg[1] + op_arg[2] ]
+		op_arg[4] + op_arg[5] == op_arg[ 6 + op_arg[4] + op_arg[5] ]
 		);
 		/*
 		The only thing that really needs fixing is op_arg_.
 		Actual number of arugments for this operator is
-			op_arg[1] + op_arg[2] + 4.
+			7 + op_arg[4] + op_arg[5]
  		We must change op_arg_ so that when you add NumArg(CSkipOp)
 		you get first argument for next operator in sequence.
 		*/
-		op_arg_    += op_arg[1] + op_arg[2] + 4;
+		op_arg_    += 7 + op_arg[4] + op_arg[5];
 
 		CPPAD_ASSERT_UNKNOWN( op_arg_ + NumArg(op) <= rec_op_arg_.size() );
 		CPPAD_ASSERT_UNKNOWN( var_index_  < num_rec_var_ );

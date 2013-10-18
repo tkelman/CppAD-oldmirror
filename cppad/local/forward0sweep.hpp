@@ -257,6 +257,17 @@ size_t forward0sweep(
 			break;
 			// -------------------------------------------------
 
+			case CSkipOp:
+			// CSumOp has a variable number of arguments and
+			// next_forward thinks it one has one argument.
+			// we must inform next_forward of this special case.
+			Rec->forward_cskip(op, arg, i_op, i_var);
+			// forward_cskip_op_0(
+			// 	0, 0, i_var, arg, num_par, parameter, J, Taylor
+			// );
+			break;
+			// -------------------------------------------------
+
 			case CSumOp:
 			// CSumOp has a variable number of arguments and
 			// next_forward thinks it one has one argument.
@@ -625,7 +636,7 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			default:
-			CPPAD_ASSERT_UNKNOWN(0);
+			CPPAD_ASSERT_UNKNOWN(false);
 		}
 # if CPPAD_FORWARD0SWEEP_TRACE
 		size_t       d      = 0;
