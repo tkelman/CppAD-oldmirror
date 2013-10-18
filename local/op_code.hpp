@@ -69,12 +69,16 @@ enum OpCode {
 	CosOp,    //  cos(variable)
 	CoshOp,   // cosh(variable)
 	CSkipOp,  // Conditional skip
-	// arg[0] = index of the corresponding CExpOp
-	// arg[1] = number of operations to skip if CExpOp comparision is true
-	// arg[2] = number of operations to skip if CExpOp comparision is false
-	// arg[3] -> arg[2+arg[0]]               = skip operations if true
-	// arg[3+arg[0]] -> arg[2+arg[0]+arg[1]] = skip operations if false
-	// arg[3+arg[0]+arg[1]] = arg[1] + arg[2]
+	// arg[0]     = the Rel operator: Lt, Le, Eq, Ge, Gt, or Ne
+	// arg[1] & 1 = is left a variable
+	// arg[1] & 2 = is right a variable
+	// arg[2]     = index correspoding to left 
+	// arg[3]     = index correspoding to right 
+	// arg[4] = number of operations to skip if CExpOp comparision is true
+	// arg[5] = number of operations to skip if CExpOp comparision is false
+	// arg[6] -> arg[5+arg[4]]               = skip operations if true
+	// arg[6+arg[4]] -> arg[5+arg[4]+arg[5]] = skip operations if false
+	// arg[6+arg[4]+arg[5]] = arg[4] + arg[5]
 	CSumOp,   // Cummulative summation 
 	// arg[0] = number of addition variables in summation
 	// arg[1] = number of subtraction variables in summation
@@ -514,19 +518,29 @@ void printOp(
 	{
 		case CSkipOp:
 		/*
-		ind[0] = index of the corresponding CExpOp
-		ind[1] = number of operations to skip if CExpOp comparision is true
-		ind[2] = number of operations to skip if CExpOp comparision is false
-		ind[3] -> ind[2+ind[0]]               = skip operations if true
-		ind[3+ind[0]] -> ind[2+ind[0]+ind[1]] = skip operations if false
-		ind[3+ind[0]+ind[1]] = ind[1] + ind[2]
+		ind[0]     = the Rel operator: Lt, Le, Eq, Ge, Gt, or Ne
+		ind[1] & 1 = is left a variable
+		ind[1] & 2 = is right a variable
+		ind[2]     = index correspoding to left 
+		ind[3]     = index correspoding to right 
+		ind[4] = number of operations to skip if CExpOp comparision is true
+		ind[5] = number of operations to skip if CExpOp comparision is false
+		ind[6] -> ind[5+ind[4]]               = skip operations if true
+		ind[6+ind[4]] -> ind[5+ind[4]+ind[5]] = skip operations if false
+		ind[6+ind[4]+ind[5]] = ind[4] + ind[5]
 		*/
-		CPPAD_ASSERT_UNKNOWN( ind[3+ind[0]+ind[1]] == ind[0]+ind[1] );
-		printOpField(os, " pr=", Rec->GetPar(ind[2]), ncol);
-		for(i = 0; i < size_t(ind[0]); i++)
-			 printOpField(os, " +v=", ind[3+i], ncol);
-		for(i = 0; i < size_t(ind[1]); i++)
-			 printOpField(os, " -v=", ind[3+ind[0]+i], ncol);
+		CPPAD_ASSERT_UNKNOWN( ind[6+ind[4]+ind[5]] == ind[4]+ind[5] );
+		CPPAD_ASSERT_UNKNOWN(ind[1] != 0);
+		if( ind[1] & 1 )
+			printOpField(os, " vl=", ind[2], ncol);
+		else	printOpField(os, " pl=", Rec->GetPar(ind[2]), ncol);
+		if( ind[1] & 2 )
+			printOpField(os, " vr=", ind[3], ncol);
+		else	printOpField(os, " pr=", Rec->GetPar(ind[3]), ncol);
+		for(i = 0; i < size_t(ind[4]); i++)
+			 printOpField(os, " st=", ind[6+i], ncol);
+		for(i = 0; i < size_t(ind[5]); i++)
+			 printOpField(os, " sf=", ind[6+ind[4]+i], ncol);
 		break;
 
 		case CSumOp:
