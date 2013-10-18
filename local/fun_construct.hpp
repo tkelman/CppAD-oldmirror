@@ -325,6 +325,10 @@ void ADFun<Base>::operator=(const ADFun<Base>& f)
 		}
 	}
 
+	// allocate and copy the conditional skip information
+	cskip_var_.clear();
+	cskip_var_ = f.cskip_var_;
+
 	// allocate and copy the forward sparsity information
 	size_t n_set = f.for_jac_sparse_pack_.n_set();
 	size_t end   = f.for_jac_sparse_pack_.end();
@@ -451,7 +455,8 @@ total_num_var_(0)
 	// use independent variable values to fill in values for others
 # if CPPAD_USE_FORWARD0SWEEP
 	compare_change_ = forward0sweep(std::cout, false,
-		n, total_num_var_, &play_, taylor_col_dim_, taylor_.data()
+		n, total_num_var_, &play_, taylor_col_dim_, taylor_.data(),
+		cskip_var_
 	);
 # else
 	size_t p = 0;
