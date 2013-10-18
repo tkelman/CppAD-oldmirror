@@ -167,6 +167,10 @@ size_t forward0sweep(
 		}
 	}
 
+	// zero order, so initialize conditional skip flags
+	for(i = 0; i < numvar; i++)
+		cskip_var[i] = false;
+
 	// work space used by UserOp.
 	const size_t user_q = 0;     // lowest order
 	const size_t user_p = 0;     // highest order
@@ -218,6 +222,18 @@ size_t forward0sweep(
 	{
 		// this op
 		Rec->next_forward(op, arg, i_op, i_var);
+
+		// check if we are skipping this operation
+		CPPAD_ASSERT_UNKNOWN( NumRes(CSkipOp) == 0 );
+		CPPAD_ASSERT_UNKNOWN( NumRes(EndOp)  == 0 );
+		while( cskip_var[i_var] && NumRes(op) > 0 )
+		{	Rec->next_forward(op, arg, i_op, i_var);
+			if( op == CSumOp )
+			{	// CSumOp has a variable number of arguments and
+				Rec->forward_csum(op, arg, i_op, i_var);
+			}
+		}
+
 # ifndef NDEBUG
 		if( i_op <= n )
 		{	CPPAD_ASSERT_UNKNOWN((op == InvOp) | (op == BeginOp));
