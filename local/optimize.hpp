@@ -250,6 +250,8 @@ struct optimize_cskip_info {
 	CppAD::vector<size_t> skip_on_true;
 	/// set of operations to skip on false
 	CppAD::vector<size_t> skip_on_false;
+	/// pointer to space reserved for the arguments
+	addr_t* arg;
 };
 
 /*!
@@ -1808,28 +1810,19 @@ void optimize(
 		{	cskip_info_next++;
 			skip &= cskip_info[j].skip_on_true.size() > 0 ||
 					cskip_info[j].skip_on_false.size() > 0;
-		}
-		if( skip )
-		{	optimize_cskip_info info = cskip_info[j];
-			CPPAD_ASSERT_UNKNOWN( NumRes(CSkipOp) == 0 );
-			CPPAD_ASSERT_UNKNOWN( info.left < i_var );
-			CPPAD_ASSERT_UNKNOWN( info.right < i_var );
-			rec->PutArg( 
-				info.cop                  , // arg[0]
-				info.flag                 , // arg[1]
-				info.left                 , // arg[2]
-				info.right                , // arg[3]
-				info.skip_on_true.size()  , // arg[4] 
-				info.skip_on_false.size()   // arg[5] 
-			);
-			// These are old variable indices and need to be mapped
-			// to new variable indices after forward pass is completed.
-			for(i = 0; i < info.skip_on_true.size(); i++)
-				rec->PutArg( info.skip_on_true[i] );
-			for(i = 0; i < info.skip_on_false.size(); i++)
-				rec->PutArg( info.skip_on_false[i] );
-			//
-			rec->PutOp(CSkipOp);
+			if( skip )
+			{	optimize_cskip_info info = cskip_info[j];
+				CPPAD_ASSERT_UNKNOWN( NumRes(CSkipOp) == 0 );
+				CPPAD_ASSERT_UNKNOWN( info.left < i_var );
+				CPPAD_ASSERT_UNKNOWN( info.right < i_var );
+				size_t n_true  = info.skip_on_true.size();
+				size_t n_false = info.skip_on_false.size();
+				// reserve space for the arguments to this operator but 
+				// delay setting them until we have all the new addresses
+				cskip_info[j].arg = rec->ReserveArg(7 + n_true + n_false);
+				rec->PutOp(CSkipOp);
+			}
+			else	cskip_info[j].arg = CPPAD_NULL;
 		}
 
 		// determine if we should keep this operation in the new
@@ -2262,8 +2255,34 @@ void optimize(
 	}
 	// modify the dependent variable vector to new indices
 	for(i = 0; i < dep_taddr.size(); i++ )
-	{	CPPAD_ASSERT_UNKNOWN( size_t(tape[ dep_taddr[i] ].new_var) < num_var );
+	{	CPPAD_ASSERT_UNKNOWN( size_t(tape[dep_taddr[i]].new_var) < num_var );
 		dep_taddr[i] = tape[ dep_taddr[i] ].new_var;
+	}
+
+	// fill in the arguments for the CSkip operations
+	CPPAD_ASSERT_UNKNOWN( cskip_info_next == cskip_info.size() );
+	for(i = 0; i < cskip_info.size(); i++)
+	{	optimize_cskip_info info = cskip_info[i];
+		if( info.arg != CPPAD_NULL )
+		{	size_t n_true  = info.skip_on_true.size();
+			size_t n_false = info.skip_on_false.size();
+			info.arg[0] = static_cast<addr_t>( info.cop );
+			info.arg[1] = static_cast<addr_t>( info.flag );
+			info.arg[2] = static_cast<addr_t>( info.left );
+			info.arg[3] = static_cast<addr_t>( info.right );
+			info.arg[4] = static_cast<addr_t>( n_true );
+			info.arg[5] = static_cast<addr_t>( n_false );
+			for(j = 0; j < n_true; j++)
+			{	i_var = info.skip_on_true[j];
+				info.arg[6 + j] = tape[i_var].new_var;
+			} 
+			for(j = 0; j < n_false; j++)
+			{	i_var = info.skip_on_false[j];
+				info.arg[6 + n_true + j] = tape[i_var].new_var;
+			} 
+			info.arg[6 + n_true + n_false] = 
+				static_cast<addr_t>(n_true + n_false);
+		}
 	}
 }
 

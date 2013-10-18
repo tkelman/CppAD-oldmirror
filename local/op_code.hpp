@@ -506,6 +506,10 @@ void printOp(
 	{	printOpField(os, "op=", OpName[op], 4); 
 		printOpField(os, "", CompareOpName[ ind[0] ], 3);
 	}
+	else if( op == CSkipOp )
+	{	printOpField(os, "op=", OpName[op], 5); 
+		printOpField(os, "", CompareOpName[ ind[0] ], 3);
+	}
 	else if( op == ComOp )
 	{	printOpField(os, "op=", OpName[op], 3); 
 		printOpField(os, "", CompareOpName[ ind[0] ], 4);
