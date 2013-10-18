@@ -35,38 +35,152 @@ This is used for error checking. To be specific,
 the left and right operands for the CExpOp operation must have indexes
 less than or equal this value.
 
-\param arg
-\a arg[0] 
-is the index of the corresponding CExpOp operation. This is used to 
-determine if the comparision result is true or false.
+\param arg [in]
 \n
-\a arg[1] 
-is the number of operations to skip if the comparision result is true.
+\a arg[0]
+is static cast to size_t from the enum type
+\verbatim
+	enum CompareOp {
+		CompareLt, 
+		CompareLe, 
+		CompareEq, 
+		CompareGe, 
+		CompareGt, 
+		CompareNe
+	}
+\endverbatim
+for this operation.
+Note that arg[0] cannot be equal to CompareNe.
+\n
+\n
+\a arg[1] & 1
+\n
+If this is zero, left is a a parameter. Otherwise it is a variable.
+\n
+\n
+\a arg[1] & 2
+\n
+If this is zero, right is a parameter. Otherwise it is a variable.
 \n
 \a arg[2] 
+is the index corresponding to left in comparision.
+\n
+\a arg[3] 
+is the index corresponding to right in comparision.
+\n
+\a arg[4] 
+is the number of operations to skip if the comparision result is true.
+\n
+\a arg[5] 
 is the number of operations to skip if the comparision result is false.
 \n
-<tt>arg[2+i]</tt>
-for <tt>i = 1 , ... , arg[1]</tt> are the operations to skip if the
+<tt>arg[5+i]</tt>
+for <tt>i = 1 , ... , arg[4]</tt> are the operations to skip if the
 comparision result is true.
 \n
-<tt>arg[2+arg[1]+i]</tt>
-for <tt>i = 1 , ... , arg[2]</tt> are the operations to skip if the
+<tt>arg[5+arg[4]+i]</tt>
+for <tt>i = 1 , ... , arg[5]</tt> are the operations to skip if the
 comparision result is false.
 
-\param \skip_op_list
+\param num_par [in]
+is the total number of values in the vector \a parameter.
+
+\param parameter [in]
+If left is a parameter,
+<code>parameter [ arg[2] ]</code> is its value.
+If right is a parameter,
+<code>parameter [ arg[3] ]</code> is its value.
+
+\param nc_taylor [in]
+number of columns in the matrix containing the Taylor coefficients.
+
+\param taylor [in]
+If left is a variable,
+<code>taylor [ arg[2] * nc_taylor + 0 ]</code>
+is the zeroth order Taylor coefficient corresponding to left.
+If right is a variable,
+<code>taylor [ arg[3] * nc_taylor + 0 ]</code>
+is the zeroth order Taylor coefficient corresponding to right.
+
+\param \skip_op_list [in,out]
 is vector specifying which operations are at this point are know to be
 unecessary and can be skipped. 
 This is both an input and an output.
 */
 template <class Base>
 inline void forward_cskip_op_0(
-	size_t        i_z          ,
-	const addr_t* arg          ,
-	size_t        skip_op_list )
+	size_t         i_z                    ,
+	const addr_t*  arg                    ,
+	size_t         num_par                ,
+	const Base*    parameter              ,
+	size_t         nc_taylor              ,
+	Base*          taylor                 ,
+	CppAD::pod_vector<bool>& skip_op_list )
 {
-	// This routine not yet implemented
-	CPPAD_ASSERT_UNKNOWN(false);
+	CPPAD_ASSERT_UNKNOWN( size_t(arg[0]) < size_t(CompareNe) );
+	CPPAD_ASSERT_UNKNOWN( arg[1] != 0 );
+
+	Base left, right;
+	if( arg[1] & 1 )
+	{	CPPAD_ASSERT_UNKNOWN( size_t(arg[2]) < i_z );
+		left = taylor[ arg[2] * nc_taylor + 0 ];
+		CPPAD_ASSERT_UNKNOWN( IdenticalPar(left) );
+	}
+	else
+	{	CPPAD_ASSERT_UNKNOWN( size_t(arg[2]) < num_par );
+		left = parameter[ arg[2] ];
+		CPPAD_ASSERT_UNKNOWN( IdenticalPar(left) );
+	}
+	if( arg[1] & 2 )
+	{	CPPAD_ASSERT_UNKNOWN( size_t(arg[3]) < i_z );
+		right = taylor[ arg[3] * nc_taylor + 0 ];
+		CPPAD_ASSERT_UNKNOWN( IdenticalPar(right) );
+	}
+	else
+	{	CPPAD_ASSERT_UNKNOWN( size_t(arg[3]) < num_par );
+		right = parameter[ arg[3] ];
+		CPPAD_ASSERT_UNKNOWN( IdenticalPar(right) );
+	}
+
+	bool true_case;
+	switch( CompareOp( arg[0] ) )
+	{
+		case CompareLt:
+		true_case = left < right;
+		break;
+
+		case CompareLe:
+		true_case = left <= right;
+		break;
+
+		case CompareEq:
+		true_case = left == right;
+		break;
+
+		case CompareGe:
+		true_case = left >= right;
+		break;
+
+		case CompareGt:
+		true_case = left > right;
+		break;
+
+		case CompareNe:
+		true_case = left != right;
+		break;
+
+		default:
+		CPPAD_ASSERT_UNKNOWN(false);
+	}
+	if( true_case )
+	{	for(size_t i = 0; i < size_t(arg[4]); i++)
+			skip_op_list[ arg[5+i] ] = true; 
+	}
+	else
+	{	for(size_t i = 0; i < size_t(arg[5]); i++)
+			skip_op_list[ arg[5+arg[4]+i] ] = true; 
+	}
+	return;
 }
 /*! \} */
 } // END_CPPAD_NAMESPACE
