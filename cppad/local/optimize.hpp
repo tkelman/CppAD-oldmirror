@@ -1264,8 +1264,8 @@ void optimize(
 	while(op != BeginOp)
 	{	// next op
 		play->next_reverse(op, arg, i_op, i_var);
-		// This if is not necessary becasue last assignment
-		// with this value of i_var will have NumRes(op) > 0
+
+		// Store the operator corresponding to each variable
 		if( NumRes(op) > 0 )
 		{	tape[i_var].op = op;
 			tape[i_var].arg = arg;
@@ -1713,6 +1713,30 @@ void optimize(
 	// Erase all information in the recording
 	rec->free();
 
+	// Determine which variables can be conditionally skipped
+	// 2DO: Perhaps we should change NumRes( UserOp ) = 1 , so it
+	// also gets a separate skip_on_true and skip_on false value
+	for(i = 0; i < num_var; i++)
+	{	if( tape[i].connect_type == cexp_true_connected )
+		{	j = tape[i].connect_index;
+			cskip_info[j].skip_on_false.push_back(i);
+		}
+		if( tape[i].connect_type == cexp_false_connected )
+		{	j = tape[i].connect_index;
+			cskip_info[j].skip_on_true.push_back(i);
+		}
+	}
+	// Sort the conditional skip information by the maximum of the
+	// index for the left and right comparision operands
+	CppAD::vector<size_t> cskip_info_order( cskip_info.size() );
+	{	CppAD::vector<size_t> keys( cskip_info.size() );
+		for(i = 0; i < cskip_info.size(); i++)
+			keys[i] = std::max( cskip_info[i].left, cskip_info[i].right );
+		CppAD::index_sort(keys, cskip_info_order);
+	}
+	size_t cskip_info_next = 0;
+
+
 	// Initilaize table mapping hash code to variable index in tape
 	// as pointing to the BeginOp at the beginning of the tape
 	CppAD::vector<size_t>  hash_table_var(CPPAD_HASH_TABLE_SIZE);
@@ -1772,6 +1796,41 @@ void optimize(
 		play->next_forward(op, arg, i_op, i_var);
 		CPPAD_ASSERT_UNKNOWN( (i_op > n)  | (op == InvOp) );
 		CPPAD_ASSERT_UNKNOWN( (i_op <= n) | (op != InvOp) );
+
+		// determine if we should insert a conditional skip here
+		bool skip = cskip_info_next < cskip_info.size();
+		if( skip )
+		{	j     = cskip_info_order[cskip_info_next];
+			skip &= cskip_info[j].left < i_var;
+			skip &= cskip_info[j].right < i_var;
+		}
+		if( skip )
+		{	cskip_info_next++;
+			skip &= cskip_info[j].skip_on_true.size() > 0 ||
+					cskip_info[j].skip_on_false.size() > 0;
+		}
+		if( skip )
+		{	optimize_cskip_info info = cskip_info[j];
+			CPPAD_ASSERT_UNKNOWN( NumRes(CSkipOp) == 0 );
+			CPPAD_ASSERT_UNKNOWN( info.left < i_var );
+			CPPAD_ASSERT_UNKNOWN( info.right < i_var );
+			rec->PutArg( 
+				info.cop                  , // arg[0]
+				info.flag                 , // arg[1]
+				info.left                 , // arg[2]
+				info.right                , // arg[3]
+				info.skip_on_true.size()  , // arg[4] 
+				info.skip_on_false.size()   // arg[5] 
+			);
+			// These are old variable indices and need to be mapped
+			// to new variable indices after forward pass is completed.
+			for(i = 0; i < info.skip_on_true.size(); i++)
+				rec->PutArg( info.skip_on_true[i] );
+			for(i = 0; i < info.skip_on_false.size(); i++)
+				rec->PutArg( info.skip_on_false[i] );
+			//
+			rec->PutOp(CSkipOp);
+		}
 
 		// determine if we should keep this operation in the new
 		// operation sequence
