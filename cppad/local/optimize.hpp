@@ -233,6 +233,24 @@ struct optimize_csum_stacks {
 	std::stack<size_t >                         sub_stack;
 };
 
+/*!
+CExpOp information that is copied to corresponding CSkipOp
+*/
+struct optimize_cskip_info {
+	/// comparision operator
+	CompareOp cop;
+	/// (flag & 1) is true if and only if left is a variable
+	/// (flag & 2) is true if and only if right is a variable
+	size_t flag;
+	/// index for left comparison operand
+	size_t left; 
+	/// index for right comparison operand
+	size_t right; 
+	/// set of operations to skip on true
+	CppAD::vector<size_t> skip_on_true;
+	/// set of operations to skip on false
+	CppAD::vector<size_t> skip_on_false;
+};
 
 /*!
 Shared documentation for optimization helper functions (not called).
@@ -1234,6 +1252,9 @@ void optimize(
 	std::stack<optimize_connection_type> user_connect_type;
 	std::stack<size_t>                   user_connect_index;
 
+	/// During reverse mode, information for each CSkip operation
+	CppAD::vector<optimize_cskip_info>   cskip_info;
+
 	// Initialize a reverse mode sweep through the operation sequence
 	size_t i_op;
 	play->start_reverse(op, arg, i_op, i_var);
@@ -1476,10 +1497,19 @@ void optimize(
 			break; // --------------------------------------------
 
 			// Conditional expression operators
+			// 2DO: This does not handle nested conditional expressions; 
+			// i.e. Suppose i_var is connected to a conditional expression.
 			case CExpOp:
 			CPPAD_ASSERT_UNKNOWN( NumArg(CExpOp) == 6 );
 			if( tape[i_var].connect_type != not_connected )
-			{
+			{	optimize_cskip_info info;
+				info.cop   = CompareOp( arg[0] );
+				info.flag  = arg[1];
+				info.left  = arg[2];
+				info.right = arg[3];
+				size_t index = cskip_info.size();
+				cskip_info.push_back(info);
+
 				mask = 1;
 				for(i = 2; i < 6; i++)
 				{	CPPAD_ASSERT_UNKNOWN( size_t(arg[i]) < i_var );
@@ -1487,7 +1517,7 @@ void optimize(
 					{	if( i == 2 || i == 3 )
 							tape[arg[i]].connect_type = yes_connected;
 						else
-						{	tape[arg[i]].connect_index = i_var;
+						{	tape[arg[i]].connect_index = index;
 							if( i == 4 )
 								tape[arg[i]].connect_type = 
 										cexp_true_connected;
