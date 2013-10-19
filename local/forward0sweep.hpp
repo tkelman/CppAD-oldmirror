@@ -110,19 +110,19 @@ variable with index i on the tape
 is the zero order Taylor coefficient for the variable with 
 index i on the tape.
 
-\a return
-The return value is equal to the number of ComOp operations
-that have a different result from when the information in 
-\a Rec was recorded.
-(Note that if NDEBUG is true, there are no ComOp operations
-in Rec and hence this return value is always zero.)
-
 \param cskip_var
 Is a vector with size \c numvar,
 the input value of the elements does not matter.
 Upon return, if cskip_var[i] is true, the value of variable with index i
 does not affect any of the dependent variable (given the value
 of the independent variables).
+
+\a return
+The return value is equal to the number of ComOp operations
+that have a different result from when the information in 
+\a Rec was recorded.
+(Note that if NDEBUG is true, there are no ComOp operations
+in Rec and hence this return value is always zero.)
 */
 
 template <class Base>
@@ -222,6 +222,8 @@ size_t forward0sweep(
 	{
 		// this op
 		Rec->next_forward(op, arg, i_op, i_var);
+		CPPAD_ASSERT_UNKNOWN( (i_op > n)  | (op == InvOp) );  
+		CPPAD_ASSERT_UNKNOWN( (i_op <= n) | (op != InvOp) );  
 
 		// check if we are skipping this operation
 		CPPAD_ASSERT_UNKNOWN( NumRes(CSkipOp) == 0 );
@@ -233,13 +235,6 @@ size_t forward0sweep(
 				Rec->forward_csum(op, arg, i_op, i_var);
 			}
 		}
-
-# ifndef NDEBUG
-		if( i_op <= n )
-		{	CPPAD_ASSERT_UNKNOWN((op == InvOp) | (op == BeginOp));
-		}
-		else	CPPAD_ASSERT_UNKNOWN((op != InvOp) & (op != BeginOp));
-# endif
 
 		// action to take depends on the case
 		switch( op )
@@ -281,28 +276,6 @@ size_t forward0sweep(
 			break;
 			// -------------------------------------------------
 
-			case CSkipOp:
-			// CSumOp has a variable number of arguments and
-			// next_forward thinks it one has one argument.
-			// we must inform next_forward of this special case.
-			Rec->forward_cskip(op, arg, i_op, i_var);
-			forward_cskip_op_0(
-				i_var, arg, num_par, parameter, J, Taylor, cskip_var
-			);
-			break;
-			// -------------------------------------------------
-
-			case CSumOp:
-			// CSumOp has a variable number of arguments and
-			// next_forward thinks it one has one argument.
-			// we must inform next_forward of this special case.
-			Rec->forward_csum(op, arg, i_op, i_var);
-			forward_csum_op(
-				0, 0, i_var, arg, num_par, parameter, J, Taylor
-			);
-			break;
-
-			// -------------------------------------------------
 			case CExpOp:
 			// Use the general case with d == 0 
 			// (could create an optimzied verison for this case)
@@ -329,6 +302,28 @@ size_t forward0sweep(
 			// sinh(x), cosh(x)
 			CPPAD_ASSERT_UNKNOWN( i_var < numvar  );
 			forward_cosh_op_0(i_var, arg[0], J, Taylor);
+			break;
+			// -------------------------------------------------
+
+			case CSkipOp:
+			// CSumOp has a variable number of arguments and
+			// next_forward thinks it one has one argument.
+			// we must inform next_forward of this special case.
+			Rec->forward_cskip(op, arg, i_op, i_var);
+			forward_cskip_op_0(
+				i_var, arg, num_par, parameter, J, Taylor, cskip_var
+			);
+			break;
+			// -------------------------------------------------
+
+			case CSumOp:
+			// CSumOp has a variable number of arguments and
+			// next_forward thinks it one has one argument.
+			// we must inform next_forward of this special case.
+			Rec->forward_csum(op, arg, i_op, i_var);
+			forward_csum_op(
+				0, 0, i_var, arg, num_par, parameter, J, Taylor
+			);
 			break;
 			// -------------------------------------------------
 

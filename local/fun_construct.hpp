@@ -461,7 +461,8 @@ total_num_var_(0)
 # else
 	size_t p = 0;
 	compare_change_ = forward_sweep(std::cout, false,
-		p, p, n, total_num_var_, &play_, taylor_col_dim_, taylor_.data()
+		p, p, n, total_num_var_, &play_, taylor_col_dim_, taylor_.data(),
+		cskip_var_
 	);
 # endif
 	CPPAD_ASSERT_UNKNOWN( compare_change_ == 0 );
