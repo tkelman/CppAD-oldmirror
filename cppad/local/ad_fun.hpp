@@ -431,6 +431,9 @@ public:
 	/// set number of coefficients currently allocated (per variable)
 	void capacity_taylor(size_t per_var);   
 
+	/// number of variables in conditional expressions that can be skipped
+	size_t number_skip(void);   
+
 	/// number of independent variables
 	size_t Domain(void) const
 	{	return ind_taddr_.size(); }

@@ -200,6 +200,7 @@ nobase_myinclude_HEADERS =  \
 	cppad/local/mul.hpp \
 	cppad/local/mul_op.hpp \
 	cppad/local/near_equal_ext.hpp \
+	cppad/local/num_skip.hpp \
 	cppad/local/omp_max_thread.hpp \
 	cppad/local/op_code.hpp \
 	cppad/local/op.hpp \
