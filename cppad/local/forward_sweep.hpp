@@ -119,6 +119,22 @@ variable with index j on the tape
 is the k-th order Taylor coefficient for the variable with 
 index i on the tape.
 
+\param cskip_var
+Is a vector with size \c numvar,
+
+\li <tt>q = 0</tt>
+In this case,
+the input value of the elements does not matter.
+Upon return, if cskip_var[i] is true, the value of variable with index i
+does not affect any of the dependent variable (given the value
+of the independent variables).
+
+\li <tt>q > 0</tt>
+The vector is not modified and
+if cskip_var[i] is true, the value of variable with index i
+does not affect any of the dependent variable (given the value
+of the independent variables).
+
 \a return
 If \a p is not zero, the return value is zero.
 If \a p is zero,
@@ -138,8 +154,9 @@ size_t forward_sweep(
 	const size_t          n,
 	const size_t          numvar,
 	player<Base>         *Rec,
-	const size_t         J,
-	Base                 *Taylor
+	const size_t          J,
+	Base                 *Taylor,
+	CppAD::vector<bool>&  cskip_var
 )
 {	CPPAD_ASSERT_UNKNOWN( J >= p + 1 );
 	CPPAD_ASSERT_UNKNOWN( q <= p );
@@ -165,17 +182,23 @@ size_t forward_sweep(
 	// initialize the comparision operator (ComOp) counter
 	size_t compareCount = 0;
 
-	// if this is an order zero calculation, initialize vector indices
 	pod_vector<size_t> VectorInd;  // address for each element
 	pod_vector<bool>   VectorVar;  // is element a variable
-	i = Rec->num_rec_vecad_ind();
-	if( i > 0 )
-	{	VectorInd.extend(i);
-		VectorVar.extend(i);
-		while(i--)
-		{	VectorInd[i] = Rec->GetVecInd(i);
-			VectorVar[i] = false;
+	if( q == 0 )
+	{
+		// this includes order zero calculation, initialize vector indices
+		i = Rec->num_rec_vecad_ind();
+		if( i > 0 )
+		{	VectorInd.extend(i);
+			VectorVar.extend(i);
+			while(i--)
+			{	VectorInd[i] = Rec->GetVecInd(i);
+				VectorVar[i] = false;
+			}
 		}
+		// includes zero order, so initialize conditional skip flags
+		for(i = 0; i < numvar; i++)
+			cskip_var[i] = false;
 	}
 
 	// Work space used by UserOp. Note User assumes q = p.
@@ -231,6 +254,17 @@ size_t forward_sweep(
 		Rec->next_forward(op, arg, i_op, i_var);
 		CPPAD_ASSERT_UNKNOWN( (i_op > n)  | (op == InvOp) );  
 		CPPAD_ASSERT_UNKNOWN( (i_op <= n) | (op != InvOp) );  
+
+		// check if we are skipping this operation
+		CPPAD_ASSERT_UNKNOWN( NumRes(CSkipOp) == 0 );
+		CPPAD_ASSERT_UNKNOWN( NumRes(EndOp)  == 0 );
+		while( cskip_var[i_var] && NumRes(op) > 0 )
+		{	Rec->next_forward(op, arg, i_op, i_var);
+			if( op == CSumOp )
+			{	// CSumOp has a variable number of arguments and
+				Rec->forward_csum(op, arg, i_op, i_var);
+			}
+		}
 
 		// action depends on the operator
 		switch( op )
@@ -297,6 +331,19 @@ size_t forward_sweep(
 			// sinh(x), cosh(x)
 			CPPAD_ASSERT_UNKNOWN( i_var < numvar  );
 			forward_cosh_op(q, p, i_var, arg[0], J, Taylor);
+			break;
+			// -------------------------------------------------
+
+			case CSkipOp:
+			if( q == 0 )
+			{	// CSumOp has a variable number of arguments and
+				// next_forward thinks it one has one argument.
+				// we must inform next_forward of this special case.
+				Rec->forward_cskip(op, arg, i_op, i_var);
+				forward_cskip_op_0(
+					i_var, arg, num_par, parameter, J, Taylor, cskip_var
+				);
+			}
 			break;
 			// -------------------------------------------------
 

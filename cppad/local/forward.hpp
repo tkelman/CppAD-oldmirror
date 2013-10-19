@@ -126,18 +126,21 @@ Vector ADFun<Base>::Forward(
 		);
 # else
 		compare_change_ = forward_sweep(s, true, q,
-			p, n, total_num_var_, &play_, taylor_col_dim_, taylor_.data()
+			p, n, total_num_var_, &play_, taylor_col_dim_, taylor_.data(),
+			cskip_var_
 		);
 # endif
 	}
 	else if( q == 0 )
 	{	compare_change_ = forward_sweep(s, true, q,
-			p, n, total_num_var_, &play_, taylor_col_dim_, taylor_.data()
+			p, n, total_num_var_, &play_, taylor_col_dim_, taylor_.data(),
+			cskip_var_
 		);
 	}
 	else
 	{	forward_sweep(s, true, q,
-			p, n, total_num_var_, &play_, taylor_col_dim_, taylor_.data()
+			p, n, total_num_var_, &play_, taylor_col_dim_, taylor_.data(),
+			cskip_var_
 		);
 	}
 
