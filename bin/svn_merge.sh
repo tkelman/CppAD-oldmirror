@@ -35,10 +35,10 @@ repository='https://projects.coin-or.org/svn/CppAD'
 from_branch='trunk'
 #
 # Version of the repository corresponding to from_branch just before changes
-Start=2951
+Start=2959
 # 
 # Version of the repository corresponding to from_branch after the changes
-End=2959
+End=2973
 #
 # the svn merge command
 cmd="svn merge $DryRun -r $Start:$End $repository/$from_branch"
