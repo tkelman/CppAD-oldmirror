@@ -70,15 +70,34 @@ $end
 // BEGIN CppAD namespace
 namespace CppAD {
 
+// This routine is not const becasue it runs through the operations sequence
+// 2DO: compute this value during zero order forward operations.
 template <typename Base>
 size_t ADFun<Base>::number_skip(void)
-{	// temporary indices
-	size_t count = 0;
-	for(size_t i = 0; i < total_num_var_; i++)
-		if( cskip_var_[i] )
-			count++;
-	return count;
+{	// must pass through operation sequence to map operations to variables
+	OpCode op;
+	size_t        i_op;
+	size_t        i_var;
+	const addr_t* arg;
 
+	// number of variables skipped
+	size_t n_skip = 0;
+
+	// start playback
+	play_.start_forward(op, arg, i_op, i_var);
+	CPPAD_ASSERT_UNKNOWN(op == BeginOp)
+	while(op != EndOp)
+	{	// next op
+		play_.next_forward(op, arg, i_op, i_var);
+		if( op == CSumOp)
+			play_.forward_csum(op, arg, i_op, i_var);
+		else if (op == CSkipOp)
+			play_.forward_cskip(op, arg, i_op, i_var);
+		//
+		if( cskip_op_[i_op] & (NumRes(op) > 0) )
+			n_skip++;
+	}
+	return n_skip;
 }
 
 } // END CppAD namespace

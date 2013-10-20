@@ -124,25 +124,25 @@ Vector ADFun<Base>::Forward(
 # if CPPAD_USE_FORWARD0SWEEP
 		compare_change_ = forward0sweep(s, true,
 			n, total_num_var_, &play_, taylor_col_dim_, taylor_.data(),
-			cskip_var_
+			cskip_op_
 		);
 # else
 		compare_change_ = forward_sweep(s, true, q,
 			p, n, total_num_var_, &play_, taylor_col_dim_, taylor_.data(),
-			cskip_var_
+			cskip_op_
 		);
 # endif
 	}
 	else if( q == 0 )
 	{	compare_change_ = forward_sweep(s, true, q,
 			p, n, total_num_var_, &play_, taylor_col_dim_, taylor_.data(),
-			cskip_var_
+			cskip_op_
 		);
 	}
 	else
 	{	forward_sweep(s, true, q,
 			p, n, total_num_var_, &play_, taylor_col_dim_, taylor_.data(),
-			cskip_var_
+			cskip_op_
 		);
 	}
 
