@@ -226,13 +226,15 @@ public:
 	
 	/*!
 	\brief
-	Replace an argument index in the recording.
+	Replace an argument value in the recording.
+	2DO: change name of this routine to ReplaceArg.
 
 	\param i
-	is the index, in argument indices, that is to be replaced.
+	is the index, in the recording argument vector, 
+	of the value that is to be replaced.
 
 	\param value
-	is the new normal index value.
+	is the new argument value.
 	*/
 	void ReplaceInd(size_t i, size_t value)
 	{	rec_op_arg_[i] =  static_cast<addr_t>( value ); }

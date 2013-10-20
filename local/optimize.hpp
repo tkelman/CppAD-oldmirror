@@ -259,8 +259,8 @@ struct optimize_cskip_info {
 	CppAD::vector<size_t> skip_on_true;
 	/// set of operations to skip on false
 	CppAD::vector<size_t> skip_on_false;
-	/// pointer to space reserved for the arguments
-	addr_t* arg;
+	/// index in the argument recording of first argument for this CSkipOp
+	size_t i_arg;
 };
 
 /*!
@@ -1845,12 +1845,14 @@ void optimize(
 				CPPAD_ASSERT_UNKNOWN( info.right < i_var );
 				size_t n_true  = info.skip_on_true.size();
 				size_t n_false = info.skip_on_false.size();
+				size_t n_arg   = 7 + n_true + n_false; 
 				// reserve space for the arguments to this operator but 
 				// delay setting them until we have all the new addresses
-				cskip_info[j].arg = rec->ReserveArg(7 + n_true + n_false);
+				cskip_info[j].i_arg = rec->ReserveArg(n_arg);
+				CPPAD_ASSERT_UNKNOWN( cskip_info[i].i_arg > 0 );
 				rec->PutOp(CSkipOp);
 			}
-			else	cskip_info[j].arg = CPPAD_NULL;
+			else	cskip_info[j].i_arg = 0;
 		}
 
 		// determine if we should keep this operation in the new
@@ -2315,27 +2317,31 @@ void optimize(
 	CPPAD_ASSERT_UNKNOWN( cskip_info_next == cskip_info.size() );
 	for(i = 0; i < cskip_info.size(); i++)
 	{	optimize_cskip_info info = cskip_info[i];
-		if( info.arg != CPPAD_NULL )
+		if( info.i_arg > 0 )
 		{	size_t n_true  = info.skip_on_true.size();
 			size_t n_false = info.skip_on_false.size();
-			info.arg[0] = static_cast<addr_t>( info.cop );
-			info.arg[1] = static_cast<addr_t>( info.flag );
-			info.arg[2] = static_cast<addr_t>( info.left );
-			info.arg[3] = static_cast<addr_t>( info.right );
-			info.arg[4] = static_cast<addr_t>( n_true );
-			info.arg[5] = static_cast<addr_t>( n_false );
+			size_t i_arg   = info.i_arg;
+			rec->ReplaceArg(i_arg++, info.cop   );
+			rec->ReplaceArg(i_arg++, info.flag  );
+			rec->ReplaceArg(i_arg++, info.left  );
+			rec->ReplaceArg(i_arg++, info.right );
+			rec->ReplaceArg(i_arg++, n_true     );
+			rec->ReplaceArg(i_arg++, n_false    );
 			for(j = 0; j < n_true; j++)
 			{	i_var = info.skip_on_true[j];
 				CPPAD_ASSERT_UNKNOWN( tape[i_var].new_op > 0 );
-				info.arg[6 + j] = tape[i_var].new_op;
+				rec->ReplaceArg(i_arg++, tape[i_var].new_op );
 			} 
 			for(j = 0; j < n_false; j++)
 			{	i_var = info.skip_on_false[j];
 				CPPAD_ASSERT_UNKNOWN( tape[i_var].new_op > 0 );
-				info.arg[6 + n_true + j] = tape[i_var].new_op;
+				rec->ReplaceArg(i_arg++, tape[i_var].new_op );
 			} 
-			info.arg[6 + n_true + n_false] = 
-				static_cast<addr_t>(n_true + n_false);
+			rec->ReplaceArg(i_arg++, n_true + n_false);
+# ifndef NDEBUG
+			size_t n_arg   = 7 + n_true + n_false; 
+			CPPAD_ASSERT_UNKNOWN( info.i_arg + n_arg == i_arg );
+# endif
 		}
 	}
 }

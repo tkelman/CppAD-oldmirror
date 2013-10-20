@@ -109,8 +109,12 @@ public:
 	/// Put six operation argument index in the recording
 	inline void PutArg(addr_t arg0, addr_t arg1, addr_t arg2, addr_t arg3,
 		addr_t arg4, addr_t arg5);
-	/// Reserve spacke for a specified number or arguments
-	inline addr_t* ReserveArg(size_t n_arg);
+
+	// Reserve space for a specified number of arguments
+	inline size_t ReserveArg(size_t n_arg);
+
+	// Replace an argument value
+	void ReplaceArg(size_t i_arg, size_t value);
 
 	/// Put a character string in the text for this recording.
 	inline size_t PutTxt(const char *text);
@@ -435,16 +439,31 @@ Reserve space for arguments, but delay placing values there.
 number of arguements to reserve space for
 
 \return
-point to the first argument; i.e., if arg is the return value,
-arg[0] throught arg[n_arg-1] are the arguments.
+is the index in the argument vector corresponding to the
+first of the arguments being reserved.
 */
 template <class Base>
-inline addr_t* recorder<Base>::ReserveArg(size_t n_arg)
+inline size_t recorder<Base>::ReserveArg(size_t n_arg)
 { 
 	size_t i = rec_op_arg_.extend(n_arg);
 	CPPAD_ASSERT_UNKNOWN( rec_op_arg_.size() == i + n_arg );
-	return rec_op_arg_.data() + i;
+	return i;
 }
+
+/*!
+\brief
+Replace an argument value in the recording 
+(intended to fill in reserved values).
+
+\param i_arg
+is the index, in argument vector, for the value that is replaced.
+
+\param value
+is the new value for the argument with the specified index.
+*/
+template <class Base>
+inline void recorder<Base>::ReplaceArg(size_t i_arg, size_t value)
+{	rec_op_arg_[i_arg] =  static_cast<addr_t>( value ); }
 // --------------------------------------------------------------------------
 /*!
 Put a character string in the text for this recording.
