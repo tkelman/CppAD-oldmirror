@@ -272,7 +272,7 @@ void ADFun<Base>::Dependent(ADTape<Base> *tape, const ADvector &y)
 	// conditional skip vector
 	cskip_op_.clear();
 	cskip_op_.resize( tape->Rec_.num_rec_op() );
-	for(i = 0; i < tape->Rec_.num_rec_op(); i++)
+	for(i = 0; i < cskip_op_.size(); i++)
 		cskip_op_[i] = false;
 
 	// now that each dependent variable has a place in the tape,

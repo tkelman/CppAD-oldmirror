@@ -82,6 +82,8 @@ This is also equal to the number of rows in the matrix \a Taylor; i.e.,
 Rec->num_rec_var().
 
 \param Rec
+2DO: change this name from Rec to play (becuase it is a player 
+and not a recorder).
 The information stored in \a Rec
 is a recording of the operations corresponding to the function
 \f[
@@ -743,6 +745,7 @@ size_t forward_sweep(
 		printOp(
 			std::cout, 
 			Rec,
+			i_op,
 			i_tmp,
 			op, 
 			arg,

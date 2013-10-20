@@ -394,7 +394,12 @@ Determines the type of the values that we are printing.
 is the output stream that the information is printed on.
 
 \param Rec
+2DO: change this name from Rec to play (becuase it is a player 
+and not a recorder).
 Is the entire recording for the tape that this operator is in.
+
+\param i_op
+is the index for the operator corresponding to this operation.
 
 \param i_var
 is the index for the variable corresponding to the result of this operation
@@ -434,6 +439,7 @@ template <class Base, class Value>
 void printOp(
 	std::ostream          &os     , 
 	const player<Base>   *Rec     ,
+	size_t                 i_op   , 
 	size_t                 i_var  , 
 	OpCode                 op     ,
 	const addr_t          *ind    ,
@@ -504,20 +510,13 @@ void printOp(
 	);
 
 	// print operator
-	printOpField(os,  "i=",      i_var, 5);
-	if( op == CExpOp )
-	{	printOpField(os, "op=", OpName[op], 4); 
+	printOpField(os,  "o=",      i_op,  5);
+	printOpField(os,  "v=",      i_var, 5);
+	if( op == CExpOp || op == CSkipOp || op == ComOp )
+	{	printOpField(os, "", OpName[op], 5); 
 		printOpField(os, "", CompareOpName[ ind[0] ], 3);
 	}
-	else if( op == CSkipOp )
-	{	printOpField(os, "op=", OpName[op], 5); 
-		printOpField(os, "", CompareOpName[ ind[0] ], 3);
-	}
-	else if( op == ComOp )
-	{	printOpField(os, "op=", OpName[op], 3); 
-		printOpField(os, "", CompareOpName[ ind[0] ], 4);
-	}
-	else	printOpField(os, "op=", OpName[op], 7); 
+	else	printOpField(os, "", OpName[op], 8); 
 
 	// print other fields
 	size_t ncol = 5;
@@ -545,9 +544,9 @@ void printOp(
 			printOpField(os, " vr=", ind[3], ncol);
 		else	printOpField(os, " pr=", Rec->GetPar(ind[3]), ncol);
 		for(i = 0; i < size_t(ind[4]); i++)
-			 printOpField(os, " st=", ind[6+i], ncol);
+			 printOpField(os, " ot=", ind[6+i], ncol);
 		for(i = 0; i < size_t(ind[5]); i++)
-			 printOpField(os, " sf=", ind[6+ind[4]+i], ncol);
+			 printOpField(os, " of=", ind[6+ind[4]+i], ncol);
 		break;
 
 		case CSumOp:

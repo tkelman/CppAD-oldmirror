@@ -697,6 +697,7 @@ void RevJacSweep(
 		printOp(
 			std::cout, 
 			play,
+			i_op,
 			i_var,
 			op, 
 			arg,

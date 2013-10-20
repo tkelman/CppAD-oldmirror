@@ -18,10 +18,54 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 namespace {
 	// -------------------------------------------------------------------
 	// Test of optimizing out arguments to an atomic function
-	void algo( 
+	void g_algo( 
 		const CppAD::vector< CppAD::AD<double> >& ax ,
 		      CppAD::vector< CppAD::AD<double> >& ay )
 	{	ay = ax; }
+
+	bool atomic_no_used(void)
+	{	bool ok = true;
+		using CppAD::AD;
+		using CppAD::vector;
+	
+		// Create a checkpoint version of the function g
+		vector< AD<double> > ax(2), ay(1), az(1);
+		ax[0] = 0.;
+		ax[1] = 1.;
+		CppAD::checkpoint<double> g_check("g_check", g_algo, ax, ay);
+	
+		// independent variable vector 
+		Independent(ax);
+	
+		// call atomic function that does not get used
+		g_check(ax, ay);
+	
+		// conditional expression
+		az[0] = CondExpLt(ax[0], ax[1], ax[0] + ax[1], ax[0] - ax[1]); 
+		
+		// create function object f : ax -> az
+		CppAD::ADFun<double> f;
+		f.Dependent(ax, az);
+
+		// number of variables before optimization
+		size_t n_before = f.size_var();
+		
+		// now optimize the operation sequence
+		f.optimize();
+
+		// number of variables before optimization
+		size_t n_after = f.size_var();
+		ok            &= n_after + 1 == n_before;
+	
+		// check optimization works ok
+		vector<double> x(2), z(1);
+		x[0] = 4.;
+		x[1] = 3.;
+		z    = f.Forward(0, x);
+		ok   = z[0] == x[0] - x[1];
+		
+		return ok;
+	}
 
 	bool atomic_arguments(void)
 	{	bool ok = true;
@@ -29,18 +73,18 @@ namespace {
 		using CppAD::vector;
 		vector< AD<double> > au(2), aw(2), ax(2), ay(1);
 
-		// create atomic function corresponding to algo
+		// create atomic function corresponding to g_algo
 		au[0] = 1.0;
 		au[1] = 2.0;
-		CppAD::checkpoint<double> algo_check("algo", algo, au, ax);
+		CppAD::checkpoint<double> g_check("g_algo", g_algo, au, ax);
 
 		// start recording a new function
 		CppAD::Independent(ax);
 
-		// now use algo_check during the recording
+		// now use g_check during the recording
 		au[0] = ax[0] + ax[1]; // this argument requires a new variable
 		au[1] = ax[0] - ax[1]; // this argument also requires a new variable
-		algo_check(au, aw);
+		g_check(au, aw);
 
 		// now create f(x) = x_0 - x_1 
 		ay[0] = aw[0];

@@ -1768,8 +1768,8 @@ void optimize(
 	// initialize mapping from old variable index to new 
 	// operator and variable index
 	for(i = 0; i < num_var; i++)
-	{	tape[i].new_op  = rec->num_rec_op(); // invalid index
-		tape[i].new_var = num_var;           // invalid index
+	{	tape[i].new_op  = 0;       // invalid index (except for BeginOp)
+		tape[i].new_var = num_var; // invalid index
 	}
 
 	// Erase all information in the old recording
@@ -2305,6 +2305,12 @@ void optimize(
 		dep_taddr[i] = tape[ dep_taddr[i] ].new_var;
 	}
 
+# ifndef NDEBUG
+	size_t num_new_op = rec->num_rec_op();
+	for(i_var = 0; i_var < tape.size(); i_var++)
+		CPPAD_ASSERT_UNKNOWN( tape[i_var].new_op < num_new_op );
+# endif
+
 	// fill in the arguments for the CSkip operations
 	CPPAD_ASSERT_UNKNOWN( cskip_info_next == cskip_info.size() );
 	for(i = 0; i < cskip_info.size(); i++)
@@ -2320,10 +2326,12 @@ void optimize(
 			info.arg[5] = static_cast<addr_t>( n_false );
 			for(j = 0; j < n_true; j++)
 			{	i_var = info.skip_on_true[j];
+				CPPAD_ASSERT_UNKNOWN( tape[i_var].new_op > 0 );
 				info.arg[6 + j] = tape[i_var].new_op;
 			} 
 			for(j = 0; j < n_false; j++)
 			{	i_var = info.skip_on_false[j];
+				CPPAD_ASSERT_UNKNOWN( tape[i_var].new_op > 0 );
 				info.arg[6 + n_true + j] = tape[i_var].new_op;
 			} 
 			info.arg[6 + n_true + n_false] = 
@@ -2352,8 +2360,9 @@ void ADFun<Base>::optimize(void)
 	// number of independent variables
 	size_t n = ind_taddr_.size();
 
+	size_t i;
 # ifndef NDEBUG
-	size_t i, j, m = dep_taddr_.size();
+	size_t j, m = dep_taddr_.size();
 	CppAD::vector<Base> x(n), y(m), check(m);
 	bool check_zero_order = taylor_per_var_ > 0;
 	Base max_taylor(0);
@@ -2396,6 +2405,12 @@ void ADFun<Base>::optimize(void)
 	taylor_.free();
 	taylor_per_var_ = 0;
 	taylor_col_dim_ = 0;
+
+	// resize and initilaize conditional skip vector
+	// (must use player size because it now has the recoreder information)
+	cskip_op_.resize( play_.num_rec_op() );
+	for(i = 0; i < cskip_op_.size(); i++)
+		cskip_op_[i] = false;
 
 # ifndef NDEBUG
 	if( check_zero_order )

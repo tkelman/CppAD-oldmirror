@@ -230,6 +230,7 @@ void ReverseSweep(
 		printOp(
 			std::cout, 
 			Rec,
+			i_op,
 			i_tmp,
 			op, 
 			arg,
