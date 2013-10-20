@@ -426,6 +426,9 @@ that correspond to this operation
 points to the first reverse calculated value
 that correspond to this operation
 (ignored if NumRes(op) == 0).
+
+\par 2DO
+print the operator index (in addition to the variables index).
 */
 template <class Base, class Value>
 void printOp(

@@ -110,10 +110,10 @@ variable with index i on the tape
 is the zero order Taylor coefficient for the variable with 
 index i on the tape.
 
-\param cskip_var
-Is a vector with size \c numvar,
+\param cskip_op
+Is a vector with size Rec->num_rec_op(),
 the input value of the elements does not matter.
-Upon return, if cskip_var[i] is true, the value of variable with index i
+Upon return, if cskip_op[i] is true, the operator index i in the recording
 does not affect any of the dependent variable (given the value
 of the independent variables).
 
@@ -134,7 +134,7 @@ size_t forward0sweep(
 	player<Base>         *Rec,
 	size_t                J,
 	Base                 *Taylor,
-	CppAD::vector<bool>&  cskip_var
+	CppAD::vector<bool>&  cskip_op
 )
 {	CPPAD_ASSERT_UNKNOWN( J >= 1 );
 
@@ -168,8 +168,8 @@ size_t forward0sweep(
 	}
 
 	// zero order, so initialize conditional skip flags
-	for(i = 0; i < numvar; i++)
-		cskip_var[i] = false;
+	for(i = 0; i < Rec->num_rec_op(); i++)
+		cskip_op[i] = false;
 
 	// work space used by UserOp.
 	const size_t user_q = 0;     // lowest order
@@ -226,14 +226,12 @@ size_t forward0sweep(
 		CPPAD_ASSERT_UNKNOWN( (i_op <= n) | (op != InvOp) );  
 
 		// check if we are skipping this operation
-		CPPAD_ASSERT_UNKNOWN( NumRes(CSkipOp) == 0 );
-		CPPAD_ASSERT_UNKNOWN( NumRes(EndOp)  == 0 );
-		while( cskip_var[i_var] && NumRes(op) > 0 )
-		{	Rec->next_forward(op, arg, i_op, i_var);
-			if( op == CSumOp )
+		while( cskip_op[i_op] )
+		{	if( op == CSumOp )
 			{	// CSumOp has a variable number of arguments and
 				Rec->forward_csum(op, arg, i_op, i_var);
 			}
+			Rec->next_forward(op, arg, i_op, i_var);
 		}
 
 		// action to take depends on the case
@@ -311,7 +309,7 @@ size_t forward0sweep(
 			// we must inform next_forward of this special case.
 			Rec->forward_cskip(op, arg, i_op, i_var);
 			forward_cskip_op_0(
-				i_var, arg, num_par, parameter, J, Taylor, cskip_var
+				i_var, arg, num_par, parameter, J, Taylor, cskip_op
 			);
 			break;
 			// -------------------------------------------------

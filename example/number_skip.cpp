@@ -61,7 +61,8 @@ bool number_skip(void)
 	CppAD::vector<double>  y( f.Range() );
 	x[0]    = 3.;
 	x[1]    = 4.;
-	f.Forward(0, x);
+	y   = f.Forward(0, x);
+	ok &= (y[0] == x[0] + x[1]); 
 
 	// before call to optimize
 	ok &= f.number_skip() == 0;
@@ -69,9 +70,14 @@ bool number_skip(void)
 	
 	// now optimize the operation sequence
 	f.optimize();
-	f.Forward(0, x);
 
-	// after call to optimize and forward
+	// after optimize, check forward mode result
+	x[0]    = 4.;
+	x[1]    = 3.;
+	y   = f.Forward(0, x);
+	ok &= (y[0] == x[0] - x[1]); 
+
+	// after optimize, check amount of optimization
 	ok &= f.size_var() == n_var - 1;
 	ok &= f.number_skip() == 1;
 	

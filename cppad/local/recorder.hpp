@@ -119,6 +119,10 @@ public:
 	size_t num_rec_var(void) const
 	{	return num_rec_var_; }
 
+	/// Number of operators currently stored in the recording.
+	size_t num_rec_op(void) const
+	{	return  rec_op_.size(); }
+
 	/// Approximate amount of memory used by the recording 
 	size_t Memory(void) const
 	{	return rec_op_.capacity()        * sizeof(CPPAD_OP_CODE_TYPE) 
