@@ -17,6 +17,68 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 namespace {
 	// -------------------------------------------------------------------
+	// Test conditional optimizing out call to an atomic function
+	void k_algo(
+		const CppAD::vector< CppAD::AD<double> >& x ,
+		      CppAD::vector< CppAD::AD<double> >& y )
+	{	y[0] = x[0] + x[1]; }
+
+	void h_algo(
+		const CppAD::vector< CppAD::AD<double> >& x ,
+		      CppAD::vector< CppAD::AD<double> >& y )
+	{	y[0] = x[0] - x[1]; }
+
+	bool atomic_cond_exp(void)
+	{	bool ok = true;
+		typedef CppAD::vector< CppAD::AD<double> > ADVector;
+
+		// Create a checkpoint version of the function g
+		ADVector ax(2), ag(1), ah(1), ay(1);
+		ax[0] = 0.;
+		ax[1] = 1.;
+		CppAD::checkpoint<double> k_check("k_check", k_algo, ax, ag);
+		CppAD::checkpoint<double> h_check("h_check", h_algo, ax, ah);
+
+		// independent variable vector 
+		Independent(ax);
+
+		// atomic function calls that get conditionally used
+		k_check(ax, ag);
+		h_check(ax, ah);
+
+		// conditional expression
+		ay[0] = CondExpLt(ax[0], ax[1], ag[0], ah[0]); 
+	
+		// create function object f : ax -> ay
+		CppAD::ADFun<double> f;
+		f.Dependent(ax, ay);
+	
+		// use zero order to evaluate f(3,4)
+		CppAD::vector<double>  x( f.Domain() );
+		CppAD::vector<double>  y( f.Range() );
+		x[0] = 3.;
+		x[1] = 4.;
+		y    = f.Forward(0, x);
+		ok  &= y[0] == x[0] + x[1];
+
+		// before optimize
+		ok  &= f.number_skip() == 0;
+
+		// now optimize the operation sequence
+		f.optimize();
+
+		// optimized zero order forward
+		x[0] = 4.;
+		x[1] = 3.;
+		y    = f.Forward(0, x);
+		ok   = y[0] == x[0] - x[1];
+
+		// after optimize can skip either call to g or call to h
+		ok  &= f.number_skip() == 1;
+	
+		return ok;
+	}
+	// -------------------------------------------------------------------
 	// Test of optimizing out arguments to an atomic function
 	void g_algo( 
 		const CppAD::vector< CppAD::AD<double> >& ax ,
@@ -1209,6 +1271,8 @@ namespace {
 
 bool optimize(void)
 {	bool ok = true;
+	// check optimizing out entire atomic function
+	ok     &= atomic_cond_exp();
 	// check optimizing out atomic arguments
 	ok     &= atomic_arguments();
 	// check reverse dependency analysis optimization
