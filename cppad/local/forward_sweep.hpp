@@ -337,12 +337,12 @@ size_t forward_sweep(
 			// -------------------------------------------------
 
 			case CSkipOp:
+			// CSumOp has a variable number of arguments and
+			// next_forward thinks it one has one argument.
+			// we must inform next_forward of this special case.
+			Rec->forward_cskip(op, arg, i_op, i_var);
 			if( q == 0 )
-			{	// CSumOp has a variable number of arguments and
-				// next_forward thinks it one has one argument.
-				// we must inform next_forward of this special case.
-				Rec->forward_cskip(op, arg, i_op, i_var);
-				forward_cskip_op_0(
+			{	forward_cskip_op_0(
 					i_var, arg, num_par, parameter, J, Taylor, cskip_op
 				);
 			}

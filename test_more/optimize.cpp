@@ -53,9 +53,9 @@ namespace {
 		CppAD::ADFun<double> f;
 		f.Dependent(ax, ay);
 	
-		// use zero order to evaluate f(3,4)
-		CppAD::vector<double>  x( f.Domain() );
-		CppAD::vector<double>  y( f.Range() );
+		// use zero order to evaluate when condition is true
+		CppAD::vector<double>  x(2), dx(2);
+		CppAD::vector<double>  y(1), dy(1);
 		x[0] = 3.;
 		x[1] = 4.;
 		y    = f.Forward(0, x);
@@ -67,7 +67,7 @@ namespace {
 		// now optimize the operation sequence
 		f.optimize();
 
-		// optimized zero order forward
+		// optimized zero order forward when condition is false
 		x[0] = 4.;
 		x[1] = 3.;
 		y    = f.Forward(0, x);
@@ -75,6 +75,12 @@ namespace {
 
 		// after optimize can skip either call to g or call to h
 		ok  &= f.number_skip() == 1;
+
+		// optimized first order forward
+		dx[0] = 2.;
+		dx[1] = 1.;
+		dy    = f.Forward(1, dx);
+		ok   &= dy[0] == dx[0] - dx[1];
 	
 		return ok;
 	}
@@ -128,7 +134,6 @@ namespace {
 		
 		return ok;
 	}
-
 	bool atomic_arguments(void)
 	{	bool ok = true;
 		using CppAD::AD;
