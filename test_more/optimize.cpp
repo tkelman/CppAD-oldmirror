@@ -17,7 +17,7 @@ Please visit http://www.coin-or.org/CppAD/ for information on other licenses.
 
 namespace {
 	// -------------------------------------------------------------------
-	// Test conditional optimizing out call to an atomic function
+	// Test conditional optimizing out call to an atomic function call
 	void k_algo(
 		const CppAD::vector< CppAD::AD<double> >& x ,
 		      CppAD::vector< CppAD::AD<double> >& y )
@@ -55,7 +55,7 @@ namespace {
 	
 		// use zero order to evaluate when condition is true
 		CppAD::vector<double>  x(2), dx(2);
-		CppAD::vector<double>  y(1), dy(1);
+		CppAD::vector<double>  y(1), dy(1), w(1);
 		x[0] = 3.;
 		x[1] = 4.;
 		y    = f.Forward(0, x);
@@ -81,6 +81,12 @@ namespace {
 		dx[1] = 1.;
 		dy    = f.Forward(1, dx);
 		ok   &= dy[0] == dx[0] - dx[1];
+
+		// optimized first order reverse
+		w[0]  = 1.;
+		dx    = f.Reverse(1, w);
+		ok   &= dx[0] == 1.;
+		ok   &= dx[1] == -1.;
 	
 		return ok;
 	}
