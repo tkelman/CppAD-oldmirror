@@ -327,7 +327,7 @@ public:
 		var_index = var_index_   = 0;
 
 		CPPAD_ASSERT_UNKNOWN( op_  == BeginOp );
-		CPPAD_ASSERT_NARG_NRES(op_, 0, 1);
+		CPPAD_ASSERT_NARG_NRES(op_, 1, 1);
 
 		return;
 	}

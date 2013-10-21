@@ -1806,9 +1806,10 @@ void optimize(
 	// playing forward skips BeginOp at the beginning, but not EndOp at
 	// the end.  Put BeginOp at beginning of recording
 	CPPAD_ASSERT_UNKNOWN( op == BeginOp );
-	CPPAD_ASSERT_NARG_NRES(BeginOp, 0, 1);
+	CPPAD_ASSERT_NARG_NRES(BeginOp, 1, 1);
 	tape[i_var].new_op  = rec->num_rec_op();
 	tape[i_var].new_var = rec->PutOp(BeginOp);
+	rec->PutArg(0);
 
 	// temporary buffer for new argument values
 	addr_t new_arg[6];

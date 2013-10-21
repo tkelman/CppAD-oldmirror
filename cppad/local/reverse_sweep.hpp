@@ -294,7 +294,7 @@ void ReverseSweep(
 			// -------------------------------------------------
 
 			case BeginOp:
-			CPPAD_ASSERT_NARG_NRES(op, 0, 1);
+			CPPAD_ASSERT_NARG_NRES(op, 1, 1);
 			break;
 			// --------------------------------------------------
 
