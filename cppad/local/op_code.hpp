@@ -543,10 +543,25 @@ void printOp(
 		if( ind[1] & 2 )
 			printOpField(os, " vr=", ind[3], ncol);
 		else	printOpField(os, " pr=", Rec->GetPar(ind[3]), ncol);
-		for(i = 0; i < size_t(ind[4]); i++)
-			 printOpField(os, " ot=", ind[6+i], ncol);
-		for(i = 0; i < size_t(ind[5]); i++)
-			 printOpField(os, " of=", ind[6+ind[4]+i], ncol);
+		if( size_t(ind[4]) < 3 )
+		{	for(i = 0; i < size_t(ind[4]); i++)
+			 	printOpField(os, " ot=", ind[6+i], ncol);
+		}
+		else
+		{	printOpField(os, "\n\tot=", ind[6+0], ncol);
+			for(i = 1; i < size_t(ind[4]); i++)
+			 	printOpField(os, " ot=", ind[6+i], ncol);
+		}
+		if( size_t(ind[5]) < 3 )
+		{	for(i = 0; i < size_t(ind[5]); i++)
+				printOpField(os, " of=", ind[6+ind[4]+i], ncol);
+		}
+		else
+		{	printOpField(os, "\n\tof=", ind[6+ind[4]+0], ncol);
+			{	for(i = 1; i < size_t(ind[5]); i++)
+					printOpField(os, " of=", ind[6+ind[4]+i], ncol);
+			}
+		}
 		break;
 
 		case CSumOp:
