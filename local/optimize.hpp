@@ -1553,10 +1553,12 @@ void optimize(
 			CPPAD_ASSERT_UNKNOWN( NumArg(CExpOp) == 6 );
 			if( tape[i_var].connect_type != not_connected )
 			{	optimize_cskip_info info;
-				info.cop   = CompareOp( arg[0] );
-				info.flag  = arg[1];
-				info.left  = arg[2];
-				info.right = arg[3];
+				info.cop        = CompareOp( arg[0] );
+				info.flag       = arg[1];
+				info.left       = arg[2];
+				info.right      = arg[3];
+				info.n_op_true  = 0;
+				info.n_op_false = 0;
 				size_t index = cskip_info.size();
 				cskip_info.push_back(info);
 
