@@ -249,6 +249,14 @@ void ForJacSweep(
 			break;
 			// -------------------------------------------------
 
+			case CSkipOp:
+			// CSipOp has a variable number of arguments and
+			// next_forward thinks it one has one argument.
+			// we must inform next_forward of this special case.
+			play->forward_cskip(op, arg, i_op, i_var);
+			break;
+			// -------------------------------------------------
+
 			case CSumOp:
 			// CSumOp has a variable number of arguments and
 			// next_forward thinks it one has one argument.

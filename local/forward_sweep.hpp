@@ -258,8 +258,6 @@ size_t forward_sweep(
 		CPPAD_ASSERT_UNKNOWN( (i_op <= n) | (op != InvOp) );  
 
 		// check if we are skipping this operation
-		CPPAD_ASSERT_UNKNOWN( NumRes(CSkipOp) == 0 );
-		CPPAD_ASSERT_UNKNOWN( NumRes(EndOp)  == 0 );
 		while( cskip_op[i_op] )
 		{	if( op == CSumOp )
 			{	// CSumOp has a variable number of arguments 
