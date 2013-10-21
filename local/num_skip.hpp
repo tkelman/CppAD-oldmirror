@@ -94,8 +94,8 @@ size_t ADFun<Base>::number_skip(void)
 		else if (op == CSkipOp)
 			play_.forward_cskip(op, arg, i_op, i_var);
 		//
-		if( cskip_op_[i_op] & (NumRes(op) > 0) )
-			n_skip++;
+		if( cskip_op_[i_op] )
+			n_skip += NumRes(op);
 	}
 	return n_skip;
 }

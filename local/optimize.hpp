@@ -255,10 +255,18 @@ struct optimize_cskip_info {
 	size_t left; 
 	/// index for right comparison operand
 	size_t right; 
+	/// set of variables to skip on true
+	CppAD::vector<size_t> skip_var_true;
+	/// set of variables to skip on false
+	CppAD::vector<size_t> skip_var_false;
 	/// set of operations to skip on true
-	CppAD::vector<size_t> skip_on_true;
+	CppAD::vector<size_t> skip_op_true;
 	/// set of operations to skip on false
-	CppAD::vector<size_t> skip_on_false;
+	CppAD::vector<size_t> skip_op_false;
+	/// size of skip_op_true
+	size_t n_op_true;
+	/// size of skip_op_false
+	size_t n_op_false;
 	/// index in the argument recording of first argument for this CSkipOp
 	size_t i_arg;
 };
@@ -274,11 +282,11 @@ struct optimize_user_info {
 	/// If this is a conditional connection, this is the operator
 	/// index of the beginning of the atomic call sequence; i.e.,
 	/// the first UserOp.
-	size_t new_op_begin;
+	size_t op_begin;
 	/// If this is a conditional connection, this is one more than the
 	///  operator index of the ending of the atomic call sequence; i.e.,
 	/// the second UserOp.
-	size_t new_op_end;
+	size_t op_end;
 };
 
 /*!
@@ -1576,13 +1584,17 @@ void optimize(
 			break;  // --------------------------------------------
 
 			// Operations where there is noting to do
-			case BeginOp:
 			case ComOp:
 			case EndOp:
-			case InvOp:
 			case ParOp:
 			case PriOp:
 			break;  // --------------------------------------------
+
+			// Operators that never get removed
+			case BeginOp:
+			case InvOp:
+			tape[i_var].connect_type = yes_connected;
+			break;
 
 			// Load using a parameter index
 			case LdpOp:
@@ -1639,7 +1651,9 @@ void optimize(
 				//
 				optimize_user_info info;
 				info.connect_type = not_connected;
+				info.op_end       = i_op + 1;
 				user_info.push_back(info);
+				
 			}
 			else
 			{	CPPAD_ASSERT_UNKNOWN( user_state == user_start );
@@ -1650,7 +1664,8 @@ void optimize(
 				user_state = user_end;
 				//
 				CPPAD_ASSERT_UNKNOWN( user_curr + 1 == user_info.size() );
-				user_curr         = user_info.size();
+				user_info[user_curr].op_begin = i_op;
+				user_curr                     = user_info.size();
                }
 			break;
 
@@ -1674,9 +1689,8 @@ void optimize(
 			CPPAD_ASSERT_UNKNOWN( 0 < arg[0] );
 			--user_j;
 			if( ! user_s[user_j].empty() )
-			{	tape[arg[0]].connect_type          = yes_connected;
-				user_info[user_curr].connect_type  = yes_connected;
-			}
+				tape[arg[0]].connect_type = 
+					user_info[user_curr].connect_type;
 			if( user_j == 0 )
 				user_state = user_start;
 			break;
@@ -1758,18 +1772,30 @@ void optimize(
 	// -------------------------------------------------------------
 
 	// Determine which variables can be conditionally skipped
-	// 2DO: Perhaps we should change NumRes( UserOp ) = 1 , so it
-	// also gets a separate skip_on_true and skip_on false value
 	for(i = 0; i < num_var; i++)
 	{	if( tape[i].connect_type == cexp_true_connected )
 		{	j = tape[i].connect_index;
-			cskip_info[j].skip_on_false.push_back(i);
+			cskip_info[j].skip_var_false.push_back(i);
 		}
 		if( tape[i].connect_type == cexp_false_connected )
 		{	j = tape[i].connect_index;
-			cskip_info[j].skip_on_true.push_back(i);
+			cskip_info[j].skip_var_true.push_back(i);
 		}
 	}
+	// Move skip information from user_info to cskip_info
+	for(i = 0; i < user_info.size(); i++)
+	{	if( user_info[i].connect_type == cexp_true_connected )
+		{	j = user_info[i].connect_index;
+			cskip_info[j].n_op_false = 
+				user_info[i].op_end - user_info[i].op_begin;
+		}
+		if( user_info[i].connect_type == cexp_false_connected )
+		{	j = user_info[i].connect_index;
+			cskip_info[j].n_op_true = 
+				user_info[i].op_end - user_info[i].op_begin;
+		}
+	}
+
 	// Sort the conditional skip information by the maximum of the
 	// index for the left and right comparision operands
 	CppAD::vector<size_t> cskip_info_order( cskip_info.size() );
@@ -1857,20 +1883,26 @@ void optimize(
 		bool skip = cskip_info_next < cskip_info.size();
 		if( skip )
 		{	j     = cskip_info_order[cskip_info_next];
-			skip &= cskip_info[j].left < i_var;
-			skip &= cskip_info[j].right < i_var;
+			if( NumRes(op) > 0 )
+			{	skip &= cskip_info[j].left < i_var;
+				skip &= cskip_info[j].right < i_var;
+			}
+			else
+			{	skip &= cskip_info[j].left <= i_var;
+				skip &= cskip_info[j].right <= i_var;
+			}
 		}
 		if( skip )
 		{	cskip_info_next++;
-			skip &= cskip_info[j].skip_on_true.size() > 0 ||
-					cskip_info[j].skip_on_false.size() > 0;
+			skip &= cskip_info[j].skip_var_true.size() > 0 ||
+					cskip_info[j].skip_var_false.size() > 0;
 			if( skip )
 			{	optimize_cskip_info info = cskip_info[j];
 				CPPAD_ASSERT_UNKNOWN( NumRes(CSkipOp) == 0 );
-				CPPAD_ASSERT_UNKNOWN( info.left < i_var );
-				CPPAD_ASSERT_UNKNOWN( info.right < i_var );
-				size_t n_true  = info.skip_on_true.size();
-				size_t n_false = info.skip_on_false.size();
+				size_t n_true  = 
+					info.skip_var_true.size() + info.n_op_true;
+				size_t n_false = 
+					info.skip_var_false.size() + info.n_op_false;
 				size_t n_arg   = 7 + n_true + n_false; 
 				// reserve space for the arguments to this operator but 
 				// delay setting them until we have all the new addresses
@@ -2269,11 +2301,11 @@ void optimize(
 			{	user_state = user_arg;
 				CPPAD_ASSERT_UNKNOWN( user_curr > 0 );
 				user_curr--;
-				user_info[user_curr].new_op_begin = i_op;
+				user_info[user_curr].op_begin = rec->num_rec_op();
 			}
 			else
 			{	user_state = user_start;
-				user_info[user_curr].new_op_end = i_op;
+				user_info[user_curr].op_end = rec->num_rec_op() + 1;
 			}
 			// user_index, user_id, user_n, user_m
 			if( user_info[user_curr].connect_type != not_connected )
@@ -2352,13 +2384,33 @@ void optimize(
 		CPPAD_ASSERT_UNKNOWN( tape[i_var].new_op < num_new_op );
 # endif
 
+	// Move skip information from user_info to cskip_info
+	for(i = 0; i < user_info.size(); i++)
+	{	if( user_info[i].connect_type == cexp_true_connected )
+		{	j = user_info[i].connect_index;
+			k = user_info[i].op_begin;
+			while(k < user_info[i].op_end)
+				cskip_info[j].skip_op_false.push_back(k++);
+		}
+		if( user_info[i].connect_type == cexp_false_connected )
+		{	j = user_info[i].connect_index;
+			k = user_info[i].op_begin;
+			while(k < user_info[i].op_end)
+				cskip_info[j].skip_op_true.push_back(k++);
+		}
+	}
+
 	// fill in the arguments for the CSkip operations
 	CPPAD_ASSERT_UNKNOWN( cskip_info_next == cskip_info.size() );
 	for(i = 0; i < cskip_info.size(); i++)
 	{	optimize_cskip_info info = cskip_info[i];
 		if( info.i_arg > 0 )
-		{	size_t n_true  = info.skip_on_true.size();
-			size_t n_false = info.skip_on_false.size();
+		{	CPPAD_ASSERT_UNKNOWN( info.n_op_true==info.skip_op_true.size() );
+			CPPAD_ASSERT_UNKNOWN(info.n_op_false==info.skip_op_false.size());
+			size_t n_true  = 
+				info.skip_var_true.size() + info.skip_op_true.size();
+			size_t n_false = 
+				info.skip_var_false.size() + info.skip_op_false.size();
 			size_t i_arg   = info.i_arg;
 			rec->ReplaceArg(i_arg++, info.cop   );
 			rec->ReplaceArg(i_arg++, info.flag  );
@@ -2366,15 +2418,23 @@ void optimize(
 			rec->ReplaceArg(i_arg++, info.right );
 			rec->ReplaceArg(i_arg++, n_true     );
 			rec->ReplaceArg(i_arg++, n_false    );
-			for(j = 0; j < n_true; j++)
-			{	i_var = info.skip_on_true[j];
+			for(j = 0; j < info.skip_var_true.size(); j++)
+			{	i_var = info.skip_var_true[j];
 				CPPAD_ASSERT_UNKNOWN( tape[i_var].new_op > 0 );
 				rec->ReplaceArg(i_arg++, tape[i_var].new_op );
 			} 
-			for(j = 0; j < n_false; j++)
-			{	i_var = info.skip_on_false[j];
+			for(j = 0; j < info.skip_op_true.size(); j++)
+			{	i_op = info.skip_op_true[j];
+				rec->ReplaceArg(i_arg++, i_op);
+			} 
+			for(j = 0; j < info.skip_var_false.size(); j++)
+			{	i_var = info.skip_var_false[j];
 				CPPAD_ASSERT_UNKNOWN( tape[i_var].new_op > 0 );
 				rec->ReplaceArg(i_arg++, tape[i_var].new_op );
+			} 
+			for(j = 0; j < info.skip_op_false.size(); j++)
+			{	i_op = info.skip_op_false[j];
+				rec->ReplaceArg(i_arg++, i_op);
 			} 
 			rec->ReplaceArg(i_arg++, n_true + n_false);
 # ifndef NDEBUG
