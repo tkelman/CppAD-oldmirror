@@ -257,6 +257,14 @@ void RevJacSweep(
 			break;
 			// -------------------------------------------------
 
+			case CSkipOp:
+			// CSkipOp has a variable number of arguments and
+			// next_reverse thinks it one has one argument.
+			// We must inform next_reverse of this special case.
+			play->reverse_cskip(op, arg, i_op, i_var);
+			break;
+			// -------------------------------------------------
+
 			case CSumOp:
 			// CSumOp has a variable number of arguments and
 			// next_reverse thinks it one has one argument.

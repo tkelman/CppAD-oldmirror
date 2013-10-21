@@ -889,12 +889,13 @@ namespace {
 		size_t n = 3; 
 	
 		// dimension of the range space
-		size_t m = 2;
+		size_t m = 3;
 	
 		// independent variable vector 
 		CppAD::vector< AD<double> > X(n);
 		X[0] = 2.; 
 		X[1] = 3.;
+		X[2] = 4.;
 		Independent(X);
 	
 		// dependent variable vector
@@ -916,6 +917,17 @@ namespace {
 		// Y[1] 
 		Y[index]             = Y[0] - (X[1] + X[2]);
 		Check[index * n + 0] = true;
+		Check[index * n + 1] = true;
+		Check[index * n + 2] = true;
+		index++;
+
+		// Y[2] 
+		// 2DO: There is a subtitle issue that has to do with using reverse
+		// jacobian sparsity patterns during the optimization process.
+		// We need an option to include X[0] in the sparsity pattern
+		// so the optimizer can know it affects the results.
+		Y[index]             = CondExpLe(X[0], X[1], X[1]+X[1], X[2]-X[2]);
+		Check[index * n + 0] = false;
 		Check[index * n + 1] = true;
 		Check[index * n + 2] = true;
 		index++;
@@ -959,12 +971,13 @@ namespace {
 		size_t n = 3; 
 	
 		// dimension of the range space
-		size_t m = 2;
+		size_t m = 3;
 	
 		// independent variable vector 
 		CppAD::vector< AD<double> > X(n);
 		X[0] = 2.; 
 		X[1] = 3.;
+		X[2] = 4.;
 		Independent(X);
 	
 		// dependent variable vector
@@ -986,6 +999,17 @@ namespace {
 		// Y[1] 
 		Y[index]             = Y[0] - (X[1] + X[2]);
 		Check[index * n + 0] = true;
+		Check[index * n + 1] = true;
+		Check[index * n + 2] = true;
+		index++;
+
+		// Y[2] 
+		// 2DO: There is a subtitle issue that has to do with using reverse
+		// jacobian sparsity patterns during the optimization process.
+		// We need an option to include X[0] in the sparsity pattern
+		// so the optimizer can know it affects the results.
+		Y[index]             = CondExpLe(X[0], X[1], X[1]+X[1], X[2]-X[2]);
+		Check[index * n + 0] = false;
 		Check[index * n + 1] = true;
 		Check[index * n + 2] = true;
 		index++;
