@@ -152,7 +152,7 @@ const size_t NumArgTable[] = {
 	2, // AddvvOp
 	1, // AsinOp
 	1, // AtanOp
-	0, // BeginOp
+	1, // BeginOp  offset first real argument to have index 1
 	6, // CExpOp
 	4, // ComOp
 	1, // CosOp
