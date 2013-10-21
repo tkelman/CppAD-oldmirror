@@ -881,7 +881,7 @@ namespace {
 	
 		return ok;
 	}
-	bool forward_sparse_jacobian_csum()
+	bool forward_sparse_jacobian()
 	{	bool ok = true;
 		using namespace CppAD;
 	
@@ -963,7 +963,7 @@ namespace {
 	
 		return ok;
 	}
-	bool reverse_sparse_jacobian_csum()
+	bool reverse_sparse_jacobian()
 	{	bool ok = true;
 		using namespace CppAD;
 	
@@ -1042,26 +1042,37 @@ namespace {
 	
 		return ok;
 	}
-	bool reverse_sparse_hessian_csum(void)
+	bool reverse_sparse_hessian(void)
 	{	bool ok = true;
 		using CppAD::AD;
 		size_t i, j;
 	
-		size_t n = 2;
+		size_t n = 3;
 		CppAD::vector< AD<double> > X(n); 
 		X[0] = 1.;
 		X[1] = 2.;
+		X[2] = 3.;
 		CppAD::Independent(X);
 	
 		size_t m = 1;
 		CppAD::vector< AD<double> > Y(m);
-		Y[0] = (2. + X[0] + X[1] + 3.) * X[0];
+		Y[0] = CondExpGe( X[0], X[1], 
+			X[0] + (2. + X[1] + 3.) * X[1], 
+			X[0] + (2. + X[2] + 3.) * X[1]
+		);
 	
 		CppAD::vector<bool> check(n * n);
-		check[0 * n + 0] = true;  // partial w.r.t. x[0], x[0]
-		check[0 * n + 1] = true;  //                x[0], x[1]
-		check[1 * n + 0] = true;  //                x[1], x[0]
-		check[1 * n + 1] = false; //                x[1], x[1]
+		check[0 * n + 0] = false; // partial w.r.t. x[0], x[0]
+		check[0 * n + 1] = false; //                x[0], x[1]
+		check[0 * n + 2] = false; //                x[0], x[2]
+
+		check[1 * n + 0] = false; // partial w.r.t. x[1], x[0]
+		check[1 * n + 1] = true;  //                x[1], x[1]
+		check[1 * n + 2] = true;  //                x[1], x[2]
+
+		check[2 * n + 0] = false; // partial w.r.t. x[2], x[0]
+		check[2 * n + 1] = true;  //                x[2], x[1]
+		check[2 * n + 2] = false; //                x[2], x[2]
 	
 		// create function object F : X -> Y
 		CppAD::ADFun<double> F(X, Y);
@@ -1323,9 +1334,10 @@ bool optimize(void)
 	ok     &= cummulative_sum();
 	ok     &= forward_csum();
 	ok     &= reverse_csum();
-	ok     &= forward_sparse_jacobian_csum();
-	ok     &= reverse_sparse_jacobian_csum();
-	ok     &= reverse_sparse_hessian_csum();
+	// sparsity patterns
+	ok     &= forward_sparse_jacobian();
+	ok     &= reverse_sparse_jacobian();
+	ok     &= reverse_sparse_hessian();
 	// check that CondExp properly detects dependencies
 	ok     &= cond_exp_depend();
 	// check old_atomic functions
