@@ -230,7 +230,7 @@ size_t forward0sweep(
 		// check if we are skipping this operation
 		while( cskip_op[i_op] )
 		{	if( op == CSumOp )
-			{	// CSumOp has a variable number of arguments and
+			{	// CSumOp has a variable number of arguments
 				Rec->forward_csum(op, arg, i_op, i_var);
 			}
 			Rec->next_forward(op, arg, i_op, i_var);
@@ -306,7 +306,7 @@ size_t forward0sweep(
 			// -------------------------------------------------
 
 			case CSkipOp:
-			// CSumOp has a variable number of arguments and
+			// CSkipOp has a variable number of arguments and
 			// next_forward thinks it one has one argument.
 			// we must inform next_forward of this special case.
 			Rec->forward_cskip(op, arg, i_op, i_var);
