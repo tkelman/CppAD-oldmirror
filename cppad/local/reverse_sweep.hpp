@@ -220,7 +220,8 @@ void ReverseSweep(
 # if CPPAD_REVERSE_SWEEP_TRACE
 	std::cout << std::endl;
 # endif
-	while(op != BeginOp )
+	bool more_operators = true;
+	while(more_operators)
 	{	// next op
 		Rec->next_reverse(op, arg, i_op, i_var);
 		CPPAD_ASSERT_UNKNOWN((i_op >  n) | (op == InvOp) | (op == BeginOp));
@@ -309,6 +310,7 @@ void ReverseSweep(
 
 			case BeginOp:
 			CPPAD_ASSERT_NARG_NRES(op, 1, 1);
+			more_operators = false;
 			break;
 			// --------------------------------------------------
 
