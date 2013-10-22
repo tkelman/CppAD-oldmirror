@@ -207,7 +207,8 @@ void RevHesSweep(
 	CppAD::vectorBool zf_value(limit);
 	CppAD::vectorBool zh_value(limit);
 # endif
-	while(op != BeginOp)
+	bool more_operators = true;
+	while(more_operators)
 	{
 		// next op
 		play->next_reverse(op, arg, i_op, i_var);
@@ -274,6 +275,7 @@ void RevHesSweep(
 
 			case BeginOp:
 			CPPAD_ASSERT_NARG_NRES(op, 1, 1)
+			more_operators = false;
 			break;
 			// -------------------------------------------------
 

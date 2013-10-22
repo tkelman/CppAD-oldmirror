@@ -220,7 +220,8 @@ size_t forward0sweep(
 # if CPPAD_FORWARD0SWEEP_TRACE
 	std::cout << std::endl;
 # endif
-	while(op != EndOp)
+	bool more_operators = true;
+	while(more_operators)
 	{
 		// this op
 		Rec->next_forward(op, arg, i_op, i_var);
@@ -351,6 +352,7 @@ size_t forward0sweep(
 
 			case EndOp:
 			CPPAD_ASSERT_NARG_NRES(op, 0, 0);
+			more_operators = false;
 			break;
 			// -------------------------------------------------
 
